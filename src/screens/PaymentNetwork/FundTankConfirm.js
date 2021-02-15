@@ -78,7 +78,7 @@ const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
 
     const accountTokenDeposit = await etherspot.getAccountTokenDeposit(contractAddress);
 
-    if (!feeInfo || !accountTokenDeposit) {
+    if (!feeInfo?.fee || !accountTokenDeposit) {
       Toast.show({
         message: t('toast.cannotFundTank'),
         emoji: 'woman-shrugging',

@@ -291,6 +291,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     // check if ETH is being transferred and adjust transfer amount if needed
     const ethTransfer = keyBasedAssetsToTransferUpdated.find(({ assetData }) => assetData?.token === ETH);
     if (ethTransfer) {
+      // $FlowFixMe: bignumber.js typing
       const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
       const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransferUpdated.reduce(
         (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),

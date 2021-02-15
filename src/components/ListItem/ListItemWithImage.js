@@ -21,13 +21,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import Icon from 'components/Icon';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import { Shadow } from 'components/Shadow';
 import { Wrapper, Spacing } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -207,14 +207,14 @@ const ItemIcon = styled(Icon)`
   color: ${({ iconColor, theme }) => iconColor || theme.colors.basic000};
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(Image)`
   ${({ size }) => `
     height: ${size || 24}px;
     width: ${size || 24}px;
   `}
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   ${({ borderRadius, diameter }) => `
     width: ${(!borderRadius && diameter) || 54}px;
     height: ${(!borderRadius && diameter) || 54}px;
@@ -278,7 +278,7 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
-const CornerIcon = styled(CachedImage)`
+const CornerIcon = styled(Image)`
   width: 16px;
   height: 16px;
   position: absolute;

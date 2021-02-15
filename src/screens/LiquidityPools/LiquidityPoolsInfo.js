@@ -21,10 +21,10 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
 import { BaseText, MediumText } from 'components/Typography';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
@@ -47,7 +47,7 @@ const MainContainer = styled.View`
   padding: 16px 20px;
 `;
 
-const BannerImage = styled(CachedImage)`
+const BannerImage = styled(Image)`
   width: ${bannerWidth}px;
   height: ${bannerWidth * (114 / 335)}px;
 `;

@@ -21,7 +21,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import { RefreshControl, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -30,6 +29,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import CircleButton from 'components/CircleButton';
+import Image from 'components/Image';
 import BalanceView from 'components/PortfolioBalance/BalanceView';
 import Tabs from 'components/Tabs';
 import Table, { TableRow, TableLabel } from 'components/Table';
@@ -94,7 +94,7 @@ const ButtonsContainer = styled.View`
   width: 100%;
 `;
 
-const RariLogo = styled(CachedImage)`
+const RariLogo = styled(Image)`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   align-self: center;

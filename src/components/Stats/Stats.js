@@ -20,10 +20,10 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
+import Image from 'components/Image';
 
 
 type Props = {
@@ -45,7 +45,7 @@ const Card = styled.View`
   border-radius: 6px;
 `;
 
-const TokenIcon = styled(CachedImage)`
+const TokenIcon = styled(Image)`
   width: 20px;
   height: 20px;
 `;

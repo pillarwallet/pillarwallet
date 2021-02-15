@@ -24,7 +24,7 @@ import {
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
-import { LIQUIDITY_POOLS_TYPES } from 'models/LiquidityPools';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 import {
   getStakedAmount,
   getEarnedAmount,
@@ -49,7 +49,7 @@ import Toast from 'components/Toast';
 import t from 'translations/translate';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { LiquidityPool } from 'models/LiquidityPools';
+import type { LiquidityPool, UnipoolLiquidityPool } from 'models/LiquidityPools';
 
 
 const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
@@ -128,7 +128,7 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: true });
     await Promise.all(pools.map(async pool => {
-      if (pool.type === LIQUIDITY_POOLS_TYPES.UNIPOOL) {
+      if (pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL) {
         await dispatch(fetchUnipoolUserDataAction(pool.unipoolAddress));
       }
       await dispatch(fetchUniswapPoolDataAction(pool.uniswapPairAddress));
@@ -184,7 +184,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
 };
 
 export const calculateStakeTransactionEstimateAction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   tokenAmount: string,
   tokenAsset: Asset,
 ) => {
@@ -228,7 +228,7 @@ export const calculateStakeTransactionEstimateAction = (
 };
 
 export const calculateUnstakeTransactionEstimateAction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   tokenAmount: string,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -296,7 +296,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
   };
 };
 
-export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPool, amountToClaim: number) => {
+export const calculateClaimRewardsTransactionEstimateAction = (pool: UnipoolLiquidityPool, amountToClaim: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstEtherspotAccount(accounts);

@@ -163,7 +163,7 @@ export const getUniswapOffer = async (
   const askRate = expectedOutput.dividedBy(quantityBN);
   const allowanceSet = await getAllowanceSet(clientAddress, fromAssetParsed);
 
-  return parseOffer(fromAssetParsed, toAssetParsed, allowanceSet, askRate, PROVIDER_UNISWAP);
+  return parseOffer(fromAssetParsed, toAssetParsed, allowanceSet, askRate.toFixed(), PROVIDER_UNISWAP);
 };
 
 const getUniswapOrderData = async (

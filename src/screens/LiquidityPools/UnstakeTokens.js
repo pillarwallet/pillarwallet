@@ -26,7 +26,7 @@ import debounce from 'lodash.debounce';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Spacing } from 'components/Layout';
+import { Container, Spacing } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import ValueInput from 'components/ValueInput';
@@ -34,6 +34,9 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
 import { LIQUIDITY_POOLS_UNSTAKE_REVIEW } from 'constants/navigationConstants';
+
+// models
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
 // utils
 import { findSupportedAsset } from 'utils/assets';
@@ -48,7 +51,7 @@ import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
-import type { LiquidityPool } from 'models/LiquidityPools';
+import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 
 
 type Props = {
@@ -58,9 +61,13 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  calculateUnstakeTransactionEstimate: (pool: LiquidityPool, tokenAmount: string) => void,
+  calculateUnstakeTransactionEstimate: (pool: UnipoolLiquidityPool, tokenAmount: string) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
+
+type NavigationParams = {|
+  pool: UnipoolLiquidityPool,
+|};
 
 const MainContainer = styled.View`
   padding: 24px 20px;
@@ -91,7 +98,13 @@ const UnstakeTokensScreen = ({
     resetEstimateTransaction();
   }, []);
 
-  const { pool } = navigation.state.params;
+  const { pool }: NavigationParams = navigation.state.params;
+  useEffect(() => {
+    if (pool.type !== LIQUIDITY_POOL_TYPES.UNIPOOL) {
+      navigation.goBack();
+    }
+  }, [pool]);
+
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
   const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
@@ -101,6 +114,10 @@ const UnstakeTokensScreen = ({
     if (!parseFloat(assetValue) || !isValid) return;
     calculateUnstakeTransactionEstimate(pool, (assetValue));
   }, [assetValue, isValid]);
+
+  if (!assetData) {
+    return <Container />;
+  }
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const isNextButtonDisabled = !!isEstimating
@@ -116,7 +133,7 @@ const UnstakeTokensScreen = ({
 
   const customBalances = assetData != null ? {
     [assetData.symbol]: {
-      balance: poolStats?.stakedAmount,
+      balance: poolStats?.stakedAmount.toFixed(),
       symbol: assetData.symbol,
     },
   } : 0;
@@ -182,7 +199,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateUnstakeTransactionEstimate: debounce((
-    pool: LiquidityPool,
+    pool: UnipoolLiquidityPool,
     tokenAmount: string,
   ) => dispatch(calculateUnstakeTransactionEstimateAction(pool, tokenAmount)), 500),
 });

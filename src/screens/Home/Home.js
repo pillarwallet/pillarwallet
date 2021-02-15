@@ -404,7 +404,7 @@ class HomeScreen extends React.Component<Props> {
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
     const { rates, baseFiatCurrency } = this.props;
-    const tokenBalance = poolStats.userLiquidityTokenBalance + poolStats.stakedAmount;
+    const tokenBalance = poolStats.userLiquidityTokenBalance.toNumber() + poolStats.stakedAmount.toNumber();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return (
       <ListItemWithImage
@@ -518,11 +518,11 @@ class HomeScreen extends React.Component<Props> {
     const hasRariDeposits = !!rariDeposits.length;
 
     const purchasedLiquidityPools = LIQUIDITY_POOLS()
-      .map(pool => ({
+      .map((pool) => ({
         pool,
         poolStats: getPoolStats(pool, liquidityPoolsReducer),
       }))
-      .filter(({ poolStats }) => poolStats && (poolStats.userLiquidityTokenBalance > 0 || poolStats.stakedAmount > 0));
+      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
 
     return (
       <React.Fragment>

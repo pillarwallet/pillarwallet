@@ -27,7 +27,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
@@ -35,6 +34,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
@@ -147,7 +147,7 @@ const RightSideWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const Image = styled(CachedImage)`
+const StyledImage = styled(Image)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
@@ -387,7 +387,7 @@ class TextInput extends React.Component<Props, State> {
     const optionImageSource = resolveAssetSource(selectedOptionIcon);
     return (
       <ValueWrapper>
-        <Image
+        <StyledImage
           key={selectedValue}
           source={optionImageSource}
           fallbackSource={selectedOptionFallback || genericToken}

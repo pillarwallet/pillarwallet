@@ -195,7 +195,7 @@ export const getHeaderRightItems = (
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
   try {
     const amountBN = new BigNumber(amount);
-    const balanceBN = new BigNumber(assetBalance);
+    const balanceBN = new BigNumber(assetBalance ?? 0);
     // assetBalance is fixed to 6 digits and amount is not, so usually amount will be technically higher
     // fix and round both down to 6 to get meaningful info
     const amountFixed = amountBN.toFixed(6, 1);

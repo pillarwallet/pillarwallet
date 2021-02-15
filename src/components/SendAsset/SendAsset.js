@@ -273,6 +273,7 @@ const SendAsset = ({
       // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
       amount: amount || 0,
+      // $FlowFixMe: bignumber.js types
       txFeeInWei: feeInfo.fee,
       // $FlowFixMe: flow update to 0.122
       symbol: assetData.token,

@@ -1311,7 +1311,8 @@
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Ethereum fee"
+      "allowancePlusEthFee": "Allowance + Ethereum fee",
+      "migratingFrom": "migrating from"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1756,6 +1757,7 @@
       "totalLiquidity": "Total liquidity",
       "24hVolume": "24h volume",
       "tokenLiquidity": "{{tokenName}} liquidity",
+      "poolTokenAllocation": "Pool token allocation",
       "yourPoolShareAllocation": "Your pool share token allocation",
       "tokenPrice": "Token price",
       "quantity": "Quantity",

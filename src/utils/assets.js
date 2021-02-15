@@ -41,6 +41,7 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Option } from 'models/Selector';
+import type { Value } from 'utils/common';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -137,7 +138,7 @@ export const getFormattedRate = (
 export const calculateMaxAmount = (
   token: string,
   balance: number | string,
-  txFeeInWei: ?BigNumber,
+  txFeeInWei: ?Value,
   gasToken: ?GasToken = {},
 ): string => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
@@ -153,7 +154,7 @@ export const calculateMaxAmount = (
     return balance;
   }
 
-  // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
+  // we need to convert txFeeInWei to EthersBigNumber as ethers.js utils use different library for Big Numbers
   const decimals = get(gasToken, 'decimals', 'ether');
   const maxAmount = utils.parseUnits(balance, decimals).sub(EthersBigNumber.from(txFeeInWei.toString()));
   if (maxAmount.lt(0)) return '0';
@@ -164,7 +165,7 @@ export const calculateMaxAmount = (
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
   transaction: {
-    txFeeInWei: number,
+    txFeeInWei: ?Value,
     gasToken?: ?GasToken,
     amount?: any,
     decimals?: number,
@@ -199,7 +200,7 @@ export const isEnoughBalanceForTransactionFee = (
     }
   }
 
-  const txFeeInWeiBN = new BigNumber(txFeeInWei.toString()); // compatibility
+  const txFeeInWeiBN = new BigNumber(txFeeInWei?.toString() ?? 0); // compatibility
 
   return balanceInWei.gte(txFeeInWeiBN);
 };
@@ -256,6 +257,14 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
 
 export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
   return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+};
+
+export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
+};
+
+export const isSupportedAssetSymbol = (supportedAssets: Asset[], symbolToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => asset.symbol === symbolToCheck);
 };
 
 export const getAssetData = (

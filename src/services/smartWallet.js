@@ -305,7 +305,7 @@ class SmartWallet {
       });
   }
 
-  getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+  getAccountStakedAmount(tokenAddress: ?string): Promise<BigNumber> | BigNumber {
     if (!tokenAddress) return new BigNumber(0);
     return this.getSdk().getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
@@ -385,7 +385,13 @@ class SmartWallet {
     return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
   }
 
-  createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
+  createAccountPayment(
+    recipient: string,
+    token: ?string,
+    value: EthersBigNumber,
+    paymentType?: string,
+    reference?: string,
+  ) {
     token = toChecksumAddress(token);
     return this.getSdk().createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
   }
@@ -394,11 +400,11 @@ class SmartWallet {
     return this.getSdk().getConnectedAccountTransaction(txHash);
   }
 
-  estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
+  estimateTopUpAccountVirtualBalance(value: EthersBigNumber, tokenAddress: ?string) {
     return this.getSdk().estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
-  estimateWithdrawFromVirtualAccount(value: BigNumber, tokenAddress: ?string) {
+  estimateWithdrawFromVirtualAccount(value: EthersBigNumber, tokenAddress: ?string) {
     return this.getSdk()
       .estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
@@ -579,6 +585,7 @@ class SmartWallet {
         throw new Error(errorMessage);
       });
 
+    // $FlowFixMe: bignumber.js typing
     return formatEstimated(estimated);
   }
 

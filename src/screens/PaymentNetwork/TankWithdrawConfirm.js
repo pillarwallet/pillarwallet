@@ -49,7 +49,7 @@ import etherspot from 'services/etherspot';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
@@ -104,18 +104,19 @@ const TankWithdrawConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
     }
 
     const { to, data } = tokenWithdrawTransaction;
+    const { gasToken, fee: txFeeInWei } = feeInfo;
 
-    const transactionPayload: TransactionPayload = {
+    let transactionPayload = {
       to,
       amount: 0,
       data,
-      txFeeInWei: feeInfo.fee,
+      txFeeInWei,
       symbol: ETH,
       decimals: 18,
       contractAddress: ZERO_ADDRESS,
     };
 
-    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
+    if (gasToken) transactionPayload = { ...transactionPayload, gasToken };
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
 

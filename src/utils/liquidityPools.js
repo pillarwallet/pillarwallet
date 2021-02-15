@@ -27,23 +27,25 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
+  UNIPOOL_LIQUIDITY_POOLS,
   UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
 import { UNISWAP_ROUTER_ADDRESS } from 'constants/exchangeConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, isSupportedAssetAddress, isSupportedAssetSymbol } from 'utils/assets';
 import {
   getStakeTransactions as getUnipoolStakeTransactions,
   getUnstakeTransaction as getUnipoolUnstakeTransaction,
   getClaimRewardsTransaction as getUnipoolClaimRewardsTransaction,
 } from 'utils/unipool';
 import { getDeadline } from 'utils/uniswap';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
 import type { Asset } from 'models/Asset';
-import type { LiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
+import type { LiquidityPool, UnipoolLiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
 import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
@@ -101,6 +103,15 @@ export const fetchPoolData = async (poolAddress: string, userAddress: string): P
   `;
   /* eslint-enable i18next/no-literal-string */
   return callSubgraph(getEnv().UNISWAP_SUBGRAPH_NAME, query);
+};
+
+export const isSupportedPool = (supportedAssets: Asset[], poolToCheck: LiquidityPool) => {
+  return isSupportedAssetAddress(supportedAssets, poolToCheck.uniswapPairAddress)
+    && poolToCheck.tokensProportions.every((token) => isSupportedAssetSymbol(supportedAssets, token.symbol));
+};
+
+export const supportedLiquidityPools = (supportedAssets: Asset[]): LiquidityPool[] => {
+  return LIQUIDITY_POOLS().filter((pool) => isSupportedPool(supportedAssets, pool));
 };
 
 export const getAddLiquidityTransactions = async (
@@ -222,7 +233,7 @@ export const getRemoveLiquidityTransactions = async (
   obtainedTokensAmounts: string[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
-  const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
+  const poolTokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
   const deadline = getDeadline();
 
   let removeLiquidityTransactionData;
@@ -232,7 +243,7 @@ export const getRemoveLiquidityTransactions = async (
     const erc20TokenData = tokensAssets[erc20TokenIndex];
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
       erc20TokenData.address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -242,7 +253,7 @@ export const getRemoveLiquidityTransactions = async (
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidity', [
       tokensAssets[0].address,
       tokensAssets[1].address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -263,7 +274,7 @@ export const getRemoveLiquidityTransactions = async (
     ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
     : null;
 
-  if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
+  if (!approvedAmountBN || poolTokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(
       UNISWAP_ROUTER_ADDRESS, poolTokenAmount, poolToken.decimals);
     removeLiquidityTransactions = [
@@ -292,7 +303,7 @@ export const getRemoveLiquidityTransactions = async (
 };
 
 export const getStakeTransactions = async (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amount: string,
   token: Asset,
@@ -312,7 +323,7 @@ export const getStakeTransactions = async (
 };
 
 export const getUnstakeTransaction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amount: string,
   txFeeInWei?: BigNumber,
@@ -331,7 +342,7 @@ export const getUnstakeTransaction = (
 };
 
 export const getClaimRewardsTransaction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amountToClaim: number,
   txFeeInWei?: BigNumber,
@@ -389,8 +400,9 @@ export const getPoolStats = (
     [tokenSymbols[1]]: pairData.reserve1 / pairData.totalSupply,
   };
 
-  const { unipoolAddress } = pool;
-  const unipoolData = liquidityPoolsReducer.unipoolData[unipoolAddress];
+  const unipoolData = pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL
+    ? liquidityPoolsReducer.unipoolData[pool.unipoolAddress]
+    : undefined;
 
   const history = historyData.map(dataPoint => ({
     date: new Date(dataPoint.date * 1000),
@@ -416,14 +428,14 @@ export const getPoolStats = (
     dailyVolume,
     dailyFees: dailyVolume * UNISWAP_FEE_RATE,
     tokensLiquidity,
-    stakedAmount: parseFloat(unipoolData?.stakedAmount) || 0,
+    stakedAmount: new BigNumber(unipoolData?.stakedAmount ?? '0'),
     rewardsToClaim: parseFloat(unipoolData?.earnedAmount) || 0,
     tokensPricesUSD,
     tokensPrices,
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,
-    userLiquidityTokenBalance: parseFloat(poolData.liquidityPosition?.liquidityTokenBalance) || 0,
+    userLiquidityTokenBalance: new BigNumber(poolData.liquidityPosition?.liquidityTokenBalance ?? '0'),
   };
 };
 
@@ -466,38 +478,40 @@ export const calculateProportionalAssetValues = (
   return [token0Deposited, token1Deposited, amountMinted];
 };
 
+type RemoveLiquidityAmounts = {
+  pairTokens: BigNumber[];
+  poolToken: BigNumber;
+}
+
 // the same as above, but for removing liquidity
-export const calculateProportionalRemoveLiquidityAssetValues = (
+export const calculateProportionalAssetAmountsForRemoval = (
   pool: LiquidityPool,
-  tokenAmount: number,
-  tokenIndex: number,
-  liquidityPoolsReducer: LiquidityPoolsReducerState,
-): number[] => {
-  const poolAddress = pool.uniswapPairAddress;
-  const poolData = liquidityPoolsReducer.poolsData[poolAddress];
+  tokenAmount: string,
+  tokenIndex: number | null,
+  liquidityPoolsState: LiquidityPoolsReducerState,
+): RemoveLiquidityAmounts => {
+  const poolData = liquidityPoolsState.poolsData[pool.uniswapPairAddress];
   const pairData = poolData.pair;
 
-  const totalAmount = parseFloat(pairData.totalSupply);
-  const token0Pool = parseFloat(pairData.reserve0);
-  const token1Pool = parseFloat(pairData.reserve1);
-  let token0Withdrawn;
-  let token1Withdrawn;
-  let poolTokenBurned;
+  let amount0;
+  let amount1;
+  let amountPool;
 
   if (tokenIndex === 0) {
-    token0Withdrawn = tokenAmount;
-    poolTokenBurned = (token0Withdrawn * totalAmount) / token0Pool;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amount0 = new BigNumber(tokenAmount);
+    amountPool = amount0.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve0);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   } else if (tokenIndex === 1) {
-    token1Withdrawn = tokenAmount;
-    poolTokenBurned = (token1Withdrawn * totalAmount) / token1Pool;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
+    amount1 = new BigNumber(tokenAmount);
+    amountPool = amount1.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve1);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
   } else {
-    poolTokenBurned = tokenAmount;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amountPool = new BigNumber(tokenAmount);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   }
-  return [token0Withdrawn, token1Withdrawn, poolTokenBurned];
+
+  return { pairTokens: [amount0, amount1], poolToken: amountPool };
 };
 
 export const isLiquidityPoolsTransactionTag = (txTag: ?string) => {
@@ -582,14 +596,22 @@ const mapTransactionsHistoryWithUnipool = async (
   }`;
   /* eslint-enable i18next/no-literal-string */
 
-  const responses = await Promise.all(LIQUIDITY_POOLS().map(pool => callSubgraph(pool.unipoolSubgraphName, query)));
+  const responses = await Promise.all(
+    UNIPOOL_LIQUIDITY_POOLS().map(
+      pool => callSubgraph(pool.unipoolSubgraphName, query),
+    ),
+  );
+
   const mappedHistory = transactionHistory.reduce((
     transactions,
     transaction,
     transactionIndex,
   ) => {
     const { to } = transaction;
-    const liquidityPoolIndex = LIQUIDITY_POOLS().findIndex(pool => addressesEqual(pool.unipoolAddress, to));
+    const liquidityPoolIndex = UNIPOOL_LIQUIDITY_POOLS().findIndex(
+      pool => addressesEqual(pool.unipoolAddress, to),
+    );
+
     if (liquidityPoolIndex !== -1) {
       transactions[transactionIndex] = buildUnipoolTransaction(
         accountAddress,

@@ -261,7 +261,7 @@ class EtherspotService {
     return deposits.find(({ token }) => addressesEqual(token, tokenAddress));
   }
 
-  async getAccountTokenDepositBalance(tokenAddress: string): BigNumber {
+  async getAccountTokenDepositBalance(tokenAddress: string): Promise<BigNumber> {
     const tokenDeposit: ?P2PPaymentDeposit = await this.getAccountTokenDeposit(tokenAddress);
     if (!tokenDeposit) {
       reportErrorLog('getAccountTokenDepositBalance failed: cannot find token deposit', { tokenAddress });

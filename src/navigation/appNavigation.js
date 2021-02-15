@@ -19,12 +19,12 @@
 */
 
 import * as React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator, CardStyleInterpolators } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Image, AppState } from 'react-native';
+import { View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
@@ -333,27 +333,21 @@ const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
 const StackNavigatorModalConfig = {
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
 };
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
-    header: null,
-    gesturesEnabled: true,
-  },
-  cardStyle: {
-    backgroundColor: {
-      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
-      light: getThemeColors(getThemeByType()).basic070,
+    headerShown: false,
+    gestureEnabled: true,
+    cardStyle: {
+      backgroundColor: {
+        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+        light: getThemeColors(getThemeByType()).basic070,
+      },
     },
   },
 };
@@ -565,9 +559,11 @@ const tabNavigation = createBottomTabNavigator(
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
+        height: 54,
+      },
+      tabStyle: {
         paddingTop: 5,
         paddingBottom: 5,
-        height: 54,
       },
     },
     tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
@@ -1051,20 +1047,56 @@ class AppFlow extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <AppFlowNavigation
-        screenProps={{
-          profileImage: user?.profileImage,
-          showHomeUpdateIndicator,
-          intercomNotificationsCount,
-          isWalletBackedUp,
-          theme,
-          language: i18n.language,
-        }}
+      <MemoizedAppFlowNavigation
+        profileImage={user?.profileImage}
+        showHomeUpdateIndicator={showHomeUpdateIndicator}
+        intercomNotificationsCount={intercomNotificationsCount}
+        isWalletBackedUp={isWalletBackedUp}
+        theme={theme}
+        language={i18n.language}
         navigation={navigation}
       />
     );
   }
 }
+
+// Workaround for React Navigation 4 obscure crash occuring if `screenProps` object is re-created on each render.
+// Functional component created just to use useMemo hook, can be inlined when AppFlow is migrated to FC.
+const MemoizedAppFlowNavigation = ({
+  profileImage,
+  showHomeUpdateIndicator,
+  intercomNotificationsCount,
+  isWalletBackedUp,
+  theme,
+  language,
+  navigation,
+}) => {
+  const screenProps = React.useMemo(
+    () => ({
+      profileImage,
+      showHomeUpdateIndicator,
+      intercomNotificationsCount,
+      isWalletBackedUp,
+      theme,
+      language,
+    }),
+    [
+      profileImage,
+      showHomeUpdateIndicator,
+      intercomNotificationsCount,
+      isWalletBackedUp,
+      theme,
+      language,
+    ],
+  );
+
+  return (
+    <AppFlowNavigation
+      screenProps={screenProps}
+      navigation={navigation}
+    />
+  );
+};
 
 const mapStateToProps = ({
   user: { data: user },
