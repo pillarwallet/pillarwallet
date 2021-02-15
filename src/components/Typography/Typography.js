@@ -19,9 +19,15 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
+import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+
+import type { TextProps } from 'utils/types/react-native';
+import type { Theme } from 'models/Theme';
+import type { TranslationOptions } from 'models/Translations';
+
 
 type StyleValue = string | number | null | void;
 
@@ -90,7 +96,46 @@ const getTextStyle = (props) => {
   return { ...textProps };
 };
 
-export const BaseText = styled.Text`
+export type BaseTextProps = {|
+  ...TextProps,
+  ...$Exact<TranslationOptions>,
+  theme?: Theme,
+
+  // Variants
+  primary?: boolean,
+  secondary?: boolean,
+  positive?: boolean,
+  negative?: boolean,
+  accent?: boolean,
+  synthetic?: boolean,
+  link?: boolean,
+  danger?: boolean,
+  color?: string,
+  center?: boolean,
+  right?: boolean,
+
+  // Styles
+  fontSize?: number,
+  lineHeight?: number,
+  lineThrough?: boolean,
+
+  // Font Styles
+  tiny?: boolean,
+  small?: boolean,
+  regular?: boolean,
+  medium?: boolean,
+  big?: boolean,
+  large?: boolean,
+  giant?: boolean,
+  rSmall?: boolean,
+  rRegular?: boolean,
+  rBig?: boolean,
+  rLarge?: boolean,
+  rGiant?: boolean,
+  rJumbo?: boolean,
+|};
+
+export const BaseText: React.ComponentType<BaseTextProps> = styled.Text`
   font-family: "${appFont.regular}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};

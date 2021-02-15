@@ -230,7 +230,7 @@ const ViewDepositedAsset = ({
                 }),
               })}
             </MediumText>
-            <BaseText success fontSize={fontSizes.medium}>
+            <BaseText fontSize={fontSizes.medium}>
               {t('positiveValue', {
                 value: t('percentValue', {
                   value: formatAmountDisplay(earningsPercentageGain),
