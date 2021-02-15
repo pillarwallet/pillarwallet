@@ -148,7 +148,7 @@ class HTMLContentModal extends React.Component<Props, State> {
 
   handleModalScrollTo = (p: ScrollToProps) => {
     if (!p || !this.scrollViewRef.current) return;
-    this.scrollViewRef.current.scrollTo({});
+    this.scrollViewRef.current.scrollTo(p);
   };
 
   handleContentOnScroll = (event: Object) => {
