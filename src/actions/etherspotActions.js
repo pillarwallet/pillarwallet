@@ -133,7 +133,6 @@ export const subscribeToEtherspotNotificationsAction = () => {
       Toast.show({
         message: notificationMessage,
         emoji: 'ok_hand',
-        autoClose: false,
       });
     });
   };
