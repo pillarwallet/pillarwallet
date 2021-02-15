@@ -57,7 +57,7 @@ type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
-  inputRef?: typeof RNTextInput,
+  inputRef?: React.ElementRef<typeof RNTextInput>,
   inputIconName?: string,
   iconProps?: IconProps,
 };
