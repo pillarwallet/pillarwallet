@@ -197,7 +197,7 @@ const EmptyStateWrapper = styled.View`
 
 const DepositedAssetGain = styled(BaseText)`
   margin-bottom: 5px;
-  font-size: ${fontSizes.big};
+  font-size: ${fontSizes.big}px;
 `;
 
 const referralImage = require('assets/images/referral_gift.png');

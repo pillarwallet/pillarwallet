@@ -46,7 +46,7 @@ const HeaderButtonRounded = styled.TouchableOpacity`
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
-  font-size: ${fontSizes.regular};
+  font-size: ${fontSizes.regular}px;
   line-height: 20px;
   color: ${({ color }) => color || getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
   margin-left: 6px;

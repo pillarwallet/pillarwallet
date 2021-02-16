@@ -21,7 +21,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { BottomTabBar } from 'react-navigation-tabs';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
-import { withTheme } from 'styled-components';
+import { withTheme } from 'styled-components/native';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 

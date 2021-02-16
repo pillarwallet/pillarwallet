@@ -69,7 +69,7 @@ const TitleText = styled(MediumText)`
 `;
 
 const DescriptionText = styled(BaseText)`
-  margin-bottom: ${spacing.large};
+  margin-bottom: ${spacing.large}px;
 `;
 
 const InsightWrapper = styled.View`

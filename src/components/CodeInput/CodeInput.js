@@ -185,7 +185,7 @@ export default class CodeInput extends React.Component<Props, State> {
             <StyledTextInput
               {...inputProps}
               value=""
-              innerRef={this.input}
+              ref={this.input}
               onChangeText={this.onChange}
               onKeyPress={this.onKeyPress}
               onFocus={this.onFocus}

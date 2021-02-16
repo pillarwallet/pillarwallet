@@ -445,7 +445,7 @@ class Camera extends React.Component<Props, State> {
             {preview}
           </PreviewWrapper>
           <ResultScreenFooter>
-            <Button marginBottom="4px" onPress={this.setImage} title={t('button.confirm')} block={false} />
+            <Button marginBottom={4} onPress={this.setImage} title={t('button.confirm')} block={false} />
             <Button onPress={this.getBackToCamera} title={t('button.tryAgain')} transparent />
           </ResultScreenFooter>
         </ResultScreen>

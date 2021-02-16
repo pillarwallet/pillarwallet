@@ -237,7 +237,7 @@ const NewProfile = ({
       <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
         {t('auth:paragraph.successfullyRestoredWallet')}
       </Paragraph>
-      <Button marginBottom="20px" onPress={proceedToNextScreen} title={t('auth:button.next')} />
+      <Button marginBottom={20} onPress={proceedToNextScreen} title={t('auth:button.next')} />
     </Wrapper>
   );
 

@@ -490,11 +490,5 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const ThemedSelectorOptions = (withTheme(SelectorOptions): React.AbstractComponent<{|
-    ...OwnProps,
-    innerRef: { current: null | SelectorOptions } | (null | SelectorOptions) => mixed,
-|}>);
-
-export default React.forwardRef<OwnProps, SelectorOptions>((props, ref) => {
-  return <ThemedSelectorOptions {...props} innerRef={ref} />;
-});
+const ThemedSelectorOptions: React.AbstractComponent<OwnProps, SelectorOptions> = withTheme(SelectorOptions);
+export default ThemedSelectorOptions;

@@ -188,6 +188,22 @@ export const lineHeights = {
 };
 
 export const fontStyles = {
+  tiny: `font-size: ${fontSizes.tiny}px; line-height: ${lineHeights.tiny}px;`,
+  small: `font-size: ${fontSizes.small}px; line-height: ${lineHeights.small}px;`,
+  regular: `font-size: ${fontSizes.regular}px; line-height: ${lineHeights.regular}px;`,
+  medium: `font-size: ${fontSizes.medium}px; line-height: ${lineHeights.medium}px;`,
+  big: `font-size: ${fontSizes.big}px; line-height: ${lineHeights.big}px;`,
+  large: `font-size: ${fontSizes.large}px; line-height: ${lineHeights.large}px;`,
+  giant: `font-size: ${fontSizes.giant}px; line-height: ${lineHeights.giant}px;`,
+  rSmall: `font-size: ${fontSizes.rSmall}px; line-height: ${lineHeights.rSmall}px;`,
+  rRegular: `font-size: ${fontSizes.rRegular}px; line-height: ${lineHeights.rRegular}px;`,
+  rBig: `font-size: ${fontSizes.rBig}px; line-height: ${lineHeights.rBig}px;`,
+  rLarge: `font-size: ${fontSizes.rLarge}px; line-height: ${lineHeights.rLarge}px;`,
+  rGiant: `font-size: ${fontSizes.rGiant}px; line-height: ${lineHeights.rGiant}px;`,
+  rJumbo: `font-size: ${fontSizes.rJumbo}px; line-height: ${lineHeights.rJumbo}px;`,
+};
+
+export const objectFontStyles = {
   tiny: { fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny },
   small: { fontSize: fontSizes.small, lineHeight: lineHeights.small },
   regular: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },

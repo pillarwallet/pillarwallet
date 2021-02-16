@@ -2,7 +2,7 @@
 import React from 'react';
 import { Linking } from 'react-native';
 import ParsedText from 'react-native-parsed-text';
-import { withTheme } from 'styled-components';
+import { withTheme } from 'styled-components/native';
 import { appFont } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { handleUrlPress } from 'utils/common';

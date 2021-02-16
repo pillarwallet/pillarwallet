@@ -122,7 +122,7 @@ const InputField = styled(TextInput)`
   padding-right: 16px;
   color: ${({ theme }) => theme.colors.basic010};
   font-size: ${fontSizes.regular}px;
-  font-family: ${appFont.regular};
+  font-family: "${appFont.regular}";
 `;
 
 const InputIcon = styled(IconButton)`
@@ -199,7 +199,7 @@ const SearchInput = (props: SearchInputProps) => {
         placeholderTextColor={colors.secondaryText}
         underlineColorAndroid="transparent"
         autoCorrect={false}
-        innerRef={inputRef}
+        ref={inputRef}
         needsExtraPadding={showIcon}
       />
       {showIcon &&

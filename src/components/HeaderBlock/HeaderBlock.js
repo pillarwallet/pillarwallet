@@ -21,8 +21,7 @@ import * as React from 'react';
 import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import styled, { withTheme } from 'styled-components/native';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider, withTheme } from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
@@ -69,7 +68,7 @@ type Props = {|
 
 const Wrapper = styled(Animated.View)`
   width: 100%;
-  border-bottom-width: 1;
+  border-bottom-width: 1px;
   ${({ floating }) => floating && `
     position: absolute;
     top: 0;

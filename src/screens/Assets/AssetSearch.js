@@ -94,7 +94,7 @@ const EmptyStateWrapper = styled(Wrapper)`
 `;
 
 const SearchSpinner = styled(Wrapper)`
-  padding-top: 20;
+  padding-top: 20px;
 `;
 
 const TopWrapper = styled.View`

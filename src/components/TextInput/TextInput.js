@@ -163,7 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9;
+  margin-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -569,7 +569,7 @@ class TextInput extends React.Component<Props, State> {
                     >
                       <InputField
                         {...inputProps}
-                        innerRef={(input) => {
+                        ref={(input) => {
                           if (getInputRef) getInputRef(input);
                           this.multilineInputField = input;
                         }}
@@ -613,7 +613,7 @@ class TextInput extends React.Component<Props, State> {
             {Platform.OS === 'ios' && <IosFocusInput
               caretHidden
               autoCorrect={false}
-              innerRef={(ref) => { this.rnInput = ref; }}
+              ref={(ref) => { this.rnInput = ref; }}
               onFocus={this.handleRNFocus}
             />}
           </ItemHolder>

@@ -61,7 +61,7 @@ type Props = {
 };
 
 const InterestText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ChooseAssetDeposit = ({

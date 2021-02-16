@@ -20,7 +20,7 @@
 /* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 

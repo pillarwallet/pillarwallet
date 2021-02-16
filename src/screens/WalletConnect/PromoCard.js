@@ -83,7 +83,7 @@ const CloseIconContainer = styled.TouchableOpacity`
 `;
 
 const CloseIcon = styled(Icon)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.large}px;
   color: ${({ theme }) => theme.current === DARK_THEME ? theme.colors.tertiary : theme.colors.text};
 `;
 

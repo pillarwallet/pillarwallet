@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import { getThemeByType } from 'utils/themes';
 import type { RootReducerState } from 'reducers/rootReducer';
