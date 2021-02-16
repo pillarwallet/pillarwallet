@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, InteractionManager } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import styled, { withTheme } from 'styled-components/native';
@@ -159,26 +159,30 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      navigation, getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
-    } = this.props;
-    const { fromAsset, toAsset } = this.state;
-    this._isMounted = true;
-    getWbtcFees();
-    getBtcRate();
-    getExchangeSupportedAssets(() => {
-      // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
-      if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
+    InteractionManager.runAfterInteractions(() => {
+      const {
+        getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
+      } = this.props;
+      const { fromAsset, toAsset } = this.state;
+      getWbtcFees();
+      getBtcRate();
+      getExchangeSupportedAssets(() => {
+        // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
+        if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
+      });
+
+      if (!hasSeenExchangeIntro) {
+        this.openExchangeIntroModal();
+      }
     });
 
+    const { navigation } = this.props;
     this.listeners = [
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
       navigation.addListener('didBlur', this.blurFromInput),
     ];
 
-    if (!hasSeenExchangeIntro) {
-      this.openExchangeIntroModal();
-    }
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
@@ -325,7 +329,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     setTimeout(() => {
       if (!this.fromInputRef || !this._isMounted || !hasSeenExchangeIntro) return;
       this.fromInputRef.focus();
-    }, 200);
+    }, 650);
   };
 
   resetSearch = () => {
