@@ -37,7 +37,7 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Button from 'components/Button';
 
 import { getThemeColors } from 'utils/themes';
-import { formatFiat, formatAmount } from 'utils/common';
+import { formatFiat, formatAmount, formatApy } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -54,7 +54,6 @@ import { useYieldCurrentApy, useStableCurrentApy, useEthereumCurrentApy } from '
 
 import { fetchRariDataAction } from 'actions/rariActions';
 
-import type { BigNumber } from 'bignumber.js';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates } from 'models/Asset';
@@ -135,10 +134,6 @@ const RariDepositScreen = ({
   const yieldApyQuery = useYieldCurrentApy();
   const stableApyQuery = useStableCurrentApy();
   const ethereumApyQuery = useEthereumCurrentApy();
-
-  const formatApy = (apy: ?BigNumber) => {
-    return apy?.multipliedBy(100).toFixed(2) ?? '?';
-  };
 
   const getPoolApyString = (pool: RariPool) => {
     switch (pool) {
@@ -285,7 +280,7 @@ const RariDepositScreen = ({
         <Table>
           <TableRow>
             <TableLabel>{t('rariContent.label.currentAPY')}</TableLabel>
-            <BaseText regular>{t('percentValue', { value: getPoolApyString(activeTab) })}</BaseText>
+            <BaseText regular>{getPoolApyString(activeTab)}</BaseText>
           </TableRow>
           {hasDeposit && renderInterestsRow()}
         </Table>
