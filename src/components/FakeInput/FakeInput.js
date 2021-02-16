@@ -28,7 +28,7 @@ const FakeInput = styled(BaseText)`
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 4px;
-  font-size: 12;
+  font-size: 12px;
 `;
 
 export default FakeInput;

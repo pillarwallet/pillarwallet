@@ -41,7 +41,7 @@ type Props = {
 
 const DepositedAssetGain = styled(BaseText)`
   margin-bottom: 5px;
-  font-size: ${fontSizes.big};
+  font-size: ${fontSizes.big}px;
 `;
 
 const aaveImage = require('assets/images/apps/aave.png');

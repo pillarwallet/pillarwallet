@@ -55,7 +55,7 @@ const SwitcherTouchable = styled.TouchableOpacity`
   justify-content: center;
   width: 50px;
   border-radius: ${(TOGGLE_DIAMETER / 2) + 3}px;
-  height: ${TOGGLE_DIAMETER + 3};
+  height: ${TOGGLE_DIAMETER + 3}px;
   background-color: ${({ isOn, theme }) => isOn ? theme.colors.basic020 : theme.colors.basic080};
   ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;

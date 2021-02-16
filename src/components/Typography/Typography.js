@@ -23,6 +23,10 @@ import styled from 'styled-components/native';
 import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
+type StyleValue = string | number | null | void;
+
+// Naive transformer from css values to add px units to numeric prosp. Required by Styled Components.
+const toCssLength = (value: StyleValue) => (typeof value === 'number' ? `${value}px` : value);
 
 const getFontSize = (props) => {
   const propsKeys = Object.keys(props);
@@ -60,7 +64,7 @@ const getTextStyle = (props) => {
   if (props.synthetic) textProps.color = colors.synthetic140;
   if (props.link) textProps.color = colors.basic000;
   if (props.danger) textProps.color = colors.secondaryAccent240;
-  if (props.color) textProps.color = props.color; // for custom color
+  if (props.color && typeof props.color === 'string') textProps.color = props.color; // for custom color
 
   // positioning
   if (props.center) textProps.textAlign = 'center';
@@ -68,16 +72,16 @@ const getTextStyle = (props) => {
 
   // font size
   if (props.fontSize) {
-    textProps.fontSize = props.fontSize;
+    textProps.fontSize = toCssLength(props.fontSize);
   } else {
-    textProps.fontSize = getFontSize(props);
+    textProps.fontSize = toCssLength(getFontSize(props));
   }
 
   // line height
   if (props.lineHeight) {
-    textProps.lineHeight = props.lineHeight;
+    textProps.lineHeight = toCssLength(props.lineHeight);
   } else {
-    textProps.lineHeight = getLineHeight(props);
+    textProps.lineHeight = toCssLength(getLineHeight(props));
   }
 
   // other
@@ -87,28 +91,28 @@ const getTextStyle = (props) => {
 };
 
 export const BaseText = styled.Text`
-  font-family: ${appFont.regular};
+  font-family: "${appFont.regular}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: ${appFont.bold};
+  font-family: "${appFont.bold}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: ${appFont.light};
+  font-family: "${appFont.light}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: ${appFont.medium};
+  font-family: "${appFont.medium}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}

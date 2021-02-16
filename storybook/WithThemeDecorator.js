@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { Provider, connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
 import { getThemeByType } from 'utils/themes';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 

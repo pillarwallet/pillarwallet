@@ -154,6 +154,13 @@ export const pipe = (...fns: Function[]) => {
 
 export const noop = () => {};
 
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
 /**
  * formatMoney(n, x, s, c)
  *
@@ -182,7 +189,7 @@ export const formatMoney = (
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
 };
 
-export const parseNumber = (amount: string = '0') => {
+export const parseNumber = (amount: Value = '0') => {
   let strg = amount.toString();
   let decimal = '.';
   strg = strg.replace(/[^0-9$.,]/g, '');
@@ -194,7 +201,7 @@ export const parseNumber = (amount: string = '0') => {
   return parseFloat(strg);
 };
 
-export const isValidNumber = (amount: string = '0') => {
+export const isValidNumber = (amount: Value = '0') => {
   const strg = amount.toString();
   const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
 
@@ -210,13 +217,6 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
   if (assetSymbol === ETH) return 4;
   if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
   return 2;
-};
-
-export type Value = BigNumber | number | string;
-
-export const wrapBigNumber = (value: Value): BigNumber => {
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
 };
 
 export const formatAmount = (amount: Value, precision: number = 6): string => {
@@ -437,10 +437,10 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: string = '0', decimals: number): string => {
+export const formatUnits = (val: Value = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
-  let valueWithoutDecimals = null; // null for sentry reports
+  let valueWithoutDecimals: string | null = null; // null for sentry reports
   try {
     // check if val is exact number or other format (might be hex, exponential, etc.)
     preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
@@ -449,7 +449,7 @@ export const formatUnits = (val: string = '0', decimals: number): string => {
     if (decimals === 0) {
       // check additionally if string contains decimal pointer
       // because converting exponential numbers back to number will result as exponential expression again
-      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      if (valueWithoutDecimals.includes('.')) return Math.floor(+valueWithoutDecimals).toFixed();
       // else return as it is
       return valueWithoutDecimals;
     }
@@ -591,10 +591,12 @@ export const humanizeHexString = (hexString: ?string) => {
 };
 
 export const convertToBaseUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.multipliedBy(new BigNumber(10).pow(decimals));
 };
 
 export const convertToNominalUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.dividedBy(new BigNumber(10).pow(decimals));
 };
 

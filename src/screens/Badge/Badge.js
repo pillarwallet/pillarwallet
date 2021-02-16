@@ -30,7 +30,7 @@ const BadgeWrapper = styled.View`
 `;
 
 const Image = styled(BadgeImage)`
-  margin-bottom: ${spacing.rhythm / 2};
+  margin-bottom: ${spacing.rhythm / 2}px;
 `;
 
 const Subtitle = styled(MediumText)`

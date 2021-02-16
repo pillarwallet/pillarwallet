@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 import type SDKWrapper from 'services/api';
 

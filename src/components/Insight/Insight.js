@@ -113,7 +113,7 @@ const TinyCircle = styled.View`
 
 const CheckIcon = styled(Icon)`
   color: ${themedColors.positive};
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.tiny}px;
 `;
 
 const NumberedListItem = styled.View`

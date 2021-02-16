@@ -13,7 +13,7 @@ type Props = {
 
 const BadgesItem = styled.TouchableOpacity`
   align-items: center;
-  margin-bottom: ${spacing.medium};
+  margin-bottom: ${spacing.medium}px;
 `;
 
 const BadgeTouchableItem = ({ data: badge, onPress, style }: Props) => {

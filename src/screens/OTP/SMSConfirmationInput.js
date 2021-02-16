@@ -116,7 +116,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
         const value = input.value || EMPTY_STRING;
         return (
           <SMSCodeInput
-            innerRef={(node) => { this.inputs[id] = node; }}
+            ref={(node) => { this.inputs[id] = node; }}
             value={value}
             onKeyPress={(e) => this.handleKeyPress(e, id)}
             keyboardType="number-pad"
