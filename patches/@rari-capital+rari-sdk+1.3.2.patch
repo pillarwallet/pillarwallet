@@ -1,0 +1,295 @@
+diff --git a/node_modules/@rari-capital/rari-sdk/governance.js b/node_modules/@rari-capital/rari-sdk/governance.js
+index 26e1618..5b39109 100644
+--- a/node_modules/@rari-capital/rari-sdk/governance.js
++++ b/node_modules/@rari-capital/rari-sdk/governance.js
+@@ -14,22 +14,22 @@ const contractAddresses = {
+ 
+ var abis = {};
+ 
+-abis["RariGovernanceToken"] = require(__dirname +
++abis["RariGovernanceToken"] = require("." +
+   "/governance/abi/" +
+   "RariGovernanceToken" +
+   ".json");
+ 
+-abis["RariGovernanceTokenDistributor"] = require(__dirname +
++abis["RariGovernanceTokenDistributor"] = require("." +
+   "/governance/abi/" +
+   "RariGovernanceTokenDistributor" +
+   ".json");
+ 
+-abis["RariGovernanceTokenVesting"] = require(__dirname +
++abis["RariGovernanceTokenVesting"] = require("." +
+   "/governance/abi/" +
+   "RariGovernanceTokenVesting" +
+   ".json");
+ 
+-abis["RariGovernanceTokenUniswapDistributor"] = require(__dirname +
++abis["RariGovernanceTokenUniswapDistributor"] = require("." +
+   "/governance/abi/" +
+   "RariGovernanceTokenUniswapDistributor" +
+   ".json");
+diff --git a/node_modules/@rari-capital/rari-sdk/index.js b/node_modules/@rari-capital/rari-sdk/index.js
+index 09d1131..da207cf 100644
+--- a/node_modules/@rari-capital/rari-sdk/index.js
++++ b/node_modules/@rari-capital/rari-sdk/index.js
+@@ -20,7 +20,7 @@ import Governance from "./governance.js";
+ 
+ import Cache from "./cache.js";
+ 
+-var erc20Abi = require(__dirname + "/abi/ERC20.json");
++var erc20Abi = require("." + "/abi/ERC20.json");
+ 
+ export default class Rari {
+   constructor(web3Provider) {
+diff --git a/node_modules/@rari-capital/rari-sdk/pools/ethereum.js b/node_modules/@rari-capital/rari-sdk/pools/ethereum.js
+index 80e4a45..0dabd82 100644
+--- a/node_modules/@rari-capital/rari-sdk/pools/ethereum.js
++++ b/node_modules/@rari-capital/rari-sdk/pools/ethereum.js
+@@ -13,22 +13,22 @@ const contractAddresses = {
+ 
+ var abis = {};
+ 
+-abis["RariFundController"] = require(__dirname +
++abis["RariFundController"] = require("." +
+   "/ethereum/abi/" +
+   "RariFundController" +
+   ".json");
+ 
+-abis["RariFundManager"] = require(__dirname +
++abis["RariFundManager"] = require("." +
+   "/ethereum/abi/" +
+   "RariFundManager" +
+   ".json");
+ 
+-abis["RariFundToken"] = require(__dirname +
++abis["RariFundToken"] = require("." +
+   "/ethereum/abi/" +
+   "RariFundToken" +
+   ".json");
+ 
+-abis["RariFundProxy"] = require(__dirname +
++abis["RariFundProxy"] = require("." +
+   "/ethereum/abi/" +
+   "RariFundProxy" +
+   ".json");
+@@ -42,7 +42,7 @@ const legacyContractAddresses = {
+ var legacyAbis = {};
+ 
+ legacyAbis["v1.0.0"] = {};
+-legacyAbis["v1.0.0"]["RariFundController"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundController"] = require("." +
+   "/ethereum/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+diff --git a/node_modules/@rari-capital/rari-sdk/pools/stable.js b/node_modules/@rari-capital/rari-sdk/pools/stable.js
+index f6affea..3338182 100644
+--- a/node_modules/@rari-capital/rari-sdk/pools/stable.js
++++ b/node_modules/@rari-capital/rari-sdk/pools/stable.js
+@@ -7,7 +7,7 @@ import MStableSubpool from "../subpools/mstable.js";
+ import Cache from "../cache.js";
+ import { get0xSwapOrders } from "../0x.js";
+ 
+-var erc20Abi = require(__dirname + "/../abi/ERC20.json");
++var erc20Abi = require("." + "/../abi/ERC20.json");
+ 
+ const contractAddresses = {
+   RariFundController: "0x369855b051D1b2dBee88a792DCFc08614ff4e262",
+@@ -18,11 +18,27 @@ const contractAddresses = {
+ };
+ 
+ var abis = {};
+-for (const contractName of Object.keys(contractAddresses))
+-  abis[contractName] = require(__dirname +
++abis["RariFundController"] = require("." +
+     "/stable/abi/" +
+-    contractName +
++    "RariFundController" +
+     ".json");
++abis["RariFundManager"] = require("." +
++    "/stable/abi/" +
++    "RariFundManager" +
++    ".json");
++abis["RariFundToken"] = require("." +
++    "/stable/abi/" +
++    "RariFundToken" +
++    ".json");
++abis["RariFundPriceConsumer"] = require("." +
++    "/stable/abi/" +
++    "RariFundPriceConsumer" +
++    ".json");
++abis["RariFundProxy"] = require("." +
++    "/stable/abi/" +
++    "RariFundProxy" +
++    ".json");
++
+ 
+ const legacyContractAddresses = {
+   "v1.0.0": {
+@@ -55,21 +71,21 @@ var legacyAbis = {};
+ 
+ legacyAbis["v1.0.0"] = {};
+ 
+-legacyAbis["v1.0.0"]["RariFundManager"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundManager"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+   "RariFundManager" +
+   ".json");
+ 
+-legacyAbis["v1.0.0"]["RariFundToken"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundToken"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+   "RariFundToken" +
+   ".json");
+ 
+-legacyAbis["v1.0.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundProxy"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+@@ -79,21 +95,21 @@ legacyAbis["v1.0.0"]["RariFundProxy"] = require(__dirname +
+   // 1.1.0
+ 
+ legacyAbis["v1.1.0"] = {};
+-legacyAbis["v1.1.0"]["RariFundManager"] = require(__dirname +
++legacyAbis["v1.1.0"]["RariFundManager"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.1.0" +
+   "/" +
+   "RariFundManager" +
+   ".json");
+ 
+-legacyAbis["v1.1.0"]["RariFundController"] = require(__dirname +
++legacyAbis["v1.1.0"]["RariFundController"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.1.0" +
+   "/" +
+   "RariFundController" +
+   ".json");
+ 
+-legacyAbis["v1.1.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v1.1.0"]["RariFundProxy"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.1.0" +
+   "/" +
+@@ -103,7 +119,7 @@ legacyAbis["v1.1.0"]["RariFundProxy"] = require(__dirname +
+   // 1.2.0
+ 
+ legacyAbis["v1.2.0"] = {};
+-legacyAbis["v1.2.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v1.2.0"]["RariFundProxy"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.2.0" +
+   "/" +
+@@ -113,21 +129,21 @@ legacyAbis["v1.2.0"]["RariFundProxy"] = require(__dirname +
+   // 2.0.0
+ 
+ legacyAbis["v2.0.0"] = {};
+-legacyAbis["v2.0.0"]["RariFundManager"] = require(__dirname +
++legacyAbis["v2.0.0"]["RariFundManager"] = require("." +
+   "/stable/abi/legacy/" +
+   "v2.0.0" +
+   "/" +
+   "RariFundManager" +
+   ".json");
+ 
+-legacyAbis["v2.0.0"]["RariFundController"] = require(__dirname +
++legacyAbis["v2.0.0"]["RariFundController"] = require("." +
+   "/stable/abi/legacy/" +
+   "v2.0.0" +
+   "/" +
+   "RariFundController" +
+   ".json");
+ 
+-legacyAbis["v2.0.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v2.0.0"]["RariFundProxy"] = require("." +
+   "/stable/abi/legacy/" +
+   "v2.0.0" +
+   "/" +
+@@ -137,7 +153,7 @@ legacyAbis["v2.0.0"]["RariFundProxy"] = require(__dirname +
+   // 2.2.0
+ 
+ legacyAbis["v2.2.0"] = {};
+-legacyAbis["v2.2.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v2.2.0"]["RariFundProxy"] = require("." +
+   "/stable/abi/legacy/" +
+   "v1.2.0" +
+   "/" +
+diff --git a/node_modules/@rari-capital/rari-sdk/pools/yield.js b/node_modules/@rari-capital/rari-sdk/pools/yield.js
+index 9554149..1040349 100644
+--- a/node_modules/@rari-capital/rari-sdk/pools/yield.js
++++ b/node_modules/@rari-capital/rari-sdk/pools/yield.js
+@@ -26,14 +26,14 @@ var legacyAbis = {};
+ 
+ // 1.0.0
+ legacyAbis["v1.0.0"] = {};
+-legacyAbis["v1.0.0"]["RariFundController"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundController"] = require("." +
+   "/yield/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+   "RariFundController" +
+   ".json");
+ 
+-legacyAbis["v1.0.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v1.0.0"]["RariFundProxy"] = require("." +
+   "/yield/abi/legacy/" +
+   "v1.0.0" +
+   "/" +
+@@ -42,7 +42,7 @@ legacyAbis["v1.0.0"]["RariFundProxy"] = require(__dirname +
+ 
+ // 1.1.0
+ legacyAbis["v1.1.0"] = {};
+-legacyAbis["v1.1.0"]["RariFundProxy"] = require(__dirname +
++legacyAbis["v1.1.0"]["RariFundProxy"] = require("." +
+   "/yield/abi/legacy/" +
+   "v1.1.0" +
+   "/" +
+diff --git a/node_modules/@rari-capital/rari-sdk/subpools/alpha.js b/node_modules/@rari-capital/rari-sdk/subpools/alpha.js
+index 6e959d4..f6b559b 100644
+--- a/node_modules/@rari-capital/rari-sdk/subpools/alpha.js
++++ b/node_modules/@rari-capital/rari-sdk/subpools/alpha.js
+@@ -10,9 +10,9 @@ const externalContractAddresses = {
+ 
+ var externalAbis = {};
+ 
+-externalAbis["Bank"] = require(__dirname + "/alpha/abi/" + "Bank" + ".json");
++externalAbis["Bank"] = require("." + "/alpha/abi/" + "Bank" + ".json");
+ 
+-externalAbis["ConfigurableInterestBankConfig"] = require(__dirname +
++externalAbis["ConfigurableInterestBankConfig"] = require("." +
+   "/alpha/abi/" +
+   "ConfigurableInterestBankConfig" +
+   ".json");
+diff --git a/node_modules/@rari-capital/rari-sdk/subpools/mstable.js b/node_modules/@rari-capital/rari-sdk/subpools/mstable.js
+index 504bf4a..6eb8f22 100644
+--- a/node_modules/@rari-capital/rari-sdk/subpools/mstable.js
++++ b/node_modules/@rari-capital/rari-sdk/subpools/mstable.js
+@@ -4,7 +4,7 @@ import axios from "axios";
+ 
+ import Cache from "../cache.js";
+ 
+-var erc20Abi = require(__dirname + "/../abi/ERC20.json");
++var erc20Abi = require("." + "/../abi/ERC20.json");
+ 
+ const externalContractAddresses = {
+   Masset: "0xe2f2a5c287993345a840db3b0845fbc70f5935a5",
+@@ -12,12 +12,12 @@ const externalContractAddresses = {
+ };
+ 
+ var externalAbis = {};
+-externalAbis["Masset"] = require(__dirname +
++externalAbis["Masset"] = require("." +
+   "/mstable/abi/" +
+   "Masset" +
+   ".json");
+ 
+-externalAbis["MassetValidationHelper"] = require(__dirname +
++externalAbis["MassetValidationHelper"] = require("." +
+   "/mstable/abi/" +
+   "MassetValidationHelper" +
+   ".json");
