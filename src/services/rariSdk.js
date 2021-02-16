@@ -25,27 +25,34 @@ import { BigNumber } from 'bignumber.js';
 import { useQuery } from 'react-query';
 import { getEnv } from 'configs/envConfig';
 
-const INFURA_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
+const INFURA_MAINNET_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
+const INFURA_KOVAN_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
 
-const web3Provider = new Web3(new Web3.providers.WebsocketProvider(INFURA_WEB_SOCKET));
-const rariClient = new Rari(web3Provider);
+const getWeb3Provider = () => {
+  const socketAddress = getEnv().NETWORK_PROVIDER === 'kovan' ? INFURA_MAINNET_WEB_SOCKET : INFURA_KOVAN_WEB_SOCKET;
+  return new Web3(new Web3.providers.WebsocketProvider(socketAddress));
+};
+
+const getRariClient = () => {
+  return new Rari(getWeb3Provider());
+};
 
 const toBigNumber = (bn: any): BigNumber => {
   return new BigNumber(bn.toString());
 };
 
 export const fetchYieldCurrentApy = async (): Promise<BigNumber> => {
-  const value = await rariClient?.pools.yield.apy.getCurrentRawApy();
+  const value = await getRariClient().pools.yield.apy.getCurrentRawApy();
   return toBigNumber(value).dividedBy(1e18);
 };
 
 export const fetchStableCurrentApy = async (): Promise<BigNumber> => {
-  const value = await rariClient?.pools.stable.apy.getCurrentRawApy();
+  const value = await getRariClient().pools.stable.apy.getCurrentRawApy();
   return toBigNumber(value).dividedBy(1e18);
 };
 
 export const fetchEthereumCurrentApy = async (): Promise<BigNumber> => {
-  const value = await rariClient?.pools.ethereum.apy.getCurrentRawApy();
+  const value = await getRariClient().pools.ethereum.apy.getCurrentRawApy();
   return toBigNumber(value).dividedBy(1e18);
 };
 
