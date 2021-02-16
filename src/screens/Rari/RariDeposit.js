@@ -50,7 +50,7 @@ import {
 } from 'constants/navigationConstants';
 import { RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 
-import { useYieldCurrentApy, useStableCurrentApy, useEthereumCurrentApy } from 'services/rariSdk';
+import { usePoolCurrentApy } from 'services/rariSdk';
 
 import { fetchRariDataAction } from 'actions/rariActions';
 
@@ -131,9 +131,9 @@ const RariDepositScreen = ({
     fetchRariData();
   }, []);
 
-  const yieldApyQuery = useYieldCurrentApy();
-  const stableApyQuery = useStableCurrentApy();
-  const ethereumApyQuery = useEthereumCurrentApy();
+  const yieldApyQuery = usePoolCurrentApy(RARI_POOLS.YIELD_POOL);
+  const stableApyQuery = usePoolCurrentApy(RARI_POOLS.STABLE_POOL);
+  const ethereumApyQuery = usePoolCurrentApy(RARI_POOLS.ETH_POOL);
 
   const getPoolApyString = (pool: RariPool) => {
     switch (pool) {

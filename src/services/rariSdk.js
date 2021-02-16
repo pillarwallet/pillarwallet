@@ -25,6 +25,9 @@ import { BigNumber } from 'bignumber.js';
 import { useQuery } from 'react-query';
 import { getEnv } from 'configs/envConfig';
 
+import { RARI_POOLS } from 'constants/rariConstants';
+import type { RariPool } from 'models/RariPool';
+
 const INFURA_MAINNET_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
 const INFURA_KOVAN_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
 
@@ -41,29 +44,25 @@ const toBigNumber = (bn: any): BigNumber => {
   return new BigNumber(bn.toString());
 };
 
-export const fetchYieldCurrentApy = async (): Promise<BigNumber> => {
-  const value = await getRariClient().pools.yield.apy.getCurrentRawApy();
-  return toBigNumber(value).dividedBy(1e18);
+const getPool = (type: RariPool) => {
+  switch (type) {
+    case RARI_POOLS.YIELD_POOL:
+      return getRariClient().pools.yield;
+    case RARI_POOLS.STABLE_POOL:
+      return getRariClient().pools.stable;
+    case RARI_POOLS.ETH_POOL:
+      return getRariClient().pools.ethereum;
+    default:
+      return undefined;
+  }
 };
 
-export const fetchStableCurrentApy = async (): Promise<BigNumber> => {
-  const value = await getRariClient().pools.stable.apy.getCurrentRawApy();
-  return toBigNumber(value).dividedBy(1e18);
+export const fetchPoolCurrentApy = async (type: RariPool): Promise<BigNumber> => {
+  const pool = getPool(type);
+  const apy = await pool?.apy.getCurrentRawApy();
+  return toBigNumber(apy).dividedBy(1e18);
 };
 
-export const fetchEthereumCurrentApy = async (): Promise<BigNumber> => {
-  const value = await getRariClient().pools.ethereum.apy.getCurrentRawApy();
-  return toBigNumber(value).dividedBy(1e18);
-};
-
-export const useYieldCurrentApy = () => {
-  return useQuery('Rari.Yield.CurrentApy', fetchYieldCurrentApy);
-};
-
-export const useStableCurrentApy = () => {
-  return useQuery('Rari.Stable.CurrentApy', fetchStableCurrentApy);
-};
-
-export const useEthereumCurrentApy = () => {
-  return useQuery('Rari.Ethereum.CurrentApy', fetchEthereumCurrentApy);
+export const usePoolCurrentApy = (type: RariPool) => {
+  return useQuery(['Rari', type, 'CurrentApy'], () => fetchPoolCurrentApy(type));
 };
