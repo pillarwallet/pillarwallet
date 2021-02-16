@@ -46,10 +46,10 @@ const toBigNumber = (bn: any): BigNumber => {
 
 const getPool = (type: RariPool) => {
   switch (type) {
-    case RARI_POOLS.YIELD_POOL:
-      return getRariClient().pools.yield;
     case RARI_POOLS.STABLE_POOL:
       return getRariClient().pools.stable;
+    case RARI_POOLS.YIELD_POOL:
+      return getRariClient().pools.yield;
     case RARI_POOLS.ETH_POOL:
       return getRariClient().pools.ethereum;
     default:
