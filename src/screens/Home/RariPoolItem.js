@@ -39,7 +39,7 @@ import { usePoolCurrentApy } from 'services/rariSdk';
 // utils
 import { fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { formatFiat, formatApy } from 'utils/common';
 
 // types
 import type { RariPool } from 'models/RariPool';
@@ -94,8 +94,8 @@ const RariPoolItem = ({ pool, balanceInUSD }: Props) => {
   return (
     <ListItemWithImage
       label={poolsLabels[pool]}
-      subtext={t('rariContent.label.currentAPYWithPercentage', {
-        percentage: formatAmountDisplay(apyQuery.data?.multipliedBy(100).toString()),
+      subtext={t('rariContent.label.currentAPYWithValue', {
+        value: formatApy(apyQuery.data),
       })}
       itemImageSource={rariLogo}
       onPress={() => navigation.navigate(RARI_DEPOSIT)}
