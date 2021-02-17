@@ -23,17 +23,25 @@ import Web3 from 'web3';
 import Rari from '@rari-capital/rari-sdk';
 import { BigNumber } from 'bignumber.js';
 import { useQuery } from 'react-query';
+
+// Config
 import { getEnv } from 'configs/envConfig';
 
+// Utils
+import { isProdEnv } from 'utils/environment';
+
+// Constants
 import { RARI_POOLS } from 'constants/rariConstants';
+
+// Types
 import type { RariPool } from 'models/RariPool';
 
-const INFURA_MAINNET_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
-const INFURA_KOVAN_WEB_SOCKET = `wss://mainnet.infura.io/ws/v3/${getEnv().INFURA_PROJECT_ID}`;
+const INFURA_MAINNET_URL = `https://mainnet.infura.io/v3/${getEnv().INFURA_PROJECT_ID}`;
+const INFURA_KOVAN_URL = `https://kovan.infura.io/v3/${getEnv().INFURA_PROJECT_ID}`;
 
 const getWeb3Provider = () => {
-  const socketAddress = getEnv().NETWORK_PROVIDER === 'kovan' ? INFURA_MAINNET_WEB_SOCKET : INFURA_KOVAN_WEB_SOCKET;
-  return new Web3(new Web3.providers.WebsocketProvider(socketAddress));
+  const url = isProdEnv() ? INFURA_MAINNET_URL : INFURA_KOVAN_URL;
+  return new Web3.providers.HttpProvider(url);
 };
 
 const getRariClient = () => {
