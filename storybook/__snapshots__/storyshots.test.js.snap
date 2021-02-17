@@ -6376,7 +6376,12 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
               />
               <View
                 label="label.needToActivate"
-                labelStyle="font-size: 10px; line-height: 14px;"
+                labelStyle={
+                  Object {
+                    "fontSize": 10,
+                    "lineHeight": 14,
+                  }
+                }
                 primary={true}
                 style={
                   Array [
@@ -6400,7 +6405,10 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                         "fontSize": 8,
                         "textAlignVertical": "center",
                       },
-                      "font-size: 10px; line-height: 14px;",
+                      Object {
+                        "fontSize": 10,
+                        "lineHeight": 14,
+                      },
                     ]
                   }
                 >
@@ -9678,7 +9686,12 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
               />
               <View
                 label="label.needToActivate"
-                labelStyle="font-size: 10px; line-height: 14px;"
+                labelStyle={
+                  Object {
+                    "fontSize": 10,
+                    "lineHeight": 14,
+                  }
+                }
                 primary={true}
                 style={
                   Array [
@@ -9702,7 +9715,10 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                         "fontSize": 8,
                         "textAlignVertical": "center",
                       },
-                      "font-size: 10px; line-height: 14px;",
+                      Object {
+                        "fontSize": 10,
+                        "lineHeight": 14,
+                      },
                     ]
                   }
                 >

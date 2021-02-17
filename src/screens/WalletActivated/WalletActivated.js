@@ -24,7 +24,7 @@ import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-import { fontStyles } from 'utils/variables';
+import { fontStyles, objectFontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 import { ASSETS } from 'constants/navigationConstants';
@@ -99,7 +99,7 @@ class WalletActivated extends React.PureComponent<Props> {
               title={t('smartWalletContent.button.goToSmartWallet')}
               onPress={this.handleNavigate}
               secondary
-              textStyle={fontStyles.medium}
+              textStyle={objectFontStyles.medium}
             />
           </ButtonWrapper>
         </ScrollView>
