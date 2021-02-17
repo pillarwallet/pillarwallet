@@ -22,7 +22,5 @@ import { useSelector } from 'react-redux';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { RariReducerState } from 'reducers/rariReducer';
 
-export const useRariSelector = <T>(selector: (state: RariReducerState) => T): T => {
-  return useSelector((root: RootReducerState) => selector(root.rari));
-};
-
+export const useRariSelector = <T>(selector: (state: RariReducerState) => T): T =>
+  useSelector((root: RootReducerState) => selector(root.rari));

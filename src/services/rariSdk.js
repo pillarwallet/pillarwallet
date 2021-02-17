@@ -27,30 +27,17 @@ import { useQuery } from 'react-query';
 // Config
 import { getEnv } from 'configs/envConfig';
 
-// Utils
-import { isProdEnv } from 'utils/environment';
-
 // Constants
 import { RARI_POOLS } from 'constants/rariConstants';
 
 // Types
 import type { RariPool } from 'models/RariPool';
 
-const INFURA_MAINNET_URL = `https://mainnet.infura.io/v3/${getEnv().INFURA_PROJECT_ID}`;
-const INFURA_KOVAN_URL = `https://kovan.infura.io/v3/${getEnv().INFURA_PROJECT_ID}`;
+const getWeb3Provider = () => new Web3.providers.HttpProvider(getEnv().WEB3_INFURA_URL);
 
-const getWeb3Provider = () => {
-  const url = isProdEnv() ? INFURA_MAINNET_URL : INFURA_KOVAN_URL;
-  return new Web3.providers.HttpProvider(url);
-};
+const getRariClient = () => new Rari(getWeb3Provider());
 
-const getRariClient = () => {
-  return new Rari(getWeb3Provider());
-};
-
-const toBigNumber = (bn: any): BigNumber => {
-  return new BigNumber(bn.toString());
-};
+const toBigNumber = (bn: any): BigNumber => new BigNumber(bn.toString());
 
 const getPool = (type: RariPool) => {
   switch (type) {
@@ -71,6 +58,5 @@ export const fetchPoolCurrentApy = async (type: RariPool): Promise<BigNumber> =>
   return toBigNumber(apy).dividedBy(1e18);
 };
 
-export const usePoolCurrentApy = (type: RariPool) => {
-  return useQuery(['Rari', type, 'CurrentApy'], () => fetchPoolCurrentApy(type));
-};
+export const usePoolCurrentApy = (type: RariPool) =>
+  useQuery(['Rari', type, 'CurrentApy'], () => fetchPoolCurrentApy(type));

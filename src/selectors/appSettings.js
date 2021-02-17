@@ -22,8 +22,7 @@ import { useSelector } from 'react-redux';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
 
-export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerState) => T): T => {
-  return useSelector((root: RootReducerState) => selector(root.appSettings));
-};
+export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerState) => T): T =>
+  useSelector((root: RootReducerState) => selector(root.appSettings));
 
 export const useBaseFiatCurrency = () => useAppSettingsSelector(state => state.data.baseFiatCurrency);
