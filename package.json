@@ -29,7 +29,7 @@
     "@ethersproject/shims": "^5.0.7",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.48.1890",
-    "@rari-capital/rari-sdk": "^1.3.2",
+    "@rari-capital/rari-sdk": "^1.4.0",
     "@react-native-community/async-storage": "1.8.1",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/hooks": "^2.5.1",
