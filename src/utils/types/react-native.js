@@ -33,6 +33,7 @@ import { ScrollView } from 'react-native';
 
 // Props
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
+export type { TextProps } from 'react-native/Libraries/Text/TextProps';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 

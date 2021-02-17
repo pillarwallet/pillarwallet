@@ -19,9 +19,14 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
+import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+
+import type { TextProps } from 'utils/types/react-native';
+import type { Theme } from 'models/Theme';
+
 
 type StyleValue = string | number | null | void;
 
@@ -90,61 +95,116 @@ const getTextStyle = (props) => {
   return { ...textProps };
 };
 
-export const BaseText = styled.Text`
+export type BaseTextProps = {|
+  ...TextProps,
+  theme?: Theme,
+
+  // Variants
+  primary?: boolean,
+  secondary?: boolean,
+  positive?: boolean,
+  negative?: boolean,
+  accent?: boolean,
+  synthetic?: boolean,
+  link?: boolean,
+  danger?: boolean,
+  color?: ?string,
+  center?: boolean,
+  right?: boolean,
+
+  // Styles
+  fontSize?: number,
+  lineHeight?: number,
+  lineThrough?: boolean,
+
+  // Font Styles
+  tiny?: boolean,
+  small?: boolean,
+  regular?: boolean,
+  medium?: boolean,
+  big?: boolean,
+  large?: boolean,
+  giant?: boolean,
+  rSmall?: boolean,
+  rRegular?: boolean,
+  rBig?: boolean,
+  rLarge?: boolean,
+  rGiant?: boolean,
+  rJumbo?: boolean,
+|};
+
+export const BaseText: React.ComponentType<BaseTextProps> = styled.Text`
   font-family: "${appFont.regular}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
-export const BoldText = styled(BaseText)`
+export const BoldText: React.ComponentType<BaseTextProps> = styled(BaseText)`
   font-family: "${appFont.bold}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
-export const LightText = styled(BaseText)`
+export const LightText: React.ComponentType<BaseTextProps> = styled(BaseText)`
   font-family: "${appFont.light}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
-export const MediumText = styled(BaseText)`
+export const MediumText: React.ComponentType<BaseTextProps> = styled(BaseText)`
   font-family: "${appFont.medium}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
-export const Title = styled(BaseText)`
+type TitleProps = {|
+  ...BaseTextProps,
+  align?: 'left' | 'right' | 'center' | 'auto' | 'justify',
+  padding?: boolean,
+|};
+
+export const Title: React.ComponentType<TitleProps> = styled(BaseText)`
   ${fontStyles.large};
   margin: 20px 0;
-  padding: ${props => (props.padding ? '0 20px' : '0')};
-  text-align: ${props => (props.align || 'left')};
+  padding: ${(props) => (props.padding ? '0 20px' : '0')};
+  text-align: ${(props) => props.align || 'left'};
 `;
 
-export const SubTitle = styled(BaseText)`
- ${fontStyles.big};
+type SubTitleProps = {|
+  ...BaseTextProps,
+  align?: 'left' | 'right' | 'center' | 'auto' | 'justify',
+  margin?: string,
+|};
+
+export const SubTitle: React.ComponentType<SubTitleProps> = styled(BaseText)`
+  ${fontStyles.big};
   color: ${({ theme }) => theme.colors.basic000};
-  text-align: ${props => (props.align || 'left')};
-  margin: ${props => props.margin || '0 0 20px'};
+  text-align: ${(props) => props.align || 'left'};
+  margin: ${(props) => props.margin || '0 0 20px'};
 `;
 
-export const SubHeading = styled(LightText)`
+export const SubHeading: React.ComponentType<BaseTextProps> = styled(LightText)`
   ${fontStyles.small};
   color: ${({ theme }) => theme.colors.basic020};
   letter-spacing: 0.4;
 `;
 
-export const SubHeadingMedium = styled(MediumText)`
+export const SubHeadingMedium: React.ComponentType<BaseTextProps> = styled(MediumText)`
   ${fontStyles.small};
   color: ${({ theme }) => theme.colors.basic020};
   letter-spacing: 0.4;
 `;
 
-export const Paragraph = styled(BaseText)`
+type ParagraphProps = {|
+  ...BaseTextProps,
+  light?: boolean,
+|};
+
+export const Paragraph: React.ComponentType<ParagraphProps> = styled(BaseText)`
   ${props => props.small ? fontStyles.medium : fontStyles.big};
   margin-bottom: ${props => props.small ? '5px' : '10px'};
   color: ${({ light, theme }) => light ? theme.colors.basic020 : theme.colors.basic010};
@@ -152,18 +212,23 @@ export const Paragraph = styled(BaseText)`
   flex-wrap: wrap;
 `;
 
-export const TextLink = styled(BaseText)`
+export const TextLink: React.ComponentType<BaseTextProps> = styled(BaseText)`
   ${fontStyles.medium};
   color: ${({ theme }) => theme.colors.basic000};
   ${(props) => getTextStyle(props)}
 `;
 
-export const Label = styled(MediumText)`
-  ${props => props.small ? fontStyles.medium : fontStyles.regular}px;
+export const Label: React.ComponentType<BaseTextProps> = styled(MediumText)`
+  ${(props) => (props.small ? fontStyles.medium : fontStyles.regular)}px;
   color: ${({ color, theme }) => color || theme.colors.basic020};
 `;
 
-export const HelpText = styled(BaseText)`
+type HelpTextProps = {|
+  ...BaseTextProps,
+  noPadding?: boolean,
+|};
+
+export const HelpText: React.ComponentType<HelpTextProps> = styled(BaseText)`
   ${fontStyles.regular};
   ${({ noPadding }) => !noPadding && 'padding: 10px;'}
   color: ${({ color, theme }) => color || theme.colors.basic020};
