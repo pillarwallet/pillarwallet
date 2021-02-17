@@ -195,14 +195,6 @@ export const getUserInterests = async (accountAddress: string, rates: Rates) => 
   return mapPools(interestsPerPool);
 };
 
-// APY calculations taken from the official Rari dApp: https://github.com/Rari-Capital/rari-dApp
-export const getRariAPY = async () => {
-  const apys = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
-
-  }));
-  return mapPools(apys);
-};
-
 export const getUserRgtBalance = async (accountAddress: string) => {
   const rariContract = getContract(
     getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
