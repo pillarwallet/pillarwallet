@@ -30,6 +30,8 @@ LogBox.ignoreLogs([
   'Setting a timer', // TODO: this is coming from ethers.js lib, periodically check whether we can already remove this
   'Warning: componentWillReceiveProps has been renamed',
   'Warning: componentWillMount has been renamed',
+  'web3-bzz package will be deprecated',
+  'web3-shh package will be deprecated',
 ]);
 import '@ethersproject/shims';
 import 'utils/shim';
