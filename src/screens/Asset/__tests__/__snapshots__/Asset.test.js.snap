@@ -88,15 +88,18 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               name="back"
               style={
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 18,
-                  "marginBottom": undefined,
-                  "marginLeft": undefined,
-                  "marginRight": undefined,
-                  "marginTop": undefined,
-                  "paddingTop": 0,
-                }
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 18,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "paddingTop": 0,
+                  },
+                  Object {},
+                ]
               }
             />
           </View>
@@ -139,10 +142,15 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
         >
           <View
             style={
-              Object {
-                "marginLeft": 8,
-                "marginRight": -10,
-              }
+              Array [
+                Object {
+                  "marginLeft": 8,
+                },
+                Object {},
+                Object {
+                  "marginRight": -10,
+                },
+              ]
             }
           >
             <View
@@ -174,15 +182,18 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 name="info-circle-inverse"
                 style={
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 24,
-                    "marginBottom": undefined,
-                    "marginLeft": undefined,
-                    "marginRight": undefined,
-                    "marginTop": undefined,
-                    "paddingTop": 0,
-                  }
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontSize": 24,
+                      "marginBottom": undefined,
+                      "marginLeft": undefined,
+                      "marginRight": undefined,
+                      "marginTop": undefined,
+                      "paddingTop": 0,
+                    },
+                    Object {},
+                  ]
                 }
               />
             </View>

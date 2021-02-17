@@ -149,7 +149,7 @@ type Props = {
 
 export type EventData = {
   label?: string,
-  itemImageSource?: string,
+  itemImageSource?: number,
   actionLabel?: ?string,
   badge?: ?string,
   subtext?: string,

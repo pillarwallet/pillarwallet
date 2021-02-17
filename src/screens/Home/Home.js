@@ -354,7 +354,9 @@ class HomeScreen extends React.Component<Props> {
     return <SablierStream stream={stream} />;
   };
 
-  renderEarnedInterestsPercent = (interestsPercentage: number) => {
+  renderEarnedInterestsPercent = (interestsPercentage: ?number) => {
+    if (!interestsPercentage) return null;
+
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
@@ -404,12 +406,14 @@ class HomeScreen extends React.Component<Props> {
         <DepositedAssetGain>
           {formatFiat(balanceInUSD, fiatCurrency)}
         </DepositedAssetGain>
-        {this.renderEarnedInterestsPercent(rariUserInterests[pool].interestsPercentage)}
+        {this.renderEarnedInterestsPercent(rariUserInterests[pool]?.interestsPercentage)}
       </ListItemWithImage>
     );
   }
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
+    if (!poolStats) return null;
+
     const { rates, baseFiatCurrency } = this.props;
     const tokenBalance = poolStats.userLiquidityTokenBalance.toNumber() + poolStats.stakedAmount.toNumber();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -614,7 +618,7 @@ class HomeScreen extends React.Component<Props> {
                         keyExtractor={(item) => (item.id.toString())}
                         renderItem={this.renderBadge}
                         style={{ width: '100%', paddingBottom: spacing.medium }}
-                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
+                        contentContainerStyle={[{ paddingHorizontal: 2, paddingTop: 26 }, badgesContainerStyle]}
                         initialNumToRender={5}
                         ListEmptyComponent={(
                           <EmptyStateWrapper>
@@ -680,7 +684,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={rariDeposits}
-                          keyExtractor={(item) => item.id}
+                          keyExtractor={(item) => item.pool}
                           renderItem={this.renderRariPool}
                           initialNumToRender={2}
                           listKey="rari"
@@ -699,7 +703,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={purchasedLiquidityPools}
-                          keyExtractor={(item) => item.name}
+                          keyExtractor={(item) => item.pool.name}
                           renderItem={this.renderLiquidityPool}
                           initialNumToRender={2}
                           listKey="liquidityPools"

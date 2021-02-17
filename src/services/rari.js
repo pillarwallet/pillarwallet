@@ -395,6 +395,7 @@ export const getUnclaimedRgt = async (accountAddress: string) => {
 
 export const getRtgPrice = async () => {
   const price = await getCoinGeckoTokenPrices({
+    // $FlowFixMe: react-native types
     [RARI_GOVERNANCE_TOKEN_DATA.symbol]: RARI_GOVERNANCE_TOKEN_DATA,
   });
   if (!price) return null;

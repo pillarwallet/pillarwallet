@@ -895,7 +895,7 @@ type Props = {
 };
 
 type State = {
-  lastAppState: string,
+  lastAppState: ?string,
 };
 
 let lockTimer;

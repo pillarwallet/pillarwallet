@@ -90,12 +90,12 @@ const CircularProgressBar = ({
 
   const dashOffset = circleAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [circumference, 0],
+    outputRange: ([circumference, 0]: number[]),
   });
 
   const backgroundCircleDashOffset = backgroundCircleAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [circumference, 0],
+    outputRange: ([circumference, 0]: number[]),
   });
 
   const colors = getThemeColors(theme);

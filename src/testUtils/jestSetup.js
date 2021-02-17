@@ -208,6 +208,7 @@ jest.setMock('react-native-intercom', {
 const mockCameraView = mockView;
 
 // ouch
+// $FlowFixMe: react-native types
 mockCameraView.Constants = {
   Type: {
     back: 'back',

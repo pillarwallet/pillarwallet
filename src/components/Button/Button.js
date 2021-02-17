@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import themeVariant from 'styled-theming';
 import debounce from 'lodash.debounce';
@@ -28,6 +27,9 @@ import Spinner from 'components/Spinner';
 import { fontSizes, spacing } from 'utils/variables';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { getThemeColors, getThemeType } from 'utils/themes';
+
+// types
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 
 export type Props = {|
@@ -47,13 +49,13 @@ export type Props = {|
   flexRight?: boolean,
   small?: boolean,
   debounceTime?: number,
-  textStyle?: ?StyleSheet.Styles,
-  style?: StyleSheet.Styles,
+  textStyle?: TextStyleProp,
+  style?: ViewStyleProp,
   isLoading?: boolean,
   leftIconName?: string,
-  leftIconStyle?: StyleSheet.Styles,
+  leftIconStyle?: ViewStyleProp,
   rightIconName?: string,
-  rightIconStyle?: StyleSheet.Styles,
+  rightIconStyle?: ViewStyleProp,
   horizontalPaddings?: number,
   transparent?: boolean,
   primarySecond?: boolean,

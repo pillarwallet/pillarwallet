@@ -6376,7 +6376,12 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
               />
               <View
                 label="label.needToActivate"
-                labelStyle="font-size: 10px; line-height: 14px;"
+                labelStyle={
+                  Object {
+                    "fontSize": 10,
+                    "lineHeight": 14,
+                  }
+                }
                 primary={true}
                 style={
                   Array [
@@ -6400,7 +6405,10 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                         "fontSize": 8,
                         "textAlignVertical": "center",
                       },
-                      "font-size: 10px; line-height: 14px;",
+                      Object {
+                        "fontSize": 10,
+                        "lineHeight": 14,
+                      },
                     ]
                   }
                 >
@@ -9678,7 +9686,12 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
               />
               <View
                 label="label.needToActivate"
-                labelStyle="font-size: 10px; line-height: 14px;"
+                labelStyle={
+                  Object {
+                    "fontSize": 10,
+                    "lineHeight": 14,
+                  }
+                }
                 primary={true}
                 style={
                   Array [
@@ -9702,7 +9715,10 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                         "fontSize": 8,
                         "textAlignVertical": "center",
                       },
-                      "font-size: 10px; line-height: 14px;",
+                      Object {
+                        "fontSize": 10,
+                        "lineHeight": 14,
+                      },
                     ]
                   }
                 >
@@ -12440,15 +12456,18 @@ exports[`Storyshots Banner default 1`] = `
           <View
             name="rounded-close"
             style={
-              Object {
-                "color": "#818EB3",
-                "fontSize": 12,
-                "marginBottom": undefined,
-                "marginLeft": undefined,
-                "marginRight": undefined,
-                "marginTop": undefined,
-                "paddingTop": 0,
-              }
+              Array [
+                Object {
+                  "color": "#818EB3",
+                  "fontSize": 12,
+                  "marginBottom": undefined,
+                  "marginLeft": undefined,
+                  "marginRight": undefined,
+                  "marginTop": undefined,
+                  "paddingTop": 0,
+                },
+                Object {},
+              ]
             }
           />
         </View>
@@ -12587,15 +12606,18 @@ exports[`Storyshots Banner with image 1`] = `
           <View
             name="rounded-close"
             style={
-              Object {
-                "color": "#818EB3",
-                "fontSize": 12,
-                "marginBottom": undefined,
-                "marginLeft": undefined,
-                "marginRight": undefined,
-                "marginTop": undefined,
-                "paddingTop": 0,
-              }
+              Array [
+                Object {
+                  "color": "#818EB3",
+                  "fontSize": 12,
+                  "marginBottom": undefined,
+                  "marginLeft": undefined,
+                  "marginRight": undefined,
+                  "marginTop": undefined,
+                  "paddingTop": 0,
+                },
+                Object {},
+              ]
             }
           />
         </View>
@@ -39204,15 +39226,18 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                 <View
                   name="back"
                   style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 18,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "marginBottom": undefined,
+                        "marginLeft": undefined,
+                        "marginRight": undefined,
+                        "marginTop": undefined,
+                        "paddingTop": 0,
+                      },
+                      Object {},
+                    ]
                   }
                 />
               </View>
@@ -39237,7 +39262,12 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -39281,10 +39311,15 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginLeft": 8,
-                    "marginRight": -10,
-                  }
+                  Array [
+                    Object {
+                      "marginLeft": 8,
+                    },
+                    Object {},
+                    Object {
+                      "marginRight": -10,
+                    },
+                  ]
                 }
               >
                 <View
@@ -39316,15 +39351,18 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                   <View
                     name="info-circle-inverse"
                     style={
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 24,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 24,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -39494,15 +39532,18 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                 <View
                   name="back"
                   style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 18,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "marginBottom": undefined,
+                        "marginLeft": undefined,
+                        "marginRight": undefined,
+                        "marginTop": undefined,
+                        "paddingTop": 0,
+                      },
+                      Object {},
+                    ]
                   }
                 />
               </View>
@@ -39527,7 +39568,12 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -39570,10 +39616,15 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginLeft": 8,
-                    "marginRight": -10,
-                  }
+                  Array [
+                    Object {
+                      "marginLeft": 8,
+                    },
+                    Object {},
+                    Object {
+                      "marginRight": -10,
+                    },
+                  ]
                 }
               >
                 <View
@@ -39605,15 +39656,18 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                   <View
                     name="info-circle-inverse"
                     style={
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 24,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 24,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -39710,12 +39764,17 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginBottom": -20,
-                    "marginLeft": -20,
-                    "marginRight": -12,
-                    "marginTop": -20,
-                  }
+                  Array [
+                    Object {
+                      "marginLeft": -20,
+                      "marginRight": -12,
+                    },
+                    Object {
+                      "marginBottom": -20,
+                      "marginTop": -20,
+                    },
+                    Object {},
+                  ]
                 }
               >
                 <View
@@ -39745,15 +39804,18 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                   <View
                     name="close"
                     style={
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 14,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 14,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -39779,7 +39841,12 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -39929,7 +39996,12 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -39972,12 +40044,17 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginBottom": -20,
-                    "marginLeft": -12,
-                    "marginRight": -20,
-                    "marginTop": -20,
-                  }
+                  Array [
+                    Object {
+                      "marginLeft": -12,
+                      "marginRight": -20,
+                    },
+                    Object {
+                      "marginBottom": -20,
+                      "marginTop": -20,
+                    },
+                    Object {},
+                  ]
                 }
               >
                 <View
@@ -40007,15 +40084,18 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                   <View
                     name="close"
                     style={
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 14,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 14,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -40112,9 +40192,13 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginLeft": -10,
-                  }
+                  Array [
+                    Object {},
+                    Object {},
+                    Object {
+                      "marginLeft": -10,
+                    },
+                  ]
                 }
               >
                 <View
@@ -40147,15 +40231,18 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                   <View
                     name="hamburger"
                     style={
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 24,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 24,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -40181,7 +40268,12 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -40341,15 +40433,18 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                 <View
                   name="back"
                   style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 18,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "marginBottom": undefined,
+                        "marginLeft": undefined,
+                        "marginRight": undefined,
+                        "marginTop": undefined,
+                        "paddingTop": 0,
+                      },
+                      Object {},
+                    ]
                   }
                 />
               </View>
@@ -40374,7 +40469,12 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
               }
             >
               <View
-                style={Object {}}
+                style={
+                  Array [
+                    Object {},
+                    Object {},
+                  ]
+                }
               >
                 <Text
                   centerText={true}
@@ -40417,10 +40517,15 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
             >
               <View
                 style={
-                  Object {
-                    "marginLeft": 8,
-                    "marginRight": -10,
-                  }
+                  Array [
+                    Object {
+                      "marginLeft": 8,
+                    },
+                    Object {},
+                    Object {
+                      "marginRight": -10,
+                    },
+                  ]
                 }
               >
                 <View
@@ -40452,15 +40557,18 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                   <View
                     name="info-circle-inverse"
                     style={
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 24,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 24,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -43744,17 +43852,23 @@ exports[`Storyshots SearchBlock default 1`] = `
                 <View
                   name="search"
                   style={
-                    Object {
-                      "color": "#818EB3",
-                      "fontSize": 24,
-                      "height": 24,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                      "width": 24,
-                    }
+                    Array [
+                      Object {
+                        "color": undefined,
+                        "fontSize": undefined,
+                        "marginBottom": undefined,
+                        "marginLeft": undefined,
+                        "marginRight": undefined,
+                        "marginTop": undefined,
+                        "paddingTop": 0,
+                      },
+                      Object {
+                        "color": "#818EB3",
+                        "fontSize": 24,
+                        "height": 24,
+                        "width": 24,
+                      },
+                    ]
                   }
                 />
               </View>
@@ -45709,7 +45823,12 @@ exports[`Storyshots SlideModal default 1`] = `
                     }
                   >
                     <View
-                      style={Object {}}
+                      style={
+                        Array [
+                          Object {},
+                          Object {},
+                        ]
+                      }
                     >
                       <Text
                         centerText={false}
@@ -45752,12 +45871,17 @@ exports[`Storyshots SlideModal default 1`] = `
                   >
                     <View
                       style={
-                        Object {
-                          "marginBottom": -20,
-                          "marginLeft": -12,
-                          "marginRight": -20,
-                          "marginTop": -20,
-                        }
+                        Array [
+                          Object {
+                            "marginLeft": -12,
+                            "marginRight": -20,
+                          },
+                          Object {
+                            "marginBottom": -20,
+                            "marginTop": -20,
+                          },
+                          Object {},
+                        ]
                       }
                     >
                       <View
@@ -45787,15 +45911,18 @@ exports[`Storyshots SlideModal default 1`] = `
                         <View
                           name="close"
                           style={
-                            Object {
-                              "color": "#0A1427",
-                              "fontSize": 14,
-                              "marginBottom": undefined,
-                              "marginLeft": undefined,
-                              "marginRight": undefined,
-                              "marginTop": undefined,
-                              "paddingTop": 0,
-                            }
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 14,
+                                "marginBottom": undefined,
+                                "marginLeft": undefined,
+                                "marginRight": undefined,
+                                "marginTop": undefined,
+                                "paddingTop": 0,
+                              },
+                              Object {},
+                            ]
                           }
                         />
                       </View>
@@ -46420,19 +46547,25 @@ exports[`Storyshots TextInput default 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
           style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            }
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              Object {},
+            ]
           }
         >
           <Text
@@ -46700,19 +46833,25 @@ exports[`Storyshots TextInput multiline 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
           style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            }
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              Object {},
+            ]
           }
         >
           <Text
@@ -46934,19 +47073,25 @@ exports[`Storyshots TextInput numeric 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
           style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            }
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              Object {},
+            ]
           }
         >
           <Text
@@ -47215,10 +47360,13 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
@@ -47466,15 +47614,18 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                   <View
                     name="plus"
                     style={
-                      Object {
-                        "color": "#007AFF",
-                        "fontSize": undefined,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      }
+                      Array [
+                        Object {
+                          "color": "#007AFF",
+                          "fontSize": undefined,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ]
                     }
                   />
                 </View>
@@ -47749,10 +47900,13 @@ exports[`Storyshots TextInput with button 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
@@ -48019,19 +48173,25 @@ exports[`Storyshots TextInput with selector 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {},
+          ]
         }
       >
         <View
           style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            }
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              Object {},
+            ]
           }
         >
           <Text
@@ -49154,20 +49314,27 @@ exports[`Storyshots Value Input default 1`] = `
     >
       <View
         style={
-          Object {
-            "flexDirection": "column",
-            "paddingBottom": 10,
-            "zIndex": 10,
-          }
+          Array [
+            Object {
+              "flexDirection": "column",
+              "paddingBottom": 10,
+            },
+            Object {
+              "zIndex": 10,
+            },
+          ]
         }
       >
         <View
           style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            }
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              Object {},
+            ]
           }
         >
           <View

@@ -95,7 +95,7 @@ const showFaceIDFailedMessage = () => {
     emoji: 'pensive',
     supportLink: true,
     link: t('label.faceIDSettings'),
-    onLinkPress: () => Linking.openURL('app-settings:'),
+    onLinkPress: () => { Linking.openURL('app-settings:'); },
     autoClose: true,
   });
 };

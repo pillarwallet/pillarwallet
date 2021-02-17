@@ -134,7 +134,7 @@ const FormWrapper = styled.View`
 `;
 
 class ExchangeScreen extends React.Component<Props, State> {
-  fromInputRef: RNTextInput;
+  fromInputRef: React.ElementRef<typeof RNTextInput>;
   listeners: NavigationEventSubscription[];
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
@@ -417,6 +417,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
+        // $FlowFixMe: react-native types
         <ScrollView
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"

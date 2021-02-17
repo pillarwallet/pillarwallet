@@ -111,14 +111,13 @@ const DepositedAssetsList = ({
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!depositedAssets.length && emptyStyle}
-        ListEmptyComponent={!isFetchingDepositedAssets &&
-        <EmptyStateParagraph title={t('aaveContent.title.noDepositedAssets')} />
+        ListEmptyComponent={
+          !isFetchingDepositedAssets ? (
+            <EmptyStateParagraph title={t('aaveContent.title.noDepositedAssets')} />
+          ) : undefined
         }
         refreshControl={
-          <RefreshControl
-            refreshing={isFetchingDepositedAssets}
-            onRefresh={() => fetchDepositedAssets()}
-          />
+          <RefreshControl refreshing={isFetchingDepositedAssets} onRefresh={() => fetchDepositedAssets()} />
         }
       />
     </ContainerWithHeader>

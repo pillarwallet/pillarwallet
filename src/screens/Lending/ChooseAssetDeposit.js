@@ -114,8 +114,10 @@ const ChooseAssetDeposit = ({
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}
-        ListEmptyComponent={!isFetchingAssetsToDeposit &&
-        <EmptyStateParagraph title={t('aaveContent.title.noAssetsToDeposit')} />
+        ListEmptyComponent={
+          !isFetchingAssetsToDeposit ? (
+            <EmptyStateParagraph title={t('aaveContent.title.noAssetsToDeposit')} />
+          ) : undefined
         }
         refreshControl={
           <RefreshControl

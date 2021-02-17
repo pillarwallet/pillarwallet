@@ -165,6 +165,8 @@ const LiquidityPoolsScreen = ({
 
   const renderAvailablePool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
+    if (!poolStats) return null;
+
     const renderPercent = (percent: number) => {
       if (percent > 0) {
         return <BaseText small positive>{t('positivePercentValue', { value: percent.toFixed(2) })}</BaseText>;
@@ -240,7 +242,7 @@ const LiquidityPoolsScreen = ({
                 </BaseText>
                 <Spacing w={16} />
                 <Rewards>
-                  {pool.rewards.map((reward) => {
+                  {pool.rewards?.map((reward) => {
                     const asset = supportedAssets.find(
                       ({ symbol }) => symbol === reward.symbol,
                     );
@@ -288,6 +290,9 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
+    if (!poolStats) return null;
+
+
     const balance = poolStats.userLiquidityTokenBalance.toNumber();
 
     const { currentPrice } = poolStats;
@@ -298,11 +303,12 @@ const LiquidityPoolsScreen = ({
 
   const renderStakedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
+    if (!poolStats) return null;
 
     const { currentPrice } = poolStats;
     const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount.toNumber(), rates, fiatCurrency);
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
-    const tokenSymbol = pool.rewards[0].symbol;
+    const tokenSymbol = pool.rewards?.[0].symbol;
 
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>

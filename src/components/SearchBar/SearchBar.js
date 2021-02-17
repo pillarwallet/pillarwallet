@@ -57,7 +57,7 @@ type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
-  inputRef?: RNTextInput,
+  inputRef?: React.ElementRef<typeof RNTextInput>,
   inputIconName?: string,
   iconProps?: IconProps,
 };
@@ -365,7 +365,7 @@ class SearchBar extends React.Component<Props, State> {
             style={{
               width: animShrink.interpolate({
                 inputRange: [0, 1],
-                outputRange: ['0%', '1%'],
+                outputRange: (['0%', '1%']: string[]),
               }),
             }}
           >

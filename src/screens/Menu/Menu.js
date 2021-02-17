@@ -164,7 +164,18 @@ const Menu = ({
     !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
   );
 
-  const menuItems = [
+  type MenuItem = {|
+    key: string,
+    title: string,
+    emoji?: string,
+    action?: () => void,
+    icon?: string,
+    iconColor?: string,
+    hidden?: boolean,
+    labelBadge?: { label: string, color?: string } | false,
+  |};
+
+  const menuItems: MenuItem[] = [
     {
       key: 'appSettings',
       title: t('settingsContent.settingsItem.appSettings.title'),
@@ -265,7 +276,7 @@ const Menu = ({
         <SettingsListItem
           label={title}
           onPress={action}
-          labelBadge={labelBadge}
+          labelBadge={labelBadge || undefined}
           icon={icon}
           iconColor={iconColor}
           customIcon={!!emoji && <View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
