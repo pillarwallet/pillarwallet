@@ -37,7 +37,7 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Button from 'components/Button';
 
 import { getThemeColors } from 'utils/themes';
-import { formatFiat, formatAmount } from 'utils/common';
+import { formatFiat, formatAmount, formatApy } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -50,6 +50,8 @@ import {
 } from 'constants/navigationConstants';
 import { RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 
+import { usePoolCurrentApy } from 'services/rariSdk';
+
 import { fetchRariDataAction } from 'actions/rariActions';
 
 import type { Theme } from 'models/Theme';
@@ -57,13 +59,11 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates } from 'models/Asset';
 import type { RariPool, Interests } from 'models/RariPool';
 
-
 type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   navigation: NavigationScreenProp<*>,
   fetchRariData: () => void,
-  rariApy: {[RariPool]: number},
   userDepositInUSD: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
   userRgtBalance: number,
@@ -117,7 +117,6 @@ const Row = styled.View`
 
 const RariDepositScreen = ({
   baseFiatCurrency, theme, navigation, fetchRariData,
-  rariApy,
   userDepositInUSD,
   userInterests,
   isFetchingRariData,
@@ -131,6 +130,23 @@ const RariDepositScreen = ({
   useEffect(() => {
     fetchRariData();
   }, []);
+
+  const yieldApyQuery = usePoolCurrentApy(RARI_POOLS.YIELD_POOL);
+  const stableApyQuery = usePoolCurrentApy(RARI_POOLS.STABLE_POOL);
+  const ethereumApyQuery = usePoolCurrentApy(RARI_POOLS.ETH_POOL);
+
+  const getPoolApyString = (pool: RariPool) => {
+    switch (pool) {
+      case RARI_POOLS.YIELD_POOL:
+        return formatApy(yieldApyQuery.data);
+      case RARI_POOLS.STABLE_POOL:
+        return formatApy(stableApyQuery.data);
+      case RARI_POOLS.ETH_POOL:
+        return formatApy(ethereumApyQuery.data);
+      default:
+        return undefined;
+    }
+  };
 
   const colors = getThemeColors(theme);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -264,7 +280,7 @@ const RariDepositScreen = ({
         <Table>
           <TableRow>
             <TableLabel>{t('rariContent.label.currentAPY')}</TableLabel>
-            <BaseText regular>{t('percentValue', { value: rariApy[activeTab].toFixed(2) })}</BaseText>
+            <BaseText regular>{getPoolApyString(activeTab)}</BaseText>
           </TableRow>
           {hasDeposit && renderInterestsRow()}
         </Table>
@@ -356,7 +372,6 @@ const RariDepositScreen = ({
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rari: {
-    rariApy,
     userDepositInUSD,
     userInterests,
     isFetchingRariData,
@@ -367,7 +382,6 @@ const mapStateToProps = ({
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
-  rariApy,
   userDepositInUSD,
   userInterests,
   isFetchingRariData,

@@ -27,7 +27,6 @@ import type { RariPool, Interests } from 'models/RariPool';
 
 
 export type RariReducerState = {
-  rariApy: {[RariPool]: number},
   userDepositInUSD: {[RariPool]: number},
   userDepositInRariToken: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
@@ -49,11 +48,6 @@ export type RariReducerAction = {
 };
 
 const initialState = {
-  rariApy: {
-    [RARI_POOLS.STABLE_POOL]: 0,
-    [RARI_POOLS.YIELD_POOL]: 0,
-    [RARI_POOLS.ETH_POOL]: 0,
-  },
   userDepositInUSD: {
     [RARI_POOLS.STABLE_POOL]: 0,
     [RARI_POOLS.YIELD_POOL]: 0,
@@ -92,7 +86,6 @@ const initialState = {
   userUnclaimedRgt: 0,
   rtgPrice: {},
   rtgSupply: 0,
-  isFetchingRariAPY: false,
   isFetchingRariData: false,
   rariDataFetchFailed: false,
 };
