@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View, Linking } from 'react-native';
+import { View, Linking, InteractionManager } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
@@ -361,13 +361,15 @@ export class EventDetail extends React.Component<Props> {
   timeout: ?TimeoutID;
 
   componentDidMount() {
-    const { event } = this.props;
-    const { type } = event;
-    if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
-    const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
-    if (!txInfo) return;
-    this.syncEnsRegistry(txInfo);
-    this.syncTxStatus(txInfo);
+    InteractionManager.runAfterInteractions(() => {
+      const { event } = this.props;
+      const { type } = event;
+      if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
+      const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+      if (!txInfo) return;
+      this.syncEnsRegistry(txInfo);
+      this.syncTxStatus(txInfo);
+    });
   }
 
   componentDidUpdate() {
