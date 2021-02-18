@@ -22,7 +22,6 @@ import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import memoize from 'memoize-one';
 
 // types
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -37,7 +36,7 @@ import EventDetails, { shouldShowEventDetails } from 'components/EventDetails';
 import Modal from 'components/Modal';
 
 // utils
-import { groupAndSortByDate } from 'utils/common';
+import { groupSectionsByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 
 // constants
@@ -171,8 +170,7 @@ class ActivityFeed extends React.Component<Props> {
       items.push({ type: ITEM_TYPE.CARD_HEADER });
     }
 
-    const sections = groupAndSortByDate(filteredFeedList);
-    sections.forEach(({ data, ...section }) => {
+    groupSectionsByDate(filteredFeedList).forEach(({ data, ...section }) => {
       items.push({ type: ITEM_TYPE.SECTION, section });
       items.push(...data.map((item) => ({ type: ITEM_TYPE.ITEM, item })));
     });

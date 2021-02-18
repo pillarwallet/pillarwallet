@@ -473,7 +473,7 @@ type SectionData = {|
 
 
 // all default values makes common sense and usage
-export const groupAndSortByDate = (
+export const groupSectionsByDate = (
   data: any[],
   timestampMultiplier: number = 1000,
   dateField: string = 'createdAt',
@@ -483,7 +483,7 @@ export const groupAndSortByDate = (
 
   orderBy(data, [dateField], [sortDirection]).forEach((item) => {
     const date = new Date(item[dateField] * timestampMultiplier);
-    const key = formatDate(date, 'MMM D YYYY');
+    const key = formatDate(date, 'YYYY-MM-DD');
 
     const existingSection = sections[key];
     if (!existingSection) {
