@@ -18,18 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { withTheme } from 'styled-components/native';
 import { MaterialIndicator } from 'react-native-indicators';
 import { getThemeColors } from 'utils/themes';
+
 import type { Theme } from 'models/Theme';
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {|
   basic?: boolean,
   size?: number,
   trackWidth?: number,
   color?: ?string,
-  style?: StyleSheet.Styles,
+  style?: ViewStyleProp,
   theme?: Theme,
 |};
 

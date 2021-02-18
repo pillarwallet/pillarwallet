@@ -19,16 +19,18 @@
 */
 import React, { useRef, useCallback, useImperativeHandle } from 'react';
 import type { Node as ReactNode } from 'react';
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
 // components
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
 
+// types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
 type Props = {|
   children: ReactNode,
-  modalStyle?: StyleSheet.Styles,
+  modalStyle?: ViewStyleProp,
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
   onModalHide?: () => void,

@@ -94,7 +94,7 @@ const TitleWithImagesWrapper = styled.View`
 `;
 
 const ImageWrapper = styled.View`
-  height: 16;
+  height: 16px;
   justify-content: flex-end;
 `;
 

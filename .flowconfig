@@ -24,22 +24,17 @@ node_modules/warning/.*
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
-<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
-<PROJECT_ROOT>/node_modules/findup/.*
 <PROJECT_ROOT>/node_modules/react-native-camera/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
 <PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/react-native-share/.*
 <PROJECT_ROOT>/node_modules/react-native-swiper/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
-<PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/polished/.*
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*
 <PROJECT_ROOT>/node_modules/react-native-keychain/.*
 <PROJECT_ROOT>/node_modules/@storybook/.*/polished
 <PROJECT_ROOT>/node_modules/redux-persist/.*
-<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
-<PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 <PROJECT_ROOT>/node_modules/react-native-inappbrowser-reborn/.*
 <PROJECT_ROOT>/node_modules/react-native-linear-gradient/.*
 ; ;;; custom untyped end ;;;

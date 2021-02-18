@@ -60,7 +60,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
-  txFeeInWei: BigNumber | number,
+  txFeeInWei: BigNumber | number | string,
   gasToken: ?GasToken,
   isLoading?: boolean,
   labelText?: string,

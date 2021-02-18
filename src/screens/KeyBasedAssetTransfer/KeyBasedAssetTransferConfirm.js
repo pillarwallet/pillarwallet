@@ -108,6 +108,7 @@ const KeyBasedAssetTransferConfirm = ({
   const renderFooter = () => {
     let ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
     const ethTransfer = keyBasedAssetsToTransfer.find(({ assetData }) => assetData?.token === ETH);
+    // $FlowFixMe: bignumber.js typing
     if (ethTransfer) ethBalanceBN = ethBalanceBN.minus(new BigNumber(ethTransfer.amount));
     const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransfer.reduce(
       (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),

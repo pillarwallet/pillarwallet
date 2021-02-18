@@ -21,25 +21,19 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import maxBy from 'lodash.maxby';
 import { getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
-import {
-  getDydxApyBNs,
-  getCompoundApyBNs,
-  getAaveApyBNs,
-  getMStableApyBN,
-} from 'services/rariPoolsAPY';
 import { getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { reportErrorLog } from 'utils/common';
-import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_TOKENS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
+import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { ETH } from 'constants/assetsConstants';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
-import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
-import RARI_FUND_CONTROLLER_ETH_CONTRACT_ABI from 'abi/rariFundControllerEth.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import type { RariPool } from 'models/RariPool';
 import type { Rates } from 'models/Asset';
+
+const hasEthUsdPrice = (rates: Rates) => !!rates?.[ETH]?.USD;
 
 const mapPools = (resultsArray: Object[]) => {
   return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
@@ -61,6 +55,9 @@ export const getRariFundBalanceInUSD = async (rates: Rates) => {
         return EthersBigNumber.from(0);
       });
     if (rariPool === RARI_POOLS.ETH_POOL) {
+      // if ETH USD price is not within rates we cannot do anything – return 0
+      if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
       balance = EthersBigNumber.from(balance).mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
     }
     return parseFloat(utils.formatUnits(balance, 18));
@@ -119,6 +116,9 @@ export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddres
       return EthersBigNumber.from(0);
     });
   if (rariPool === RARI_POOLS.ETH_POOL) {
+    // if ETH USD price is not within rates we cannot do anything – return 0
+    if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
     balanceBN = balanceBN.mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
   }
   return balanceBN;
@@ -194,6 +194,9 @@ export const getUserInterests = async (accountAddress: string, rates: Rates) => 
     let interests = userBalanceUSD[rariPool] - initialBalance;
     const interestsPercentage = (interests / initialBalance) * 100;
     if (rariPool === RARI_POOLS.ETH_POOL) {
+      // if ETH USD price is not within rates we cannot do anything – return 0
+      if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
       // interests in ETH pool are in ETH - convert them to
       const interestsBN = EthersBigNumber.from(Math.floor(interests * 1e9)).mul(Math.floor(rates[ETH].USD * 1e9));
       interests = parseFloat(utils.formatUnits(interestsBN));
@@ -201,168 +204,6 @@ export const getUserInterests = async (accountAddress: string, rates: Rates) => 
     return { interests, interestsPercentage };
   }));
   return mapPools(interestsPerPool);
-};
-
-// stable pool and yield pool are very similar
-const getStablecoinPoolAPY = async (rariPool: RariPool, servicesApys: Object[]) => {
-  const [dydxApyBNs, compoundApyBNs, aaveApyBNs, mstableApyBNs] = servicesApys;
-  if (!dydxApyBNs || !compoundApyBNs || !aaveApyBNs || !mstableApyBNs) {
-    return 0;
-  }
-
-  const rariContract = getContract(
-    getRariPoolsEnv(rariPool).RARI_FUND_PROXY_CONTRACT_ADDRESS,
-    RARI_FUND_PROXY_CONTRACT_ABI,
-  );
-
-  if (!rariContract) return 0;
-
-  const balancesAndPrices = await rariContract.callStatic.getRawFundBalancesAndPrices()
-    .catch((error) => {
-      reportErrorLog("Rari service failed: Can't get fund balances and prices", { error });
-      return null;
-    });
-
-  if (!balancesAndPrices) return 0;
-
-  const [
-    currencyCodes,
-    fundControllerContractBalances,
-    poolIndexes,
-    poolIndexesBalances,
-    pricesInUSD,
-  ] = balancesAndPrices;
-
-  const factors = [];
-  let totalBalanceUsdBN = EthersBigNumber.from(0);
-
-  for (let i = 0; i < currencyCodes.length; i++) {
-    const currencyCode = currencyCodes[i];
-    const priceInUsdBN = EthersBigNumber.from(pricesInUSD[i]);
-    const contractBalanceBN = EthersBigNumber.from(fundControllerContractBalances[i]);
-    const scale = EthersBigNumber.from(10).pow(RARI_TOKENS[currencyCode].decimals);
-    const contractBalanceUsdBN = contractBalanceBN.mul(priceInUsdBN).div(scale);
-    factors.push([contractBalanceUsdBN, EthersBigNumber.from(0)]);
-    totalBalanceUsdBN = totalBalanceUsdBN.add(contractBalanceUsdBN);
-    const pools = poolIndexes[i];
-    const poolBalances = poolIndexesBalances[i];
-
-    for (let j = 0; j < pools.length; j++) {
-      const pool = pools[j];
-      const poolBalanceBN = EthersBigNumber.from(poolBalances[j]);
-      const poolBalanceUsdBN = poolBalanceBN.mul(priceInUsdBN).div(scale);
-      let apyBN = EthersBigNumber.from(0);
-      if (pool === 3) {
-        apyBN = mstableApyBNs[currencyCode];
-      } else if (pool === 2) {
-        apyBN = aaveApyBNs[currencyCode];
-      } else if (pool === 1) {
-        apyBN = compoundApyBNs[currencyCode];
-      } else if (pool === 0) {
-        apyBN = dydxApyBNs[currencyCode];
-      }
-      if (apyBN) {
-        factors.push([poolBalanceUsdBN, apyBN]);
-        totalBalanceUsdBN = totalBalanceUsdBN.add(poolBalanceUsdBN);
-      }
-    }
-  }
-
-  if (totalBalanceUsdBN.isZero()) {
-    let maxApyBN = EthersBigNumber.from(0);
-
-    factors.forEach(factor => {
-      const apyBN = factor[1];
-      if (apyBN.gt(maxApyBN)) {
-        maxApyBN = apyBN;
-      }
-    });
-    return parseFloat(maxApyBN.toString()) / 1e16;
-  }
-
-  let apyBN = EthersBigNumber.from(0);
-  for (let i = 0; i < factors.length; i++) {
-    apyBN = apyBN.add(factors[i][0].mul(factors[i][1]).div(totalBalanceUsdBN));
-  }
-  return parseFloat(apyBN.toString()) / 1e16;
-};
-
-// ETH pool has slightly different contracts
-const getEthPoolAPY = async (servicesApys: Object[]) => {
-  const [dydxApyBNs, compoundApyBNs, aaveApyBNs] = servicesApys;
-  if (!dydxApyBNs || !compoundApyBNs || !aaveApyBNs) {
-    return 0;
-  }
-
-  const rariContract = getContract(
-    getRariPoolsEnv(RARI_POOLS.ETH_POOL).RARI_FUND_CONTROLLER_CONTRACT_ADDRESS,
-    RARI_FUND_CONTROLLER_ETH_CONTRACT_ABI,
-  );
-
-  if (!rariContract) return 0;
-
-  const allBalances = await rariContract.callStatic.getRawFundBalances();
-
-  const factors = [];
-  let totalBalanceBN = EthersBigNumber.from(0);
-  const contractBalanceBN = EthersBigNumber.from(allBalances['0']);
-  factors.push([contractBalanceBN, EthersBigNumber.from(0)]);
-  totalBalanceBN = totalBalanceBN.add(contractBalanceBN);
-  const pools = allBalances['1'];
-  const poolBalances = allBalances['2'];
-
-  for (let i = 0; i < pools.length; i++) {
-    const pool = pools[i];
-    const poolBalanceBN = EthersBigNumber.from(poolBalances[i]);
-    let poolAPY = EthersBigNumber.from(0);
-    if (pool === 0) {
-      poolAPY = dydxApyBNs.ETH;
-    } else if (pool === 1) {
-      poolAPY = compoundApyBNs.ETH;
-    } else if (pool === 2) {
-      poolAPY = EthersBigNumber.from(0);
-    } else if (pool === 3) {
-      poolAPY = aaveApyBNs.ETH;
-    }
-    factors.push([poolBalanceBN, poolAPY]);
-    totalBalanceBN = totalBalanceBN.add(poolBalanceBN);
-  }
-
-  // If balance = 0, choose the maximum
-  if (totalBalanceBN.isZero()) {
-    let maxApyBN = EthersBigNumber.from(0);
-    factors.forEach(factor => {
-      const apyBN = factor[1];
-      if (apyBN.gt(maxApyBN)) {
-        maxApyBN = apyBN;
-      }
-    });
-    return parseFloat(maxApyBN.toString()) / 1e16;
-  }
-  // If balance > 0, calculate the APY using the factors
-  let apyBN = EthersBigNumber.from(0);
-  for (let i = 0; i < factors.length; i++) {
-    apyBN = apyBN.add(factors[i][0].mul(factors[i][1]).div(totalBalanceBN));
-  }
-  return parseFloat(apyBN.toString()) / 1e16;
-};
-
-// APY calculations taken from the official Rari dApp: https://github.com/Rari-Capital/rari-dApp
-export const getRariAPY = async () => {
-  const servicesApysArray = await Promise.all([
-    getDydxApyBNs(),
-    getCompoundApyBNs(),
-    getAaveApyBNs(),
-    getMStableApyBN(),
-  ]);
-
-  const apys = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
-    if (rariPool === RARI_POOLS.ETH_POOL) {
-      return getEthPoolAPY(servicesApysArray);
-    }
-    return getStablecoinPoolAPY(rariPool, servicesApysArray);
-  }));
-  return mapPools(apys);
 };
 
 export const getUserRgtBalance = async (accountAddress: string) => {
@@ -395,6 +236,7 @@ export const getUnclaimedRgt = async (accountAddress: string) => {
 
 export const getRtgPrice = async () => {
   const price = await getCoinGeckoTokenPrices({
+    // $FlowFixMe: react-native types
     [RARI_GOVERNANCE_TOKEN_DATA.symbol]: RARI_GOVERNANCE_TOKEN_DATA,
   });
   if (!price) return null;

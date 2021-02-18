@@ -38,7 +38,7 @@ import { SABLIER_NEW_STREAM } from 'constants/navigationConstants';
 
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 
-import { fontStyles } from 'utils/variables';
+import { objectFontStyles } from 'utils/variables';
 
 import type { Stream } from 'models/Sablier';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -102,7 +102,7 @@ class SablierStreams extends React.Component<Props, State> {
             { title: t('insight.moneyStream.description.forOrganizations') },
           ]}
           titleStyle={{
-            ...fontStyles.big,
+            ...objectFontStyles.big,
             textAlign: 'center',
           }}
         />

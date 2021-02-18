@@ -31,11 +31,11 @@ import type { ModalOptions } from './ModalProvider';
 
 export { default as ModalProvider } from './ModalProvider';
 
-export type ScrollToProps = {
+export type ScrollToProps = {|
   x?: number,
-  y: number,
-  animated: boolean,
-}
+  y?: number,
+  animated?: boolean,
+|}
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 

@@ -53,7 +53,7 @@ type Props = {
 
 const DepositedAssetGain = styled(BaseText)`
   margin-bottom: 5px;
-  font-size: ${fontSizes.big};
+  font-size: ${fontSizes.big}px;
 `;
 
 const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
@@ -111,14 +111,13 @@ const DepositedAssetsList = ({
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!depositedAssets.length && emptyStyle}
-        ListEmptyComponent={!isFetchingDepositedAssets &&
-        <EmptyStateParagraph title={t('aaveContent.title.noDepositedAssets')} />
+        ListEmptyComponent={
+          !isFetchingDepositedAssets ? (
+            <EmptyStateParagraph title={t('aaveContent.title.noDepositedAssets')} />
+          ) : undefined
         }
         refreshControl={
-          <RefreshControl
-            refreshing={isFetchingDepositedAssets}
-            onRefresh={() => fetchDepositedAssets()}
-          />
+          <RefreshControl refreshing={isFetchingDepositedAssets} onRefresh={() => fetchDepositedAssets()} />
         }
       />
     </ContainerWithHeader>

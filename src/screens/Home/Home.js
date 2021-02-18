@@ -54,7 +54,6 @@ import {
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI, defaultFiatCurrency } from 'constants/assetsConstants';
-import { RARI_POOLS } from 'constants/rariConstants';
 import { STAGING } from 'constants/envConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
@@ -112,13 +111,14 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { DepositedAsset, Rates } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
-import type { RariPool, Interests } from 'models/RariPool';
+import type { RariPool } from 'models/RariPool';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 
 // partials
 import WalletsPart from './WalletsPart';
 import DepositedAssets from './DepositedAssets';
+import RariPoolItem from './RariPoolItem';
 
 
 type Props = {
@@ -173,9 +173,7 @@ type Props = {
   toggleRari: () => void,
   hideRari: boolean,
   isFetchingRariData: boolean,
-  rariApy: {[RariPool]: number},
   rariUserDepositInUSD: {[RariPool]: number},
-  rariUserInterests: {[RariPool]: ?Interests},
   fetchRariData: () => void,
   fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => void,
   toggleLiquidityPools: () => void,
@@ -195,17 +193,11 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const DepositedAssetGain = styled(BaseText)`
-  margin-bottom: 5px;
-  font-size: ${fontSizes.big};
-`;
-
 const referralImage = require('assets/images/referral_gift.png');
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
-const rariLogo = require('assets/images/rari_logo.png');
 
 class HomeScreen extends React.Component<Props> {
   _willFocus: NavigationEventSubscription;
@@ -354,7 +346,9 @@ class HomeScreen extends React.Component<Props> {
     return <SablierStream stream={stream} />;
   };
 
-  renderEarnedInterestsPercent = (interestsPercentage: number) => {
+  renderEarnedInterestsPercent = (interestsPercentage: ?number) => {
+    if (!interestsPercentage) return null;
+
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
@@ -374,42 +368,14 @@ class HomeScreen extends React.Component<Props> {
     );
   };
 
-  renderRariPool = ({ item: deposit }) => {
-    const {
-      pool,
-      balanceInUSD,
-    } = deposit;
-    const {
-      rariApy,
-      baseFiatCurrency,
-      rariUserInterests,
-    } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const poolsLabels = {
-      [RARI_POOLS.STABLE_POOL]: t('rariContent.depositsList.stablePool'),
-      [RARI_POOLS.YIELD_POOL]: t('rariContent.depositsList.yieldPool'),
-      [RARI_POOLS.ETH_POOL]: t('rariContent.depositsList.ethPool'),
-    };
-
-    return (
-      <ListItemWithImage
-        label={poolsLabels[pool]}
-        subtext={t('rariContent.label.currentAPYWithPercentage', { percentage: formatAmountDisplay(rariApy[pool]) })}
-        itemImageSource={rariLogo}
-        onPress={() => this.props.navigation.navigate(RARI_DEPOSIT)}
-        iconImageSize={48}
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-      >
-        <DepositedAssetGain>
-          {formatFiat(balanceInUSD, fiatCurrency)}
-        </DepositedAssetGain>
-        {this.renderEarnedInterestsPercent(rariUserInterests[pool].interestsPercentage)}
-      </ListItemWithImage>
-    );
+  renderRariPool = ({ item }) => {
+    const { pool, balanceInUSD } = item;
+    return <RariPoolItem pool={pool} balanceInUSD={balanceInUSD} />;
   }
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
+    if (!poolStats) return null;
+
     const { rates, baseFiatCurrency } = this.props;
     const tokenBalance = poolStats.userLiquidityTokenBalance.toNumber() + poolStats.stakedAmount.toNumber();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -614,7 +580,7 @@ class HomeScreen extends React.Component<Props> {
                         keyExtractor={(item) => (item.id.toString())}
                         renderItem={this.renderBadge}
                         style={{ width: '100%', paddingBottom: spacing.medium }}
-                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
+                        contentContainerStyle={[{ paddingHorizontal: 2, paddingTop: 26 }, badgesContainerStyle]}
                         initialNumToRender={5}
                         ListEmptyComponent={(
                           <EmptyStateWrapper>
@@ -680,7 +646,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={rariDeposits}
-                          keyExtractor={(item) => item.id}
+                          keyExtractor={(item) => item.pool}
                           renderItem={this.renderRariPool}
                           initialNumToRender={2}
                           listKey="rari"
@@ -699,7 +665,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={purchasedLiquidityPools}
-                          keyExtractor={(item) => item.name}
+                          keyExtractor={(item) => item.pool.name}
                           renderItem={this.renderLiquidityPool}
                           initialNumToRender={2}
                           listKey="liquidityPools"
@@ -747,7 +713,7 @@ const mapStateToProps = ({
   poolTogether: { isFetchingPoolStats },
   sablier: { incomingStreams, outgoingStreams, isFetchingStreams },
   rari: {
-    isFetchingRariData, rariApy, userDepositInUSD: rariUserDepositInUSD, userInterests: rariUserInterests,
+    isFetchingRariData, userDepositInUSD: rariUserDepositInUSD,
   },
   liquidityPools: {
     isFetchingLiquidityPoolsData,
@@ -778,9 +744,7 @@ const mapStateToProps = ({
   outgoingStreams,
   isFetchingStreams,
   isFetchingRariData,
-  rariApy,
   rariUserDepositInUSD,
-  rariUserInterests,
   isFetchingLiquidityPoolsData,
   liquidityPoolsReducer,
   rates,

@@ -78,14 +78,14 @@ const SablierDatePicker = ({
 
   const header = picker === DATE_PICKER.START_TIME ? (
     <Row>
-      <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
+      <MediumText color={colors.basic020} regular>{t('sablierContent.label.start')}</MediumText>
       <TextLink onPress={() => setDate(minimumDate)}>
         {t('sablierContent.button.startImmediately')}
       </TextLink>
     </Row>
   ) : (
     <Row>
-      <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
+      <MediumText color={colors.basic020} regular>{t('sablierContent.label.start')}</MediumText>
       <Row>
         <TextLink onPress={() => setDate(addHours(displayedDate, 1))}>
           {t('sablierContent.button.plusHour')}

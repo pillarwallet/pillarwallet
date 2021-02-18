@@ -159,10 +159,11 @@ export const isOrderAmountTooLow = (
   // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
   if (!order.expectedOutput) return false;
   try {
-  // askRate is provided by offer
+    // askRate is provided by offer
     const offerAmount = calculateAmountToBuy(askRate, fromAmount);
     // fix and round down because offer and order can have different decimals
     const offerAmountFixed = new BigNumber(offerAmount).toFixed(8, 1);
+    // $FlowExpectedError: checked above
     const orderAmountFixed = new BigNumber(order.expectedOutput).toFixed(8, 1);
     // stop swap if order < offer
     return new BigNumber(offerAmountFixed).isGreaterThan(orderAmountFixed);

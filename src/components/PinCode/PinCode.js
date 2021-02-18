@@ -149,7 +149,7 @@ export default class PinCode extends React.Component<Props, State> {
               transform: [{
                 translateX: this.state.errorShake.interpolate({
                   inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
-                  outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
+                  outputRange: ([0, -10, 10, -10, 10, -5, 5, 0]: number[]),
                 }),
               }],
             },
