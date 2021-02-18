@@ -32,7 +32,6 @@ import {
   AppState,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
-import { format as formatDate, isToday, isYesterday } from 'date-fns';
 import { CardStyleInterpolators } from 'react-navigation-stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
@@ -53,6 +52,7 @@ import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // local
+import { humanizeDateString, formatDate } from './date';
 import { isProdEnv, isTest } from './environment';
 
 
@@ -466,26 +466,10 @@ export const formatUnits = (val: Value = '0', decimals: number): string => {
   return formattedUnits;
 };
 
-type GroupedAndSortedData = {|
+type SectionData = {|
   title: string,
-  date: string,
   data: any[],
 |};
-
-export const humanizeDateString = (date: Date): string => {
-  // by default don't show the year if the event happened this year
-  if (isToday(date)) return t('label.today');
-  if (isYesterday(date)) return t('label.yesterday');
-
-  // TODO: localize dates
-  // temp till dates will be localized
-  /* eslint-disable i18next/no-literal-string */
-  const dateFormat = date.getFullYear() === new Date().getFullYear()
-    ? 'MMM D'
-    : 'MMM D YYYY';
-  /* eslint-enable i18next/no-literal-string */
-  return formatDate(date, dateFormat);
-};
 
 
 // all default values makes common sense and usage
@@ -494,23 +478,26 @@ export const groupAndSortByDate = (
   timestampMultiplier: number = 1000,
   dateField: string = 'createdAt',
   sortDirection: string = 'desc',
-): GroupedAndSortedData[] => {
-  const grouped = [];
-  orderBy(data, [dateField], [sortDirection]).forEach(listItem => {
-    const dateValue = timestampMultiplier
-      ? listItem[dateField] * timestampMultiplier
-      : listItem[dateField];
-    const itemCreatedDate = new Date(dateValue);
-    const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
-    const sectionTitle = humanizeDateString(itemCreatedDate);
-    const existingSection = grouped.find(({ date }) => date === formattedDate);
+): SectionData[] => {
+  const sections: { [string]: SectionData } = {};
+
+  orderBy(data, [dateField], [sortDirection]).forEach((item) => {
+    const date = new Date(item[dateField] * timestampMultiplier);
+    const key = formatDate(date, 'MMM D YYYY');
+
+    const existingSection = sections[key];
     if (!existingSection) {
-      grouped.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
+      sections[key] = {
+        title: humanizeDateString(date),
+        data: [{ ...item }],
+      };
     } else {
-      existingSection.data.push({ ...listItem });
+      existingSection.data.push({ ...item });
     }
   });
-  return grouped;
+
+  // $FlowFixMe: should be fine
+  return Object.values(sections);
 };
 
 export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {

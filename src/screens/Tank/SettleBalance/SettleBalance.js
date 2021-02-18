@@ -245,7 +245,7 @@ class SettleBalance extends React.Component<Props, State> {
     } = this.props;
     const { txToSettle } = this.state;
     const showSpinner = !isFetched;
-    const formattedFeedData = groupAndSortByDate(availableToSettleTx, 0);
+    const formattedFeedData = groupAndSortByDate(availableToSettleTx, 1);
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('ppnContent.title.settleTransactionsScreen') }] }}
