@@ -351,7 +351,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
             </LabeledRow>
             <LabeledRow>
               <Label>{t('transactions.label.message')}</Label>
-              <Value>{message}</Value>
+              <Value>{t('transactions.paragraph.typedDataMessage')}</Value>
             </LabeledRow>
           </ScrollWrapper>
         );
