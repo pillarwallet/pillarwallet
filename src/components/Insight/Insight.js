@@ -113,7 +113,7 @@ const TinyCircle = styled.View`
 
 const CheckIcon = styled(Icon)`
   color: ${themedColors.positive};
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.tiny}px;
 `;
 
 const NumberedListItem = styled.View`
@@ -211,7 +211,7 @@ const Insight = (props: Props) => {
             {!!insightChecklist && <FlatList
               data={insightChecklist}
               extraData={props}
-              keyExtractor={(item) => item.key}
+              keyExtractor={(item) => item.title}
               renderItem={({ item }) => {
                 const { status, title: listItem, onPress } = item;
                 return (
@@ -227,7 +227,7 @@ const Insight = (props: Props) => {
             {!!insightNumberedList && <FlatList
               data={insightNumberedList}
               extraData={props}
-              keyExtractor={(item) => item.title}
+              keyExtractor={(item) => item}
               renderItem={({ item, index }) => {
                 return (
                   <NumberedListItem>

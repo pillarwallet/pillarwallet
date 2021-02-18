@@ -33,6 +33,9 @@ import type { Theme } from 'models/Theme';
 
 import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
+// types
+import type { StatusBarStyle, KeyboardShouldPersistTaps } from 'utils/types/react-native';
+
 import { ScrollWrapper } from './Layout';
 
 type Props = {
@@ -48,10 +51,10 @@ type Props = {
   shouldFooterAvoidKeyboard?: boolean,
   tab?: boolean,
   statusbarColor?: {
-    darkTheme?: string,
-    lightTheme?: string
+    darkTheme?: StatusBarStyle,
+    lightTheme?: StatusBarStyle,
   },
-  keyboardShouldPersistTaps?: string,
+  keyboardShouldPersistTaps?: KeyboardShouldPersistTaps,
   footerContainerStyle?: Object,
   footerContainerInset?: Object,
 };
@@ -100,7 +103,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
     if (this.focusSubscription) this.focusSubscription.remove();
   }
 
-  getStatusBarColor = (themeType) => {
+  getStatusBarColor = (themeType): StatusBarStyle => {
     const { statusbarColor = {} } = this.props;
     if (themeType === DARK_THEME) {
       if (statusbarColor[DARK_THEME]) return statusbarColor[DARK_THEME];
@@ -130,8 +133,12 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
     const {
-      children, footer, keyboardShouldPersistTaps = 'never', shouldFooterAvoidKeyboard = true,
+      children,
+      footer,
+      keyboardShouldPersistTaps = 'never',
+      shouldFooterAvoidKeyboard = true,
     } = this.props;
+
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {
         if (typeof children === 'function') {
@@ -211,7 +218,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
     } else {
       bottomBorderAnimationValue = this.state.scrollY.interpolate({
         inputRange: [0, 20],
-        outputRange: [0, 1],
+        outputRange: ([0, 1]: number[]),
         extrapolate: 'clamp',
       });
     }

@@ -150,7 +150,7 @@ const MIN_QUERY_LENGTH = 2;
 
 
 class SelectorOptions extends React.Component<Props, State> {
-  searchInput: TextInput;
+  searchInput: React.ElementRef<typeof TextInput>;
   modalRef = React.createRef<SlideModalInstance>();
 
   constructor(props: Props) {
@@ -230,7 +230,7 @@ class SelectorOptions extends React.Component<Props, State> {
           {(showOptionsTitles && !!title) && <OptionsHeader>{title}</OptionsHeader>}
           <FlatList
             data={data}
-            keyExtractor={({ value, id }) => value || id}
+            keyExtractor={({ value, id }) => value || id || ''}
             keyboardShouldPersistTaps="always"
             renderItem={this.renderHorizontalOption}
             horizontal
@@ -322,7 +322,7 @@ class SelectorOptions extends React.Component<Props, State> {
     if (onOptionSelect) onOptionSelect(selectedValue);
   };
 
-  optionKeyExtractor = (option: Option) => {
+  optionKeyExtractor = (option: Option): string => {
     const { optionKeyExtractor } = this.props;
     if (optionKeyExtractor) {
       return optionKeyExtractor(option);
@@ -475,6 +475,7 @@ class SelectorOptions extends React.Component<Props, State> {
                 stickyHeaderIndices={[0]}
                 data={allFeedListData}
                 renderItem={this.renderOption}
+                // $FlowFixMe: react-native types
                 keyExtractor={this.optionKeyExtractor}
                 keyboardShouldPersistTaps="always"
                 initialNumToRender={10}
@@ -490,11 +491,5 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const ThemedSelectorOptions = (withTheme(SelectorOptions): React.AbstractComponent<{|
-    ...OwnProps,
-    innerRef: { current: null | SelectorOptions } | (null | SelectorOptions) => mixed,
-|}>);
-
-export default React.forwardRef<OwnProps, SelectorOptions>((props, ref) => {
-  return <ThemedSelectorOptions {...props} innerRef={ref} />;
-});
+const ThemedSelectorOptions: React.AbstractComponent<OwnProps, SelectorOptions> = withTheme(SelectorOptions);
+export default ThemedSelectorOptions;

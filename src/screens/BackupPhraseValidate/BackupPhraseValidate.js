@@ -58,7 +58,7 @@ const WordInputFields = styled.View`
 
 const MnemonicPhraseWord = styled.TouchableOpacity`
   background-color: ${themedColors.primary};
-  border-radius: 6;
+  border-radius: 6px;
   padding: 14px 5px;
   margin: 0 2.5px 5px;
   ${({ disabled }) => disabled && 'opacity: 0.5;'}

@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,18 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
 
-const FakeInput = styled(BaseText)`
-  background: #ffffff;
-  border-width: 0.5;
-  border-color: #efefef;
-  border-style: solid;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  font-size: 12px;
-`;
+import { useSelector } from 'react-redux';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
 
-export default FakeInput;
+export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerState) => T): T =>
+  useSelector((root: RootReducerState) => selector(root.appSettings));
+
+export const useBaseFiatCurrency = () => useAppSettingsSelector(state => state.data.baseFiatCurrency);

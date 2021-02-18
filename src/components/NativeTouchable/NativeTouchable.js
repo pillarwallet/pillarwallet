@@ -64,6 +64,7 @@ const NativeTouchable = (props: Props) => {
   return (
     <TouchableNativeFeedback
       onPress={onPress}
+      // $FlowFixMe: react-native types
       background={TouchableNativeFeedback.Ripple()}
       disabled={!onPress || disabled}
     >

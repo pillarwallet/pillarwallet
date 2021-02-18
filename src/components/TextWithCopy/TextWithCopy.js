@@ -34,6 +34,10 @@ import Toast from 'components/Toast';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
+// Types
+import type { BaseTextProps } from 'components/Typography';
+import type { Theme } from 'models/Theme';
+
 const Container = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -44,7 +48,9 @@ const Text = styled(BaseText)`
   margin-right: ${spacing.small}px;
 `;
 
-type Props = React.ElementConfig<typeof BaseText> & {|
+type Props = {|
+  ...BaseTextProps,
+  theme: Theme,
   textToCopy?: string,
 |};
 

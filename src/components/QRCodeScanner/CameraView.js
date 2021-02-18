@@ -42,8 +42,8 @@ const SquareContainer = styled.View`
   position: absolute;
   justify-content: center;
   display: flex;
-  height: ${props => props.size};
-  width: ${props => props.size};
+  height: ${props => props.size}px;
+  width: ${props => props.size}px;
   border-width: 4px;
   border-color: ${props => props.color};
   background-color: transparent;

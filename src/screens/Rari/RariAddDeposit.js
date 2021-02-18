@@ -38,7 +38,7 @@ import Toast from 'components/Toast';
 
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
-import { reportErrorLog, formatUnits } from 'utils/common';
+import { reportErrorLog, formatUnits, formatApy } from 'utils/common';
 
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
@@ -54,6 +54,7 @@ import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
 import { NotEnoughLiquidityError } from 'services/0x';
+import { usePoolCurrentApy } from 'services/rariSdk';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,7 +67,6 @@ type Props = {
   assets: Assets,
   visibleAssets: Option[],
   navigation: NavigationScreenProp<*>,
-  rariApy: {[RariPool]: number},
   calculateRariDepositTransactionEstimate: (Object[]) => void,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
@@ -94,7 +94,6 @@ const RariAddDepositScreen = ({
   assets,
   visibleAssets,
   navigation,
-  rariApy,
   calculateRariDepositTransactionEstimate,
   supportedAssets,
   feeInfo,
@@ -119,7 +118,7 @@ const RariAddDepositScreen = ({
 
   const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
-  const rariPool = navigation.getParam('rariPool');
+  const rariPool: RariPool = navigation.getParam('rariPool');
 
   let notEnoughForFee = false;
   if (feeInfo && parseFloat(assetValue)) {
@@ -137,6 +136,8 @@ const RariAddDepositScreen = ({
     : estimateErrorMessage;
 
   const customAssets = visibleAssets.filter(asset => !addressesInclude(blockedTokenAddresses, asset.address));
+
+  const apyQuery = usePoolCurrentApy(rariPool);
 
   useEffect(() => {
     if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
@@ -253,8 +254,9 @@ const RariAddDepositScreen = ({
           onFormValid={setInputValid}
         />
         <Spacing h={24} />
-        <BaseText regular secondary>{t('rariContent.label.currentAPY')}{' '}
-          <BaseText>{t('percentValue', { value: rariApy[rariPool].toFixed(2) })}</BaseText>
+        <BaseText regular secondary>
+          {t('rariContent.label.currentAPY')}{' '}
+          <BaseText>{formatApy(apyQuery?.data)}</BaseText>
         </BaseText>
       </ValueInputWrapper>
     </ContainerWithHeader>
@@ -262,14 +264,10 @@ const RariAddDepositScreen = ({
 };
 
 const mapStateToProps = ({
-  rari: {
-    rariApy,
-  },
   rates: { data: rates },
   assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  rariApy,
   rates,
   supportedAssets,
   feeInfo,

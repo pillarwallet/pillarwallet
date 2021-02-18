@@ -61,7 +61,7 @@ type Props = {
 };
 
 const InterestText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ChooseAssetDeposit = ({
@@ -114,8 +114,10 @@ const ChooseAssetDeposit = ({
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}
-        ListEmptyComponent={!isFetchingAssetsToDeposit &&
-        <EmptyStateParagraph title={t('aaveContent.title.noAssetsToDeposit')} />
+        ListEmptyComponent={
+          !isFetchingAssetsToDeposit ? (
+            <EmptyStateParagraph title={t('aaveContent.title.noAssetsToDeposit')} />
+          ) : undefined
         }
         refreshControl={
           <RefreshControl

@@ -74,7 +74,7 @@ const InnerWrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-top: ${spacing.rhythm};
+  margin-top: ${spacing.rhythm}px;
   margin-bottom: ${props => props.flexStart ? 'auto' : '4px'};
   height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '50px'};
 `;

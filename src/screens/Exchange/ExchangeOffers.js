@@ -457,16 +457,18 @@ class ExchangeOffers extends React.Component<Props, State> {
               <ExchangeStatus isVisible={isExchangeActive} />
             </ListHeader>
           )}
-          ListEmptyComponent={!!showEmptyMessage && (
-            <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
-              <EmptyStateParagraph
-                title={t('exchangeContent.emptyState.noOffers.title')}
-                bodyText={t('exchangeContent.emptyState.noOffers.paragraph')}
-                large
-                wide
-              />
-            </ESWrapper>
-          )}
+          ListEmptyComponent={
+            showEmptyMessage ? (
+              <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
+                <EmptyStateParagraph
+                  title={t('exchangeContent.emptyState.noOffers.title')}
+                  bodyText={t('exchangeContent.emptyState.noOffers.paragraph')}
+                  large
+                  wide
+                />
+              </ESWrapper>
+            ) : undefined
+          }
         />
       </React.Fragment>
     );

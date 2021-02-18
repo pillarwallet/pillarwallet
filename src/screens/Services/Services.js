@@ -98,6 +98,15 @@ type Props = {
   loadAltalixInfo: () => void,
 };
 
+type Service = {|
+  key: string,
+  title: string,
+  body: string,
+  label?: string,
+  action: () => any,
+  disabled?: boolean,
+|};
+
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
     const { isAltalixAvailable, loadAltalixInfo } = this.props;
@@ -119,7 +128,7 @@ class ServicesScreen extends React.Component<Props> {
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
-  getServices = () => {
+  getServices = (): Service[] => {
     const {
       navigation,
       isActiveAccountSmartWallet,
@@ -204,6 +213,7 @@ class ServicesScreen extends React.Component<Props> {
         action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }
+
     return services;
   };
 
@@ -332,7 +342,6 @@ class ServicesScreen extends React.Component<Props> {
       action,
       disabled,
       label,
-      labelBadge,
       hidden = false,
     } = item;
 
@@ -346,7 +355,6 @@ class ServicesScreen extends React.Component<Props> {
         action={action}
         disabled={disabled}
         label={label}
-        labelBadge={labelBadge}
       />
     );
   }

@@ -1545,7 +1545,7 @@
       "youAreClaiming": "You are claiming rewards",
       "rgtPrice": "RGT price",
       "rgtSupply": "RGT supply",
-      "currentAPYWithPercentage": "Current APY: {{percentage}}%",
+      "currentAPYWithValue": "Current APY: {{value}}",
       "claimingDetails": "Claiming details",
       "burnTakeback": "Burn/Takeback"
     },
