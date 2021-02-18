@@ -1633,7 +1633,7 @@ export class EventDetail extends React.Component<Props> {
         {!!title && (
           <DetailRow color={titleColor}>
             {title}
-            {!!actionIcon && <ActionIcon name={actionIcon} iconColor={statusIconColor} />}
+            {!!actionIcon && <ActionIcon name={actionIcon} iconColor={this.getColor(statusIconColor)} />}
           </DetailRow>
         )}
         {customActionTitle}
