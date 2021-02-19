@@ -33,7 +33,7 @@ import t from 'translations/translate';
 
 export * from 'date-fns';
 
-const USER_DATE_FORMAT = 'MMM D YYYY';
+const USER_FULL_DATE_FORMAT = 'MMM D YYYY';
 const USER_MONTH_DAY_FORMAT = 'MMM D';
 
 export const isSameDay = (first: Date | number, second: Date | number): boolean => {
@@ -49,14 +49,23 @@ export const isYesterday = (date: Date | number): boolean => {
   return isSameDay(date, DateFns.subDays(new Date(), 1));
 };
 
+export const formatDate = (
+  date: ?(Date | string | number),
+  format?: string,
+): string => {
+  if (!date) return '';
+
+  return DateFns.format(date, format);
+};
+
 export const humanizeDateString = (date: Date): string => {
+  if (!date) return '';
+
   // by default don't show the year if the event happened this year
   if (isToday(date)) return t('label.today');
   if (isYesterday(date)) return t('label.yesterday');
 
   // TODO: localize dates
-  const dateFormat = DateFns.isThisYear(date) ? USER_MONTH_DAY_FORMAT : USER_DATE_FORMAT;
+  const dateFormat = DateFns.isThisYear(date) ? USER_MONTH_DAY_FORMAT : USER_FULL_DATE_FORMAT;
   return DateFns.format(date, dateFormat);
 };
-
-export const formatDate = DateFns.format;
