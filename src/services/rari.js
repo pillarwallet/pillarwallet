@@ -33,6 +33,8 @@ import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributo
 import type { RariPool } from 'models/RariPool';
 import type { Rates } from 'models/Asset';
 
+const hasEthUsdPrice = (rates: Rates) => !!rates?.[ETH]?.USD;
+
 const mapPools = (resultsArray: Object[]) => {
   return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
     result[pool] = resultsArray[i];
@@ -53,6 +55,9 @@ export const getRariFundBalanceInUSD = async (rates: Rates) => {
         return EthersBigNumber.from(0);
       });
     if (rariPool === RARI_POOLS.ETH_POOL) {
+      // if ETH USD price is not within rates we cannot do anything – return 0
+      if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
       balance = EthersBigNumber.from(balance).mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
     }
     return parseFloat(utils.formatUnits(balance, 18));
@@ -111,6 +116,9 @@ export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddres
       return EthersBigNumber.from(0);
     });
   if (rariPool === RARI_POOLS.ETH_POOL) {
+    // if ETH USD price is not within rates we cannot do anything – return 0
+    if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
     balanceBN = balanceBN.mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
   }
   return balanceBN;
@@ -186,6 +194,9 @@ export const getUserInterests = async (accountAddress: string, rates: Rates) => 
     let interests = userBalanceUSD[rariPool] - initialBalance;
     const interestsPercentage = (interests / initialBalance) * 100;
     if (rariPool === RARI_POOLS.ETH_POOL) {
+      // if ETH USD price is not within rates we cannot do anything – return 0
+      if (!hasEthUsdPrice(rates)) return EthersBigNumber.from(0);
+
       // interests in ETH pool are in ETH - convert them to
       const interestsBN = EthersBigNumber.from(Math.floor(interests * 1e9)).mul(Math.floor(rates[ETH].USD * 1e9));
       interests = parseFloat(utils.formatUnits(interestsBN));

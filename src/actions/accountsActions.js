@@ -194,7 +194,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
-    await dispatch(initSmartWalletSdkAction(privateKey));
+    await dispatch(initSmartWalletSdkAction(privateKey, true));
 
     const activeAccountType = getActiveAccountType(accounts);
     const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
