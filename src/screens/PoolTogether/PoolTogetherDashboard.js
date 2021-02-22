@@ -27,7 +27,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
@@ -90,7 +89,6 @@ type Props = {
   accounts: Accounts,
   balances: Balances,
   poolPrizeInfo: PoolPrizeInfo,
-  logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   isFetchingPoolStats: boolean,
   theme: Theme,
@@ -122,12 +120,8 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      logScreenView,
-      fetchPoolStats,
-    } = this.props;
+    const { fetchPoolStats } = this.props;
     fetchPoolStats(DAI);
-    logScreenView('View PoolTogether', 'PoolTogether');
   }
 
   setActiveTab = (activeTab: string) => {
@@ -359,7 +353,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 

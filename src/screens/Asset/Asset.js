@@ -44,7 +44,6 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
 
@@ -92,7 +91,6 @@ type Props = {
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
   history: Object[],
-  logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
@@ -167,16 +165,14 @@ class AssetScreen extends React.Component<Props> {
   componentDidMount() {
     const {
       navigation,
-      logScreenView,
       getExchangeSupportedAssets,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
     } = this.props;
-    const { assetData: { token }, resetHideRemoval } = navigation.state.params;
+    const { resetHideRemoval } = navigation.state.params;
     fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
-    logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
   shouldComponentUpdate(nextProps: Props) {
@@ -411,9 +407,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
-  },
-  logScreenView: (contentName: string, contentType: string, contentId: string) => {
-    dispatch(logScreenViewAction(contentName, contentType, contentId));
   },
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
