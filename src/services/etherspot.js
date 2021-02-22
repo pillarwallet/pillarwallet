@@ -199,6 +199,7 @@ class EtherspotService {
     // const { gasToken } = transaction;
 
     const etherspotTransactions = await mapToEtherspotTransactionsBatch(transaction, fromAccountAddress);
+
     return this.setTransactionsBatchAndSend(etherspotTransactions);
   }
 

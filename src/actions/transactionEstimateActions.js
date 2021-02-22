@@ -19,17 +19,15 @@
 */
 
 import t from 'translations/translate';
-import { utils } from 'ethers';
 
 // components
 import Toast from 'components/Toast';
 
 // services
 import etherspot from 'services/etherspot';
-import { buildERC721TransactionData } from 'services/assets';
 
 // utils
-import { buildTxFeeInfo } from 'utils/etherspot';
+import { buildToEtherspotTransaction, buildTxFeeInfo } from 'utils/etherspot';
 import { reportErrorLog } from 'utils/common';
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 
@@ -44,7 +42,6 @@ import {
   SET_TRANSACTION_ESTIMATE_FEE_INFO,
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -118,36 +115,25 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
     const activeAccountAddress = activeAccountAddressSelector(getState());
 
     const etherspotTransactions: EtherspotTransaction[] = await Promise.all(
-      transactions.map(async (transactionDraft) => {
-        const { to, assetData } = transactionDraft;
-        let { data, value } = transactionDraft;
+      transactions.map((transactionDraft) => {
+        const {
+          to,
+          data,
+          assetData,
+          value,
+        } = transactionDraft;
 
-        if (assetData && assetData.token !== ETH) {
-          switch (assetData.tokenType) {
-            case COLLECTIBLES:
-              const {
-                name,
-                id,
-                contractAddress,
-                tokenType,
-              } = assetData;
-              data = await buildERC721TransactionData({
-                from: activeAccountAddress,
-                to,
-                name,
-                tokenId: id,
-                contractAddress,
-                tokenType,
-              });
-              value = 0;
-              break;
-            default: break;
-          }
-        } else if (!assetData || assetData.token === ETH) {
-          value = utils.parseEther(value.toString());
-        }
-
-        return { to, value, data };
+        return buildToEtherspotTransaction(
+          to,
+          activeAccountAddress,
+          data,
+          Number(value).toString(),
+          assetData?.token,
+          assetData?.decimals,
+          assetData?.tokenType,
+          assetData?.contractAddress,
+          assetData?.id,
+        );
       }),
     );
 
