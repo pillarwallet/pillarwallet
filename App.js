@@ -69,11 +69,13 @@ import Modal from 'components/Modal';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
+import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
 import { firebaseRemoteConfig } from 'services/firebase';
+import { logScreenViewAction } from 'actions/analyticsActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -117,6 +119,7 @@ type Props = {
   updateTranslationResourceOnContextChange: () => void,
   initialDeeplinkExecuted: boolean,
   sessionLanguageVersion: ?string,
+  logScreenView: (screenName: string) => void,
 }
 
 
@@ -274,8 +277,14 @@ class App extends React.Component<Props, *> {
     }
   };
 
-  closeModalsOnScreenChange = (prev, next, action) => {
+  handleNavigationStateChange = (prevState, nextState, action) => {
     if (action.type === NavigationActions.NAVIGATE) Modal.closeAll();
+
+    const nextRouteName = getActiveRouteName(nextState);
+    const previousRouteName = getActiveRouteName(prevState);
+    if (!!nextRouteName && nextRouteName !== previousRouteName) {
+      this.props.logScreenView(nextRouteName);
+    }
   }
 
   render() {
@@ -305,7 +314,7 @@ class App extends React.Component<Props, *> {
                 }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
-                onNavigationStateChange={this.closeModalsOnScreenChange}
+                onNavigationStateChange={this.handleNavigationStateChange}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
@@ -369,6 +378,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   changeLanguage: (language) => dispatch(changeLanguageAction(language)),
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
+  logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
 });
 
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));

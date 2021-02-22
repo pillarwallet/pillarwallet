@@ -32,3 +32,16 @@ export const isNavigationAllowed = (): boolean => {
 
   return currentFlow !== AUTH_FLOW;
 };
+
+// Source: https://reactnavigation.org/docs/4.x/screen-tracking
+export const getActiveRouteName = (navigationState: any): string | null => {
+  if (!navigationState) return null;
+
+  const route = navigationState.routes[navigationState.index];
+  // dive into nested navigators
+  if (route.routes) {
+    return getActiveRouteName(route);
+  }
+
+  return route.routeName;
+};
