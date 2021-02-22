@@ -44,7 +44,7 @@ const BTC_ID = 'bitcoin';
 const WBTC_ID = 'wrapped-bitcoin';
 
 const requestConfig = {
-  timeout: 5000,
+  timeout: 10000,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

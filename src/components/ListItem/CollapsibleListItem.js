@@ -127,7 +127,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
   renderToggleArrow = (shouldRender: boolean) => {
     const spinAngle = this.spinValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ['90deg', '-90deg'],
+      outputRange: (['90deg', '-90deg']: string[]),
     });
 
     if (shouldRender) {

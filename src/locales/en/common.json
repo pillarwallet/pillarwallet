@@ -1318,7 +1318,8 @@
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
+      "typedDataMessage": "Typed Data message"
     },
     "emptyState": {
       "assetsList": {
@@ -1550,7 +1551,7 @@
       "youAreClaiming": "You are claiming rewards",
       "rgtPrice": "RGT price",
       "rgtSupply": "RGT supply",
-      "currentAPYWithPercentage": "Current APY: {{percentage}}%",
+      "currentAPYWithValue": "Current APY: {{value}}",
       "claimingDetails": "Claiming details",
       "burnTakeback": "Burn/Takeback"
     },

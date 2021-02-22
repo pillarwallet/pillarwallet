@@ -71,7 +71,7 @@ type Props = {
 
 type State = {
   biometricsShown: boolean,
-  lastAppState: string,
+  lastAppState: ?string,
   showPin: boolean,
 };
 

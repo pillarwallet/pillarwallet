@@ -20,10 +20,13 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import { Platform, StatusBar, StyleSheet } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { spacing } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
+
+// types
+import type { ViewStyleProp, KeyboardShouldPersistTaps } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 
 type ContainerProps = {
@@ -40,7 +43,7 @@ type ContainerProps = {
 
 type FooterProps = {
   children?: React.Node,
-  style?: StyleSheet.Styles,
+  style?: ViewStyleProp,
   column?: boolean,
   backgroundColor?: string,
   keyboardVerticalOffset?: number,
@@ -54,9 +57,9 @@ type ScrollWrapperProps = {
   onKeyboardWillShow?: Function,
   innerRef?: Object,
   contentContainerStyle?: Object,
-  keyboardShouldPersistTaps?: string,
+  keyboardShouldPersistTaps?: KeyboardShouldPersistTaps,
   onScroll?: Function,
-  stickyHeaderIndices?: ?number[],
+  stickyHeaderIndices?: ?(number[]),
   scrollEnabled?: boolean,
   refreshControl?: React.Node,
   disableOnAndroid?: boolean,
@@ -191,14 +194,16 @@ export const Footer = (props: FooterProps) => {
       column={props.column}
       behavior={Platform.OS === 'ios' ? 'position' : null}
       keyboardVerticalOffset={isIphoneX() ? 40 : 20}
-      contentContainerStyle={{
-        alignItems: 'center',
-        position: 'relative',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        padding: spacing.layoutSides,
-        ...props.style,
-      }}
+      contentContainerStyle={[
+        {
+          alignItems: 'center',
+          position: 'relative',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          padding: spacing.layoutSides,
+        },
+        props.style,
+      ]}
       backgroundColor={props.backgroundColor}
     >
       {props.children}

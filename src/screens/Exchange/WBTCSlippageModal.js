@@ -100,7 +100,7 @@ const InnerCircle = styled.View`
 
 const Label = styled.View`
   position: absolute;
-  right: 50;
+  right: 50px;
   justify-content: center;
   bottom: 0;
 `;

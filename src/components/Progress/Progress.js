@@ -56,7 +56,7 @@ const ProgressBarWrapper = styled.View`
   padding: ${({ padding }) => padding}px;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 10;
+  border-radius: 10px;
   width: 100%;
   ${({ border }) => border && `
     borderColor: #ebf0ff;
@@ -67,7 +67,7 @@ const ProgressBarWrapper = styled.View`
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
   height: ${({ height }) => height}px;
-  border-radius: 10;
+  border-radius: 10px;
   overflow: hidden;
 `;
 

@@ -181,7 +181,7 @@ const KeyBasedAssetTransferChoose = ({
     onAvailableCollectiblesRefresh();
   }, []);
 
-  const availableAssets = Object.keys(availableBalances)
+  const availableAssets: AssetData[] = Object.keys(availableBalances)
     // filter those with extremely low balances that are shown as 0 in app anyway
     .filter((symbol) => !!getBalance(availableBalances, symbol))
     .map((symbol) => getAssetData(supportedAssets, [], symbol))
@@ -245,7 +245,7 @@ const KeyBasedAssetTransferChoose = ({
     />
   );
 
-  const mappedAvailableCollectible = availableCollectibles.map(mapCollectibleToAssetData);
+  const mappedAvailableCollectible: AssetData[] = availableCollectibles.map(mapCollectibleToAssetData);
   const filteredAvailableCollectibles = !searchQuery || searchQuery.trim().length < 2
     ? mappedAvailableCollectible
     : mappedAvailableCollectible.filter(
@@ -273,7 +273,7 @@ const KeyBasedAssetTransferChoose = ({
     <FlatList
       data={filteredAvailableCollectibles}
       scrollEnabled={!inSearchMode}
-      keyExtractor={(item) => `${item.contractAddress}${item.id}`}
+      keyExtractor={(item) => `${item.contractAddress ?? ''}${item.id ?? ''}`}
       renderItem={renderCollectible}
       initialNumToRender={9}
       ListEmptyComponent={

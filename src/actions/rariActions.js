@@ -19,7 +19,6 @@
 */
 import {
   getRariFundBalanceInUSD,
-  getRariAPY,
   getUserInterests,
   getAccountDepositInUSD,
   getAccountDepositInPoolToken,
@@ -63,13 +62,12 @@ export const fetchRariDataAction = () => {
     dispatch({ type: SET_FETCHING_RARI_DATA });
 
     const [
-      userDepositInUSD, userDepositInRariToken, userInterests, rariApy, rariFundBalance, rariTotalSupply,
+      userDepositInUSD, userDepositInRariToken, userInterests, rariFundBalance, rariTotalSupply,
       userRgtBalance, userUnclaimedRgt, rtgPrice, rtgSupply,
     ] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress, rates),
       getAccountDepositInPoolToken(smartWalletAddress),
       getUserInterests(smartWalletAddress, rates),
-      getRariAPY(),
       getRariFundBalanceInUSD(rates),
       getRariTokenTotalSupply(),
       getUserRgtBalance(smartWalletAddress),
@@ -91,7 +89,7 @@ export const fetchRariDataAction = () => {
       return [];
     });
 
-    if (userDepositInUSD && userInterests && rariApy && userDepositInRariToken && rariFundBalance &&
+    if (userDepositInUSD && userInterests && userDepositInRariToken && rariFundBalance &&
         rariTotalSupply && userRgtBalance != null && userUnclaimedRgt != null && rtgPrice && rtgSupply) {
       const payload = {
         userDepositInUSD,
@@ -103,7 +101,6 @@ export const fetchRariDataAction = () => {
         userUnclaimedRgt,
         rtgPrice,
         rtgSupply,
-        rariApy,
       };
       dispatch({ type: SET_RARI_USER_DATA, payload });
       dispatch({ type: SET_FETCHING_RARI_DATA_ERROR, payload: false });

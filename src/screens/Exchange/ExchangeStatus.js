@@ -25,6 +25,8 @@ import { BaseText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
 import t from 'translations/translate';
 
+import type { ViewProps } from 'utils/types/react-native';
+
 
 const Status = styled.View`
   flex-direction: row;
@@ -47,8 +49,8 @@ const StatusIcon = styled.View`
   margin-left: 8px;
 `;
 
-const AnimatedStatusIcon = Animated.createAnimatedComponent(StatusIcon);
-const AnimatedStatus = Animated.createAnimatedComponent(Status);
+const AnimatedStatusIcon = Animated.createAnimatedComponent<ViewProps, typeof StatusIcon>(StatusIcon);
+const AnimatedStatus = Animated.createAnimatedComponent<ViewProps, typeof Status>(Status);
 
 type State = {
   indicatorFadeValue: Animated.Value,

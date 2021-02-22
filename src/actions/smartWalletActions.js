@@ -842,9 +842,13 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   };
 };
 
-export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
+export const initSmartWalletSdkAction = (walletPrivateKey: string, forceInit: boolean = false) => {
   return async (dispatch: Dispatch) => {
-    await smartWalletService.init(walletPrivateKey, (event) => dispatch(onSmartWalletSdkEventAction(event)));
+    await smartWalletService.init(
+      walletPrivateKey,
+      (event) => dispatch(onSmartWalletSdkEventAction(event)),
+      forceInit,
+    );
     const initialized: boolean = smartWalletService.sdkInitialized;
     dispatch({
       type: SET_SMART_WALLET_SDK_INIT,

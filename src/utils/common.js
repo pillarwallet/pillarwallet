@@ -564,6 +564,13 @@ export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasT
   return t('tokenValue', { value, token });
 };
 
+/** Apy is provided as fractional number, i.e. 0.5 => 50% */
+export const formatApy = (apy: ?Value): string => {
+  if (!apy) return '';
+
+  return t('percentValue', { value: wrapBigNumber(apy).multipliedBy(100).toFixed(2) });
+};
+
 export const humanizeHexString = (hexString: ?string) => {
   if (!hexString) return '';
 

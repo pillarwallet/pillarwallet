@@ -94,7 +94,7 @@ const EmptyStateWrapper = styled(Wrapper)`
 `;
 
 const SearchSpinner = styled(Wrapper)`
-  padding-top: 20;
+  padding-top: 20px;
 `;
 
 const TopWrapper = styled.View`
@@ -143,7 +143,7 @@ class AssetSearch extends React.Component<Props, State> {
     ];
   };
 
-  handleAssetToggle = (asset: Asset, added: Boolean) => {
+  handleAssetToggle = (asset: Asset, added: boolean) => {
     if (!added) {
       this.addTokenToWallet(asset);
     } else {

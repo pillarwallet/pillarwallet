@@ -25,7 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { View, Image, AppState } from 'react-native';
-import { withTheme } from 'styled-components';
+import { withTheme } from 'styled-components/native';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 
@@ -867,7 +867,7 @@ type Props = {
 };
 
 type State = {
-  lastAppState: string,
+  lastAppState: ?string,
 };
 
 let lockTimer;

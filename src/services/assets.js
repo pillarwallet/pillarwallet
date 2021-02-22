@@ -398,7 +398,11 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
        * because ether price doesn't fit into CoinGecko token price endpoint
        */
       const etherPrice = await getCoinGeckoEtherPrice();
-      rates = { ...rates, [ETH]: etherPrice };
+
+      // append fetched ETH price only if it didn't fail
+      if (!isEmpty(etherPrice)) {
+        rates = { ...rates, [ETH]: etherPrice };
+      }
     }
   }
 

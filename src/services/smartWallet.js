@@ -174,8 +174,8 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, onEvent?: Function) {
-    if (this.sdkInitialized) return;
+  async init(privateKey: string, onEvent?: Function, forceInit: boolean = false) {
+    if (this.sdkInitialized && !forceInit) return;
 
     await this.getSdk()
       .initialize({ device: { privateKey } })

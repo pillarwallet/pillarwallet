@@ -34,6 +34,7 @@ import t from 'translations/translate';
 import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -85,6 +86,8 @@ import Storybook from 'screens/Storybook';
 import configureStore from './src/configureStore';
 
 const { store, persistor } = configureStore();
+
+const queryClient = new QueryClient();
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
@@ -384,7 +387,9 @@ const AppRoot = () => (
           loading={<Container defaultTheme={defaultTheme}><LoadingSpinner theme={defaultTheme} /></Container>}
           persistor={persistor}
         >
-          {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+          <QueryClientProvider client={queryClient}>
+            {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+          </QueryClientProvider>
         </PersistGate>
       </Provider>
     </SafeAreaProvider>

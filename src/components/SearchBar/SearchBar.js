@@ -57,7 +57,7 @@ type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
-  inputRef?: RNTextInput,
+  inputRef?: React.ElementRef<typeof RNTextInput>,
   inputIconName?: string,
   iconProps?: IconProps,
 };
@@ -122,7 +122,7 @@ const InputField = styled(TextInput)`
   padding-right: 16px;
   color: ${({ theme }) => theme.colors.basic010};
   font-size: ${fontSizes.regular}px;
-  font-family: ${appFont.regular};
+  font-family: "${appFont.regular}";
 `;
 
 const InputIcon = styled(IconButton)`
@@ -199,7 +199,7 @@ const SearchInput = (props: SearchInputProps) => {
         placeholderTextColor={colors.secondaryText}
         underlineColorAndroid="transparent"
         autoCorrect={false}
-        innerRef={inputRef}
+        ref={inputRef}
         needsExtraPadding={showIcon}
       />
       {showIcon &&
@@ -365,7 +365,7 @@ class SearchBar extends React.Component<Props, State> {
             style={{
               width: animShrink.interpolate({
                 inputRange: [0, 1],
-                outputRange: ['0%', '1%'],
+                outputRange: (['0%', '1%']: string[]),
               }),
             }}
           >

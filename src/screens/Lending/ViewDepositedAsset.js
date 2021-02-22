@@ -116,7 +116,7 @@ const CurrentInterestRate = styled.View`
 
 const InterestRate = styled(TextLink)`
   ${fontStyles.regular};
-  margin-left: 7;
+  margin-left: 7px;
 `;
 
 const AssetButtonsWrapper = styled.View`
@@ -230,7 +230,7 @@ const ViewDepositedAsset = ({
                 }),
               })}
             </MediumText>
-            <BaseText success fontSize={fontSizes.medium}>
+            <BaseText positive fontSize={fontSizes.medium}>
               {t('positiveValue', {
                 value: t('percentValue', {
                   value: formatAmountDisplay(earningsPercentageGain),
