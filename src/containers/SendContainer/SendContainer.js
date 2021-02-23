@@ -125,7 +125,7 @@ const SendContainer = (props: Props) => {
         <Spacing h={20} />
         <Selector
           placeholder={t('label.whereToSend')}
-          searchPlaceholder={t('label.walletAddress')}
+          searchPlaceholder={t('label.walletAddressEnsUser')}
           noOptionImageFallback
           hasQRScanner
           disableSelfSelect
