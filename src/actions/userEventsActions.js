@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
@@ -129,7 +128,7 @@ export const getWalletsCreationEventsAction = () => {
     }
 
     const userAccounts = await api.listAccounts(walletId);
-    if (isEmpty(userAccounts)) {
+    if (!userAccounts?.length) {
       reportLog('getWalletsCreationEventsAction failed: userAccounts is empty');
       return;
     }

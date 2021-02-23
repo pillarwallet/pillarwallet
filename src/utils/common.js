@@ -27,17 +27,13 @@ import * as ethUtil from 'ethereumjs-util';
 import {
   Dimensions,
   Platform,
-  Animated,
-  Easing,
   Linking,
   PixelRatio,
   AppState,
-  DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
-import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { CardStyleInterpolators } from 'react-navigation-stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
@@ -47,10 +43,12 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
-  WBTC,
-  sBTC,
+  HIGH_VALUE_TOKENS,
+  VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
-import * as NAVSCREENS from 'constants/navigationConstants';
+
+// services
+import etherspot from 'services/etherspot';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
@@ -66,7 +64,7 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
+  if ((isProdEnv() && !__DEV__) || isTest) return;
   console.log(...params); // eslint-disable-line
 };
 
@@ -159,6 +157,13 @@ export const pipe = (...fns: Function[]) => {
 
 export const noop = () => {};
 
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
 /**
  * formatMoney(n, x, s, c)
  *
@@ -187,7 +192,7 @@ export const formatMoney = (
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
 };
 
-export const parseNumber = (amount: string = '0') => {
+export const parseNumber = (amount: Value = '0') => {
   let strg = amount.toString();
   let decimal = '.';
   strg = strg.replace(/[^0-9$.,]/g, '');
@@ -199,7 +204,7 @@ export const parseNumber = (amount: string = '0') => {
   return parseFloat(strg);
 };
 
-export const isValidNumber = (amount: string = '0') => {
+export const isValidNumber = (amount: Value = '0') => {
   const strg = amount.toString();
   const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
 
@@ -212,32 +217,33 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case ETH:
-      return 4;
-    case WBTC:
-    case sBTC:
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === ETH) return 4;
+  if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
+  return 2;
 };
 
-export const formatAmount = (amount: string | number, precision: number = 6): string => {
-  const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
-
+export const formatAmount = (amount: Value, precision: number = 6): string => {
+  const roundedNumber = wrapBigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
+
+export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
+  formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
 export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
-  const formatted = amount.toString();
-  return decimals > 0
-    ? utils.parseUnits(formatted, decimals)
-    : EthersBigNumber.from(formatted);
+  let formatted = amount.toString();
+  const [whole, fraction] = formatted.split('.');
+  if (decimals > 0) {
+    if (fraction && fraction.length > decimals) {
+      formatted = `${whole}.${fraction.substring(0, decimals)}`;
+    }
+    return utils.parseUnits(formatted, decimals);
+  }
+  return EthersBigNumber.from(formatted);
 };
 
 export const parseTokenAmount = (amount: number | string, decimals: number): number => {
@@ -317,68 +323,12 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [
-  NAVSCREENS.MANAGE_USERS_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_TOKEN_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
-  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-  NAVSCREENS.POOLTOGETHER_FLOW,
-];
-
-const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
-  return DEFAULT_TRANSITION_SCREENS.some(
-    screenName =>
-      screenName === transitionProps.scene.route.routeName ||
-      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
-  );
-};
-
-const getTransitionDuration = (isFaster: boolean) => {
-  let duration = 400;
-  if (isFaster && Platform.OS === 'android') {
-    duration = 250;
-  }
-  return duration;
-};
-
-const getTransitionSpec = (isFasterAnimation: boolean) => ({
-  duration: getTransitionDuration(isFasterAnimation),
-  easing: Easing.out(Easing.poly(2)),
-  timing: Animated.timing,
-});
-
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
-  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
-    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
-    screenInterpolator: (sceneProps: TransitionProps) => {
-      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
-      if (needsDefaultTransition) {
-        return Platform.OS === 'ios'
-          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
-          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
-      }
-
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
-      const height = layout.initHeight;
-      const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0],
-      });
-      return { opacity, transform: [{ translateY }] };
-    },
-  }),
 };
 
 export const handleUrlPress = (url: string) => {
@@ -393,17 +343,9 @@ export const handleUrlPress = (url: string) => {
   }
 };
 
-export const addAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
+export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
 
-export const removeAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
+export const removeAppStateChangeListener = (callback: Function) => AppState.removeEventListener('change', callback);
 
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {
@@ -424,20 +366,10 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
-export const resolveEnsName = (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.resolveName(ensName);
-};
-
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let ensName;
-  try {
-    ensName = await provider.lookupAddress(address);
-  } catch (_) {
-    //
-  }
-  return ensName;
+  const resolved = await etherspot.getENSNode(address);
+
+  return resolved?.name;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {
@@ -498,10 +430,10 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: string = '0', decimals: number): string => {
+export const formatUnits = (val: Value = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
-  let valueWithoutDecimals = null; // null for sentry reports
+  let valueWithoutDecimals: string | null = null; // null for sentry reports
   try {
     // check if val is exact number or other format (might be hex, exponential, etc.)
     preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
@@ -510,7 +442,7 @@ export const formatUnits = (val: string = '0', decimals: number): string => {
     if (decimals === 0) {
       // check additionally if string contains decimal pointer
       // because converting exponential numbers back to number will result as exponential expression again
-      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      if (valueWithoutDecimals.includes('.')) return Math.floor(+valueWithoutDecimals).toFixed();
       // else return as it is
       return valueWithoutDecimals;
     }
@@ -632,6 +564,13 @@ export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasT
   return t('tokenValue', { value, token });
 };
 
+/** Apy is provided as fractional number, i.e. 0.5 => 50% */
+export const formatApy = (apy: ?Value): string => {
+  if (!apy) return '';
+
+  return t('percentValue', { value: wrapBigNumber(apy).multipliedBy(100).toFixed(2) });
+};
+
 export const humanizeHexString = (hexString: ?string) => {
   if (!hexString) return '';
 
@@ -652,10 +591,12 @@ export const humanizeHexString = (hexString: ?string) => {
 };
 
 export const convertToBaseUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.multipliedBy(new BigNumber(10).pow(decimals));
 };
 
 export const convertToNominalUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.dividedBy(new BigNumber(10).pow(decimals));
 };
 
@@ -696,3 +637,44 @@ export const hitSlop10 = {
 };
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
+
+export const formatBigAmount = (value: Value) => {
+  const _value = wrapBigNumber(value);
+
+  if (_value.gte(1e12)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e12).toFixed(2)}T`;
+  }
+
+  if (_value.gte(1e9)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e9).toFixed(2)}B`;
+  }
+
+  if (_value.gte(1e6)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e6).toFixed(2)}M`;
+  }
+
+  if (_value.gte(1e3)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e3).toFixed(2)}K`;
+  }
+
+  return _value.toFixed(2);
+};
+
+export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  return `${currencySymbol} ${formatBigAmount(value)}`;
+};
+
+export const removeTrailingZeros = (amount: string) => {
+  if (!amount.includes('.')) return amount;
+  return amount.replace(/0+$/, '').replace(/\.$/, '');
+};
+
+export const toFixedString = (amount: number) => {
+  return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
+};
+

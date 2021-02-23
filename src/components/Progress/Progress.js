@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
-import styled, { withTheme } from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import t from 'translations/translate';
 
@@ -56,7 +56,7 @@ const ProgressBarWrapper = styled.View`
   padding: ${({ padding }) => padding}px;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 10;
+  border-radius: 10px;
   width: 100%;
   ${({ border }) => border && `
     borderColor: #ebf0ff;
@@ -67,7 +67,7 @@ const ProgressBarWrapper = styled.View`
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
   height: ${({ height }) => height}px;
-  border-radius: 10;
+  border-radius: 10px;
   overflow: hidden;
 `;
 
@@ -166,6 +166,7 @@ class Progress extends React.Component<Props, State> {
         toValue: newProgress,
         easing: Easing.linear,
         duration: 500,
+        useNativeDriver: false,
       },
     ).start();
   };

@@ -22,13 +22,13 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
-import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import styled, { withTheme } from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -44,19 +44,19 @@ import SablierStream from 'components/SablierStream';
 // constants
 import {
   BADGE,
-  LENDING_DEPOSITED_ASSETS_LIST,
-  LENDING_VIEW_DEPOSITED_ASSET,
   MENU,
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   RARI_DEPOSIT,
+  LIQUIDITY_POOLS as LIQUIDITY_POOLS_SCREEN,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI, defaultFiatCurrency } from 'constants/assetsConstants';
-import { RARI_POOLS } from 'constants/rariConstants';
 import { STAGING } from 'constants/envConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -75,6 +75,7 @@ import {
   togglePoolTogetherAction,
   toggleSablierAction,
   toggleRariAction,
+  toggleLiquidityPoolsAction,
 } from 'actions/appSettingsActions';
 import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
@@ -82,6 +83,8 @@ import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { fetchRariDataAction } from 'actions/rariActions';
+import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
+import { checkEtherspotSessionAction } from 'actions/etherspotActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -95,6 +98,8 @@ import { getThemeColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { getPoolStats } from 'utils/liquidityPools';
+import { convertUSDToFiat } from 'utils/assets';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -104,12 +109,16 @@ import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
-import type { DepositedAsset } from 'models/Asset';
+import type { DepositedAsset, Rates } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
-import type { RariPool, Interests } from 'models/RariPool';
+import type { RariPool } from 'models/RariPool';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 // partials
 import WalletsPart from './WalletsPart';
+import DepositedAssets from './DepositedAssets';
+import RariPoolItem from './RariPoolItem';
 
 
 type Props = {
@@ -163,10 +172,15 @@ type Props = {
   toggleRari: () => void,
   hideRari: boolean,
   isFetchingRariData: boolean,
-  rariApy: {[RariPool]: number},
   rariUserDepositInUSD: {[RariPool]: number},
-  rariUserInterests: {[RariPool]: ?Interests},
   fetchRariData: () => void,
+  fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => void,
+  toggleLiquidityPools: () => void,
+  isFetchingLiquidityPoolsData: boolean,
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
+  rates: Rates,
+  hideLiquidityPools: boolean,
+  checkEtherspotSession: () => void,
 };
 
 const RequestsWrapper = styled.View`
@@ -178,18 +192,11 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const DepositedAssetGain = styled(BaseText)`
-  margin-bottom: 5px;
-  font-size: ${fontSizes.big};
-`;
-
 const referralImage = require('assets/images/referral_gift.png');
-const aaveImage = require('assets/images/apps/aave.png');
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
-const rariLogo = require('assets/images/rari_logo.png');
 
 class HomeScreen extends React.Component<Props> {
   _willFocus: NavigationEventSubscription;
@@ -207,6 +214,7 @@ class HomeScreen extends React.Component<Props> {
       fetchPoolStats,
       fetchUserStreams,
       fetchRariData,
+      fetchLiquidityPoolsData,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -226,6 +234,7 @@ class HomeScreen extends React.Component<Props> {
     if (!isStaging) {
       fetchRariData();
     }
+    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }
 
   componentWillUnmount() {
@@ -264,8 +273,11 @@ class HomeScreen extends React.Component<Props> {
       fetchPoolStats,
       fetchUserStreams,
       fetchRariData,
+      fetchLiquidityPoolsData,
+      checkEtherspotSession,
     } = this.props;
 
+    checkEtherspotSession();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     fetchBadges();
@@ -277,6 +289,7 @@ class HomeScreen extends React.Component<Props> {
     fetchDepositedAssets();
     fetchPoolStats();
     fetchUserStreams();
+    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
     if (!isStaging) {
       fetchRariData();
     }
@@ -290,37 +303,6 @@ class HomeScreen extends React.Component<Props> {
         onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
         style={{ paddingHorizontal: 8 }}
       />
-    );
-  };
-
-  renderDepositedAsset = ({ item: depositedAsset }: { item: DepositedAsset }) => {
-    const {
-      symbol,
-      earnInterestRate,
-      currentBalance,
-      earnedAmount,
-      earningsPercentageGain,
-      iconUrl,
-    } = depositedAsset;
-    const cornerIcon = iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : '';
-    return (
-      <ListItemWithImage
-        label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}
-        subtext={t('aaveContent.label.currentAPYPercentage', { rate: formatAmountDisplay(earnInterestRate) })}
-        itemImageSource={aaveImage}
-        onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
-        iconImageSize={52}
-        cornerIcon={cornerIcon}
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-        itemImageRoundedSquare
-      >
-        <DepositedAssetGain positive>
-          {t('positiveTokenValue', { value: formatAmountDisplay(earnedAmount), token: symbol })}
-        </DepositedAssetGain>
-        <BaseText secondary>
-          {t('positivePercentValue', { value: formatAmountDisplay(earningsPercentageGain) })}
-        </BaseText>
-      </ListItemWithImage>
     );
   };
 
@@ -357,7 +339,9 @@ class HomeScreen extends React.Component<Props> {
     return <SablierStream stream={stream} />;
   };
 
-  renderEarnedInterestsPercent = (interestsPercentage: number) => {
+  renderEarnedInterestsPercent = (interestsPercentage: ?number) => {
+    if (!interestsPercentage) return null;
+
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
@@ -377,37 +361,27 @@ class HomeScreen extends React.Component<Props> {
     );
   };
 
-  renderRariPool = ({ item: deposit }) => {
-    const {
-      pool,
-      balanceInUSD,
-    } = deposit;
-    const {
-      rariApy,
-      baseFiatCurrency,
-      rariUserInterests,
-    } = this.props;
+  renderRariPool = ({ item }) => {
+    const { pool, balanceInUSD } = item;
+    return <RariPoolItem pool={pool} balanceInUSD={balanceInUSD} />;
+  }
 
+  renderLiquidityPool = ({ item: { pool, poolStats } }) => {
+    if (!poolStats) return null;
+
+    const { rates, baseFiatCurrency } = this.props;
+    const tokenBalance = poolStats.userLiquidityTokenBalance.toNumber() + poolStats.stakedAmount.toNumber();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const poolsLabels = {
-      [RARI_POOLS.STABLE_POOL]: t('rariContent.depositsList.stablePool'),
-      [RARI_POOLS.YIELD_POOL]: t('rariContent.depositsList.yieldPool'),
-      [RARI_POOLS.ETH_POOL]: t('rariContent.depositsList.ethPool'),
-    };
-
     return (
       <ListItemWithImage
-        label={poolsLabels[pool]}
-        subtext={t('rariContent.label.currentAPYWithPercentage', { percentage: formatAmountDisplay(rariApy[pool]) })}
-        itemImageSource={rariLogo}
-        onPress={() => this.props.navigation.navigate(RARI_DEPOSIT)}
-        iconImageSize={48}
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+        label={pool.name}
+        subtext={t('tokenValue', { value: formatAmountDisplay(tokenBalance), token: pool.symbol })}
+        itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
+        onPress={() => this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool })}
       >
-        <DepositedAssetGain>
-          {formatFiat(balanceInUSD, fiatCurrency)}
-        </DepositedAssetGain>
-        {this.renderEarnedInterestsPercent(rariUserInterests[pool].interestsPercentage)}
+        <BaseText big>
+          {formatFiat(convertUSDToFiat(poolStats.currentPrice * tokenBalance, rates, fiatCurrency), fiatCurrency)}
+        </BaseText>
       </ListItemWithImage>
     );
   }
@@ -449,6 +423,10 @@ class HomeScreen extends React.Component<Props> {
       hideRari,
       isFetchingRariData,
       rariUserDepositInUSD,
+      hideLiquidityPools,
+      isFetchingLiquidityPoolsData,
+      toggleLiquidityPools,
+      liquidityPoolsReducer,
     } = this.props;
 
     const tokenTxHistory = history
@@ -504,6 +482,13 @@ class HomeScreen extends React.Component<Props> {
       }))
       .filter(pool => !!pool.balanceInUSD);
     const hasRariDeposits = !!rariDeposits.length;
+
+    const purchasedLiquidityPools = LIQUIDITY_POOLS()
+      .map((pool) => ({
+        pool,
+        poolStats: getPoolStats(pool, liquidityPoolsReducer),
+      }))
+      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
 
     return (
       <React.Fragment>
@@ -587,7 +572,7 @@ class HomeScreen extends React.Component<Props> {
                         keyExtractor={(item) => (item.id.toString())}
                         renderItem={this.renderBadge}
                         style={{ width: '100%', paddingBottom: spacing.medium }}
-                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
+                        contentContainerStyle={[{ paddingHorizontal: 2, paddingTop: 26 }, badgesContainerStyle]}
                         initialNumToRender={5}
                         ListEmptyComponent={(
                           <EmptyStateWrapper>
@@ -602,25 +587,13 @@ class HomeScreen extends React.Component<Props> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
-                  {!isEmpty(depositedAssets) &&
-                    <CollapsibleSection
-                      label={t('aaveContent.depositedAssetsList.title')}
-                      labelRight={isFetchingDepositedAssets ? null : t('button.viewAll')}
-                      showLoadingSpinner={isFetchingDepositedAssets}
-                      onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
-                      collapseContent={
-                        <FlatList
-                          data={depositedAssets}
-                          keyExtractor={(item) => item.symbol}
-                          renderItem={this.renderDepositedAsset}
-                          initialNumToRender={5}
-                          listKey="aave_deposits"
-                        />
-                      }
-                      onPress={toggleLendingDeposits}
-                      open={!hideLendingDeposits}
-                    />
-                  }
+                  <DepositedAssets
+                    depositedAssets={depositedAssets}
+                    isFetchingDepositedAssets={isFetchingDepositedAssets}
+                    navigation={navigation}
+                    hideLendingDeposits={hideLendingDeposits}
+                    toggleLendingDeposits={toggleLendingDeposits}
+                  />
                   {!!hasPoolTickets && (
                     <CollapsibleSection
                       label={t('poolTogetherContent.ticketsList.title')}
@@ -665,7 +638,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={rariDeposits}
-                          keyExtractor={(item) => item.id}
+                          keyExtractor={(item) => item.pool}
                           renderItem={this.renderRariPool}
                           initialNumToRender={2}
                           listKey="rari"
@@ -675,6 +648,25 @@ class HomeScreen extends React.Component<Props> {
                       open={!hideRari}
                     />
                   }
+                  {!isEmpty(purchasedLiquidityPools) && (
+                    <CollapsibleSection
+                      label={t('liquidityPoolsContent.depositsList.title')}
+                      showLoadingSpinner={isFetchingLiquidityPoolsData}
+                      labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
+                      onPressLabelRight={() => navigation.navigate(LIQUIDITY_POOLS_SCREEN)}
+                      collapseContent={
+                        <FlatList
+                          data={purchasedLiquidityPools}
+                          keyExtractor={(item) => item.pool.name}
+                          renderItem={this.renderLiquidityPool}
+                          initialNumToRender={2}
+                          listKey="liquidityPools"
+                        />
+                      }
+                      onPress={toggleLiquidityPools}
+                      open={!hideLiquidityPools}
+                    />
+                  )}
                 </React.Fragment>
               )}
               flatListProps={{
@@ -703,7 +695,7 @@ const mapStateToProps = ({
   userEvents: { data: userEvents },
   appSettings: {
     data: {
-      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari,
+      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari, hideLiquidityPools,
     },
   },
   walletConnect: { requests: walletConnectRequests },
@@ -713,8 +705,13 @@ const mapStateToProps = ({
   poolTogether: { isFetchingPoolStats },
   sablier: { incomingStreams, outgoingStreams, isFetchingStreams },
   rari: {
-    isFetchingRariData, rariApy, userDepositInUSD: rariUserDepositInUSD, userInterests: rariUserInterests,
+    isFetchingRariData, userDepositInUSD: rariUserDepositInUSD,
   },
+  liquidityPools: {
+    isFetchingLiquidityPoolsData,
+  },
+  liquidityPools: liquidityPoolsReducer,
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   user,
   intercomNotificationsCount,
@@ -727,6 +724,7 @@ const mapStateToProps = ({
   hidePoolTogether,
   hideSablier,
   hideRari,
+  hideLiquidityPools,
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
@@ -738,9 +736,10 @@ const mapStateToProps = ({
   outgoingStreams,
   isFetchingStreams,
   isFetchingRariData,
-  rariApy,
   rariUserDepositInUSD,
-  rariUserInterests,
+  isFetchingLiquidityPoolsData,
+  liquidityPoolsReducer,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -777,6 +776,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   toggleSablier: () => dispatch(toggleSablierAction()),
   toggleRari: () => dispatch(toggleRariAction()),
   fetchRariData: () => dispatch(fetchRariDataAction()),
+  fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(liquidityPools)),
+  toggleLiquidityPools: () => dispatch(toggleLiquidityPoolsAction()),
+  checkEtherspotSession: () => dispatch(checkEtherspotSessionAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

@@ -57,7 +57,7 @@ type Props = {
 type State = {
   waitingTime: number,
   biometricsShown: boolean,
-  lastAppState: string,
+  lastAppState: ?string,
   showPin: boolean,
 };
 

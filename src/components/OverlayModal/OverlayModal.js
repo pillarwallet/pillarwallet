@@ -19,14 +19,15 @@
 */
 
 import * as React from 'react';
-import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import SlideModal from 'components/Modals/SlideModal';
-import type { SlideModalInstance } from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { getDeviceHeight } from 'utils/common';
+
+import type { LayoutEvent } from 'utils/types/react-native';
+import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 
 type Props = {|
@@ -41,8 +42,8 @@ type State = {|
 |};
 
 const Wrapper = styled.View`
-  padding-left: 16;
-  padding-right: 16;
+  padding-left: 16px;
+  padding-right: 16px;
   background-color: ${UIColors.darkShadowColor};
   flex: 1;
 `;
@@ -54,17 +55,17 @@ const ModalTitle = styled(BaseText)`
 
 const ModalMessage = styled(BaseText)`
   ${fontStyles.medium};
-  line-height: 26;
+  line-height: 26px;
   color: ${baseColors.white};
 `;
 
 const TextWrapper = styled.View`
-  padding-left: 20;
-  padding-right: 20;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const ButtonWrapper = styled.View`
-  height: ${({ height }) => height};
+  height: ${({ height }) => height}px;
   justify-content: center;
 `;
 

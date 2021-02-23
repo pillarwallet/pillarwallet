@@ -51,8 +51,9 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
+import { isOrderAmountTooLow } from 'utils/exchange';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -84,10 +85,11 @@ import { saveDbAction } from './dbActions';
 export const takeOfferAction = (
   fromAsset: Asset,
   toAsset: Asset,
-  fromAmount: number,
+  fromAmount: string,
   provider: string,
   trackId: string,
-  callback: Function,
+  askRate: string | number,
+  callback: Object => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -107,6 +109,13 @@ export const takeOfferAction = (
 
     if (!fromAsset || !toAsset || !order) {
       reportErrorLog('Cannot find exchange asset');
+      callback({});
+      return;
+    }
+
+    if (isOrderAmountTooLow(askRate, fromAmount, order)) {
+      reportLog('Offer output amount and order output amount diverged');
+      Toast.show({ message: t('error.exchange.exchangeFailed'), emoji: 'hushed' });
       callback({});
       return;
     }
@@ -131,28 +140,28 @@ export const takeOfferAction = (
 
 export const resetOffersAction = () => ({ type: RESET_OFFERS });
 
-const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await getUniswapOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await getSynthetixOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       exchange: { exchangeSupportedAssets },
@@ -352,6 +361,7 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { supportedAssets },
+      exchange: { exchangeSupportedAssets: _exchangeSupportedAssets },
     } = getState();
 
     dispatch({
@@ -364,7 +374,11 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
-    if (!assetsSymbols[1]) {
+    const fetchOneInchSuccess = Array.isArray(assetsSymbols[0]);
+    const fetchUniswapSuccess = Array.isArray(assetsSymbols[1]);
+    const fetchSuccess = fetchOneInchSuccess && fetchUniswapSuccess;
+
+    if (!fetchUniswapSuccess) {
       dispatch({
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
@@ -376,21 +390,40 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
       });
     }
 
-    const fetchSuccess: boolean = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
+    // if fetching failed and user can fall back to valid assets, no need to do anything
+    if (_exchangeSupportedAssets?.length && !fetchSuccess) return;
 
-    const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
+    let fetchedAssetsSymbols: string[] = [];
+    if (fetchSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[0].concat(assetsSymbols[1]));
+    } else if (fetchOneInchSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[0]);
+    } else if (fetchUniswapSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[1]);
+    }
 
-    const exchangeSupportedAssets = fetchSuccess
+    if (!fetchedAssetsSymbols.length) {
+      reportErrorLog('Failed to fetch exchange supported assets', null);
+      return;
+    }
+
+    const exchangeSupportedAssets = fetchOneInchSuccess || fetchUniswapSuccess
       ? supportedAssets.filter(({ symbol, isSynthetixAsset }) =>
         isSynthetixAsset || fetchedAssetsSymbols.includes(symbol))
       : [];
 
-    dispatch({
-      type: SET_EXCHANGE_SUPPORTED_ASSETS,
-      payload: exchangeSupportedAssets,
-    });
+    // there's no point in overwriting if results are empty
+    if (exchangeSupportedAssets?.length) {
+      dispatch({
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: exchangeSupportedAssets,
+      });
+      dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
+    } else {
+      reportErrorLog('Failed to fetch exchange supported assets', null);
+    }
+
     if (callback) callback();
-    dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };
 

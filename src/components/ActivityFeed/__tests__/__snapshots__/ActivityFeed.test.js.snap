@@ -9,7 +9,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         "flexGrow": 1,
         "flexShrink": 1,
       },
-      undefined,
     ]
   }
 >
@@ -56,7 +55,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     initialNumToRender={7}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
-    numColumns={1}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -80,7 +78,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           "flexShrink": 1,
           "width": "100%",
         },
-        undefined,
       ]
     }
     updateCellsBatchingPeriod={50}
@@ -104,7 +101,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           style={
             Array [
               Object {},
-              undefined,
             ]
           }
         >
@@ -118,7 +114,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   "paddingTop": 8,
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
@@ -128,16 +123,10 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                    },
-                    undefined,
-                  ],
                 ]
               }
             >
@@ -154,7 +143,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           style={
             Array [
               Object {},
-              undefined,
             ]
           }
         >
@@ -165,14 +153,12 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   "flexDirection": "column",
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -202,7 +188,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       "justifyContent": "center",
                       "paddingRight": 12,
                     },
-                    undefined,
                   ]
                 }
               >
@@ -223,7 +208,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         "textAlign": "center",
                         "width": 48,
                       },
-                      undefined,
                     ]
                   }
                 >
@@ -235,7 +219,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           "color": "#BD573A",
                           "fontSize": 48,
                         },
-                        undefined,
                       ]
                     }
                   />
@@ -257,7 +240,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         "justifyContent": "space-between",
                         "width": "100%",
                       },
-                      undefined,
                     ]
                   }
                   type="ACTION"
@@ -289,7 +271,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             "flexDirection": "row",
                             "justifyContent": "space-between",
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -300,25 +281,12 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
                               "textAlignVertical": "center",
+                              "width": "100%",
                             },
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ],
-                            ],
                           ]
                         }
                         type="ACTION"
@@ -383,17 +351,11 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                               Object {
                                 "color": "#0A1427",
                                 "fontFamily": "EuclidCircularB-Regular",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "textAlign": "right",
                                 "textAlignVertical": "center",
                               },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlign": "right",
-                                },
-                                undefined,
-                              ],
                             ]
                           }
                         >
@@ -422,7 +384,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         "flexGrow": 1,
         "flexShrink": 1,
       },
-      undefined,
     ]
   }
 >
@@ -469,7 +430,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     initialNumToRender={7}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
-    numColumns={1}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -493,7 +453,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           "flexShrink": 1,
           "width": "100%",
         },
-        undefined,
       ]
     }
     updateCellsBatchingPeriod={50}
@@ -517,7 +476,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           style={
             Array [
               Object {},
-              undefined,
             ]
           }
         >
@@ -531,7 +489,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   "paddingTop": 8,
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
@@ -541,16 +498,10 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                    },
-                    undefined,
-                  ],
                 ]
               }
             >
@@ -567,7 +518,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           style={
             Array [
               Object {},
-              undefined,
             ]
           }
         >
@@ -578,14 +528,12 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   "flexDirection": "column",
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -615,7 +563,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       "justifyContent": "center",
                       "paddingRight": 12,
                     },
-                    undefined,
                   ]
                 }
               >
@@ -636,7 +583,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         "textAlign": "center",
                         "width": 48,
                       },
-                      undefined,
                     ]
                   }
                 >
@@ -648,7 +594,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           "color": "#BD573A",
                           "fontSize": 48,
                         },
-                        undefined,
                       ]
                     }
                   />
@@ -670,7 +615,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         "justifyContent": "space-between",
                         "width": "100%",
                       },
-                      undefined,
                     ]
                   }
                   type="ACTION"
@@ -702,7 +646,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             "flexDirection": "row",
                             "justifyContent": "space-between",
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -713,25 +656,12 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
                               "textAlignVertical": "center",
+                              "width": "100%",
                             },
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ],
-                            ],
                           ]
                         }
                         type="ACTION"
@@ -796,17 +726,11 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                               Object {
                                 "color": "#0A1427",
                                 "fontFamily": "EuclidCircularB-Regular",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "textAlign": "right",
                                 "textAlignVertical": "center",
                               },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlign": "right",
-                                },
-                                undefined,
-                              ],
                             ]
                           }
                         >

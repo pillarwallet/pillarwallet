@@ -30,6 +30,7 @@ import {
 // utils
 import {
   updateAccountHistory,
+  updateHistoryRecord,
 } from 'utils/history';
 import {
   getAccountId,
@@ -50,13 +51,11 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 
 
 export const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
-    dispatch(checkPoolTogetherApprovalTransactionAction());
   };
 };
 
@@ -138,6 +137,7 @@ export const fetchTransactionsHistoryAction = () => {
     // const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
     // const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
     // const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    // const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
     // const history = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
     //
     // if (!history.length) return;
@@ -173,6 +173,26 @@ export const fetchGasInfoAction = () => {
 //     payload: hash,
 //   };
 // };
+
+export const setHistoryTransactionStatusByHashAction = (transactionHash: string, status: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const transactionsHistory = historySelector(getState());
+
+    const { txUpdated, updatedHistory } = updateHistoryRecord(
+      transactionsHistory,
+      transactionHash,
+      (transaction) => ({ ...transaction, status }),
+    );
+
+    // check if updated
+    if (!txUpdated) return;
+
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
+  };
+};
+
+
 // export const updateTransactionStatusAction = (hash: string) => {
 //   return async (dispatch: Dispatch, getState: GetState) => {
 //     const { session: { data: { isOnline } } } = getState();

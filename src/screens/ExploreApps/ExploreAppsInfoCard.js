@@ -44,7 +44,7 @@ const Title = styled(MediumText)`
 
 const Text = styled(BaseText)`
   ${fontStyles.medium};
-  margin-bottom: 38;
+  margin-bottom: 38px;
 `;
 
 const ButtonWrapper = styled.View`

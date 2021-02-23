@@ -21,7 +21,6 @@
 import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -32,6 +31,7 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
 import { Wrapper } from 'components/Layout';
+import Image from 'components/Image';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
@@ -64,12 +64,12 @@ const Background = styled.View`
   position: relative;
 `;
 
-const Pattern = styled(CachedImage)`
+const Pattern = styled(Image)`
   width: 216px;
   height: 162px;
 `;
 
-const PillarLogo = styled(CachedImage)`
+const PillarLogo = styled(Image)`
   height: ${LOGO_HEIGHT}px;
   width: 192px;
 `;
@@ -121,7 +121,7 @@ const Welcome = ({
       toValue: -20,
       easing: Easing.elastic(1),
       duration: 2000,
-      userNativeDriver: true,
+      useNativeDriver: true,
     }).start();
   }, []);
 

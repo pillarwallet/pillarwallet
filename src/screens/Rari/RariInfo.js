@@ -19,17 +19,18 @@
 */
 
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
+import Image from 'components/Image';
 import Insight from 'components/Insight/Insight';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
+import Stats from 'components/Stats';
 
 import { fontStyles } from 'utils/variables';
 import { getDeviceWidth, formatFiat, commify } from 'utils/common';
@@ -76,17 +77,7 @@ const Paragraph = styled(BaseText)`
   ${fontStyles.medium};
 `;
 
-const Row = styled.View`
-  flex-direction: row;
-`;
-
-const Card = styled.View`
-  background-color: ${({ theme }) => theme.colors.basic050};
-  padding: 8px 16px 16px;
-  border-radius: 6px;
-`;
-
-const Banner = styled(CachedImage)`
+const Banner = styled(Image)`
   width: ${bannerWidth}px;
   height: ${bannerWidth * (120 / 335)}px;
 `;
@@ -98,7 +89,7 @@ const RariLogoWrapper = styled.View`
   right: ${bannerWidth * (12 / 335)}px;
 `;
 
-const RariLogo = styled(CachedImage)`
+const RariLogo = styled(Image)`
   width: ${bannerWidth * (48 / 335)}px;
   height: ${bannerWidth * (48 / 335)}px;
 `;
@@ -125,6 +116,22 @@ const RariInfoScreen = ({
       </>
     );
   };
+
+  const stats = [
+    {
+      title: t('rariContent.label.rgtPrice'),
+      value: formatFiat(rtgPrice[fiatCurrency], fiatCurrency),
+    },
+    {
+      title: t('rariContent.label.rgtSupply'),
+      value: commify(rtgSupply, { skipCents: true }),
+    },
+    {
+      title: t('rariContent.label.totalSupply'),
+      value: formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true }),
+    },
+  ];
+
   return (
     <ContainerWithHeader
       inset={{ bottom: 'never' }}
@@ -142,37 +149,12 @@ const RariInfoScreen = ({
           </RariLogoWrapper>
         </View>
         <Spacing h={28} />
-        <Subtitle>{t('rariContent.infoContent.subtitle.keyFacts')}</Subtitle>
+        <Subtitle>{t('label.keyFacts')}</Subtitle>
         <Spacing h={6} />
       </HorizontalPadding>
+      <Stats stats={stats} />
+      <Spacing h={16} />
       <HorizontalPadding p={4}>
-        <ScrollView horizontal>
-          <Row>
-            <Spacing w={16} />
-            <Card>
-              <MediumText big>
-                {formatFiat(rtgPrice[fiatCurrency], fiatCurrency)}
-              </MediumText>
-              <BaseText secondary small>{t('rariContent.label.rgtPrice')}</BaseText>
-            </Card>
-            <Spacing w={16} />
-            <Card>
-              <MediumText big>
-                {commify(rtgSupply, { skipCents: true })}
-              </MediumText>
-              <BaseText secondary small>{t('rariContent.label.rgtSupply')}</BaseText>
-            </Card>
-            <Spacing w={16} />
-            <Card>
-              <MediumText big>
-                {formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true })}
-              </MediumText>
-              <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
-            </Card>
-            <Spacing w={16} />
-          </Row>
-        </ScrollView>
-        <Spacing h={16} />
         <Insight
           isVisible
           insightNumberedList={[

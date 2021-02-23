@@ -57,13 +57,14 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
+  isOnline: boolean,
 };
 
 const DepositWrapper = styled.View`
   padding: 16px 20px;
 `;
 
-const FundTankConfirm = ({ navigation, feeInfo }: Props) => {
+const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const fundAmount: number = navigation.getParam('amount');
@@ -77,7 +78,7 @@ const FundTankConfirm = ({ navigation, feeInfo }: Props) => {
 
     const accountTokenDeposit = await etherspot.getAccountTokenDeposit(contractAddress);
 
-    if (!feeInfo || !accountTokenDeposit) {
+    if (!feeInfo?.fee || !accountTokenDeposit) {
       Toast.show({
         message: t('toast.cannotFundTank'),
         emoji: 'woman-shrugging',
@@ -132,7 +133,7 @@ const FundTankConfirm = ({ navigation, feeInfo }: Props) => {
         </Table>
         <Spacing h={50} />
         <Button
-          disabled={isSubmitted}
+          disabled={isSubmitted || !isOnline}
           isLoading={isSubmitted}
           title={t('ppnContent.button.fundTank')}
           onPress={onNextButtonPress}
@@ -143,9 +144,11 @@ const FundTankConfirm = ({ navigation, feeInfo }: Props) => {
 };
 
 const mapStateToProps = ({
+  session: { data: { isOnline } },
   transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
+  isOnline,
 });
 
 export default connect(mapStateToProps)(FundTankConfirm);

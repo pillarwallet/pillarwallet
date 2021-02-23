@@ -41,6 +41,7 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Option } from 'models/Selector';
+import type { Value } from 'utils/common';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -137,9 +138,9 @@ export const getFormattedRate = (
 export const calculateMaxAmount = (
   token: string,
   balance: number | string,
-  txFeeInWei: ?BigNumber,
+  txFeeInWei: ?Value,
   gasToken: ?GasToken = {},
-): number => {
+): string => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
   if (!balance) balance = 0;
 
@@ -150,21 +151,21 @@ export const calculateMaxAmount = (
   const feeSymbol = get(gasToken, 'symbol', ETH);
 
   if (token !== feeSymbol) {
-    return +balance;
+    return balance;
   }
 
-  // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
+  // we need to convert txFeeInWei to EthersBigNumber as ethers.js utils use different library for Big Numbers
   const decimals = get(gasToken, 'decimals', 'ether');
   const maxAmount = utils.parseUnits(balance, decimals).sub(EthersBigNumber.from(txFeeInWei.toString()));
-  if (maxAmount.lt(0)) return 0;
+  if (maxAmount.lt(0)) return '0';
 
-  return new BigNumber(utils.formatUnits(maxAmount, decimals)).toNumber();
+  return utils.formatUnits(maxAmount, decimals).toString();
 };
 
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
   transaction: {
-    txFeeInWei: number,
+    txFeeInWei: ?Value,
     gasToken?: ?GasToken,
     amount?: any,
     decimals?: number,
@@ -199,7 +200,7 @@ export const isEnoughBalanceForTransactionFee = (
     }
   }
 
-  const txFeeInWeiBN = new BigNumber(txFeeInWei.toString()); // compatibility
+  const txFeeInWeiBN = new BigNumber(txFeeInWei?.toString() ?? 0); // compatibility
 
   return balanceInWei.gte(txFeeInWeiBN);
 };
@@ -247,6 +248,23 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
   if (!address1 || !address2) return false;
 
   return isCaseInsensitiveMatch(address1, address2);
+};
+
+/** Checks if address list contains given address. Similar to `Array.includes`.  */
+export const addressesInclude = (addresses: string[], addressToFind: ?string): boolean => {
+  return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
+};
+
+export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
+  return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+};
+
+export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
+};
+
+export const isSupportedAssetSymbol = (supportedAssets: Asset[], symbolToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => asset.symbol === symbolToCheck);
 };
 
 export const getAssetData = (
@@ -350,6 +368,7 @@ export const generateAssetSelectorOption = (
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
+  // $FlowFixMe: flow update to 0.122
   return ({
     key: symbol,
     value: symbol,

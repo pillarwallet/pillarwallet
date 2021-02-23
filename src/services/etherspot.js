@@ -27,8 +27,17 @@ import {
   GatewayEstimatedBatch,
   P2PPaymentDeposit,
   ENSNode,
+  EnvNames,
+  GatewayKnownOps,
+  GatewaySubmittedBatch,
 } from 'etherspot';
 import { BigNumber } from 'bignumber.js';
+import { map } from 'rxjs/operators';
+import type {
+  P2PPaymentChannel,
+  Notification as EtherspotNotification,
+  IncreaseP2PPaymentChannelAmountDto,
+} from 'etherspot';
 
 // utils
 import {
@@ -47,37 +56,43 @@ import { ETH } from 'constants/assetsConstants';
 import { getEnv } from 'configs/envConfig';
 
 // types
-import type { EtherspotTransaction } from 'models/Etherspot';
+import type { EtherspotTransaction, EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
-import type { P2PPaymentChannel } from 'etherspot';
-import type { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
 
 class EtherspotService {
   sdk: EtherspotSdk;
+  subscription: any;
 
   async init(privateKey: string) {
     const networkName = getEnv().NETWORK_PROVIDER === 'homestead'
       ? NetworkNames.Mainnet
       : NetworkNames.Kovan;
 
-    this.sdk = new EtherspotSdk(privateKey, { networkName });
+    const envName = getEnv().NETWORK_PROVIDER === 'homestead'
+      ? EnvNames.MainNets
+      : EnvNames.TestNets;
+
+    this.sdk = new EtherspotSdk(privateKey, { env: envName, networkName });
 
     await this.sdk.computeContractAccount({ sync: true }).catch((error) => {
       reportErrorLog('EtherspotService init computeContractAccount failed', { error });
     });
   }
 
-  subscribe() {
-    // return this.sdk.api.subscribe()
+  subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
+    this.subscription = this.sdk.notifications$
+      .pipe(map(callback))
+      .subscribe();
   }
 
   unsubscribe() {
-    // return this.sdk.api.subscribe()
+    if (!this.subscription) return;
+    this.subscription.unsubscribe();
   }
 
-  getAccounts(): ?EtherspotAccount[] {
+  getAccounts(): Promise<?EtherspotAccount[]> {
     return this.sdk.getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items) // TODO: pagination
       .catch((error) => {
@@ -102,8 +117,9 @@ class EtherspotService {
     return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  estimateTransactionsBatch() {
-    return this.sdk.estimateGatewayBatch().then((result) => result?.estimation);
+  estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    return this.sdk.estimateGatewayBatch({ refundToken: useGasTokenAddress })
+      .then((result) => result?.estimation);
   }
 
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
@@ -112,12 +128,20 @@ class EtherspotService {
       .filter(({ address }) => !isCaseInsensitiveMatch(address, constants.AddressZero))
       .map(({ address }) => address);
 
+    let balancesRequestPayload = {
+      account: accountAddress,
+    };
+
+    if (assetAddresses.length) {
+      balancesRequestPayload = {
+        ...balancesRequestPayload,
+        tokens: assetAddresses,
+      };
+    }
+
     // gets balances by provided token (asset) address and ETH balance regardless
     const accountBalances = await this.sdk
-      .getAccountBalances({
-        account: accountAddress,
-        tokens: assetAddresses,
-      })
+      .getAccountBalances(balancesRequestPayload)
       .catch((error) => {
         reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
         return null;
@@ -150,7 +174,10 @@ class EtherspotService {
     }, []);
   }
 
-  async setTransactionsBatchAndSend(transactions: EtherspotTransaction[]) {
+  async setTransactionsBatchAndSend(
+    transactions: EtherspotTransaction[],
+    useGasTokenAddress?: string,
+  ) {
     // clear batch
     this.clearTransactionsBatch();
 
@@ -161,7 +188,7 @@ class EtherspotService {
     });
 
     // estimate current batch
-    await this.estimateTransactionsBatch();
+    await this.estimateTransactionsBatch(useGasTokenAddress);
 
     // submit current batch
     return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));
@@ -180,6 +207,7 @@ class EtherspotService {
     // const { gasToken } = transaction;
 
     const etherspotTransactions = await mapToEtherspotTransactionsBatch(transaction, fromAccountAddress);
+
     return this.setTransactionsBatchAndSend(etherspotTransactions);
   }
 
@@ -196,12 +224,45 @@ class EtherspotService {
     return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
   }
 
+  estimateWithdrawFromAccountDepositTransaction(
+    useGasTokenAddress?: string,
+  ): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    return this.sdk.estimateGatewayKnownOp({
+      op: GatewayKnownOps.WithdrawP2PDeposit,
+      refundToken: useGasTokenAddress,
+    })
+      .catch((error) => {
+        reportErrorLog('estimateWithdrawFromAccountDepositTransaction -> estimateGatewayKnownOp failed', {
+          error,
+        });
+        return null;
+      });
+  }
+
+  buildTokenWithdrawFromAccountDepositTransaction(
+    asset: Asset,
+    withdrawAmount: string,
+  ): Promise<?{ to: string, data: string }> {
+    return this.sdk.encodeWithdrawP2PPaymentDeposit({
+      token: asset.address,
+      amount: parseTokenAmount(withdrawAmount.toString(), asset.decimals).toString(),
+    })
+      .catch((error) => {
+        reportErrorLog('buildTokenWithdrawFromAccountDepositTransaction -> encodeWithdrawP2PPaymentDeposit failed', {
+          error,
+          asset,
+          withdrawAmount,
+        });
+        return null;
+      });
+  }
+
   async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
     // returns all deposits: ETH and provided tokens
-    const deposits = await this.sdk.syncP2PPaymentDeposits({ tokens: [tokenAddress] })
+    const deposits = await this.sdk.getP2PPaymentDeposits({ tokens: [tokenAddress] })
       .then(({ items }) => items)
       .catch((error) => {
-        reportErrorLog('getAccountTokenDeposit -> syncP2PPaymentDeposits failed', { error, tokenAddress });
+        reportErrorLog('getAccountTokenDeposit -> getP2PPaymentDeposits failed', { error, tokenAddress });
         throw error;
       });
 
@@ -209,8 +270,8 @@ class EtherspotService {
     return deposits.find(({ token }) => addressesEqual(token, tokenAddress));
   }
 
-  async getAccountTokenDepositBalance(tokenAddress: string): BigNumber {
-    const tokenDeposit = await this.getAccountTokenDeposit(tokenAddress);
+  async getAccountTokenDepositBalance(tokenAddress: string): Promise<BigNumber> {
+    const tokenDeposit: ?P2PPaymentDeposit = await this.getAccountTokenDeposit(tokenAddress);
     if (!tokenDeposit) {
       reportErrorLog('getAccountTokenDepositBalance failed: cannot find token deposit', { tokenAddress });
       return new BigNumber(0);
@@ -235,11 +296,27 @@ class EtherspotService {
     return paymentChannels;
   }
 
-  async getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
+  getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
       return null;
     });
+  }
+
+  getSubmittedBatchByHash(hash: string): Promise<?GatewaySubmittedBatch> {
+    return this.sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
+      reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
+      return null;
+    });
+  }
+
+  async getTransactionExplorerLink(hash: string): Promise<?string> {
+    const submittedBatch = await this.getSubmittedBatchByHash(hash);
+
+    const transactionHash = submittedBatch?.transaction?.hash;
+    if (!transactionHash) return null;
+
+    return `${getEnv().TX_DETAILS_URL}${transactionHash}`;
   }
 
   async logout() {

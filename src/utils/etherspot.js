@@ -18,11 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import BigNumber from 'bignumber.js';
-import type { GatewayEstimatedBatch } from 'etherspot';
+import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
+import { type GatewayEstimatedBatch, GatewayBatchStates } from 'etherspot';
 
 // constants
 import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // utils
 import { parseTokenAmount } from 'utils/common';
@@ -36,7 +38,6 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 // types
 import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 import type { EtherspotTransaction } from 'models/Etherspot';
-
 
 export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: boolean = false): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
@@ -58,46 +59,69 @@ export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: b
   };
 };
 
-export const mapToEtherspotTransactionsBatch = async (
-  transaction: TransactionPayload,
-  fromAddress: string,
-): Promise<EtherspotTransaction[]> => {
-  // $FlowFixMe
-  const {
-    symbol,
-    amount,
-    contractAddress,
-    decimals = 18,
-    sequentialTransactions = [],
-  } = transaction;
-  // $FlowFixMe
-  let { to, data } = transaction;
+export const buildToEtherspotTransaction = async (
+  to: string,
+  from: string,
+  data: ?string,
+  amount: string,
+  symbol: ?string,
+  decimals: number = 18,
+  tokenType: ?string,
+  contractAddress: ?string,
+  tokenId: ?string,
+) => {
   let value;
 
-  if (transaction.tokenType !== COLLECTIBLES) {
-    value = parseTokenAmount(amount.toString(), decimals);
-    if (symbol !== ETH && !data) {
+  if (tokenType !== COLLECTIBLES) {
+    value = EthersBigNumber.from(parseTokenAmount(amount, decimals).toString());
+    if (symbol !== ETH && !data && contractAddress) {
       data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
       to = contractAddress;
-      value = 0; // value is in encoded transfer method as data
+      value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
-  } else {
-    const { tokenId } = transaction;
+  } else if (contractAddress) {
     data = await buildERC721TransactionData({
-      from: fromAddress,
+      from,
       to,
       tokenId,
       contractAddress,
     });
     to = contractAddress;
-    value = 0;
+    value = EthersBigNumber.from(0);
   }
 
-  let etherspotTransactions = [{
+  return { to, data, value };
+};
+
+export const mapToEtherspotTransactionsBatch = async (
+  transaction: TransactionPayload,
+  fromAddress: string,
+): Promise<EtherspotTransaction[]> => {
+  const {
     to,
     data,
-    value,
-  }];
+    symbol,
+    amount,
+    contractAddress,
+    tokenType,
+    tokenId,
+    decimals = 18,
+    sequentialTransactions = [],
+  } = transaction;
+
+  const etherspotTransaction = await buildToEtherspotTransaction(
+    to,
+    fromAddress,
+    data,
+    amount.toString(),
+    symbol,
+    decimals,
+    tokenType,
+    contractAddress,
+    tokenId,
+  );
+
+  let etherspotTransactions = [etherspotTransaction];
 
   // important: maintain array sequence, this gets mapped into arrays as well by reusing same method
   const mappedSequential = await Promise.all(sequentialTransactions.map((sequential) =>
@@ -113,4 +137,15 @@ export const mapToEtherspotTransactionsBatch = async (
   });
 
   return etherspotTransactions;
+};
+
+export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?string => {
+  switch (state) {
+    case GatewayBatchStates.Sent: return TX_CONFIRMED_STATUS;
+    case GatewayBatchStates.Sending: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Resending: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Queued: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Reverted: return TX_FAILED_STATUS;
+    default: return null;
+  }
 };

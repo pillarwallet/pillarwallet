@@ -52,11 +52,15 @@ import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
 import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
 import { getThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -284,6 +288,8 @@ class AssetsScreen extends React.Component<Props, State> {
   render() {
     const { activeAccount } = this.props;
 
+    const accountsSelectionEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.ACCOUNTS_SELECTION_ENABLED);
+
     const screenInfo = this.getScreenInfo();
     const {
       label: headerButtonLabel,
@@ -295,7 +301,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: !!activeAccount && [{
+          rightItems: accountsSelectionEnabled && !!activeAccount && [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,

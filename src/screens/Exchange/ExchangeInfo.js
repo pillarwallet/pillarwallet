@@ -189,7 +189,7 @@ class ExchangeInfo extends React.Component<Props, State> {
               <SectionTitle>{t('exchangeContent.label.enabledAssets')}</SectionTitle>
               <FlatList
                 data={assetsArray}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.symbol}
                 renderItem={this.renderToken}
                 initialNumToRender={8}
                 onEndReachedThreshold={0.5}

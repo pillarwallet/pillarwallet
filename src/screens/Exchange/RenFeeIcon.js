@@ -32,7 +32,7 @@ const Icon = styled.TouchableOpacity`
   width: 13px;
   border-color: ${themedColors.inactiveTabBarIcon};
   border-width: 1px;
-  border-radius: 7;
+  border-radius: 7px;
   justify-content: center;
   align-items: center;
   margin-left: 5px;

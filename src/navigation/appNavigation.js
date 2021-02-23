@@ -19,13 +19,13 @@
 */
 
 import * as React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator, CardStyleInterpolators } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Image, AppState } from 'react-native';
-import { withTheme } from 'styled-components';
+import { View, Image, AppState } from 'react-native';
+import { withTheme } from 'styled-components/native';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 
@@ -61,8 +61,8 @@ import FundTankScreen from 'screens/PaymentNetwork/FundTank';
 import FundTankConfirmScreen from 'screens/PaymentNetwork/FundTankConfirm';
 import SettleBalanceScreen from 'screens/PaymentNetwork/SettleBalance';
 import SettleBalanceConfirmScreen from 'screens/PaymentNetwork/SettleBalanceConfirm';
-import TankWithdrawalScreen from 'screens/PaymentNetwork/TankWithdrawal';
-import TankWithdrawalConfirmScreen from 'screens/PaymentNetwork/TankWithdrawalConfirm';
+import TankWithdrawScreen from 'screens/PaymentNetwork/TankWithdraw';
+import TankWithdrawConfirmScreen from 'screens/PaymentNetwork/TankWithdrawConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
@@ -125,6 +125,18 @@ import RariTransferScreen from 'screens/Rari/RariTransfer';
 import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
 import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
+import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
+import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
+import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
+import LiquidityPoolsStakeTokensScreen from 'screens/LiquidityPools/StakeTokens';
+import LiquidityPoolsStakeTokensReviewScreen from 'screens/LiquidityPools/StakeTokensReview';
+import LiquidityPoolsUnstakeTokensScreen from 'screens/LiquidityPools/UnstakeTokens';
+import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/UnstakeTokensReview';
+import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLiquidity';
+import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
+import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
+import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
+import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import EtherspotUpgradeScreen from 'screens/EtherspotUpgrade';
 
 // components
@@ -148,6 +160,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
+import { checkEtherspotSessionAction } from 'actions/etherspotActions';
 
 // constants
 import {
@@ -203,7 +216,7 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
-  TANK_WITHDRAWAL_CONFIRM,
+  TANK_WITHDRAW_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -277,6 +290,19 @@ import {
   RARI_CLAIM_RGT,
   RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
+  LIQUIDITY_POOLS_FLOW,
+  LIQUIDITY_POOLS,
+  LIQUIDITY_POOL_DASHBOARD,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_STAKE,
+  LIQUIDITY_POOLS_STAKE_REVIEW,
+  LIQUIDITY_POOLS_UNSTAKE,
+  LIQUIDITY_POOLS_UNSTAKE_REVIEW,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
+  LIQUIDITY_POOLS_INFO,
   ARCHANOVA_TO_ETHERSPOT_UPGRADE,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
@@ -298,6 +324,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 
 
 const SLEEP_TIMEOUT = 20000;
+const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
@@ -308,27 +335,21 @@ const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
 const StackNavigatorModalConfig = {
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
 };
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
-    header: null,
-    gesturesEnabled: true,
-  },
-  cardStyle: {
-    backgroundColor: {
-      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
-      light: getThemeColors(getThemeByType()).basic070,
+    headerShown: false,
+    gestureEnabled: true,
+    cardStyle: {
+      backgroundColor: {
+        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+        light: getThemeColors(getThemeByType()).basic070,
+      },
     },
   },
 };
@@ -540,9 +561,11 @@ const tabNavigation = createBottomTabNavigator(
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
+        height: 54,
+      },
+      tabStyle: {
         paddingTop: 5,
         paddingBottom: 5,
-        height: 54,
       },
     },
     tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
@@ -629,8 +652,8 @@ const tankFundFlow = createStackNavigator({
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankWithdrawalFlow = createStackNavigator({
-  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
-  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+  [TANK_WITHDRAWAL]: TankWithdrawScreen,
+  [TANK_WITHDRAW_CONFIRM]: TankWithdrawConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
@@ -745,6 +768,25 @@ const rariFlow = createStackNavigator({
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const liquidityPoolsFlow = createStackNavigator({
+  [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
+  [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
+  [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
+  [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
+  [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -786,6 +828,7 @@ const AppFlowNavigation = createStackNavigator(
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
+    [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [ARCHANOVA_TO_ETHERSPOT_UPGRADE]: EtherspotUpgradeScreen,
   },
   modalTransition,
@@ -823,13 +866,15 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
+  checkEtherspotSession: () => void,
 };
 
 type State = {
-  lastAppState: string,
+  lastAppState: ?string,
 };
 
 let lockTimer;
+let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -846,6 +891,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
+      checkEtherspotSession,
     } = this.props;
 
     /**
@@ -860,6 +906,11 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
+
+    smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
+      checkEtherspotSession,
+      SMART_WALLET_SESSION_CHECK_INTERVAL,
+    );
 
     if (!user?.walletId) {
       this.checkIfOnboardingFinished();
@@ -896,6 +947,7 @@ class AppFlow extends React.Component<Props, State> {
 
     notifications
       .slice(prevNotifications.length)
+      // $FlowFixMe: flow update to 0.122
       .forEach(notification => Toast.show({ ...notification }));
   }
 
@@ -912,6 +964,7 @@ class AppFlow extends React.Component<Props, State> {
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
+    BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 
   checkIfOnboardingFinished = () => {
@@ -949,6 +1002,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
+      checkEtherspotSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -965,6 +1019,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
+      checkEtherspotSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -995,20 +1050,56 @@ class AppFlow extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <AppFlowNavigation
-        screenProps={{
-          profileImage: user?.profileImage,
-          showHomeUpdateIndicator,
-          intercomNotificationsCount,
-          isWalletBackedUp,
-          theme,
-          language: i18n.language,
-        }}
+      <MemoizedAppFlowNavigation
+        profileImage={user?.profileImage}
+        showHomeUpdateIndicator={showHomeUpdateIndicator}
+        intercomNotificationsCount={intercomNotificationsCount}
+        isWalletBackedUp={isWalletBackedUp}
+        theme={theme}
+        language={i18n.language}
         navigation={navigation}
       />
     );
   }
 }
+
+// Workaround for React Navigation 4 obscure crash occuring if `screenProps` object is re-created on each render.
+// Functional component created just to use useMemo hook, can be inlined when AppFlow is migrated to FC.
+const MemoizedAppFlowNavigation = ({
+  profileImage,
+  showHomeUpdateIndicator,
+  intercomNotificationsCount,
+  isWalletBackedUp,
+  theme,
+  language,
+  navigation,
+}) => {
+  const screenProps = React.useMemo(
+    () => ({
+      profileImage,
+      showHomeUpdateIndicator,
+      intercomNotificationsCount,
+      isWalletBackedUp,
+      theme,
+      language,
+    }),
+    [
+      profileImage,
+      showHomeUpdateIndicator,
+      intercomNotificationsCount,
+      isWalletBackedUp,
+      theme,
+      language,
+    ],
+  );
+
+  return (
+    <AppFlowNavigation
+      screenProps={screenProps}
+      navigation={navigation}
+    />
+  );
+};
 
 const mapStateToProps = ({
   user: { data: user },
@@ -1057,6 +1148,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
+  checkEtherspotSession: () => dispatch(checkEtherspotSessionAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

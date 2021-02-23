@@ -28,7 +28,7 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-import { estimateAccountDepositTokenTransactionAction } from 'actions/etherspotActions';
+import { estimateAccountTokenDepositTransactionAction } from 'actions/etherspotActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // components
@@ -66,11 +66,12 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
-  estimateAccountDepositTokenTransaction: (amount: number) => void,
+  estimateAccountTokenDepositTransaction: (amount: number) => void,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   accountAssets: Assets,
   fetchAssetsBalances: () => void,
+  isOnline: boolean,
 };
 
 const FeeInfo = styled.View`
@@ -95,11 +96,12 @@ const FundTank = ({
   balances,
   feeInfo,
   isEstimating,
-  estimateAccountDepositTokenTransaction,
+  estimateAccountTokenDepositTransaction,
   estimateErrorMessage,
   resetEstimateTransaction,
   accountAssets,
   fetchAssetsBalances,
+  isOnline,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
@@ -113,7 +115,7 @@ const FundTank = ({
 
   useEffect(() => {
     if (!fundAmount || isEmpty(PPNAsset) || !inputValid) return;
-    estimateAccountDepositTokenTransaction(fundAmount);
+    estimateAccountTokenDepositTransaction(fundAmount);
   }, [fundAmount, PPNAsset, inputValid]);
 
   let notEnoughForFee;
@@ -136,7 +138,8 @@ const FundTank = ({
     || !fundAmount
     || !!errorMessage
     || !inputValid
-    || !feeInfo;
+    || !feeInfo
+    || !isOnline;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(FUND_CONFIRM, { amount: fundAmount, asset: PPNAsset });
 
@@ -190,11 +193,13 @@ const FundTank = ({
 };
 
 const mapStateToProps = ({
+  session: { data: { isOnline } },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   isEstimating,
   feeInfo,
   estimateErrorMessage,
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -208,8 +213,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateAccountDepositTokenTransaction: debounce(
-    (amount: number) => dispatch(estimateAccountDepositTokenTransactionAction(amount)),
+  estimateAccountTokenDepositTransaction: debounce(
+    (amount: number) => dispatch(estimateAccountTokenDepositTransactionAction(amount)),
     200,
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),

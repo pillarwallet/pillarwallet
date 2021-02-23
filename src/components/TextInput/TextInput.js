@@ -27,7 +27,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
@@ -35,6 +34,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
@@ -147,7 +147,7 @@ const RightSideWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const Image = styled(CachedImage)`
+const StyledImage = styled(Image)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
@@ -163,7 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9;
+  margin-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -217,7 +217,7 @@ const InputLabel = styled(MediumText)`
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
-  searchInput: RNInput;
+  searchInput: React.ElementRef<typeof RNInput>;
   rnInput: Object;
 
   static defaultProps = {
@@ -387,7 +387,7 @@ class TextInput extends React.Component<Props, State> {
     const optionImageSource = resolveAssetSource(selectedOptionIcon);
     return (
       <ValueWrapper>
-        <Image
+        <StyledImage
           key={selectedValue}
           source={optionImageSource}
           fallbackSource={selectedOptionFallback || genericToken}
@@ -421,18 +421,21 @@ class TextInput extends React.Component<Props, State> {
     const justifyContent = rightLabel && !(label || customLabel) ? 'flex-end' : 'space-between';
 
     return (
-      <View style={{
-        flexDirection: 'row',
-        width: '100%',
-        justifyContent,
-        ...inputHeaderStyle,
-      }}
+      <View
+        style={[
+          {
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent,
+          },
+          inputHeaderStyle,
+        ]}
       >
         {customLabel}
         {!!label && <InputLabel>{label}</InputLabel>}
-        {!!rightLabel &&
+        {!!rightLabel && (
           <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
-        }
+        )}
         {customRightLabel}
       </View>
     );
@@ -528,7 +531,7 @@ class TextInput extends React.Component<Props, State> {
     };
 
     return (
-      <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
+      <View style={[{ paddingBottom: 10, flexDirection: 'column' }, inputWrapperStyle]}>
         {this.renderInputHeader()}
         <InputBorder error={hasError} style={itemHolderStyle}>
           <ItemHolder error={hasError} style={itemHolderStyle} >
@@ -560,6 +563,7 @@ class TextInput extends React.Component<Props, State> {
                 </LeftSideWrapper>
               </TouchableWithoutFeedback>}
               {!fullWidthSelector && (
+                /* $FlowFixMe: incorrect RN flow types */
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
                     <Tooltip
@@ -569,7 +573,7 @@ class TextInput extends React.Component<Props, State> {
                     >
                       <InputField
                         {...inputProps}
-                        innerRef={(input) => {
+                        ref={(input) => {
                           if (getInputRef) getInputRef(input);
                           this.multilineInputField = input;
                         }}
@@ -613,7 +617,7 @@ class TextInput extends React.Component<Props, State> {
             {Platform.OS === 'ios' && <IosFocusInput
               caretHidden
               autoCorrect={false}
-              innerRef={(ref) => { this.rnInput = ref; }}
+              ref={(ref) => { this.rnInput = ref; }}
               onFocus={this.handleRNFocus}
             />}
           </ItemHolder>

@@ -43,8 +43,8 @@ type Props = {
 };
 
 const CheckboxBox = styled.View`
-  width: 24;
-  height: 24;
+  width: 24px;
+  height: 24px;
   margin-right: ${spacing.mediumLarge}px;
   border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
   flex: 0 0 24px;

@@ -139,7 +139,7 @@ class SDKWrapper {
       .catch(() => '');
   }
 
-  listAccounts(walletId: string) {
+  listAccounts(walletId: string): Promise<?Object[]> {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
       .then(({ data }) => data.wallets || [])

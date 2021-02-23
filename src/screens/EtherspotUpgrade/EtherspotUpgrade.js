@@ -49,6 +49,7 @@ import { getThemeByType } from 'utils/themes';
 // types
 import type { Dispatch } from 'reducers/rootReducer';
 
+// assets
 const etherspotUpgradeImage = require('assets/images/etherspotUpgrade.png');
 
 
@@ -99,30 +100,32 @@ const CardEmojiWrapper = styled.View`
 
 const CardEmoji = styled(Emoji)`
   font-size: 32px;
-  color: #000000;
 `;
-
-const benefitList = [
-  { title: 'Benefit number one', emojiName: 'money_with_wings' },
-  { title: 'Benefit number two is long enought to fit in two lines', emojiName: 'v' },
-  { title: 'This third benefit is rather long and all of a sudden requires three lines for copy', emojiName: 'innocent' },
-];
-
-// NOTE: this screen is always pure dark (#000) background according to Dmitry
 
 const EtherspotUpgrade = ({ upgradeToEtherspot }: Props) => {
   useEffect(() => {
     StatusBar.setBarStyle(LIGHT_CONTENT);
-  }, [])
+  }, []);
+
+  const benefitList = [
+    { title: t('benefitNumberOne'), emoji: 'money_with_wings' },
+    { title: t('benefitNumberTwoLonger'), emoji: 'v' },
+    { title: t('benefitNumberThreeLong'), emoji: 'innocent' },
+  ];
+
+  // NOTE: this screen is always pure dark (#000) background according to Dmitry
+  const containerBackgroundColor = '#000';
 
   return (
     <ThemeProvider theme={getThemeByType(DARK_THEME)}>
-      <Container color="#000">
+      <Container color={containerBackgroundColor}>
         <ScrollWrapper regularPadding>
           <Spacing h={40} />
           <Title center>{t('etherspotContent.upgradeContent.title.enhanceCryptoExperience')}</Title>
           <Spacing h={spacing.rhythm} />
-          <Paragraph small light center>{t('etherspotContent.upgradeContent.paragraph.yourAccountIsBeingUpgraded')}</Paragraph>
+          <Paragraph small light center>
+            {t('etherspotContent.upgradeContent.paragraph.yourAccountIsBeingUpgraded')}
+          </Paragraph>
           <Spacing h={spacing.rhythm} />
           <Center>
             <Image
@@ -134,11 +137,11 @@ const EtherspotUpgrade = ({ upgradeToEtherspot }: Props) => {
           <SubTitle center>{t('etherspotContent.upgradeContent.title.whatIsUpgrade')}</SubTitle>
           <Paragraph small light center>{t('etherspotContent.upgradeContent.paragraph.whatIsUpgrade')}</Paragraph>
           <Spacing h={48} />
-          {benefitList.map(({ title, emojiName }) => (
-            <CardContent key={emojiName}>
+          {benefitList.map(({ title, emoji }) => (
+            <CardContent key={emoji}>
               <CardTitle style={{ flex: 1 }}>{title}</CardTitle>
               <CardEmojiWrapper>
-                <CardEmoji name={emojiName} />
+                <CardEmoji name={emoji} />
               </CardEmojiWrapper>
             </CardContent>
           ))}
@@ -155,7 +158,6 @@ const EtherspotUpgrade = ({ upgradeToEtherspot }: Props) => {
     </ThemeProvider>
   );
 };
-
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   upgradeToEtherspot: () => dispatch(upgradeToEtherspotAction()),

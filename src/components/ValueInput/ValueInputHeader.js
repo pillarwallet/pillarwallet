@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
 import type { Option } from 'models/Selector';
@@ -27,6 +26,7 @@ import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -55,7 +55,7 @@ const SideWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const Image = styled(CachedImage)`
+const StyledImage = styled(Image)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
@@ -70,7 +70,6 @@ const SelectorChevron = styled(Icon)`
 const ChevronWrapper = styled.View`
   width: 25px;
   align-items: center;
-  margin-right: 4px;
 `;
 
 const AssetName = styled(MediumText)`
@@ -97,16 +96,19 @@ const ValueInputHeader = (props: Props) => {
   return (
     <Wrapper>
       <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
-        <Image
+        <StyledImage
           key={id}
           source={optionImageSource}
-          fallbackSource={!!optionImageSource.uri && genericToken}
+          fallbackSource={optionImageSource.uri !== undefined && genericToken}
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
-        <ChevronWrapper>
-          <SelectorChevron name="selector" />
-        </ChevronWrapper>
+        {!disableAssetSelection && (
+          <ChevronWrapper>
+            <SelectorChevron name="selector" />
+          </ChevronWrapper>
+        )}
+        <Spacing w={4} />
       </SideWrapper>
       <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />

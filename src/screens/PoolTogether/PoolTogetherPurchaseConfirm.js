@@ -23,9 +23,9 @@ import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -40,6 +40,7 @@ import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import Toast from 'components/Toast';
 
@@ -52,12 +53,18 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import { formatAmount } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
 
+// services
+import { getPurchaseTicketTransactions } from 'services/poolTogether';
+
+// selectors
+import { activeAccountAddressSelector } from 'selectors';
+
 
 const ContentWrapper = styled.View`
   padding: 16px 20px;
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   width: 64px;
   height: 64px;
 `;
@@ -75,6 +82,7 @@ type Props = {
   fetchPoolStats: (symbol: string) => void,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
+  accountAddress: string,
 };
 
 type State = {
@@ -82,7 +90,6 @@ type State = {
   tokenValue: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  transactionPayload: Object,
 };
 
 class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
@@ -95,7 +102,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
-      transactionPayload,
     } = navigation.state.params || {};
     super(props);
     this.state = {
@@ -103,7 +109,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
-      transactionPayload,
     };
   }
 
@@ -112,9 +117,9 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     logScreenView('View PoolTogether Purchase Confirm', 'PoolTogetherPurchaseConfirm');
   }
 
-  purchasePoolAsset = () => {
-    const { navigation, feeInfo } = this.props;
-    const { transactionPayload } = this.state;
+  purchasePoolAsset = async () => {
+    const { navigation, feeInfo, accountAddress } = this.props;
+    const { poolToken, tokenValue } = this.state;
 
     if (!feeInfo) {
       Toast.show({
@@ -126,6 +131,19 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     }
 
     const { fee: txFeeInWei, gasToken } = feeInfo;
+
+    const purchaseTicketTransactions = await getPurchaseTicketTransactions(accountAddress, tokenValue, poolToken);
+
+    let transactionPayload = purchaseTicketTransactions[0];
+
+    if (purchaseTicketTransactions.length > 1) {
+      transactionPayload = {
+        ...transactionPayload,
+        sequentialSmartWalletTransactions: purchaseTicketTransactions.slice(1),
+      };
+    }
+
+    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo?.gasToken;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: { ...transactionPayload, txFeeInWei, gasToken },
@@ -224,9 +242,18 @@ const mapStateToProps = ({
   feeInfo,
 });
 
+const structuredSelector = createStructuredSelector({
+  accountAddress: activeAccountAddressSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PoolTogetherPurchaseConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchaseConfirm);

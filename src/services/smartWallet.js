@@ -161,6 +161,7 @@ class SmartWallet {
         this.handleError(err);
       }
     }
+
     return this.sdk;
   }
 
@@ -173,8 +174,8 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, onEvent?: Function) {
-    if (this.sdkInitialized) return;
+  async init(privateKey: string, onEvent?: Function, forceInit: boolean = false) {
+    if (this.sdkInitialized && !forceInit) return;
 
     await this.getSdk()
       .initialize({ device: { privateKey } })
@@ -244,8 +245,13 @@ class SmartWallet {
     walletId: string,
     privateKey: string,
     fcmToken: ?string,
-  ) {
+  ): Promise<any> {
     const backendAccounts = await api.listAccounts(walletId);
+    if (!backendAccounts) {
+      reportErrorLog('Unable to sync smart wallets', { walletId });
+      return Promise.resolve();
+    }
+
     const registerOnBackendPromises = smartAccounts.map(async account => {
       const backendAccount = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
       if (!backendAccount) {
@@ -258,6 +264,7 @@ class SmartWallet {
       }
       return Promise.resolve();
     });
+
     return Promise
       .all(registerOnBackendPromises)
       .catch(e => reportErrorLog('Unable to sync smart wallets', { e }));
@@ -298,7 +305,7 @@ class SmartWallet {
       });
   }
 
-  getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+  getAccountStakedAmount(tokenAddress: ?string): Promise<BigNumber> | BigNumber {
     if (!tokenAddress) return new BigNumber(0);
     return this.getSdk().getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
@@ -378,7 +385,13 @@ class SmartWallet {
     return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
   }
 
-  createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
+  createAccountPayment(
+    recipient: string,
+    token: ?string,
+    value: EthersBigNumber,
+    paymentType?: string,
+    reference?: string,
+  ) {
     token = toChecksumAddress(token);
     return this.getSdk().createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
   }
@@ -387,11 +400,11 @@ class SmartWallet {
     return this.getSdk().getConnectedAccountTransaction(txHash);
   }
 
-  estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
+  estimateTopUpAccountVirtualBalance(value: EthersBigNumber, tokenAddress: ?string) {
     return this.getSdk().estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
-  estimateWithdrawFromVirtualAccount(value: BigNumber, tokenAddress: ?string) {
+  estimateWithdrawFromVirtualAccount(value: EthersBigNumber, tokenAddress: ?string) {
     return this.getSdk()
       .estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
@@ -510,14 +523,16 @@ class SmartWallet {
       data,
     ];
 
-    // supporting 2, can be added up to 5
+    // can be added up to 5
     if (sequentialTransactions.length) {
-      estimateMethodParams = [
-        ...estimateMethodParams,
-        sequentialTransactions[0].recipient,
-        sequentialTransactions[0].value,
-        sequentialTransactions[0].data,
-      ];
+      sequentialTransactions.forEach(tx => {
+        estimateMethodParams = [
+          ...estimateMethodParams,
+          tx.recipient,
+          ethToWei(tx.value || 0),
+          tx.data,
+        ];
+      });
     }
 
     estimateMethodParams = [...estimateMethodParams, transactionSpeed];
@@ -570,6 +585,7 @@ class SmartWallet {
         throw new Error(errorMessage);
       });
 
+    // $FlowFixMe: bignumber.js typing
     return formatEstimated(estimated);
   }
 
@@ -626,6 +642,10 @@ class SmartWallet {
 
   getConnectedAccountTransactionExplorerLink(hash: string): string {
     return this.getSdk().getConnectedAccountTransactionExplorerLink(hash); // not a promise
+  }
+
+  isValidSession(): Promise<string> {
+    return this.getSdk().session.verifyToken().catch(() => false);
   }
 
   handleError(error: any) {

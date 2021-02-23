@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { getEnv } from 'configs/envConfig';
 import type { Theme } from 'models/Theme';
 import { getThemeType } from './themes';
-
 
 const patternPlaceholderLight = require('assets/images/no_logo.png');
 const patternPlaceholderDark = require('assets/images/no_logo_dark.png');
@@ -50,6 +50,8 @@ const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
 const infoIconLight = require('assets/icons/icon_info_light.png');
 const infoIconDark = require('assets/icons/icon_info_dark.png');
+const copyIconLight = require('assets/icons/icon_copy.png');
+const copyIconDark = require('assets/icons/icon_copy_dark.png');
 
 
 // exchange providers
@@ -148,6 +150,10 @@ export const images = (theme: Theme) => {
       lightTheme: infoIconLight,
       darkTheme: infoIconDark,
     }),
+    copy: getImageByTheme(currentTheme, {
+      lightTheme: copyIconLight,
+      darkTheme: copyIconDark,
+    }),
   };
 };
 
@@ -172,6 +178,11 @@ export const staticImages = {
   synthetixDarkMonochrome,
   exchangeDefaultLogoDark,
   exchangeDefaultLogoLight,
+};
+
+export const getImageUrl = (url: ?string, size: number) => {
+  if (!url) return undefined;
+  return `${getEnv().SDK_PROVIDER}/${url}?size=${size}`;
 };
 
 export const isSvgImage = (uri: ?string) => {

@@ -34,10 +34,7 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import {
-  getAccountName,
-  isEthersportSmartWalletType,
-} from 'utils/accounts';
+import { getAccountName, isEthersportSmartWalletType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -69,6 +66,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { Theme } from 'models/Theme';
+import type { RenderItemProps } from 'utils/types/react-native';
 
 
 const ITEM_TYPE = {
@@ -86,8 +84,6 @@ type ListItem = {|
   isActive?: boolean,
   iconSource?: string,
 |};
-
-type ListElement = {| item: ListItem |};
 
 type Props = {|
   navigation: NavigationScreenProp<*>,
@@ -138,7 +134,7 @@ const AccountsScreen = ({
     navigation.navigate(ASSETS);
   };
 
-  const renderListItem = ({ item }: ListElement) => {
+  const renderListItem = ({ item }: RenderItemProps<ListItem>) => {
     const {
       title,
       balance,
@@ -175,7 +171,7 @@ const AccountsScreen = ({
   };
 
 
-  const walletsToShow = accounts
+  const walletsToShow: ListItem[] = accounts
     .filter(isEthersportSmartWalletType) // filter others due migration to etherspot
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;
@@ -200,6 +196,7 @@ const AccountsScreen = ({
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
     walletsToShow.push({
+      id: 'KEY_BASED',
       type: ITEM_TYPE.BUTTON,
       title: t('button.migrateAssetsToSmartWallet'),
       mainAction: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE),
@@ -208,7 +205,9 @@ const AccountsScreen = ({
 
   const networksToShow: ListItem[] = [];
 
-  if (ppnNetwork) {
+  const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+  if (ppnEnabled && ppnNetwork) {
     const { isActive } = ppnNetwork;
     const availableStakeFormattedAmount = formatMoney(availableStake);
     networksToShow.push({

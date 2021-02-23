@@ -46,6 +46,9 @@ import {
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
+import { fetch1inchSupportedTokens } from 'services/1inch';
+
+const { FETCHING, SUCCESS, ERROR } = UNISWAP_TOKENS_QUERY_STATUS;
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -56,6 +59,9 @@ const pending = [
   { amount: 5, dateCreated: 6 },
 ];
 const ACC_ID = 'id';
+
+// too long for JS number to handle, enforces string/BigNumber
+const OFFER_AMOUNT = '1000000.000000000000000001';
 
 const storeState = {
   exchange: {
@@ -70,7 +76,7 @@ const storeState = {
   accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.LEGACY_SMART_WALLET }] },
 };
 
-const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => ({
+const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: string) => ({
   type: SET_EXCHANGE_SEARCH_REQUEST,
   payload: { fromAssetCode, toAssetCode, fromAmount },
 });
@@ -87,25 +93,26 @@ describe('Exchange actions test', () => {
       store = mockStore(storeState);
     });
     it('Creates Synthetix offers when needed', async () => {
-      await store.dispatch(searchOffersAction('sETH', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('sETH', 'sUSD', OFFER_AMOUNT));
       const actions = store.getActions();
-      const expectedActions = [getSearchRequestAction('sETH', 'sUSD', 10), getAddOfferAction(PROVIDER_SYNTHETIX)];
+      const expectedActions =
+        [getSearchRequestAction('sETH', 'sUSD', OFFER_AMOUNT), getAddOfferAction(PROVIDER_SYNTHETIX)];
       expect(actions).toEqual(expectedActions);
     });
     it('Creates Uniswap and 1inch offers when needed', async () => {
-      await store.dispatch(searchOffersAction('ETH', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('ETH', 'sUSD', OFFER_AMOUNT));
       const actions = store.getActions();
       const expectedActions = [
-        getSearchRequestAction('ETH', 'sUSD', 10),
+        getSearchRequestAction('ETH', 'sUSD', OFFER_AMOUNT),
         getAddOfferAction(PROVIDER_1INCH),
         getAddOfferAction(PROVIDER_UNISWAP),
       ];
       expect(actions).toEqual(expectedActions);
     });
     it('Does not create offers for invalid data', async () => {
-      await store.dispatch(searchOffersAction('invalidToken', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('invalidToken', 'sUSD', OFFER_AMOUNT));
       const actions = store.getActions();
-      const expectedActions = [getSearchRequestAction('invalidToken', 'sUSD', 10)];
+      const expectedActions = [getSearchRequestAction('invalidToken', 'sUSD', OFFER_AMOUNT)];
       expect(actions).toEqual(expectedActions);
     });
   });
@@ -113,7 +120,7 @@ describe('Exchange actions test', () => {
     beforeEach(() => {
       store = mockStore(storeState);
     });
-    const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId'];
+    const commonArgs = [mockSupportedAssets[1], OFFER_AMOUNT, PROVIDER_UNISWAP, 'trackId', '123'];
     it('Creates an exchange transaction object for valid data', async () => {
       let txData;
       await store.dispatch(takeOfferAction(mockSupportedAssets[0], ...commonArgs, (val) => { txData = val; }));
@@ -147,10 +154,10 @@ describe('Exchange actions test', () => {
     it('updates query status in case of a successful response', async () => {
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
+        payload: { status: FETCHING },
       }, {
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS },
+        payload: { status: SUCCESS },
       }, {
         type: SET_EXCHANGE_SUPPORTED_ASSETS,
         payload: [{ symbol: 'ETH' }],
@@ -160,18 +167,69 @@ describe('Exchange actions test', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
 
+    it('updates exchange supported assets even if Uniswap call fails', async () => {
+      (fetch1inchSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(['PLR']));
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
+
+      const expectedActions = [{
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: FETCHING },
+      }, {
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: ERROR },
+      },
+      {
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: [{ symbol: 'PLR' }],
+      }];
+      await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('updates exchange supported assets even if 1inch call fails', async () => {
+      (fetch1inchSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
+
+      const expectedActions = [{
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: FETCHING },
+      }, {
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: SUCCESS },
+      },
+      {
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: [{ symbol: 'ETH' }],
+      }];
+      await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('does not update supported assets if a service call fails but store has valid supported assets', async () => {
+      store = mockStore({
+        exchange: { exchangeSupportedAssets: [{ symbol: 'DAI' }] },
+        assets: { supportedAssets: [{ symbol: 'ETH' }, { symbol: 'PLR' }] },
+      });
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
+      const expectedActions = [{
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: FETCHING },
+      }, {
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: ERROR },
+      }];
+      await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
     it('updates query status in case of an error', async () => {
       (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
 
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
+        payload: { status: FETCHING },
       }, {
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
-      }, {
-        type: SET_EXCHANGE_SUPPORTED_ASSETS,
-        payload: [],
+        payload: { status: ERROR },
       }];
 
       await store.dispatch(getExchangeSupportedAssetsAction());

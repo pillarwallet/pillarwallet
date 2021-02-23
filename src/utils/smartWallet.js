@@ -20,7 +20,7 @@
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
 // constants

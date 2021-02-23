@@ -24,7 +24,6 @@ import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
-import { ImageCacheManager } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // constants
@@ -484,9 +483,6 @@ export const resetAppServicesAction = () => {
 
     // reset data stored in keychain
     await resetKeychainDataObject();
-
-    // clear images cache
-    ImageCacheManager().clearCache().catch(() => null);
 
     // reset app webview's cookies
     clearWebViewCookies();

@@ -19,13 +19,16 @@
 */
 
 // This script runs at the beginning of all unit tests
+import 'react-native-gesture-handler/jestSetup';
+import React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
-import { utils, BigNumber as EthersBigNumber, constants as ethersConstants } from 'ethers';
+import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
+import { Account, AccountStates, AccountStores, AccountTypes } from 'etherspot';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -80,6 +83,23 @@ const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+
+jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
+
+// Source: https://reactnavigation.org/docs/testing/#mocking-native-modules
+jest.mock('react-native-reanimated', () => {
+  // eslint-disable-next-line global-require
+  const Reanimated = require('react-native-reanimated/mock');
+
+  // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
+  jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+
+  // The mock for `call` immediately calls the callback which is incorrect
+  // So we override it with a no-op
+  Reanimated.default.call = () => {};
+
+  return Reanimated;
+});
 
 jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
@@ -143,6 +163,7 @@ jest.setMock('ethers', {
       fromEncryptedJson: () => mockWallet,
     },
   },
+  Wallet: EthersWallet,
   Contract: mocktract,
   utils: {
     parseEther: x => x,
@@ -154,6 +175,9 @@ jest.setMock('ethers', {
     formatEther: utils.formatEther,
     randomBytes: utils.randomBytes,
     entropyToMnemonic: utils.entropyToMnemonic,
+    isHexString: utils.isHexString,
+    Interface: utils.Interface,
+    SigningKey: utils.SigningKey,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -189,6 +213,7 @@ jest.setMock('react-native-intercom', {
 const mockCameraView = mockView;
 
 // ouch
+// $FlowFixMe: react-native types
 mockCameraView.Constants = {
   Type: {
     back: 'back',
@@ -238,12 +263,7 @@ jest.setMock('cryptocompare', {
 
 jest.setMock('react-native-share', {});
 
-jest.setMock('react-native-cached-image', {
-  ImageCacheManager: () => ({
-    clearCache: () => Promise.resolve(),
-  }),
-  CachedImage: () => null,
-});
+jest.setMock('react-native-fast-image', () => null);
 
 export const mockSmartWalletAccountApiData = {
   id: 123,
@@ -252,6 +272,22 @@ export const mockSmartWalletAccountApiData = {
   state: 'Created',
   nextState: null,
   updatedAt: '2019-05-10T07:15:09.000Z',
+};
+
+export const mockEtherspotAccount = {
+  id: '0x9c',
+  isActive: false,
+  walletId: '',
+  type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+};
+
+export const mockEtherspotApiAccount: Account = {
+  address: '0x9c',
+  type: AccountTypes.Key,
+  state: AccountStates.UnDeployed,
+  store: AccountStores.PersonalAccountRegistry,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export const mockSmartWalletAccount = {
@@ -442,5 +478,5 @@ jest.setMock('services/1inch', {
     provider: PROVIDER_1INCH,
   }),
   create1inchOrder: () => Promise.resolve({}),
-  fetch1inchSupportedTokens: () => Promise.resolve([]),
+  fetch1inchSupportedTokens: jest.fn(() => Promise.resolve([])),
 });

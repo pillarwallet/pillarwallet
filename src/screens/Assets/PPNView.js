@@ -69,6 +69,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
+import type { P2PPaymentChannel } from 'etherspot';
 
 // utils
 import { addressesEqual } from 'utils/assets';
@@ -100,6 +101,7 @@ type Props = {
   activeAccountAddress: string,
   balances: BalancesStore,
   fetchAccountPaymentChannels: () => void,
+  paymentChannels: P2PPaymentChannel[],
 };
 
 const AssetButtonsWrapper = styled.View`
@@ -250,7 +252,7 @@ const PPNView = ({
     unsettledCount: 0,
   });
 
-  const incomingBalanceInFiat = PPNTransactionsGrouped.incoming.reduce((totalInFiat, incomingAsset) => {
+  const incomingBalanceInFiat = PPNTransactionsGrouped.incoming.reduce((totalInFiat) => {
     // const tokenSymbol = get(incomingAsset, 'symbol', ETH);
     // const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
     // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

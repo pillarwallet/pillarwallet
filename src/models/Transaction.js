@@ -21,6 +21,8 @@
 import { BigNumber } from 'bignumber.js';
 import type { RariPool } from 'models/RariPool';
 import type { AssetData } from 'models/Asset';
+import type { LiquidityPool } from 'models/LiquidityPools';
+import type { Value } from 'utils/common';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -100,6 +102,12 @@ export type RariExtra = RariDepositExtra
   | RariTransferExtra
   | RariClaimExtra;
 
+export type LiquidityPoolsExtra = {|
+  amount: string,
+  pool: LiquidityPool,
+  tokenAmounts?: string[],
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -107,7 +115,8 @@ export type TransactionExtra = TxSettlementItem[]
   | AaveExtra
   | TxPoolTogetherExtra
   | TxSablierExtra
-  | RariExtra;
+  | RariExtra
+  | LiquidityPoolsExtra;
 
 export type GasToken = {
   address: string,
@@ -116,7 +125,7 @@ export type GasToken = {
 };
 
 export type FeeWithGasToken = {
-  feeInWei: number,
+  feeInWei: BigNumber,
   gasToken: GasToken,
 };
 
@@ -153,7 +162,7 @@ export type TokenTransactionPayload = {
   to: string,
   receiverEnsName?: string,
   gasPrice?: number,
-  txFeeInWei: number,
+  txFeeInWei: Value,
   txSpeed?: string,
   symbol: string,
   contractAddress: string,
@@ -185,7 +194,7 @@ export type CollectibleTransactionPayload = {
   gasLimit?: ?number,
   txSpeed?: string,
   gasToken?: ?GasToken,
-  txFeeInWei: number,
+  txFeeInWei: Value,
 }
 
 export type TransactionPayload = $Shape<TokenTransactionPayload & CollectibleTransactionPayload>;
@@ -216,7 +225,7 @@ export type EstimatedTransactionFee = {
 };
 
 export type TransactionFeeInfo = {
-  fee: BigNumber,
+  fee: ?BigNumber,
   gasToken?: ?GasToken,
 };
 

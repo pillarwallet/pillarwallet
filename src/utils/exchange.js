@@ -19,15 +19,15 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import { constants } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 
 // models
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
-import { ETH, BTC } from 'constants/assetsConstants';
+import { BTC } from 'constants/assetsConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { AllowanceTransaction } from 'models/Transaction';
@@ -39,7 +39,6 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { encodeContractMethod } from 'services/assets';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
-import { chainId } from './uniswap';
 import { reportOrWarn } from './common';
 
 export type ExchangeOptions = {
@@ -102,10 +101,6 @@ export const parseOffer = (
   };
 };
 
-export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
-  return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
-};
-
 /* eslint-disable i18next/no-literal-string */
 const setAllowanceAbiFunction = [{
   name: 'approve',
@@ -144,3 +139,45 @@ export const createAllowanceTx = async (
 };
 
 export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;
+
+export const calculateAmountToBuy = (askRate: number | string, amountToSell: string): string =>
+  new BigNumber(askRate).multipliedBy(new BigNumber(amountToSell)).toFixed();
+
+// check if the re-calculated order amount doesn't diverge from offer amount
+export const isOrderAmountTooLow = (
+  askRate: string | number,
+  fromAmount: string,
+  order: { expectedOutput?: string },
+): boolean => {
+  // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
+  if (!order.expectedOutput) return false;
+  try {
+    // askRate is provided by offer
+    const offerAmount = calculateAmountToBuy(askRate, fromAmount);
+    // fix and round down because offer and order can have different decimals
+    const offerAmountFixed = new BigNumber(offerAmount).toFixed(8, 1);
+    // $FlowExpectedError: checked above
+    const orderAmountFixed = new BigNumber(order.expectedOutput).toFixed(8, 1);
+    // stop swap if order < offer
+    return new BigNumber(offerAmountFixed).isGreaterThan(orderAmountFixed);
+  } catch {
+    return true;
+  }
+};
+
+export const isAmountToSellBelowMin = (minQuantity: string | number, amountToSell: string): boolean => {
+  const minQuantityBN = new BigNumber(minQuantity);
+  const amountToSellBN = new BigNumber(amountToSell);
+  return !minQuantityBN.isZero() && amountToSellBN.isLessThan(minQuantityBN);
+};
+
+export const isAmountToSellAboveMax = (maxQuantity: string | number, amountToSell: string): boolean => {
+  const maxQuantityBN = new BigNumber(maxQuantity);
+  const amountToSellBN = new BigNumber(amountToSell);
+  return !maxQuantityBN.isZero() && amountToSellBN.isGreaterThan(maxQuantityBN);
+};
+
+export const getFixedQuantity = (quantity: string, decimals?: number | string): string => {
+  if (!!decimals && quantity.split('.')[1]?.length <= Number(decimals)) return quantity;
+  return new BigNumber(quantity).toFixed(Number(decimals) || 18, 1);
+};

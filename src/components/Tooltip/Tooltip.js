@@ -100,7 +100,7 @@ const Tooltip = (props: Props) => {
     wrapperStyle,
   } = props;
 
-  const [wrapperLayout, setWrapperLayout] = React.useState<Layout>({
+  const [wrapperLayout, setWrapperLayout] = React.useState<$ReadOnly<Layout>>({
     width: 0, height: 0, x: 0, y: 0,
   });
 
@@ -110,7 +110,7 @@ const Tooltip = (props: Props) => {
   const [wrapperX, setWrapperX] = React.useState(0);
   const [balloonWidth, setBalloonWidth] = React.useState(0);
 
-  const balloonRef = React.useRef(null);
+  const balloonRef = React.useRef<any>(null);
 
   // for fade-out animation
   const [visibilityState, setVisibilityState] = React.useState<boolean>(false);
@@ -122,7 +122,7 @@ const Tooltip = (props: Props) => {
         toValue: isVisible ? 1 : 0,
         duration: 200,
         useNativeDriver: true,
-      }).start(() => !isVisible && setVisibilityState(false));
+      }).start(() => { if (!isVisible) setVisibilityState(false); });
     }
     if (isVisible) {
       setVisibilityState(true);
@@ -130,6 +130,7 @@ const Tooltip = (props: Props) => {
   }, [isVisible, tooltipLayout]);
 
   const measureBalloonPosition = () => {
+    // $FlowFixMe: react-native types
     measure(balloonRef.current)
       .then(({ x }) => setWrapperX(x))
       .catch((error) => {

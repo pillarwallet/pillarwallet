@@ -164,7 +164,7 @@ const SendCollectibleConfirm = ({
 
   if (feeInfo) {
     // rinkeby testnet fee check
-    const txFee = utils.formatEther(feeInfo.fee.toString());
+    const txFee = utils.formatEther(feeInfo.fee?.toString() ?? 0);
     const canProceedKovanTesting = isKovanNetwork && parseFloat(rinkebyEth) > parseFloat(txFee);
 
     // fee

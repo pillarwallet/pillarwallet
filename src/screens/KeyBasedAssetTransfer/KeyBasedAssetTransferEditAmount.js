@@ -136,7 +136,7 @@ const KeyBasedAssetTransferEditAmount = ({
     const formattedAssetBalance = formatFullAmount(assetBalance);
     const displayAmount = updatedValues[symbol]?.amount || '';
     const errorMessage = errorMessages[symbol];
-    const value = isEmpty(updatedValues[symbol]) ? amount.toString() : displayAmount;
+    const value = isEmpty(updatedValues[symbol]) ? amount?.toString() : displayAmount;
     return (
       <ListItemWithImage
         label={name}

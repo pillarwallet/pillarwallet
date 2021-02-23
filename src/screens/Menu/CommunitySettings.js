@@ -57,12 +57,12 @@ class CommunitySettings extends React.Component<{}, State> {
     isSubmitted: false,
   };
 
-  goTo = (link: { web: string, app?: string}) => () => {
-    if (!link.app) {
-      Linking.openURL(link.web);
+  goTo = ({ web, app }: { web: string, app?: string}) => () => {
+    if (!app) {
+      Linking.openURL(web);
     } else {
-      Linking.canOpenURL(link.app)
-        .then(supported => supported ? Linking.openURL(link.app) : Linking.openURL(link.web))
+      Linking.canOpenURL(app)
+        .then(supported => supported ? Linking.openURL(app) : Linking.openURL(web))
         .catch(() => {});
     }
   };

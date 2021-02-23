@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { withTheme } from 'styled-components';
+import { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 import Loader from 'components/Loader';

@@ -77,7 +77,7 @@ const FeedWrapper = styled.ScrollView`
   bottom: 0;
   left: 0;
   right: 0;
-  max-height: ${getDeviceHeight() / 2.5};
+  max-height: ${getDeviceHeight() / 2.5}px;
 `;
 
 const logo = require('assets/images/exchangeProviders/wbtcLogo.png');

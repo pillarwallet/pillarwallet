@@ -19,22 +19,22 @@
 */
 
 import t from 'translations/translate';
-import { utils } from 'ethers';
 
 // components
 import Toast from 'components/Toast';
 
 // services
 import etherspot from 'services/etherspot';
-import { buildERC721TransactionData } from 'services/assets';
 
 // utils
-import { buildTxFeeInfo } from 'utils/etherspot';
+import { buildToEtherspotTransaction, buildTxFeeInfo } from 'utils/etherspot';
 import { reportErrorLog } from 'utils/common';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
-import { activeAccountAddressSelector } from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -42,12 +42,11 @@ import {
   SET_TRANSACTION_ESTIMATE_FEE_INFO,
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionDraft } from 'models/Transaction';
-import type { EtherspotTransaction } from 'models/Etherspot';
+import type { EtherspotTransaction, EtherspotTransactionEstimate } from 'models/Etherspot';
 
 
 export const resetEstimateTransactionAction = () => {
@@ -63,14 +62,46 @@ export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
   payload: isEstimating,
 });
 
-export const setEstimatingErrorAction = (errorMessage: string) => ({
-  type: SET_TRANSACTION_ESTIMATE_ERROR,
-  payload: errorMessage,
-});
+export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const currentErrorMessage = getState().transactionEstimate.errorMessage;
+    if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
+
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+
+    Toast.show({
+      message: errorMessage,
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+  };
+};
+
+export const setTransactionsEstimateFeeAction = (estimated: ?$Shape<EtherspotTransactionEstimate>) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    if (!estimated) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+      return;
+    }
+
+    const useGasToken = useGasTokenSelector(getState());
+    const feeInfo = buildTxFeeInfo(estimated, useGasToken);
+
+    if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gt(0))) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+      return;
+    }
+
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+  };
+};
 
 export const estimateTransactionsAction = (transactions: TransactionDraft[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     // reset batch, not a promise
     try {
@@ -84,77 +115,54 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
     const activeAccountAddress = activeAccountAddressSelector(getState());
 
     const etherspotTransactions: EtherspotTransaction[] = await Promise.all(
-      transactions.map(async (transactionDraft) => {
-        const { to, assetData } = transactionDraft;
-        let { data, value } = transactionDraft;
+      transactions.map((transactionDraft) => {
+        const {
+          to,
+          data,
+          assetData,
+          value,
+        } = transactionDraft;
 
-        if (assetData && assetData.token !== ETH) {
-          switch (assetData.tokenType) {
-            case COLLECTIBLES:
-              const {
-                name,
-                id,
-                contractAddress,
-                tokenType,
-              } = assetData;
-              data = await buildERC721TransactionData({
-                from: activeAccountAddress,
-                to,
-                name,
-                tokenId: id,
-                contractAddress,
-                tokenType,
-              });
-              value = 0;
-              break;
-            default: break;
-          }
-        } else if (!assetData || assetData.token === ETH) {
-          value = utils.parseEther(value.toString());
-        }
-
-        return { to, value, data };
+        return buildToEtherspotTransaction(
+          to,
+          activeAccountAddress,
+          data,
+          Number(value).toString(),
+          assetData?.token,
+          assetData?.decimals,
+          assetData?.tokenType,
+          assetData?.contractAddress,
+          assetData?.id,
+        );
       }),
     );
 
     let errorMessage;
-    let feeInfo;
 
     await etherspot.setTransactionsBatch(etherspotTransactions).catch((error) => {
       errorMessage = error?.message || t('toast.transactionFeeEstimationFailed');
     });
 
-    const estimated = await etherspot.estimateTransactionsBatch().catch((error) => {
+    const useGasToken = useGasTokenSelector(getState());
+    const accountAssets = accountAssetsSelector(getState());
+    const supportedAssets = supportedAssetsSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
+
+    const estimated = await etherspot.estimateTransactionsBatch(gasToken?.address).catch((error) => {
       errorMessage = error?.message
         ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
         : t('toast.transactionFeeEstimationFailed');
       return null;
     });
 
-    if (!errorMessage) {
-      const useGasToken = useGasTokenSelector(getState());
-      feeInfo = buildTxFeeInfo(estimated, useGasToken);
-    }
-
-    if (!errorMessage && feeInfo && feeInfo.fee && !feeInfo.fee.gt(0)) {
-      errorMessage = t('toast.transactionFeeEstimationFailed');
-    }
-
-    const currentErrorMessage = getState().transactionEstimate.errorMessage;
     if (errorMessage) {
-      dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
-      if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
-      Toast.show({
-        message: errorMessage,
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(errorMessage));
       return;
     }
 
-    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
-    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+    dispatch(setTransactionsEstimateFeeAction(estimated));
   };
 };
 

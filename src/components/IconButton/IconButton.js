@@ -19,29 +19,31 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { StyleSheet } from 'react-native';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
 import { fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+
+// types
 import type { Theme } from 'models/Theme';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 export type Props = {
   icon: string,
   color?: string,
   onPress?: Function,
   fontSize?: number,
-  style?: StyleSheet.Styles,
-  iconStyle?: StyleSheet.Styles,
+  style?: ViewStyleProp,
+  iconStyle?: ViewStyleProp,
   type?: string,
   margin?: number,
   iconText?: string,
-  iconTextStyle?: StyleSheet.Styles,
+  iconTextStyle?: TextStyleProp,
   horizontalAlign?: string,
   theme: Theme,
   secondary?: boolean,
   hitSlop?: { top: number, left: number, bottom: number, right: number },
-}
+};
 
 const IconButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
@@ -76,16 +78,18 @@ const IconButton = (props: Props) => {
   const iconParams = {
     active: false,
     name: icon,
-    style: {
-      paddingTop: 0,
-      fontSize,
-      color: iconColor,
-      marginLeft: margin,
-      marginRight: margin,
-      marginTop: margin,
-      marginBottom: margin,
-      ...iconStyle,
-    },
+    style: [
+      {
+        paddingTop: 0,
+        fontSize,
+        color: iconColor,
+        marginLeft: margin,
+        marginRight: margin,
+        marginTop: margin,
+        marginBottom: margin,
+      },
+      iconStyle,
+    ],
     type,
   };
   return (

@@ -17,10 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
+import type { BigNumber as EthersBigNumber } from 'ethers';
 
 export type EtherspotTransaction = {
   to: string,
-  value: number,
-  data?: string,
-}
+  value: EthersBigNumber,
+  data: ?string,
+};
 
+export type EtherspotTransactionEstimate = {
+  refundAmount: BigNumber;
+  estimatedGas: number;
+  estimatedGasPrice: BigNumber;
+};

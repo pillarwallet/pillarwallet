@@ -31,6 +31,10 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import {
+  subscribeToEtherspotNotificationsAction,
+  unsubscribeToEtherspotNotificationsAction,
+} from 'actions/etherspotActions';
 
 // constants
 import {
@@ -67,7 +71,6 @@ import { reportErrorLog } from 'utils/common';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import type { FirebaseMessage } from 'models/Notification';
-import { subscribeToEtherspotEventsAction } from 'actions/etherspotActions';
 
 const storage = Storage.getInstance('db');
 
@@ -229,12 +232,12 @@ export const startListeningNotificationsAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(subscribeToSocketEventsAction());
     dispatch(subscribeToPushNotificationsAction());
-    dispatch(subscribeToEtherspotEventsAction());
+    dispatch(subscribeToEtherspotNotificationsAction());
   };
 };
 
 export const stopListeningNotificationsAction = () => {
-  return () => {
+  return (dispatch: Dispatch) => {
     if (disabledPushNotificationsListener !== null) {
       clearInterval(disabledPushNotificationsListener);
       disabledPushNotificationsListener = null;
@@ -244,6 +247,8 @@ export const stopListeningNotificationsAction = () => {
       notificationsListener();
       notificationsListener = null;
     }
+
+    dispatch(unsubscribeToEtherspotNotificationsAction());
   };
 };
 

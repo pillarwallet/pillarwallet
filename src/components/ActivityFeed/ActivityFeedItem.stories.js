@@ -44,6 +44,14 @@ import {
   RARI_CLAIM_TRANSACTION,
   RARI_POOLS,
 } from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+  LIQUIDITY_POOLS,
+} from 'constants/liquidityPoolsConstants';
 import { withTheme } from 'styled-components/native';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
@@ -685,6 +693,71 @@ storiesOf('ActivityFeedItem', module)
           rariPool: RARI_POOLS.STABLE_POOL,
         },
         status: TX_PENDING_STATUS,
+      }}
+    />
+  ))
+  .add('Liquidity added', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity removed', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity staked', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity unstaked', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity rewards claimed', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
       }}
     />
   ));

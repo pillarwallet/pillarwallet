@@ -20,7 +20,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import type { AbstractComponent } from 'react';
 import { View } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -34,6 +33,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import Modal from 'components/Modal';
 
 // utils
@@ -72,7 +72,7 @@ const InputWrapper = styled.View`
   margin-top: ${spacing.small}px;
 `;
 
-const FieldIcon = styled(CachedImage)`
+const FieldIcon = styled(Image)`
   width: 48px;
   height: 48px;
   margin-right: ${spacing.small}px;
@@ -185,9 +185,9 @@ const ContactDetailsModal = ({
     setEnsUnresolved(false);
     setResolvingEns(true);
     getReceiverWithEnsName(nameValue)
-      .then(({ receiver }) => {
-        if (receiver) {
-          setAddressValue(receiver);
+      .then((resolved) => {
+        if (resolved?.receiver) {
+          setAddressValue(resolved?.receiver);
         } else {
           setEnsUnresolved(true);
         }
@@ -221,6 +221,7 @@ const ContactDetailsModal = ({
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
       if (modalRef.current) modalRef.current.close();
+      // $FlowFixMe: flow update to 0.122
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };

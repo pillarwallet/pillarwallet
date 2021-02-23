@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
-import { type Account as EtherspotAccount, type P2PPaymentChannel } from 'etherspot';
+import { type Account as EtherspotAccount, NotificationTypes } from 'etherspot';
+import t from 'translations/translate';
 
 // constants
 import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
@@ -31,45 +32,59 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // actions
-import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
+import {
+  addAccountAction,
+  removeAccountAction,
+  setActiveAccountAction,
+} from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+  setTransactionsEstimateFeeAction,
+} from 'actions/transactionEstimateActions';
 import { checkUserENSNameAction } from 'actions/ensRegistryActions';
+import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
+import { lockScreenAction } from 'actions/authActions';
 
 // services
 import etherspot from 'services/etherspot';
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// components
+import Toast from 'components/Toast';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
+import { formatUnits, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { addressesEqual, getAssetData, getAssetsAsList, mapAssetToAssetData } from 'utils/assets';
 import {
-  formatUnits,
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-} from 'utils/common';
-import {
-  addressesEqual,
-  getAssetData,
-  getAssetDataByAddress,
-  getAssetsAsList,
-  mapAssetToAssetData,
-} from 'utils/assets';
-import { findFirstEtherspotAccount } from 'utils/accounts';
-import { buildHistoryTransaction } from 'utils/history';
+  findFirstEtherspotAccount,
+  findFirstLegacySmartAccount,
+  getAccountAddress,
+} from 'utils/accounts';
+import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
+import {
+  accountsSelector,
+  activeAccountAddressSelector,
+  supportedAssetsSelector,
+} from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import type { Transaction } from 'models/Transaction';
 
 
 export const initEtherspotServiceAction = (privateKey: string) => {
@@ -84,14 +99,61 @@ export const initEtherspotServiceAction = (privateKey: string) => {
   };
 };
 
-export const subscribeToEtherspotEventsAction = () => {
-  return async () => {
-    etherspot.subscribe();
+export const subscribeToEtherspotNotificationsAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    etherspot.subscribe(async (notification) => {
+      let notificationMessage;
+
+      if (notification.type === NotificationTypes.GatewayBatchUpdated) {
+        const { hash } = notification.payload;
+        const submittedBatch = await etherspot.getSubmittedBatchByHash(hash);
+
+        // check if submitted hash exists within Etherspot. otherwise it's a failure
+        if (!submittedBatch) {
+          reportErrorLog('subscribeToEtherspotNotificationsAction failed: no matching batch', { notification });
+          return;
+        }
+
+        const accountHistory = accountHistorySelector(getState());
+        const existingTransaction = accountHistory.find(({
+          hash: existingHash,
+        }) => isCaseInsensitiveMatch(existingHash, hash));
+
+        // check if matching transaction exists in history, if not – nothing to update
+        if (!existingTransaction) return;
+
+        const accountAssets = accountAssetsSelector(getState());
+        const supportedAssets = supportedAssetsSelector(getState());
+        const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, existingTransaction.asset);
+
+        const etherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
+
+        // checks for confirmed transaction notification
+        if (existingTransaction.status !== etherspotBatchStatus
+          && !isEmpty(assetData)
+          && etherspotBatchStatus === TX_CONFIRMED_STATUS) {
+          dispatch(setHistoryTransactionStatusByHashAction(hash, TX_CONFIRMED_STATUS));
+          const { symbol, decimals } = assetData;
+          const { value } = existingTransaction;
+          const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
+          notificationMessage = t('toast.transactionSent', { paymentInfo });
+        }
+      }
+
+      // check if any notification needs to be shown
+      if (!notificationMessage) return;
+
+      Toast.show({
+        message: notificationMessage,
+        emoji: 'ok_hand',
+        autoClose: true,
+      });
+    });
   };
 };
 
-export const unsubscribeToEtherspotEventsAction = () => {
-  return async () => {
+export const unsubscribeToEtherspotNotificationsAction = () => {
+  return () => {
     etherspot.unsubscribe();
   };
 };
@@ -224,8 +286,10 @@ export const fetchAccountDepositBalanceAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    if (!isOnline) {
-      // nothing to do offline
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!isOnline || !ppnEnabled) {
+      // nothing to do offline or if PPN is disabled
       return;
     }
 
@@ -247,75 +311,78 @@ export const fetchAccountDepositBalanceAction = () => {
   };
 };
 
-const shouldPaymentChannelTransactionBeUpdated = (
-  paymentChannel: P2PPaymentChannel,
-  accountHistory: Transaction[],
-): boolean => true || !accountHistory.some(({
-  hash: transactionHash,
-  stateInPPN: prevStateInPPN,
-}) => isCaseInsensitiveMatch(transactionHash, paymentChannel.hash) && paymentChannel.state === prevStateInPPN);
+// const shouldPaymentChannelTransactionBeUpdated = (
+//   paymentChannel: P2PPaymentChannel,
+//   accountHistory: Transaction[],
+// ): boolean => true || !accountHistory.some(({
+//   hash: transactionHash,
+//   stateInPPN: prevStateInPPN,
+// }) => isCaseInsensitiveMatch(transactionHash, paymentChannel.hash) && paymentChannel.state === prevStateInPPN);
 
 export const fetchAccountPaymentChannelsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: { isOnline } },
-      assets: { supportedAssets },
+      // assets: { supportedAssets },
     } = getState();
 
-    if (!isOnline) {
-      // nothing to do offline
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!isOnline || !ppnEnabled) {
+      // nothing to do offline or if PPN is disabled
       return;
     }
 
+    // TODO: etherspot finish mapping to history
+
     const accountAddress = activeAccountAddressSelector(getState());
-    const accountAssets = accountAssetsSelector(getState());
+    // const accountAssets = accountAssetsSelector(getState());
     const paymentChannels = await etherspot.getPaymentChannelsByAddress(accountAddress);
 
     dispatch({ type: SET_PAYMENT_CHANNELS, payload: paymentChannels });
 
-    const accountId = activeAccountIdSelector(getState());
-    const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
+    // const accountId = activeAccountIdSelector(getState());
+    // const { history: { data: currentHistory } } = getState();
+    // const accountHistory = currentHistory[accountId] || [];
 
     // map payments to history as sent/received transactions
-    const paymentChannelsTransactions = paymentChannels
-      .filter((paymentChannel) => shouldPaymentChannelTransactionBeUpdated(paymentChannel, accountHistory))
-      .reduce((transactions, paymentChannel) => {
-        const {
-          hash,
-          committedAmount,
-          updatedAt,
-          recipient: to,
-          sender: from,
-          token: tokenAddress,
-          state: stateInPPN,
-        } = paymentChannel;
+    // const paymentChannelsTransactions = paymentChannels
+    //   .filter((paymentChannel) => shouldPaymentChannelTransactionBeUpdated(paymentChannel, accountHistory))
+    //   .reduce((transactions, paymentChannel) => {
+    //     const {
+    //       hash,
+    //       committedAmount,
+    //       updatedAt,
+    //       recipient: to,
+    //       sender: from,
+    //       token: tokenAddress,
+    //       state: stateInPPN,
+    //     } = paymentChannel;
+    //
+    //     const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, tokenAddress);
+    //     if (!assetData) {
+    //       reportErrorLog('fetchAccountPaymentChannelsAction paymentChannel failed: no assetData found', {
+    //         paymentChannel,
+    //       });
+    //       return transactions;
+    //     }
+    //
+    //     const { symbol: tokenSymbol } = assetData;
+    //     const transaction = buildHistoryTransaction({
+    //       from,
+    //       to,
+    //       hash,
+    //       stateInPPN,
+    //       value: committedAmount.toString(),
+    //       asset: tokenSymbol,
+    //       isPPNTransaction: true,
+    //       createdAt: +new Date(updatedAt) / 1000,
+    //       status: TX_CONFIRMED_STATUS,
+    //     });
+    //
+    //     return transactions.concat(transaction);
+    //   }, []);
 
-        const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, tokenAddress);
-        if (!assetData) {
-          reportErrorLog('fetchAccountPaymentChannelsAction paymntChannel failed: no assetData found', {
-            paymentChannel,
-          });
-          return transactions;
-        }
-
-        const { symbol: tokenSymbol } = assetData;
-        const transaction = buildHistoryTransaction({
-          from,
-          to,
-          hash,
-          stateInPPN,
-          value: committedAmount.toString(),
-          asset: tokenSymbol,
-          isPPNTransaction: true,
-          createdAt: +new Date(updatedAt) / 1000,
-          status: TX_CONFIRMED_STATUS,
-        });
-
-        return transactions.concat(transaction);
-      }, []);
-
-    // TODO: finish mapping to history
     //
     // const updatedAccountHistory = [...paymentChannelsTransactions, ...accountHistory];
     // const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
@@ -326,8 +393,10 @@ export const fetchAccountPaymentChannelsAction = () => {
 
 export const initPPNAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    if (getState().paymentNetwork.isTankInitialised) {
-      // already initialized
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!ppnEnabled || getState().paymentNetwork.isTankInitialised) {
+      // nothing to do if PPN is disabled or already initialized
       return;
     }
 
@@ -344,7 +413,7 @@ export const initPPNAction = () => {
   };
 };
 
-export const estimateAccountDepositTokenTransactionAction = (depositAmount: number) => {
+export const estimateAccountTokenDepositTransactionAction = (depositAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -381,8 +450,66 @@ export const estimateAccountDepositTokenTransactionAction = (depositAmount: numb
   };
 };
 
+export const estimateTokenWithdrawFromAccountDepositTransactionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
+
+    // put into loading state at this point already
+    dispatch(setEstimatingTransactionAction(true));
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+
+    if (isEmpty(ppnTokenAsset)) {
+      // TODO: show toast?
+      reportErrorLog(
+        'estimateTokenWithdrawFromAccountDepositTransactionAction failed: no ppnTokenAsset',
+        { ppnTokenAsset },
+      );
+      dispatch(setEstimatingTransactionAction(false));
+      return;
+    }
+
+    const useGasToken = useGasTokenSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
+
+    const estimated = await etherspot.estimateWithdrawFromAccountDepositTransaction(gasToken?.address);
+
+    if (!estimated) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotWithdrawFromTank')));
+      return;
+    }
+
+    dispatch(setTransactionsEstimateFeeAction(estimated));
+  };
+};
+
+export const checkEtherspotSessionAction = () => {
+  return async () => {
+    // TODO: add etherspot session restore?
+  };
+};
+
 export const upgradeToEtherspotAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // TODO: create etherspot account similar to importEtherspotAccountsAction and implement onchain migration method when it's developer
-  }
+    /**
+     * TODO: create etherspot account similar to importEtherspotAccountsAction
+     * and implement onchain migration method when it's developer,
+     * code below is a mock of archanova smart wallet migration
+     */
+
+    const smartWalletAccount = findFirstLegacySmartAccount(accountsSelector(getState()));
+    if (smartWalletAccount) {
+      dispatch(removeAccountAction(getAccountAddress(smartWalletAccount)));
+    }
+
+    dispatch(lockScreenAction());
+  };
 };

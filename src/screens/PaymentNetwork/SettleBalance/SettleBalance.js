@@ -76,7 +76,6 @@ type Props = {
   session: Object,
   estimateSettleBalance: Function,
   availableToSettleTx: Object[],
-  isFetched: boolean,
   fetchAvailableTxToSettle: Function,
   theme: Theme,
 };
@@ -241,10 +240,9 @@ class SettleBalance extends React.Component<Props, State> {
     const {
       session,
       availableToSettleTx,
-      isFetched,
     } = this.props;
     const { txToSettle } = this.state;
-    const showSpinner = !isFetched;
+    const showSpinner = false; // !isFetched;
     const formattedFeedData = groupAndSortByDate(availableToSettleTx, 0);
     return (
       <ContainerWithHeader
@@ -313,13 +311,10 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
-  paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   session,
-  availableToSettleTx,
-  isFetched,
 });
 
 const structuredSelector = createStructuredSelector({

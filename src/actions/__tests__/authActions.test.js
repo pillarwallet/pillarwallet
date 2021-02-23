@@ -26,16 +26,8 @@ import merge from 'lodash.merge';
 import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'constants/walletConstants';
 import { UPDATE_USER, SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import {
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  SET_SMART_WALLET_SDK_INIT,
-} from 'constants/smartWalletConstants';
-import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import {
-  SET_UNISWAP_TOKENS_QUERY_STATUS,
-  UNISWAP_TOKENS_QUERY_STATUS,
-} from 'constants/exchangeConstants';
+import { SET_UNISWAP_TOKENS_QUERY_STATUS, UNISWAP_TOKENS_QUERY_STATUS } from 'constants/exchangeConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -44,9 +36,8 @@ import { loginAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 
-
 // test utils
-import { mockSmartWalletAccount, mockSmartWalletConnectedAccount } from 'testUtils/jestSetup';
+import { mockEtherspotAccount } from 'testUtils/jestSetup';
 
 
 const mockUpdatedUser = {
@@ -93,6 +84,7 @@ describe('Auth actions', () => {
 
   beforeEach(() => {
     store = mockStore({
+      exchange: { exchangeSupportedAssets: [] },
       assets: { data: {} },
       navigation: {},
       oAuthTokens: { data: {} },
@@ -100,7 +92,7 @@ describe('Auth actions', () => {
         backupStatus: { isBackedUp: false, isImported: false },
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
-      accounts: { data: [{ ...mockSmartWalletAccount, isActive: true }] },
+      accounts: { data: [{ ...mockEtherspotAccount, isActive: true }] },
       featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
@@ -121,9 +113,6 @@ describe('Auth actions', () => {
           privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
         },
       },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
@@ -148,9 +137,6 @@ describe('Auth actions', () => {
       { type: SET_WALLET_IS_DECRYPTING },
       { type: SET_USER, payload: mockRegisteredUser },
       { type: SET_WALLET, payload: mockWallet },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
       { type: UPDATE_USER, payload: merge({}, mockRegisteredUser, mockUpdatedUser) },

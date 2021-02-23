@@ -33,6 +33,7 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
     return (
       <Trans
         i18nKey={key}
+        // $FlowFixMe: we're passing a lot translation options as props to base text.
         components={onPress ? [<BaseText {...options} link />] : []}
         values={{ linkedText }}
       />
@@ -42,6 +43,7 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
     return (
       <Trans
         i18nKey={key}
+        // $FlowFixMe: we're passing a lot translation options as props to base text.
         components={[<BaseText {...options} primary />]}
         values={{ primaryText }}
       />
@@ -51,6 +53,7 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
     return (
       <Trans
         i18nKey={key}
+        // $FlowFixMe: we're passing a lot translation options as props to base text.
         components={[<MediumText {...options} />]}
         values={values}
       />

@@ -21,13 +21,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import Icon from 'components/Icon';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import { Shadow } from 'components/Shadow';
 import { Wrapper, Spacing } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -37,7 +37,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import { ACTION, DEFAULT } from 'constants/listItemConstants';
 
 import { formatAmount, getDecimalPlaces } from 'utils/common';
-import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 'utils/variables';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
@@ -207,14 +207,14 @@ const ItemIcon = styled(Icon)`
   color: ${({ iconColor, theme }) => iconColor || theme.colors.basic000};
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(Image)`
   ${({ size }) => `
     height: ${size || 24}px;
     width: ${size || 24}px;
   `}
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   ${({ borderRadius, diameter }) => `
     width: ${(!borderRadius && diameter) || 54}px;
     height: ${(!borderRadius && diameter) || 54}px;
@@ -278,7 +278,7 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
-const CornerIcon = styled(CachedImage)`
+const CornerIcon = styled(Image)`
   width: 16px;
   height: 16px;
   position: absolute;
@@ -638,7 +638,7 @@ const ListItemWithImage = (props: Props) => {
               {!!badge &&
               <React.Fragment>
                 <Spacing h={4} />
-                <LabelBadge label={badge} primary labelStyle={fontStyles.tiny} />
+                <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
               </React.Fragment>
               }
             </Column>

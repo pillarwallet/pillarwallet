@@ -73,6 +73,7 @@ export const LabelBadge = (props: Props) => {
     color,
   } = props;
   return (
+    // $FlowFixMe: flow update to 0.122
     <BadgeWrapper style={containerStyle} color={color} {...props}>
       <Label style={labelStyle}>
         {label}

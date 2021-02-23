@@ -29,6 +29,7 @@ import { themedColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
+// $FlowFixMe
 import type { Event } from 'react-native';
 
 
@@ -184,7 +185,7 @@ export default class CodeInput extends React.Component<Props, State> {
             <StyledTextInput
               {...inputProps}
               value=""
-              innerRef={this.input}
+              ref={this.input}
               onChangeText={this.onChange}
               onKeyPress={this.onKeyPress}
               onFocus={this.onFocus}

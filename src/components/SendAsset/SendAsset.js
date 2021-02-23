@@ -270,11 +270,16 @@ const SendAsset = ({
     // $FlowFixMe
     const transactionPayload: TokenTransactionPayload = {
       to: selectedContact.ethAddress,
+      // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
       amount: amount || 0,
+      // $FlowFixMe: bignumber.js types
       txFeeInWei: feeInfo.fee,
+      // $FlowFixMe: flow update to 0.122
       symbol: assetData.token,
+      // $FlowFixMe: flow update to 0.122
       contractAddress: assetData.contractAddress,
+      // $FlowFixMe: flow update to 0.122
       decimals: assetData.decimals,
     };
 

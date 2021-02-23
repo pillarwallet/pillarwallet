@@ -79,6 +79,9 @@ const envVars = {
     MSTABLE_VALIDATION_HELPER_CONTRACT_ADDRESS: '0xabcc93c3be238884cc3309c19afd128fafc16911',
     RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS: '0xD291E7a03283640FDc51b121aC401383A46cC623',
     RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS: '0x9C0CaEb986c003417D21A7Daaf30221d61FC1043',
+    UNIPOOL_CONTRACT_ADDRESS: '0x32105017918Cb9CD9A5f21fd6984Ee7DC82B9E7E',
+    UNISWAP_SUBGRAPH_NAME: 'uniswap/uniswap-v2',
+    WEB3_INFURA_URL: `https://mainnet.infura.io/v3/${buildEnvironment.INFURA_PROJECT_ID}`,
     ...buildEnvironment,
     ...devOptions,
   },
@@ -118,6 +121,9 @@ const envVars = {
     MSTABLE_VALIDATION_HELPER_CONTRACT_ADDRESS: '0xabcc93c3be238884cc3309c19afd128fafc16911',
     RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS: '0xD291E7a03283640FDc51b121aC401383A46cC623',
     RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS: '0x9C0CaEb986c003417D21A7Daaf30221d61FC1043',
+    UNIPOOL_CONTRACT_ADDRESS: '0xFfD8C07309d3A3ce473Feb1d98ebF1F3171A83d9',
+    UNISWAP_SUBGRAPH_NAME: 'graszka22/uniswapv2-kovan',
+    WEB3_INFURA_URL: `https://kovan.infura.io/v3/${buildEnvironment.INFURA_PROJECT_ID}`,
     ...buildEnvironment,
     ...devOptions,
   },
@@ -213,6 +219,7 @@ export const switchEnvironments = () => {
 };
 
 // current environment accessor function
+// $FlowFixMe: flow update to 0.122
 export const getEnv = (): CurrentEnvironment => envVars[storedEnv];
 
 export const getRariPoolsEnv = (rariPool: RariPool): CurrentEnvironment => rariPoolsEnv[storedEnv][rariPool];

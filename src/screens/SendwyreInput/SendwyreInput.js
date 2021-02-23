@@ -239,6 +239,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: t('exchangeContent.title.buyWithWyreScreen') }] }}
         inset={{ bottom: 'never' }}
       >
+        {/* $FlowFixMe: react-native types */}
         <ScrollView
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"

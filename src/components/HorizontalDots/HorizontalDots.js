@@ -38,7 +38,7 @@ const Dot = styled.View`
   background-color: ${({ active, theme }) => active
     ? theme.colors.primaryAccent130
     : css`${getColorByTheme({ lightKey: 'basic005', darkKey: 'basic030' })}`};
-  border-radius: 8;
+  border-radius: 8px;
 `;
 
 type Props = {

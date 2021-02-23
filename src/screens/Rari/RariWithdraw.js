@@ -23,9 +23,12 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
+import { useDebounce } from 'use-debounce';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+
 import { getEnv } from 'configs/envConfig';
+import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
@@ -35,7 +38,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 
 import { getRariWithdrawTransaction, getMaxWithdrawAmount } from 'utils/rari';
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
 import { reportErrorLog, formatUnits } from 'utils/common';
 
 import { calculateRariWithdrawTransactionEstimateAction } from 'actions/rariActions';
@@ -43,16 +46,20 @@ import { resetEstimateTransactionAction, setEstimatingTransactionAction } from '
 
 import { ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
+import { NotEnoughLiquidityError } from 'services/0x';
+
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Assets } from 'models/Asset';
-
+import type { Option } from 'models/Selector';
+import type { RariPool } from 'models/RariPool';
 
 type Props = {
   assets: Assets,
@@ -79,6 +86,28 @@ const ValueInputWrapper = styled.View`
   align-items: center;
 `;
 
+const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): Option[] => {
+  const poolAssets = rariPool === RARI_POOLS.ETH_POOL
+    ? supportedAssets.filter(asset => asset.symbol === ETH)
+    : supportedAssets;
+
+  const allowedAssets = poolAssets.filter(
+    asset => !addressesInclude(blockedTokenAddresses, asset.address),
+  );
+
+  return allowedAssets.map(({ iconUrl, ...rest }) => {
+    const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    return {
+      ...rest,
+      value: rest.symbol,
+      iconUrl,
+      icon: iconUrl,
+      imageUrl,
+    };
+  });
+};
+
+
 const RariWithdrawScreen = ({
   assets, navigation, feeInfo, isEstimating, estimateErrorMessage,
   resetEstimateTransaction, balances, setEstimatingTransaction, calculateRariWithdrawTransactionEstimate,
@@ -95,6 +124,7 @@ const RariWithdrawScreen = ({
   const [isCalculatingMaxAmount, setIsCalculatingMaxAmount] = useState(false);
   const [customBalances, setCustomBalances] = useState({});
 
+  const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
   const rariPool = navigation.getParam('rariPool');
 
@@ -134,13 +164,20 @@ const RariWithdrawScreen = ({
         calculateRariWithdrawTransactionEstimate(withdrawTransaction);
       })
       .catch((error) => {
-        reportErrorLog('Rari service failed: Error creating transaction payload', { error });
-        Toast.show({
-          message: t('toast.rariServiceFailed'),
-          emoji: 'hushed',
-        });
+        if (error instanceof NotEnoughLiquidityError) {
+          Toast.show({
+            message: t('toast.rariNotEnoughLiquidity'),
+            emoji: 'hushed',
+          });
+        } else {
+          reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+          Toast.show({
+            message: t('toast.rariServiceFailed'),
+            emoji: 'hushed',
+          });
+        }
       });
-  }, [assetValue, selectedAsset]);
+  }, [debouncedAssetValue, selectedAsset]);
 
   useEffect(() => {
     if (!selectedAsset) return;
@@ -167,11 +204,18 @@ const RariWithdrawScreen = ({
         });
       })
       .catch((error) => {
-        reportErrorLog('Rari service failed: Error getting max balance', { error });
-        Toast.show({
-          message: t('toast.rariServiceFailed'),
-          emoji: 'hushed',
-        });
+        if (error instanceof NotEnoughLiquidityError) {
+          Toast.show({
+            message: t('toast.rariNotEnoughLiquidity'),
+            emoji: 'hushed',
+          });
+        } else {
+          reportErrorLog('Rari service failed: Error getting max balance', { error });
+          Toast.show({
+            message: t('toast.rariServiceFailed'),
+            emoji: 'hushed',
+          });
+        }
       })
       .then(() => setIsCalculatingMaxAmount(false));
   }, [selectedAsset]);
@@ -192,15 +236,10 @@ const RariWithdrawScreen = ({
       || !inputValid
       || !feeInfo;
 
-  const supportedAssetsWithIcons = supportedAssets.map(({ iconUrl, ...rest }) => {
-    const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    return ({
-      ...rest, iconUrl, icon: iconUrl, imageUrl,
-    });
-  });
+  const customAssets = getCustomAssetOptions(supportedAssets, rariPool);
 
   const popularOptions = POPULAR_EXCHANGE_TOKENS
-    .map(popularSymbol => supportedAssetsWithIcons.find(({ symbol }) => symbol === popularSymbol))
+    .map(popularSymbol => customAssets.find(({ symbol }) => symbol === popularSymbol))
     .filter(asset => !!asset && !isEmpty(asset));
 
   const horizontalOptions = [{
@@ -245,7 +284,7 @@ const RariWithdrawScreen = ({
           onFormValid={setInputValid}
           customBalances={customBalances}
           hideMaxSend={isCalculatingMaxAmount}
-          customAssets={supportedAssetsWithIcons}
+          customAssets={customAssets}
           horizontalOptions={horizontalOptions}
         />
       </ValueInputWrapper>

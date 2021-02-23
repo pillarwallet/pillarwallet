@@ -47,8 +47,18 @@ describe('Validators', () => {
       expect(isValid).toBeTruthy();
     });
 
-    it('should return true for the valid ENS name', () => {
+    it('should return true for the valid ENS .eth name', () => {
       const isValid = isValidETHAddress('test.eth');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS .crypto name', () => {
+      const isValid = isValidETHAddress('test.crypto');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS .zil name', () => {
+      const isValid = isValidETHAddress('test.zil');
       expect(isValid).toBeTruthy();
     });
 

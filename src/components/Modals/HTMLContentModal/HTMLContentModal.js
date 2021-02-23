@@ -101,12 +101,11 @@ const baseStyles = (colors) => {
 };
 
 class HTMLContentModal extends React.Component<Props, State> {
-  scrollViewRef: React.ElementRef<ScrollView>;
+  scrollViewRef = React.createRef<React.ElementRef<typeof ScrollView>>();
   modalRef = React.createRef();
 
   constructor(props: Props) {
     super(props);
-    this.scrollViewRef = React.createRef();
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
@@ -219,6 +218,7 @@ class HTMLContentModal extends React.Component<Props, State> {
           }
           {!!isHtmlFetched &&
             // do not put ScrollView as styled component or ref.scrollTo will fail
+            // $FlowFixMe: react-native types
             <ScrollView
               paddingHorizontal={spacing.rhythm}
               ref={this.scrollViewRef}

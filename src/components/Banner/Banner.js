@@ -19,9 +19,9 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import IconButton from 'components/IconButton';
+import Image from 'components/Image';
 import { Paragraph } from 'components/Typography';
 import { fontSizes, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
@@ -69,7 +69,7 @@ const BannerParagraph = styled(Paragraph)`
   margin: 8px 0;
 `;
 
-const BannerImage = styled(CachedImage)`
+const BannerImage = styled(Image)`
   align-self: flex-end;
 `;
 

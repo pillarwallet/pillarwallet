@@ -33,7 +33,7 @@ const Container = styled.View`
   border-radius: 10px;
   padding: ${spacing.rhythm}px;
   position: absolute;
-  top: 150;
+  top: 150px;
   width: 100%;
   background-color: ${themedColors.card};
 `;

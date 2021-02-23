@@ -110,8 +110,8 @@ const ButtonWrapper = styled.View`
 `;
 
 const DetailText = styled(MediumText)`
-  font-size: ${fontSizes.large};
-  line-height: ${fontSizes.large};
+  font-size: ${fontSizes.large}px;
+  line-height: ${fontSizes.large}px;
   color: ${({ color, theme }) => color || theme.colors.basic010};
 `;
 

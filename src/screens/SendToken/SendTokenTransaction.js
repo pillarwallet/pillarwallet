@@ -34,16 +34,16 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
 import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
 import { isRariTransactionTag } from 'utils/rari';
+import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
-import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
 
 // constants
 import {
@@ -52,7 +52,15 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   RARI_DEPOSIT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -67,9 +75,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   executingExchangeTransaction: boolean,
   setDismissExchangeTransaction: Function,
-  setDismissPoolTogetherApprove: Function,
-  setExecutingPoolTogetherApprove: Function,
-  poolApproveExecuting: { [string]: boolean | string },
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -140,24 +145,12 @@ class SendTokenTransaction extends React.Component<Props> {
       navigation,
       executingExchangeTransaction,
       setDismissExchangeTransaction,
-      setDismissPoolTogetherApprove,
-      setExecutingPoolTogetherApprove,
-      poolApproveExecuting,
     } = this.props;
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
     }
 
-    const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
-
-    const poolToken = transactionPayload?.extra?.poolTogetherApproval?.symbol;
-    if (poolToken && !poolApproveExecuting[poolToken]) {
-      if (isSuccess && txHash) {
-        setExecutingPoolTogetherApprove(poolToken, txHash);
-      } else {
-        setDismissPoolTogetherApprove(poolToken);
-      }
-    }
+    const { isSuccess, transactionPayload } = navigation.state.params;
 
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
@@ -198,6 +191,38 @@ class SendTokenTransaction extends React.Component<Props> {
         toastMessage = t('toast.rariClaimRgt', { amount: formattedAmount });
       }
 
+      if (toastMessage) {
+        Toast.show({
+          message: toastMessage,
+          emoji: 'ok_hand',
+          autoClose: true,
+        });
+      }
+      return;
+    }
+
+    if (isLiquidityPoolsTransactionTag(txTag)) {
+      let toastMessage = null;
+      const {
+        extra: {
+          amount, pool,
+        } = {},
+      } = transactionPayload;
+      navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+      if (txTag === LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsAddLiquidity', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsRemoveLiquidity', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_STAKE_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsStake', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_UNSTAKE_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsUnstake', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsClaimRewards', {
+          value: amount,
+          token: pool.rewards[0].symbol,
+        });
+      }
       if (toastMessage) {
         Toast.show({
           message: toastMessage,
@@ -283,8 +308,8 @@ class SendTokenTransaction extends React.Component<Props> {
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
       : t('error.transactionFailed.default');
-    const titleStyle = { ...fontStyles.large, marginTop: 16, marginBottom: 7 };
-    const textStyle = { ...fontStyles.regular, marginBottom: 75 };
+    const titleStyle = { ...objectFontStyles.large, marginTop: 16, marginBottom: 7 };
+    const textStyle = { ...objectFontStyles.regular, marginBottom: 75 };
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
@@ -307,17 +332,12 @@ class SendTokenTransaction extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
-  poolTogether: { poolApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
-  poolApproveExecuting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
-  setDismissPoolTogetherApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
-  setExecutingPoolTogetherApprove:
-    (symbol: string, txHash: string) => dispatch(setExecutingApproveAction(symbol, txHash)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);

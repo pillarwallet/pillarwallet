@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, InteractionManager } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import styled, { withTheme } from 'styled-components/native';
@@ -71,7 +71,7 @@ import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import {
-  validateInput,
+  shouldResetAndTriggerSearch,
   getBestAmountToBuy,
   provideOptions,
   getHeaderRightItems,
@@ -87,7 +87,7 @@ type Props = {
   baseFiatCurrency: ?string,
   user: Object,
   assets: Assets,
-  searchOffers: (string, string, number) => void,
+  searchOffers: (string, string, string) => void,
   balances: Balances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
@@ -125,7 +125,7 @@ const FormWrapper = styled.View`
 `;
 
 class ExchangeScreen extends React.Component<Props, State> {
-  fromInputRef: RNTextInput;
+  fromInputRef: React.ElementRef<typeof RNTextInput>;
   listeners: NavigationEventSubscription[];
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
@@ -150,26 +150,30 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      navigation, getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
-    } = this.props;
-    const { fromAsset, toAsset } = this.state;
-    this._isMounted = true;
-    getWbtcFees();
-    getBtcRate();
-    getExchangeSupportedAssets(() => {
-      // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
-      if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
+    InteractionManager.runAfterInteractions(() => {
+      const {
+        getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
+      } = this.props;
+      const { fromAsset, toAsset } = this.state;
+      getWbtcFees();
+      getBtcRate();
+      getExchangeSupportedAssets(() => {
+        // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
+        if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
+      });
+
+      if (!hasSeenExchangeIntro) {
+        this.openExchangeIntroModal();
+      }
     });
 
+    const { navigation } = this.props;
     this.listeners = [
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
       navigation.addListener('didBlur', this.blurFromInput),
     ];
 
-    if (!hasSeenExchangeIntro) {
-      this.openExchangeIntroModal();
-    }
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
@@ -189,8 +193,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset, toAsset, fromAmount, isFormValid,
     } = this.state;
     const {
-      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount,
+      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount, isFormValid: prevIsFormValid,
     } = prevState;
+
+    if (!prevIsFormValid && isFormValid) this.resetSearch();
 
     // update from and to options when (supported) assets changes or user selects an option
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
@@ -206,17 +212,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       setTimeout(this.focusInputWithKeyboard, 300);
     }
 
-    if (
-      // access token has changed, init search again
-      (prevProps.oAuthAccessToken !== oAuthAccessToken) ||
-      // valid input provided or asset changed
-      ((
-        fromAsset !== prevFromAsset ||
-        toAsset !== prevToAsset ||
-        fromAmount !== prevFromAmount) &&
-        isFormValid &&
-        validateInput(fromAmount, fromAsset, toAsset))
-    ) {
+    const { oAuthAccessToken: prevAccessToken } = prevProps;
+    if (shouldResetAndTriggerSearch(
+      fromAmount, prevFromAmount, fromAsset, prevFromAsset, toAsset, prevToAsset, oAuthAccessToken, prevAccessToken,
+    )) {
       this.resetSearch();
       this.triggerSearch();
     }
@@ -321,7 +320,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     setTimeout(() => {
       if (!this.fromInputRef || !this._isMounted || !hasSeenExchangeIntro) return;
       this.fromInputRef.focus();
-    }, 200);
+    }, 650);
   };
 
   resetSearch = () => {
@@ -345,11 +344,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { fromAmount, fromAsset, toAsset } = this.state;
     const { symbol: from } = fromAsset;
     const { symbol: to } = toAsset;
-    const amount = parseFloat(fromAmount);
-    if (!from || !to || !amount || !shouldTriggerSearch(fromAsset, toAsset, amount)) return;
+    if (!from || !to || !fromAmount || !shouldTriggerSearch(fromAsset, toAsset, fromAmount)) return;
     this.setState({ isSubmitted: true });
-    searchOffers(from, to, amount);
-
+    searchOffers(from, to, fromAmount);
     this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
@@ -397,6 +394,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       }}
         inset={{ bottom: 'never' }}
       >
+        {/* $FlowFixMe: react-native types */}
         <ScrollView
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"

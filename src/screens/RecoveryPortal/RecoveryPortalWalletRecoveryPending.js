@@ -17,7 +17,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // actions

@@ -19,29 +19,26 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     }
   >
     <View
-      androidStatusbarHeight={42}
-      onLayout={[Function]}
-      pointerEvents="box-none"
       style={
-        Object {
-          "marginTop": 42,
-          "paddingBottom": 0,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "paddingTop": 20,
-        }
+        Array [
+          Object {
+            "height": 58,
+            "paddingHorizontal": 16,
+            "paddingVertical": 10,
+            "width": "100%",
+          },
+        ]
       }
     >
       <View
         style={
           Array [
             Object {
-              "height": 58,
-              "paddingHorizontal": 16,
-              "paddingVertical": 10,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
               "width": "100%",
             },
-            undefined,
           ]
         }
       >
@@ -50,11 +47,96 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             Array [
               Object {
                 "alignItems": "center",
+                "flexBasis": 0,
                 "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "height": 36,
+                "justifyContent": "flex-start",
               },
-              undefined,
+              Object {},
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#EBF0F6",
+                "borderRadius": 36,
+                "height": 36,
+                "justifyContent": "center",
+                "opacity": 1,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "position": "relative",
+                "width": 36,
+              }
+            }
+          >
+            <View
+              name="back"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 18,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "paddingTop": 0,
+                  },
+                  Object {},
+                ]
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 4,
+                "flexShrink": 1,
+                "height": 40,
+                "justifyContent": "center",
+                "paddingBottom": 0,
+                "paddingLeft": 12,
+                "paddingRight": 12,
+                "paddingTop": 0,
+              },
+            ]
+          }
+        />
+        <View
+          style={
+            Array [
+              Object {
+                "alignContent": "center",
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "flexWrap": "wrap",
+                "height": 36,
+                "justifyContent": "flex-end",
+              },
             ]
           }
         >
@@ -62,22 +144,18 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             style={
               Array [
                 Object {
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "height": 36,
-                  "justifyContent": "flex-start",
+                  "marginLeft": 8,
                 },
                 Object {},
+                Object {
+                  "marginRight": -10,
+                },
               ]
             }
           >
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -87,113 +165,24 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "alignItems": "center",
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 36,
+                  "alignItems": "flex-start",
+                  "alignSelf": "center",
                   "height": 36,
                   "justifyContent": "center",
                   "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
+                  "paddingBottom": 5,
+                  "paddingLeft": 10,
+                  "paddingRight": 10,
+                  "paddingTop": 5,
                   "position": "relative",
-                  "width": 36,
+                  "width": 44,
                 }
               }
             >
               <View
-                name="back"
+                name="info-circle-inverse"
                 style={
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 18,
-                    "marginBottom": undefined,
-                    "marginLeft": undefined,
-                    "marginRight": undefined,
-                    "marginTop": undefined,
-                    "paddingTop": 0,
-                  }
-                }
-              />
-            </View>
-          </View>
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 4,
-                  "flexShrink": 1,
-                  "height": 40,
-                  "justifyContent": "center",
-                  "paddingBottom": 0,
-                  "paddingLeft": 12,
-                  "paddingRight": 12,
-                  "paddingTop": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <View
-            style={
-              Array [
-                Object {
-                  "alignContent": "center",
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "flexWrap": "wrap",
-                  "height": 36,
-                  "justifyContent": "flex-end",
-                },
-                undefined,
-              ]
-            }
-          >
-            <View
-              style={
-                Object {
-                  "marginLeft": 8,
-                  "marginRight": -10,
-                }
-              }
-            >
-              <View
-                accessible={true}
-                focusable={true}
-                isTVSelectable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "flex-start",
-                    "alignSelf": "center",
-                    "height": 36,
-                    "justifyContent": "center",
-                    "opacity": 1,
-                    "paddingBottom": 5,
-                    "paddingLeft": 10,
-                    "paddingRight": 10,
-                    "paddingTop": 5,
-                    "position": "relative",
-                    "width": 44,
-                  }
-                }
-              >
-                <View
-                  name="info-circle-inverse"
-                  style={
+                  Array [
                     Object {
                       "color": "#0A1427",
                       "fontSize": 24,
@@ -202,10 +191,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       "marginRight": undefined,
                       "marginTop": undefined,
                       "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
+                    },
+                    Object {},
+                  ]
+                }
+              />
             </View>
           </View>
         </View>
@@ -214,6 +204,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
   </View>
   <View
     androidStatusbarHeight={0}
+    forwardedRef={[Function]}
     onLayout={[Function]}
     pointerEvents="box-none"
     style={
@@ -281,7 +272,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "justifyContent": "center",
                 "width": "100%",
               },
-              undefined,
             ]
           }
         >
@@ -292,7 +282,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "height": 220,
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
@@ -376,25 +365,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     undefined,
                   ]
                 }
-              >
-                <Image
-                  onError={[Function]}
-                  onLoadEnd={[Function]}
-                  resizeMode="contain"
-                  source={
-                    Object {
-                      "uri": "http://icons/plr?size=3",
-                    }
-                  }
-                  style={
-                    Object {
-                      "height": 104,
-                      "opacity": 1,
-                      "width": 104,
-                    }
-                  }
-                />
-              </CMIFColorMatrixImageFilter>
+              />
             </View>
             <View
               addShadow={false}
@@ -476,25 +447,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     undefined,
                   ]
                 }
-              >
-                <Image
-                  onError={[Function]}
-                  onLoadEnd={[Function]}
-                  resizeMode="contain"
-                  source={
-                    Object {
-                      "uri": "http://icons/plr?size=3",
-                    }
-                  }
-                  style={
-                    Object {
-                      "height": 66,
-                      "opacity": 0.15,
-                      "width": 66,
-                    }
-                  }
-                />
-              </CMIFColorMatrixImageFilter>
+              />
             </View>
             <View
               addShadow={false}
@@ -576,25 +529,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     undefined,
                   ]
                 }
-              >
-                <Image
-                  onError={[Function]}
-                  onLoadEnd={[Function]}
-                  resizeMode="contain"
-                  source={
-                    Object {
-                      "uri": "http://icons/plr?size=3",
-                    }
-                  }
-                  style={
-                    Object {
-                      "height": 86,
-                      "opacity": 0.3,
-                      "width": 86,
-                    }
-                  }
-                />
-              </CMIFColorMatrixImageFilter>
+              />
             </View>
             <View
               addShadow={false}
@@ -676,25 +611,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     undefined,
                   ]
                 }
-              >
-                <Image
-                  onError={[Function]}
-                  onLoadEnd={[Function]}
-                  resizeMode="contain"
-                  source={
-                    Object {
-                      "uri": "http://icons/plr?size=3",
-                    }
-                  }
-                  style={
-                    Object {
-                      "height": 86,
-                      "opacity": 0.3,
-                      "width": 86,
-                    }
-                  }
-                />
-              </CMIFColorMatrixImageFilter>
+              />
             </View>
             <View
               addShadow={false}
@@ -776,25 +693,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     undefined,
                   ]
                 }
-              >
-                <Image
-                  onError={[Function]}
-                  onLoadEnd={[Function]}
-                  resizeMode="contain"
-                  source={
-                    Object {
-                      "uri": "http://icons/plr?size=3",
-                    }
-                  }
-                  style={
-                    Object {
-                      "height": 66,
-                      "opacity": 0.15,
-                      "width": 66,
-                    }
-                  }
-                />
-              </CMIFColorMatrixImageFilter>
+              />
             </View>
           </View>
         </View>
@@ -810,7 +709,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "marginTop": 0,
                 "paddingBottom": 8,
               },
-              undefined,
             ]
           }
         >
@@ -822,35 +720,20 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "justifyContent": "center",
                 },
-                undefined,
               ]
             }
           >
             <Text
-              isSynthetic={false}
               style={
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "fontSize": 36,
+                    "lineHeight": 54,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 36,
-                        "lineHeight": 54,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
-                  ],
                 ]
               }
             >
@@ -863,7 +746,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 Object {
                   "flexDirection": "row",
                 },
-                undefined,
               ]
             }
           >
@@ -873,16 +755,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "fontSize": 12,
-                      "lineHeight": 18,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
             >
@@ -905,7 +782,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "paddingBottom": 30,
                 "paddingTop": 10,
               },
-              undefined,
             ]
           }
         >
@@ -924,14 +800,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "paddingRight": 10,
                   "paddingTop": 0,
                 },
-                undefined,
               ]
             }
           >
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -957,7 +831,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Object {
                       "position": "relative",
                     },
-                    undefined,
                   ]
                 }
               >
@@ -1005,9 +878,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "top": -6,
                           },
                           Object {
-                            "opacity": 1,
-                          },
-                          Object {
                             "flex": 0,
                             "height": 148,
                             "width": 148,
@@ -1016,47 +886,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       }
                       width={148}
                     >
-                      <RNSVGGroup
-                        fill={
-                          Array [
-                            0,
-                            4278190080,
-                          ]
-                        }
-                        fillOpacity={1}
-                        fillRule={1}
-                        font={Object {}}
-                        matrix={
-                          Array [
-                            1,
-                            0,
-                            0,
-                            1,
-                            0,
-                            0,
-                          ]
-                        }
-                        opacity={1}
-                        originX={0}
-                        originY={0}
-                        propList={Array []}
-                        rotation={0}
-                        scaleX={1}
-                        scaleY={1}
-                        skewX={0}
-                        skewY={0}
-                        stroke={null}
-                        strokeDasharray={null}
-                        strokeDashoffset={null}
-                        strokeLinecap={0}
-                        strokeLinejoin={0}
-                        strokeMiterlimit={4}
-                        strokeOpacity={1}
-                        strokeWidth={1}
-                        vectorEffect={0}
-                        x={0}
-                        y={0}
-                      >
+                      <RNSVGGroup>
                         <RNSVGDefs>
                           <RNSVGLinearGradient
                             gradient={
@@ -1067,16 +897,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="top"
                             x1="0%"
@@ -1093,16 +914,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="bottom"
                             x1="0%"
@@ -1119,16 +931,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="left"
                             x1="100%"
@@ -1145,16 +948,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="right"
                             x1="0%"
@@ -1177,16 +971,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-left-top"
                             rx="100%"
@@ -1207,16 +992,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-left-bottom"
                             rx="100%"
@@ -1237,16 +1013,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-right-top"
                             rx="100%"
@@ -1267,16 +1034,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-right-bottom"
                             rx="100%"
@@ -1291,42 +1049,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-left-top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
@@ -1336,42 +1063,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-right-top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
@@ -1381,42 +1077,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-right-bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
@@ -1426,42 +1091,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-left-bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGRect
                           fill={
@@ -1470,41 +1104,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={10}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={0}
                           x={42}
                           y="0"
@@ -1516,41 +1121,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "left",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={0}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={10}
                           x="0"
                           y={42}
@@ -1562,41 +1138,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "right",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={0}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={10}
                           x={74}
                           y={42}
@@ -1608,89 +1155,24 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={10}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={0}
                           x={42}
                           y={74}
                         />
                         <RNSVGPath
                           d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                          fill={
-                            Array [
-                              0,
-                              218562682,
-                            ]
-                          }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
+                          fill={218562682}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                       </RNSVGGroup>
                     </RNSVGSvgView>
@@ -1704,7 +1186,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "position": "absolute",
                             "width": 64,
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -1731,11 +1212,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "position": "absolute",
                                 "width": 64,
                               },
-                              undefined,
                             ],
-                            Object {
-                              "opacity": 1,
-                            },
                             Object {
                               "flex": 0,
                               "height": 64,
@@ -1747,47 +1224,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         vbWidth={64}
                         width={64}
                       >
-                        <RNSVGGroup
-                          fill={
-                            Array [
-                              0,
-                              4278190080,
-                            ]
-                          }
-                          fillOpacity={1}
-                          fillRule={1}
-                          font={Object {}}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
-                          propList={Array []}
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
-                        >
+                        <RNSVGGroup>
                           <RNSVGDefs>
                             <RNSVGLinearGradient
                               gradient={
@@ -1798,16 +1235,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   -854791,
                                 ]
                               }
-                              gradientTransform={
-                                Array [
-                                  1,
-                                  0,
-                                  0,
-                                  1,
-                                  0,
-                                  0,
-                                ]
-                              }
+                              gradientTransform={null}
                               gradientUnits={0}
                               name="grad"
                               x1="0"
@@ -1825,43 +1253,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "grad",
                               ]
                             }
-                            fillOpacity={1}
-                            fillRule={1}
-                            matrix={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
-                            opacity={1}
-                            originX={0}
-                            originY={0}
                             propList={
                               Array [
                                 "fill",
                               ]
                             }
                             r={32}
-                            rotation={0}
-                            scaleX={1}
-                            scaleY={1}
-                            skewX={0}
-                            skewY={0}
-                            stroke={null}
-                            strokeDasharray={null}
-                            strokeDashoffset={null}
-                            strokeLinecap={0}
-                            strokeLinejoin={0}
-                            strokeMiterlimit={4}
-                            strokeOpacity={1}
-                            strokeWidth={1}
-                            vectorEffect={0}
-                            x={0}
-                            y={0}
                           />
                         </RNSVGGroup>
                       </RNSVGSvgView>
@@ -1880,7 +1277,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "position": "absolute",
                               "width": 63,
                             },
-                            undefined,
                           ]
                         }
                       />
@@ -1904,20 +1300,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#007AFF",
                       "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 16,
+                      "letterSpacing": 0.1,
+                      "opacity": 1,
+                      "textAlign": "center",
                       "textAlignVertical": "center",
                     },
-                    Array [
-                      Object {
-                        "color": "#007AFF",
-                        "fontSize": 16,
-                        "letterSpacing": 0.1,
-                        "opacity": 1,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
                   ]
                 }
               >
@@ -1927,7 +1317,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -1953,7 +1342,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Object {
                       "position": "relative",
                     },
-                    undefined,
                   ]
                 }
               >
@@ -2001,9 +1389,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "top": -6,
                           },
                           Object {
-                            "opacity": 1,
-                          },
-                          Object {
                             "flex": 0,
                             "height": 148,
                             "width": 148,
@@ -2012,47 +1397,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       }
                       width={148}
                     >
-                      <RNSVGGroup
-                        fill={
-                          Array [
-                            0,
-                            4278190080,
-                          ]
-                        }
-                        fillOpacity={1}
-                        fillRule={1}
-                        font={Object {}}
-                        matrix={
-                          Array [
-                            1,
-                            0,
-                            0,
-                            1,
-                            0,
-                            0,
-                          ]
-                        }
-                        opacity={1}
-                        originX={0}
-                        originY={0}
-                        propList={Array []}
-                        rotation={0}
-                        scaleX={1}
-                        scaleY={1}
-                        skewX={0}
-                        skewY={0}
-                        stroke={null}
-                        strokeDasharray={null}
-                        strokeDashoffset={null}
-                        strokeLinecap={0}
-                        strokeLinejoin={0}
-                        strokeMiterlimit={4}
-                        strokeOpacity={1}
-                        strokeWidth={1}
-                        vectorEffect={0}
-                        x={0}
-                        y={0}
-                      >
+                      <RNSVGGroup>
                         <RNSVGDefs>
                           <RNSVGLinearGradient
                             gradient={
@@ -2063,16 +1408,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="top"
                             x1="0%"
@@ -2089,16 +1425,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="bottom"
                             x1="0%"
@@ -2115,16 +1442,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="left"
                             x1="100%"
@@ -2141,16 +1459,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="right"
                             x1="0%"
@@ -2173,16 +1482,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-left-top"
                             rx="100%"
@@ -2203,16 +1503,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-left-bottom"
                             rx="100%"
@@ -2233,16 +1524,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-right-top"
                             rx="100%"
@@ -2263,16 +1545,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 458874,
                               ]
                             }
-                            gradientTransform={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
+                            gradientTransform={null}
                             gradientUnits={0}
                             name="border-right-bottom"
                             rx="100%"
@@ -2287,42 +1560,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-left-top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
@@ -2332,42 +1574,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-right-top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
@@ -2377,42 +1588,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-right-bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGPath
                           d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
@@ -2422,42 +1602,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border-left-bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                         <RNSVGRect
                           fill={
@@ -2466,41 +1615,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "top",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={10}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={0}
                           x={42}
                           y="0"
@@ -2512,41 +1632,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "left",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={0}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={10}
                           x="0"
                           y={42}
@@ -2558,41 +1649,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "right",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={0}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={10}
                           x={74}
                           y={42}
@@ -2604,89 +1666,24 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "bottom",
                             ]
                           }
-                          fillOpacity={1}
-                          fillRule={1}
                           height={10}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
                           width={0}
                           x={42}
                           y={74}
                         />
                         <RNSVGPath
                           d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                          fill={
-                            Array [
-                              0,
-                              458874,
-                            ]
-                          }
-                          fillOpacity={1}
-                          fillRule={1}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
+                          fill={458874}
                           propList={
                             Array [
                               "fill",
                             ]
                           }
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
                         />
                       </RNSVGGroup>
                     </RNSVGSvgView>
@@ -2700,7 +1697,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "position": "absolute",
                             "width": 64,
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -2727,11 +1723,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "position": "absolute",
                                 "width": 64,
                               },
-                              undefined,
                             ],
-                            Object {
-                              "opacity": 1,
-                            },
                             Object {
                               "flex": 0,
                               "height": 64,
@@ -2743,47 +1735,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         vbWidth={64}
                         width={64}
                       >
-                        <RNSVGGroup
-                          fill={
-                            Array [
-                              0,
-                              4278190080,
-                            ]
-                          }
-                          fillOpacity={1}
-                          fillRule={1}
-                          font={Object {}}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
-                          propList={Array []}
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
-                        >
+                        <RNSVGGroup>
                           <RNSVGDefs>
                             <RNSVGLinearGradient
                               gradient={
@@ -2794,16 +1746,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   -854791,
                                 ]
                               }
-                              gradientTransform={
-                                Array [
-                                  1,
-                                  0,
-                                  0,
-                                  1,
-                                  0,
-                                  0,
-                                ]
-                              }
+                              gradientTransform={null}
                               gradientUnits={0}
                               name="grad"
                               x1="0"
@@ -2821,43 +1764,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "grad",
                               ]
                             }
-                            fillOpacity={1}
-                            fillRule={1}
-                            matrix={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
-                            opacity={1}
-                            originX={0}
-                            originY={0}
                             propList={
                               Array [
                                 "fill",
                               ]
                             }
                             r={32}
-                            rotation={0}
-                            scaleX={1}
-                            scaleY={1}
-                            skewX={0}
-                            skewY={0}
-                            stroke={null}
-                            strokeDasharray={null}
-                            strokeDashoffset={null}
-                            strokeLinecap={0}
-                            strokeLinejoin={0}
-                            strokeMiterlimit={4}
-                            strokeOpacity={1}
-                            strokeWidth={1}
-                            vectorEffect={0}
-                            x={0}
-                            y={0}
                           />
                         </RNSVGGroup>
                       </RNSVGSvgView>
@@ -2876,7 +1788,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "position": "absolute",
                               "width": 63,
                             },
-                            undefined,
                           ]
                         }
                       />
@@ -2900,20 +1811,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 16,
+                      "letterSpacing": 0.1,
+                      "opacity": 1,
+                      "textAlign": "center",
                       "textAlignVertical": "center",
                     },
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 16,
-                        "letterSpacing": 0.1,
-                        "opacity": 1,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
                   ]
                 }
               >
@@ -2925,6 +1830,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
       </View>
     </RCTScrollView>
     <View
+      forwardedRef={[Function]}
       onLayout={[Function]}
       pointerEvents="box-none"
       style={
@@ -2967,20 +1873,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           style={
             Array [
               Object {
-                "color": "#0A1427",
+                "color": "#ffffff",
                 "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "marginBottom": 8,
+                "textAlign": "center",
                 "textAlignVertical": "center",
               },
-              Array [
-                Object {
-                  "color": "#ffffff",
-                  "fontSize": 12,
-                  "lineHeight": 18,
-                  "marginBottom": 8,
-                  "textAlign": "center",
-                },
-                undefined,
-              ],
             ]
           }
         >
@@ -2992,14 +1892,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Object {
                 "flexDirection": "row",
               },
-              undefined,
             ]
           }
         >
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -3037,22 +1935,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#FFFFFF",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 12,
-                    "lineHeight": 18,
+                    "fontSize": 14,
+                    "lineHeight": 14,
+                    "marginTop": 2.52,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#FFFFFF",
-                      "fontSize": 14,
-                      "lineHeight": 14,
-                      "marginTop": 2.52,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
               variant="danger"
@@ -3067,7 +1957,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "height": 0,
                   "width": 8,
                 },
-                undefined,
               ]
             }
             w={8}
@@ -3075,7 +1964,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -3113,22 +2001,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#FFFFFF",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 12,
-                    "lineHeight": 18,
+                    "fontSize": 14,
+                    "lineHeight": 14,
+                    "marginTop": 2.52,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#FFFFFF",
-                      "fontSize": 14,
-                      "lineHeight": 14,
-                      "marginTop": 2.52,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
               variant="default"

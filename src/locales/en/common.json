@@ -12,6 +12,7 @@
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
+  "etherspot": "Etherspot",
   "ellipsedString": "{{string}}...",
   "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
 
@@ -206,7 +207,9 @@
     "claim": "Claim",
     "fromRariToWallet": "Rari Capital → Wallet",
     "fromWalletToRari": "Wallet → Rari Capital",
-    "rewardsClaimed": "Rewards claimed"
+    "rewardsClaimed": "Rewards claimed",
+    "keyFacts": "Key facts",
+    "multiple": "Multiple"
   },
 
   "button": {
@@ -300,7 +303,12 @@
     "buyToken": "Buy {{token}}",
     "topUpTokenTank": "Top up {{token}} Tank",
     "claimMore": "Claim more",
-    "transferMore": "Transfer more"
+    "transferMore": "Transfer more",
+    "addMoreLiquidity": "Add more liquidity",
+    "removeMoreLiquidity": "Remove more liquidity",
+    "stakeMoreLiquidity": "Stake more",
+    "unstakeMoreLiquidity": "Unstake more",
+    "claimMoreRewards": "Claim more"
   },
 
   "paragraph": {
@@ -487,7 +495,8 @@
     },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
-      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}.",
+      "exchangeFailed": "This transaction could not be completed. Please try again."
     },
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
@@ -504,7 +513,8 @@
       "sablierStreams": "Can't connect to Sablier",
       "isTokenSupportedByUniswap": "Can't connect to exchange service",
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
-      "rari": "Can't connect to Rari service."
+      "rari": "Can't connect to Rari service.",
+      "liquidityPools": "Can't connect to Liquidity Pools service"
     }
   },
 
@@ -539,12 +549,12 @@
       "fundTankConfirmScreen": "Fund tank review",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
       "unsettledAssetsScreen": "Unsettled Assets",
-      "withdrawFromTankScreen": "Withdraw from PLR tank"
+      "withdrawFromTokenTankScreen": "Withdraw from {{token}} tank"
     },
     "button": {
       "fundTank": "Fund Pillar Tank",
       "releaseTankFunds": "Release Funds",
-      "withdrawFromTank": "Withdraw from PLR tank",
+      "withdraw": "Withdraw",
       "settleTransactions": "Settle transactions",
       "enableSmartWalletForTank": "Enable Smart Wallet to create Tank",
       "goToTank": "Go to PLR Tank"
@@ -553,7 +563,8 @@
       "availableBalance": "Available Balance",
       "paidByPillar": "No fees - paid by Pillar",
       "transactionsAvailableToSettle": "Transactions available to settle",
-      "youAreFundingTokenTank": "You are funding your {{token}} tank"
+      "youAreFundingTokenTank": "You are funding your {{token}} tank",
+      "youAreWithdrawingFromTokenTank": "You are withdrawing from {{token}} tank"
     },
     "paragraph": {
       "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
@@ -1043,7 +1054,6 @@
       "ticketPurchaseScreen": "Purchase Tickets",
       "withdrawScreen": "Withdraw",
       "withdrawConfirmScreen": "Review",
-      "authorizePoolTogether": "Authorize Pool Together",
       "purchaseConfirmScreen": "Review"
     },
     "button": {
@@ -1053,10 +1063,7 @@
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",
-      "automationMissing": "In order to join Pool Together you will need to automate transactions first.",
-      "pendingAutomation": "Please wait for Pool Together automation",
-      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes.",
-      "allowAutomationWithToken": "Allow Pool Together to spend your {{token}} and automate transactions for you. You will have to do it only once. All further purchases will be executed with no automation fee."
+      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes."
     }
   },
 
@@ -1192,6 +1199,9 @@
     },
     "paragraph": {
       "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
+    },
+    "error": {
+      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed."
     }
   },
 
@@ -1219,10 +1229,6 @@
       "title": "Sablier money streaming",
       "description": "Stream money to people and organizations in real-time with just one deposit"
     },
-    "peerToPeerTrading": {
-      "title": "Peer-to-peer trading",
-      "description": "Swap tokens directly with others. Safe, secure, anonymous"
-    },
     "ramp": {
       "assetDecisionAlert": {
         "title": "Please choose...",
@@ -1244,6 +1250,10 @@
     "rari": {
       "title": "Rari Capital",
       "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
+    },
+    "liquidityPools": {
+      "title": "Liquidity Pools",
+      "description": "Stake your PLR Liquidity tokens and receive your rewards."
     },
     "label": {
       "requiresActivation": "Requires activation",
@@ -1301,13 +1311,15 @@
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Ethereum fee"
+      "allowancePlusEthFee": "Allowance + Ethereum fee",
+      "migratingFrom": "migrating from"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
+      "typedDataMessage": "Typed Data message"
     },
     "emptyState": {
       "assetsList": {
@@ -1344,8 +1356,6 @@
     "linkedDeviceNotFound": " Linked device not found.",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) to {{toAssetName}} ({{toAssetSymbol}}) exchange enabled.",
     "keyWalletAssetsTransfered": "Assets transferred. Enjoy using your Smart Wallet!",
-    "poolTogetherAutomationEnabled": "{{tokenSymbol}} enabled. Happy pooling!",
-    "poolTogetherAutomationFailed": "Can't enable {{tokenSymbol}}. Please try again",
     "walletRecovered": "Your wallet is now recovered. Enjoy using Pillar!",
     "rewardsOnTheirWay": "Referral reward is on its way. You will receive it soon.",
     "somethingWentWrong": "Something went wrong, we are already investigating it. Don't worry, your funds are safe. Please try again or contact support.",
@@ -1414,7 +1424,6 @@
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
-    "cannotAllowAsset": "Cannot allow asset. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
     "cannotWithdraw": "Cannot withdraw. Please try again.",
     "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
@@ -1424,6 +1433,7 @@
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
     "walletBackedUp": "Your wallet is backed up now.",
     "cannotFundTank": "Cannot funk tank. Please try again.",
+    "cannotWithdrawFromTank": "Cannot withdraw from tank. Please try again.",
     "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
     "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
     "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
@@ -1431,7 +1441,18 @@
     "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
-    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH."
+    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
+    "rariNotEnoughLiquidity": "Not enough liquidity to exchange this token. Please select another token.",
+    "poolDataFetchFailed": "Can't fetch liquidity pools data. Please try again or contact support.",
+    "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
+    "cannotStakeTokens": "Cannot stake tokens. Please try again.",
+    "cannotUnstakeTokens": "Cannot unstake tokens. Please try again.",
+    "cannotRemoveLiquidity": "Cannot remove liquidity. Please try again.",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} received.",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsStake": "{{value}} {{token}} staked.",
+    "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed."
   },
 
   "exchangeContent": {
@@ -1530,7 +1551,7 @@
       "youAreClaiming": "You are claiming rewards",
       "rgtPrice": "RGT price",
       "rgtSupply": "RGT supply",
-      "currentAPYWithPercentage": "Current APY: {{percentage}}%",
+      "currentAPYWithValue": "Current APY: {{value}}",
       "claimingDetails": "Claiming details",
       "burnTakeback": "Burn/Takeback"
     },
@@ -1547,7 +1568,6 @@
     },
     "infoContent": {
       "subtitle": {
-        "keyFacts": "Key facts",
         "whatIsRari": "What is Rari?",
         "howDoesRariEarn": "How does Rari Earn Yield?",
         "rariPools":"Rari Pools",
@@ -1614,7 +1634,10 @@
       "paragraph": {
         "yourAccountIsBeingUpgraded": "Your account is being upgraded to a\n{MARKETING TERM} Smart Wallet.",
         "whatIsUpgrade": "In a few words: Pillar is making Ethereum more accessible and laying a foundation for further improvements of Pillar platform.",
-        "upgrade": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new {MARKETING TERM} Smart Wallet. \nThe fee will be extremely small thanks to Pillar Etherspot technology. "
+        "upgrade": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new {MARKETING TERM} Smart Wallet. \nThe fee will be extremely small thanks to Pillar Etherspot technology.",
+        "benefitNumberOne": "Benefit number one",
+        "benefitNumberTwoLonger": "Benefit number two is long enough to fit in two lines",
+        "benefitNumberThreeLong": "This third benefit is rather long and all of a sudden requires three lines for copy"
       }
     }
   },
@@ -1696,5 +1719,107 @@
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received a collectible.",
     "collectibleSentAndReceived": "Your collectible has been received."
+  },
+
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 D",
+      "week": "7 D",
+      "month": "30 D",
+      "halfYear": "6 M",
+      "year": "1 Y",
+      "all": "ALL "
+    }
+  },
+
+  "liquidityPoolsContent": {
+    "title": {
+      "addLiquidity": "Add liquidity",
+      "addLiquidityReview": "Review",
+      "stakeTokens": "Stake tokens",
+      "stakeTokensReview": "Review",
+      "unstakeTokens": "Unstake tokens",
+      "unstakeTokensReview": "Review",
+      "removeLiquidity": "Remove liquidity",
+      "removeLiquidityReview": "Review",
+      "claimRewardsReview": "Review",
+      "liquidityPools": "Liquidity Pools",
+      "infoScreen": "Liquidity Pools"
+    },
+    "button": {
+      "addLiquidity": "Add liquidity",
+      "removeLiquidity": "Remove liquidity",
+      "stake": "Stake",
+      "unstake": "Unstake",
+      "claimRewards": "Claim rewards"
+    },
+    "label": {
+      "staked": "Staked",
+      "rewards": "Rewards",
+      "claimedSoFar": "{{value}} {{token}} claimed so far",
+      "addLiquidityToStartEarning": "Add liquidity to start earning from staking",
+      "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards",
+      "shareOfPool": "Share of pool",
+      "youAreAddingLiquidity": "You are adding liquidity",
+      "tokenAllocation": "Token allocation",
+      "youAreStaking": "You are staking",
+      "youAreUnstaking": "You are unstaking",
+      "youAreRemovingLiquidity": "You are removing liquidity",
+      "youWillReceive": "You will receive",
+      "youAreClaiming": "You are claiming",
+      "price": "Price",
+      "volume": "Volume",
+      "weeklyRewards": "Weekly rewards",
+      "24h": "24 h",
+      "1w": "1 w",
+      "1m": "1 m",
+      "tokenPercent": "{{value}}% {{token}}",
+      "availableRewards": "Available rewards",
+      "totalLiquidity": "Total liquidity",
+      "24hVolume": "24h volume",
+      "tokenLiquidity": "{{tokenName}} liquidity",
+      "poolTokenAllocation": "Pool token allocation",
+      "yourPoolShareAllocation": "Your pool share token allocation",
+      "tokenPrice": "Token price",
+      "quantity": "Quantity",
+      "liquidityAdded": "Liquidity added",
+      "unstaked": "Unstaked",
+      "rewardsClaimed": "Rewards claimed",
+      "liquidityRemoved": "Liquidity removed",
+      "fromWalletToPool": "Wallet → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → Wallet",
+      "24hFees": "24h fees"
+    },
+    "tabs": {
+      "active": "Available",
+      "purchased": "Liquidity added",
+      "staked": "Staked"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "What are Liquidity Pools?",
+        "howDoLiquidityPoolsWork": "How Do Liquidity Pools Work?"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "Liquidity pools, in essence, are pools of tokens that are locked in a smart contract. They are used to facilitate trading by providing liquidity and are extensively used by some of the decentralized exchanges a.k.a DEXes.",
+        "howDoLiquidityPoolsWork": "In its basic form, a single liquidity pool holds 2 tokens and each pool creates a new market for that particular pair of tokens. DAI/ETH can be a good example of a popular liquidity pool on Uniswap.\n\nWhen a new pool is created, the first liquidity provider is the one that sets the initial price of the assets in the pool. The liquidity provider is incentivised to supply an equal value of both tokens to the pool. If the initial price of the tokens in the pool diverges from the current global market price, it creates an instant arbitrage opportunity that can result in lost capital for the liquidity provider. This concept of supplying tokens in a correct ratio remains the same for all the other liquidity providers that are willing to add more funds to the pool later.\n\nWhen liquidity is supplied to a pool, the liquidity provider (LP) receives special tokens called LP tokens in proportion to how much liquidity they supplied to the pool. When a trade is facilitated by the pool a 0.3% fee is proportionally distributed amongst all the LP token holders. If the liquidity provider wants to get their underlying liquidity back, plus any accrued fees, they must burn their LP tokens.\n\nEach token swap that a liquidity pool facilitates results in a price adjustment according to a deterministic pricing algorithm. This mechanism is also called an automated market maker (AMM) and liquidity pools across different protocols may use a slightly different algorithm."
+      },
+      "insight": {
+        "title": "Add liquidity to start earning from staking",
+        "button": "Explore pools"
+      }
+    },
+    "depositsList": {
+      "title": "Liquidity Pools"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Staking unlocked",
+        "liquidityAdded": "Liquidity added",
+        "stakeYourTokens": "Stake your tokens to get more interest and extra rewards.",
+        "stakeTokensButton": "Stake tokens",
+        "laterButton": "Later"
+      }
+    }
   }
 }

@@ -23,7 +23,8 @@ import axios from 'axios';
 import type { Asset } from 'models/Asset';
 
 import Toast from 'components/Toast';
-import { convertToBaseUnits, reportLog } from 'utils/common';
+import { convertToBaseUnits, convertToNominalUnits, reportLog } from 'utils/common';
+import { getFixedQuantity } from 'utils/exchange';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const EXCHANGE_URL = 'https://api.1inch.exchange/v2.0';
@@ -37,9 +38,9 @@ type CommonUrlParams = {
 export const get1inchCommonUrlParams = (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
 ): CommonUrlParams => {
-  const quantityBN = new BigNumber(quantity);
+  const quantityBN = new BigNumber(getFixedQuantity(quantity, fromAsset.decimals));
   const quantityInBaseUnits: BigNumber = convertToBaseUnits(
     new BigNumber(fromAsset.decimals), quantityBN,
   );
@@ -83,3 +84,8 @@ export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => (
   ...asset,
   code: asset.symbol,
 }));
+
+export const parseTokenAmount = (decimals: number, amount: string): BigNumber => convertToNominalUnits(
+  new BigNumber(decimals),
+  new BigNumber(amount),
+);

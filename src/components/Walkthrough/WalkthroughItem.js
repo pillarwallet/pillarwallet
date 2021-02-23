@@ -40,7 +40,7 @@ type State = {
 };
 
 class WalkthroughItem extends React.Component<Props, State> {
-  reference = React.createRef();
+  reference: React.ElementRef<any>;
 
   state = {
     showTooltip: false,
@@ -124,6 +124,7 @@ class WalkthroughItem extends React.Component<Props, State> {
         <TouchableOpacity onPress={this.showNext}>
           {children}
           {!!showTooltip && refMeasures &&
+            // $FlowFixMe: flow update to 0.122
             <WalkthroughTooltip
               isAttached
               targetMeasurements={refMeasures}
