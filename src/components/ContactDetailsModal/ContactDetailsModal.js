@@ -221,7 +221,7 @@ const ContactDetailsModal = ({
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
       if (modalRef.current) modalRef.current.close();
-      // $FlowFixMe: flow update to 0.122
+
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };

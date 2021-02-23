@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -199,37 +198,56 @@ const SendAsset = ({
   }, []);
 
   const resolveContactFromOption = async (value: Option): Promise<?Contact> => {
-    const ethAddress = value?.ethAddress || '';
-    let contact = {
+    let contact: Contact = {
       name: value?.name || '',
-      ethAddress,
-      ensName: null,
+      ethAddress: value?.ethAddress || '',
     };
 
-    if (isEnsName(ethAddress)) {
+    if (isEnsName(contact.ethAddress)) {
       setResolvingContactEnsName(true);
-      contact = await getContactWithEnsName(contact, ethAddress);
-      if (!contact?.ensName) {
-        // failed to resolve ENS, error toast will be shown
-        setResolvingContactEnsName(false);
-        return Promise.resolve();
-      }
+      contact = await getContactWithEnsName(contact, contact.ethAddress);
       setResolvingContactEnsName(false);
+
+      // ENS name resolution failed
+      if (!contact.ensName) return undefined;
     }
 
-    // if name still empty let's set it with address
-    if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
+    if (!contact.name) {
+      contact.name = contact.ethAddress;
+    }
 
     return contact;
   };
 
-  const handleReceiverSelect = async (value: Option) => {
-    if (!value?.ethAddress) {
+  const handleSelectContact = async (option: Option) => {
+    if (resolvingContactEnsName) return;
+
+    if (!option?.ethAddress) {
       setSelectedContact(null);
-    } else {
-      const contact = await resolveContactFromOption(value);
-      setSelectedContact(contact);
+      return;
     }
+
+    const contact = await resolveContactFromOption(option);
+    setSelectedContact(contact);
+  };
+
+  const handleAddToContactsPress = async (option: Option) => {
+    if (resolvingContactEnsName) return;
+
+    const initialContact = await resolveContactFromOption(option);
+
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initialContact}
+        onSave={(contact: Contact) => {
+          addContact(contact);
+          setSelectedContact(contact);
+        }}
+        contacts={contacts}
+        isDefaultNameEns
+      />
+    ));
   };
 
   const handleFormSubmit = async () => {
@@ -338,30 +356,7 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
 
-  const openAddToContacts = useCallback((initial: ?Contact) => {
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        contact={initial}
-        onSave={(contact: Contact) => {
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    ));
-  }, [contacts, addContact, handleReceiverSelect]);
-
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
-
-  const handleAddToContactsPress = async (option: Option) => {
-    console.log('🔵 handleAddToContactsPress', option);
-    if (resolvingContactEnsName) return;
-
-    const contact = await resolveContactFromOption(option);
-    openAddToContacts(contact);
-  };
 
   const selectedOption: ?Option = selectedContact
     ? { ...selectedContact, value: selectedContact.ethAddress }
@@ -370,7 +365,7 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
+        onOptionSelect: handleSelectContact,
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),

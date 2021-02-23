@@ -20,5 +20,5 @@
 export type Contact = {
   name: string,
   ethAddress: string,
-  ensName: ?string,
+  ensName?: ?string,
 };
