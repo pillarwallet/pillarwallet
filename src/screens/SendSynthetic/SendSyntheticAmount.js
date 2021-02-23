@@ -50,7 +50,6 @@ import {
 
 // models, types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Contact } from 'models/Contact';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
