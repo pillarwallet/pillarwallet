@@ -70,7 +70,7 @@ import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 
 // services
-import smartWalletInstance from 'services/smartWallet';
+import etherspot from 'services/etherspot';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
@@ -451,7 +451,7 @@ export class EventDetail extends React.Component<Props> {
     });
   };
 
-  viewOnTheBlockchain = () => {
+  viewOnTheBlockchain = async () => {
     const { hash } = this.props.event;
     if (!hash) {
       Toast.show({
@@ -463,7 +463,7 @@ export class EventDetail extends React.Component<Props> {
       return;
     }
 
-    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const explorerLink = await etherspot.getTransactionExplorerLink(hash);
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),

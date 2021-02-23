@@ -128,12 +128,20 @@ class EtherspotService {
       .filter(({ address }) => !isCaseInsensitiveMatch(address, constants.AddressZero))
       .map(({ address }) => address);
 
+    let balancesRequestPayload = {
+      account: accountAddress,
+    };
+
+    if (assetAddresses.length) {
+      balancesRequestPayload = {
+        ...balancesRequestPayload,
+        tokens: assetAddresses,
+      };
+    }
+
     // gets balances by provided token (asset) address and ETH balance regardless
     const accountBalances = await this.sdk
-      .getAccountBalances({
-        account: accountAddress,
-        tokens: assetAddresses,
-      })
+      .getAccountBalances(balancesRequestPayload)
       .catch((error) => {
         reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
         return null;
@@ -300,6 +308,15 @@ class EtherspotService {
       reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
       return null;
     });
+  }
+
+  async getTransactionExplorerLink(hash: string): Promise<?string> {
+    const submittedBatch = await this.getSubmittedBatchByHash(hash);
+
+    const transactionHash = submittedBatch?.transaction?.hash;
+    if (!transactionHash) return null;
+
+    return `${getEnv().TX_DETAILS_URL}${transactionHash}`;
   }
 
   async logout() {
