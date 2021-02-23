@@ -57,7 +57,7 @@ const RecoveryIcon = styled.Image`
 `;
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   theme: Theme,
   resetOnboardingAndNavigate: (routeName: string) => void,
 };

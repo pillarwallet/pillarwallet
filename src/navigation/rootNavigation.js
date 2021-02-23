@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -61,6 +60,8 @@ import {
   RECOVERY_PORTAL_WALLET_RECOVERY,
   RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
 } from 'constants/navigationConstants';
+
+import type { NavigationNavigator } from 'react-navigation';
 
 import AppFlow from './appNavigation';
 
@@ -105,7 +106,7 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
-const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
+const RootSwitch: NavigationNavigator<any, {}, {}> = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
@@ -126,4 +127,4 @@ class WrappedRootSwitch extends React.Component<Props> {
   }
 }
 
-export default createAppContainer(WrappedRootSwitch);
+export default createAppContainer<any, {}>(WrappedRootSwitch);

@@ -77,7 +77,7 @@ const LiquidityPoolsInfoScreen = ({
         <InsightWithButton
           title={t('liquidityPoolsContent.infoContent.insight.title')}
           buttonTitle={t('liquidityPoolsContent.infoContent.insight.button')}
-          onButtonPress={() => navigation.navigate(LIQUIDITY_POOLS)}
+          onButtonPress={() => { navigation.navigate(LIQUIDITY_POOLS); }}
         />
         <Spacing h={50} />
       </MainContainer>

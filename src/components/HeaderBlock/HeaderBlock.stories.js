@@ -23,13 +23,13 @@ import styled from 'styled-components/native';
 import { storiesOf } from '@storybook/react-native';
 import { getColorByTheme } from 'utils/themes';
 
+import type { NavigationScreenProp } from 'react-navigation';
+
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import HeaderBlock from './HeaderBlock';
 
-
-const navigationMock = {
-  goBack: () => {},
-};
+// @FlowFixMe: mock
+const navigationMock: NavigationScreenProp<void> = ({ goBack: () => {} }: any);
 
 const Background = styled.View`
   background-color: ${getColorByTheme({ lightCustom: '#3DDDE5', darkCustom: '#18777C' })};

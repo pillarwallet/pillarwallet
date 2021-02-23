@@ -29,7 +29,7 @@ import Spinner from 'components/Spinner';
 
 type Props = {
   onWebViewMessage?: Function,
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   onWebViewNavigate?: Function,
   onRef?: Function,
   title?: string,

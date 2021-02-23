@@ -41,7 +41,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   isBackedUp: boolean,
   isImported: boolean,
   theme: Theme,

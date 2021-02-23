@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { Alert, Keyboard } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
@@ -50,6 +49,8 @@ import {
 } from 'constants/navigationConstants';
 
 // models, types
+import type { NavigationScreenProp } from 'react-navigation';
+import type { Contact } from 'models/Contact';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
@@ -60,10 +61,9 @@ import smartWalletService from 'services/smartWallet';
 // selectors
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 
-
 type Props = {
   initSyntheticsService: () => void,
-  navigation: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<any>,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
   isOnline: boolean,
