@@ -183,7 +183,7 @@ const RariInfoScreen = ({
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
           buttonProps={{ small: false }}
-          onButtonPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL })}
+          onButtonPress={() => { navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL }); }}
         />
         <Spacing h={44} />
         <Subtitle>{t('rariContent.infoContent.subtitle.rariPools')}</Subtitle>
@@ -233,7 +233,7 @@ const RariInfoScreen = ({
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
           buttonProps={{ small: false }}
-          onButtonPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL })}
+          onButtonPress={() => { navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL }); }}
         />
       </HorizontalPadding>
       <Spacing h={16} />
