@@ -30,7 +30,7 @@ import type { EthereumWallet } from 'models/Wallet';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   wallet: ?EthereumWallet,
   initRecoveryPortalWalletRecover: () => void,
 };

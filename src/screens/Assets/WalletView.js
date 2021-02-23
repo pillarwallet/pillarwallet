@@ -312,7 +312,7 @@ class WalletView extends React.Component<Props, State> {
             {!balance && !!activeAccountAddress && (
               <ListItemChevron
                 label={t('button.buyTokensWithCreditCard')}
-                onPress={() => navigation.navigate(SERVICES)}
+                onPress={() => { navigation.navigate(SERVICES); }}
                 bordered
                 addon={(<LabelBadge label={t('badgeText.new')} />)}
               />

@@ -33,7 +33,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   connectedSmartWallet: ConnectedSmartWalletAccount,
   executeDeepLink: (deepLink: string) => void,
   accounts: Accounts,

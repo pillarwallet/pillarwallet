@@ -200,7 +200,7 @@ const AccountsScreen = ({
       id: 'KEY_BASED',
       type: ITEM_TYPE.BUTTON,
       title: t('button.migrateAssetsToSmartWallet'),
-      mainAction: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE),
+      mainAction: () => { navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE); },
     });
   }
 

@@ -37,7 +37,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   lockScreen: () => void,
 };
 

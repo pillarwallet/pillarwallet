@@ -182,8 +182,10 @@ const NewProfile = ({
     Keyboard.dismiss();
     const navProps = usernameValue ? { username: usernameValue } : null;
     if (Platform.OS === 'android') {
+      // $FlowFixMe: react-navigation types
       navigation.navigate(PERMISSIONS, navProps);
     } else {
+      // $FlowFixMe: react-navigation types
       navigation.navigate(SET_WALLET_PIN_CODE, navProps);
     }
   };
