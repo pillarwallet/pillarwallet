@@ -286,6 +286,7 @@
     "sendTokenInstead": "Send token instead",
     "addToContacts": "Add to contacts",
     "copyToClipboard": "Copy to clipboard",
+    "paste": "Paste",
     "resendIt": "Resend it",
     "migrateAssetsToSmartWallet": "Migrate assets to Smart Wallet",
     "continue": "Continue",
