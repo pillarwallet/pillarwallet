@@ -198,11 +198,7 @@ const SendAsset = ({
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
   }, []);
 
-  const resolveAndSetContactAndFromOption = async (
-    value: Option,
-    setContact: (value: ?Contact) => void,
-    onSuccess?: () => void,
-  ): Promise<void> => {
+  const resolveContactFromOption = async (value: Option): Promise<?Contact> => {
     const ethAddress = value?.ethAddress || '';
     let contact = {
       name: value?.name || '',
@@ -224,19 +220,15 @@ const SendAsset = ({
     // if name still empty let's set it with address
     if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
 
-    setContact(contact);
-
-    if (onSuccess) onSuccess();
-
-    return Promise.resolve();
+    return contact;
   };
 
-  const handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
+  const handleReceiverSelect = async (value: Option) => {
     if (!value?.ethAddress) {
       setSelectedContact(null);
-      if (onSuccess) onSuccess();
     } else {
-      resolveAndSetContactAndFromOption(value, setSelectedContact, onSuccess);
+      const contact = await resolveContactFromOption(value);
+      setSelectedContact(contact);
     }
   };
 
@@ -362,13 +354,15 @@ const SendAsset = ({
   }, [contacts, addContact, handleReceiverSelect]);
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
-  const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
-    option,
-    openAddToContacts,
-  );
-  const customOptionButtonOnPress = !resolvingContactEnsName
-    ? addContactButtonPress
-    : () => {};
+
+  const handleAddToContactsPress = async (option: Option) => {
+    console.log('🔵 handleAddToContactsPress', option);
+    if (resolvingContactEnsName) return;
+
+    const contact = await resolveContactFromOption(option);
+    openAddToContacts(contact);
+  };
+
   const selectedOption: ?Option = selectedContact
     ? { ...selectedContact, value: selectedContact.ethAddress }
     : null;
@@ -380,7 +374,7 @@ const SendAsset = ({
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
-        customOptionButtonOnPress,
+        customOptionButtonOnPress: handleAddToContactsPress,
       }}
       customValueSelectorProps={{
         value: amount,
