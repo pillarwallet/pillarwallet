@@ -35,7 +35,7 @@ type Props = {
   depositedAssets: DepositedAsset[],
   isFetchingDepositedAssets: boolean,
   hideLendingDeposits: boolean,
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   toggleLendingDeposits: () => void,
 }
 
@@ -90,7 +90,7 @@ const DepositedAssets = ({
       label={t('aaveContent.depositedAssetsList.title')}
       labelRight={isFetchingDepositedAssets ? null : t('button.viewAll')}
       showLoadingSpinner={isFetchingDepositedAssets}
-      onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
+      onPressLabelRight={() => { navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST); }}
       collapseContent={
         <FlatList
           data={depositedAssets}

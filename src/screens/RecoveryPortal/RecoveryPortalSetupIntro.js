@@ -46,7 +46,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   hasSeenRecoveryPortalIntro: () => void,
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
 };
 
 const CustomWrapper = styled.View`

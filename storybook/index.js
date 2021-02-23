@@ -45,6 +45,7 @@ const StorybookUIRoot = () => {
   return <StorybookComponent />;
 };
 
+// $FlowFixMe: react-navigation types
 const StorybookWithNav = createAppContainer(createSwitchNavigator({ Screen: StorybookUIRoot }));
 
 export default StorybookWithNav;

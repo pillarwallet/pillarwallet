@@ -419,7 +419,7 @@ class PPNView extends React.Component<Props, State> {
             chevronStyle={{ color: colors.secondaryText }}
             label={t('label.incomingBalance')}
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
-            onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
+            onPress={() => { navigation.navigate(UNSETTLED_ASSETS); }}
             color={colors.text}
             bordered
             disabled={disableTopUpAndSettle}

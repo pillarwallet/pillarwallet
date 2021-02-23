@@ -54,7 +54,7 @@ import { EXCHANGE } from 'constants/exchangeConstants';
 import WBTCCafeIntro from './WBTCCafeIntro';
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   hasSeenWbtcCafeIntro: boolean,
   updateHasSeenIntro: () => void,
   theme: Theme,

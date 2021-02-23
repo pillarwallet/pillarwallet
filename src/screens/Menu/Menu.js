@@ -168,7 +168,7 @@ const Menu = ({
     key: string,
     title: string,
     emoji?: string,
-    action?: () => void,
+    action?: () => any,
     icon?: string,
     iconColor?: string,
     hidden?: boolean,
@@ -241,9 +241,7 @@ const Menu = ({
       iconColor: colors.accent,
       hidden: isKeyBasedAssetsMigrationHidden,
       action: () => navigation.navigate(
-        hasKeyBasedAssetsTransferInProgress
-          ? KEY_BASED_ASSET_TRANSFER_STATUS
-          : KEY_BASED_ASSET_TRANSFER_CHOOSE,
+        hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
       ),
     },
     {

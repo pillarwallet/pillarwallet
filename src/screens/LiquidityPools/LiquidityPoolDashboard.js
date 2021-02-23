@@ -178,7 +178,7 @@ const LiquidityPoolDashboard = ({
       Modal.open(() => (
         <StakingEnabledModal
           pool={pool}
-          stakeTokens={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+          stakeTokens={() => { navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool }); }}
         />
       ));
       setShownStakingEnabledModal(pool.name);

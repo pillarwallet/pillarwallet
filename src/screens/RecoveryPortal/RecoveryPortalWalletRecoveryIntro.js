@@ -44,7 +44,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
   theme: Theme,
   resetOnboardingAndNavigate: (routeName: string) => void,
 };
