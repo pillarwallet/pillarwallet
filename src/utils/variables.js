@@ -221,10 +221,12 @@ export const objectFontStyles = {
 
 export const spacing = {
   rhythm: 20,
+  extraSmall: 4,
   small: 8,
   medium: 12,
   mediumLarge: 16,
   large: 20,
+  extraLarge: 24,
   layoutSides: 16,
 };
 
