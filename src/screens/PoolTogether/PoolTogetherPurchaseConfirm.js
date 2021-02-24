@@ -28,7 +28,6 @@ import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 
 // actions
-import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
@@ -78,7 +77,6 @@ type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
   session: Object,
-  logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
@@ -110,11 +108,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       userTickets,
       totalPoolTicketsCount,
     };
-  }
-
-  componentDidMount() {
-    const { logScreenView } = this.props;
-    logScreenView('View PoolTogether Purchase Confirm', 'PoolTogetherPurchaseConfirm');
   }
 
   purchasePoolAsset = async () => {
@@ -252,7 +245,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 

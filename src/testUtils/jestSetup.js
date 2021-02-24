@@ -109,6 +109,7 @@ jest.mock('@react-native-firebase/app', () => ({
     }),
     analytics: () => ({
       logEvent: () => {},
+      setCurrentScreen: () => {},
     }),
     crashlytics: () => ({
       setUserId: () => {

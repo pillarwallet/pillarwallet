@@ -48,7 +48,7 @@ const rariLogo = require('assets/images/rari_logo.png');
 
 const DepositedAssetGain = styled(BaseText)`
   margin-bottom: 5px;
-  font-size: ${fontSizes.big};
+  font-size: ${fontSizes.big}px;
 `;
 
 type Props = {|

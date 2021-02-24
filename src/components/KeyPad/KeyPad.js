@@ -64,7 +64,7 @@ const ButtonText = styled(BaseText)`
 `;
 
 const RippleSizer = styled.View`
-   height: 55;
+   height: 55px;
    width: 100%;
    align-self: center;
 `;
