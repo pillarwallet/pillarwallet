@@ -362,11 +362,12 @@ export class EventDetail extends React.Component<Props> {
 
   componentDidMount() {
     InteractionManager.runAfterInteractions(() => {
-      const { event } = this.props;
-      const { type } = event;
+      const { type } = this.props.event;
       if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
-      const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+
+      const txInfo = this.findTxInfo(type === COLLECTIBLE_TRANSACTION);
       if (!txInfo) return;
+
       this.syncEnsRegistry(txInfo);
       this.syncTxStatus(txInfo);
     });
