@@ -22,7 +22,6 @@ import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import memoize from 'memoize-one';
 
 // types
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -37,7 +36,7 @@ import EventDetails, { shouldShowEventDetails } from 'components/EventDetails';
 import Modal from 'components/Modal';
 
 // utils
-import { groupAndSortByDate } from 'utils/common';
+import { groupSectionsByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 
 // constants
@@ -149,38 +148,35 @@ class ActivityFeed extends React.Component<Props> {
     initialNumToRender: 7,
   };
 
-  generateFeedSections = memoize(
-    (tabs, activeTab, feedData, headerComponent, tabsComponent, card) => {
-      let feedList = feedData || [];
+  generateFeedSections = (tabs, activeTab, feedData, headerComponent, tabsComponent, card) => {
+    let feedList = feedData || [];
 
-      if (tabs.length) {
-        const activeTabInfo = tabs.find(({ id }) => id === activeTab);
-        if (activeTabInfo) ({ data: feedList } = activeTabInfo);
-      }
+    if (tabs.length) {
+      const activeTabInfo = tabs.find(({ id }) => id === activeTab);
+      if (activeTabInfo) ({ data: feedList } = activeTabInfo);
+    }
 
-      const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+    if (!filteredFeedList.length) {
+      return [{ type: ITEM_TYPE.EMPTY_STATE }];
+    }
 
-      const dataSections = groupAndSortByDate(filteredFeedList);
+    const items = [
+      { type: ITEM_TYPE.HEADER, component: headerComponent },
+      { type: ITEM_TYPE.TABS, component: tabsComponent },
+    ];
 
-      const items = [];
-      items.push({ type: ITEM_TYPE.HEADER, component: headerComponent });
-      items.push({ type: ITEM_TYPE.TABS, component: tabsComponent });
-      if (!filteredFeedList.length) {
-        items.push({ type: ITEM_TYPE.EMPTY_STATE });
-      } else {
-        if (card) {
-          items.push({ type: ITEM_TYPE.CARD_HEADER });
-        }
-        dataSections.forEach(({ data, ...section }) => {
-          items.push({ type: ITEM_TYPE.SECTION, section });
-          data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
-        });
-      }
+    if (card) {
+      items.push({ type: ITEM_TYPE.CARD_HEADER });
+    }
 
-      return items;
-    },
-    isEqual,
-  );
+    groupSectionsByDate(filteredFeedList).forEach(({ data, ...section }) => {
+      items.push({ type: ITEM_TYPE.SECTION, section });
+      items.push(...data.map((item) => ({ type: ITEM_TYPE.ITEM, item })));
+    });
+
+    return items;
+  };
 
   getEmptyStateData = () => {
     const {

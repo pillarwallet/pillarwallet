@@ -31,7 +31,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         },
         Object {
           "section": Object {
-            "date": "Invalid Date",
             "title": "Invalid Date",
           },
           "type": "SECTION",
@@ -406,7 +405,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         },
         Object {
           "section": Object {
-            "date": "Invalid Date",
             "title": "Invalid Date",
           },
           "type": "SECTION",
