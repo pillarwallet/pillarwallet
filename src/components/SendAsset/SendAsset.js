@@ -231,7 +231,7 @@ const SendAsset = ({
     setSelectedContact(contact);
   };
 
-  const handleAddToContactsPress = async (option: Option) => {
+  const handleAddToContactsPress = async (option: Option, closeOptions: () => void) => {
     if (resolvingContactEnsName) return;
 
     const initialContact = await resolveContactFromOption(option);
@@ -243,6 +243,7 @@ const SendAsset = ({
         onSave={(contact: Contact) => {
           addContact(contact);
           setSelectedContact(contact);
+          closeOptions();
         }}
         contacts={contacts}
         isDefaultNameEns

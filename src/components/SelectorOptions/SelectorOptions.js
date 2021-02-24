@@ -70,7 +70,7 @@ type OwnProps = {|
   allowEnteringCustomAddress?: boolean,
   forceTab?: string,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
+  customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
   onOpen?: () => void,
 |};
 
@@ -221,7 +221,7 @@ class SelectorOptions extends React.Component<Props, State> {
       option = {
         ...option,
         buttonActionLabel: customOptionButtonLabel,
-        buttonAction: () => customOptionButtonOnPress(option),
+        buttonAction: () => customOptionButtonOnPress(option, this.close),
       };
     }
 
