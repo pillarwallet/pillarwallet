@@ -35,6 +35,7 @@ import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Instabug, { NetworkLogger } from 'instabug-reactnative';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -144,6 +145,14 @@ class App extends React.Component<Props, *> {
     this.state = {
       env: null,
     };
+
+    Instabug.startWithToken(getEnv().INSTABUG_TOKEN, [Instabug.invocationEvent.shake]);
+
+    // Temporary workaround: In dev mode, the app crashes while loading
+    // the home screen if network logging is enabled.
+    if (__DEV__) {
+      NetworkLogger.setEnabled(false);
+    }
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -289,6 +298,8 @@ class App extends React.Component<Props, *> {
     if (!!nextRouteName && nextRouteName !== previousRouteName) {
       this.props.logScreenView(nextRouteName);
     }
+
+    Instabug.onNavigationStateChange(prevState, nextState, action);
   }
 
   render() {
