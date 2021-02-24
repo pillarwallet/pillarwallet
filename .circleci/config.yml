@@ -293,6 +293,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_TOKEN/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Fetch App Store Connect API key
@@ -381,6 +382,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_TOKEN/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -482,6 +484,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
+            sed -i.bak "s/_instabug_token_/$INSTABUG_TOKEN/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:
@@ -602,6 +605,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
+            sed -i.bak "s/_instabug_token_/$INSTABUG_TOKEN/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:
