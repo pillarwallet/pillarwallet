@@ -26,7 +26,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
@@ -54,7 +53,6 @@ type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
   session: Object,
-  logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
   user: Object,
@@ -83,11 +81,6 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
       tokenValue,
       transactionPayload,
     };
-  }
-
-  componentDidMount() {
-    const { logScreenView } = this.props;
-    logScreenView('View PoolTogether Withdraw Confirm', 'PoolTogetherWithdrawConfirm');
   }
 
   withdrawPoolAsset = () => {
@@ -178,7 +171,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 

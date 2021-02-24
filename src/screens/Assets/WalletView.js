@@ -58,7 +58,6 @@ import type { Theme } from 'models/Theme';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
@@ -81,7 +80,6 @@ type Props = {
   hideInsight: () => void,
   insightList: Object[],
   insightsTitle: string,
-  logScreenView: (view: string, screen: string) => void,
   balances: Balances,
   rates: Rates,
   accounts: Accounts,
@@ -137,9 +135,7 @@ class WalletView extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
-    const { logScreenView } = this.props;
     this.setState({ activeTab });
-    logScreenView(`View tab Assets.${activeTab}`, 'Assets');
   };
 
   shouldBlockAssetsView = () => {
@@ -354,7 +350,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),

@@ -33,6 +33,7 @@ describe('Analytics Actions', () => {
 
   beforeEach(() => {
     firebaseAnalytics.logEvent = jest.fn();
+    firebaseAnalytics.setCurrentScreen = jest.fn();
   });
 
   afterEach(() => {
@@ -64,21 +65,18 @@ describe('Analytics Actions', () => {
     describe('when not opted out tracking', () => {
       beforeEach(() => optOutTracking(false));
 
-      it('calls firebaseAnalytics().logEvent', () => {
-        logScreenViewAction('name', 'type', 'id')(dispatch, getState);
-        expect(firebaseAnalytics.logEvent).toBeCalledWith(
-          'screen_view',
-          { contentName: 'name', contentType: 'type', contentId: 'id' },
-        );
+      it('calls firebaseAnalytics().setCurrentScreen', () => {
+        logScreenViewAction('name')(dispatch, getState);
+        expect(firebaseAnalytics.setCurrentScreen).toBeCalledWith('name', 'name');
       });
     });
 
     describe('when opted out tracking', () => {
       beforeEach(() => optOutTracking(true));
 
-      it('does not call firebaseAnalytics().logEvent', () => {
-        logScreenViewAction('name', 'type', 'id')(dispatch, getState);
-        expect(firebaseAnalytics.logEvent).not.toBeCalled();
+      it('does not call firebaseAnalytics().setCurrentScreen', () => {
+        logScreenViewAction('name')(dispatch, getState);
+        expect(firebaseAnalytics.setCurrentScreen).not.toBeCalled();
       });
     });
   });

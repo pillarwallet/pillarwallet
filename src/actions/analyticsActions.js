@@ -25,12 +25,10 @@ const isTrackingEnabled = (
   getState: GetState,
 ): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
 
-export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
+export const logScreenViewAction = (screenName: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState)) return;
-    let params = { contentName, contentType };
-    if (contentId) params = { ...params, contentId };
-    firebaseAnalytics.logEvent('screen_view', params);
+    firebaseAnalytics.setCurrentScreen(screenName, screenName);
   };
 };
 

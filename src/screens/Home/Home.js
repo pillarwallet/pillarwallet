@@ -62,7 +62,6 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { hideHomeUpdateIndicatorAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
-import { logScreenViewAction } from 'actions/analyticsActions';
 import {
   goToInvitationFlowAction,
   fetchReferralRewardsIssuerAddressesAction,
@@ -134,7 +133,6 @@ type Props = {
   badges: Badges,
   fetchBadges: Function,
   pendingConnector: ?Connector,
-  logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
   accounts: Accounts,
   userEvents: UserEvent[],
@@ -206,7 +204,6 @@ class HomeScreen extends React.Component<Props> {
   componentDidMount() {
     const isStaging = getEnv().ENVIRONMENT === STAGING;
     const {
-      logScreenView,
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchSmartWalletTransactions,
@@ -218,8 +215,6 @@ class HomeScreen extends React.Component<Props> {
       fetchRariData,
       fetchLiquidityPoolsData,
     } = this.props;
-
-    logScreenView('View home', 'Home');
 
     resetAppNotificationsBadgeNumber();
 
@@ -770,7 +765,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hideHomeUpdateIndicator: () => dispatch(hideHomeUpdateIndicatorAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
-  logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
