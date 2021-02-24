@@ -307,7 +307,7 @@ class HomeScreen extends React.Component<Props> {
     return (
       <BadgeTouchableItem
         data={item}
-        onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
+        onPress={() => { navigation.navigate(BADGE, { badgeId: item.badgeId }); }}
         style={{ paddingHorizontal: 8 }}
       />
     );
@@ -509,6 +509,7 @@ class HomeScreen extends React.Component<Props> {
                 iconProps: { secondary: true, style: { marginLeft: -4 } },
               },
             ],
+            // $FlowFixMe: react-navigation types
             centerItems: [{ custom: <UserNameAndImage user={user} /> }],
             rightItems: [
               {
@@ -550,7 +551,7 @@ class HomeScreen extends React.Component<Props> {
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
                     <ButtonText
-                      onPress={() => navigation.navigate(WALLETCONNECT)}
+                      onPress={() => { navigation.navigate(WALLETCONNECT); }}
                       buttonText={t('button.viewAllItemsAmount', { amount: walletConnectRequests.length })}
                       wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
                     />}
@@ -623,7 +624,7 @@ class HomeScreen extends React.Component<Props> {
                       label={t('sablierContent.moneyStreamingList.title')}
                       showLoadingSpinner={isFetchingStreams}
                       labelRight={isFetchingStreams ? null : t('button.viewAll')}
-                      onPressLabelRight={() => navigation.navigate(SABLIER_STREAMS)}
+                      onPressLabelRight={() => { navigation.navigate(SABLIER_STREAMS); }}
                       collapseContent={
                         <FlatList
                           data={streams}
@@ -642,7 +643,7 @@ class HomeScreen extends React.Component<Props> {
                       label={t('rariContent.depositsList.title')}
                       showLoadingSpinner={isFetchingRariData}
                       labelRight={isFetchingRariData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => navigation.navigate(RARI_DEPOSIT)}
+                      onPressLabelRight={() => { navigation.navigate(RARI_DEPOSIT); }}
                       collapseContent={
                         <FlatList
                           data={rariDeposits}
@@ -661,7 +662,7 @@ class HomeScreen extends React.Component<Props> {
                       label={t('liquidityPoolsContent.depositsList.title')}
                       showLoadingSpinner={isFetchingLiquidityPoolsData}
                       labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => navigation.navigate(LIQUIDITY_POOLS_SCREEN)}
+                      onPressLabelRight={() => { navigation.navigate(LIQUIDITY_POOLS_SCREEN); }}
                       collapseContent={
                         <FlatList
                           data={purchasedLiquidityPools}

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { withNavigation, NavigationScreenProp } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
@@ -35,13 +35,14 @@ import { themedColors } from 'utils/themes';
 import { toggleWCPromoCardAction } from 'actions/walletConnectActions';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import { EXPLORE_APPS } from 'constants/navigationConstants';
+import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   promoCardCollapsed: boolean,
   toggleWCPromoCard: (collapsed: boolean) => void,
-  navigation: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<mixed>,
 };
 
 const promoImage = require('assets/images/logo_pattern.png');

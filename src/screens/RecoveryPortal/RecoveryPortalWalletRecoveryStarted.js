@@ -33,7 +33,7 @@ import { fontStyles, spacing } from 'utils/variables';
 
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<mixed>,
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
