@@ -53,5 +53,8 @@ allprojects {
 //                force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 //            }
 //        }
+        maven {
+            url "https://sdks.instabug.com/nexus/repository/instabug-cp"
+        }
     }
 }

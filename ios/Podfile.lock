@@ -190,6 +190,8 @@ PODS:
   - GoogleUtilities/UserDefaults (6.7.2):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.5.0)
+  - instabug-reactnative (10.0.0):
+    - React
   - Intercom (5.5.2)
   - libwebp (1.1.0):
     - libwebp/demux (= 1.1.0)
@@ -611,6 +613,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (~> 0.54.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - instabug-reactnative (from `../node_modules/instabug-reactnative`)
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
@@ -743,6 +746,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  instabug-reactnative:
+    :path: "../node_modules/instabug-reactnative"
   lottie-ios:
     :path: "../node_modules/lottie-ios"
   lottie-react-native:
@@ -921,6 +926,7 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 1350d40e86a76f7863928d63bcb0b89c84c521c5
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+  instabug-reactnative: acf00941006b656bb811d819f13c5dd6584f0203
   Intercom: 1151a15e5e7931d8e401671a4357239d44325159
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
