@@ -36,7 +36,8 @@ import { ScrollWrapper } from 'components/Layout';
 
 // utils
 import { themedColors } from 'utils/themes';
-import { humanizeDateString, humanizeHexString } from 'utils/common';
+import { humanizeHexString } from 'utils/common';
+import { humanizeDateString } from 'utils/date';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { addressesEqual } from 'utils/assets';
 import { images } from 'utils/images';
