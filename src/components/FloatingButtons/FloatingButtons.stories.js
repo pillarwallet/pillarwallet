@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { View, FlatList } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 
 import FloatingButtons from './FloatingButtons';
@@ -49,4 +50,22 @@ stories.add('3 items', () => (
       { title: 'Send', iconSource: iconSend },
     ]}
   />
+));
+
+stories.add('With flat list', () => (
+  <View>
+    <FlatList
+      data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+      renderItem={({ item }) => <View style={{ height: 100, backgroundColor: item % 2 ? 'red' : 'blue' }} />}
+      contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+    />
+
+    <FloatingButtons
+      items={[
+        { title: 'Add contact', iconSource: iconAddContact },
+        { title: 'Invite friend', iconSource: iconAdd },
+        { title: 'Send', iconSource: iconSend },
+      ]}
+    />
+  </View>
 ));
