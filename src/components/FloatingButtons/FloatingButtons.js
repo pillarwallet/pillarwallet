@@ -79,6 +79,7 @@ const Container = styled.View`
   shadow-color: #000;
   shadow-offset: 0 8px;
   shadow-radius: 16px;
+  elevation: 6;
 `;
 
 const ItemView = styled.TouchableOpacity`
