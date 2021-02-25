@@ -23,19 +23,26 @@ import styled from 'styled-components/native';
 
 // Components
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 // Utils
 import { compactFalsy } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // Types
+import type { IconName } from 'components/Icon';
 import type { ImageSource } from 'utils/types/react-native';
 
 export type Item = {|
-    title: string,
-    iconSource?: ImageSource;
-    onPress?: () => void;
-|}
+  title: string,
+  // `name` prop from `Icon` component
+  iconName?: IconName,
+  // `source` prop value for `Image` component
+  iconSource?: ImageSource,
+  // Custom component, you are responsible for light/dark mode styling
+  icon?: React.Node,
+  onPress?: () => void,
+|};
 
 type Props = {|
   items: (?Item | false)[],
@@ -52,7 +59,11 @@ const FloatingButtons = ({ items: falsyItems }: Props) => {
     <Container>
       {items.map((item) => (
         <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
-          <ItemIcon source={item.iconSource} resizeMode="contain" />
+          <ItemIconWrapper>
+            {item.icon}
+            {item.iconName && <ItemIcon name={item.iconName} />}
+            {item.iconSource && <ItemIconImage source={item.iconSource} resizeMode="contain" />}
+          </ItemIconWrapper>
           <ItemTitle>{item.title}</ItemTitle>
         </ItemView>
       ))}
@@ -89,9 +100,20 @@ const ItemView = styled.TouchableOpacity`
   padding-bottom: ${spacing.medium}px;
 `;
 
-const ItemIcon = styled.Image.attrs(({ theme }) => ({ tintColor: theme.colors.basic010 }))`
+const ItemIconWrapper = styled.View`
   flex: 1;
+  justify-content: center;
+  align-items: center;
   margin-horizontal: ${spacing.extraLarge}px;
+`;
+
+const ItemIcon = styled(Icon)`
+  font-size: 24px;
+  color: ${({ theme }) => theme.colors.basic010};
+`;
+
+const ItemIconImage = styled.Image.attrs(({ theme }) => ({ tintColor: theme.colors.basic010 }))`
+  flex: 1;
   tint-color: ${({ theme }) => theme.colors.basic010};
 `;
 
