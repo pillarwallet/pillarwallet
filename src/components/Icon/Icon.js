@@ -20,7 +20,7 @@
 /* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { createIconSet } from 'react-native-vector-icons';
 
 
