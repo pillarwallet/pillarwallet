@@ -39114,6 +39114,507 @@ exports[`Storyshots FloatingBox interactive 1`] = `
 </View>
 `;
 
+exports[`Storyshots FloatingButtons 1 item 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "alignSelf": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "bottom": 32,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "position": "absolute",
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Add contact
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots FloatingButtons 2 items 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "alignSelf": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "bottom": 32,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "position": "absolute",
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Add contact
+        </Text>
+      </View>
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Invite friend
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots FloatingButtons 3 items 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "alignSelf": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "bottom": 32,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "position": "absolute",
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Add contact
+        </Text>
+      </View>
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Invite friend
+        </Text>
+      </View>
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <Image
+          resizeMode="contain"
+          source={
+            Object {
+              "default": "",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "marginHorizontal": 24,
+                "tintColor": "#0A1427",
+              },
+            ]
+          }
+          tintColor="#0A1427"
+        />
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "marginTop": 4,
+                "textAlign": "center",
+                "textAlignVertical": "center",
+              },
+            ]
+          }
+        >
+          Send
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots HeaderBlock edge cases 1`] = `
 <View
   style={
