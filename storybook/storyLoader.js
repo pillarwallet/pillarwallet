@@ -1,3 +1,8 @@
+// Auto-generated file created by react-native-storybook-loader	
+// Do not edit.	
+//	
+// https://github.com/elderfo/react-native-storybook-loader.git	
+
 function loadStories() {
 	require('../src/components/ActionModal/ActionModal.stories');
 	require('../src/components/ActivityFeed/ActivityFeedItem.stories');
@@ -61,7 +66,7 @@ const stories = [
 	'../src/components/TextInput/TextInput.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',
-	'../src/components/ValueInput/ValueInput.stories',
+	'../src/components/ValueInput/ValueInput.stories'
 ];
 
 module.exports = {
