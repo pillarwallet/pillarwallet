@@ -27,14 +27,12 @@ import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const stories = storiesOf('FloatingButtons', module).addDecorator(WithThemeDecorator);
 
-const iconAddContact = require('assets/icons/icon_add_contact.png');
-
-stories.add('1 item', () => <FloatingButtons items={[{ title: 'Add contact', iconSource: iconAddContact }]} />);
+stories.add('1 item', () => <FloatingButtons items={[{ title: 'Add contact', iconSvgName: 'addContact' }]} />);
 
 stories.add('2 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', iconSource: iconAddContact },
+      { title: 'Add contact', iconSvgName: 'addContact' },
       { title: 'Invite friend', iconName: 'plus' },
     ]}
   />
@@ -43,7 +41,7 @@ stories.add('2 items', () => (
 stories.add('3 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', iconSource: iconAddContact },
+      { title: 'Add contact', iconSvgName: 'addContact' },
       { title: 'Invite friend', iconName: 'plus' },
       { title: 'Send', iconName: 'paperPlane' },
     ]}
@@ -60,7 +58,7 @@ stories.add('With flat list', () => (
 
     <FloatingButtons
       items={[
-        { title: 'Add contact', iconSource: iconAddContact },
+        { title: 'Add contact', iconSvgName: 'addContact' },
         { title: 'Invite friend', iconName: 'plus' },
         { title: 'Send', iconName: 'paperPlane' },
       ]}

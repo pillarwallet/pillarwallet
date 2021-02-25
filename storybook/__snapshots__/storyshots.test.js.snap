@@ -39178,26 +39178,24 @@ exports[`Storyshots FloatingButtons 1 item 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <
+            fill="#0A1427"
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39286,26 +39284,24 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <
+            fill="#0A1427"
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39346,26 +39342,32 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <View
+            name="plus"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39454,26 +39456,24 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <
+            fill="#0A1427"
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39514,26 +39514,32 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <View
+            name="plus"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39574,26 +39580,32 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
         }
         testID="FloatingButtonItem"
       >
-        <Image
-          resizeMode="contain"
-          source={
-            Object {
-              "default": "",
-            }
-          }
+        <View
           style={
             Array [
               Object {
+                "alignItems": "center",
                 "flexBasis": 0,
                 "flexGrow": 1,
                 "flexShrink": 1,
+                "justifyContent": "center",
                 "marginHorizontal": 24,
-                "tintColor": "#0A1427",
               },
             ]
           }
-          tintColor="#0A1427"
-        />
+        >
+          <View
+            name="paperPlane"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
         <Text
           regular={true}
           style={
@@ -39866,26 +39878,24 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
           }
           testID="FloatingButtonItem"
         >
-          <Image
-            resizeMode="contain"
-            source={
-              Object {
-                "default": "",
-              }
-            }
+          <View
             style={
               Array [
                 Object {
+                  "alignItems": "center",
                   "flexBasis": 0,
                   "flexGrow": 1,
                   "flexShrink": 1,
+                  "justifyContent": "center",
                   "marginHorizontal": 24,
-                  "tintColor": "#0A1427",
                 },
               ]
             }
-            tintColor="#0A1427"
-          />
+          >
+            <
+              fill="#0A1427"
+            />
+          </View>
           <Text
             regular={true}
             style={
@@ -39926,26 +39936,32 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
           }
           testID="FloatingButtonItem"
         >
-          <Image
-            resizeMode="contain"
-            source={
-              Object {
-                "default": "",
-              }
-            }
+          <View
             style={
               Array [
                 Object {
+                  "alignItems": "center",
                   "flexBasis": 0,
                   "flexGrow": 1,
                   "flexShrink": 1,
+                  "justifyContent": "center",
                   "marginHorizontal": 24,
-                  "tintColor": "#0A1427",
                 },
               ]
             }
-            tintColor="#0A1427"
-          />
+          >
+            <View
+              name="plus"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                  },
+                ]
+              }
+            />
+          </View>
           <Text
             regular={true}
             style={
@@ -39986,26 +40002,32 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
           }
           testID="FloatingButtonItem"
         >
-          <Image
-            resizeMode="contain"
-            source={
-              Object {
-                "default": "",
-              }
-            }
+          <View
             style={
               Array [
                 Object {
+                  "alignItems": "center",
                   "flexBasis": 0,
                   "flexGrow": 1,
                   "flexShrink": 1,
+                  "justifyContent": "center",
                   "marginHorizontal": 24,
-                  "tintColor": "#0A1427",
                 },
               ]
             }
-            tintColor="#0A1427"
-          />
+          >
+            <View
+              name="paperPlane"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                  },
+                ]
+              }
+            />
+          </View>
           <Text
             regular={true}
             style={

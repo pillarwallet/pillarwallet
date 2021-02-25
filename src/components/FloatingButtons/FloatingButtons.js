@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 // Components
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import IconSvg from 'components/IconSvg';
 
 // Utils
 import { compactFalsy } from 'utils/common';
@@ -31,12 +32,15 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { IconName } from 'components/Icon';
+import type { IconSvgName } from 'components/IconSvg';
 import type { ImageSource } from 'utils/types/react-native';
 
 export type Item = {|
   title: string,
   // `name` prop from `Icon` component
   iconName?: IconName,
+  // `name` prop from `IconSvg` component
+  iconSvgName?: IconSvgName,
   // `source` prop value for `Image` component
   iconSource?: ImageSource,
   // Custom component, you are responsible for light/dark mode styling
@@ -62,6 +66,7 @@ const FloatingButtons = ({ items: falsyItems }: Props) => {
           <ItemIconWrapper>
             {item.icon}
             {item.iconName && <ItemIcon name={item.iconName} />}
+            {item.iconSvgName && <ItemIconSvg name={item.iconSvgName} /> }
             {item.iconSource && <ItemIconImage source={item.iconSource} resizeMode="contain" />}
           </ItemIconWrapper>
           <ItemTitle>{item.title}</ItemTitle>
@@ -111,6 +116,8 @@ const ItemIcon = styled(Icon)`
   font-size: 24px;
   color: ${({ theme }) => theme.colors.basic010};
 `;
+
+const ItemIconSvg = styled(IconSvg).attrs(({ theme }) => ({ color: theme.colors.basic010 }))``;
 
 const ItemIconImage = styled.Image.attrs(({ theme }) => ({ tintColor: theme.colors.basic010 }))`
   flex: 1;
