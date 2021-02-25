@@ -109,8 +109,8 @@ const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
 
 const IconSet = createIconSet(glyphMap, fontName);
 
-const Icon = ({ name, style, fontSize }: IconProps) => {
-  return <IconSet name={name} style={[style, fontSize != null && { fontSize }]} />;
+const Icon = ({ name, style }: IconProps) => {
+  return <IconSet name={name} style={style} />;
 };
 
 export default Icon;
