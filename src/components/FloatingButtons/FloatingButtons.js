@@ -19,32 +19,20 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 // Components
 import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
-import IconSvg from 'components/IconSvg';
 
 // Utils
 import { compactFalsy } from 'utils/common';
 import { spacing } from 'utils/variables';
 
-// Types
-import type { IconName } from 'components/Icon';
-import type { IconSvgName } from 'components/IconSvg';
-import type { ImageSource } from 'utils/types/react-native';
+type RenderIcon = React.Node | (({ color: string }) => React.Node);
 
 export type Item = {|
   title: string,
-  // `name` prop from `Icon` component
-  iconName?: IconName,
-  // `name` prop from `IconSvg` component
-  iconSvgName?: IconSvgName,
-  // `source` prop value for `Image` component
-  iconSource?: ImageSource,
-  // Custom component, you are responsible for light/dark mode styling
-  icon?: React.Node,
+  icon: RenderIcon,
   onPress?: () => void,
 |};
 
@@ -53,22 +41,23 @@ type Props = {|
 |};
 
 const FloatingButtons = ({ items: falsyItems }: Props) => {
-  const items = compactFalsy(falsyItems);
+  const theme = useTheme();
+
+  const items = compactFalsy<Item>(falsyItems);
 
   if (items.length === 0) {
     return null;
   }
 
+  const renderIcon = (icon) => {
+    return typeof icon === 'function' ? icon({ color: theme.colors.basic010 }) : icon;
+  };
+
   return (
     <Container>
       {items.map((item) => (
         <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
-          <ItemIconWrapper>
-            {item.icon}
-            {item.iconName && <ItemIcon name={item.iconName} />}
-            {item.iconSvgName && <ItemIconSvg name={item.iconSvgName} /> }
-            {item.iconSource && <ItemIconImage source={item.iconSource} resizeMode="contain" />}
-          </ItemIconWrapper>
+          <ItemIconWrapper>{renderIcon(item.icon)}</ItemIconWrapper>
           <ItemTitle>{item.title}</ItemTitle>
         </ItemView>
       ))}
@@ -110,18 +99,6 @@ const ItemIconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-horizontal: ${spacing.extraLarge}px;
-`;
-
-const ItemIcon = styled(Icon)`
-  font-size: 24px;
-  color: ${({ theme }) => theme.colors.basic010};
-`;
-
-const ItemIconSvg = styled(IconSvg).attrs(({ theme }) => ({ color: theme.colors.basic010 }))``;
-
-const ItemIconImage = styled.Image.attrs(({ theme }) => ({ tintColor: theme.colors.basic010 }))`
-  flex: 1;
-  tint-color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ItemTitle = styled(BaseText).attrs({ regular: true })`

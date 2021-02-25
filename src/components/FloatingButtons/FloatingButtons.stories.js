@@ -22,18 +22,25 @@ import * as React from 'react';
 import { View, FlatList } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 
+import Icon from 'components/Icon';
+import IconSvg from 'components/IconSvg';
+
 import FloatingButtons from './FloatingButtons';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const stories = storiesOf('FloatingButtons', module).addDecorator(WithThemeDecorator);
 
-stories.add('1 item', () => <FloatingButtons items={[{ title: 'Add contact', iconSvgName: 'addContact' }]} />);
+stories.add('1 item', () => (
+  <FloatingButtons
+    items={[{ title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> }]}
+  />
+));
 
 stories.add('2 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', iconSvgName: 'addContact' },
-      { title: 'Invite friend', iconName: 'plus' },
+      { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+      { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
     ]}
   />
 ));
@@ -41,9 +48,9 @@ stories.add('2 items', () => (
 stories.add('3 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', iconSvgName: 'addContact' },
-      { title: 'Invite friend', iconName: 'plus' },
-      { title: 'Send', iconName: 'paperPlane' },
+      { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+      { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
+      { title: 'Send', icon: ({ color }) => <Icon name="paperPlane" color={color} fontSize={24} /> },
     ]}
   />
 ));
@@ -58,9 +65,9 @@ stories.add('With flat list', () => (
 
     <FloatingButtons
       items={[
-        { title: 'Add contact', iconSvgName: 'addContact' },
-        { title: 'Invite friend', iconName: 'plus' },
-        { title: 'Send', iconName: 'paperPlane' },
+        { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+        { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
+        { title: 'Send', icon: ({ color }) => <Icon name="paperPlane" color={color} fontSize={24} /> },
       ]}
     />
   </View>

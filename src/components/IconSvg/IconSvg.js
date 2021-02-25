@@ -28,7 +28,7 @@ import { getThemeColors } from 'utils/themes';
 import IconAddContact from 'assets/icons/icon_add_contact.svg';
 
 const componentMap = {
-  addContact: IconAddContact,
+  addContact: (IconAddContact: any),
 };
 
 export type IconSvgName = $Keys<typeof componentMap>;

@@ -80,16 +80,20 @@ exports[`Header should render Header correctly 1`] = `
           name="back"
           style={
             Array [
-              Object {
-                "color": "#0A1427",
-                "fontSize": 24,
-                "marginBottom": undefined,
-                "marginLeft": undefined,
-                "marginRight": undefined,
-                "marginTop": undefined,
-                "paddingTop": 0,
-              },
-              Object {},
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                  "marginBottom": undefined,
+                  "marginLeft": undefined,
+                  "marginRight": undefined,
+                  "marginTop": undefined,
+                  "paddingTop": 0,
+                },
+                Object {},
+              ],
+              false,
+              false,
             ]
           }
         />

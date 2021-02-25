@@ -214,10 +214,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                     name="sent"
                     style={
                       Array [
-                        Object {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
+                        Array [
+                          Object {
+                            "color": "#BD573A",
+                            "fontSize": 48,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -588,10 +592,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                     name="sent"
                     style={
                       Array [
-                        Object {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
+                        Array [
+                          Object {
+                            "color": "#BD573A",
+                            "fontSize": 48,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />

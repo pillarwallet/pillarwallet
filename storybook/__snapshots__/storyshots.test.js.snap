@@ -179,11 +179,15 @@ exports[`Storyshots ActionModal default 1`] = `
                       name="chevron-right"
                       style={
                         Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontSize": 10,
-                            "lineHeight": 14,
-                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 10,
+                              "lineHeight": 14,
+                            },
+                          ],
+                          false,
+                          false,
                         ]
                       }
                     />
@@ -3273,10 +3277,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -3518,10 +3526,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -3763,10 +3775,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -3913,12 +3929,16 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                     name="pending"
                     style={
                       Array [
-                        Object {
-                          "color": "#818EB3",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "marginLeft": 12,
-                        },
+                        Array [
+                          Object {
+                            "color": "#818EB3",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "marginLeft": 12,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -4021,10 +4041,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -4266,10 +4290,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
               name="sent"
               style={
                 Array [
-                  Object {
-                    "color": "#BD573A",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#BD573A",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -4511,10 +4539,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -4661,12 +4693,16 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                     name="pending"
                     style={
                       Array [
-                        Object {
-                          "color": "#818EB3",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "marginLeft": 12,
-                        },
+                        Array [
+                          Object {
+                            "color": "#818EB3",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "marginLeft": 12,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -4769,10 +4805,14 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -8561,12 +8601,16 @@ exports[`Storyshots ActivityFeedItem Rari pending transaction 1`] = `
                     name="pending"
                     style={
                       Array [
-                        Object {
-                          "color": "#818EB3",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "marginLeft": 12,
-                        },
+                        Array [
+                          Object {
+                            "color": "#818EB3",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "marginLeft": 12,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -9887,10 +9931,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               name="sent"
               style={
                 Array [
-                  Object {
-                    "color": "#BD573A",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#BD573A",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -10132,10 +10180,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -10377,10 +10429,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               name="sent"
               style={
                 Array [
-                  Object {
-                    "color": "#BD573A",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#BD573A",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -10527,12 +10583,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                     name="pending"
                     style={
                       Array [
-                        Object {
-                          "color": "#818EB3",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "marginLeft": 12,
-                        },
+                        Array [
+                          Object {
+                            "color": "#818EB3",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "marginLeft": 12,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -10635,10 +10695,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -10880,10 +10944,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
               name="sent"
               style={
                 Array [
-                  Object {
-                    "color": "#BD573A",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#BD573A",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -11125,10 +11193,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               name="received"
               style={
                 Array [
-                  Object {
-                    "color": "#2AA057",
-                    "fontSize": 48,
-                  },
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontSize": 48,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -11275,12 +11347,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                     name="pending"
                     style={
                       Array [
-                        Object {
-                          "color": "#818EB3",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "marginLeft": 12,
-                        },
+                        Array [
+                          Object {
+                            "color": "#818EB3",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "marginLeft": 12,
+                          },
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -12457,16 +12533,20 @@ exports[`Storyshots Banner default 1`] = `
             name="rounded-close"
             style={
               Array [
-                Object {
-                  "color": "#818EB3",
-                  "fontSize": 12,
-                  "marginBottom": undefined,
-                  "marginLeft": undefined,
-                  "marginRight": undefined,
-                  "marginTop": undefined,
-                  "paddingTop": 0,
-                },
-                Object {},
+                Array [
+                  Object {
+                    "color": "#818EB3",
+                    "fontSize": 12,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "paddingTop": 0,
+                  },
+                  Object {},
+                ],
+                false,
+                false,
               ]
             }
           />
@@ -12607,16 +12687,20 @@ exports[`Storyshots Banner with image 1`] = `
             name="rounded-close"
             style={
               Array [
-                Object {
-                  "color": "#818EB3",
-                  "fontSize": 12,
-                  "marginBottom": undefined,
-                  "marginLeft": undefined,
-                  "marginRight": undefined,
-                  "marginTop": undefined,
-                  "paddingTop": 0,
-                },
-                Object {},
+                Array [
+                  Object {
+                    "color": "#818EB3",
+                    "fontSize": 12,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "paddingTop": 0,
+                  },
+                  Object {},
+                ],
+                false,
+                false,
               ]
             }
           />
@@ -13585,12 +13669,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="search"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginLeft": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginLeft": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13630,12 +13718,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="back"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginRight": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginRight": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13711,12 +13803,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="search"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginLeft": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginLeft": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13756,12 +13852,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="back"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginRight": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginRight": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13837,12 +13937,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="search"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginLeft": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginLeft": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13882,12 +13986,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="back"
           style={
             Array [
-              Object {
-                "color": "#FFFFFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginRight": 6,
-              },
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginRight": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -13963,12 +14071,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="search"
           style={
             Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginLeft": 6,
-              },
+              Array [
+                Object {
+                  "color": "#007AFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginLeft": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -14008,12 +14120,16 @@ exports[`Storyshots Button buttons with icons 1`] = `
           name="back"
           style={
             Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 16,
-                "height": 16,
-                "marginRight": 6,
-              },
+              Array [
+                Object {
+                  "color": "#007AFF",
+                  "fontSize": 16,
+                  "height": 16,
+                  "marginRight": 6,
+                },
+              ],
+              false,
+              false,
             ]
           }
         />
@@ -19420,10 +19536,14 @@ exports[`Storyshots Checkbox all cases 1`] = `
               <View
                 name="check"
                 style={
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                  }
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 10,
+                    },
+                    false,
+                    false,
+                  ]
                 }
               />
             </View>
@@ -19611,10 +19731,14 @@ exports[`Storyshots Checkbox all cases 1`] = `
               <View
                 name="check"
                 style={
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                  }
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 10,
+                    },
+                    false,
+                    false,
+                  ]
                 }
               />
             </View>
@@ -19839,10 +19963,14 @@ exports[`Storyshots Checkbox all cases light 1`] = `
               <View
                 name="check"
                 style={
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                  }
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 10,
+                    },
+                    false,
+                    false,
+                  ]
                 }
               />
             </View>
@@ -20034,10 +20162,14 @@ exports[`Storyshots Checkbox all cases light 1`] = `
               <View
                 name="check"
                 style={
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                  }
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 10,
+                    },
+                    false,
+                    false,
+                  ]
                 }
               />
             </View>
@@ -20591,12 +20723,16 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 <View
                   name="paperPlane"
                   style={
-                    Object {
-                      "alignSelf": "center",
-                      "color": "#007AFF",
-                      "fontSize": 22,
-                      "opacity": 1,
-                    }
+                    Array [
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      },
+                      false,
+                      false,
+                    ]
                   }
                 />
               </View>
@@ -21101,12 +21237,16 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 <View
                   name="paperPlane"
                   style={
-                    Object {
-                      "alignSelf": "center",
-                      "color": "#007AFF",
-                      "fontSize": 22,
-                      "opacity": 0.5,
-                    }
+                    Array [
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 0.5,
+                      },
+                      false,
+                      false,
+                    ]
                   }
                 />
               </View>
@@ -21612,12 +21752,16 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 <View
                   name="paperPlane"
                   style={
-                    Object {
-                      "alignSelf": "center",
-                      "color": "#007AFF",
-                      "fontSize": 22,
-                      "opacity": 1,
-                    }
+                    Array [
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      },
+                      false,
+                      false,
+                    ]
                   }
                 />
               </View>
@@ -22221,9 +22365,13 @@ exports[`Storyshots DetailModal Layout M 1`] = `
             <View
               name="scan"
               style={
-                Object {
-                  "fontSize": 64,
-                }
+                Array [
+                  Object {
+                    "fontSize": 64,
+                  },
+                  false,
+                  false,
+                ]
               }
             />
             <View
@@ -22614,9 +22762,13 @@ exports[`Storyshots DetailModal Layout S 1`] = `
             <View
               name="scan"
               style={
-                Object {
-                  "fontSize": 64,
-                }
+                Array [
+                  Object {
+                    "fontSize": 64,
+                  },
+                  false,
+                  false,
+                ]
               }
             />
             <View
@@ -23289,9 +23441,13 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
             <View
               name="scan"
               style={
-                Object {
-                  "fontSize": 64,
-                }
+                Array [
+                  Object {
+                    "fontSize": 64,
+                  },
+                  false,
+                  false,
+                ]
               }
             />
             <View
@@ -23781,9 +23937,13 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
             <View
               name="scan"
               style={
-                Object {
-                  "fontSize": 64,
-                }
+                Array [
+                  Object {
+                    "fontSize": 64,
+                  },
+                  false,
+                  false,
+                ]
               }
             />
             <View
@@ -25383,10 +25543,14 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
                 name="received"
                 style={
                   Array [
-                    Object {
-                      "color": "#497391",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#497391",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -25750,10 +25914,14 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
                 name="sent"
                 style={
                   Array [
-                    Object {
-                      "color": "#BD573A",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#BD573A",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -34333,11 +34501,15 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
                   name="pending"
                   style={
                     Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 18,
-                        "marginLeft": 4,
-                      },
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 18,
+                          "marginLeft": 4,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -34989,10 +35161,14 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                 name="received"
                 style={
                   Array [
-                    Object {
-                      "color": "#497391",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#497391",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -35051,11 +35227,15 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                   name="pending"
                   style={
                     Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 18,
-                        "marginLeft": 4,
-                      },
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 18,
+                          "marginLeft": 4,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -35368,10 +35548,14 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
                 name="received"
                 style={
                   Array [
-                    Object {
-                      "color": "#497391",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#497391",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -35769,11 +35953,15 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
                   name="pending"
                   style={
                     Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 18,
-                        "marginLeft": 4,
-                      },
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 18,
+                          "marginLeft": 4,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -36425,10 +36613,14 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                 name="sent"
                 style={
                   Array [
-                    Object {
-                      "color": "#BD573A",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#BD573A",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -36487,11 +36679,15 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                   name="pending"
                   style={
                     Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 18,
-                        "marginLeft": 4,
-                      },
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 18,
+                          "marginLeft": 4,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -36804,10 +37000,14 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
                 name="sent"
                 style={
                   Array [
-                    Object {
-                      "color": "#BD573A",
-                      "fontSize": 64,
-                    },
+                    Array [
+                      Object {
+                        "color": "#BD573A",
+                        "fontSize": 64,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -39360,8 +39560,11 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
             name="plus"
             style={
               Array [
+                undefined,
                 Object {
                   "color": "#0A1427",
+                },
+                Object {
                   "fontSize": 24,
                 },
               ]
@@ -39532,8 +39735,11 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
             name="plus"
             style={
               Array [
+                undefined,
                 Object {
                   "color": "#0A1427",
+                },
+                Object {
                   "fontSize": 24,
                 },
               ]
@@ -39598,8 +39804,11 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
             name="paperPlane"
             style={
               Array [
+                undefined,
                 Object {
                   "color": "#0A1427",
+                },
+                Object {
                   "fontSize": 24,
                 },
               ]
@@ -39954,8 +40163,11 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
               name="plus"
               style={
                 Array [
+                  undefined,
                   Object {
                     "color": "#0A1427",
+                  },
+                  Object {
                     "fontSize": 24,
                   },
                 ]
@@ -40020,8 +40232,11 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
               name="paperPlane"
               style={
                 Array [
+                  undefined,
                   Object {
                     "color": "#0A1427",
+                  },
+                  Object {
                     "fontSize": 24,
                   },
                 ]
@@ -40166,16 +40381,20 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                   name="back"
                   style={
                     Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      },
-                      Object {},
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 18,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -40291,16 +40510,20 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                     name="info-circle-inverse"
                     style={
                       Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 24,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 24,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -40472,16 +40695,20 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                   name="back"
                   style={
                     Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      },
-                      Object {},
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 18,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -40596,16 +40823,20 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                     name="info-circle-inverse"
                     style={
                       Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 24,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 24,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -40744,16 +40975,20 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                     name="close"
                     style={
                       Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 14,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 14,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -41024,16 +41259,20 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                     name="close"
                     style={
                       Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 14,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 14,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -41171,16 +41410,20 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                     name="hamburger"
                     style={
                       Array [
-                        Object {
-                          "color": "#8B939E",
-                          "fontSize": 24,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 24,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -41373,16 +41616,20 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                   name="back"
                   style={
                     Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      },
-                      Object {},
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 18,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {},
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -41497,16 +41744,20 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                     name="info-circle-inverse"
                     style={
                       Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 24,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 24,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -41672,12 +41923,16 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       name="tick-circle"
                       style={
                         Array [
-                          Object {
-                            "color": "#2AA057",
-                            "fontSize": 16,
-                            "lineHeight": 24,
-                            "marginRight": 8,
-                          },
+                          Array [
+                            Object {
+                              "color": "#2AA057",
+                              "fontSize": 16,
+                              "lineHeight": 24,
+                              "marginRight": 8,
+                            },
+                          ],
+                          false,
+                          false,
                         ]
                       }
                     />
@@ -41718,12 +41973,16 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       name="tick-circle"
                       style={
                         Array [
-                          Object {
-                            "color": "#2AA057",
-                            "fontSize": 16,
-                            "lineHeight": 24,
-                            "marginRight": 8,
-                          },
+                          Array [
+                            Object {
+                              "color": "#2AA057",
+                              "fontSize": 16,
+                              "lineHeight": 24,
+                              "marginRight": 8,
+                            },
+                          ],
+                          false,
+                          false,
                         ]
                       }
                     />
@@ -43306,10 +43565,14 @@ exports[`Storyshots ListItemChevron default 1`] = `
               name="chevron-right"
               style={
                 Array [
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 12,
-                  },
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 12,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -43466,10 +43729,14 @@ exports[`Storyshots ListItemChevron with addon 1`] = `
               name="chevron-right"
               style={
                 Array [
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 12,
-                  },
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 12,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -43633,10 +43900,14 @@ exports[`Storyshots ListItemChevron with subtext 1`] = `
               name="chevron-right"
               style={
                 Array [
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 12,
-                  },
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 12,
+                    },
+                  ],
+                  false,
+                  false,
                 ]
               }
             />
@@ -44792,21 +45063,25 @@ exports[`Storyshots SearchBlock default 1`] = `
                   name="search"
                   style={
                     Array [
-                      Object {
-                        "color": undefined,
-                        "fontSize": undefined,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      },
-                      Object {
-                        "color": "#818EB3",
-                        "fontSize": 24,
-                        "height": 24,
-                        "width": 24,
-                      },
+                      Array [
+                        Object {
+                          "color": undefined,
+                          "fontSize": undefined,
+                          "marginBottom": undefined,
+                          "marginLeft": undefined,
+                          "marginRight": undefined,
+                          "marginTop": undefined,
+                          "paddingTop": 0,
+                        },
+                        Object {
+                          "color": "#818EB3",
+                          "fontSize": 24,
+                          "height": 24,
+                          "width": 24,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -45453,11 +45728,15 @@ exports[`Storyshots SettingsItemCarded active card 1`] = `
                   name="check"
                   style={
                     Array [
-                      Object {
-                        "alignSelf": "flex-start",
-                        "color": "#007AFF",
-                        "fontSize": 24,
-                      },
+                      Array [
+                        Object {
+                          "alignSelf": "flex-start",
+                          "color": "#007AFF",
+                          "fontSize": 24,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -46851,16 +47130,20 @@ exports[`Storyshots SlideModal default 1`] = `
                           name="close"
                           style={
                             Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontSize": 14,
-                                "marginBottom": undefined,
-                                "marginLeft": undefined,
-                                "marginRight": undefined,
-                                "marginTop": undefined,
-                                "paddingTop": 0,
-                              },
-                              Object {},
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontSize": 14,
+                                  "marginBottom": undefined,
+                                  "marginLeft": undefined,
+                                  "marginRight": undefined,
+                                  "marginTop": undefined,
+                                  "paddingTop": 0,
+                                },
+                                Object {},
+                              ],
+                              false,
+                              false,
                             ]
                           }
                         />
@@ -48392,11 +48675,15 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                   name="plus"
                   style={
                     Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 16,
-                        "marginRight": 9,
-                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 16,
+                          "marginRight": 9,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -48554,16 +48841,20 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                     name="plus"
                     style={
                       Array [
-                        Object {
-                          "color": "#007AFF",
-                          "fontSize": undefined,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": undefined,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ],
+                        false,
+                        false,
                       ]
                     }
                   />
@@ -49267,11 +49558,15 @@ exports[`Storyshots TextInput with selector 1`] = `
                   name="selector"
                   style={
                     Array [
-                      Object {
-                        "color": "#818EB3",
-                        "fontSize": 16,
-                        "marginLeft": 15,
-                      },
+                      Array [
+                        Object {
+                          "color": "#818EB3",
+                          "fontSize": 16,
+                          "marginLeft": 15,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
@@ -49543,10 +49838,14 @@ exports[`Storyshots ToastCard default 1`] = `
                 name="rounded-close"
                 style={
                   Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
+                    Array [
+                      Object {
+                        "color": "#ededed",
+                        "fontSize": 16,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -49741,10 +50040,14 @@ exports[`Storyshots ToastCard link 1`] = `
                 name="rounded-close"
                 style={
                   Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
+                    Array [
+                      Object {
+                        "color": "#ededed",
+                        "fontSize": 16,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -49922,10 +50225,14 @@ exports[`Storyshots ToastCard long text 1`] = `
                 name="rounded-close"
                 style={
                   Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
+                    Array [
+                      Object {
+                        "color": "#ededed",
+                        "fontSize": 16,
+                      },
+                    ],
+                    false,
+                    false,
                   ]
                 }
               />
@@ -50322,10 +50629,14 @@ exports[`Storyshots Value Input default 1`] = `
                   name="selector"
                   style={
                     Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 16,
-                      },
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontSize": 16,
+                        },
+                      ],
+                      false,
+                      false,
                     ]
                   }
                 />
