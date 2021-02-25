@@ -25,26 +25,33 @@ import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 
 // Utils
+import { compactFalsy } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
 
-type Item = {|
+export type Item = {|
     title: string,
     iconSource?: ImageSource;
     onPress?: () => void;
 |}
 
 type Props = {|
-  items: Item[],
+  items: (?Item | false)[],
 |};
 
-const FloatingButtons = ({ items }: Props) => {
+const FloatingButtons = ({ items: falsyItems }: Props) => {
+  const items = compactFalsy(falsyItems);
+
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <Container>
       {items.map((item) => (
-        <ItemView key={item.title}>
+        <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
           <ItemIcon source={item.iconSource} resizeMode="contain" />
           <ItemTitle>{item.title}</ItemTitle>
         </ItemView>
