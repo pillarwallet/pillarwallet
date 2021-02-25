@@ -19,10 +19,6 @@
 */
 
 import * as React from 'react';
-import { useTheme } from 'styled-components/native';
-
-// Utils
-import { getThemeColors } from 'utils/themes';
 
 // Assets
 import IconAddContact from 'assets/icons/icon_add_contact.svg';
@@ -35,14 +31,10 @@ export type IconSvgName = $Keys<typeof componentMap>;
 
 type Props = {|
   name: IconSvgName,
-  color: string,
+  color?: string,
 |};
 
 const IconSvg = ({ name, color }: Props) => {
-  const theme = useTheme();
-
-  color = getThemeColors(theme)[color] || color;
-
   const Component = componentMap[name];
   return <Component fill={color} />;
 };
