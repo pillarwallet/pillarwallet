@@ -60,10 +60,9 @@ module.file_ext=.ios.js
 munge_underscores=true
 
 module.name_mapper='^react-native/\(.*\)$' -> '<PROJECT_ROOT>/node_modules/react-native/\1'
-module.name_mapper='^@?[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
+module.name_mapper='^@?[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
 
-module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)' -> 'RelativeImageStub'
-module.name_mapper.extension='\(svg)' -> '<PROJECT_ROOT>/src/utils/types/TransformedSvgImageStub.js'
+module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)' -> 'RelativeImageStub'
 ; ;;; custom paths start ;;;
 
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
