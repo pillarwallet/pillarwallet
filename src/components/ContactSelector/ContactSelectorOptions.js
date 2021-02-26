@@ -251,23 +251,22 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       ? t('error.invalid.address')
       : t('label.nothingFound');
 
-    const extendedHeaderItems = {
-      value: 'extendedHeaderItems', /* eslint-disable-line i18next/no-literal-string */
-      component: (
-        <>
-          {showEmptyState &&
+    const renderHeader = () => {
+      return (
+        showEmptyState && (
           <EmptyStateWrapper fullScreen>
             <EmptyStateParagraph title={emptyStateMessage} />
           </EmptyStateWrapper>
-          }
-        </>),
+        )
+      );
     };
 
-    let allFeedListData = [extendedHeaderItems];
+
+    let allFeedListData = [];
     if (filteredOptions.length) {
-      allFeedListData = [extendedHeaderItems, ...filteredOptions];
+      allFeedListData = [...filteredOptions];
     } else if (!hasSearchError && customAddressAsAnOption) {
-      allFeedListData = [extendedHeaderItems, customAddressAsAnOption];
+      allFeedListData = [customAddressAsAnOption];
     }
 
     return (
@@ -320,12 +319,16 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             viewabilityConfig={viewConfig}
             windowSize={10}
             hideModalContentWhileAnimating
+            ListHeaderComponent={renderHeader()}
           />
 
           <FloatingButtons
             items={[
               { title: t('button.addContact'), icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
-              { title: t('button.inviteFriend'), icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
+              {
+                title: t('button.inviteFriend'),
+                icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} />,
+              },
             ]}
           />
         </ContainerWithHeader>
