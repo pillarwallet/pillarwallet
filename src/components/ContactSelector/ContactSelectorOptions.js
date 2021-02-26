@@ -32,7 +32,6 @@ import t from 'translations/translate';
 // Components
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import CollectiblesList from 'components/CollectiblesList';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
@@ -43,7 +42,6 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
-import Tabs from 'components/Tabs';
 
 // Utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
@@ -54,7 +52,7 @@ import { isValidAddress } from 'utils/validators';
 
 // Types
 import type { Theme } from 'models/Theme';
-import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
+import type { HorizontalOption, Option } from 'models/Selector';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
@@ -65,7 +63,6 @@ type OwnProps = {|
   optionKeyExtractor?: (item: Object) => string,
   title?: string,
   options?: Option[],
-  optionTabs?: OptionTabs[],
   optionsTitle?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
@@ -74,7 +71,6 @@ type OwnProps = {|
   onHide?: () => void,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
-  forceTab?: string,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
   onOpen?: () => void,
@@ -90,7 +86,6 @@ type State = {|
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
   isQueryValidAddress: boolean,
-  activeTab: ?string,
 |};
 
 
@@ -176,16 +171,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       customAddressAsAnOption: null,
       isQueryValidAddress: false,
       hasSearchError: false,
-      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { activeTab } = this.state;
-    const { optionTabs } = this.props;
-    if (!activeTab && !prevProps.optionTabs && optionTabs && !!optionTabs.length) {
-      this.setActiveTab(optionTabs[0]?.id);
-    }
   }
 
   focusInput = () => {
@@ -367,14 +353,9 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     return null;
   };
 
-  setActiveTab = (tabId: string) => {
-    this.setState({ activeTab: tabId });
-  };
-
   handleOptionsOpen = () => {
-    const { forceTab, onOpen } = this.props;
+    const { onOpen } = this.props;
     this.focusInput();
-    if (forceTab) this.setState({ activeTab: forceTab });
     if (onOpen) onOpen();
   };
 
@@ -383,7 +364,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       theme,
       title,
       options = [],
-      optionTabs,
       showOptionsTitles,
       optionsTitle,
       horizontalOptionsData = [],
@@ -396,20 +376,11 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       customAddressAsAnOption,
       isQueryValidAddress,
       hasSearchError,
-      activeTab,
     } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-    const updatedOptionTabs = !!optionTabs && optionTabs.length
-      ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => this.setActiveTab(id), id }))
-      : [];
 
-    const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
-    const activeTabOptions = activeTabInfo?.options;
-    const relatedOptions = activeTabOptions || options || [];
-    const collectibles = activeTabInfo?.collectibles;
-
-    const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+    const filteredOptions = isSearching ? getMatchingSortedData(options, query) : options;
     const filteredHorizontalOptionsData = isSearching && horizontalOptionsData.length
       ? horizontalOptionsData.reduce((mappedInfo, info) => {
         const { data } = info;
@@ -488,34 +459,18 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             <Button onPress={this.handlePaste} title={t('button.paste')} transparent small />
           </SearchContainer>
 
-          {!!optionTabs && (
-            <Tabs
-              tabs={updatedOptionTabs}
-              wrapperStyle={{ paddingTop: 22 }}
-              activeTab={activeTab || updatedOptionTabs[0].name}
-            />
-          )}
-
-          {collectibles ? (
-            <CollectiblesList
-              collectibles={filteredOptions}
-              onCollectiblePress={this.selectValue}
-              isSearching={isSearching}
-            />
-          ) : (
-            <FlatList
-              stickyHeaderIndices={[0]}
-              data={allFeedListData}
-              renderItem={this.renderOption}
-              // $FlowFixMe: react-native types
-              keyExtractor={this.optionKeyExtractor}
-              keyboardShouldPersistTaps="always"
-              initialNumToRender={10}
-              viewabilityConfig={viewConfig}
-              windowSize={10}
-              hideModalContentWhileAnimating
-            />
-          )}
+          <FlatList
+            stickyHeaderIndices={[0]}
+            data={allFeedListData}
+            renderItem={this.renderOption}
+            // $FlowFixMe: react-native types
+            keyExtractor={this.optionKeyExtractor}
+            keyboardShouldPersistTaps="always"
+            initialNumToRender={10}
+            viewabilityConfig={viewConfig}
+            windowSize={10}
+            hideModalContentWhileAnimating
+          />
 
           <FloatingButtons
             items={[
