@@ -34,7 +34,7 @@ import type { IconName } from 'components/Icon';
 export type Item = {|
   title: string,
   iconName: IconName,
-  onPress?: () => void,
+  onPress?: () => mixed,
 |};
 
 type Props = {|

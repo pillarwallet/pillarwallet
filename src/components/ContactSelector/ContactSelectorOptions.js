@@ -172,14 +172,13 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     this.handleInputChange(clipboardValue);
   };
 
-  handleAddToContactsPress = async (contact: Contact) => {
+  handleAddToContactsPress = async (contact?: Contact) => {
     const { dispatch } = this.props;
     const { resolvingContactEnsName } = this.state;
 
     if (resolvingContactEnsName) return;
 
-    const initialContact = await this.resolveContact(contact);
-    if (!initialContact) return;
+    const initialContact = contact ? await this.resolveContact(contact) : null;
 
     Modal.open(() => (
       <ContactDetailsModal
@@ -318,6 +317,19 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       allFeedListData = [customAddressContact];
     }
 
+    const buttons = [
+      {
+        title: t('button.addContact'),
+        iconName: 'add-contact',
+        onPress: () => this.handleAddToContactsPress(),
+      },
+      {
+        title: t('button.inviteFriend'),
+        iconName: 'plus',
+        onPress: () => console.log('Invite Friend'),
+      },
+    ];
+
     return (
       <SlideModal
         ref={this.modalRef}
@@ -370,12 +382,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             ListHeaderComponent={renderHeader()}
           />
 
-          <FloatingButtons
-            items={[
-              { title: t('button.addContact'), iconName: 'add-contact' },
-              { title: t('button.inviteFriend'), iconName: 'plus' },
-            ]}
-          />
+          <FloatingButtons items={buttons} />
         </ContainerWithHeader>
       </SlideModal>
     );
