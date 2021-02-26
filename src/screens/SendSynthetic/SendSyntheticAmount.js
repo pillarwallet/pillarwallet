@@ -53,6 +53,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
+import type { Contact } from 'models/Contact';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -78,7 +79,7 @@ type State = {
   inputHasError: boolean,
   receiver?: string,
   receiverEnsName?: string,
-  selectedContact: ?Option,
+  selectedContact: ?Contact,
   assetData: ?Option,
 };
 
@@ -129,7 +130,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
+  handleReceiverSelect = async (value: Contact, onSuccess?: () => void) => {
     const { navigation } = this.props;
     const { ethAddress } = value;
 
@@ -153,7 +154,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  setReceiver = async (value: Option, onSuccess?: () => void) => {
+  setReceiver = async (value: Contact, onSuccess?: () => void) => {
     const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
     if (!receiver) {

@@ -197,7 +197,7 @@ const SendAsset = ({
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
   }, []);
 
-  const resolveContactFromOption = async (value: Option): Promise<?Contact> => {
+  const resolveContactFromOption = async (value: Contact): Promise<?Contact> => {
     let contact: Contact = {
       name: value?.name || '',
       ethAddress: value?.ethAddress || '',
@@ -219,30 +219,30 @@ const SendAsset = ({
     return contact;
   };
 
-  const handleSelectContact = async (option: Option) => {
+  const handleSelectContact = async (contact: Contact) => {
     if (resolvingContactEnsName) return;
 
-    if (!option?.ethAddress) {
+    if (!contact?.ethAddress) {
       setSelectedContact(null);
       return;
     }
 
-    const contact = await resolveContactFromOption(option);
-    setSelectedContact(contact);
+    const resolvedContact = await resolveContactFromOption(contact);
+    setSelectedContact(resolvedContact);
   };
 
-  const handleAddToContactsPress = async (option: Option, closeOptions: () => void) => {
+  const handleAddToContactsPress = async (contact: Contact, closeOptions: () => void) => {
     if (resolvingContactEnsName) return;
 
-    const initialContact = await resolveContactFromOption(option);
+    const initialContact = await resolveContactFromOption(contact);
 
     Modal.open(() => (
       <ContactDetailsModal
         title={t('title.addNewContact')}
         contact={initialContact}
-        onSave={(contact: Contact) => {
-          addContact(contact);
-          setSelectedContact(contact);
+        onSave={(savedContact: Contact) => {
+          addContact(savedContact);
+          setSelectedContact(savedContact);
           closeOptions();
         }}
         contacts={contacts}
@@ -357,12 +357,10 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
 
-  const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
-
   return (
     <SendContainer
       customSelectorProps={{
-        contacts: contactsAsOptions,
+        contacts,
         selectedContact,
         onSelectContact: handleSelectContact,
         customOptionButtonLabel: t('button.addToContacts'),

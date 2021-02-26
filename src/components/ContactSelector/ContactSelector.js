@@ -42,13 +42,12 @@ import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
 // types
-import type { Option } from 'models/Selector';
 import type { Contact } from 'models/Contact';
 
 import ContactSelectorOptions from './ContactSelectorOptions';
 
 export type Props = {|
-  contact?: Contact[],
+  contacts?: Contact[],
   selectedContact?: ?Contact,
   onSelectContact?: (contact: Contact) => mixed,
   placeholder?: string,
@@ -61,7 +60,7 @@ export type Props = {|
   allowEnteringCustomAddress?: boolean,
   children?: any,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
+  customOptionButtonOnPress?: (contact: Contact, close: () => void) => void | Promise<void>,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -140,10 +139,10 @@ const ContactSelector = ({
     ));
   };
 
-  const renderOption = (option: ?Option) => {
-    if (!option) return null;
-    const { imageUrl, lastUpdateTime } = option;
-    let { name } = option;
+  const renderContact = (contact: ?Contact) => {
+    if (!contact) return null;
+
+    let { name } = contact;
 
     if (isValidAddress(name)) {
       name = t('ellipsedMiddleString', {
@@ -152,12 +151,9 @@ const ContactSelector = ({
       });
     }
 
-    const updatedUserImageUrl = lastUpdateTime && imageUrl ? `${imageUrl}?t=${lastUpdateTime}` : imageUrl;
-
     return (
       <SelectedOption>
         <ProfileImage
-          uri={updatedUserImageUrl}
           userName={name}
           diameter={16}
           noShadow
@@ -178,7 +174,7 @@ const ContactSelector = ({
     <>
       <SelectorPill onPress={openOptions} disabled={disabled}>
         {hasValue ? (
-          renderOption(selectedContact)
+          renderContact(selectedContact)
         ) : (
           <BaseText link medium>
             {placeholderText}

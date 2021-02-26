@@ -56,7 +56,6 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Balances, AssetData, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Contact } from 'models/Contact';
-import type { Option } from 'models/Selector';
 
 
 type Props = {
@@ -202,7 +201,7 @@ const RariTransferScreen = ({
   };
 
   const resolveAndSetContactAndFromOption = async (
-    value: Option,
+    value: Contact,
     setContact: (value: ?Contact) => void,
     onSuccess?: () => void,
   ): Promise<void> => {
@@ -234,7 +233,7 @@ const RariTransferScreen = ({
     return Promise.resolve();
   };
 
-  const handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
+  const handleReceiverSelect = (value: Contact, onSuccess?: () => void) => {
     if (!value?.ethAddress) {
       setSelectedContact(null);
       if (onSuccess) onSuccess();
@@ -258,14 +257,11 @@ const RariTransferScreen = ({
     ));
   }, [contacts, addContact, handleReceiverSelect]);
 
-  const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
-    option,
-    openAddToContacts,
-  );
+  const addContactButtonPress = (contact: Contact) => resolveAndSetContactAndFromOption(contact, openAddToContacts);
+
   const customOptionButtonOnPress = !resolvingContactEnsName
     ? addContactButtonPress
     : () => {};
-  const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
 
   let enoughBalanceForTransaction = true;
   if (feeInfo && inputIsValid) {
@@ -304,7 +300,7 @@ const RariTransferScreen = ({
     <SendContainer
       customScreenTitle={t('rariContent.title.transferScreen')}
       customSelectorProps={{
-        contacts: contactsAsOptions,
+        contacts,
         selectedContact,
         onSelectContact: !resolvingContactEnsName ? handleReceiverSelect : () => {},
         customOptionButtonLabel: t('button.addToContacts'),

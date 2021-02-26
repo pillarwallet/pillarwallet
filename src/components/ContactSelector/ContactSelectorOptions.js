@@ -46,7 +46,6 @@ import { isValidAddress } from 'utils/validators';
 // Types
 import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
-import type { Option } from 'models/Selector';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
@@ -59,7 +58,7 @@ type OwnProps = {|
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
+  customOptionButtonOnPress?: (contact: Contact, close: () => void) => void | Promise<void>,
 |};
 
 type Props = {|
@@ -196,7 +195,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     if (this.modalRef.current) this.modalRef.current.close();
   };
 
-  selectValue = (selectedValue: Option) => {
+  selectValue = (selectedValue: Contact) => {
     this.close();
     const { onSelectContact } = this.props;
     if (onSelectContact) onSelectContact(selectedValue);
@@ -246,12 +245,12 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       : t('label.nothingFound');
 
     const renderHeader = () => {
+      if (!showEmptyState) return null;
+
       return (
-        showEmptyState && (
-          <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph title={emptyStateMessage} />
-          </EmptyStateWrapper>
-        )
+        <EmptyStateWrapper fullScreen>
+          <EmptyStateParagraph title={emptyStateMessage} />
+        </EmptyStateWrapper>
       );
     };
 
