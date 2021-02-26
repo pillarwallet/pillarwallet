@@ -25,7 +25,6 @@ import styled, { useTheme } from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 
 // Utils
-import { compactFalsy } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 type RenderIcon = React.Node | (({ color: string }) => React.Node);
@@ -43,7 +42,7 @@ type Props = {|
 const FloatingButtons = ({ items: falsyItems }: Props) => {
   const theme = useTheme();
 
-  const items = compactFalsy<Item>(falsyItems);
+  const items: Item[] = (falsyItems.filter(Boolean): any);
 
   if (items.length === 0) {
     return null;
