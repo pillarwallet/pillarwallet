@@ -102,18 +102,14 @@ export type IconName = $Keys<typeof glyphMap>;
 export type IconProps = {
   name: IconName,
   style?: Object,
-  fontSize?: number,
-  color?: string,
 };
 
 const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
 
 const IconSet = createIconSet(glyphMap, fontName);
 
-const Icon = ({
-  name, style, fontSize, color,
-}: IconProps) => {
-  return <IconSet name={name} style={[style, color != null && { color }, fontSize != null && { fontSize }]} />;
+const Icon = ({ name, style }: IconProps) => {
+  return <IconSet name={name} style={style} />;
 };
 
 export default Icon;

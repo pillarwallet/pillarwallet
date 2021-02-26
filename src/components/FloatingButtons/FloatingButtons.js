@@ -19,19 +19,21 @@
 */
 
 import * as React from 'react';
-import styled, { useTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 
 // Components
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 // Utils
 import { spacing } from 'utils/variables';
 
-type RenderIcon = React.Node | (({ color: string }) => React.Node);
+// Types
+import type { IconName } from 'components/Icon';
 
 export type Item = {|
   title: string,
-  icon: RenderIcon,
+  iconName: IconName,
   onPress?: () => void,
 |};
 
@@ -40,23 +42,19 @@ type Props = {|
 |};
 
 const FloatingButtons = ({ items: falsyItems }: Props) => {
-  const theme = useTheme();
-
   const items: Item[] = (falsyItems.filter(Boolean): any);
 
   if (items.length === 0) {
     return null;
   }
 
-  const renderIcon = (icon) => {
-    return typeof icon === 'function' ? icon({ color: theme.colors.basic010 }) : icon;
-  };
-
   return (
     <Container>
       {items.map((item) => (
         <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
-          <ItemIconWrapper>{renderIcon(item.icon)}</ItemIconWrapper>
+          <ItemIconWrapper>
+            <ItemIcon name={item.iconName} />
+          </ItemIconWrapper>
           <ItemTitle>{item.title}</ItemTitle>
         </ItemView>
       ))}
@@ -98,6 +96,11 @@ const ItemIconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-horizontal: ${spacing.extraLarge}px;
+`;
+
+const ItemIcon = styled(Icon)`
+  font-size: 24px;
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ItemTitle = styled(BaseText).attrs({ regular: true })`
