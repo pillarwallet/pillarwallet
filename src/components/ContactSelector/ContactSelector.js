@@ -49,7 +49,7 @@ import ContactSelectorOptions from './ContactSelectorOptions';
 export type Props = {|
   contacts?: Contact[],
   selectedContact?: ?Contact,
-  onSelectContact?: (contact: Contact) => mixed,
+  onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
   searchPlaceholder?: string,
   wrapperStyle?: Object,
@@ -58,9 +58,8 @@ export type Props = {|
   disableSelfSelect?: boolean,
   activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
+  allowAddContact?: boolean,
   children?: any,
-  customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (contact: Contact, close: () => void) => void | Promise<void>,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -85,9 +84,8 @@ const ContactSelector = ({
   noOptionImageFallback,
   hasQRScanner,
   allowEnteringCustomAddress,
+  allowAddContact = true,
   children,
-  customOptionButtonLabel,
-  customOptionButtonOnPress,
 }: Props) => {
   const optionsRef = useRef();
 
@@ -133,8 +131,7 @@ const ContactSelector = ({
         }
         validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
-        customOptionButtonLabel={customOptionButtonLabel}
-        customOptionButtonOnPress={customOptionButtonOnPress}
+        allowAddContact={allowAddContact}
       />
     ));
   };

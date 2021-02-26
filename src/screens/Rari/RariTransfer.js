@@ -22,25 +22,18 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
-import ContactDetailsModal from 'components/ContactDetailsModal';
-import Modal from 'components/Modal';
 
 import SendContainer from 'containers/SendContainer';
 
 import { isEnoughBalanceForTransactionFee, convertUSDToFiat } from 'utils/assets';
 import { reportErrorLog, noop, parseTokenBigNumberAmount } from 'utils/common';
-import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName } from 'utils/validators';
 
 import { resetEstimateTransactionAction, estimateTransactionAction } from 'actions/transactionEstimateActions';
-import { addContactAction } from 'actions/contactsActions';
-
 
 import { ETH, supportedFiatCurrencies, USD } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
@@ -65,7 +58,6 @@ type Props = {
   estimateErrorMessage: ?string,
   userDepositInRariToken: {[RariPool]: number},
   contacts: Contact[],
-  addContact: (contact: Contact) => void,
   estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
   useGasToken: boolean,
   balances: Balances,
@@ -101,7 +93,6 @@ const RariTransferScreen = ({
   estimateErrorMessage,
   userDepositInRariToken,
   contacts,
-  addContact,
   estimateTransaction,
   useGasToken,
   balances,
@@ -113,7 +104,6 @@ const RariTransferScreen = ({
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
   const [submitPressed, setSubmitPressed] = useState(false);
 
   useEffect(() => {
@@ -200,68 +190,13 @@ const RariTransferScreen = ({
     });
   };
 
-  const resolveAndSetContactAndFromOption = async (
-    value: Contact,
-    setContact: (value: ?Contact) => void,
-    onSuccess?: () => void,
-  ): Promise<void> => {
-    const ethAddress = value?.ethAddress || '';
-    let contact = {
-      name: value?.name || '',
-      ethAddress,
-      ensName: null,
-    };
-
-    if (isEnsName(ethAddress)) {
-      setResolvingContactEnsName(true);
-      contact = await getContactWithEnsName(contact, ethAddress);
-      if (!contact?.ensName) {
-        // failed to resolve ENS, error toast will be shown
-        setResolvingContactEnsName(false);
-        return Promise.resolve();
-      }
-      setResolvingContactEnsName(false);
-    }
-
-    // if name still empty let's set it with address
-    if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
-
-    setContact(contact);
-
-    if (onSuccess) onSuccess();
-
-    return Promise.resolve();
-  };
-
-  const handleReceiverSelect = (value: Contact, onSuccess?: () => void) => {
+  const handleSelectContact = (value: ?Contact) => {
     if (!value?.ethAddress) {
       setSelectedContact(null);
-      if (onSuccess) onSuccess();
-    } else {
-      resolveAndSetContactAndFromOption(value, setSelectedContact, onSuccess);
     }
+
+    setSelectedContact(value);
   };
-
-  const openAddToContacts = useCallback((initial: ?Contact) => {
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        contact={initial}
-        onSave={(contact: Contact) => {
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    ));
-  }, [contacts, addContact, handleReceiverSelect]);
-
-  const addContactButtonPress = (contact: Contact) => resolveAndSetContactAndFromOption(contact, openAddToContacts);
-
-  const customOptionButtonOnPress = !resolvingContactEnsName
-    ? addContactButtonPress
-    : () => {};
 
   let enoughBalanceForTransaction = true;
   if (feeInfo && inputIsValid) {
@@ -302,9 +237,7 @@ const RariTransferScreen = ({
       customSelectorProps={{
         contacts,
         selectedContact,
-        onSelectContact: !resolvingContactEnsName ? handleReceiverSelect : () => {},
-        customOptionButtonLabel: t('button.addToContacts'),
-        customOptionButtonOnPress,
+        onSelectContact: handleSelectContact,
       }}
       customValueSelectorProps={{
         assetData: rariTokenData,
@@ -366,7 +299,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  addContact: (contact: Contact) => dispatch(addContactAction(contact)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (
     recipient: string,

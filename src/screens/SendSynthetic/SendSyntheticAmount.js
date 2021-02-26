@@ -130,14 +130,14 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  handleReceiverSelect = async (value: Contact, onSuccess?: () => void) => {
+  handleReceiverSelect = async (value: ?Contact) => {
     const { navigation } = this.props;
-    const { ethAddress } = value;
+    const { ethAddress } = value ?? {};
 
     const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
 
     if (userInfo) {
-      this.setReceiver(value, onSuccess);
+      this.setReceiver(value);
     } else {
       Alert.alert(
         t('alert.addressIsNotOnPillarNetwork.title'),
@@ -154,7 +154,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  setReceiver = async (value: Contact, onSuccess?: () => void) => {
+  setReceiver = async (value: ?Contact) => {
     const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
     if (!receiver) {
@@ -166,7 +166,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     } else {
       stateToUpdate = { selectedContact: value, receiver, receiverEnsName };
     }
-    this.setState(stateToUpdate, () => { if (onSuccess) onSuccess(); });
+
+    this.setState(stateToUpdate);
   };
 
   handleAssetValueSelect = (value: string, assetData: ?Option) => {
@@ -287,6 +288,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
           contacts: [],
           selectedContact,
           onSelectContact: this.handleReceiverSelect,
+          allowAddContact: false,
         }}
         customValueSelectorProps={{
           onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),

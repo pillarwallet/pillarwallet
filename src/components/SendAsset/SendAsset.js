@@ -26,7 +26,6 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
-import { addContactAction } from 'actions/contactsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // constants
@@ -37,15 +36,11 @@ import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
-import ContactDetailsModal from 'components/ContactDetailsModal';
 import Toast from 'components/Toast';
-import Modal from 'components/Modal';
 
 // utils
 import { isValidNumber, reportErrorLog } from 'utils/common';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName } from 'utils/validators';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -73,7 +68,6 @@ type Props = {
   assetsWithBalance: Option[],
   collectibles: Option[],
   contacts: Contact[],
-  addContact: (contact: Contact) => void,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
@@ -127,7 +121,6 @@ const SendAsset = ({
   assetsWithBalance,
   collectibles,
   contacts,
-  addContact,
   defaultContact,
   feeInfo,
   isEstimating,
@@ -146,7 +139,6 @@ const SendAsset = ({
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
-  const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -197,58 +189,13 @@ const SendAsset = ({
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
   }, []);
 
-  const resolveContactFromOption = async (value: Contact): Promise<?Contact> => {
-    let contact: Contact = {
-      name: value?.name || '',
-      ethAddress: value?.ethAddress || '',
-    };
-
-    if (isEnsName(contact.ethAddress)) {
-      setResolvingContactEnsName(true);
-      contact = await getContactWithEnsName(contact, contact.ethAddress);
-      setResolvingContactEnsName(false);
-
-      // ENS name resolution failed
-      if (!contact.ensName) return undefined;
-    }
-
-    if (!contact.name) {
-      contact.name = contact.ethAddress;
-    }
-
-    return contact;
-  };
-
-  const handleSelectContact = async (contact: Contact) => {
-    if (resolvingContactEnsName) return;
-
+  const handleSelectContact = async (contact: ?Contact) => {
     if (!contact?.ethAddress) {
       setSelectedContact(null);
       return;
     }
 
-    const resolvedContact = await resolveContactFromOption(contact);
-    setSelectedContact(resolvedContact);
-  };
-
-  const handleAddToContactsPress = async (contact: Contact, closeOptions: () => void) => {
-    if (resolvingContactEnsName) return;
-
-    const initialContact = await resolveContactFromOption(contact);
-
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        contact={initialContact}
-        onSave={(savedContact: Contact) => {
-          addContact(savedContact);
-          setSelectedContact(savedContact);
-          closeOptions();
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    ));
+    setSelectedContact(contact);
   };
 
   const handleFormSubmit = async () => {
@@ -363,8 +310,6 @@ const SendAsset = ({
         contacts,
         selectedContact,
         onSelectContact: handleSelectContact,
-        customOptionButtonLabel: t('button.addToContacts'),
-        customOptionButtonOnPress: handleAddToContactsPress,
       }}
       customValueSelectorProps={{
         value: amount,
@@ -418,7 +363,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  addContact: (contact: Contact) => dispatch(addContactAction(contact)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (
     recipient: string,

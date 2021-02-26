@@ -25,15 +25,21 @@ import {
   Keyboard,
   FlatList,
 } from 'react-native';
+import { connect } from 'react-redux';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
+// Actions
+import { addContactAction } from 'actions/contactsActions';
+
 // Components
 import Button from 'components/Button';
+import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 
@@ -41,29 +47,32 @@ import SlideModal from 'components/Modals/SlideModal';
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
-import { isValidAddress } from 'utils/validators';
+import { getContactWithEnsName } from 'utils/contacts';
+import { isEnsName, isValidAddress } from 'utils/validators';
+
 
 // Types
+import type { Dispatch } from 'redux';
 import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
   contacts?: Contact[],
-  onSelectContact?: (contact: Contact) => mixed,
+  onSelectContact?: (contact: ?Contact) => mixed,
   title?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: Object,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
-  customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (contact: Contact, close: () => void) => void | Promise<void>,
+  allowAddContact?: boolean,
 |};
 
 type Props = {|
   ...OwnProps,
   theme: Theme,
+  dispatch: Dispatch,
 |};
 
 type State = {|
@@ -71,6 +80,7 @@ type State = {|
   hasSearchError: boolean,
   customAddressContact: ?Contact,
   isQueryValidAddress: boolean,
+  resolvingContactEnsName: boolean,
 |};
 
 const EmptyStateWrapper = styled.View`
@@ -110,6 +120,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       customAddressContact: null,
       isQueryValidAddress: false,
       hasSearchError: false,
+      resolvingContactEnsName: false,
     };
   }
 
@@ -136,32 +147,71 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     this.setState({
       isQueryValidAddress: isValid,
       customAddressContact: isValid && query
-        ? this.getCustomOption(query)
+        ? this.getCustomAddressContact(query)
         : null,
     });
   };
 
-  getCustomOption = (address: string) => {
-    let option = {
-      value: address,
-      name: address,
-      ethAddress: address,
-    };
-    const { customOptionButtonLabel, customOptionButtonOnPress } = this.props;
-    if (customOptionButtonLabel && customOptionButtonOnPress) {
-      option = {
-        ...option,
-        buttonActionLabel: customOptionButtonLabel,
-        buttonAction: () => customOptionButtonOnPress(option, this.close),
+  getCustomAddressContact = (address: string) => {
+    let contact = { name: address, ethAddress: address };
+
+    const { allowAddContact } = this.props;
+    if (allowAddContact) {
+      contact = {
+        ...contact,
+        buttonActionLabel: t('button.addToContacts'),
+        buttonAction: () => this.handleAddToContactsPress(contact),
       };
     }
 
-    return option;
+    return contact;
   };
 
   handlePaste = async () => {
     const clipboardValue = await Clipboard.getString();
     this.handleInputChange(clipboardValue);
+  };
+
+  handleAddToContactsPress = async (contact: Contact) => {
+    if (this.state.resolvingContactEnsName) return;
+
+    const initialContact = await this.resolveContact(contact);
+
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initialContact}
+        onSave={(savedContact: Contact) => {
+          this.props.dispatch(addContactAction(savedContact));
+          this.selectValue(savedContact);
+          this.close();
+        }}
+        contacts={this.props.contacts ?? []}
+        isDefaultNameEns
+      />
+    ));
+  };
+
+  resolveContact = async (value: Contact): Promise<?Contact> => {
+    let contact: Contact = {
+      name: value?.name || '',
+      ethAddress: value?.ethAddress || '',
+    };
+
+    if (isEnsName(contact.ethAddress)) {
+      this.setState({ resolvingContactEnsName: true });
+      contact = await getContactWithEnsName(contact, contact.ethAddress);
+      this.setState({ resolvingContactEnsName: false });
+
+      // ENS name resolution failed
+      if (!contact.ensName) return undefined;
+    }
+
+    if (!contact.name) {
+      contact.name = contact.ethAddress;
+    }
+
+    return contact;
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -195,10 +245,13 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     if (this.modalRef.current) this.modalRef.current.close();
   };
 
-  selectValue = (selectedValue: Contact) => {
+  selectValue = async (contact: Contact) => {
     this.close();
-    const { onSelectContact } = this.props;
-    if (onSelectContact) onSelectContact(selectedValue);
+    const resolvedContact = await this.resolveContact(contact);
+
+    if (this.props.onSelectContact) {
+      this.props.onSelectContact(resolvedContact);
+    }
   };
 
   validateSearch = (val: string) => {
@@ -326,6 +379,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 }
 
 const ThemedSelectorOptions: React.AbstractComponent<OwnProps, ContactSelectorOptions> = withTheme(
-  ContactSelectorOptions,
+  connect(null, null)(ContactSelectorOptions),
 );
 export default ThemedSelectorOptions;
