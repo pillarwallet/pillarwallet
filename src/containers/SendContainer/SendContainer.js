@@ -23,16 +23,16 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import Selector from 'components/Selector';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueInput from 'components/ValueInput';
-import Button from 'components/Button';
-import Spinner from 'components/Spinner';
-import ArrowIcon from 'components/ArrowIcon';
 import { Spacing } from 'components/Layout';
+import ArrowIcon from 'components/ArrowIcon';
+import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContactSelector from 'components/ContactSelector';
+import Spinner from 'components/Spinner';
+import ValueInput from 'components/ValueInput';
 
 // types
-import type { Props as SelectorProps } from 'components/Selector';
+import type { Props as ContactSelectorProps } from 'components/ContactSelector';
 import type { ExternalProps as ValueSelectorProps } from 'components/ValueInput';
 import type { Props as ButtonProps } from 'components/Button';
 
@@ -50,7 +50,7 @@ type FooterProps = {
 };
 
 type Props = {
-  customSelectorProps?: SelectorProps,
+  customSelectorProps?: ContactSelectorProps,
   customValueSelectorProps?: ValueSelectorProps,
   footerProps?: FooterProps,
   children?: React.Node,
@@ -118,12 +118,10 @@ const SendContainer = (props: Props) => {
       minAvoidHeight={800}
     >
       <Wrapper>
-        <InputWrapper>
-          {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
-        </InputWrapper>
+        <InputWrapper>{isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}</InputWrapper>
         <ArrowIcon />
         <Spacing h={20} />
-        <Selector
+        <ContactSelector
           placeholder={t('label.whereToSend')}
           searchPlaceholder={t('label.walletAddressEnsUser')}
           noOptionImageFallback
