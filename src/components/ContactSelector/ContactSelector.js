@@ -42,7 +42,7 @@ import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
 // types
-import type { HorizontalOption, Option } from 'models/Selector';
+import type { Option } from 'models/Selector';
 
 import ContactSelectorOptions from './ContactSelectorOptions';
 
@@ -50,10 +50,8 @@ export type Props = {|
   selectedOption?: ?Option,
   onOptionSelect?: (option: Option) => mixed,
   placeholder?: string,
-  optionsTitle?: string,
   options?: Option[],
   searchPlaceholder?: string,
-  horizontalOptionsData?: HorizontalOption[],
   wrapperStyle?: Object,
   noOptionImageFallback?: boolean,
   hasQRScanner?: boolean,
@@ -81,11 +79,9 @@ const ContactSelector = ({
   disableSelfSelect,
   activeAccountAddress,
   placeholder = t('label.choseOption'),
-  optionsTitle,
   options,
   searchPlaceholder = t('label.search'),
   selectedOption,
-  horizontalOptionsData,
   noOptionImageFallback,
   hasQRScanner,
   allowEnteringCustomAddress,
@@ -123,11 +119,10 @@ const ContactSelector = ({
     Modal.open(() => (
       <ContactSelectorOptions
         ref={optionsRef}
-        title={optionsTitle || placeholder}
+        title={placeholder}
         options={options}
         searchPlaceholder={searchPlaceholder}
         optionKeyExtractor={({ name, value }) => name || value}
-        horizontalOptionsData={horizontalOptionsData}
         onOptionSelect={onOptionSelect}
         noImageFallback={noOptionImageFallback}
         iconProps={
