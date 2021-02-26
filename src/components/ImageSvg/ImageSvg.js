@@ -24,19 +24,22 @@ import * as React from 'react';
 import IconAddContact from 'assets/icons/icon_add_contact.svg';
 
 const componentMap = {
-  addContact: (IconAddContact: any),
+  iconAddContact: (IconAddContact: any),
 };
 
-export type IconSvgName = $Keys<typeof componentMap>;
+export type ImageSvgName = $Keys<typeof componentMap>;
 
 type Props = {|
-  name: IconSvgName,
+  name: ImageSvgName,
   color?: string,
 |};
 
-const IconSvg = ({ name, color }: Props) => {
+/**
+ *  Component for displaying SVG i
+ */
+const ImageSvg = ({ name, color }: Props) => {
   const Component = componentMap[name];
   return <Component fill={color} />;
 };
 
-export default IconSvg;
+export default ImageSvg;

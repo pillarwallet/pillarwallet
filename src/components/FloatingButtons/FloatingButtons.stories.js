@@ -23,7 +23,7 @@ import { View, FlatList } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 
 import Icon from 'components/Icon';
-import IconSvg from 'components/IconSvg';
+import ImageSvg from 'components/ImageSvg';
 
 import FloatingButtons from './FloatingButtons';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -32,14 +32,14 @@ const stories = storiesOf('FloatingButtons', module).addDecorator(WithThemeDecor
 
 stories.add('1 item', () => (
   <FloatingButtons
-    items={[{ title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> }]}
+    items={[{ title: 'Add contact', icon: ({ color }) => <ImageSvg name="iconAddContact" color={color} /> }]}
   />
 ));
 
 stories.add('2 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+      { title: 'Add contact', icon: ({ color }) => <ImageSvg name="iconAddContact" color={color} /> },
       { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
     ]}
   />
@@ -48,7 +48,7 @@ stories.add('2 items', () => (
 stories.add('3 items', () => (
   <FloatingButtons
     items={[
-      { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+      { title: 'Add contact', icon: ({ color }) => <ImageSvg name="iconAddContact" color={color} /> },
       { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
       { title: 'Send', icon: ({ color }) => <Icon name="paperPlane" color={color} fontSize={24} /> },
     ]}
@@ -65,7 +65,7 @@ stories.add('With flat list', () => (
 
     <FloatingButtons
       items={[
-        { title: 'Add contact', icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
+        { title: 'Add contact', icon: ({ color }) => <ImageSvg name="iconAddContact" color={color} /> },
         { title: 'Invite friend', icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} /> },
         { title: 'Send', icon: ({ color }) => <Icon name="paperPlane" color={color} fontSize={24} /> },
       ]}
