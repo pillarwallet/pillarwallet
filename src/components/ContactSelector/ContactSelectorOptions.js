@@ -52,9 +52,9 @@ import type { Option } from 'models/Selector';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  onOptionSelect?: (option: Option) => mixed,
-  title?: string,
   contacts?: Contact[],
+  onSelectContact?: (contact: Contact) => mixed,
+  title?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: Object,
@@ -170,9 +170,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
-    if (option?.value === 'extendedHeaderItems') {
-      return option.component;
-    }
     const { noImageFallback } = this.props;
 
     if (!option) return null;
@@ -205,8 +202,8 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
   selectValue = (selectedValue: Option) => {
     this.close();
-    const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(selectedValue);
+    const { onSelectContact } = this.props;
+    if (onSelectContact) onSelectContact(selectedValue);
   };
 
   validateSearch = (val: string) => {
@@ -262,7 +259,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       );
     };
 
-
     let allFeedListData = [];
     if (filteredContacts.length) {
       allFeedListData = [...filteredContacts];
@@ -313,8 +309,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             stickyHeaderIndices={[0]}
             data={allFeedListData}
             renderItem={this.renderOption}
-            // $FlowFixMe: react-native types
-            keyExtractor={(option) => option.value || option.name}
+            keyExtractor={(contact) => contact.ethAddress || contact.name}
             keyboardShouldPersistTaps="always"
             initialNumToRender={10}
             viewabilityConfig={viewConfig}

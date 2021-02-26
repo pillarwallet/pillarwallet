@@ -119,10 +119,10 @@ const ContactSelector = ({
     Modal.open(() => (
       <ContactSelectorOptions
         ref={optionsRef}
-        title={placeholder}
         contacts={options}
+        onSelectContact={onOptionSelect}
+        title={placeholder}
         searchPlaceholder={searchPlaceholder}
-        onOptionSelect={onOptionSelect}
         noImageFallback={noOptionImageFallback}
         iconProps={
           hasQRScanner && {
