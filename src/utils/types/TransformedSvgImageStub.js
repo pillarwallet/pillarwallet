@@ -18,28 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import type { Svg } from 'react-native-svg';
 
-// Assets
-import IconAddContact from 'assets/icons/icon_add_contact.svg';
-
-const componentMap = {
-  iconAddContact: (IconAddContact: any),
-};
-
-export type ImageSvgName = $Keys<typeof componentMap>;
-
-type Props = {|
-  name: ImageSvgName,
-  color?: string,
-|};
-
-/**
- *  Component for displaying SVG i
- */
-const ImageSvg = ({ name, color }: Props) => {
-  const Component = componentMap[name];
-  return <Component fill={color} />;
-};
-
-export default ImageSvg;
+declare export default Svg;
