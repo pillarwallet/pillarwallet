@@ -120,7 +120,7 @@ const ContactSelector = ({
       <ContactSelectorOptions
         ref={optionsRef}
         title={placeholder}
-        options={options}
+        contacts={options}
         searchPlaceholder={searchPlaceholder}
         onOptionSelect={onOptionSelect}
         noImageFallback={noOptionImageFallback}

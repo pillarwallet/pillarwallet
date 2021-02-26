@@ -47,13 +47,14 @@ import { isValidAddress } from 'utils/validators';
 
 // Types
 import type { Theme } from 'models/Theme';
+import type { Contact } from 'models/Contacts';
 import type { Option } from 'models/Selector';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
   onOptionSelect?: (option: Option) => mixed,
   title?: string,
-  options?: Option[],
+  contacts?: Contact[],
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: Object,
@@ -230,7 +231,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     const {
       theme,
       title,
-      options = [],
+      contacts = [],
       searchPlaceholder,
       iconProps = {},
       allowEnteringCustomAddress,
@@ -244,9 +245,9 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-    const filteredOptions = isSearching ? getMatchingSortedData(options, query) : options;
+    const filteredContacts = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
-    const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length;
+    const showEmptyState = !customAddressAsAnOption && !filteredContacts?.length;
     const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
       ? t('error.invalid.address')
       : t('label.nothingFound');
@@ -263,8 +264,8 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
 
     let allFeedListData = [];
-    if (filteredOptions.length) {
-      allFeedListData = [...filteredOptions];
+    if (filteredContacts.length) {
+      allFeedListData = [...filteredContacts];
     } else if (!hasSearchError && customAddressAsAnOption) {
       allFeedListData = [customAddressAsAnOption];
     }
@@ -337,5 +338,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const ThemedSelectorOptions: React.AbstractComponent<OwnProps, SelectorOptions> = withTheme(ContactSelectorOptions);
+const ThemedSelectorOptions: React.AbstractComponent<OwnProps, ContactSelectorOptions> = withTheme(
+  ContactSelectorOptions,
+);
 export default ThemedSelectorOptions;
