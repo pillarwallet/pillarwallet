@@ -26,7 +26,7 @@ import type { Item } from '../FloatingButtons';
 
 
 test('Works with single item', () => {
-  const item1: Item = { title: 'Item 1', icon: null, onPress: jest.fn() };
+  const item1: Item = { title: 'Item 1', iconName: 'add-contact', onPress: jest.fn() };
 
   const screen = renderWithTheme(<FloatingButtons items={[item1]} />);
   expect(screen.getAllByTestId('FloatingButtonItem')).toHaveLength(1);
@@ -36,9 +36,9 @@ test('Works with single item', () => {
 });
 
 test('Works with multiple items', () => {
-  const item1: Item = { title: 'Item 1', icon: null, onPress: jest.fn() };
-  const item2: Item = { title: 'Item 2', icon: null, onPress: jest.fn() };
-  const item3: Item = { title: 'Item 3', icon: null, onPress: jest.fn() };
+  const item1: Item = { title: 'Item 1', iconName: 'add-contact', onPress: jest.fn() };
+  const item2: Item = { title: 'Item 2', iconName: 'add-contact', onPress: jest.fn() };
+  const item3: Item = { title: 'Item 3', iconName: 'add-contact', onPress: jest.fn() };
 
   const screen = renderWithTheme(<FloatingButtons items={[item1, item2, item3]} />);
   expect(screen.getAllByTestId('FloatingButtonItem')).toHaveLength(3);
@@ -61,8 +61,8 @@ test('Works with multiple items', () => {
 });
 
 test('Filters out falsy items', () => {
-  const item1: Item = { title: 'Item 1', icon: null, onPress: jest.fn() };
-  const item3: Item = { title: 'Item 3', icon: null, onPress: jest.fn() };
+  const item1: Item = { title: 'Item 1', iconName: 'add-contact', onPress: jest.fn() };
+  const item3: Item = { title: 'Item 3', iconName: 'add-contact', onPress: jest.fn() };
 
   const screen = renderWithTheme(<FloatingButtons items={[item1, false, item3]} />);
   expect(screen.getAllByTestId('FloatingButtonItem')).toHaveLength(2);
