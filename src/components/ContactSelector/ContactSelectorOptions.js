@@ -52,7 +52,6 @@ import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
   onOptionSelect?: (option: Option) => mixed,
-  optionKeyExtractor?: (item: Object) => string,
   title?: string,
   options?: Option[],
   searchPlaceholder?: string,
@@ -212,14 +211,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     if (onOptionSelect) onOptionSelect(selectedValue);
   };
 
-  optionKeyExtractor = (option: Option): string => {
-    const { optionKeyExtractor } = this.props;
-    if (optionKeyExtractor) {
-      return optionKeyExtractor(option);
-    }
-    return option.value;
-  };
-
   validateSearch = (val: string) => {
     const { validator } = this.props;
     const { hasSearchError } = this.state;
@@ -329,7 +320,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             data={allFeedListData}
             renderItem={this.renderOption}
             // $FlowFixMe: react-native types
-            keyExtractor={this.optionKeyExtractor}
+            keyExtractor={(option) => option.value || option.name}
             keyboardShouldPersistTaps="always"
             initialNumToRender={10}
             viewabilityConfig={viewConfig}

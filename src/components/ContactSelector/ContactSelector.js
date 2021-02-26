@@ -122,7 +122,6 @@ const ContactSelector = ({
         title={placeholder}
         options={options}
         searchPlaceholder={searchPlaceholder}
-        optionKeyExtractor={({ name, value }) => name || value}
         onOptionSelect={onOptionSelect}
         noImageFallback={noOptionImageFallback}
         iconProps={
