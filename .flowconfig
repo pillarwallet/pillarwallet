@@ -37,7 +37,6 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/redux-persist/.*
 <PROJECT_ROOT>/node_modules/react-native-inappbrowser-reborn/.*
 <PROJECT_ROOT>/node_modules/react-native-linear-gradient/.*
-<PROJECT_ROOT>/node_modules/metro/.*
 ; ;;; custom untyped end ;;;
 
 [include]

@@ -27,20 +27,16 @@ exports[`IconButton should render IconButton correctly 1`] = `
     name="settings"
     style={
       Array [
-        Array [
-          Object {
-            "color": undefined,
-            "fontSize": undefined,
-            "marginBottom": undefined,
-            "marginLeft": undefined,
-            "marginRight": undefined,
-            "marginTop": undefined,
-            "paddingTop": 0,
-          },
-          Object {},
-        ],
-        false,
-        false,
+        Object {
+          "color": undefined,
+          "fontSize": undefined,
+          "marginBottom": undefined,
+          "marginLeft": undefined,
+          "marginRight": undefined,
+          "marginTop": undefined,
+          "paddingTop": 0,
+        },
+        Object {},
       ]
     }
   />

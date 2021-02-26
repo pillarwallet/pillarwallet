@@ -89,20 +89,16 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               name="back"
               style={
                 Array [
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 18,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    },
-                    Object {},
-                  ],
-                  false,
-                  false,
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 18,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "paddingTop": 0,
+                  },
+                  Object {},
                 ]
               }
             />
@@ -187,20 +183,16 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 name="info-circle-inverse"
                 style={
                   Array [
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 24,
-                        "marginBottom": undefined,
-                        "marginLeft": undefined,
-                        "marginRight": undefined,
-                        "marginTop": undefined,
-                        "paddingTop": 0,
-                      },
-                      Object {},
-                    ],
-                    false,
-                    false,
+                    Object {
+                      "color": "#0A1427",
+                      "fontSize": 24,
+                      "marginBottom": undefined,
+                      "marginLeft": undefined,
+                      "marginRight": undefined,
+                      "marginTop": undefined,
+                      "paddingTop": 0,
+                    },
+                    Object {},
                   ]
                 }
               />
@@ -1292,16 +1284,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       <View
                         name="qrDetailed"
                         style={
-                          Array [
-                            Object {
-                              "alignSelf": "center",
-                              "color": "#007AFF",
-                              "fontSize": 22,
-                              "opacity": 1,
-                            },
-                            false,
-                            false,
-                          ]
+                          Object {
+                            "alignSelf": "center",
+                            "color": "#007AFF",
+                            "fontSize": 22,
+                            "opacity": 1,
+                          }
                         }
                       />
                     </View>
@@ -1807,16 +1795,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       <View
                         name="paperPlane"
                         style={
-                          Array [
-                            Object {
-                              "alignSelf": "center",
-                              "color": "#007AFF",
-                              "fontSize": 22,
-                              "opacity": 0.5,
-                            },
-                            false,
-                            false,
-                          ]
+                          Object {
+                            "alignSelf": "center",
+                            "color": "#007AFF",
+                            "fontSize": 22,
+                            "opacity": 0.5,
+                          }
                         }
                       />
                     </View>
