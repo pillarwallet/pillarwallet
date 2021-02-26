@@ -56,7 +56,6 @@ type OwnProps = {|
   options?: Option[],
   searchPlaceholder?: string,
   noImageFallback?: boolean,
-  inputIconName?: string,
   iconProps?: Object,
   onHide?: () => void,
   validator?: (value: string) => ?string,
