@@ -33,8 +33,6 @@ import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
-import Icon from 'components/Icon';
-import IconSvg from 'components/IconSvg';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
@@ -318,11 +316,8 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
           <FloatingButtons
             items={[
-              { title: t('button.addContact'), icon: ({ color }) => <IconSvg name="addContact" color={color} /> },
-              {
-                title: t('button.inviteFriend'),
-                icon: ({ color }) => <Icon name="plus" color={color} fontSize={24} />,
-              },
+              { title: t('button.addContact'), iconName: 'add-contact' },
+              { title: t('button.inviteFriend'), iconName: 'plus' },
             ]}
           />
         </ContainerWithHeader>
