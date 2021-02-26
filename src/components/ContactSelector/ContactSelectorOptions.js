@@ -72,7 +72,7 @@ type Props = {|
 type State = {|
   query: ?string,
   hasSearchError: boolean,
-  customAddressAsAnOption: ?Option,
+  customAddressContact: ?Contact,
   isQueryValidAddress: boolean,
 |};
 
@@ -110,7 +110,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     super(props);
     this.state = {
       query: null,
-      customAddressAsAnOption: null,
+      customAddressContact: null,
       isQueryValidAddress: false,
       hasSearchError: false,
     };
@@ -138,7 +138,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
     this.setState({
       isQueryValidAddress: isValid,
-      customAddressAsAnOption: isValid && query
+      customAddressContact: isValid && query
         ? this.getCustomOption(query)
         : null,
     });
@@ -164,9 +164,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
   handlePaste = async () => {
     const clipboardValue = await Clipboard.getString();
-    this.setState({
-      query: clipboardValue?.trim() ?? '',
-    });
+    this.handleInputChange(clipboardValue);
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -235,7 +233,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     } = this.props;
     const {
       query,
-      customAddressAsAnOption,
+      customAddressContact,
       isQueryValidAddress,
       hasSearchError,
     } = this.state;
@@ -244,7 +242,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
     const filteredContacts = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
-    const showEmptyState = !customAddressAsAnOption && !filteredContacts?.length;
+    const showEmptyState = !customAddressContact && !filteredContacts?.length;
     const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
       ? t('error.invalid.address')
       : t('label.nothingFound');
@@ -262,8 +260,8 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     let allFeedListData = [];
     if (filteredContacts.length) {
       allFeedListData = [...filteredContacts];
-    } else if (!hasSearchError && customAddressAsAnOption) {
-      allFeedListData = [customAddressAsAnOption];
+    } else if (!hasSearchError && customAddressContact) {
+      allFeedListData = [customAddressContact];
     }
 
     return (
