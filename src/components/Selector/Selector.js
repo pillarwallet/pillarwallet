@@ -62,7 +62,7 @@ export type Props = {|
   allowEnteringCustomAddress?: boolean,
   children?: any,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
+  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
 |};
 
 const SelectorPill = styled.TouchableOpacity`

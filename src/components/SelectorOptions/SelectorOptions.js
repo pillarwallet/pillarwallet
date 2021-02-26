@@ -26,11 +26,9 @@ import {
   Keyboard,
   FlatList,
 } from 'react-native';
-import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
-import Button from 'components/Button';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -70,7 +68,7 @@ type OwnProps = {|
   allowEnteringCustomAddress?: boolean,
   forceTab?: string,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
+  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onOpen?: () => void,
 |};
 
@@ -121,16 +119,8 @@ const EmptyStateWrapper = styled.View`
   align-items: center;
 `;
 
-const SearchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
 const SearchBarWrapper = styled.View`
-  flex: 1;
-  padding-vertical: ${spacing.small}px;
-  padding-start: ${spacing.layoutSides}px;
-  //padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
+  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
 `;
 
 const IconCircle = styled.View`
@@ -221,18 +211,11 @@ class SelectorOptions extends React.Component<Props, State> {
       option = {
         ...option,
         buttonActionLabel: customOptionButtonLabel,
-        buttonAction: () => customOptionButtonOnPress(option, this.close),
+        buttonAction: () => customOptionButtonOnPress(option),
       };
     }
 
     return option;
-  };
-
-  handlePaste = async () => {
-    const clipboardValue = await Clipboard.getString();
-    this.setState({
-      query: clipboardValue?.trim() ?? '',
-    });
   };
 
   renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
@@ -460,34 +443,26 @@ class SelectorOptions extends React.Component<Props, State> {
             centerItems: [{ title }],
           }}
         >
-          <SearchContainer>
-            <SearchBarWrapper>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleInputChange,
-                  value: query,
-                  autoCapitalize: 'none',
-                  validator: this.validateSearch,
-                }}
-                placeholder={searchPlaceholder}
-                inputRef={(ref) => {
-                  this.searchInput = ref;
-                }}
-                noClose
-                marginBottom="0"
-                iconProps={{ ...iconProps, persistIconOnFocus: true }}
-              />
-            </SearchBarWrapper>
-
-            <Button onPress={this.handlePaste} title={t('button.paste')} transparent small />
-          </SearchContainer>
-
+          <SearchBarWrapper>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleInputChange,
+                value: query,
+                autoCapitalize: 'none',
+                validator: this.validateSearch,
+              }}
+              placeholder={searchPlaceholder}
+              inputRef={ref => { this.searchInput = ref; }}
+              noClose
+              marginBottom="0"
+              iconProps={{ ...iconProps, persistIconOnFocus: true }}
+            />
+          </SearchBarWrapper>
           {!!optionTabs && <Tabs
             tabs={updatedOptionTabs}
             wrapperStyle={{ paddingTop: 22 }}
             activeTab={activeTab || updatedOptionTabs[0].name}
           />}
-
           {
             collectibles ? (
               <CollectiblesList
