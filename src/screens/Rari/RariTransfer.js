@@ -266,9 +266,6 @@ const RariTransferScreen = ({
     ? addContactButtonPress
     : () => {};
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
-  const selectedOption: ?Option = selectedContact
-    ? { ...selectedContact, value: selectedContact.ethAddress }
-    : null;
 
   let enoughBalanceForTransaction = true;
   if (feeInfo && inputIsValid) {
@@ -308,8 +305,8 @@ const RariTransferScreen = ({
       customScreenTitle={t('rariContent.title.transferScreen')}
       customSelectorProps={{
         contacts: contactsAsOptions,
-        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
-        selectedOption,
+        selectedContact,
+        onSelectContact: !resolvingContactEnsName ? handleReceiverSelect : () => {},
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,
       }}
@@ -330,13 +327,9 @@ const RariTransferScreen = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(
-          feeInfo,
-          showFee,
-          errorMessage,
-          isEstimating,
-          enoughBalanceForTransaction,
-        ),
+        footerTopAddon:
+          !!selectedContact &&
+          renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating, enoughBalanceForTransaction),
         isLoading: isEstimating,
       }}
     />

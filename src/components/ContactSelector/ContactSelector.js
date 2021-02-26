@@ -49,8 +49,8 @@ import ContactSelectorOptions from './ContactSelectorOptions';
 
 export type Props = {|
   contact?: Contact[],
-  selectedOption?: ?Option,
-  onOptionSelect?: (option: Option) => mixed,
+  selectedContact?: ?Contact,
+  onSelectContact?: (contact: Contact) => mixed,
   placeholder?: string,
   searchPlaceholder?: string,
   wrapperStyle?: Object,
@@ -77,12 +77,12 @@ const SelectedOption = styled.View`
 
 const ContactSelector = ({
   contacts,
-  onOptionSelect = noop,
+  selectedContact,
+  onSelectContact = noop,
   disableSelfSelect,
   activeAccountAddress,
   placeholder = t('label.choseOption'),
   searchPlaceholder = t('label.search'),
-  selectedOption,
   noOptionImageFallback,
   hasQRScanner,
   allowEnteringCustomAddress,
@@ -99,7 +99,7 @@ const ContactSelector = ({
         ethAddress: address,
         name: address,
       };
-      onOptionSelect(option);
+      onSelectContact(option);
       if (optionsRef.current) {
         optionsRef.current.close();
       }
@@ -121,7 +121,7 @@ const ContactSelector = ({
       <ContactSelectorOptions
         ref={optionsRef}
         contacts={contacts}
-        onSelectContact={onOptionSelect}
+        onSelectContact={onSelectContact}
         title={placeholder}
         searchPlaceholder={searchPlaceholder}
         noImageFallback={noOptionImageFallback}
@@ -170,7 +170,7 @@ const ContactSelector = ({
     );
   };
 
-  const hasValue = !isEmpty(selectedOption);
+  const hasValue = !isEmpty(selectedContact);
   const disabled = !contacts?.length && !allowEnteringCustomAddress;
   const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
 
@@ -178,7 +178,7 @@ const ContactSelector = ({
     <>
       <SelectorPill onPress={openOptions} disabled={disabled}>
         {hasValue ? (
-          renderOption(selectedOption)
+          renderOption(selectedContact)
         ) : (
           <BaseText link medium>
             {placeholderText}

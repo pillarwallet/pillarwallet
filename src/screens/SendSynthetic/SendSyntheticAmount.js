@@ -284,17 +284,17 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         isLoading={isFetchingSyntheticAssets || syntheticAssets.length === 0}
         customSelectorProps={{
           contacts: [],
-          onOptionSelect: this.handleReceiverSelect,
-          selectedOption: selectedContact,
+          selectedContact,
+          onSelectContact: this.handleReceiverSelect,
         }}
         customValueSelectorProps={{
-         onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
-         onValueChange: (newValue) => this.setState({ value: newValue }),
-         assetData: assetData || defaultAssetData,
-         value,
-         customAssets: syntheticAssets,
-         customBalances,
-         onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
+          onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
+          onValueChange: (newValue) => this.setState({ value: newValue }),
+          assetData: assetData || defaultAssetData,
+          value,
+          customAssets: syntheticAssets,
+          customBalances,
+          onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,

@@ -359,16 +359,12 @@ const SendAsset = ({
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
 
-  const selectedOption: ?Option = selectedContact
-    ? { ...selectedContact, value: selectedContact.ethAddress }
-    : null;
-
   return (
     <SendContainer
       customSelectorProps={{
         contacts: contactsAsOptions,
-        onOptionSelect: handleSelectContact,
-        selectedOption,
+        selectedContact,
+        onSelectContact: handleSelectContact,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress: handleAddToContactsPress,
       }}
@@ -390,13 +386,9 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(
-          feeInfo,
-          showFee,
-          errorMessage,
-          isEstimating,
-          enoughBalanceForTransaction,
-        ),
+        footerTopAddon:
+          !!selectedContact &&
+          renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating, enoughBalanceForTransaction),
         isLoading: isEstimating,
       }}
     />
