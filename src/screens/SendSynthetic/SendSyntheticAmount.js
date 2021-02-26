@@ -283,8 +283,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       <SendContainer
         isLoading={isFetchingSyntheticAssets || syntheticAssets.length === 0}
         customSelectorProps={{
+          contacts: [],
           onOptionSelect: this.handleReceiverSelect,
-          options: [],
           selectedOption: selectedContact,
         }}
         customValueSelectorProps={{

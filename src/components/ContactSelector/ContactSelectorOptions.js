@@ -45,7 +45,7 @@ import { isValidAddress } from 'utils/validators';
 
 // Types
 import type { Theme } from 'models/Theme';
-import type { Contact } from 'models/Contacts';
+import type { Contact } from 'models/Contact';
 import type { Option } from 'models/Selector';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 

@@ -43,14 +43,15 @@ import { noop } from 'utils/common';
 
 // types
 import type { Option } from 'models/Selector';
+import type { Contact } from 'models/Contact';
 
 import ContactSelectorOptions from './ContactSelectorOptions';
 
 export type Props = {|
+  contact?: Contact[],
   selectedOption?: ?Option,
   onOptionSelect?: (option: Option) => mixed,
   placeholder?: string,
-  options?: Option[],
   searchPlaceholder?: string,
   wrapperStyle?: Object,
   noOptionImageFallback?: boolean,
@@ -75,11 +76,11 @@ const SelectedOption = styled.View`
 `;
 
 const ContactSelector = ({
+  contacts,
   onOptionSelect = noop,
   disableSelfSelect,
   activeAccountAddress,
   placeholder = t('label.choseOption'),
-  options,
   searchPlaceholder = t('label.search'),
   selectedOption,
   noOptionImageFallback,
@@ -119,7 +120,7 @@ const ContactSelector = ({
     Modal.open(() => (
       <ContactSelectorOptions
         ref={optionsRef}
-        contacts={options}
+        contacts={contacts}
         onSelectContact={onOptionSelect}
         title={placeholder}
         searchPlaceholder={searchPlaceholder}
@@ -170,8 +171,7 @@ const ContactSelector = ({
   };
 
   const hasValue = !isEmpty(selectedOption);
-  const hasOptions = !!options?.length;
-  const disabled = !hasOptions && !allowEnteringCustomAddress;
+  const disabled = !contacts?.length && !allowEnteringCustomAddress;
   const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
 
   return (

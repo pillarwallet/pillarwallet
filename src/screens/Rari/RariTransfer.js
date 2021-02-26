@@ -307,8 +307,8 @@ const RariTransferScreen = ({
     <SendContainer
       customScreenTitle={t('rariContent.title.transferScreen')}
       customSelectorProps={{
+        contacts: contactsAsOptions,
         onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
-        options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,

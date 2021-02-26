@@ -366,8 +366,8 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
+        contacts: contactsAsOptions,
         onOptionSelect: handleSelectContact,
-        options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress: handleAddToContactsPress,
