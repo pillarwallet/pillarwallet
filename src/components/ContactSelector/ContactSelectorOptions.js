@@ -57,7 +57,6 @@ type OwnProps = {|
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: Object,
-  onHide?: () => void,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
   customOptionButtonLabel?: string,
@@ -279,7 +278,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
         ref={this.modalRef}
         fullScreen
         onModalShow={this.handleOptionsOpen}
-        onModalHide={this.props.onHide}
         noSwipeToDismiss
         noClose
         backgroundColor={colors.basic050}
