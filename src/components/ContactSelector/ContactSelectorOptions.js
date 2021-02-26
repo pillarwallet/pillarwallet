@@ -173,16 +173,20 @@ class ContactSelectorOptions extends React.Component<Props, State> {
   };
 
   handleAddToContactsPress = async (contact: Contact) => {
-    if (this.state.resolvingContactEnsName) return;
+    const { dispatch } = this.props;
+    const { resolvingContactEnsName } = this.state;
+
+    if (resolvingContactEnsName) return;
 
     const initialContact = await this.resolveContact(contact);
+    if (!initialContact) return;
 
     Modal.open(() => (
       <ContactDetailsModal
         title={t('title.addNewContact')}
         contact={initialContact}
         onSave={(savedContact: Contact) => {
-          this.props.dispatch(addContactAction(savedContact));
+          dispatch(addContactAction(savedContact));
           this.selectValue(savedContact);
           this.close();
         }}

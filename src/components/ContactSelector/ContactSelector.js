@@ -37,7 +37,7 @@ import Modal from 'components/Modal';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { isValidAddress } from 'utils/validators';
+import { isValidAddress, isEnsName } from 'utils/validators';
 import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
@@ -141,7 +141,7 @@ const ContactSelector = ({
 
     let { name } = contact;
 
-    if (isValidAddress(name)) {
+    if (isValidAddress(name) && !isEnsName(name)) {
       name = t('ellipsedMiddleString', {
         stringStart: name.slice(0, 6),
         stringEnd: name.slice(-6),
