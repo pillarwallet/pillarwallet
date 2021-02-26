@@ -31,6 +31,7 @@ import t from 'translations/translate';
 
 // Actions
 import { addContactAction } from 'actions/contactsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
 import Button from 'components/Button';
@@ -195,6 +196,11 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     ));
   };
 
+  handleInviteFriendPress = () => {
+    const { dispatch } = this.props;
+    dispatch(goToInvitationFlowAction());
+  };
+
   resolveContact = async (value: Contact): Promise<?Contact> => {
     let contact: Contact = {
       name: value?.name || '',
@@ -326,7 +332,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       {
         title: t('button.inviteFriend'),
         iconName: 'plus',
-        onPress: () => console.log('Invite Friend'),
+        onPress: this.handleInviteFriendPress,
       },
     ];
 
