@@ -61,7 +61,6 @@ type OwnProps = {|
   allowEnteringCustomAddress?: boolean,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option, close: () => void) => void | Promise<void>,
-  onOpen?: () => void,
 |};
 
 type Props = {|
@@ -224,9 +223,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
   };
 
   handleOptionsOpen = () => {
-    const { onOpen } = this.props;
     this.focusInput();
-    if (onOpen) onOpen();
   };
 
   render() {
