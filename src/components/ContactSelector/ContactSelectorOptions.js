@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/* eslint-disable no-unused-expressions */
+
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { TextInput, Keyboard, FlatList } from 'react-native';
@@ -58,6 +60,7 @@ import type { SlideModalInstance } from 'components/Modals/SlideModal';
 type OwnProps = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
+  onResolvingContact?: (isResolving: boolean) => mixed,
   title?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
@@ -171,8 +174,11 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
     if (isEnsName(contact.ethAddress)) {
       this.setState({ resolvingContactEnsName: true });
+      this.props.onResolvingContact?.(true);
+
       contact = await getContactWithEnsName(contact, contact.ethAddress);
       this.setState({ resolvingContactEnsName: false });
+      this.props.onResolvingContact?.(false);
 
       // ENS name resolution failed
       if (!contact.ensName) return undefined;

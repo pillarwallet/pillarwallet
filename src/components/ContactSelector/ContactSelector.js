@@ -21,17 +21,17 @@
 import React, { useRef } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
+import { Spacing } from 'components/Layout';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import ProfileImage from 'components/ProfileImage';
-import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
+import Spinner from 'components/Spinner';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -89,6 +89,8 @@ const ContactSelector = ({
 }: Props) => {
   const optionsRef = useRef();
 
+  const [isResolvingContact, setIsResolvingContact] = React.useState(false);
+
   // ToDo: move to ContactSelectorOptions
   const handleScannerReadResult = (address: string) => {
     if (isValidAddress(address)) {
@@ -119,6 +121,7 @@ const ContactSelector = ({
       <ContactSelectorOptions
         contacts={contacts}
         onSelectContact={onSelectContact}
+        onResolvingContact={setIsResolvingContact}
         title={placeholder}
         searchPlaceholder={searchPlaceholder}
         noImageFallback={noOptionImageFallback}
@@ -136,10 +139,21 @@ const ContactSelector = ({
     ));
   };
 
-  const renderContact = (contact: ?Contact) => {
-    if (!contact) return null;
+  const disabled = !contacts?.length && !allowEnteringCustomAddress;
+  const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
 
-    let { name } = contact;
+  const renderContact = () => {
+    if (isResolvingContact) {
+      return <Spinner size={20} />;
+    }
+
+    if (!selectedContact) {
+      return (
+        <BaseText link medium>{placeholderText}</BaseText>
+      );
+    }
+
+    let { name } = selectedContact;
 
     if (isValidAddress(name) && !isEnsName(name)) {
       name = t('ellipsedMiddleString', {
@@ -163,20 +177,10 @@ const ContactSelector = ({
     );
   };
 
-  const hasValue = !isEmpty(selectedContact);
-  const disabled = !contacts?.length && !allowEnteringCustomAddress;
-  const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
-
   return (
     <>
       <SelectorPill onPress={openOptions} disabled={disabled}>
-        {hasValue ? (
-          renderContact(selectedContact)
-        ) : (
-          <BaseText link medium>
-            {placeholderText}
-          </BaseText>
-        )}
+        {renderContact()}
       </SelectorPill>
       {children}
     </>
