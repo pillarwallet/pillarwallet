@@ -32,7 +32,7 @@ import Spinner from 'components/Spinner';
 import ValueInput from 'components/ValueInput';
 
 // types
-import type { Props as ContactSelectorProps } from 'components/ContactSelector';
+import type { ContactSelectorProps } from 'components/ContactSelector';
 import type { ExternalProps as ValueSelectorProps } from 'components/ValueInput';
 import type { Props as ButtonProps } from 'components/Button';
 
@@ -121,11 +121,7 @@ const SendContainer = (props: Props) => {
         <InputWrapper>{isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}</InputWrapper>
         <ArrowIcon />
         <Spacing h={20} />
-        <ContactSelector
-          disableSelfSelect
-          allowEnteringCustomAddress
-          {...customSelectorProps}
-        />
+        <ContactSelector {...customSelectorProps} />
       </Wrapper>
       {children}
     </ContainerWithHeader>

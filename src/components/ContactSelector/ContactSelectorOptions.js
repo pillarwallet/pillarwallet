@@ -64,7 +64,7 @@ type Props = {|
   onResolvingContact?: (isResolving: boolean) => mixed,
   title?: string,
   searchPlaceholder?: string,
-  allowEnteringCustomAddress?: boolean,
+  allowCustomAddress?: boolean,
   allowAddContact?: boolean,
 |};
 
@@ -81,7 +81,7 @@ const ContactSelectorOptions = ({
   onSelectContact,
   onResolvingContact,
   title,
-  allowEnteringCustomAddress,
+  allowCustomAddress,
   allowAddContact,
 }: Props) => {
   const theme = useTheme();
@@ -113,7 +113,7 @@ const ContactSelectorOptions = ({
   const handleInputChange = (input: string) => {
     input = input?.trim() ?? '';
     setQuery(input);
-    if (allowEnteringCustomAddress) handleCustomAddress(input);
+    if (allowCustomAddress) handleCustomAddress(input);
   };
 
   const resolveContact = async (value: Contact): Promise<?Contact> => {
@@ -230,7 +230,7 @@ const ContactSelectorOptions = ({
 
   const showEmptyState = !customAddressContact && !filteredContacts?.length;
   const emptyStateMessage =
-    allowEnteringCustomAddress && !!query && !isQueryValidAddress
+    allowCustomAddress && !!query && !isQueryValidAddress
       ? t('error.invalid.address')
       : t('label.nothingFound');
 

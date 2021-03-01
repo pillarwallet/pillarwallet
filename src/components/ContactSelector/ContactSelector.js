@@ -39,13 +39,13 @@ import type { Contact } from 'models/Contact';
 
 import ContactSelectorOptions from './ContactSelectorOptions';
 
-export type Props = {|
+export type ContactSelectorProps = {|
   contacts?: Contact[],
   selectedContact?: ?Contact,
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
   wrapperStyle?: Object,
-  allowEnteringCustomAddress?: boolean,
+  allowCustomAddress?: boolean,
   allowAddContact?: boolean,
   children?: any,
 |};
@@ -66,10 +66,10 @@ const ContactSelector = ({
   selectedContact,
   onSelectContact = noop,
   placeholder = t('label.whereToSend'),
-  allowEnteringCustomAddress,
+  allowCustomAddress = true,
   allowAddContact = true,
   children,
-}: Props) => {
+}: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
 
   const openOptions = () => {
@@ -79,13 +79,13 @@ const ContactSelector = ({
         onSelectContact={onSelectContact}
         onResolvingContact={setIsResolvingContact}
         title={placeholder}
-        allowEnteringCustomAddress={allowEnteringCustomAddress}
+        allowCustomAddress={allowCustomAddress}
         allowAddContact={allowAddContact}
       />
     ));
   };
 
-  const disabled = !contacts?.length && !allowEnteringCustomAddress;
+  const disabled = !contacts?.length && !allowCustomAddress;
   const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
 
   const renderContact = () => {
@@ -95,7 +95,9 @@ const ContactSelector = ({
 
     if (!selectedContact) {
       return (
-        <BaseText link medium>{placeholderText}</BaseText>
+        <BaseText link medium>
+          {placeholderText}
+        </BaseText>
       );
     }
 
@@ -110,13 +112,7 @@ const ContactSelector = ({
 
     return (
       <SelectedOption>
-        <ProfileImage
-          userName={name}
-          diameter={16}
-          noShadow
-          borderWidth={0}
-          initialsSize={10}
-        />
+        <ProfileImage userName={name} diameter={16} noShadow borderWidth={0} initialsSize={10} />
         <Spacing w={8} />
         <MediumText medium>{name}</MediumText>
       </SelectedOption>
