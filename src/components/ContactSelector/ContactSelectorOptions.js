@@ -20,13 +20,7 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import {
-  View,
-  Text,
-  TextInput,
-  Keyboard,
-  FlatList,
-} from 'react-native';
+import { TextInput, Keyboard, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
@@ -86,27 +80,6 @@ type State = {|
   isQueryValidAddress: boolean,
   resolvingContactEnsName: boolean,
 |};
-
-const EmptyStateWrapper = styled.View`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  align-items: center;
-`;
-
-const SearchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const SearchBarWrapper = styled.View`
-  flex: 1;
-  padding-vertical: ${spacing.small}px;
-  padding-start: ${spacing.layoutSides}px;
-`;
-
-const ActionButtonsContainer = styled.View`
-  padding-horizontal: ${spacing.rhythm}px;
-`;
 
 const viewConfig = {
   minimumViewTime: 300,
@@ -212,28 +185,16 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     return contact;
   };
 
-  renderOption = ({ item: option }: Object) => {
+  renderItem = (item: Contact) => {
     const { noImageFallback } = this.props;
 
-    if (!option) return null;
-
-    const {
-      name,
-      imageUrl,
-      imageSource,
-      opacity,
-      disabled,
-    } = option;
+    if (!item) return null;
 
     return (
       <ListItemWithImage
-        onPress={!disabled ? () => this.selectValue(option) : null}
-        label={name}
-        itemImageUrl={imageUrl}
-        iconSource={imageSource}
+        label={item.name}
+        onPress={() => this.selectValue(item)}
         fallbackToGenericToken={!noImageFallback}
-        wrapperOpacity={opacity}
-        {...option}
       />
     );
   };
@@ -289,7 +250,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-    const filteredContacts = isSearching ? getMatchingSortedData(contacts, query) : contacts;
+    const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
     const showEmptyState = !customAddressContact && !filteredContacts?.length;
     const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
@@ -306,7 +267,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       );
     };
 
-    let items = [];
+    let items: Contact[] = [];
     if (filteredContacts.length) {
       items = [...filteredContacts];
     } else if (!hasSearchError && customAddressContact) {
@@ -314,12 +275,12 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     }
 
     const buttons = [
-      allowAddContact && {
+      {
         title: t('button.addContact'),
         iconName: 'add-contact',
         onPress: () => this.handleAddToContactsPress(),
       },
-      allowAddContact && {
+      {
         title: t('button.inviteFriend'),
         iconName: 'plus',
         onPress: this.handleInviteFriendPress,
@@ -368,7 +329,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
           <FlatList
             stickyHeaderIndices={[0]}
             data={items}
-            renderItem={this.renderOption}
+            renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(contact) => contact.ethAddress || contact.name}
             keyboardShouldPersistTaps="always"
             initialNumToRender={10}
@@ -378,7 +339,11 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             ListHeaderComponent={renderEmptyState()}
           />
 
-          {addContactAction && customAddressContact && (
+          {allowAddContact && !customAddressContact && (
+            <FloatingButtons items={buttons} />
+          )}
+
+          {allowAddContact && customAddressContact && (
             <ActionButtonsContainer>
               <Button
                 title={t('button.addToAddressBook')}
@@ -388,9 +353,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
               <Button secondary title={t('button.skip')} onPress={() => this.selectValue(customAddressContact)} />
             </ActionButtonsContainer>
           )}
-
-          {addContactAction && !customAddressContact && (<FloatingButtons items={buttons} />)}
-
         </ContainerWithHeader>
       </SlideModal>
     );
@@ -400,4 +362,26 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 const ThemedSelectorOptions: React.AbstractComponent<OwnProps, ContactSelectorOptions> = withTheme(
   connect(null, null, null, { forwardRef: true })(ContactSelectorOptions),
 );
+
 export default ThemedSelectorOptions;
+
+const EmptyStateWrapper = styled.View`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
+`;
+
+const SearchContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SearchBarWrapper = styled.View`
+  flex: 1;
+  padding-vertical: ${spacing.small}px;
+  padding-start: ${spacing.layoutSides}px;
+`;
+
+const ActionButtonsContainer = styled.View`
+  padding-horizontal: ${spacing.rhythm}px;
+`;
