@@ -211,7 +211,15 @@ export const Footer = (props: FooterProps) => {
   );
 };
 
-export const Spacing = styled.View`
+type SpacingProps = {|
+  h?: ?number;
+  w?: ?number;
+  flex?: ?number;
+|};
+
+export const Spacing: React.ComponentType<SpacingProps> = styled.View`
   height: ${({ h }) => h || 0}px;
   width: ${({ w }) => w || 0}px;
+  background-color: red;
+  ${({ flex }) => (flex != null ? `flex: ${flex};` : undefined)}
 `;

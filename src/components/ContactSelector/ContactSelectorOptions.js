@@ -21,6 +21,8 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import {
+  View,
+  Text,
   TextInput,
   Keyboard,
   FlatList,
@@ -34,6 +36,7 @@ import { addContactAction } from 'actions/contactsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
+import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -99,7 +102,10 @@ const SearchBarWrapper = styled.View`
   flex: 1;
   padding-vertical: ${spacing.small}px;
   padding-start: ${spacing.layoutSides}px;
-  //padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
+`;
+
+const ActionButtonsContainer = styled.View`
+  padding-horizontal: ${spacing.rhythm}px;
 `;
 
 const viewConfig = {
@@ -147,25 +153,8 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
     this.setState({
       isQueryValidAddress: isValid,
-      customAddressContact: isValid && query
-        ? this.getCustomAddressContact(query)
-        : null,
+      customAddressContact: isValid && query ? { name: query, ethAddress: query } : null,
     });
-  };
-
-  getCustomAddressContact = (address: string) => {
-    let contact = { name: address, ethAddress: address };
-
-    const { allowAddContact } = this.props;
-    if (allowAddContact) {
-      contact = {
-        ...contact,
-        buttonActionLabel: t('button.addToContacts'),
-        buttonAction: () => this.handleAddToContactsPress(contact),
-      };
-    }
-
-    return contact;
   };
 
   handlePaste = async () => {
@@ -289,6 +278,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       searchPlaceholder,
       iconProps = {},
       allowEnteringCustomAddress,
+      allowAddContact,
     } = this.props;
     const {
       query,
@@ -306,7 +296,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       ? t('error.invalid.address')
       : t('label.nothingFound');
 
-    const renderHeader = () => {
+    const renderEmptyState = () => {
       if (!showEmptyState) return null;
 
       return (
@@ -316,20 +306,20 @@ class ContactSelectorOptions extends React.Component<Props, State> {
       );
     };
 
-    let allFeedListData = [];
+    let items = [];
     if (filteredContacts.length) {
-      allFeedListData = [...filteredContacts];
+      items = [...filteredContacts];
     } else if (!hasSearchError && customAddressContact) {
-      allFeedListData = [customAddressContact];
+      items = [customAddressContact];
     }
 
     const buttons = [
-      {
+      allowAddContact && {
         title: t('button.addContact'),
         iconName: 'add-contact',
         onPress: () => this.handleAddToContactsPress(),
       },
-      {
+      allowAddContact && {
         title: t('button.inviteFriend'),
         iconName: 'plus',
         onPress: this.handleInviteFriendPress,
@@ -377,7 +367,7 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 
           <FlatList
             stickyHeaderIndices={[0]}
-            data={allFeedListData}
+            data={items}
             renderItem={this.renderOption}
             keyExtractor={(contact) => contact.ethAddress || contact.name}
             keyboardShouldPersistTaps="always"
@@ -385,10 +375,22 @@ class ContactSelectorOptions extends React.Component<Props, State> {
             viewabilityConfig={viewConfig}
             windowSize={10}
             hideModalContentWhileAnimating
-            ListHeaderComponent={renderHeader()}
+            ListHeaderComponent={renderEmptyState()}
           />
 
-          <FloatingButtons items={buttons} />
+          {addContactAction && customAddressContact && (
+            <ActionButtonsContainer>
+              <Button
+                title={t('button.addToAddressBook')}
+                onPress={() => this.handleAddToContactsPress(customAddressContact)}
+              />
+              <Spacing h={spacing.small} />
+              <Button secondary title={t('button.skip')} onPress={() => this.selectValue(customAddressContact)} />
+            </ActionButtonsContainer>
+          )}
+
+          {addContactAction && !customAddressContact && (<FloatingButtons items={buttons} />)}
+
         </ContainerWithHeader>
       </SlideModal>
     );
