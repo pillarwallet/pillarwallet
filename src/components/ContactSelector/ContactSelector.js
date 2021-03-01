@@ -20,8 +20,6 @@
 
 import React from 'react';
 import styled from 'styled-components/native';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
@@ -30,9 +28,6 @@ import { Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
-
-// selectors
-import { activeAccountAddressSelector } from 'selectors';
 
 // utils
 import { isValidAddress, isEnsName } from 'utils/validators';
@@ -50,8 +45,6 @@ export type Props = {|
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
   wrapperStyle?: Object,
-  disableSelfSelect?: boolean,
-  activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
   allowAddContact?: boolean,
   children?: any,
@@ -72,19 +65,12 @@ const ContactSelector = ({
   contacts,
   selectedContact,
   onSelectContact = noop,
-  disableSelfSelect,
-  activeAccountAddress,
   placeholder = t('label.whereToSend'),
   allowEnteringCustomAddress,
   allowAddContact = true,
   children,
 }: Props) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
-
-  const handleSearchValidation = (searchQuery: string): ?string => {
-    if (disableSelfSelect && searchQuery === activeAccountAddress) return t('error.cannotSendYourself');
-    return null;
-  };
 
   const openOptions = () => {
     Modal.open(() => (
@@ -93,7 +79,6 @@ const ContactSelector = ({
         onSelectContact={onSelectContact}
         onResolvingContact={setIsResolvingContact}
         title={placeholder}
-        validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
         allowAddContact={allowAddContact}
       />
@@ -148,8 +133,4 @@ const ContactSelector = ({
   );
 };
 
-const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
-});
-
-export default connect(structuredSelector)(ContactSelector);
+export default ContactSelector;

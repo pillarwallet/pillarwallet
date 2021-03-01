@@ -44,6 +44,9 @@ import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+
 // Utils
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
@@ -61,8 +64,6 @@ type Props = {|
   onResolvingContact?: (isResolving: boolean) => mixed,
   title?: string,
   searchPlaceholder?: string,
-  iconProps?: Object,
-  validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
   allowAddContact?: boolean,
 |};
@@ -80,8 +81,6 @@ const ContactSelectorOptions = ({
   onSelectContact,
   onResolvingContact,
   title,
-  validator,
-  iconProps = {},
   allowEnteringCustomAddress,
   allowAddContact,
 }: Props) => {
@@ -97,6 +96,7 @@ const ContactSelectorOptions = ({
   const [resolvingContactEnsName, setResolvingContactEnsName] = React.useState(false);
 
   const dispatch = useDispatch();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
   const close = () => {
     Keyboard.dismiss();
@@ -111,9 +111,8 @@ const ContactSelectorOptions = ({
   };
 
   const handleInputChange = (input: string) => {
-    const formattedQuery = !input ? '' : input.trim();
-    setQuery(formattedQuery);
-
+    input = input?.trim() ?? '';
+    setQuery(input);
     if (allowEnteringCustomAddress) handleCustomAddress(input);
   };
 
@@ -179,14 +178,13 @@ const ContactSelectorOptions = ({
     dispatch(goToInvitationFlowAction());
   };
 
-  const validateSearch = (val: string) => {
-    if (!validator) return null;
-    const hasError = validator(val);
+  const validateSearch = (searchQuery: string) => {
+    if (searchQuery === activeAccountAddress) {
+      setHasSearchError(true);
+      return t('error.cannotSendYourself');
+    }
 
-    if (hasError) {
-      setHasSearchError(!!hasError);
-      return hasError;
-    } else if (hasSearchError) {
+    if (hasSearchError) {
       setHasSearchError(false);
     }
 
@@ -281,9 +279,14 @@ const ContactSelectorOptions = ({
           noPaddingTop: true,
           customOnBack: close,
           centerItems: [{ title }],
-          rightItems: [{ 
-            icon: 'qrcode', onPress: handleOpenScanner, fontSize: 18, color: colors.basic020,
-          }],
+          rightItems: [
+            {
+              icon: 'qrcode',
+              onPress: handleOpenScanner,
+              fontSize: 18,
+              color: colors.basic020,
+            },
+          ],
         }}
       >
         <SearchContainer>
@@ -299,7 +302,7 @@ const ContactSelectorOptions = ({
               inputRef={searchInputRef}
               noClose
               marginBottom="0"
-              iconProps={{ ...iconProps, persistIconOnFocus: true }}
+              iconProps={{ persistIconOnFocus: true }}
             />
           </SearchBarWrapper>
 
@@ -321,17 +324,19 @@ const ContactSelectorOptions = ({
 
         {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
 
-        {allowAddContact && customAddressContact && (
-          <ActionButtonsContainer>
-            <Button
-              title={t('button.addToAddressBook')}
-              onPress={() => handleAddToContactsPress(customAddressContact)}
-              isLoading={resolvingContactEnsName}
-            />
-            <Spacing h={spacing.small} />
-            <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
-          </ActionButtonsContainer>
-        )}
+        {allowAddContact &&
+          customAddressContact &&
+          !hasSearchError && (
+            <ActionButtonsContainer>
+              <Button
+                title={t('button.addToAddressBook')}
+                onPress={() => handleAddToContactsPress(customAddressContact)}
+                isLoading={resolvingContactEnsName}
+              />
+              <Spacing h={spacing.small} />
+              <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
+            </ActionButtonsContainer>
+          )}
       </ContainerWithHeader>
     </SlideModal>
   );
