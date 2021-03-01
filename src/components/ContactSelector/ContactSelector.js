@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
@@ -28,6 +28,7 @@ import t from 'translations/translate';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
+import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import ProfileImage from 'components/ProfileImage';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
@@ -86,24 +87,26 @@ const ContactSelector = ({
   allowAddContact = true,
   children,
 }: Props) => {
+  const optionsRef = useRef();
+
   // ToDo: move to ContactSelectorOptions
-  // const handleScannerReadResult = (address: string) => {
-  //   if (isValidAddress(address)) {
-  //     const option = {
-  //       value: address,
-  //       ethAddress: address,
-  //       name: address,
-  //     };
-  //     onSelectContact(option);
-  //     if (optionsRef.current) {
-  //       optionsRef.current.close();
-  //     }
-  //   }
-  // };
+  const handleScannerReadResult = (address: string) => {
+    if (isValidAddress(address)) {
+      const option = {
+        value: address,
+        ethAddress: address,
+        name: address,
+      };
+      onSelectContact(option);
+      if (optionsRef.current) {
+        optionsRef.current.close();
+      }
+    }
+  };
 
   const handleScannerOpen = () => {
     Keyboard.dismiss();
-    // Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
+    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
   };
 
   const handleSearchValidation = (searchQuery: string): ?string => {

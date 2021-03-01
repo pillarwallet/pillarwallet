@@ -396,6 +396,6 @@ class ContactSelectorOptions extends React.Component<Props, State> {
 }
 
 const ThemedSelectorOptions: React.AbstractComponent<OwnProps, ContactSelectorOptions> = withTheme(
-  connect(null, null)(ContactSelectorOptions),
+  connect(null, null, null, { forwardRef: true })(ContactSelectorOptions),
 );
 export default ThemedSelectorOptions;
