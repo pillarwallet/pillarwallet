@@ -53,7 +53,7 @@ import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName, isValidAddress } from 'utils/validators';
-
+import { addressesEqual } from 'utils/assets';
 
 // Types
 import type { Contact } from 'models/Contact';
@@ -62,10 +62,10 @@ type Props = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
   onResolvingContact?: (isResolving: boolean) => mixed,
-  title?: string,
-  searchPlaceholder?: string,
   allowCustomAddress?: boolean,
   allowAddContact?: boolean,
+  title?: string,
+  searchPlaceholder?: string,
 |};
 
 const viewConfig = {
@@ -80,9 +80,10 @@ const ContactSelectorOptions = ({
   contacts = [],
   onSelectContact,
   onResolvingContact,
-  title,
-  allowCustomAddress,
-  allowAddContact,
+  allowCustomAddress = true,
+  allowAddContact = true,
+  title = t('label.sendTo'),
+  searchPlaceholder = t('label.walletAddressEnsUser'),
 }: Props) => {
   const theme = useTheme();
 
@@ -145,7 +146,6 @@ const ContactSelectorOptions = ({
   const selectValue = async (contact: Contact) => {
     close();
     const resolvedContact = await resolveContact(contact);
-
     onSelectContact?.(resolvedContact);
   };
 
@@ -157,12 +157,10 @@ const ContactSelectorOptions = ({
   const handleAddToContactsPress = async (contact?: Contact) => {
     if (resolvingContactEnsName) return;
 
-    const initialContact = contact ? await resolveContact(contact) : null;
-
     Modal.open(() => (
       <ContactDetailsModal
         title={t('title.addNewContact')}
-        contact={initialContact}
+        contact={contact}
         onSave={(savedContact: Contact) => {
           dispatch(addContactAction(savedContact));
           selectValue(savedContact);
@@ -179,7 +177,7 @@ const ContactSelectorOptions = ({
   };
 
   const validateSearch = (searchQuery: string) => {
-    if (searchQuery === activeAccountAddress) {
+    if (addressesEqual(searchQuery, activeAccountAddress)) {
       setHasSearchError(true);
       return t('error.cannotSendYourself');
     }
@@ -195,32 +193,24 @@ const ContactSelectorOptions = ({
     searchInputRef.current?.focus();
   };
 
-  const handleScannerResult = (address: string) => {
+  const handleScannerRead = (address: string) => {
     if (isValidAddress(address)) {
-      const option = {
-        value: address,
+      selectValue({
         ethAddress: address,
         name: address,
-      };
-      selectValue(option);
+      });
     }
   };
 
-  const handleOpenScanner = () => {
+  const openScanner = () => {
     Keyboard.dismiss();
-    Modal.open(() => <AddressScanner onRead={handleScannerResult} />);
+    Modal.open(() => <AddressScanner onRead={handleScannerRead} />);
   };
 
   const renderItem = (item: Contact) => {
     if (!item) return null;
 
-    return (
-      <ListItemWithImage
-        label={item.name}
-        onPress={() => selectValue(item)}
-        fallbackToGenericToken={false}
-      />
-    );
+    return <ListItemWithImage label={item.name} onPress={() => selectValue(item)} />;
   };
 
   const colors = getThemeColors(theme);
@@ -230,9 +220,7 @@ const ContactSelectorOptions = ({
 
   const showEmptyState = !customAddressContact && !filteredContacts?.length;
   const emptyStateMessage =
-    allowCustomAddress && !!query && !isQueryValidAddress
-      ? t('error.invalid.address')
-      : t('label.nothingFound');
+    allowCustomAddress && !!query && !isQueryValidAddress ? t('error.invalid.address') : t('label.nothingFound');
 
   const renderEmptyState = () => {
     if (!showEmptyState) return null;
@@ -282,12 +270,13 @@ const ContactSelectorOptions = ({
           rightItems: [
             {
               icon: 'qrcode',
-              onPress: handleOpenScanner,
+              onPress: openScanner,
               fontSize: 18,
               color: colors.basic020,
             },
           ],
         }}
+        inset={{ bottom: 'never' }}
       >
         <SearchContainer>
           <SearchBarWrapper>
@@ -298,7 +287,7 @@ const ContactSelectorOptions = ({
                 autoCapitalize: 'none',
                 validator: validateSearch,
               }}
-              placeholder={t('label.walletAddressEnsUser')}
+              placeholder={searchPlaceholder}
               inputRef={searchInputRef}
               noClose
               marginBottom="0"
@@ -310,7 +299,6 @@ const ContactSelectorOptions = ({
         </SearchContainer>
 
         <FlatList
-          stickyHeaderIndices={[0]}
           data={items}
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={(contact) => contact.ethAddress || contact.name}
@@ -320,23 +308,22 @@ const ContactSelectorOptions = ({
           windowSize={10}
           hideModalContentWhileAnimating
           ListHeaderComponent={renderEmptyState()}
+          contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
 
         {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
 
-        {allowAddContact &&
-          customAddressContact &&
-          !hasSearchError && (
-            <ActionButtonsContainer>
-              <Button
-                title={t('button.addToAddressBook')}
-                onPress={() => handleAddToContactsPress(customAddressContact)}
-                isLoading={resolvingContactEnsName}
-              />
-              <Spacing h={spacing.small} />
-              <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
-            </ActionButtonsContainer>
-          )}
+        {allowAddContact && customAddressContact && !hasSearchError && (
+          <ActionButtonsContainer>
+            <Button
+              title={t('button.addToAddressBook')}
+              onPress={() => handleAddToContactsPress(customAddressContact)}
+              isLoading={resolvingContactEnsName}
+            />
+            <Spacing h={spacing.small} />
+            <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
+          </ActionButtonsContainer>
+        )}
       </ContainerWithHeader>
     </SlideModal>
   );
@@ -362,5 +349,6 @@ const SearchBarWrapper = styled.View`
 `;
 
 const ActionButtonsContainer = styled.View`
-  padding-horizontal: ${spacing.rhythm}px;
+  padding-horizontal: ${spacing.large}px;
+  padding-bottom: ${spacing.extraLarge}px;
 `;

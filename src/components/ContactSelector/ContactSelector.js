@@ -78,7 +78,6 @@ const ContactSelector = ({
         contacts={contacts}
         onSelectContact={onSelectContact}
         onResolvingContact={setIsResolvingContact}
-        title={placeholder}
         allowCustomAddress={allowCustomAddress}
         allowAddContact={allowAddContact}
       />

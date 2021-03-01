@@ -165,6 +165,7 @@
     "to": "To",
     "from": "From",
     "whereToSend": "Where to send",
+    "sendTo": "Send To",
     "walletAddress": "Wallet address",
     "walletAddressEnsUser": "Wallet address, ENS, user",
     "tokens": "Tokens",
