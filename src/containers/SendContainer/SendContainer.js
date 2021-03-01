@@ -124,8 +124,6 @@ const SendContainer = (props: Props) => {
         <ContactSelector
           placeholder={t('label.whereToSend')}
           searchPlaceholder={t('label.walletAddressEnsUser')}
-          noOptionImageFallback
-          hasQRScanner
           disableSelfSelect
           allowEnteringCustomAddress
           {...customSelectorProps}

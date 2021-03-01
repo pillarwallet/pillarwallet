@@ -45,8 +45,8 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   return '';
 };
 
-export const isEnsName = (input: string): boolean => {
-  if (!input.toString().includes('.')) return false;
+export const isEnsName = (input: ?string): boolean => {
+  if (!input || !input.toString().includes('.')) return false;
 
   const domain = input.split('.').pop().toLowerCase();
   const supportedDomains = [ETH_DOMAIN];
@@ -58,7 +58,9 @@ export const isEnsName = (input: string): boolean => {
   return false;
 };
 
-export const isValidETHAddress = (address: string): boolean => {
+export const isValidETHAddress = (address: ?string): boolean => {
+  if (!address) return false;
+
   let result = true;
   try {
     utils.getAddress(address);
@@ -71,7 +73,7 @@ export const isValidETHAddress = (address: string): boolean => {
   return result;
 };
 
-export const isValidAddress = (address: string): boolean => {
+export const isValidAddress = (address: ?string): boolean => {
   return isValidETHAddress(address);
 };
 

@@ -33,6 +33,7 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
 import { Spacing } from 'components/Layout';
+import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Button from 'components/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -60,7 +61,6 @@ type Props = {|
   onResolvingContact?: (isResolving: boolean) => mixed,
   title?: string,
   searchPlaceholder?: string,
-  noImageFallback?: boolean,
   iconProps?: Object,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
@@ -85,7 +85,6 @@ const ContactSelectorOptions = ({
   iconProps = {},
   allowEnteringCustomAddress,
   allowAddContact,
-  noImageFallback,
 }: Props) => {
   const theme = useTheme();
 
@@ -118,7 +117,6 @@ const ContactSelectorOptions = ({
 
     if (allowEnteringCustomAddress) handleCustomAddress(input);
   };
-
 
   const resolveContact = async (value: Contact): Promise<?Contact> => {
     let contact: Contact = {
@@ -200,6 +198,22 @@ const ContactSelectorOptions = ({
     searchInputRef.current?.focus();
   };
 
+  const handleScannerResult = (address: string) => {
+    if (isValidAddress(address)) {
+      const option = {
+        value: address,
+        ethAddress: address,
+        name: address,
+      };
+      selectValue(option);
+    }
+  };
+
+  const handleOpenScanner = () => {
+    Keyboard.dismiss();
+    Modal.open(() => <AddressScanner onRead={handleScannerResult} />);
+  };
+
   const renderItem = (item: Contact) => {
     if (!item) return null;
 
@@ -207,7 +221,7 @@ const ContactSelectorOptions = ({
       <ListItemWithImage
         label={item.name}
         onPress={() => selectValue(item)}
-        fallbackToGenericToken={!noImageFallback}
+        fallbackToGenericToken={false}
       />
     );
   };
@@ -268,6 +282,9 @@ const ContactSelectorOptions = ({
           noPaddingTop: true,
           customOnBack: close,
           centerItems: [{ title }],
+          rightItems: [{ 
+            icon: 'qrcode', onPress: handleOpenScanner, fontSize: 18, color: colors.basic020,
+          }],
         }}
       >
         <SearchContainer>

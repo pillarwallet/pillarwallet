@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useRef } from 'react';
-import { Keyboard } from 'react-native';
+import React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -28,7 +27,6 @@ import t from 'translations/translate';
 // components
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import ProfileImage from 'components/ProfileImage';
 import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
@@ -53,8 +51,6 @@ export type Props = {|
   placeholder?: string,
   searchPlaceholder?: string,
   wrapperStyle?: Object,
-  noOptionImageFallback?: boolean,
-  hasQRScanner?: boolean,
   disableSelfSelect?: boolean,
   activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
@@ -81,35 +77,11 @@ const ContactSelector = ({
   activeAccountAddress,
   placeholder = t('label.choseOption'),
   searchPlaceholder = t('label.search'),
-  noOptionImageFallback,
-  hasQRScanner,
   allowEnteringCustomAddress,
   allowAddContact = true,
   children,
 }: Props) => {
-  const optionsRef = useRef();
-
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
-
-  // ToDo: move to ContactSelectorOptions
-  const handleScannerReadResult = (address: string) => {
-    if (isValidAddress(address)) {
-      const option = {
-        value: address,
-        ethAddress: address,
-        name: address,
-      };
-      onSelectContact(option);
-      if (optionsRef.current) {
-        optionsRef.current.close();
-      }
-    }
-  };
-
-  const handleScannerOpen = () => {
-    Keyboard.dismiss();
-    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
-  };
 
   const handleSearchValidation = (searchQuery: string): ?string => {
     if (disableSelfSelect && searchQuery === activeAccountAddress) return t('error.cannotSendYourself');
@@ -124,14 +96,6 @@ const ContactSelector = ({
         onResolvingContact={setIsResolvingContact}
         title={placeholder}
         searchPlaceholder={searchPlaceholder}
-        noImageFallback={noOptionImageFallback}
-        iconProps={
-          hasQRScanner && {
-            icon: 'qrcode',
-            style: { fontSize: 20, marginTop: 2 },
-            onPress: handleScannerOpen,
-          }
-        }
         validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
         allowAddContact={allowAddContact}
