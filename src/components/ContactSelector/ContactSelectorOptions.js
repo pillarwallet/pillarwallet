@@ -92,7 +92,6 @@ const ContactSelectorOptions = ({
 
   const [query, setQuery] = React.useState(null);
   const [customAddressContact, setCustomAddressContact] = React.useState(null);
-  const [isQueryValidAddress, setIsQueryValidAddress] = React.useState(false);
   const [hasSearchError, setHasSearchError] = React.useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = React.useState(false);
 
@@ -106,9 +105,7 @@ const ContactSelectorOptions = ({
 
   const handleCustomAddress = (address: string) => {
     const isValid = isValidAddress(address);
-
-    setIsQueryValidAddress(isValid);
-    setCustomAddressContact(isValid && address ? { name: address, ethAddress: address } : null);
+    setCustomAddressContact(isValid ? { name: address, ethAddress: address } : null);
   };
 
   const handleInputChange = (input: string) => {
@@ -218,16 +215,20 @@ const ContactSelectorOptions = ({
 
   const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
-  const showEmptyState = !customAddressContact && !filteredContacts?.length;
-  const emptyStateMessage =
-    allowCustomAddress && !!query && !isQueryValidAddress ? t('error.invalid.address') : t('label.nothingFound');
+  const renderEmptyStateIfNeeded = () => {
+    if (filteredContacts?.length || customAddressContact) return null;
 
-  const renderEmptyState = () => {
-    if (!showEmptyState) return null;
+    if (!query) {
+      return (
+        <EmptyStateWrapper fullScreen>
+          <EmptyStateParagraph title={t('label.noContacts')} bodyText={t('paragraph.addContacts')} />
+        </EmptyStateWrapper>
+      );
+    }
 
     return (
       <EmptyStateWrapper fullScreen>
-        <EmptyStateParagraph title={emptyStateMessage} />
+        <EmptyStateParagraph title={allowCustomAddress ? t('error.invalid.address') : t('label.nothingFound')} />
       </EmptyStateWrapper>
     );
   };
@@ -307,7 +308,7 @@ const ContactSelectorOptions = ({
           viewabilityConfig={viewConfig}
           windowSize={10}
           hideModalContentWhileAnimating
-          ListHeaderComponent={renderEmptyState()}
+          ListHeaderComponent={renderEmptyStateIfNeeded()}
           contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
 
