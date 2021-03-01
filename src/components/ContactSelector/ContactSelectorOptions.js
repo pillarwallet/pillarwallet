@@ -93,7 +93,6 @@ const ContactSelectorOptions = ({
   const [query, setQuery] = React.useState(null);
   const [customAddressContact, setCustomAddressContact] = React.useState(null);
   const [hasSearchError, setHasSearchError] = React.useState(false);
-  const [resolvingContactEnsName, setResolvingContactEnsName] = React.useState(false);
 
   const dispatch = useDispatch();
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
@@ -103,15 +102,14 @@ const ContactSelectorOptions = ({
     modalRef.current?.close();
   };
 
-  const handleCustomAddress = (address: string) => {
-    const isValid = isValidAddress(address);
-    setCustomAddressContact(isValid ? { name: address, ethAddress: address } : null);
-  };
-
   const handleInputChange = (input: string) => {
     input = input?.trim() ?? '';
     setQuery(input);
-    if (allowCustomAddress) handleCustomAddress(input);
+
+    if (allowCustomAddress) {
+      const isValid = isValidAddress(input);
+      setCustomAddressContact(isValid ? { name: input, ethAddress: input } : null);
+    }
   };
 
   const resolveContact = async (value: Contact): Promise<?Contact> => {
@@ -121,12 +119,8 @@ const ContactSelectorOptions = ({
     };
 
     if (isEnsName(contact.ethAddress)) {
-      setResolvingContactEnsName(true);
       onResolvingContact?.(true);
-
       contact = await getContactWithEnsName(contact, contact.ethAddress);
-
-      setResolvingContactEnsName(false);
       onResolvingContact?.(false);
 
       // ENS name resolution failed
@@ -152,8 +146,6 @@ const ContactSelectorOptions = ({
   };
 
   const handleAddToContactsPress = async (contact?: Contact) => {
-    if (resolvingContactEnsName) return;
-
     Modal.open(() => (
       <ContactDetailsModal
         title={t('title.addNewContact')}
@@ -319,9 +311,10 @@ const ContactSelectorOptions = ({
             <Button
               title={t('button.addToAddressBook')}
               onPress={() => handleAddToContactsPress(customAddressContact)}
-              isLoading={resolvingContactEnsName}
             />
+
             <Spacing h={spacing.small} />
+
             <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
           </ActionButtonsContainer>
         )}
