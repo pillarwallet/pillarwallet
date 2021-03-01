@@ -49,7 +49,6 @@ export type Props = {|
   selectedContact?: ?Contact,
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
-  searchPlaceholder?: string,
   wrapperStyle?: Object,
   disableSelfSelect?: boolean,
   activeAccountAddress?: string,
@@ -75,8 +74,7 @@ const ContactSelector = ({
   onSelectContact = noop,
   disableSelfSelect,
   activeAccountAddress,
-  placeholder = t('label.choseOption'),
-  searchPlaceholder = t('label.search'),
+  placeholder = t('label.whereToSend'),
   allowEnteringCustomAddress,
   allowAddContact = true,
   children,
@@ -95,7 +93,6 @@ const ContactSelector = ({
         onSelectContact={onSelectContact}
         onResolvingContact={setIsResolvingContact}
         title={placeholder}
-        searchPlaceholder={searchPlaceholder}
         validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
         allowAddContact={allowAddContact}

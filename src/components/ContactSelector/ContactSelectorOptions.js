@@ -80,7 +80,6 @@ const ContactSelectorOptions = ({
   onSelectContact,
   onResolvingContact,
   title,
-  searchPlaceholder,
   validator,
   iconProps = {},
   allowEnteringCustomAddress,
@@ -296,7 +295,7 @@ const ContactSelectorOptions = ({
                 autoCapitalize: 'none',
                 validator: validateSearch,
               }}
-              placeholder={searchPlaceholder}
+              placeholder={t('label.walletAddressEnsUser')}
               inputRef={searchInputRef}
               noClose
               marginBottom="0"

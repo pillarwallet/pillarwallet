@@ -122,8 +122,6 @@ const SendContainer = (props: Props) => {
         <ArrowIcon />
         <Spacing h={20} />
         <ContactSelector
-          placeholder={t('label.whereToSend')}
-          searchPlaceholder={t('label.walletAddressEnsUser')}
           disableSelfSelect
           allowEnteringCustomAddress
           {...customSelectorProps}
