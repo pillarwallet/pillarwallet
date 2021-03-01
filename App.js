@@ -245,8 +245,10 @@ class App extends React.Component<Props, *> {
     if (themeType !== prevThemeType) {
       if (themeType === DARK_THEME) {
         StatusBar.setBarStyle('light-content');
+        Instabug.setColorTheme(Instabug.colorTheme.dark);
       } else {
         StatusBar.setBarStyle('dark-content');
+        Instabug.setColorTheme(Instabug.colorTheme.light);
       }
     }
   }
