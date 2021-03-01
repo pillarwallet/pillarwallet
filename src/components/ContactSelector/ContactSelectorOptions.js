@@ -21,9 +21,9 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-import { TextInput, Keyboard, FlatList } from 'react-native';
-import { connect } from 'react-redux';
+import styled, { useTheme } from 'styled-components/native';
+import { Keyboard, FlatList } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
@@ -52,12 +52,9 @@ import { isEnsName, isValidAddress } from 'utils/validators';
 
 
 // Types
-import type { Dispatch } from 'redux';
-import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
-import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
-type OwnProps = {|
+type Props = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
   onResolvingContact?: (isResolving: boolean) => mixed,
@@ -70,20 +67,6 @@ type OwnProps = {|
   allowAddContact?: boolean,
 |};
 
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
-  dispatch: Dispatch,
-|};
-
-type State = {|
-  query: ?string,
-  hasSearchError: boolean,
-  customAddressContact: ?Contact,
-  isQueryValidAddress: boolean,
-  resolvingContactEnsName: boolean,
-|};
-
 const viewConfig = {
   minimumViewTime: 300,
   viewAreaCoveragePercentThreshold: 100,
@@ -92,93 +75,65 @@ const viewConfig = {
 
 const MIN_QUERY_LENGTH = 2;
 
-class ContactSelectorOptions extends React.Component<Props, State> {
-  searchInput: React.ElementRef<typeof TextInput>;
-  modalRef = React.createRef<SlideModalInstance>();
+const ContactSelectorOptions = ({
+  contacts = [],
+  onSelectContact,
+  onResolvingContact,
+  title,
+  searchPlaceholder,
+  validator,
+  iconProps = {},
+  allowEnteringCustomAddress,
+  allowAddContact,
+  noImageFallback,
+}: Props) => {
+  const theme = useTheme();
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      query: null,
-      customAddressContact: null,
-      isQueryValidAddress: false,
-      hasSearchError: false,
-      resolvingContactEnsName: false,
-    };
-  }
+  const searchInputRef = React.useRef<any>(null);
+  const modalRef = React.useRef<any>(null);
 
-  focusInput = () => {
-    if (this.searchInput) this.searchInput.focus();
+  const [query, setQuery] = React.useState(null);
+  const [customAddressContact, setCustomAddressContact] = React.useState(null);
+  const [isQueryValidAddress, setIsQueryValidAddress] = React.useState(false);
+  const [hasSearchError, setHasSearchError] = React.useState(false);
+  const [resolvingContactEnsName, setResolvingContactEnsName] = React.useState(false);
+
+  const dispatch = useDispatch();
+
+  const close = () => {
+    Keyboard.dismiss();
+    modalRef.current?.close();
   };
 
-  handleSearch = (query: string) => {
-    const formattedQuery = !query ? '' : query.trim();
-    this.setState({
-      query: formattedQuery,
-    });
+  const handleCustomAddress = (address: string) => {
+    const isValid = isValidAddress(address);
+
+    setIsQueryValidAddress(isValid);
+    setCustomAddressContact(isValid && address ? { name: address, ethAddress: address } : null);
   };
 
-  handleInputChange = (query: string) => {
-    const { allowEnteringCustomAddress } = this.props;
-    this.handleSearch(query);
-    if (allowEnteringCustomAddress) this.handleCustomAddress(query);
+  const handleInputChange = (input: string) => {
+    const formattedQuery = !input ? '' : input.trim();
+    setQuery(formattedQuery);
+
+    if (allowEnteringCustomAddress) handleCustomAddress(input);
   };
 
-  handleCustomAddress = (query: string) => {
-    const isValid = isValidAddress(query);
 
-    this.setState({
-      isQueryValidAddress: isValid,
-      customAddressContact: isValid && query ? { name: query, ethAddress: query } : null,
-    });
-  };
-
-  handlePaste = async () => {
-    const clipboardValue = await Clipboard.getString();
-    this.handleInputChange(clipboardValue);
-  };
-
-  handleAddToContactsPress = async (contact?: Contact) => {
-    const { dispatch } = this.props;
-    const { resolvingContactEnsName } = this.state;
-
-    if (resolvingContactEnsName) return;
-
-    const initialContact = contact ? await this.resolveContact(contact) : null;
-
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        contact={initialContact}
-        onSave={(savedContact: Contact) => {
-          dispatch(addContactAction(savedContact));
-          this.selectValue(savedContact);
-          this.close();
-        }}
-        contacts={this.props.contacts ?? []}
-        isDefaultNameEns
-      />
-    ));
-  };
-
-  handleInviteFriendPress = () => {
-    const { dispatch } = this.props;
-    dispatch(goToInvitationFlowAction());
-  };
-
-  resolveContact = async (value: Contact): Promise<?Contact> => {
+  const resolveContact = async (value: Contact): Promise<?Contact> => {
     let contact: Contact = {
       name: value?.name || '',
       ethAddress: value?.ethAddress || '',
     };
 
     if (isEnsName(contact.ethAddress)) {
-      this.setState({ resolvingContactEnsName: true });
-      this.props.onResolvingContact?.(true);
+      setResolvingContactEnsName(true);
+      onResolvingContact?.(true);
 
       contact = await getContactWithEnsName(contact, contact.ethAddress);
-      this.setState({ resolvingContactEnsName: false });
-      this.props.onResolvingContact?.(false);
+
+      setResolvingContactEnsName(false);
+      onResolvingContact?.(false);
 
       // ENS name resolution failed
       if (!contact.ensName) return undefined;
@@ -191,185 +146,182 @@ class ContactSelectorOptions extends React.Component<Props, State> {
     return contact;
   };
 
-  renderItem = (item: Contact) => {
-    const { noImageFallback } = this.props;
+  const selectValue = async (contact: Contact) => {
+    close();
+    const resolvedContact = await resolveContact(contact);
 
+    onSelectContact?.(resolvedContact);
+  };
+
+  const handlePaste = async () => {
+    const clipboardValue = await Clipboard.getString();
+    handleInputChange(clipboardValue);
+  };
+
+  const handleAddToContactsPress = async (contact?: Contact) => {
+    if (resolvingContactEnsName) return;
+
+    const initialContact = contact ? await resolveContact(contact) : null;
+
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initialContact}
+        onSave={(savedContact: Contact) => {
+          dispatch(addContactAction(savedContact));
+          selectValue(savedContact);
+          close();
+        }}
+        contacts={contacts ?? []}
+        isDefaultNameEns
+      />
+    ));
+  };
+
+  const handleInviteFriendPress = () => {
+    dispatch(goToInvitationFlowAction());
+  };
+
+  const validateSearch = (val: string) => {
+    if (!validator) return null;
+    const hasError = validator(val);
+
+    if (hasError) {
+      setHasSearchError(!!hasError);
+      return hasError;
+    } else if (hasSearchError) {
+      setHasSearchError(false);
+    }
+
+    return null;
+  };
+
+  const handleModalShow = () => {
+    searchInputRef.current?.focus();
+  };
+
+  const renderItem = (item: Contact) => {
     if (!item) return null;
 
     return (
       <ListItemWithImage
         label={item.name}
-        onPress={() => this.selectValue(item)}
+        onPress={() => selectValue(item)}
         fallbackToGenericToken={!noImageFallback}
       />
     );
   };
 
-  close = () => {
-    Keyboard.dismiss();
-    if (this.modalRef.current) this.modalRef.current.close();
-  };
+  const colors = getThemeColors(theme);
+  const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-  selectValue = async (contact: Contact) => {
-    this.close();
-    const resolvedContact = await this.resolveContact(contact);
+  const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
-    if (this.props.onSelectContact) {
-      this.props.onSelectContact(resolvedContact);
-    }
-  };
-
-  validateSearch = (val: string) => {
-    const { validator } = this.props;
-    const { hasSearchError } = this.state;
-    if (!validator) return null;
-    const hasError = validator(val);
-    if (hasError) {
-      this.setState({ hasSearchError: !!hasError });
-      return hasError;
-    } else if (hasSearchError) {
-      this.setState({ hasSearchError: false });
-    }
-    return null;
-  };
-
-  handleOptionsOpen = () => {
-    this.focusInput();
-  };
-
-  render() {
-    const {
-      theme,
-      title,
-      contacts = [],
-      searchPlaceholder,
-      iconProps = {},
-      allowEnteringCustomAddress,
-      allowAddContact,
-    } = this.props;
-    const {
-      query,
-      customAddressContact,
-      isQueryValidAddress,
-      hasSearchError,
-    } = this.state;
-    const colors = getThemeColors(theme);
-    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-
-    const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
-
-    const showEmptyState = !customAddressContact && !filteredContacts?.length;
-    const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
+  const showEmptyState = !customAddressContact && !filteredContacts?.length;
+  const emptyStateMessage =
+    allowEnteringCustomAddress && !!query && !isQueryValidAddress
       ? t('error.invalid.address')
       : t('label.nothingFound');
 
-    const renderEmptyState = () => {
-      if (!showEmptyState) return null;
-
-      return (
-        <EmptyStateWrapper fullScreen>
-          <EmptyStateParagraph title={emptyStateMessage} />
-        </EmptyStateWrapper>
-      );
-    };
-
-    let items: Contact[] = [];
-    if (filteredContacts.length) {
-      items = [...filteredContacts];
-    } else if (!hasSearchError && customAddressContact) {
-      items = [customAddressContact];
-    }
-
-    const buttons = [
-      {
-        title: t('button.addContact'),
-        iconName: 'add-contact',
-        onPress: () => this.handleAddToContactsPress(),
-      },
-      {
-        title: t('button.inviteFriend'),
-        iconName: 'plus',
-        onPress: this.handleInviteFriendPress,
-      },
-    ];
+  const renderEmptyState = () => {
+    if (!showEmptyState) return null;
 
     return (
-      <SlideModal
-        ref={this.modalRef}
-        fullScreen
-        onModalShow={this.handleOptionsOpen}
-        noSwipeToDismiss
-        noClose
-        backgroundColor={colors.basic050}
-        noTopPadding
-      >
-        <ContainerWithHeader
-          headerProps={{
-            noPaddingTop: true,
-            customOnBack: this.close,
-            centerItems: [{ title }],
-          }}
-        >
-          <SearchContainer>
-            <SearchBarWrapper>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleInputChange,
-                  value: query,
-                  autoCapitalize: 'none',
-                  validator: this.validateSearch,
-                }}
-                placeholder={searchPlaceholder}
-                inputRef={(ref) => {
-                  this.searchInput = ref;
-                }}
-                noClose
-                marginBottom="0"
-                iconProps={{ ...iconProps, persistIconOnFocus: true }}
-              />
-            </SearchBarWrapper>
-
-            <Button onPress={this.handlePaste} title={t('button.paste')} transparent small />
-          </SearchContainer>
-
-          <FlatList
-            stickyHeaderIndices={[0]}
-            data={items}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(contact) => contact.ethAddress || contact.name}
-            keyboardShouldPersistTaps="always"
-            initialNumToRender={10}
-            viewabilityConfig={viewConfig}
-            windowSize={10}
-            hideModalContentWhileAnimating
-            ListHeaderComponent={renderEmptyState()}
-          />
-
-          {allowAddContact && !customAddressContact && (
-            <FloatingButtons items={buttons} />
-          )}
-
-          {allowAddContact && customAddressContact && (
-            <ActionButtonsContainer>
-              <Button
-                title={t('button.addToAddressBook')}
-                onPress={() => this.handleAddToContactsPress(customAddressContact)}
-              />
-              <Spacing h={spacing.small} />
-              <Button secondary title={t('button.skip')} onPress={() => this.selectValue(customAddressContact)} />
-            </ActionButtonsContainer>
-          )}
-        </ContainerWithHeader>
-      </SlideModal>
+      <EmptyStateWrapper fullScreen>
+        <EmptyStateParagraph title={emptyStateMessage} />
+      </EmptyStateWrapper>
     );
+  };
+
+  let items: Contact[] = [];
+  if (filteredContacts.length) {
+    items = [...filteredContacts];
+  } else if (!hasSearchError && customAddressContact) {
+    items = [customAddressContact];
   }
-}
 
-const ThemedSelectorOptions: React.AbstractComponent<OwnProps, ContactSelectorOptions> = withTheme(
-  connect(null, null, null, { forwardRef: true })(ContactSelectorOptions),
-);
+  const buttons = [
+    {
+      title: t('button.addContact'),
+      iconName: 'add-contact',
+      onPress: () => handleAddToContactsPress(),
+    },
+    {
+      title: t('button.inviteFriend'),
+      iconName: 'plus',
+      onPress: handleInviteFriendPress,
+    },
+  ];
 
-export default ThemedSelectorOptions;
+  return (
+    <SlideModal
+      ref={modalRef}
+      fullScreen
+      onModalShow={handleModalShow}
+      noSwipeToDismiss
+      noClose
+      backgroundColor={colors.basic050}
+      noTopPadding
+    >
+      <ContainerWithHeader
+        headerProps={{
+          noPaddingTop: true,
+          customOnBack: close,
+          centerItems: [{ title }],
+        }}
+      >
+        <SearchContainer>
+          <SearchBarWrapper>
+            <SearchBar
+              inputProps={{
+                onChange: handleInputChange,
+                value: query,
+                autoCapitalize: 'none',
+                validator: validateSearch,
+              }}
+              placeholder={searchPlaceholder}
+              inputRef={searchInputRef}
+              noClose
+              marginBottom="0"
+              iconProps={{ ...iconProps, persistIconOnFocus: true }}
+            />
+          </SearchBarWrapper>
+
+          <Button onPress={handlePaste} title={t('button.paste')} transparent small />
+        </SearchContainer>
+
+        <FlatList
+          stickyHeaderIndices={[0]}
+          data={items}
+          renderItem={({ item }) => renderItem(item)}
+          keyExtractor={(contact) => contact.ethAddress || contact.name}
+          keyboardShouldPersistTaps="always"
+          initialNumToRender={10}
+          viewabilityConfig={viewConfig}
+          windowSize={10}
+          hideModalContentWhileAnimating
+          ListHeaderComponent={renderEmptyState()}
+        />
+
+        {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
+
+        {allowAddContact && customAddressContact && (
+          <ActionButtonsContainer>
+            <Button
+              title={t('button.addToAddressBook')}
+              onPress={() => handleAddToContactsPress(customAddressContact)}
+              isLoading={resolvingContactEnsName}
+            />
+            <Spacing h={spacing.small} />
+            <Button secondary title={t('button.skip')} onPress={() => selectValue(customAddressContact)} />
+          </ActionButtonsContainer>
+        )}
+      </ContainerWithHeader>
+    </SlideModal>
+  );
+};
+
+export default ContactSelectorOptions;
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;
