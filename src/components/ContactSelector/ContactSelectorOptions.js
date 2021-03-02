@@ -51,7 +51,6 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
-import { resolveContact } from 'utils/contacts';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
@@ -61,7 +60,6 @@ import type { Contact } from 'models/Contact';
 type Props = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
-  onResolvingContact?: (isResolving: boolean) => mixed,
   allowCustomAddress?: boolean,
   allowAddContact?: boolean,
   title?: string,
@@ -79,7 +77,6 @@ const MIN_QUERY_LENGTH = 2;
 const ContactSelectorOptions = ({
   contacts = [],
   onSelectContact,
-  onResolvingContact,
   allowCustomAddress = true,
   allowAddContact = true,
   title = t('label.sendTo'),
@@ -113,13 +110,8 @@ const ContactSelectorOptions = ({
   };
 
   const selectValue = async (contact: Contact) => {
+    onSelectContact?.(contact);
     close();
-
-    onResolvingContact?.(true);
-    const resolvedContact = await resolveContact(contact);
-    onResolvingContact?.(false);
-
-    onSelectContact?.(resolvedContact);
   };
 
   const handlePaste = async () => {

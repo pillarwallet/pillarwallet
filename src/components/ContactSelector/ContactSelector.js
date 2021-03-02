@@ -17,24 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable no-unused-expressions */
 
 import React from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// components
+// Components
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 
-// utils
-import { isValidAddress } from 'utils/validators';
+// Utils
+import { resolveContact } from 'utils/contacts';
 import { getColorByTheme } from 'utils/themes';
-import { noop } from 'utils/common';
+import { isValidAddress } from 'utils/validators';
 
-// types
+// Types
 import type { Contact } from 'models/Contact';
 
 import ContactSelectorOptions from './ContactSelectorOptions';
@@ -64,7 +65,7 @@ const SelectedOption = styled.View`
 const ContactSelector = ({
   contacts,
   selectedContact,
-  onSelectContact = noop,
+  onSelectContact,
   placeholder = t('label.whereToSend'),
   allowCustomAddress = true,
   allowAddContact = true,
@@ -72,12 +73,19 @@ const ContactSelector = ({
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
 
+  const handleSelectContact = async (contact: ?Contact) => {
+    setIsResolvingContact(true);
+    const resolvedContact = await resolveContact(contact);
+    setIsResolvingContact(false);
+
+    onSelectContact?.(resolvedContact);
+  };
+
   const openOptions = () => {
     Modal.open(() => (
       <ContactSelectorOptions
         contacts={contacts}
-        onSelectContact={onSelectContact}
-        onResolvingContact={setIsResolvingContact}
+        onSelectContact={handleSelectContact}
         allowCustomAddress={allowCustomAddress}
         allowAddContact={allowAddContact}
       />

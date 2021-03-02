@@ -42,7 +42,9 @@ type ResolveContactOptions = {|
  * @returns {Contact} with `ethAddress` being correct hex address`.
  * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
  */
-export const resolveContact = async (contact: Contact, options?: ResolveContactOptions): Promise<?Contact> => {
+export const resolveContact = async (contact: ?Contact, options?: ResolveContactOptions): Promise<?Contact> => {
+  if (!contact) return null;
+
   const showNotificationOptions = options?.showNotification ?? true;
 
   if (isValidAddress(contact.ethAddress)) {
