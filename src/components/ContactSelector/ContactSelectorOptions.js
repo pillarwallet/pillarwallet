@@ -52,7 +52,7 @@ import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName, isValidAddress } from 'utils/validators';
+import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 // Types
@@ -107,7 +107,7 @@ const ContactSelectorOptions = ({
     setQuery(input);
 
     if (allowCustomAddress) {
-      const isValid = isValidAddress(input);
+      const isValid = isValidAddressOrEnsName(input);
       setCustomAddressContact(isValid ? { name: input, ethAddress: input } : null);
     }
   };
@@ -183,7 +183,7 @@ const ContactSelectorOptions = ({
   };
 
   const handleScannerRead = (address: string) => {
-    if (isValidAddress(address)) {
+    if (isValidAddressOrEnsName(address)) {
       selectValue({
         ethAddress: address,
         name: address,

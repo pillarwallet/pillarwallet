@@ -220,6 +220,5 @@ type SpacingProps = {|
 export const Spacing: React.ComponentType<SpacingProps> = styled.View`
   height: ${({ h }) => h || 0}px;
   width: ${({ w }) => w || 0}px;
-  background-color: red;
   ${({ flex }) => (flex != null ? `flex: ${flex};` : undefined)}
 `;

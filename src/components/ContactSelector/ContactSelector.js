@@ -30,7 +30,7 @@ import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 
 // utils
-import { isValidAddress, isEnsName } from 'utils/validators';
+import { isValidAddress } from 'utils/validators';
 import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
@@ -102,7 +102,7 @@ const ContactSelector = ({
 
     let { name } = selectedContact;
 
-    if (isValidAddress(name) && !isEnsName(name)) {
+    if (isValidAddress(name)) {
       name = t('ellipsedMiddleString', {
         stringStart: name.slice(0, 6),
         stringEnd: name.slice(-6),

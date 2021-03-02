@@ -19,7 +19,8 @@
 */
 import {
   validatePin,
-  isValidETHAddress,
+  isValidAddress,
+  isValidAddressOrEnsName,
   hasAllValues,
   isValidEmail,
   isValidPhone,
@@ -41,35 +42,44 @@ describe('Validators', () => {
     });
   });
 
-  describe('isValidETHAddress', () => {
+  describe('isValidAddress', () => {
     it('should return true for the valid ETH address', () => {
-      const isValid = isValidETHAddress('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D');
-      expect(isValid).toBeTruthy();
+      expect(isValidAddress('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D')).toBeTruthy();
     });
 
-    it('should return true for the valid ENS name', () => {
-      const isValid = isValidETHAddress('test.eth');
-      expect(isValid).toBeTruthy();
-    });
-
-    it('should return true for the valid ENS name with subdomain', () => {
-      const isValid = isValidETHAddress('pillar.test.eth');
-      expect(isValid).toBeTruthy();
-    });
-
-    it('should return false for the unsupported ENS name', () => {
-      const isValid = isValidETHAddress('test.com');
-      expect(isValid).toBeFalsy();
-    });
-
-    it('should return false for the wrong ENS name', () => {
-      const isValid = isValidETHAddress('testeth');
-      expect(isValid).toBeFalsy();
+    it('should return false for the valid ENS name', () => {
+      expect(isValidAddress('test.eth')).toBeFalsy();
+      expect(isValidAddress('pillar.test.eth')).toBeFalsy();
     });
 
     it('should return false for the invalid ETH address', () => {
-      const isValid = isValidETHAddress('Jon Snow');
-      expect(isValid).toBeFalsy();
+      expect(isValidAddress('Jon Snow')).toBeFalsy();
+    });
+  });
+
+  describe('isValidAddressOrEnsName', () => {
+    it('should return true for the valid ETH address', () => {
+      expect(isValidAddressOrEnsName('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D')).toBeTruthy();
+    });
+
+    it('should return false for ENS name', () => {
+      expect(isValidAddressOrEnsName('test.eth')).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS name with subdomain', () => {
+      expect(isValidAddressOrEnsName('pillar.test.eth')).toBeTruthy();
+    });
+
+    it('should return false for the unsupported ENS name', () => {
+      expect(isValidAddressOrEnsName('test.com')).toBeFalsy();
+    });
+
+    it('should return false for the wrong ENS name', () => {
+      expect(isValidAddressOrEnsName('testeth')).toBeFalsy();
+    });
+
+    it('should return false for the invalid ETH address', () => {
+      expect(isValidAddressOrEnsName('Jon Snow')).toBeFalsy();
     });
   });
 

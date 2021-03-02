@@ -27,8 +27,40 @@ import type { Contact } from 'models/Contact';
 
 // utils
 import { reportLog, resolveEnsName } from './common';
-import { isEnsName } from './validators';
+import { isValidAddress, isEnsName } from './validators';
 
+/**
+ * Returns contact with resolved `ethAddress` (from ENS name).
+ *
+ * If `ethAddress` is ENS name it will be resolved.
+ * If `ethAddress` is a valid hex address this will return the input.
+ *
+ * @returns {Contact} with `ethAddress` being correct hex address`.
+ * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
+ */
+export const resolveContact = async (contact: Contact, showNotification: boolean = true): Promise<?Contact> => {
+  if (isValidAddress(contact.ethAddress)) {
+    return contact;
+  }
+
+  if (isEnsName(contact.ethAddress)) {
+    const resolvedAddress = await resolveEnsName(contact.ethAddress).catch((error) => {
+      reportLog('getReceiverWithEnsName failed', { error });
+      return null;
+    });
+
+    if (!resolvedAddress && showNotification) {
+      Toast.show({
+        message: t('toast.ensNameNotFound'),
+        emoji: 'woman-shrugging',
+      });
+    }
+
+    return resolvedAddress ? { ...contact, ethAddress: resolvedAddress } : null;
+  }
+
+  return null;
+};
 
 export const getReceiverWithEnsName = async (ethAddress: ?string, showNotification: boolean = true) => {
   let receiverEnsName = '';

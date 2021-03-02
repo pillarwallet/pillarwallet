@@ -38,7 +38,7 @@ import Modal from 'components/Modal';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { isValidAddress } from 'utils/validators';
+import { isValidAddressOrEnsName, isValidAddress } from 'utils/validators';
 import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
@@ -96,7 +96,7 @@ const Selector = ({
   const optionsRef = useRef();
 
   const handleScannerReadResult = (address: string) => {
-    if (isValidAddress(address)) {
+    if (isValidAddressOrEnsName(address)) {
       const option = {
         value: address,
         ethAddress: address,
