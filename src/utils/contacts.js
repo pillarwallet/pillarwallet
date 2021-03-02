@@ -29,6 +29,10 @@ import type { Contact } from 'models/Contact';
 import { reportLog, resolveEnsName } from './common';
 import { isValidAddress, isEnsName } from './validators';
 
+type ResolveContactOptions = {|
+  showNotification: boolean;
+|};
+
 /**
  * Returns contact with resolved `ethAddress` (from ENS name).
  *
@@ -38,7 +42,9 @@ import { isValidAddress, isEnsName } from './validators';
  * @returns {Contact} with `ethAddress` being correct hex address`.
  * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
  */
-export const resolveContact = async (contact: Contact, showNotification: boolean = true): Promise<?Contact> => {
+export const resolveContact = async (contact: Contact, options: ResolveContactOptions): Promise<?Contact> => {
+  const showNotificationOptions = options.showNotification ?? true;
+
   if (isValidAddress(contact.ethAddress)) {
     return contact;
   }
@@ -49,7 +55,7 @@ export const resolveContact = async (contact: Contact, showNotification: boolean
       return null;
     });
 
-    if (!resolvedAddress && showNotification) {
+    if (!resolvedAddress && showNotificationOptions) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
