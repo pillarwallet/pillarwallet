@@ -40,7 +40,7 @@ import Modal from 'components/Modal';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
+import { isEnsName, isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
