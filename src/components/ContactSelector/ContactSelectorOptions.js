@@ -51,8 +51,8 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
-import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
+import { resolveContact } from 'utils/contacts';
+import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 // Types
@@ -112,31 +112,13 @@ const ContactSelectorOptions = ({
     }
   };
 
-  const resolveContact = async (value: Contact): Promise<?Contact> => {
-    let contact: Contact = {
-      name: value?.name || '',
-      ethAddress: value?.ethAddress || '',
-    };
-
-    if (isEnsName(contact.ethAddress)) {
-      onResolvingContact?.(true);
-      contact = await getContactWithEnsName(contact, contact.ethAddress);
-      onResolvingContact?.(false);
-
-      // ENS name resolution failed
-      if (!contact.ensName) return undefined;
-    }
-
-    if (!contact.name) {
-      contact.name = contact.ethAddress;
-    }
-
-    return contact;
-  };
-
   const selectValue = async (contact: Contact) => {
     close();
+
+    onResolvingContact?.(true);
     const resolvedContact = await resolveContact(contact);
+    onResolvingContact?.(false);
+
     onSelectContact?.(resolvedContact);
   };
 
