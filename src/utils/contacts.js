@@ -45,7 +45,7 @@ type ResolveContactOptions = {|
 export const resolveContact = async (contact: ?Contact, options?: ResolveContactOptions): Promise<?Contact> => {
   if (!contact) return null;
 
-  const showNotificationOptions = options?.showNotification ?? true;
+  const showNotificationOption = options?.showNotification ?? true;
 
   if (isValidAddress(contact.ethAddress)) {
     return contact;
@@ -57,7 +57,7 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
       return null;
     });
 
-    if (!resolvedAddress && showNotificationOptions) {
+    if (!resolvedAddress && showNotificationOption) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
