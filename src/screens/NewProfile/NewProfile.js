@@ -231,7 +231,6 @@ const NewProfile = ({
         diameter={PROFILE_IMAGE_WIDTH}
         style={{ marginBottom: 47 }}
         userName={user?.username}
-        initialsSize={48}
       />
       <UsernameWrapper>
         <Text>{t('auth:title.welcomeBack', { username: user?.username })}</Text>

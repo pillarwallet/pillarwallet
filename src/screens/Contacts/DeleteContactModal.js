@@ -67,7 +67,6 @@ const DeleteContactModal = ({ contact }: Props) => {
         <Spacing h={spacing.large} />
         <ProfileImage
           userName={contact.name}
-          initialsSize={48}
           diameter={64}
           noShadow
           borderWidth={0}

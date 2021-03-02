@@ -474,7 +474,6 @@ const ImageAddon = (props: Props) => {
         userName={imageAddonName}
         diameter={22}
         borderWidth={2}
-        initialsSize={fontSizes.small}
       />
     </ImageAddonHolder>
   );
