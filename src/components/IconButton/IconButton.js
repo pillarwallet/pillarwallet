@@ -26,10 +26,11 @@ import { getThemeColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
+import type { IconName } from 'components/Icon';
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 export type Props = {
-  icon: string,
+  icon: IconName,
   color?: string,
   onPress?: Function,
   fontSize?: number,

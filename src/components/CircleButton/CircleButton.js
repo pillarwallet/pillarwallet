@@ -27,9 +27,12 @@ import { getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColor
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { Shadow } from 'components/Shadow';
-import type { Theme, ThemeColors } from 'models/Theme';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { hexToRgba } from 'utils/ui';
+
+// Types
+import type { Theme, ThemeColors } from 'models/Theme';
+import type { IconName } from 'components/Icon';
 
 
 type Props = {
@@ -37,7 +40,7 @@ type Props = {
   onPress: Function,
   label: string,
   icon?: string,
-  fontIcon?: string,
+  fontIcon?: IconName,
   fontIconStyle?: Object,
   showIndicator?: boolean,
   theme: Theme,

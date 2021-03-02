@@ -668,4 +668,3 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
-

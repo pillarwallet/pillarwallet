@@ -20,8 +20,9 @@
 /* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
-import { createIconSet } from 'react-native-vector-icons';
 import { Platform } from 'react-native';
+import { createIconSet } from 'react-native-vector-icons';
+
 
 const glyphMap = {
   chat: '\uE801',
@@ -96,8 +97,10 @@ const glyphMap = {
   equal: '\uE88C',
 };
 
+export type IconName = $Keys<typeof glyphMap>;
+
 export type IconProps = {
-  name: string,
+  name: IconName,
   style?: Object,
 };
 
@@ -105,8 +108,7 @@ const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
 
 const IconSet = createIconSet(glyphMap, fontName);
 
-const Icon = (props: IconProps) => {
-  const { name, style } = props;
+const Icon = ({ name, style }: IconProps) => {
   return <IconSet name={name} style={style} />;
 };
 

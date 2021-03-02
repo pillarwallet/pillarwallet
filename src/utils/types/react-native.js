@@ -37,6 +37,8 @@ export type { TextProps } from 'react-native/Libraries/Text/TextProps';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
+export type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
+
 export type { RenderItemProps } from 'react-native/Libraries/Lists/VirtualizedList';
 
 export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar/StatusBar';
