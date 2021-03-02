@@ -194,14 +194,14 @@ const ContactSelectorOptions = ({
 
     if (!query) {
       return (
-        <EmptyStateWrapper fullScreen>
+        <EmptyStateWrapper>
           <EmptyStateParagraph title={t('label.noContacts')} bodyText={t('paragraph.addContacts')} />
         </EmptyStateWrapper>
       );
     }
 
     return (
-      <EmptyStateWrapper fullScreen>
+      <EmptyStateWrapper>
         <EmptyStateParagraph title={allowCustomAddress ? t('error.invalid.address') : t('label.nothingFound')} />
       </EmptyStateWrapper>
     );
@@ -282,8 +282,8 @@ const ContactSelectorOptions = ({
           viewabilityConfig={viewConfig}
           windowSize={10}
           hideModalContentWhileAnimating
-          ListHeaderComponent={renderEmptyStateIfNeeded()}
-          contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+          ListEmptyComponent={renderEmptyStateIfNeeded()}
+          contentContainerStyle={{ flex: 1, paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
 
         {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
@@ -308,8 +308,8 @@ const ContactSelectorOptions = ({
 export default ContactSelectorOptions;
 
 const EmptyStateWrapper = styled.View`
-  padding-top: 90px;
-  padding-bottom: 90px;
+  flex: 1;
+  justify-content: center;
   align-items: center;
 `;
 
