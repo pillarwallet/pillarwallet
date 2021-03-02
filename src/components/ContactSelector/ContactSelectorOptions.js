@@ -87,8 +87,8 @@ const ContactSelectorOptions = ({
 }: Props) => {
   const theme = useTheme();
 
-  const searchInputRef = React.useRef<any>(null);
-  const modalRef = React.useRef<any>(null);
+  const searchInputRef = React.useRef(null);
+  const modalRef = React.useRef(null);
 
   const [query, setQuery] = React.useState(null);
   const [customAddressContact, setCustomAddressContact] = React.useState(null);
