@@ -17,7 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
 
+import MD5 from 'crypto-js/md5';
 import { getEnv } from 'configs/envConfig';
 import type { Theme } from 'models/Theme';
 import { getThemeType } from './themes';
@@ -187,4 +189,14 @@ export const getImageUrl = (url: ?string, size: number) => {
 
 export const isSvgImage = (uri: ?string) => {
   return uri && uri.endsWith('.svg');
+};
+
+export const getIdenticonImageUrl = (input: ?string, size: number): ?string => {
+  if (!input) return undefined;
+
+  const hash = MD5(input);
+
+  // Params explained: https://en.gravatar.com/site/implement/images/
+  // Note: using `f` to always force default identicon image
+  return `https://www.gravatar.com/avatar/${hash}?default=identicon&s=${size}&f=y`;
 };
