@@ -56,7 +56,7 @@ export const resolveContact = async (contact: Contact, showNotification: boolean
       });
     }
 
-    return resolvedAddress ? { ...contact, ethAddress: resolvedAddress } : null;
+    return resolvedAddress ? { ...contact, ethAddress: resolvedAddress, ensName: contact.ethAddress } : null;
   }
 
   return null;
