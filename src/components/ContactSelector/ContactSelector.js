@@ -48,7 +48,6 @@ export type ContactSelectorProps = {|
   allowCustomAddress?: boolean,
   allowAddContact?: boolean,
   disabled?: boolean,
-  children?: any,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -70,7 +69,6 @@ const ContactSelector = ({
   allowCustomAddress = true,
   allowAddContact = true,
   disabled,
-  children,
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
 
@@ -124,7 +122,6 @@ const ContactSelector = ({
       <SelectorPill onPress={openOptions} disabled={disabled || hasNoOptions}>
         {renderContact()}
       </SelectorPill>
-      {children}
     </>
   );
 };

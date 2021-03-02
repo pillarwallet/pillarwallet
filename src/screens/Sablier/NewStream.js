@@ -233,7 +233,6 @@ class NewStream extends React.Component<Props, State> {
           <Spacing h={20} />
 
           <ContactSelector
-            contacts={[]}
             selectedContact={selectedContact}
             onSelectContact={this.handleReceiverSelect}
           />

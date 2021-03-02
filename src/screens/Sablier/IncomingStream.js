@@ -134,10 +134,7 @@ class IncomingStream extends React.Component<Props> {
         putContentInScrollView
       >
         <SelectorWrapper>
-          <ContactSelector
-            disabled
-            selectedContact={sender}
-          />
+          <ContactSelector disabled selectedContact={sender} />
           <Spacing h={20} />
           <ArrowIcon />
         </SelectorWrapper>
