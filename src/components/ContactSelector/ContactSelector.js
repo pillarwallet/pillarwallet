@@ -47,6 +47,7 @@ export type ContactSelectorProps = {|
   wrapperStyle?: Object,
   allowCustomAddress?: boolean,
   allowAddContact?: boolean,
+  disabled?: boolean,
   children?: any,
 |};
 
@@ -68,6 +69,7 @@ const ContactSelector = ({
   placeholder = t('label.whereToSend'),
   allowCustomAddress = true,
   allowAddContact = true,
+  disabled,
   children,
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
@@ -84,8 +86,7 @@ const ContactSelector = ({
     ));
   };
 
-  const disabled = !contacts?.length && !allowCustomAddress;
-  const placeholderText = !disabled ? placeholder : t('label.noOptionsToSelect');
+  const hasNoOptions = !contacts?.length && !allowCustomAddress;
 
   const renderContact = () => {
     if (isResolvingContact) {
@@ -95,7 +96,7 @@ const ContactSelector = ({
     if (!selectedContact) {
       return (
         <BaseText link medium>
-          {placeholderText}
+          {disabled || hasNoOptions ? t('label.noOptionsToSelect') : placeholder}
         </BaseText>
       );
     }
@@ -120,7 +121,7 @@ const ContactSelector = ({
 
   return (
     <>
-      <SelectorPill onPress={openOptions} disabled={disabled}>
+      <SelectorPill onPress={openOptions} disabled={disabled || hasNoOptions}>
         {renderContact()}
       </SelectorPill>
       {children}
