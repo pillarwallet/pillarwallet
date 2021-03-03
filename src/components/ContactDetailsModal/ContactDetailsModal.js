@@ -111,9 +111,10 @@ const ContactDetailsModal = ({
 }: Props) => {
   const modalRef = useRef();
 
-  const [addressValue, setAddressValue] = useState('');
-  const [nameValue, setNameValue] = useState('');
-  const [dirtyInputs, setDirtyInputs] = useState(false);
+  const [addressValue, setAddressValue] = useState(contact?.ethAddress ?? '');
+  const [nameValue, setNameValue] = useState(contact?.name ?? '');
+  const [shouldValidate, setShouldValidate] = useState(false);
+  const [error, setError] = useState();
   const [resolvingEns, setResolvingEns] = useState(false);
   const [hasEnsResolutionError, setHasEnsResolutionError] = useState(false);
 
@@ -123,32 +124,59 @@ const ContactDetailsModal = ({
   const colors = getThemeColors(theme);
   const { walletIcon, personIcon } = images(theme);
 
-  // reset input value on default change
-  useEffect(() => {
-    setDirtyInputs(false);
-    setAddressValue(contact?.ethAddress || '');
-    setNameValue(contact?.name || '');
-  }, [contact]);
+  const getValidationError = () => {
+    if (!addressValue) return t('error.emptyAddress');
 
-  useEffect(() => {
-    if (nameValue || addressValue) {
-      setDirtyInputs(true);
+    if (!isValidAddressOrEnsName(addressValue)) return t('error.invalid.address');
+
+    if (
+      !addressesEqual(contact?.ethAddress, addressValue) &&
+      contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))
+    ) {
+      return t('error.contactWithAddressExist');
     }
 
-    setHasEnsResolutionError(false); // reset
+    if (
+      !isCaseInsensitiveMatch(contact?.name, nameValue) &&
+      contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))
+    ) {
+      return t('error.contactWithNameExist');
+    }
+
+    if (!nameValue) return t('error.emptyName');
+
+    return undefined;
+  };
+
+  const validateForm = () => {
+    const errorMessage = getValidationError();
+    setError(errorMessage);
+    setShouldValidate(true);
+    return !errorMessage;
+  };
+
+  useEffect(() => {
+    if (!shouldValidate) return;
+    validateForm();
   }, [nameValue, addressValue]);
 
   const reverseResolveEnsName = async (address: string) => {
+    if (!nameValue) return;
+
     setResolvingEns(true);
     const ensName = await lookupAddress(address);
-    setNameValue(ensName ?? '');
+    if (ensName) {
+      setNameValue(ensName);
+    }
     setResolvingEns(false);
+
+    validateForm();
   };
 
   const validateEnsName = async (ensName: string) => {
     setResolvingEns(true);
     const address = await resolveEnsName(ensName);
-    if (address) {
+    if (!nameValue && address) {
       setNameValue(ensName);
     }
     setHasEnsResolutionError(!address);
@@ -163,34 +191,18 @@ const ContactDetailsModal = ({
     }
   }, [debouncedAddressValue]);
 
-  let errorMessage;
-  if (!addressValue) {
-    errorMessage = t('error.emptyAddress');
-  } if (!isValidAddressOrEnsName(addressValue)) {
-    errorMessage = t('error.invalid.address');
-  } else if (!addressesEqual(contact?.ethAddress, addressValue)
-    && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
-    errorMessage = t('error.contactWithAddressExist');
-  } else if (!isCaseInsensitiveMatch(contact?.name, nameValue)
-    && contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))) {
-    errorMessage = t('error.contactWithNameExist');
-  } else if (!nameValue) {
-    errorMessage = t('error.emptyName');
-  }
-
   const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
+
   const onButtonPress = () => {
-    if (!errorMessage && !resolvingEns) {
+    const isValid = validateForm();
+    if (isValid) {
       modalRef.current?.close();
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };
 
   const handleScannerReadResult = (address: string) => {
-    if (isEnsName(address)) {
-      setAddressValue('');
-      setNameValue(address);
-    } else {
+    if (isValidAddressOrEnsName(address)) {
       setAddressValue(address);
     }
   };
@@ -237,15 +249,17 @@ const ContactDetailsModal = ({
           />
         </InputWrapper>
 
-        {hasEnsResolutionError && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
-
-        {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
-
         {resolvingEns && <LoadingSpinner size={25} />}
+
+        {!resolvingEns && !!error && <StatusMessage danger>{error}</StatusMessage>}
+
+        {!resolvingEns && hasEnsResolutionError && (
+          <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>
+        )}
 
         <Button
           marginTop={spacing.large}
-          disabled={!dirtyInputs || !!errorMessage || resolvingEns}
+          disabled={resolvingEns || !!error || hasEnsResolutionError}
           onPress={onButtonPress}
           title={buttonTitle}
         />
