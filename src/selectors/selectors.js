@@ -18,13 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
+import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
+import get from 'lodash.get';
 import { getAccountAddress } from 'utils/accounts';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
+
+export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T =>
+  useSelector((root: RootReducerState) => selector(root));
 
 //
 // Global selectors here

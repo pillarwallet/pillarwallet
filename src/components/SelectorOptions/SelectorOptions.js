@@ -43,7 +43,7 @@ import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
-import { isValidAddress } from 'utils/validators';
+import { isValidAddressOrEnsName } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
 import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
@@ -190,7 +190,7 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   handleCustomAddress = (query: string) => {
-    const isValid = isValidAddress(query);
+    const isValid = isValidAddressOrEnsName(query);
 
     this.setState({
       isQueryValidAddress: isValid,

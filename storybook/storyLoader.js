@@ -10,6 +10,7 @@ function loadStories() {
 	require('../src/components/Button/Button.stories');
 	require('../src/components/Checkbox/Checkbox.stories');
 	require('../src/components/CircleButton/CircleButton.stories');
+	require('../src/components/ContactSelector/ContactSelector.stories');
 	require('../src/components/DetailModal/DetailModal.stories');
 	require('../src/components/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
@@ -27,7 +28,6 @@ function loadStories() {
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/SearchBlock/SearchBlock.stories');
-	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Table/Table.stories');
 	require('../src/components/TextInput/TextInput.stories');
 	require('../src/components/Toast/ToastCard.stories');
@@ -42,6 +42,7 @@ const stories = [
 	'../src/components/Button/Button.stories',
 	'../src/components/Checkbox/Checkbox.stories',
 	'../src/components/CircleButton/CircleButton.stories',
+	'../src/components/ContactSelector/ContactSelector.stories',
 	'../src/components/DetailModal/DetailModal.stories',
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
@@ -59,7 +60,6 @@ const stories = [
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/SearchBlock/SearchBlock.stories',
-	'../src/components/Selector/Selector.stories',
 	'../src/components/Table/Table.stories',
 	'../src/components/TextInput/TextInput.stories',
 	'../src/components/Toast/ToastCard.stories',

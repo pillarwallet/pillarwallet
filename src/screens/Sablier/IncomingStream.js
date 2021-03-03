@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
-import Selector from 'components/Selector';
+import ContactSelector from 'components/ContactSelector';
 import Image from 'components/Image';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
@@ -134,11 +134,7 @@ class IncomingStream extends React.Component<Props> {
         putContentInScrollView
       >
         <SelectorWrapper>
-          <Selector
-            disabled
-            selectedOption={sender}
-            customOptions={[]}
-          />
+          <ContactSelector disabled selectedContact={sender} />
           <Spacing h={20} />
           <ArrowIcon />
         </SelectorWrapper>
