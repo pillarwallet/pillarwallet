@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable no-unused-expressions */
+
 import React, { useEffect, useState, useRef } from 'react';
-import type { AbstractComponent } from 'react';
 import { View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // components
@@ -156,15 +156,16 @@ const ContactDetailsModal = ({
   }, [contact]);
 
   useEffect(() => {
-    if (!dirtyInputs && (!isEmpty(nameValue) || !isEmpty(addressValue))) {
+    if (!!nameValue || !!addressValue) {
       setDirtyInputs(true);
     }
+
     if (ensUnresolved) setEnsUnresolved(false); // reset
   }, [nameValue, addressValue]);
 
   useEffect(() => {
     if (resolvingEns
-      || !isEmpty(nameValue)
+      || !!nameValue
       || !isValidAddressOrEnsName(addressValue)
       || isEnsName(addressValue)) return;
 
@@ -179,7 +180,7 @@ const ContactDetailsModal = ({
 
   useEffect(() => {
     if (resolvingEns
-      || !isEmpty(addressValue)
+      || !!addressValue
       || !isEnsName(nameValue)) return;
 
     setEnsUnresolved(false);
@@ -200,7 +201,7 @@ const ContactDetailsModal = ({
   }, [nameValue]);
 
   let errorMessage;
-  if (isEmpty(addressValue)) {
+  if (!addressValue) {
     errorMessage = t('error.emptyAddress');
   } if (!isValidAddressOrEnsName(addressValue)) {
     errorMessage = t('error.invalid.address');
@@ -210,15 +211,14 @@ const ContactDetailsModal = ({
   } else if (!isCaseInsensitiveMatch(contact?.name, nameValue)
     && contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))) {
     errorMessage = t('error.contactWithNameExist');
-  } else if (isEmpty(nameValue)) {
+  } else if (!nameValue) {
     errorMessage = t('error.emptyName');
   }
 
   const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
-      if (modalRef.current) modalRef.current.close();
-
+      modalRef.current?.close();
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };
@@ -261,7 +261,7 @@ const ContactDetailsModal = ({
         {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
         {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
 
-        {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
+        {ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
 
         {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
 
