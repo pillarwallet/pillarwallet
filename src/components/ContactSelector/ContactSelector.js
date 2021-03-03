@@ -24,10 +24,10 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import ProfileImage from 'components/ProfileImage';
+import { MediumText, BaseText } from 'components/Typography';
 import Modal from 'components/Modal';
+import ProfileImage from 'components/ProfileImage';
 import Spinner from 'components/Spinner';
 
 // Utils
@@ -45,7 +45,6 @@ export type ContactSelectorProps = {|
   selectedContact?: ?Contact,
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
-  wrapperStyle?: Object,
   allowCustomAddress?: boolean,
   allowAddContact?: boolean,
   disabled?: boolean,
@@ -126,11 +125,9 @@ const ContactSelector = ({
   };
 
   return (
-    <>
-      <SelectorPill onPress={openOptions} disabled={disabled || hasNoOptions}>
-        {renderContact()}
-      </SelectorPill>
-    </>
+    <SelectorPill onPress={openOptions} disabled={disabled || hasNoOptions}>
+      {renderContact()}
+    </SelectorPill>
   );
 };
 

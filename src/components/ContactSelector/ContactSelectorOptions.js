@@ -21,9 +21,9 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import styled, { useTheme } from 'styled-components/native';
 import { Keyboard, FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
+import styled, { useTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
@@ -48,11 +48,11 @@ import SlideModal from 'components/Modals/SlideModal';
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { spacing } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
-import { getMatchingSortedData } from 'utils/textInput';
-import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
+import { getMatchingSortedData } from 'utils/textInput';
+import { getThemeColors } from 'utils/themes';
+import { isValidAddressOrEnsName } from 'utils/validators';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
@@ -83,11 +83,12 @@ const ContactSelectorOptions = ({
   searchPlaceholder = t('label.walletAddressEnsUser'),
 }: Props) => {
   const theme = useTheme();
+  const colors = getThemeColors(theme);
 
   const searchInputRef = React.useRef(null);
   const modalRef = React.useRef(null);
 
-  const [query, setQuery] = React.useState(null);
+  const [query, setQuery] = React.useState('');
   const [customAddressContact, setCustomAddressContact] = React.useState(null);
   const [hasSearchError, setHasSearchError] = React.useState(false);
 
@@ -124,19 +125,13 @@ const ContactSelectorOptions = ({
       <ContactDetailsModal
         title={t('title.addNewContact')}
         contact={contact}
+        contacts={contacts}
         onSave={(savedContact: Contact) => {
           dispatch(addContactAction(savedContact));
           selectValue(savedContact);
-          close();
         }}
-        contacts={contacts ?? []}
-        isDefaultNameEns
       />
     ));
-  };
-
-  const handleInviteFriendPress = () => {
-    dispatch(goToInvitationFlowAction());
   };
 
   const validateSearch = (searchQuery: string) => {
@@ -152,16 +147,9 @@ const ContactSelectorOptions = ({
     return null;
   };
 
-  const handleModalShow = () => {
-    searchInputRef.current?.focus();
-  };
-
   const handleScannerRead = (address: string) => {
     if (isValidAddressOrEnsName(address)) {
-      selectValue({
-        ethAddress: address,
-        name: address,
-      });
+      selectValue({ name: address, ethAddress: address });
     }
   };
 
@@ -171,14 +159,10 @@ const ContactSelectorOptions = ({
   };
 
   const renderItem = (item: Contact) => {
-    if (!item) return null;
-
     return <ListItemWithImage label={item.name} onPress={() => selectValue(item)} />;
   };
 
-  const colors = getThemeColors(theme);
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-
   const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
 
   const renderEmptyStateIfNeeded = () => {
@@ -215,7 +199,7 @@ const ContactSelectorOptions = ({
     {
       title: t('button.inviteFriend'),
       iconName: 'plus',
-      onPress: handleInviteFriendPress,
+      onPress: () => dispatch(goToInvitationFlowAction()),
     },
   ];
 
@@ -223,7 +207,7 @@ const ContactSelectorOptions = ({
     <SlideModal
       ref={modalRef}
       fullScreen
-      onModalShow={handleModalShow}
+      onModalShow={() => searchInputRef.current?.focus()}
       noSwipeToDismiss
       noClose
       backgroundColor={colors.basic050}
@@ -249,13 +233,13 @@ const ContactSelectorOptions = ({
           <SearchBarWrapper>
             <SearchBar
               inputProps={{
-                onChange: handleInputChange,
                 value: query,
+                onChange: handleInputChange,
                 autoCapitalize: 'none',
                 validator: validateSearch,
               }}
-              placeholder={searchPlaceholder}
               inputRef={searchInputRef}
+              placeholder={searchPlaceholder}
               noClose
               marginBottom="0"
               iconProps={{ persistIconOnFocus: true }}
