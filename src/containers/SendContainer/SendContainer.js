@@ -118,11 +118,16 @@ const SendContainer = (props: Props) => {
       minAvoidHeight={800}
     >
       <Wrapper>
-        <InputWrapper>{isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}</InputWrapper>
+        <InputWrapper>
+          {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
+        </InputWrapper>
+
         <ArrowIcon />
         <Spacing h={20} />
+
         <ContactSelector {...customSelectorProps} />
       </Wrapper>
+
       {children}
     </ContainerWithHeader>
   );

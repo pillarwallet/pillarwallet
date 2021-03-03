@@ -189,15 +189,6 @@ const SendAsset = ({
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
   }, []);
 
-  const handleSelectContact = async (contact: ?Contact) => {
-    if (!contact?.ethAddress) {
-      setSelectedContact(null);
-      return;
-    }
-
-    setSelectedContact(contact);
-  };
-
   const handleFormSubmit = async () => {
     if (submitPressed) return; // double press
 
@@ -309,7 +300,7 @@ const SendAsset = ({
       customSelectorProps={{
         contacts,
         selectedContact,
-        onSelectContact: handleSelectContact,
+        onSelectContact: setSelectedContact,
       }}
       customValueSelectorProps={{
         value: amount,

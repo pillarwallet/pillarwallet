@@ -66,12 +66,6 @@ type Props = {|
   searchPlaceholder?: string,
 |};
 
-const viewConfig = {
-  minimumViewTime: 300,
-  viewAreaCoveragePercentThreshold: 100,
-  waitForInteraction: true,
-};
-
 const MIN_QUERY_LENGTH = 2;
 
 const ContactSelectorOptions = ({
@@ -254,10 +248,6 @@ const ContactSelectorOptions = ({
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={(contact) => contact.ethAddress || contact.name}
           keyboardShouldPersistTaps="always"
-          initialNumToRender={10}
-          viewabilityConfig={viewConfig}
-          windowSize={10}
-          hideModalContentWhileAnimating
           ListEmptyComponent={renderEmptyStateIfNeeded()}
           contentContainerStyle={{ flex: 1, paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
@@ -292,12 +282,12 @@ const EmptyStateWrapper = styled.View`
 const SearchContainer = styled.View`
   flex-direction: row;
   align-items: center;
+  padding-vertical: ${spacing.small}px;
+  padding-start: ${spacing.layoutSides}px;
 `;
 
 const SearchBarWrapper = styled.View`
   flex: 1;
-  padding-vertical: ${spacing.small}px;
-  padding-start: ${spacing.layoutSides}px;
 `;
 
 const ActionButtonsContainer = styled.View`

@@ -190,14 +190,6 @@ const RariTransferScreen = ({
     });
   };
 
-  const handleSelectContact = (value: ?Contact) => {
-    if (!value?.ethAddress) {
-      setSelectedContact(null);
-    }
-
-    setSelectedContact(value);
-  };
-
   let enoughBalanceForTransaction = true;
   if (feeInfo && inputIsValid) {
     enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(customBalances, {
@@ -237,7 +229,7 @@ const RariTransferScreen = ({
       customSelectorProps={{
         contacts,
         selectedContact,
-        onSelectContact: handleSelectContact,
+        onSelectContact: setSelectedContact,
       }}
       customValueSelectorProps={{
         assetData: rariTokenData,

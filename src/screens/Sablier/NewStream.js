@@ -115,11 +115,6 @@ class NewStream extends React.Component<Props, State> {
     return addMinutes(new Date(), delayInMinutes);
   }
 
-  handleReceiverSelect = async (contact: ?Contact) => {
-    this.setState({ selectedContact: contact });
-    return Promise.resolve();
-  }
-
   onSubmit = async () => {
     const {
       startDate, endDate, assetValue, selectedAsset, selectedContact,
@@ -228,16 +223,19 @@ class NewStream extends React.Component<Props, State> {
             customAssets={assetsOptions}
             onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
           />
+
           <Spacing h={10} />
           <ArrowIcon />
           <Spacing h={20} />
 
           <ContactSelector
             selectedContact={selectedContact}
-            onSelectContact={this.handleReceiverSelect}
+            onSelectContact={(contact) => this.setState({ selectedContact: contact })}
           />
         </InputWrapper>
+
         <Spacing h={28} />
+
         <ContentWrapper>
           <Row>
             <MediumText regular>{t('sablierContent.label.start')}</MediumText>
