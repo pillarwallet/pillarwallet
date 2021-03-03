@@ -22,6 +22,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
+import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
 // components
@@ -40,11 +41,10 @@ import Modal from 'components/Modal';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddressOrEnsName } from 'utils/validators';
+import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
-import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
-import { getReceiverWithEnsName } from 'utils/contacts';
+import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
 
 // types
 import type { Contact } from 'models/Contact';
@@ -52,7 +52,6 @@ import type { Contact } from 'models/Contact';
 type Props = {|
   onSave: (contact: Contact) => void,
   contact: ?Contact,
-  dirtyInputs?: boolean,
   title?: string,
   contacts: Contact[],
   showQRScanner?: boolean,
@@ -118,6 +117,8 @@ const ContactDetailsModal = ({
   const [resolvingEns, setResolvingEns] = useState(false);
   const [hasEnsResolutionError, setHasEnsResolutionError] = useState(false);
 
+  const [debouncedAddressValue] = useDebounce(addressValue, 500);
+
   const theme = useTheme();
   const colors = getThemeColors(theme);
   const { walletIcon, personIcon } = images(theme);
@@ -137,42 +138,30 @@ const ContactDetailsModal = ({
     setHasEnsResolutionError(false); // reset
   }, [nameValue, addressValue]);
 
-  useEffect(() => {
-    if (resolvingEns
-      || !!nameValue
-      || !isValidAddressOrEnsName(addressValue)
-      || isEnsName(addressValue)) return;
-
+  const reverseResolveEnsName = async (address: string) => {
     setResolvingEns(true);
-    lookupAddress(addressValue)
-      .then((ensName) => {
-        if (ensName) setNameValue(ensName);
-        setResolvingEns(false);
-      })
-      .catch(() => setResolvingEns(false));
-  }, [addressValue]);
+    const ensName = await lookupAddress(address);
+    setNameValue(ensName ?? '');
+    setResolvingEns(false);
+  };
+
+  const validateEnsName = async (ensName: string) => {
+    setResolvingEns(true);
+    const address = await resolveEnsName(ensName);
+    if (address) {
+      setNameValue(ensName);
+    }
+    setHasEnsResolutionError(!address);
+    setResolvingEns(false);
+  };
 
   useEffect(() => {
-    if (resolvingEns
-      || !!addressValue
-      || !isEnsName(nameValue)) return;
-
-    setHasEnsResolutionError(false);
-    setResolvingEns(true);
-    getReceiverWithEnsName(nameValue)
-      .then(({ receiver }) => {
-        if (receiver) {
-          setAddressValue(receiver);
-        } else {
-          setHasEnsResolutionError(true);
-        }
-        setResolvingEns(false);
-      })
-      .catch(() => {
-        setHasEnsResolutionError(true);
-        setResolvingEns(false);
-      });
-  }, [nameValue]);
+    if (isValidAddress(addressValue)) {
+      reverseResolveEnsName(addressValue);
+    } else if (isEnsName(addressValue)) {
+      validateEnsName(addressValue);
+    }
+  }, [debouncedAddressValue]);
 
   let errorMessage;
   if (!addressValue) {
@@ -230,6 +219,7 @@ const ContactDetailsModal = ({
               value: addressValue,
               onChangeText: setAddressValue,
               placeholder: t('label.address'),
+              autoCapitalize: 'none',
             }}
           />
         </InputWrapper>

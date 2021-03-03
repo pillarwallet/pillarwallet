@@ -365,8 +365,7 @@ export const resolveEnsName = async (ensName: string): Promise<?string> => {
 export const lookupAddress = async (address: string): Promise<?string> => {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   try {
-    const checksumAddress = utils.getAddress(address);
-    return await provider.lookupAddress(checksumAddress);
+    return await provider.lookupAddress(address);
   } catch (_) {
     return null;
   }
