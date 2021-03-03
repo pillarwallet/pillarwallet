@@ -99,32 +99,10 @@ export const QRCodeButton = styled.TouchableOpacity`
   right: 0;
 `;
 
-
 export const QRCodeIcon = styled(Icon)`
   color: ${({ color }) => color};
   font-size: 20px;
 `;
-
-const renderContactInput = (
-  value: string,
-  onChangeText: (value: string) => void,
-  placeholder: string,
-  icon: string,
-  theme: Theme,
-) => (
-  <InputWrapper>
-    <FieldIcon source={icon} />
-    <TextInput
-      theme={theme}
-      inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
-      inputProps={{
-        value,
-        onChangeText,
-        placeholder,
-      }}
-    />
-  </InputWrapper>
-);
 
 const ContactDetailsModal = ({
   contact,
@@ -235,22 +213,11 @@ const ContactDetailsModal = ({
   const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
 
   return (
-    <ModalBox
-      ref={modalRef}
-      onModalHide={onModalHide}
-      showModalClose
-      noBoxMinHeight
-    >
+    <ModalBox ref={modalRef} onModalHide={onModalHide} showModalClose noBoxMinHeight>
       <View style={{ padding: spacing.rhythm }}>
         <TitleWrapper>
-          {!!title && (
-            <Title
-              align="center"
-              title={title}
-              style={{ marginBottom: spacing.small }}
-              noMargin
-            />
-          )}
+          {!!title && <Title align="center" title={title} style={{ marginBottom: spacing.small }} noMargin />}
+
           {showQRScanner && (
             <QRCodeButton onPress={openScanner}>
               <QRCodeIcon name="qrcode" color={colors.link} />
@@ -258,8 +225,31 @@ const ContactDetailsModal = ({
           )}
         </TitleWrapper>
 
-        {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
-        {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
+        <InputWrapper>
+          <FieldIcon source={walletIcon} />
+          <TextInput
+            theme={theme}
+            inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+            inputProps={{
+              value: addressValue,
+              onChangeText: setAddressValue,
+              placeholder: t('label.address'),
+            }}
+          />
+        </InputWrapper>
+
+        <InputWrapper>
+          <FieldIcon source={personIcon} />
+          <TextInput
+            theme={theme}
+            inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+            inputProps={{
+              value: nameValue,
+              onChangeText: setNameValue,
+              placeholder: t('label.name'),
+            }}
+          />
+        </InputWrapper>
 
         {ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
 
