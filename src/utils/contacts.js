@@ -26,7 +26,7 @@ import Toast from 'components/Toast';
 import type { Contact } from 'models/Contact';
 
 // utils
-import { reportLog, resolveEnsName } from './common';
+import { resolveEnsName } from './common';
 import { isValidAddress, isEnsName } from './validators';
 
 type ResolveContactOptions = {|
@@ -52,10 +52,7 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
   }
 
   if (isEnsName(contact.ethAddress)) {
-    const resolvedAddress = await resolveEnsName(contact.ethAddress).catch((error) => {
-      reportLog('getReceiverWithEnsName failed', { error });
-      return null;
-    });
+    const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {
       Toast.show({
@@ -76,10 +73,8 @@ export const getReceiverWithEnsName = async (ethAddress: ?string, showNotificati
   if (!ethAddress) return { receiverEnsName, receiver };
 
   if (isEnsName(ethAddress)) {
-    const resolvedAddress = await resolveEnsName(ethAddress).catch((error) => {
-      reportLog('getReceiverWithEnsName failed', { error });
-      return null;
-    });
+    const resolvedAddress = await resolveEnsName(ethAddress);
+
     if (!resolvedAddress && showNotification) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
@@ -87,6 +82,7 @@ export const getReceiverWithEnsName = async (ethAddress: ?string, showNotificati
       });
       return { receiverEnsName, receiver };
     }
+
     receiverEnsName = ethAddress;
     receiver = resolvedAddress;
   } else {
