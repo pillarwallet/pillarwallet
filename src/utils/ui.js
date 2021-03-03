@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { Dimensions, Platform, PixelRatio, View } from 'react-native';
+import Instabug from 'instabug-reactnative';
 import type { Measurements } from 'reducers/walkthroughsReducer';
 
 const {
@@ -78,3 +79,7 @@ export const measure = (ref: React.ElementRef<typeof View>): Promise<Measurement
   new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
     x, y, w, h,
   })));
+
+export const makeViewPrivate = (element: React.ElementRef<any> | null) => {
+  if (element !== null) Instabug.setPrivateView(element);
+};
