@@ -20,7 +20,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import type { AbstractComponent } from 'react';
 import { View } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
@@ -50,7 +50,7 @@ import { getReceiverWithEnsName } from 'utils/contacts';
 import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
 
-type OwnProps = {|
+type Props = {|
   onSave: (contact: Contact) => void,
   contact: ?Contact,
   dirtyInputs?: boolean,
@@ -61,10 +61,6 @@ type OwnProps = {|
   onModalHide?: () => void,
 |};
 
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
-|};
 
 const InputWrapper = styled.View`
   flex-direction: row;
@@ -131,7 +127,6 @@ const renderContactInput = (
 );
 
 const ContactDetailsModal = ({
-  theme,
   contact,
   onSave,
   isDefaultNameEns,
@@ -140,6 +135,11 @@ const ContactDetailsModal = ({
   showQRScanner,
   onModalHide,
 }: Props) => {
+  const theme = useTheme();
+  const colors = getThemeColors(theme);
+
+  const modalRef = useRef();
+
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
@@ -214,9 +214,6 @@ const ContactDetailsModal = ({
     errorMessage = t('error.emptyName');
   }
 
-  const colors = getThemeColors(theme);
-  const modalRef = useRef();
-
   const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
@@ -260,11 +257,16 @@ const ContactDetailsModal = ({
             </QRCodeButton>
           )}
         </TitleWrapper>
+
         {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
         {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
+
         {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
+
         {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
+
         {resolvingEns && <LoadingSpinner size={25} />}
+
         <Button
           marginTop={spacing.large}
           disabled={!dirtyInputs || !!errorMessage || resolvingEns}
@@ -276,4 +278,4 @@ const ContactDetailsModal = ({
   );
 };
 
-export default (withTheme(ContactDetailsModal): AbstractComponent<OwnProps>);
+export default ContactDetailsModal;
