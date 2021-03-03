@@ -110,16 +110,16 @@ const ContactDetailsModal = ({
   showQRScanner,
   onModalHide,
 }: Props) => {
-  const theme = useTheme();
-  const colors = getThemeColors(theme);
-
   const modalRef = useRef();
 
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
   const [resolvingEns, setResolvingEns] = useState(false);
-  const [ensUnresolved, setEnsUnresolved] = useState(false);
+  const [hasEnsResolutionError, setHasEnsResolutionError] = useState(false);
+
+  const theme = useTheme();
+  const colors = getThemeColors(theme);
   const { walletIcon, personIcon } = images(theme);
 
   // reset input value on default change
@@ -130,11 +130,11 @@ const ContactDetailsModal = ({
   }, [contact]);
 
   useEffect(() => {
-    if (!!nameValue || !!addressValue) {
+    if (nameValue || addressValue) {
       setDirtyInputs(true);
     }
 
-    if (ensUnresolved) setEnsUnresolved(false); // reset
+    setHasEnsResolutionError(false); // reset
   }, [nameValue, addressValue]);
 
   useEffect(() => {
@@ -157,19 +157,19 @@ const ContactDetailsModal = ({
       || !!addressValue
       || !isEnsName(nameValue)) return;
 
-    setEnsUnresolved(false);
+    setHasEnsResolutionError(false);
     setResolvingEns(true);
     getReceiverWithEnsName(nameValue)
       .then(({ receiver }) => {
         if (receiver) {
           setAddressValue(receiver);
         } else {
-          setEnsUnresolved(true);
+          setHasEnsResolutionError(true);
         }
         setResolvingEns(false);
       })
       .catch(() => {
-        setEnsUnresolved(true);
+        setHasEnsResolutionError(true);
         setResolvingEns(false);
       });
   }, [nameValue]);
@@ -247,7 +247,7 @@ const ContactDetailsModal = ({
           />
         </InputWrapper>
 
-        {ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
+        {hasEnsResolutionError && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
 
         {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
 
