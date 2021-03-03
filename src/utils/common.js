@@ -55,6 +55,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import { humanizeDateString, formatDate } from './date';
 import { isProdEnv, isTest } from './environment';
 
+export { isIphoneX } from 'react-native-iphone-x-helper';
 
 const WWW_URL_PATTERN = /^www\./i;
 // eslint-disable-next-line i18next/no-literal-string
@@ -285,18 +286,6 @@ export const uniqBy = (collection: Object[] = [], key: string): Object[] => {
   return collection.filter((item, i, arr) => {
     return arr.map(it => it[key]).indexOf(item[key]) === i;
   });
-};
-
-export const isIphoneX = (): boolean => {
-  const d = Dimensions.get('window');
-  const { height, width } = d;
-
-  return (
-    // This has to be iOS duh
-    Platform.OS === 'ios' &&
-    // Accounting for the height in either orientation
-    (height === 812 || width === 812)
-  );
 };
 
 export const getiOSNavbarHeight = (): number => {

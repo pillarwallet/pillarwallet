@@ -53,6 +53,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
+import type { Contact } from 'models/Contact';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -78,7 +79,7 @@ type State = {
   inputHasError: boolean,
   receiver?: string,
   receiverEnsName?: string,
-  selectedContact: ?Option,
+  selectedContact: ?Contact,
   assetData: ?Option,
 };
 
@@ -129,14 +130,14 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
+  handleReceiverSelect = async (value: ?Contact) => {
     const { navigation } = this.props;
-    const { ethAddress } = value;
+    const { ethAddress } = value ?? {};
 
     const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
 
     if (userInfo) {
-      this.setReceiver(value, onSuccess);
+      this.setReceiver(value);
     } else {
       Alert.alert(
         t('alert.addressIsNotOnPillarNetwork.title'),
@@ -153,7 +154,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  setReceiver = async (value: Option, onSuccess?: () => void) => {
+  setReceiver = async (value: ?Contact) => {
     const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
     if (!receiver) {
@@ -165,7 +166,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     } else {
       stateToUpdate = { selectedContact: value, receiver, receiverEnsName };
     }
-    this.setState(stateToUpdate, () => { if (onSuccess) onSuccess(); });
+
+    this.setState(stateToUpdate);
   };
 
   handleAssetValueSelect = (value: string, assetData: ?Option) => {
@@ -283,18 +285,18 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       <SendContainer
         isLoading={isFetchingSyntheticAssets || syntheticAssets.length === 0}
         customSelectorProps={{
-          onOptionSelect: this.handleReceiverSelect,
-          options: [],
-          selectedOption: selectedContact,
+          selectedContact,
+          onSelectContact: this.handleReceiverSelect,
+          allowAddContact: false,
         }}
         customValueSelectorProps={{
-         onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
-         onValueChange: (newValue) => this.setState({ value: newValue }),
-         assetData: assetData || defaultAssetData,
-         value,
-         customAssets: syntheticAssets,
-         customBalances,
-         onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
+          onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
+          onValueChange: (newValue) => this.setState({ value: newValue }),
+          assetData: assetData || defaultAssetData,
+          value,
+          customAssets: syntheticAssets,
+          customBalances,
+          onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,

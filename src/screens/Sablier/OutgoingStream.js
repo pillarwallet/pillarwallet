@@ -36,7 +36,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
-import Selector from 'components/Selector';
+import ContactSelector from 'components/ContactSelector';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
 import ArrowIcon from 'components/ArrowIcon/ArrowIcon';
@@ -190,10 +190,7 @@ class OutgoingStream extends React.Component<Props> {
         <SelectorWrapper>
           <ArrowIcon />
           <Spacing h={20} />
-          <Selector
-            disabled
-            selectedOption={recipient}
-          />
+          <ContactSelector disabled selectedContact={recipient} />
         </SelectorWrapper>
         <ButtonWrapper>
           <Button

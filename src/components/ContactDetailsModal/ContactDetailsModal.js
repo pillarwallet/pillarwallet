@@ -40,7 +40,7 @@ import Modal from 'components/Modal';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddress } from 'utils/validators';
+import { isEnsName, isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
@@ -165,7 +165,7 @@ const ContactDetailsModal = ({
   useEffect(() => {
     if (resolvingEns
       || !isEmpty(nameValue)
-      || !isValidAddress(addressValue)
+      || !isValidAddressOrEnsName(addressValue)
       || isEnsName(addressValue)) return;
 
     setResolvingEns(true);
@@ -202,7 +202,7 @@ const ContactDetailsModal = ({
   let errorMessage;
   if (isEmpty(addressValue)) {
     errorMessage = t('error.emptyAddress');
-  } if (!isValidAddress(addressValue)) {
+  } if (!isValidAddressOrEnsName(addressValue)) {
     errorMessage = t('error.invalid.address');
   } else if (!addressesEqual(contact?.ethAddress, addressValue)
     && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
@@ -221,7 +221,7 @@ const ContactDetailsModal = ({
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
       if (modalRef.current) modalRef.current.close();
-      // $FlowFixMe: flow update to 0.122
+
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };

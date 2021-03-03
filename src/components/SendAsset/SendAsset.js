@@ -22,12 +22,10 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
-import { addContactAction } from 'actions/contactsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // constants
@@ -38,15 +36,11 @@ import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
-import ContactDetailsModal from 'components/ContactDetailsModal';
 import Toast from 'components/Toast';
-import Modal from 'components/Modal';
 
 // utils
 import { isValidNumber, reportErrorLog } from 'utils/common';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName } from 'utils/validators';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -74,7 +68,6 @@ type Props = {
   assetsWithBalance: Option[],
   collectibles: Option[],
   contacts: Contact[],
-  addContact: (contact: Contact) => void,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
@@ -128,7 +121,6 @@ const SendAsset = ({
   assetsWithBalance,
   collectibles,
   contacts,
-  addContact,
   defaultContact,
   feeInfo,
   isEstimating,
@@ -147,7 +139,6 @@ const SendAsset = ({
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
-  const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -197,48 +188,6 @@ const SendAsset = ({
 
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
   }, []);
-
-  const resolveAndSetContactAndFromOption = async (
-    value: Option,
-    setContact: (value: ?Contact) => void,
-    onSuccess?: () => void,
-  ): Promise<void> => {
-    const ethAddress = value?.ethAddress || '';
-    let contact = {
-      name: value?.name || '',
-      ethAddress,
-      ensName: null,
-    };
-
-    if (isEnsName(ethAddress)) {
-      setResolvingContactEnsName(true);
-      contact = await getContactWithEnsName(contact, ethAddress);
-      if (!contact?.ensName) {
-        // failed to resolve ENS, error toast will be shown
-        setResolvingContactEnsName(false);
-        return Promise.resolve();
-      }
-      setResolvingContactEnsName(false);
-    }
-
-    // if name still empty let's set it with address
-    if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
-
-    setContact(contact);
-
-    if (onSuccess) onSuccess();
-
-    return Promise.resolve();
-  };
-
-  const handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
-    if (!value?.ethAddress) {
-      setSelectedContact(null);
-      if (onSuccess) onSuccess();
-    } else {
-      resolveAndSetContactAndFromOption(value, setSelectedContact, onSuccess);
-    }
-  };
 
   const handleFormSubmit = async () => {
     if (submitPressed) return; // double press
@@ -346,41 +295,12 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
 
-  const openAddToContacts = useCallback((initial: ?Contact) => {
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        contact={initial}
-        onSave={(contact: Contact) => {
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    ));
-  }, [contacts, addContact, handleReceiverSelect]);
-
-  const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
-  const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
-    option,
-    openAddToContacts,
-  );
-  const customOptionButtonOnPress = !resolvingContactEnsName
-    ? addContactButtonPress
-    : () => {};
-  const selectedOption: ?Option = selectedContact
-    ? { ...selectedContact, value: selectedContact.ethAddress }
-    : null;
-
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
-        options: contactsAsOptions,
-        selectedOption,
-        customOptionButtonLabel: t('button.addToContacts'),
-        customOptionButtonOnPress,
+        contacts,
+        selectedContact,
+        onSelectContact: setSelectedContact,
       }}
       customValueSelectorProps={{
         value: amount,
@@ -400,13 +320,9 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(
-          feeInfo,
-          showFee,
-          errorMessage,
-          isEstimating,
-          enoughBalanceForTransaction,
-        ),
+        footerTopAddon:
+          !!selectedContact &&
+          renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating, enoughBalanceForTransaction),
         isLoading: isEstimating,
       }}
     />
@@ -438,7 +354,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  addContact: (contact: Contact) => dispatch(addContactAction(contact)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (
     recipient: string,

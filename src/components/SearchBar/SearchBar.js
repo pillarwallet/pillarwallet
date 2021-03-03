@@ -237,18 +237,35 @@ class SearchBar extends React.Component<Props, State> {
     trim: true,
   };
 
+  componentDidUpdate() {
+    // Validate value changes orginating from props
+    if (this.props.inputProps.value !== this.value) {
+      this.value = this.props.inputProps.value ?? '';
+      this.validateInput(this.value);
+    }
+  }
+
   handleChange = (e: Event) => {
-    const { inputProps: { onChange, validator } } = this.props;
-    const { errorMessage } = this.state;
     this.value = e.nativeEvent.text;
+
+    const { onChange } = this.props.inputProps;
     if (onChange) onChange(this.value);
-    if (validator) {
-      const error = validator(this.value);
-      if (error) {
-        this.setState({ errorMessage: error });
-      } else if (errorMessage) {
-        this.setState({ errorMessage: '' });
-      }
+
+    this.validateInput(this.value);
+  };
+
+  validateInput = (value: string) => {
+    const { validator } = this.props.inputProps;
+    if (!validator) return;
+
+    const error = validator(value);
+    if (error) {
+      this.setState({ errorMessage: error });
+      return;
+    }
+
+    if (this.state.errorMessage) {
+      this.setState({ errorMessage: '' });
     }
   };
 
