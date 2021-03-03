@@ -47,14 +47,12 @@ import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
 import { getReceiverWithEnsName } from 'utils/contacts';
 
 // types
-import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
 
 type Props = {|
   onSave: (contact: Contact) => void,
   contact: ?Contact,
   dirtyInputs?: boolean,
-  isDefaultNameEns?: boolean,
   title?: string,
   contacts: Contact[],
   showQRScanner?: boolean,
@@ -107,7 +105,6 @@ export const QRCodeIcon = styled(Icon)`
 const ContactDetailsModal = ({
   contact,
   onSave,
-  isDefaultNameEns,
   title,
   contacts,
   showQRScanner,
@@ -129,8 +126,7 @@ const ContactDetailsModal = ({
   useEffect(() => {
     setDirtyInputs(false);
     setAddressValue(contact?.ethAddress || '');
-    const defaultName = isDefaultNameEns ? contact?.ensName : contact?.name;
-    setNameValue(defaultName || '');
+    setNameValue(contact?.name || '');
   }, [contact]);
 
   useEffect(() => {
