@@ -21,7 +21,7 @@ import React, { useCallback } from 'react';
 import { FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
-import { withTheme } from 'styled-components/native';
+import { useTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 // actions
@@ -41,21 +41,17 @@ import { getThemeColors } from 'utils/themes';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
-import type { Theme } from 'models/Theme';
 
 // partials
 import DeleteContactModal from './DeleteContactModal';
 
-type Props = {
-  theme: Theme,
-  contacts: Contact[],
-  addContact: (contact: Contact) => void,
-  updateContact: (prevEthAddress: string, contact: Contact) => void,
-};
+const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
-const ContactsList = ({ theme }: Props) => {
+const ContactsList = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(({ contacts: { data } }: RootReducerState) => data);
+
+  const theme = useTheme();
   const colors = getThemeColors(theme);
 
   const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
@@ -105,8 +101,6 @@ const ContactsList = ({ theme }: Props) => {
     );
   };
 
-  const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
-
   return (
     <ContainerWithHeader
       headerProps={{
@@ -132,4 +126,4 @@ const ContactsList = ({ theme }: Props) => {
   );
 };
 
-export default withTheme(ContactsList);
+export default ContactsList;
