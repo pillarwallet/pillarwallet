@@ -121,7 +121,12 @@ const ContactsList = ({ theme }: Props) => {
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!contacts.length && emptyStyle}
-        ListEmptyComponent={<EmptyStateParagraph title={t('label.noContactsAdded')} />}
+        ListEmptyComponent={
+          <EmptyStateParagraph
+            title={t('label.noContacts')}
+            bodyText={t('paragraph.addContacts')}
+          />
+        }
       />
     </ContainerWithHeader>
   );
