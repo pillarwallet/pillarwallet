@@ -19,7 +19,7 @@
 */
 /* eslint-disable no-use-before-define */
 
-import React, { useCallback } from 'react';
+import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSelector, useDispatch } from 'react-redux';
@@ -28,11 +28,11 @@ import Clipboard from '@react-native-community/clipboard';
 import Swipeout from 'react-native-swipeout';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
-// components
+// Components
 import Button from 'components/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -43,19 +43,19 @@ import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SwipeoutButton from 'components/SwipeoutButton';
 
-// constants
+// Constants
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 
-// utils
+// Utils
 import { filterContacts } from 'utils/contacts';
 import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// types
-import type { RootReducerState } from 'reducers/rootReducer';
+// Types
 import type { Contact } from 'models/Contact';
+import type { RootReducerState } from 'reducers/rootReducer';
 
-// partials
+// Partials
 import DeleteContactModal from './DeleteContactModal';
 
 
@@ -70,31 +70,28 @@ const ContactsList = () => {
   const theme = useTheme();
   const colors = getThemeColors(theme);
 
+  const openContactDetails = (contact: ?Contact) => Modal.open(() => (
+    <ContactDetailsModal
+      title={contact === null ? t('title.addNewContact') : t('title.editContact')}
+      contact={contact}
+      contacts={contacts}
+      onSave={(newContact: Contact) => {
+        dispatch(contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact));
+      }}
+      showQRScanner
+    />
+  ));
+
   const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
     <DeleteContactModal contact={contact} />
   ));
-
-  const openContactDetails = useCallback((contact: null | Contact) => {
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={contact === null ? t('title.addNewContact') : t('title.editContact')}
-        contact={contact}
-        contacts={contacts}
-        onSave={(newContact: Contact) => {
-          dispatch(contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact));
-        }}
-        showQRScanner
-      />
-    ));
-  }, [contacts, dispatch]);
 
   const handlePaste = async () => {
     const clipboardValue = await Clipboard.getString();
     setQuery(clipboardValue);
   };
 
-  const renderListItem = ({ item }: { item: Contact }) => {
-    const { name, ethAddress, ensName } = item;
+  const renderItem = ({ item }: { item: Contact }) => {
     return (
       <Swipeout
         right={[{
@@ -113,7 +110,7 @@ const ContactsList = () => {
         buttonWidth={80}
       >
         <ListItemWithImage
-          label={name || ensName || ethAddress}
+          label={item.name || item.ensName || item.ethAddress}
           onPress={() => openContactDetails(item)}
           diameter={48}
           rightColumnInnerStyle={{ alignItems: 'flex-end' }}
@@ -185,7 +182,7 @@ const ContactsList = () => {
       <FlatList
         data={filteredContacts}
         keyExtractor={({ ethAddress }) => ethAddress}
-        renderItem={renderListItem}
+        renderItem={renderItem}
         initialNumToRender={9}
         ListEmptyComponent={renderEmptyState}
         contentContainerStyle={styles.flatListContantContainer}
