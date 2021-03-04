@@ -32,7 +32,7 @@ type Props = {
 }
 
 const EmptySectionTextWrapper = styled.View`
-  ${({ wide }) => !wide && 'width: 234px;'}
+  ${({ wide }) => !wide && 'min-width: 234px; width: 80%;'}
   align-items: center;
   justify-content: center;
 `;
