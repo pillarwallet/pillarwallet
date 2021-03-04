@@ -156,15 +156,18 @@ class ActivityFeed extends React.Component<Props> {
       if (activeTabInfo) ({ data: feedList } = activeTabInfo);
     }
 
-    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
-    if (!filteredFeedList.length) {
-      return [{ type: ITEM_TYPE.EMPTY_STATE }];
-    }
-
     const items = [
       { type: ITEM_TYPE.HEADER, component: headerComponent },
       { type: ITEM_TYPE.TABS, component: tabsComponent },
     ];
+
+    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+    if (!filteredFeedList.length) {
+      return [
+        ...items,
+        { type: ITEM_TYPE.EMPTY_STATE },
+      ];
+    }
 
     if (card) {
       items.push({ type: ITEM_TYPE.CARD_HEADER });

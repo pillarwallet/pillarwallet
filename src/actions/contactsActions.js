@@ -58,7 +58,7 @@ export const updateContactAction = (prevEthAddress: string, contact: Contact) =>
     }
 
     Toast.show({
-      message: t('toast.contactUpdated'),
+      message: t('toast.contactUpdated', { name: contact.name }),
       emoji: 'ok_hand',
     });
 
@@ -76,7 +76,7 @@ export const addContactAction = (contact: Contact) => {
       .concat(contact);
 
     Toast.show({
-      message: t('toast.contactAdded'),
+      message: t('toast.contactAdded', { name: contact.name }),
       emoji: 'handshake',
     });
 
@@ -90,7 +90,7 @@ export const deleteContactAction = (contact: Contact) => {
     const updatedContacts = contacts.filter(({ ethAddress }) => !addressesEqual(ethAddress, contact.ethAddress));
 
     Toast.show({
-      message: t('toast.contactDeleted'),
+      message: t('toast.contactDeleted', { name: contact.name }),
       emoji: 'cry',
     });
 

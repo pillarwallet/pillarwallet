@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Contact = {
-  name: string,
-  ethAddress: string,
-  ensName?: ?string,
+
+import * as React from 'react';
+import { ThemeProvider } from 'styled-components/native';
+import { render } from '@testing-library/react-native';
+import { defaultTheme } from 'utils/themes';
+
+export const renderWithTheme = (ui: React.Node) => {
+  return render(<ThemeProvider theme={defaultTheme}>{ui}</ThemeProvider>);
 };

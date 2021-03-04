@@ -24,7 +24,6 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { addHours, addDays, addMinutes } from 'date-fns';
 import { utils } from 'ethers';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // components
@@ -34,15 +33,13 @@ import TimingInput from 'components/TimingInput';
 import { MediumText, TextLink, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
-import Selector from 'components/Selector';
+import ContactSelector from 'components/ContactSelector';
 import ArrowIcon from 'components/ArrowIcon';
 import Modal from 'components/Modal';
 
 // utils
 import { countDownDHMS } from 'utils/common';
 import { getTimestamp } from 'utils/sablier';
-import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName } from 'utils/validators';
 
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
@@ -116,29 +113,6 @@ class NewStream extends React.Component<Props, State> {
     // default to 5 minutes
     const delayInMinutes = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.SABLIER_TIME_START_TOLERANCE) || 5;
     return addMinutes(new Date(), delayInMinutes);
-  }
-
-  handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
-    const ethAddress = value?.ethAddress || '';
-    let contact = {
-      name: value?.name || '',
-      ethAddress,
-      ensName: null,
-    };
-
-    if (isEnsName(ethAddress)) {
-      contact = await getContactWithEnsName(contact, ethAddress);
-      if (!contact?.ensName) {
-        // getContactWithEnsName should've shown the toast that ens lookup failed
-        return Promise.resolve();
-      }
-    }
-
-    if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
-
-    this.setState({ selectedContact: contact });
-    if (onSuccess) onSuccess();
-    return Promise.resolve();
   }
 
   onSubmit = async () => {
@@ -243,28 +217,25 @@ class NewStream extends React.Component<Props, State> {
         <InputWrapper>
           <ValueInput
             value={assetValue}
-            onValueChange={amount => this.setState({ assetValue: amount })}
+            onValueChange={(amount) => this.setState({ assetValue: amount })}
             assetData={selectedAsset}
-            onAssetDataChange={asset => this.setState({ selectedAsset: asset })}
+            onAssetDataChange={(asset) => this.setState({ selectedAsset: asset })}
             customAssets={assetsOptions}
             onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
           />
+
           <Spacing h={10} />
           <ArrowIcon />
           <Spacing h={20} />
-          <Selector
-            placeholder={t('label.whereToSend')}
-            searchPlaceholder={t('label.walletAddress')}
-            noOptionImageFallback
-            hasQRScanner
-            disableSelfSelect
-            allowEnteringCustomAddress
-            onOptionSelect={this.handleReceiverSelect}
-            options={[]}
-            selectedOption={selectedContact}
+
+          <ContactSelector
+            selectedContact={selectedContact}
+            onSelectContact={(contact) => this.setState({ selectedContact: contact })}
           />
         </InputWrapper>
+
         <Spacing h={28} />
+
         <ContentWrapper>
           <Row>
             <MediumText regular>{t('sablierContent.label.start')}</MediumText>
@@ -301,11 +272,7 @@ class NewStream extends React.Component<Props, State> {
           <TimingInput filled value={endDate} onPress={() => this.openDatePicker(DATE_PICKER.END_TIME, endDate)} />
 
           <Spacing h={64} />
-          <Button
-            title={t('button.next')}
-            disabled={!formValid}
-            onPress={this.onSubmit}
-          />
+          <Button title={t('button.next')} disabled={!formValid} onPress={this.onSubmit} />
           <Spacing h={19} />
           {this.renderStreamSummary()}
         </ContentWrapper>
