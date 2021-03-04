@@ -66,16 +66,11 @@ const ContactsList = ({ theme }: Props) => {
     Modal.open(() => (
       <ContactDetailsModal
         title={contact === null ? t('title.addNewContact') : t('title.editContact')}
-        dirtyInputs={contact !== null}
         contact={contact}
-        onSave={(newContact: Contact) => {
-          if (contact === null) {
-            dispatch(addContactAction(newContact));
-          } else {
-            dispatch(updateContactAction(contact.ethAddress, newContact));
-          }
-        }}
         contacts={contacts}
+        onSave={(newContact: Contact) => {
+          dispatch(contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact));
+        }}
         showQRScanner
       />
     ));

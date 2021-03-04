@@ -77,7 +77,7 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
       .test('isValid', t('error.invalid.address'), (value) => isValidAddressOrEnsName(value))
       .test(
         'alreadyExists',
-        t('error.contactWithAddressExist'),
+        t('error.contactWithAddressExists'),
         (value) =>
           addressesEqual(contact?.ethAddress, value) ||
           !contacts.some(({ ethAddress }) => addressesEqual(ethAddress, value)),
@@ -87,7 +87,7 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
       .required(t('error.emptyName'))
       .test(
         'alreadyExists',
-        t('error.contactWithNameExist'),
+        t('error.contactWithNameExists'),
         (value) =>
           isCaseInsensitiveMatch(contact?.name, value) ||
           !contacts.some(({ name }) => isCaseInsensitiveMatch(name, value)),
