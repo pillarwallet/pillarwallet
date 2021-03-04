@@ -100,7 +100,7 @@ const ContactSelectorOptions = ({
 
     if (allowCustomAddress) {
       const isValid = isValidAddressOrEnsName(input);
-      setCustomAddressContact(isValid ? { name: input, ethAddress: input } : null);
+      setCustomAddressContact(isValid ? { ethAddress: input, name: input } : null);
     }
   };
 
@@ -115,10 +115,12 @@ const ContactSelectorOptions = ({
   };
 
   const handleAddToContactsPress = async (contact?: Contact) => {
+    const initialContact = contact ? { ethAddress: contact.ethAddress, name: '' } : null;
+
     Modal.open(() => (
       <ContactDetailsModal
         title={t('title.addNewContact')}
-        contact={contact}
+        contact={initialContact}
         contacts={contacts}
         onSave={(savedContact: Contact) => {
           dispatch(addContactAction(savedContact));
@@ -142,9 +144,7 @@ const ContactSelectorOptions = ({
   };
 
   const handleScannerRead = (address: string) => {
-    if (isValidAddressOrEnsName(address)) {
-      selectValue({ name: address, ethAddress: address });
-    }
+    handleInputChange(address);
   };
 
   const openScanner = () => {

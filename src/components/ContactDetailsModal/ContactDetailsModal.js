@@ -18,35 +18,39 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 /* eslint-disable no-unused-expressions */
+/* eslint-disable i18next/no-literal-string */
+/* eslint-disable object-curly-newline */
 
 import React, { useEffect, useState, useRef } from 'react';
 import { View } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import styled, { useTheme } from 'styled-components/native';
 import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
-// components
-import ModalBox from 'components/ModalBox';
-import Title from 'components/Title';
-import Button from 'components/Button';
+// Components
 import { BaseText } from 'components/Typography';
-import TextInput from 'components/TextInput';
-import Spinner from 'components/Spinner';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
+import Button from 'components/Button';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import Modal from 'components/Modal';
+import ModalBox from 'components/ModalBox';
+import Spinner from 'components/Spinner';
+import TextInput from 'components/TextInput';
+import Title from 'components/Title';
 
-// utils
-import { fontStyles, spacing } from 'utils/variables';
+// Utils
+import { addressesEqual } from 'utils/assets';
+import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
 import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
-import { addressesEqual } from 'utils/assets';
+import { fontStyles, spacing } from 'utils/variables';
 
-import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
-
-// types
+// Types
 import type { Contact } from 'models/Contact';
 
 type Props = {|
@@ -58,156 +62,92 @@ type Props = {|
   onModalHide?: () => void,
 |};
 
+type FormData = {|
+  address: string,
+  name: string,
+|};
 
-const InputWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: ${spacing.small}px;
-`;
-
-const FieldIcon = styled(Image)`
-  width: 48px;
-  height: 48px;
-  margin-right: ${spacing.small}px;
-`;
-
-const StatusMessage = styled(BaseText)`
-  margin-top: ${spacing.large}px;
-  text-align: center;
-  ${fontStyles.small};
-`;
-
-export const LoadingSpinner = styled(Spinner)`
-  margin-top: ${spacing.large}px;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const TitleWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-`;
-
-export const QRCodeButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 0;
-  right: 0;
-`;
-
-export const QRCodeIcon = styled(Icon)`
-  color: ${({ color }) => color};
-  font-size: 20px;
-`;
-
-const ContactDetailsModal = ({
-  contact,
-  onSave,
-  title,
-  contacts,
-  showQRScanner,
-  onModalHide,
-}: Props) => {
+const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, onModalHide }: Props) => {
   const modalRef = useRef();
 
-  const [addressValue, setAddressValue] = useState(contact?.ethAddress ?? '');
-  const [nameValue, setNameValue] = useState(contact?.name ?? '');
-  const [shouldValidate, setShouldValidate] = useState(false);
-  const [error, setError] = useState();
-  const [resolvingEns, setResolvingEns] = useState(false);
-  const [hasEnsResolutionError, setHasEnsResolutionError] = useState(false);
+  const formSchema = yup.object().shape({
+    address: yup
+      .string()
+      .required(t('error.emptyAddress'))
+      .test('isValid', t('error.invalid.address'), (value) => isValidAddressOrEnsName(value))
+      .test(
+        'alreadyExists',
+        t('error.contactWithAddressExist'),
+        (value) =>
+          addressesEqual(contact?.ethAddress, value) ||
+          !contacts.some(({ ethAddress }) => addressesEqual(ethAddress, value)),
+      ),
+    name: yup
+      .string()
+      .required(t('error.emptyName'))
+      .test(
+        'alreadyExists',
+        t('error.contactWithNameExist'),
+        (value) =>
+          isCaseInsensitiveMatch(contact?.name, value) ||
+          !contacts.some(({ name }) => isCaseInsensitiveMatch(name, value)),
+      ),
+  });
 
-  const [debouncedAddressValue] = useDebounce(addressValue, 500);
+  const { control, handleSubmit, errors, watch, getValues, setValue } = useForm({
+    defaultValues: { address: contact?.ethAddress || '', name: contact?.name || '' },
+    resolver: yupResolver(formSchema),
+    mode: 'onTouched',
+  });
+
+  const [isResolvingEns, setIsResolvingEns] = useState(false);
+  const [hasEnsFailedToResolve, setHasEnsFailedToResolve] = useState(false);
+
+  const [debouncedAddress] = useDebounce(watch('address'), 500);
+
+  useEffect(() => {
+    const handleAddressChange = async () => {
+      if (isEnsName(debouncedAddress)) {
+        setIsResolvingEns(true);
+        const resolvedAddress = await resolveEnsName(debouncedAddress);
+        setIsResolvingEns(false);
+
+        setHasEnsFailedToResolve(!resolvedAddress);
+        if (resolvedAddress && !getValues('name')) {
+          setValue('name', debouncedAddress, { shouldValidate: true, shouldDirty: true });
+        }
+      } else if (isValidAddress(debouncedAddress) && !getValues('name')) {
+        setIsResolvingEns(true);
+        const ensName = await lookupAddress(debouncedAddress);
+        setIsResolvingEns(false);
+
+        setHasEnsFailedToResolve(false);
+        if (ensName && !getValues('name')) {
+          setValue('name', ensName, { shouldValidate: true, shouldDirty: true });
+        }
+      }
+    };
+    handleAddressChange();
+  }, [debouncedAddress]);
+
+  const onSubmit = async ({ address, name }: FormData) => {
+    if (hasEnsFailedToResolve) return;
+
+    modalRef.current?.close();
+    onSave({ ethAddress: address, name });
+  };
 
   const theme = useTheme();
   const colors = getThemeColors(theme);
   const { walletIcon, personIcon } = images(theme);
 
-  const getValidationError = () => {
-    if (!addressValue) return t('error.emptyAddress');
-
-    if (!isValidAddressOrEnsName(addressValue)) return t('error.invalid.address');
-
-    if (
-      !addressesEqual(contact?.ethAddress, addressValue) &&
-      contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))
-    ) {
-      return t('error.contactWithAddressExist');
-    }
-
-    if (
-      !isCaseInsensitiveMatch(contact?.name, nameValue) &&
-      contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))
-    ) {
-      return t('error.contactWithNameExist');
-    }
-
-    if (!nameValue) return t('error.emptyName');
-
-    return undefined;
+  const handleScannerRead = (address: string) => {
+    setValue('address', address, { shouldValidate: true, shouldDirty: true });
   };
 
-  const validateForm = () => {
-    const errorMessage = getValidationError();
-    setError(errorMessage);
-    setShouldValidate(true);
-    return !errorMessage;
-  };
+  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerRead} />);
 
-  useEffect(() => {
-    if (!shouldValidate) return;
-    validateForm();
-  }, [nameValue, addressValue]);
-
-  const reverseResolveEnsName = async (address: string) => {
-    if (!nameValue) return;
-
-    setResolvingEns(true);
-    const ensName = await lookupAddress(address);
-    if (ensName) {
-      setNameValue(ensName);
-    }
-    setResolvingEns(false);
-
-    validateForm();
-  };
-
-  const validateEnsName = async (ensName: string) => {
-    setResolvingEns(true);
-    const address = await resolveEnsName(ensName);
-    if (!nameValue && address) {
-      setNameValue(ensName);
-    }
-    setHasEnsResolutionError(!address);
-    setResolvingEns(false);
-  };
-
-  useEffect(() => {
-    if (isValidAddress(addressValue)) {
-      reverseResolveEnsName(addressValue);
-    } else if (isEnsName(addressValue)) {
-      validateEnsName(addressValue);
-    }
-  }, [debouncedAddressValue]);
-
-  const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
-
-  const onButtonPress = () => {
-    const isValid = validateForm();
-    if (isValid) {
-      modalRef.current?.close();
-      onSave({ ...contact, name: nameValue, ethAddress: addressValue });
-    }
-  };
-
-  const handleScannerReadResult = (address: string) => {
-    if (isValidAddressOrEnsName(address)) {
-      setAddressValue(address);
-    }
-  };
-
-  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
+  const errorMessage = errors.address?.message ?? errors.name?.message;
 
   return (
     <ModalBox ref={modalRef} onModalHide={onModalHide} showModalClose noBoxMinHeight>
@@ -222,46 +162,60 @@ const ContactDetailsModal = ({
           )}
         </TitleWrapper>
 
-        <InputWrapper>
-          <FieldIcon source={walletIcon} />
-          <TextInput
-            theme={theme}
-            inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
-            inputProps={{
-              value: addressValue,
-              onChangeText: setAddressValue,
-              placeholder: t('label.address'),
-              autoCapitalize: 'none',
-            }}
-          />
-        </InputWrapper>
+        <Controller
+          name="address"
+          control={control}
+          render={({ value, onChange, onBlur }) => (
+            <InputWrapper>
+              <FieldIcon source={walletIcon} />
+              <TextInput
+                theme={theme}
+                inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+                inputProps={{
+                  value,
+                  onChangeText: onChange,
+                  onBlur,
+                  placeholder: t('label.address'),
+                  autoCapitalize: 'none',
+                }}
+              />
+            </InputWrapper>
+          )}
+        />
 
-        <InputWrapper>
-          <FieldIcon source={personIcon} />
-          <TextInput
-            theme={theme}
-            inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
-            inputProps={{
-              value: nameValue,
-              onChangeText: setNameValue,
-              placeholder: t('label.name'),
-            }}
-          />
-        </InputWrapper>
+        <Controller
+          name="name"
+          control={control}
+          render={({ value, onChange, onBlur }) => (
+            <InputWrapper>
+              <FieldIcon source={personIcon} />
+              <TextInput
+                theme={theme}
+                inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+                inputProps={{
+                  value,
+                  onChangeText: onChange,
+                  onBlur,
+                  placeholder: t('label.name'),
+                }}
+              />
+            </InputWrapper>
+          )}
+        />
 
-        {resolvingEns && <LoadingSpinner size={25} />}
+        {isResolvingEns && <LoadingSpinner size={25} />}
 
-        {!resolvingEns && !!error && <StatusMessage danger>{error}</StatusMessage>}
+        {!!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
 
-        {!resolvingEns && hasEnsResolutionError && (
+        {hasEnsFailedToResolve && !isResolvingEns && (
           <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>
         )}
 
         <Button
+          title={isResolvingEns ? `${t('label.resolvingEnsName')}...` : t('button.save')}
+          disabled={isResolvingEns}
+          onPress={handleSubmit(onSubmit)}
           marginTop={spacing.large}
-          disabled={resolvingEns || !!error || hasEnsResolutionError}
-          onPress={onButtonPress}
-          title={buttonTitle}
         />
       </View>
     </ModalBox>
@@ -269,3 +223,45 @@ const ContactDetailsModal = ({
 };
 
 export default ContactDetailsModal;
+
+const InputWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${spacing.small}px;
+`;
+
+const FieldIcon = styled(Image)`
+  width: 48px;
+  height: 48px;
+  margin-right: ${spacing.small}px;
+`;
+
+const StatusMessage = styled(BaseText)`
+  ${fontStyles.small};
+  margin-top: ${spacing.large}px;
+  text-align: center;
+`;
+
+const LoadingSpinner = styled(Spinner)`
+  margin-top: ${spacing.large}px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const TitleWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const QRCodeButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const QRCodeIcon = styled(Icon)`
+  color: ${({ color }) => color};
+  font-size: 20px;
+`;
