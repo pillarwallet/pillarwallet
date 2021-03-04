@@ -117,9 +117,7 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
       <ProfileImage
         userName={ensName || address}
         diameter={16}
-        noShadow
         borderWidth={0}
-        initialsSize={10}
       />
       <Spacing w={8} />
       <BaseText regular>{ensName || address}</BaseText>

@@ -1487,7 +1487,6 @@ export class EventDetail extends React.Component<Props> {
         <ProfileImage
           userName={label}
           diameter={64}
-          textStyle={{ fontSize: fontSizes.big }}
           cornerIcon={cornerIcon}
           cornerIconSize={22}
         />

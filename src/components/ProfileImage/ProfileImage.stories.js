@@ -44,9 +44,9 @@ storiesOf('ProfileImage', module)
       cornerIconSize={16}
     />
   ))
-  .add('just initials', () => (
+  .add('identicon', () => (
     <ProfileImage userName="Username" />
   ))
-  .add('custom diameter', () => (
-    <ProfileImage userName="Username" diameter={64} initialsSize={26} />
+  .add('identicon with custom diameter', () => (
+    <ProfileImage userName="Username" diameter={64} />
   ));

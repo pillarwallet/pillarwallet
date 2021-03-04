@@ -435,7 +435,6 @@ const ItemImage = (props: Props) => {
       uri={updatedUserImageUrl}
       userName={label}
       diameter={diameter || 52}
-      textStyle={{ fontSize: fontSizes.big }}
       fallbackImage={fallbackSource}
       cornerIcon={cornerIcon}
       cornerIconSize={16}
@@ -474,7 +473,6 @@ const ImageAddon = (props: Props) => {
         userName={imageAddonName}
         diameter={22}
         borderWidth={2}
-        initialsSize={fontSizes.small}
       />
     </ImageAddonHolder>
   );
