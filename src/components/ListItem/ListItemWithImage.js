@@ -435,7 +435,6 @@ const ItemImage = (props: Props) => {
       uri={updatedUserImageUrl}
       userName={label}
       diameter={diameter || 52}
-      textStyle={{ fontSize: fontSizes.big }}
       fallbackImage={fallbackSource}
       cornerIcon={cornerIcon}
       cornerIconSize={16}

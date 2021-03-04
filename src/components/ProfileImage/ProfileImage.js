@@ -69,7 +69,7 @@ const CornerIcon = styled(Image)`
   right: 0;
 `;
 
-export type ProfileImageProps = {
+export type ProfileImageProps = {|
   uri?: ?string,
   userName?: ?string,
   containerStyle?: Object,
@@ -83,7 +83,7 @@ export type ProfileImageProps = {
   fallbackImage?: string,
   cornerIcon?: Object,
   cornerIconSize?: number,
-};
+|};
 
 const CACHED_IMAGE_REF = 'cachedImage';
 const IMAGE_LOAD_FAILED = 'image_load_failed';

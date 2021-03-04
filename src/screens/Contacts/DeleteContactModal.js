@@ -68,7 +68,6 @@ const DeleteContactModal = ({ contact }: Props) => {
         <ProfileImage
           userName={contact.name}
           diameter={64}
-          noShadow
           borderWidth={0}
         />
         <BaseText

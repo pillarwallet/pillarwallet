@@ -39,7 +39,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
 import CollectiblesList from 'components/CollectiblesList';
 
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
@@ -270,7 +270,6 @@ class SelectorOptions extends React.Component<Props, State> {
             uri={imageUrl}
             userName={name}
             diameter={DIAMETER}
-            textStyle={{ fontSize: fontSizes.medium }}
             fallbackImage={genericToken}
           />
           }

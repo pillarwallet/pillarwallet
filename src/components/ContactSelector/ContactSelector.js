@@ -117,7 +117,7 @@ const ContactSelector = ({
 
     return (
       <SelectedOption>
-        <ProfileImage userName={name} diameter={16} noShadow borderWidth={0} />
+        <ProfileImage userName={name} diameter={16} borderWidth={0} />
         <Spacing w={8} />
         <MediumText medium>{name}</MediumText>
       </SelectedOption>
