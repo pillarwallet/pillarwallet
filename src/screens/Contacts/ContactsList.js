@@ -19,6 +19,7 @@
 */
 import React, { useCallback } from 'react';
 import { FlatList } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 import { useSelector, useDispatch } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { useTheme } from 'styled-components/native';
@@ -37,6 +38,8 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
 import SwipeoutButton from 'components/SwipeoutButton';
 
+import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+
 // utils
 import { getThemeColors } from 'utils/themes';
 
@@ -52,6 +55,8 @@ const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 const ContactsList = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(({ contacts: { data } }: RootReducerState) => data);
+
+  const navigation = useNavigation();
 
   const theme = useTheme();
   const colors = getThemeColors(theme);
@@ -113,6 +118,11 @@ const ContactsList = () => {
       title: t('button.inviteFriend'),
       iconName: 'plus',
       onPress: () => dispatch(goToInvitationFlowAction()),
+    },
+    !!contacts.length && {
+      title: t('button.send'),
+      iconName: 'paperPlane',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW),
     },
   ];
 
