@@ -26,14 +26,16 @@ import t from 'translations/translate';
 
 // actions
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // components
+import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import ContactDetailsModal from 'components/ContactDetailsModal';
-import SwipeoutButton from 'components/SwipeoutButton';
 import Modal from 'components/Modal';
+import SwipeoutButton from 'components/SwipeoutButton';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -101,12 +103,23 @@ const ContactsList = () => {
     );
   };
 
+  const buttons = [
+    {
+      title: t('button.addContact'),
+      iconName: 'add-contact',
+      onPress: () => openContactDetails(null),
+    },
+    {
+      title: t('button.inviteFriend'),
+      iconName: 'plus',
+      onPress: () => dispatch(goToInvitationFlowAction()),
+    },
+  ];
+
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('title.addressBook') }],
-        rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => openContactDetails(null) }],
-        sideFlex: 2,
       }}
     >
       <FlatList
@@ -115,13 +128,10 @@ const ContactsList = () => {
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!contacts.length && emptyStyle}
-        ListEmptyComponent={
-          <EmptyStateParagraph
-            title={t('label.noContacts')}
-            bodyText={t('paragraph.addContacts')}
-          />
-        }
+        ListEmptyComponent={<EmptyStateParagraph title={t('label.noContacts')} bodyText={t('paragraph.addContacts')} />}
       />
+
+      <FloatingButtons items={buttons} />
     </ContainerWithHeader>
   );
 };
