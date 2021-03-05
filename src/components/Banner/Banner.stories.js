@@ -28,12 +28,11 @@ const referralImage = require('assets/images/referral_gift.png');
 storiesOf('Banner', module)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <Banner bannerText="Banner text that takes up at least two lines" isVisible />
+    <Banner bannerText="Banner text that takes up at least two lines" />
   ))
   .add('with image', () => (
     <Banner
       bannerText="Banner text that takes up at least two lines"
-      isVisible
       imageProps={{
         style: {
           width: 96,

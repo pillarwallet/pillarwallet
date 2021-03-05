@@ -33,6 +33,7 @@ import { addContactAction, updateContactAction } from 'actions/contactsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
+import Banner from 'components/Banner';
 import Button from 'components/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -59,6 +60,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 // Partials
 import DeleteContactModal from './DeleteContactModal';
 
+const referralImage = require('assets/images/referral_gift.png');
 
 const ContactsList = () => {
   const [query, setQuery] = React.useState('');
@@ -132,6 +134,26 @@ const ContactsList = () => {
     );
   };
 
+  const renderBanner = () => {
+    if (!contacts.length) return null;
+
+    return (
+      <Banner
+        onPress={() => dispatch(goToInvitationFlowAction())}
+        bannerText={t('referralsContent.label.inviteFriends')}
+        imageProps={{
+          style: {
+            width: 96,
+            height: 60,
+            marginRight: -4,
+            marginTop: 15,
+          },
+          source: referralImage,
+        }}
+      />
+    );
+  };
+
   const buttons = [
     {
       title: t('button.addContact'),
@@ -202,6 +224,7 @@ const ContactsList = () => {
         keyExtractor={({ ethAddress }) => ethAddress}
         renderItem={renderItem}
         initialNumToRender={9}
+        ListHeaderComponent={renderBanner}
         ListEmptyComponent={renderEmptyState}
         contentContainerStyle={styles.flatListContantContainer}
       />
