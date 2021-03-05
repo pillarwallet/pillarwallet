@@ -116,7 +116,7 @@ const ProfileImage = (props: ProfileImageProps) => {
       <React.Fragment>
         {children && <InnerBackground>{children}</InnerBackground>}
 
-        {!children && userName && (
+        {!children && !!userName && (
           <CircleImage
             source={{ uri: getIdenticonImageUrl(userName, diameter) }}
             diameter={diameter}
