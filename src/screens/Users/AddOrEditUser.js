@@ -586,7 +586,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                       uri={profileImage}
                       userName={username || ''}
                       diameter={96}
-                      initialsSize={36}
                     />
                   </ImageWrapper>
                 </TouchableOpacity>

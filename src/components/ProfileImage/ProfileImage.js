@@ -20,12 +20,13 @@
 import * as React from 'react';
 import { ImageBackground } from 'react-native';
 import styled, { css } from 'styled-components/native';
-import { fontSizes } from 'utils/variables';
-import { getInitials } from 'utils/accounts';
-import { getColorByTheme } from 'utils/themes';
-import Image from 'components/Image';
-import { MediumText } from 'components/Typography';
 
+// Components
+import Image from 'components/Image';
+
+// Utils
+import { getIdenticonImageUrl } from 'utils/images';
+import { getColorByTheme } from 'utils/themes';
 
 const CircleImage = styled(Image)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -60,11 +61,6 @@ const InnerBackground = styled.View`
   align-items: center;
 `;
 
-const InnerUsername = styled(MediumText)`
-  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
-  color: ${getColorByTheme({ lightCustom: '#6690eb', darkKey: 'primaryAccent240' })};
-`;
-
 const CornerIcon = styled(Image)`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
@@ -73,7 +69,7 @@ const CornerIcon = styled(Image)`
   right: 0;
 `;
 
-export type ProfileImageProps = {
+export type ProfileImageProps = {|
   uri?: ?string,
   userName?: ?string,
   containerStyle?: Object,
@@ -84,33 +80,10 @@ export type ProfileImageProps = {
   borderColor?: string,
   style?: Object,
   children?: React.Node,
-  initialsSize?: number,
   fallbackImage?: string,
   cornerIcon?: Object,
   cornerIconSize?: number,
-};
-
-const DefaultPicture = (props: { userName?: ?string, innerComponent?: React.Node, initialsSize?: number }) => {
-  const { userName, innerComponent, initialsSize } = props;
-  const initials = userName && getInitials(userName);
-
-  return (
-    <React.Fragment>
-      {innerComponent &&
-      <InnerBackground>
-        {innerComponent}
-      </InnerBackground>
-      }
-      {userName && !innerComponent &&
-      <InnerBackground>
-        <InnerUsername initialsSize={initialsSize}>
-          {initials}
-        </InnerUsername>
-      </InnerBackground>
-      }
-    </React.Fragment>
-  );
-};
+|};
 
 const CACHED_IMAGE_REF = 'cachedImage';
 const IMAGE_LOAD_FAILED = 'image_load_failed';
@@ -127,7 +100,6 @@ const ProfileImage = (props: ProfileImageProps) => {
     borderWidth = 0,
     children,
     userName,
-    initialsSize,
     fallbackImage,
     cornerIcon,
     cornerIconSize = 22,
@@ -139,13 +111,28 @@ const ProfileImage = (props: ProfileImageProps) => {
     if (fallbackImage) {
       return (<CircleImage source={fallbackImage} diameter={diameter} />);
     }
-    return (<DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />);
+
+    return (
+      <React.Fragment>
+        {children && <InnerBackground>{children}</InnerBackground>}
+
+        {!children && !!userName && (
+          <CircleImage
+            source={{ uri: getIdenticonImageUrl(userName, diameter) }}
+            diameter={diameter}
+            additionalImageStyle={imageStyle}
+            fallbackSource={IMAGE_LOAD_FAILED}
+          />
+        )}
+      </React.Fragment>
+    );
   };
 
   const renderImage = (data: Object) => {
     if (data.source === IMAGE_LOAD_FAILED) {
       return renderDefaultImage();
     }
+
     return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
   };
 
@@ -165,7 +152,6 @@ const ProfileImage = (props: ProfileImageProps) => {
       {!uri && renderDefaultImage()}
       {!!uri &&
       <CircleImage
-        useQueryParamsInCacheKey
         additionalImageStyle={imageStyle}
         diameter={diameter}
         renderImage={renderImage}
