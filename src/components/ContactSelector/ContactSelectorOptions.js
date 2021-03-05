@@ -143,13 +143,9 @@ const ContactSelectorOptions = ({
     return null;
   };
 
-  const handleScannerRead = (address: string) => {
-    handleInputChange(address);
-  };
-
   const openScanner = () => {
     Keyboard.dismiss();
-    Modal.open(() => <AddressScanner onRead={handleScannerRead} />);
+    Modal.open(() => <AddressScanner onRead={handleInputChange} />);
   };
 
   const renderItem = (item: Contact) => {
