@@ -296,12 +296,12 @@ const LiquidityPoolDashboard = ({
             {balance > 0 ? (
               <ButtonsRow>
                 <CircleButton
-                  label={t('liquidityPoolsContent.button.addLiquidity')}
+                  label={t('liquidityPoolsContent.button.addLiquidityWrapped')}
                   fontIcon="plus"
                   onPress={onAddLiquidity}
                 />
                 <CircleButton
-                  label={t('liquidityPoolsContent.button.removeLiquidity')}
+                  label={t('liquidityPoolsContent.button.removeLiquidityWrapped')}
                   fontIcon="up-arrow"
                   onPress={onRemoveLiquidity}
                 />
