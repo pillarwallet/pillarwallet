@@ -116,12 +116,16 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
         if (resolvedAddress && !getValues('name')) {
           setValue('name', debouncedAddress, { shouldValidate: true, shouldDirty: true });
         }
-      } else if (isValidAddress(debouncedAddress) && !getValues('name')) {
+        return;
+      }
+
+      setHasEnsFailedToResolve(false);
+
+      if (isValidAddress(debouncedAddress) && !getValues('name')) {
         setIsResolvingEns(true);
         const ensName = await lookupAddress(debouncedAddress);
         setIsResolvingEns(false);
 
-        setHasEnsFailedToResolve(false);
         if (ensName && !getValues('name')) {
           setValue('name', ensName, { shouldValidate: true, shouldDirty: true });
         }
