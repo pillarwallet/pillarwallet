@@ -1625,11 +1625,11 @@
 
   "alert": {
     "deleteContact": {
-      "title": "Delete {{contactName}}",
-      "message": "Are you sure you would like to delete this contact?",
+      "title": "Delete address",
+      "message": "Are you sure you would like to remove {{name}} from address book?",
       "button": {
         "cancel": "Cancel",
-        "ok": "Yes, delete"
+        "ok": "Confirm"
       }
     },
     "hideAsset": {

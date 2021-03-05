@@ -17,67 +17,64 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable no-unused-expressions */
 
 import React, { useRef } from 'react';
+import { SafeAreaView } from 'react-navigation';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import { SafeAreaView } from 'react-navigation';
 import t from 'translations/translate';
 
-import SlideModal from 'components/Modals/SlideModal';
-import ProfileImage from 'components/ProfileImage';
-import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
-import { BaseText, MediumText } from 'components/Typography';
-
-import { spacing } from 'utils/variables';
+// Actions
 import { deleteContactAction } from 'actions/contactsActions';
 
+// Components
+import { Spacing } from 'components/Layout';
+import { BaseText, MediumText } from 'components/Typography';
+import Button from 'components/Button';
+import SlideModal from 'components/Modals/SlideModal';
+import ProfileImage from 'components/ProfileImage';
+
+// Utils
+import { spacing } from 'utils/variables';
+
+// Types
 import type { Contact } from 'models/Contact';
 
 type Props = {|
   contact: Contact;
 |};
 
-const ContentWrapper = styled(SafeAreaView)`
-  width: 100%;
-  padding-bottom: 40px;
-  align-items: center;
-`;
-
 const DeleteContactModal = ({ contact }: Props) => {
   const modalRef = useRef();
+
   const dispatch = useDispatch();
 
   const close = () => {
-    if (modalRef.current) modalRef.current.close();
+    modalRef.current?.close();
   };
 
   return (
-    <SlideModal
-      ref={modalRef}
-      noClose
-      hideHeader
-    >
+    <SlideModal ref={modalRef} noClose hideHeader>
       <ContentWrapper>
-        <Spacing h={spacing.large * 2} />
+        <Spacing h={spacing.large} />
+
         <MediumText medium negative>
-          {t('alert.deleteContact.title', { contactName: contact.name })}
+          {t('alert.deleteContact.title')}
         </MediumText>
+
         <Spacing h={spacing.large} />
-        <ProfileImage
-          userName={contact.name}
-          diameter={64}
-          borderWidth={0}
-        />
-        <BaseText
-          style={{ padding: spacing.large }}
-          medium
-          center
-        >
-          {t('alert.deleteContact.message')}
+
+        <ProfileImage userName={contact.name} diameter={64} borderWidth={0} />
+
+        <Spacing h={spacing.large} />
+
+        <BaseText center secondary>
+          {t('alert.deleteContact.message', { name: contact.name })}
         </BaseText>
-        <Spacing h={spacing.large} />
+
+        <Spacing h={spacing.extraLarge} />
+
         <Button
           title={t('alert.deleteContact.button.ok')}
           onPress={() => {
@@ -87,15 +84,19 @@ const DeleteContactModal = ({ contact }: Props) => {
           block
           danger
         />
+
         <Spacing h={4} />
-        <Button
-          onPress={close}
-          title={t('alert.deleteContact.button.cancel')}
-          transparent
-        />
+
+        <Button onPress={close} title={t('alert.deleteContact.button.cancel')} transparent />
       </ContentWrapper>
     </SlideModal>
   );
 };
 
 export default DeleteContactModal;
+
+const ContentWrapper = styled(SafeAreaView)`
+  width: 100%;
+  padding-bottom: 40px;
+  align-items: center;
+`;

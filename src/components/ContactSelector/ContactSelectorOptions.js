@@ -288,5 +288,5 @@ const SearchBarWrapper = styled.View`
 
 const ActionButtonsContainer = styled.View`
   padding-horizontal: ${spacing.large}px;
-  padding-bottom: ${spacing.extraLarge}px;
+  padding-bottom: ${spacing.largePlus}px;
 `;

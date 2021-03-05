@@ -86,7 +86,7 @@ const Container = styled.View`
 
 const ItemView = styled.TouchableOpacity`
   align-items: center;
-  padding-horizontal: ${spacing.extraLarge / 2}px;
+  padding-horizontal: ${spacing.largePlus / 2}px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
 `;
@@ -95,7 +95,7 @@ const ItemIconWrapper = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  margin-horizontal: ${spacing.extraLarge}px;
+  margin-horizontal: ${spacing.largePlus}px;
 `;
 
 const ItemIcon = styled(Icon)`
