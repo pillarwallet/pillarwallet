@@ -98,7 +98,8 @@ const ContactsList = () => {
 
   const handleChangeQuery = (value: string) => {
     setQuery(value);
-    setCustomAddressContact(isValidAddressOrEnsName(value) ? { ethAddress: value, name: '' } : null);
+    const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
+    setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
   };
 
   const handlePaste = async () => {

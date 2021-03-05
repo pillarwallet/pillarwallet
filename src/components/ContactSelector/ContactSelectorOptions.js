@@ -99,8 +99,8 @@ const ContactSelectorOptions = ({
     setQuery(input);
 
     if (allowCustomAddress) {
-      const isValid = isValidAddressOrEnsName(input);
-      setCustomAddressContact(isValid ? { ethAddress: input, name: input } : null);
+      const isValid = isValidAddressOrEnsName(input) && !filterContacts(contacts, input).length;
+      setCustomAddressContact(isValid ? { ethAddress: input, name: '' } : null);
     }
   };
 
@@ -149,7 +149,7 @@ const ContactSelectorOptions = ({
   };
 
   const renderItem = (item: Contact) => {
-    return <ListItemWithImage label={item.name} onPress={() => selectValue(item)} />;
+    return <ListItemWithImage label={item.name || item.ensName || item.ethAddress} onPress={() => selectValue(item)} />;
   };
 
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
