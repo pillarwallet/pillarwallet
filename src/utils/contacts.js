@@ -111,9 +111,21 @@ const isMatchingContact = (contact: Contact, query: ?string) => {
     || contact.ensName?.toUpperCase().includes(query.toUpperCase());
 };
 
-// filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
+const isExactMatch = (contact: Contact, query: ?string) => {
+  if (!query) return false;
+
+  return (
+    contact.name.toUpperCase() === query.toUpperCase() ||
+    contact.ethAddress.toUpperCase() === query.toUpperCase() ||
+    contact.ensName?.toUpperCase() === query.toUpperCase()
+  );
+};
+
+// Filter by query and put exact matches at the beginning of the list.
 export const filterContacts = (contacts: Contact[], query: ?string): Contact[] => {
   if (!query) return contacts;
 
-  return contacts.filter((contact) => isMatchingContact(contact, query));
+  return contacts
+    .filter((contact) => isMatchingContact(contact, query))
+    .sort((contact) => isExactMatch(contact, query) ? 0 : 1);
 };

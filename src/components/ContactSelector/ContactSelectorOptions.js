@@ -49,7 +49,7 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { addressesEqual } from 'utils/assets';
-import { getMatchingSortedData } from 'utils/textInput';
+import { filterContacts } from 'utils/contacts';
 import { getThemeColors } from 'utils/themes';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { spacing } from 'utils/variables';
@@ -153,7 +153,7 @@ const ContactSelectorOptions = ({
   };
 
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-  const filteredContacts: Contact[] = isSearching ? getMatchingSortedData(contacts, query) : contacts;
+  const filteredContacts: Contact[] = isSearching ? filterContacts(contacts, query) : contacts;
 
   const renderEmptyStateIfNeeded = () => {
     if (filteredContacts?.length || customAddressContact) return null;
