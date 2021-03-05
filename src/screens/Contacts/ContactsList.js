@@ -49,6 +49,7 @@ import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 // Utils
 import { filterContacts } from 'utils/contacts';
 import { getThemeColors } from 'utils/themes';
+import { isValidAddressOrEnsName } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -61,6 +62,7 @@ import DeleteContactModal from './DeleteContactModal';
 
 const ContactsList = () => {
   const [query, setQuery] = React.useState('');
+  const [customAddressContact, setCustomAddressContact] = React.useState(null);
 
   const dispatch = useDispatch();
   const contacts = useSelector(({ contacts: { data } }: RootReducerState) => data);
@@ -70,21 +72,32 @@ const ContactsList = () => {
   const theme = useTheme();
   const colors = getThemeColors(theme);
 
-  const openContactDetails = (contact: ?Contact) => Modal.open(() => (
-    <ContactDetailsModal
-      title={contact === null ? t('title.addNewContact') : t('title.editContact')}
-      contact={contact}
-      contacts={contacts}
-      onSave={(newContact: Contact) => {
-        dispatch(contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact));
-      }}
-      showQRScanner
-    />
-  ));
+  const openContactDetails = (contact: ?Contact) => Modal.open(() => {
+    const isEdit = !!contact?.name;
+
+    return (
+      <ContactDetailsModal
+        title={isEdit ? t('title.editContact') : t('title.addNewContact')}
+        contact={contact}
+        contacts={contacts}
+        onSave={(newContact: Contact) => {
+          dispatch(
+            isEdit && contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact),
+          );
+        }}
+        showQRScanner
+      />
+    );
+  });
 
   const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
     <DeleteContactModal contact={contact} />
   ));
+
+  const handleChangeQuery = (value: string) => {
+    setQuery(value);
+    setCustomAddressContact(isValidAddressOrEnsName(value) ? { ethAddress: value, name: '' } : null);
+  };
 
   const handlePaste = async () => {
     const clipboardValue = await Clipboard.getString();
@@ -139,14 +152,21 @@ const ContactsList = () => {
 
   const filteredContacts = filterContacts(contacts, query);
 
+  let items: Contact[] = [];
+  if (filteredContacts.length) {
+    items = [...filteredContacts];
+  } else if (customAddressContact) {
+    items = [customAddressContact];
+  }
+
   const renderEmptyState = () => {
-    return contacts ? (
+    return !query ? (
       <EmptyStateWrapper>
         <EmptyStateParagraph title={t('label.noContacts')} bodyText={t('paragraph.addContacts')} />
       </EmptyStateWrapper>
     ) : (
       <EmptyStateWrapper>
-        <EmptyStateParagraph title={t('label.nothingFound')} />
+        <EmptyStateParagraph title={t('error.invalid.address')} />
       </EmptyStateWrapper>
     );
   };
@@ -159,28 +179,26 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      {contacts.length ? (
-        <SearchContainer>
-          <SearchBarWrapper>
-            <SearchBar
-              inputProps={{
-                value: query,
-                onChange: setQuery,
-                autoCapitalize: 'none',
-              }}
-              placeholder={t('label.walletAddressEnsUser')}
-              noClose
-              marginBottom="0"
-              iconProps={{ persistIconOnFocus: true }}
-            />
-          </SearchBarWrapper>
+      <SearchContainer>
+        <SearchBarWrapper>
+          <SearchBar
+            inputProps={{
+              value: query,
+              onChange: handleChangeQuery,
+              autoCapitalize: 'none',
+            }}
+            placeholder={t('label.walletAddressEnsUser')}
+            noClose
+            marginBottom="0"
+            iconProps={{ persistIconOnFocus: true }}
+          />
+        </SearchBarWrapper>
 
-          <Button onPress={handlePaste} title={t('button.paste')} transparent small />
-        </SearchContainer>
-      ) : null}
+        <Button onPress={handlePaste} title={t('button.paste')} transparent small />
+      </SearchContainer>
 
       <FlatList
-        data={filteredContacts}
+        data={items}
         keyExtractor={({ ethAddress }) => ethAddress}
         renderItem={renderItem}
         initialNumToRender={9}
@@ -188,7 +206,13 @@ const ContactsList = () => {
         contentContainerStyle={styles.flatListContantContainer}
       />
 
-      <FloatingButtons items={buttons} />
+      {!customAddressContact && <FloatingButtons items={buttons} />}
+
+      {customAddressContact && (
+        <ActionButtonsContainer>
+          <Button title={t('button.addToAddressBook')} onPress={() => openContactDetails(customAddressContact)} />
+        </ActionButtonsContainer>
+      )}
     </ContainerWithHeader>
   );
 };
@@ -217,4 +241,9 @@ const EmptyStateWrapper = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+`;
+
+const ActionButtonsContainer = styled.View`
+  padding-horizontal: ${spacing.large}px;
+  padding-bottom: ${spacing.extraLarge}px;
 `;
