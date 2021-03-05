@@ -56,7 +56,7 @@ import {
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
-import { images } from 'utils/images';
+import { images, getImageUrl } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -275,7 +275,7 @@ const LiquidityPoolDashboard = ({
       >
         <MainContainter>
           <AssetIcon
-            source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }}
+            source={{ uri: getImageUrl(pool.iconUrl, 3) }}
             defaultSource={genericToken}
             fallback
           />
