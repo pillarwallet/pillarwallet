@@ -25,6 +25,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
+import { Replies as InstabugReplies } from 'instabug-reactnative';
 
 // constants
 import {
@@ -122,6 +123,7 @@ export const updateFcmTokenAction = (walletId: string) => {
 
       return null;
     });
+    InstabugReplies.setPushNotificationRegistrationTokenAndroid(fcmToken);
     await api.updateFCMToken(walletId, fcmToken);
   };
 };

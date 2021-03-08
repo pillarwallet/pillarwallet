@@ -22,6 +22,7 @@ import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+import { Replies as InstabugReplies } from 'instabug-reactnative';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
@@ -124,7 +125,10 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
         return null;
       });
 
-      if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+      if (fcmToken) {
+        await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+        InstabugReplies.setPushNotificationRegistrationTokenAndroid(fcmToken);
+      }
 
       const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
 
