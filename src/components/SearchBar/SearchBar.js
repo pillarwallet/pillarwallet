@@ -41,8 +41,7 @@ import SearchInput, { type CommonComponentsProps } from './SearchInput';
 type Props = {|
   ...CommonComponentsProps,
   marginTop?: number,
-  marginBottom?: number | string, // if '0'
-  customCloseAction?: Function,
+  marginBottom?: number,
   forceShowCloseButton?: boolean,
   theme: Theme,
   noClose?: boolean,
@@ -187,7 +186,6 @@ class SearchBar extends React.Component<Props, State> {
       marginTop,
       marginBottom,
       inputRef,
-      customCloseAction,
       forceShowCloseButton,
       theme,
       noClose,
@@ -201,6 +199,7 @@ class SearchBar extends React.Component<Props, State> {
       lightKey: 'basic060',
       darkKey: 'basic080',
     });
+
     const borderColor = getBorderColor({
       isFocused,
       error: !!errorMessage,
@@ -246,7 +245,7 @@ class SearchBar extends React.Component<Props, State> {
             <SearchInput {...customInputProps} />
           </Animated.View>
           {(isFocused || !!value || forceShowCloseButton) && (
-            <CancelButton onPress={customCloseAction || this.handleCancel}>
+            <CancelButton onPress={this.handleCancel}>
               <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
             </CancelButton>
           )}
