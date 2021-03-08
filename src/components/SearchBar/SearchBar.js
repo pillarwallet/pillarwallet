@@ -22,6 +22,7 @@
 import * as React from 'react';
 import { Animated, Dimensions, Keyboard } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
 // Components
@@ -43,8 +44,8 @@ type Props = {|
   ...CommonComponentsProps,
   marginTop?: number,
   marginBottom?: number,
-  forceShowCloseButton?: boolean,
   theme: Theme,
+  showPasteButton?: boolean;
 |};
 
 type State = {|
@@ -54,9 +55,9 @@ type State = {|
 |};
 
 const { width } = Dimensions.get('window');
-const componentWidth = width - (spacing.large * 2);
-const closeButtonWidth = 58;
-const inputShrinkSize = ((componentWidth - closeButtonWidth) * 100) / componentWidth;
+const componentWidth = width - (2 * spacing.large);
+const sideButtonWidth = 68;
+const inputShrinkSize = ((componentWidth - sideButtonWidth) * 100) / componentWidth;
 
 const getBorderColor = ({
   isFocused, error, colors, defaultColor,
@@ -70,12 +71,12 @@ class SearchBar extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { forceShowCloseButton } = props;
+    const { showPasteButton } = this.props;
     this.value = '';
 
     this.state = {
-      animShrink: new Animated.Value(forceShowCloseButton ? inputShrinkSize : 100),
-      isFocused: !!forceShowCloseButton,
+      animShrink: new Animated.Value(showPasteButton ? inputShrinkSize : 100),
+      isFocused: false,
       errorMessage: '',
     };
   }
@@ -140,6 +141,15 @@ class SearchBar extends React.Component<Props, State> {
     this.handleBlur();
   };
 
+  handlePaste = async () => {
+    this.value = await Clipboard.getString();
+
+    const { onChange } = this.props.inputProps;
+    onChange?.(this.value);
+
+    this.validateInput(this.value);
+  };
+
   animateShowButton = () => {
     Animated.timing(this.state.animShrink, {
       toValue: inputShrinkSize,
@@ -149,7 +159,8 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   animateHideButtonIfNeeded = () => {
-    if (this.value || this.props.forceShowCloseButton) return;
+    const { showPasteButton } = this.props;
+    if (this.value || showPasteButton) return;
 
     Animated.timing(this.state.animShrink, {
       toValue: 100,
@@ -171,7 +182,7 @@ class SearchBar extends React.Component<Props, State> {
       marginTop,
       marginBottom,
       inputRef,
-      forceShowCloseButton,
+      showPasteButton,
       theme,
       iconProps,
     } = this.props;
@@ -206,7 +217,7 @@ class SearchBar extends React.Component<Props, State> {
       borderColor,
     };
 
-    const showButton = forceShowCloseButton || isFocused || !!value;
+    const showCancelButton = isFocused || !!value;
 
     const animWidth = animShrink.interpolate({
       inputRange: [0, 100],
@@ -220,12 +231,19 @@ class SearchBar extends React.Component<Props, State> {
             <SearchInput {...customInputProps} iconProps={iconProps} />
           </Animated.View>
 
-          {showButton && (
-            <CancelButton onPress={this.handleCancel}>
-              <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
-            </CancelButton>
+          {showCancelButton && (
+            <SideButton onPress={this.handleCancel}>
+              <SideButtonTitle>{t('button.cancel')}</SideButtonTitle>
+            </SideButton>
+          )}
+
+          {!showCancelButton && showPasteButton && (
+            <SideButton onPress={this.handlePaste}>
+              <SideButtonTitle>{t('button.paste')}</SideButtonTitle>
+            </SideButton>
           )}
         </Row>
+
         {!!errorMessage && <Error>{errorMessage}</Error>}
       </SearchHolder>
     );
@@ -248,11 +266,17 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const CancelButton = styled.TouchableOpacity`
-  width: ${closeButtonWidth + spacing.large}px;
+const SideButton = styled.TouchableOpacity`
+  width: ${sideButtonWidth + spacing.large}px;
   align-items: flex-end;
   padding: ${spacing.small}px ${spacing.large}px;
   margin-right: -${spacing.large}px;
+`;
+const SideButtonTitle = styled(BaseText).attrs({
+  numberOfLines: 1,
+  adjustsFontSizeToFit: true,
+})`
+  color: ${({ theme }) => theme.colors.basic000};
 `;
 
 const Error = styled(BaseText)`

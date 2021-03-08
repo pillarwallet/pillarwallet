@@ -24,7 +24,6 @@ import { FlatList, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import Clipboard from '@react-native-community/clipboard';
 import Swipeout from 'react-native-swipeout';
 import t from 'translations/translate';
 
@@ -97,11 +96,6 @@ const ContactsList = () => {
     setQuery(value);
     const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
     setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
-  };
-
-  const handlePaste = async () => {
-    const clipboardValue = await Clipboard.getString();
-    setQuery(clipboardValue);
   };
 
   const renderItem = ({ item }: { item: Contact }) => {
@@ -179,24 +173,22 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      <SearchContainer>
-        <SearchBarWrapper>
-          <SearchBar
-            inputProps={{
-              value: query,
-              onChange: handleChangeQuery,
-              autoCapitalize: 'none',
-            }}
-            iconProps={{
-              persistIconOnFocus: true,
-            }}
-            placeholder={t('label.walletAddressEnsUser')}
-            marginBottom="0"
-          />
-        </SearchBarWrapper>
+      <SearchBarWrapper>
+        <SearchBar
+          inputProps={{
+            value: query,
+            onChange: handleChangeQuery,
+            autoCapitalize: 'none',
+          }}
+          iconProps={{
+            persistIconOnFocus: true,
+          }}
+          placeholder={t('label.walletAddressEnsUser')}
+          marginBottom="0"
+          showPasteButton
+        />
+      </SearchBarWrapper>
 
-        <Button onPress={handlePaste} title={t('button.paste')} transparent small />
-      </SearchContainer>
 
       <FlatList
         data={items}
@@ -227,15 +219,9 @@ const styles = {
   },
 };
 
-const SearchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-vertical: ${spacing.small}px;
-  padding-start: ${spacing.layoutSides}px;
-`;
-
 const SearchBarWrapper = styled.View`
-  flex: 1;
+  padding-vertical: ${spacing.small}px;
+  padding-horizontal: ${spacing.layoutSides}px;
 `;
 
 const EmptyStateWrapper = styled.View`
