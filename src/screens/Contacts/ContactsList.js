@@ -187,10 +187,11 @@ const ContactsList = () => {
               onChange: handleChangeQuery,
               autoCapitalize: 'none',
             }}
+            iconProps={{
+              persistIconOnFocus: true,
+            }}
             placeholder={t('label.walletAddressEnsUser')}
-            noClose
             marginBottom="0"
-            iconProps={{ persistIconOnFocus: true }}
           />
         </SearchBarWrapper>
 

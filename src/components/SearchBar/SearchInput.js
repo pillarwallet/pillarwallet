@@ -65,8 +65,8 @@ type Props = {|
   colors: ThemeColors,
   value: ?string,
   onFocus: () => void,
-  onChange: (e: SyntheticEvent<any>) => void,
   onBlur: () => void,
+  onChange: (e: SyntheticEvent<any>) => void,
   handleSubmit: () => void,
   borderColor: string,
 |};

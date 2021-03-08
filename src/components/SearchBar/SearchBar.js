@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
 import { Animated, Dimensions, Keyboard } from 'react-native';
@@ -72,6 +73,7 @@ class SearchBar extends React.Component<Props, State> {
     super(props);
     const { forceShowCloseButton } = props;
     this.value = '';
+
     this.state = {
       animShrink: new Animated.Value(forceShowCloseButton ? inputShrinkSize : 100),
       isFocused: !!forceShowCloseButton,
@@ -96,7 +98,7 @@ class SearchBar extends React.Component<Props, State> {
     this.value = e.nativeEvent.text;
 
     const { onChange } = this.props.inputProps;
-    if (onChange) onChange(this.value);
+    onChange?.(this.value);
 
     this.validateInput(this.value);
   };
@@ -116,54 +118,30 @@ class SearchBar extends React.Component<Props, State> {
     }
   };
 
+  handleFocus = () => {
+    const { onFocus } = this.props.inputProps;
+    onFocus?.();
+    this.setState({ isFocused: true });
+    this.animateShowButton();
+  };
+
   handleBlur = () => {
-    const {
-      inputProps: { onBlur },
-      forceShowCloseButton,
-    } = this.props;
-    if (forceShowCloseButton) return;
-    if (!this.value) {
-      this.hideKeyboard();
-    }
-    if (onBlur) {
-      onBlur(this.value);
-    }
-    Keyboard.dismiss();
+    const { onBlur } = this.props.inputProps;
+    this.animateHideButtonIfNeeded();
     this.setState({ isFocused: false });
+    onBlur?.();
   };
 
   handleCancel = () => {
-    const {
-      inputProps: { onChange, onBlur },
-    } = this.props;
+    const { onChange } = this.props.inputProps;
     this.value = '';
-    if (onChange) {
-      onChange(this.value);
-    }
-    this.hideKeyboard();
-    if (onBlur) {
-      onBlur(this.value);
-    }
-    this.setState({ isFocused: false });
-  };
+    onChange?.(this.value);
 
-  hideKeyboard = () => {
-    Animated.timing(this.state.animShrink, {
-      toValue: 100,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
     Keyboard.dismiss();
+    this.handleBlur();
   };
 
-  handleFocus = () => {
-    const {
-      inputProps: { onFocus },
-    } = this.props;
-    if (onFocus) {
-      onFocus();
-    }
-    this.setState({ isFocused: true });
+  animateShowButton = () => {
     Animated.timing(this.state.animShrink, {
       toValue: inputShrinkSize,
       duration: 250,
@@ -171,10 +149,18 @@ class SearchBar extends React.Component<Props, State> {
     }).start();
   };
 
+  animateHideButtonIfNeeded = () => {
+    if (this.value || this.props.forceShowCloseButton) return;
+
+    Animated.timing(this.state.animShrink, {
+      toValue: 100,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
+
   handleSubmit = () => {
-    const {
-      inputProps: { onChange, value },
-    } = this.props;
+    const { value, onChange } = this.props.inputProps;
     onChange(value);
   };
 
@@ -231,20 +217,21 @@ class SearchBar extends React.Component<Props, State> {
       );
     }
 
+    const showButton = forceShowCloseButton || isFocused || !!value;
+
+    const animWidth = animShrink.interpolate({
+      inputRange: [0, 100],
+      outputRange: (['0%', '100%']: string[]),
+    });
+
     return (
       <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
         <Row>
-          <Animated.View
-            style={{
-              width: animShrink.interpolate({
-                inputRange: [0, 1],
-                outputRange: (['0%', '1%']: string[]),
-              }),
-            }}
-          >
-            <SearchInput {...customInputProps} />
+          <Animated.View style={{ width: animWidth }}>
+            <SearchInput {...customInputProps} iconProps={iconProps} />
           </Animated.View>
-          {(isFocused || !!value || forceShowCloseButton) && (
+
+          {showButton && (
             <CancelButton onPress={this.handleCancel}>
               <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
             </CancelButton>
