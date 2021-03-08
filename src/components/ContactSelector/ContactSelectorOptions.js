@@ -231,7 +231,6 @@ const ContactSelectorOptions = ({
               }}
               inputRef={searchInputRef}
               placeholder={searchPlaceholder}
-              noClose
               marginBottom="0"
               iconProps={{ persistIconOnFocus: true }}
             />

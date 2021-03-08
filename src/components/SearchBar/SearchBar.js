@@ -45,7 +45,6 @@ type Props = {|
   marginBottom?: number,
   forceShowCloseButton?: boolean,
   theme: Theme,
-  noClose?: boolean,
 |};
 
 type State = {|
@@ -174,7 +173,6 @@ class SearchBar extends React.Component<Props, State> {
       inputRef,
       forceShowCloseButton,
       theme,
-      noClose,
       iconProps,
     } = this.props;
     const { animShrink, isFocused, errorMessage } = this.state;
@@ -207,15 +205,6 @@ class SearchBar extends React.Component<Props, State> {
       handleSubmit: this.handleSubmit,
       borderColor,
     };
-
-    if (noClose) {
-      return (
-        <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-          <SearchInput {...customInputProps} iconProps={iconProps} />
-          {!!errorMessage && <Error>{errorMessage}</Error>}
-        </SearchHolder>
-      );
-    }
 
     const showButton = forceShowCloseButton || isFocused || !!value;
 
