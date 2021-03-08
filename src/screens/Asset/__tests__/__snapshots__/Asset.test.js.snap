@@ -202,1821 +202,1802 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
       </View>
     </View>
   </View>
+  <RCTScrollView
+    automaticallyAdjustContentInsets={false}
+    contentInset={
+      Object {
+        "bottom": 0,
+      }
+    }
+    enableAutomaticScroll={true}
+    enableOnAndroid={true}
+    enableResetScrollToCoords={true}
+    extraHeight={0}
+    extraScrollHeight={0}
+    getScrollResponder={[Function]}
+    handleOnScroll={[Function]}
+    keyboardDismissMode="interactive"
+    keyboardOpeningTime={250}
+    keyboardSpace={0}
+    onScroll={[Function]}
+    refreshControl={
+      <RefreshControlMock
+        onRefresh={[Function]}
+        refreshing={false}
+      />
+    }
+    resetKeyboardSpace={[Function]}
+    scrollForExtraHeightOnAndroid={[Function]}
+    scrollIntoView={[Function]}
+    scrollToEnd={[Function]}
+    scrollToFocusedInput={[Function]}
+    scrollToPosition={[Function]}
+    showsVerticalScrollIndicator={true}
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "flex": 1,
+        "height": "100%",
+        "paddingHorizontal": 0,
+      }
+    }
+    update={[Function]}
+    viewIsInsideTabBar={false}
+  >
+    <RCTRefreshControl />
+    <View>
+      <View
+        style={
+          Array [
+            Object {
+              "height": 250,
+              "justifyContent": "center",
+              "width": "100%",
+            },
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "height": 220,
+                "width": "100%",
+              },
+            ]
+          }
+        >
+          <View
+            addShadow={false}
+            borderRadius={54}
+            diameter={108}
+            elevation={6}
+            isListed={true}
+            left={375}
+            shadowOpacity={0.15}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#FFFFFF",
+                  "borderStyle": "solid",
+                  "borderWidth": 2,
+                  "elevation": 0,
+                  "height": 108,
+                  "justifyContent": "center",
+                  "left": 375,
+                  "position": "absolute",
+                  "shadowColor": "#0A1427",
+                  "shadowOffset": Object {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0,
+                  "shadowRadius": 6,
+                  "top": 125.5,
+                  "width": 108,
+                  "zIndex": 3,
+                },
+                Object {
+                  "transform": Array [
+                    Object {
+                      "translateX": -54,
+                    },
+                    Object {
+                      "translateY": -54,
+                    },
+                  ],
+                },
+              ]
+            }
+            top={125.5}
+            zIndex={3}
+          >
+            <CMIFColorMatrixImageFilter
+              matrix={
+                Array [
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ]
+              }
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff0",
+                  },
+                  undefined,
+                ]
+              }
+            />
+          </View>
+          <View
+            addShadow={false}
+            borderRadius={35}
+            diameter={70}
+            elevation={0}
+            isListed={true}
+            left={266.2}
+            shadowOpacity={0}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#FFFFFF",
+                  "borderStyle": "solid",
+                  "borderWidth": 2,
+                  "elevation": 0,
+                  "height": 70,
+                  "justifyContent": "center",
+                  "left": 266.2,
+                  "position": "absolute",
+                  "shadowColor": "#0A1427",
+                  "shadowOffset": Object {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0,
+                  "shadowRadius": 6,
+                  "top": 65.5,
+                  "width": 70,
+                  "zIndex": 1,
+                },
+                Object {
+                  "transform": Array [
+                    Object {
+                      "translateX": -35,
+                    },
+                    Object {
+                      "translateY": -35,
+                    },
+                  ],
+                },
+              ]
+            }
+            top={65.5}
+            zIndex={1}
+          >
+            <CMIFColorMatrixImageFilter
+              matrix={
+                Array [
+                  0.6065,
+                  0.3575,
+                  0.036,
+                  0,
+                  0,
+                  0.1065,
+                  0.8574999999999999,
+                  0.036,
+                  0,
+                  0,
+                  0.1065,
+                  0.3575,
+                  0.536,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ]
+              }
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff0",
+                  },
+                  undefined,
+                ]
+              }
+            />
+          </View>
+          <View
+            addShadow={false}
+            borderRadius={45}
+            diameter={90}
+            elevation={4}
+            isListed={true}
+            left={310.33333333333337}
+            shadowOpacity={0.05}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#FFFFFF",
+                  "borderStyle": "solid",
+                  "borderWidth": 2,
+                  "elevation": 0,
+                  "height": 90,
+                  "justifyContent": "center",
+                  "left": 310.33333333333337,
+                  "position": "absolute",
+                  "shadowColor": "#0A1427",
+                  "shadowOffset": Object {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0,
+                  "shadowRadius": 6,
+                  "top": 104.5,
+                  "width": 90,
+                  "zIndex": 2,
+                },
+                Object {
+                  "transform": Array [
+                    Object {
+                      "translateX": -45,
+                    },
+                    Object {
+                      "translateY": -45,
+                    },
+                  ],
+                },
+              ]
+            }
+            top={104.5}
+            zIndex={2}
+          >
+            <CMIFColorMatrixImageFilter
+              matrix={
+                Array [
+                  0.7638999999999999,
+                  0.21450000000000002,
+                  0.0216,
+                  0,
+                  0,
+                  0.06390000000000001,
+                  0.9145,
+                  0.0216,
+                  0,
+                  0,
+                  0.06390000000000001,
+                  0.21450000000000002,
+                  0.7215999999999999,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ]
+              }
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff0",
+                  },
+                  undefined,
+                ]
+              }
+            />
+          </View>
+          <View
+            addShadow={false}
+            borderRadius={45}
+            diameter={90}
+            elevation={4}
+            isListed={true}
+            left={439.66666666666663}
+            shadowOpacity={0.05}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#FFFFFF",
+                  "borderStyle": "solid",
+                  "borderWidth": 2,
+                  "elevation": 0,
+                  "height": 90,
+                  "justifyContent": "center",
+                  "left": 439.66666666666663,
+                  "position": "absolute",
+                  "shadowColor": "#0A1427",
+                  "shadowOffset": Object {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0,
+                  "shadowRadius": 6,
+                  "top": 104.5,
+                  "width": 90,
+                  "zIndex": 2,
+                },
+                Object {
+                  "transform": Array [
+                    Object {
+                      "translateX": -45,
+                    },
+                    Object {
+                      "translateY": -45,
+                    },
+                  ],
+                },
+              ]
+            }
+            top={104.5}
+            zIndex={2}
+          >
+            <CMIFColorMatrixImageFilter
+              matrix={
+                Array [
+                  0.7638999999999999,
+                  0.21450000000000002,
+                  0.0216,
+                  0,
+                  0,
+                  0.06390000000000001,
+                  0.9145,
+                  0.0216,
+                  0,
+                  0,
+                  0.06390000000000001,
+                  0.21450000000000002,
+                  0.7215999999999999,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ]
+              }
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff0",
+                  },
+                  undefined,
+                ]
+              }
+            />
+          </View>
+          <View
+            addShadow={false}
+            borderRadius={35}
+            diameter={70}
+            elevation={0}
+            isListed={true}
+            left={483.8}
+            shadowOpacity={0}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderColor": "#FFFFFF",
+                  "borderStyle": "solid",
+                  "borderWidth": 2,
+                  "elevation": 0,
+                  "height": 70,
+                  "justifyContent": "center",
+                  "left": 483.8,
+                  "position": "absolute",
+                  "shadowColor": "#0A1427",
+                  "shadowOffset": Object {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0,
+                  "shadowRadius": 6,
+                  "top": 65.5,
+                  "width": 70,
+                  "zIndex": 1,
+                },
+                Object {
+                  "transform": Array [
+                    Object {
+                      "translateX": -35,
+                    },
+                    Object {
+                      "translateY": -35,
+                    },
+                  ],
+                },
+              ]
+            }
+            top={65.5}
+            zIndex={1}
+          >
+            <CMIFColorMatrixImageFilter
+              matrix={
+                Array [
+                  0.6065,
+                  0.3575,
+                  0.036,
+                  0,
+                  0,
+                  0.1065,
+                  0.8574999999999999,
+                  0.036,
+                  0,
+                  0,
+                  0.1065,
+                  0.3575,
+                  0.536,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ]
+              }
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff0",
+                  },
+                  undefined,
+                ]
+              }
+            />
+          </View>
+        </View>
+      </View>
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "justifyContent": "center",
+              "marginBottom": 20,
+              "marginLeft": 20,
+              "marginRight": 20,
+              "marginTop": 0,
+              "paddingBottom": 8,
+            },
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+              },
+            ]
+          }
+        >
+          <Text
+            isSynthetic={false}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "fontSize": 36,
+                  "lineHeight": 54,
+                  "textAlign": "center",
+                  "textAlignVertical": "center",
+                },
+              ]
+            }
+          >
+            tokenValue
+          </Text>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "row",
+              },
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 12,
+                  "lineHeight": 18,
+                  "textAlign": "center",
+                  "textAlignVertical": "center",
+                },
+              ]
+            }
+          >
+            £ 0
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          Array [
+            Object {
+              "borderBottomWidth": 1,
+              "borderColor": "#EBF0F6",
+              "borderTopWidth": 1,
+              "flexBasis": 0,
+              "flexGrow": 1,
+              "flexShrink": 1,
+              "justifyContent": "flex-start",
+              "marginTop": 4,
+              "paddingBottom": 30,
+              "paddingTop": 10,
+            },
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "marginBottom": 0,
+                "marginLeft": 0,
+                "marginRight": 0,
+                "marginTop": 0,
+                "paddingBottom": 0,
+                "paddingLeft": 10,
+                "paddingRight": 10,
+                "paddingTop": 0,
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "marginBottom": 16,
+                "marginLeft": "5%",
+                "marginRight": "5%",
+                "marginTop": 16,
+                "opacity": 1,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "position": "relative",
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "position": "relative",
+                    },
+                    Object {
+                      "margin": 4,
+                      "marginBottom": 12,
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "height": 64,
+                        "position": "relative",
+                        "width": 64,
+                      },
+                      Object {
+                        "marginVertical": 0,
+                      },
+                    ]
+                  }
+                >
+                  <RNSVGSvgView
+                    bbHeight={148}
+                    bbWidth={148}
+                    focusable={false}
+                    height={148}
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "transparent",
+                          "borderWidth": 0,
+                        },
+                        Object {
+                          "left": -9,
+                          "position": "absolute",
+                          "top": -6,
+                        },
+                        Object {
+                          "flex": 0,
+                          "height": 148,
+                          "width": 148,
+                        },
+                      ]
+                    }
+                    width={148}
+                  >
+                    <RNSVGGroup>
+                      <RNSVGDefs>
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="top"
+                          x1="0%"
+                          x2="0%"
+                          y1="100%"
+                          y2="0%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="bottom"
+                          x1="0%"
+                          x2="0%"
+                          y1="0%"
+                          y2="100%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="left"
+                          x1="100%"
+                          x2="0%"
+                          y1="0%"
+                          y2="0%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="right"
+                          x1="0%"
+                          x2="100%"
+                          y1="0%"
+                          y2="0%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="100%"
+                          cy="100%"
+                          fx="100%"
+                          fy="100%"
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              0.7619047619047619,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-left-top"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="100%"
+                          cy="0%"
+                          fx="100%"
+                          fy="0%"
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              0.7619047619047619,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-left-bottom"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="0%"
+                          cy="100%"
+                          fx="0%"
+                          fy="100%"
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              0.7619047619047619,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-right-top"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="0%"
+                          cy="0%"
+                          fx="0%"
+                          fy="0%"
+                          gradient={
+                            Array [
+                              0,
+                              218562682,
+                              0.7619047619047619,
+                              218562682,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-right-bottom"
+                          rx="100%"
+                          ry="100%"
+                        />
+                      </RNSVGDefs>
+                      <RNSVGPath
+                        d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-left-top",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-right-top",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-right-bottom",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-left-bottom",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "top",
+                          ]
+                        }
+                        height={10}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={0}
+                        x={42}
+                        y="0"
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "left",
+                          ]
+                        }
+                        height={0}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={10}
+                        x="0"
+                        y={42}
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "right",
+                          ]
+                        }
+                        height={0}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={10}
+                        x={74}
+                        y={42}
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "bottom",
+                          ]
+                        }
+                        height={10}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={0}
+                        x={42}
+                        y={74}
+                      />
+                      <RNSVGPath
+                        d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
+                        fill={218562682}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                    </RNSVGGroup>
+                  </RNSVGSvgView>
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "height": 64,
+                          "justifyContent": "center",
+                          "position": "absolute",
+                          "width": 64,
+                        },
+                      ]
+                    }
+                  >
+                    <RNSVGSvgView
+                      align="xMidYMid"
+                      bbHeight={64}
+                      bbWidth={64}
+                      focusable={false}
+                      height={64}
+                      meetOrSlice={0}
+                      minX={0}
+                      minY={0}
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "transparent",
+                            "borderWidth": 0,
+                          },
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "height": 64,
+                              "justifyContent": "center",
+                              "position": "absolute",
+                              "width": 64,
+                            },
+                          ],
+                          Object {
+                            "flex": 0,
+                            "height": 64,
+                            "width": 64,
+                          },
+                        ]
+                      }
+                      vbHeight={64}
+                      vbWidth={64}
+                      width={64}
+                    >
+                      <RNSVGGroup>
+                        <RNSVGDefs>
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                -328966,
+                                1,
+                                -854791,
+                              ]
+                            }
+                            gradientTransform={null}
+                            gradientUnits={0}
+                            name="grad"
+                            x1="0"
+                            x2="0"
+                            y1="0"
+                            y2="1"
+                          />
+                        </RNSVGDefs>
+                        <RNSVGCircle
+                          cx={32}
+                          cy={32}
+                          fill={
+                            Array [
+                              1,
+                              "grad",
+                            ]
+                          }
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          r={32}
+                        />
+                      </RNSVGGroup>
+                    </RNSVGSvgView>
+                    <View
+                      borderColor="rgba(250, 250, 250, 1)"
+                      style={
+                        Array [
+                          Object {
+                            "alignItems": "center",
+                            "borderColor": "rgba(250, 250, 250, 1)",
+                            "borderRadius": 31.5,
+                            "borderStyle": "solid",
+                            "borderWidth": 0.5,
+                            "height": 63,
+                            "justifyContent": "center",
+                            "position": "absolute",
+                            "width": 63,
+                          },
+                        ]
+                      }
+                    />
+                    <View
+                      name="qrDetailed"
+                      style={
+                        Object {
+                          "alignSelf": "center",
+                          "color": "#007AFF",
+                          "fontSize": 22,
+                          "opacity": 1,
+                        }
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <Text
+              disabled={false}
+              style={
+                Array [
+                  Object {
+                    "color": "#007AFF",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 16,
+                    "letterSpacing": 0.1,
+                    "opacity": 1,
+                    "textAlign": "center",
+                    "textAlignVertical": "center",
+                  },
+                ]
+              }
+            >
+              button.addFunds
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "marginBottom": 16,
+                "marginLeft": "5%",
+                "marginRight": "5%",
+                "marginTop": 16,
+                "opacity": 1,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "position": "relative",
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "position": "relative",
+                    },
+                    Object {
+                      "margin": 4,
+                      "marginBottom": 12,
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "height": 64,
+                        "position": "relative",
+                        "width": 64,
+                      },
+                      Object {
+                        "marginVertical": 0,
+                      },
+                    ]
+                  }
+                >
+                  <RNSVGSvgView
+                    bbHeight={148}
+                    bbWidth={148}
+                    focusable={false}
+                    height={148}
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "transparent",
+                          "borderWidth": 0,
+                        },
+                        Object {
+                          "left": -9,
+                          "position": "absolute",
+                          "top": -6,
+                        },
+                        Object {
+                          "flex": 0,
+                          "height": 148,
+                          "width": 148,
+                        },
+                      ]
+                    }
+                    width={148}
+                  >
+                    <RNSVGGroup>
+                      <RNSVGDefs>
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="top"
+                          x1="0%"
+                          x2="0%"
+                          y1="100%"
+                          y2="0%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="bottom"
+                          x1="0%"
+                          x2="0%"
+                          y1="0%"
+                          y2="100%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="left"
+                          x1="100%"
+                          x2="0%"
+                          y1="0%"
+                          y2="0%"
+                        />
+                        <RNSVGLinearGradient
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="right"
+                          x1="0%"
+                          x2="100%"
+                          y1="0%"
+                          y2="0%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="100%"
+                          cy="100%"
+                          fx="100%"
+                          fy="100%"
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              0.7619047619047619,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-left-top"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="100%"
+                          cy="0%"
+                          fx="100%"
+                          fy="0%"
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              0.7619047619047619,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-left-bottom"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="0%"
+                          cy="100%"
+                          fx="0%"
+                          fy="100%"
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              0.7619047619047619,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-right-top"
+                          rx="100%"
+                          ry="100%"
+                        />
+                        <RNSVGRadialGradient
+                          cx="0%"
+                          cy="0%"
+                          fx="0%"
+                          fy="0%"
+                          gradient={
+                            Array [
+                              0,
+                              458874,
+                              0.7619047619047619,
+                              458874,
+                              1,
+                              458874,
+                            ]
+                          }
+                          gradientTransform={null}
+                          gradientUnits={0}
+                          name="border-right-bottom"
+                          rx="100%"
+                          ry="100%"
+                        />
+                      </RNSVGDefs>
+                      <RNSVGPath
+                        d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-left-top",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-right-top",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-right-bottom",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGPath
+                        d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
+                        fill={
+                          Array [
+                            1,
+                            "border-left-bottom",
+                          ]
+                        }
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "top",
+                          ]
+                        }
+                        height={10}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={0}
+                        x={42}
+                        y="0"
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "left",
+                          ]
+                        }
+                        height={0}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={10}
+                        x="0"
+                        y={42}
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "right",
+                          ]
+                        }
+                        height={0}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={10}
+                        x={74}
+                        y={42}
+                      />
+                      <RNSVGRect
+                        fill={
+                          Array [
+                            1,
+                            "bottom",
+                          ]
+                        }
+                        height={10}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                        width={0}
+                        x={42}
+                        y={74}
+                      />
+                      <RNSVGPath
+                        d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
+                        fill={458874}
+                        propList={
+                          Array [
+                            "fill",
+                          ]
+                        }
+                      />
+                    </RNSVGGroup>
+                  </RNSVGSvgView>
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "height": 64,
+                          "justifyContent": "center",
+                          "position": "absolute",
+                          "width": 64,
+                        },
+                      ]
+                    }
+                  >
+                    <RNSVGSvgView
+                      align="xMidYMid"
+                      bbHeight={64}
+                      bbWidth={64}
+                      focusable={false}
+                      height={64}
+                      meetOrSlice={0}
+                      minX={0}
+                      minY={0}
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "transparent",
+                            "borderWidth": 0,
+                          },
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "height": 64,
+                              "justifyContent": "center",
+                              "position": "absolute",
+                              "width": 64,
+                            },
+                          ],
+                          Object {
+                            "flex": 0,
+                            "height": 64,
+                            "width": 64,
+                          },
+                        ]
+                      }
+                      vbHeight={64}
+                      vbWidth={64}
+                      width={64}
+                    >
+                      <RNSVGGroup>
+                        <RNSVGDefs>
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                -328966,
+                                1,
+                                -854791,
+                              ]
+                            }
+                            gradientTransform={null}
+                            gradientUnits={0}
+                            name="grad"
+                            x1="0"
+                            x2="0"
+                            y1="0"
+                            y2="1"
+                          />
+                        </RNSVGDefs>
+                        <RNSVGCircle
+                          cx={32}
+                          cy={32}
+                          fill={
+                            Array [
+                              1,
+                              "grad",
+                            ]
+                          }
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          r={32}
+                        />
+                      </RNSVGGroup>
+                    </RNSVGSvgView>
+                    <View
+                      borderColor="rgba(250, 250, 250, 1)"
+                      style={
+                        Array [
+                          Object {
+                            "alignItems": "center",
+                            "borderColor": "rgba(250, 250, 250, 1)",
+                            "borderRadius": 31.5,
+                            "borderStyle": "solid",
+                            "borderWidth": 0.5,
+                            "height": 63,
+                            "justifyContent": "center",
+                            "position": "absolute",
+                            "width": 63,
+                          },
+                        ]
+                      }
+                    />
+                    <View
+                      name="paperPlane"
+                      style={
+                        Object {
+                          "alignSelf": "center",
+                          "color": "#007AFF",
+                          "fontSize": 22,
+                          "opacity": 0.5,
+                        }
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <Text
+              disabled={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 16,
+                    "letterSpacing": 0.1,
+                    "opacity": 1,
+                    "textAlign": "center",
+                    "textAlignVertical": "center",
+                  },
+                ]
+              }
+            >
+              button.send
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
   <View
-    androidStatusbarHeight={0}
     forwardedRef={[Function]}
     onLayout={[Function]}
     pointerEvents="box-none"
     style={
       Object {
-        "backgroundColor": "#FAFAFA",
-        "flexBasis": 0,
-        "flexGrow": 1,
-        "flexShrink": 1,
+        "bottom": 0,
+        "left": 0,
         "paddingBottom": 0,
         "paddingLeft": 0,
         "paddingRight": 0,
         "paddingTop": 0,
+        "position": "absolute",
+        "right": 0,
       }
     }
   >
-    <RCTScrollView
-      automaticallyAdjustContentInsets={false}
-      contentInset={
-        Object {
-          "bottom": 0,
-        }
-      }
-      enableAutomaticScroll={true}
-      enableOnAndroid={true}
-      enableResetScrollToCoords={true}
-      extraHeight={0}
-      extraScrollHeight={0}
-      getScrollResponder={[Function]}
-      handleOnScroll={[Function]}
-      keyboardDismissMode="interactive"
-      keyboardOpeningTime={250}
-      keyboardSpace={0}
-      onScroll={[Function]}
-      refreshControl={
-        <RefreshControlMock
-          onRefresh={[Function]}
-          refreshing={false}
-        />
-      }
-      resetKeyboardSpace={[Function]}
-      scrollForExtraHeightOnAndroid={[Function]}
-      scrollIntoView={[Function]}
-      scrollToEnd={[Function]}
-      scrollToFocusedInput={[Function]}
-      scrollToPosition={[Function]}
-      showsVerticalScrollIndicator={true}
-      style={
-        Object {
-          "backgroundColor": "transparent",
-          "flex": 1,
-          "height": "100%",
-          "paddingHorizontal": 0,
-        }
-      }
-      update={[Function]}
-      viewIsInsideTabBar={false}
-    >
-      <RCTRefreshControl />
-      <View>
-        <View
-          style={
-            Array [
-              Object {
-                "height": 250,
-                "justifyContent": "center",
-                "width": "100%",
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "height": 220,
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              addShadow={false}
-              borderRadius={54}
-              diameter={108}
-              elevation={6}
-              isListed={true}
-              left={375}
-              shadowOpacity={0.15}
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderColor": "#FFFFFF",
-                    "borderStyle": "solid",
-                    "borderWidth": 2,
-                    "elevation": 0,
-                    "height": 108,
-                    "justifyContent": "center",
-                    "left": 375,
-                    "position": "absolute",
-                    "shadowColor": "#0A1427",
-                    "shadowOffset": Object {
-                      "height": 0,
-                      "width": 0,
-                    },
-                    "shadowOpacity": 0,
-                    "shadowRadius": 6,
-                    "top": 125.5,
-                    "width": 108,
-                    "zIndex": 3,
-                  },
-                  Object {
-                    "transform": Array [
-                      Object {
-                        "translateX": -54,
-                      },
-                      Object {
-                        "translateY": -54,
-                      },
-                    ],
-                  },
-                ]
-              }
-              top={125.5}
-              zIndex={3}
-            >
-              <CMIFColorMatrixImageFilter
-                matrix={
-                  Array [
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]
-                }
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#fff0",
-                    },
-                    undefined,
-                  ]
-                }
-              />
-            </View>
-            <View
-              addShadow={false}
-              borderRadius={35}
-              diameter={70}
-              elevation={0}
-              isListed={true}
-              left={266.2}
-              shadowOpacity={0}
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderColor": "#FFFFFF",
-                    "borderStyle": "solid",
-                    "borderWidth": 2,
-                    "elevation": 0,
-                    "height": 70,
-                    "justifyContent": "center",
-                    "left": 266.2,
-                    "position": "absolute",
-                    "shadowColor": "#0A1427",
-                    "shadowOffset": Object {
-                      "height": 0,
-                      "width": 0,
-                    },
-                    "shadowOpacity": 0,
-                    "shadowRadius": 6,
-                    "top": 65.5,
-                    "width": 70,
-                    "zIndex": 1,
-                  },
-                  Object {
-                    "transform": Array [
-                      Object {
-                        "translateX": -35,
-                      },
-                      Object {
-                        "translateY": -35,
-                      },
-                    ],
-                  },
-                ]
-              }
-              top={65.5}
-              zIndex={1}
-            >
-              <CMIFColorMatrixImageFilter
-                matrix={
-                  Array [
-                    0.6065,
-                    0.3575,
-                    0.036,
-                    0,
-                    0,
-                    0.1065,
-                    0.8574999999999999,
-                    0.036,
-                    0,
-                    0,
-                    0.1065,
-                    0.3575,
-                    0.536,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]
-                }
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#fff0",
-                    },
-                    undefined,
-                  ]
-                }
-              />
-            </View>
-            <View
-              addShadow={false}
-              borderRadius={45}
-              diameter={90}
-              elevation={4}
-              isListed={true}
-              left={310.33333333333337}
-              shadowOpacity={0.05}
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderColor": "#FFFFFF",
-                    "borderStyle": "solid",
-                    "borderWidth": 2,
-                    "elevation": 0,
-                    "height": 90,
-                    "justifyContent": "center",
-                    "left": 310.33333333333337,
-                    "position": "absolute",
-                    "shadowColor": "#0A1427",
-                    "shadowOffset": Object {
-                      "height": 0,
-                      "width": 0,
-                    },
-                    "shadowOpacity": 0,
-                    "shadowRadius": 6,
-                    "top": 104.5,
-                    "width": 90,
-                    "zIndex": 2,
-                  },
-                  Object {
-                    "transform": Array [
-                      Object {
-                        "translateX": -45,
-                      },
-                      Object {
-                        "translateY": -45,
-                      },
-                    ],
-                  },
-                ]
-              }
-              top={104.5}
-              zIndex={2}
-            >
-              <CMIFColorMatrixImageFilter
-                matrix={
-                  Array [
-                    0.7638999999999999,
-                    0.21450000000000002,
-                    0.0216,
-                    0,
-                    0,
-                    0.06390000000000001,
-                    0.9145,
-                    0.0216,
-                    0,
-                    0,
-                    0.06390000000000001,
-                    0.21450000000000002,
-                    0.7215999999999999,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]
-                }
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#fff0",
-                    },
-                    undefined,
-                  ]
-                }
-              />
-            </View>
-            <View
-              addShadow={false}
-              borderRadius={45}
-              diameter={90}
-              elevation={4}
-              isListed={true}
-              left={439.66666666666663}
-              shadowOpacity={0.05}
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderColor": "#FFFFFF",
-                    "borderStyle": "solid",
-                    "borderWidth": 2,
-                    "elevation": 0,
-                    "height": 90,
-                    "justifyContent": "center",
-                    "left": 439.66666666666663,
-                    "position": "absolute",
-                    "shadowColor": "#0A1427",
-                    "shadowOffset": Object {
-                      "height": 0,
-                      "width": 0,
-                    },
-                    "shadowOpacity": 0,
-                    "shadowRadius": 6,
-                    "top": 104.5,
-                    "width": 90,
-                    "zIndex": 2,
-                  },
-                  Object {
-                    "transform": Array [
-                      Object {
-                        "translateX": -45,
-                      },
-                      Object {
-                        "translateY": -45,
-                      },
-                    ],
-                  },
-                ]
-              }
-              top={104.5}
-              zIndex={2}
-            >
-              <CMIFColorMatrixImageFilter
-                matrix={
-                  Array [
-                    0.7638999999999999,
-                    0.21450000000000002,
-                    0.0216,
-                    0,
-                    0,
-                    0.06390000000000001,
-                    0.9145,
-                    0.0216,
-                    0,
-                    0,
-                    0.06390000000000001,
-                    0.21450000000000002,
-                    0.7215999999999999,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]
-                }
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#fff0",
-                    },
-                    undefined,
-                  ]
-                }
-              />
-            </View>
-            <View
-              addShadow={false}
-              borderRadius={35}
-              diameter={70}
-              elevation={0}
-              isListed={true}
-              left={483.8}
-              shadowOpacity={0}
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderColor": "#FFFFFF",
-                    "borderStyle": "solid",
-                    "borderWidth": 2,
-                    "elevation": 0,
-                    "height": 70,
-                    "justifyContent": "center",
-                    "left": 483.8,
-                    "position": "absolute",
-                    "shadowColor": "#0A1427",
-                    "shadowOffset": Object {
-                      "height": 0,
-                      "width": 0,
-                    },
-                    "shadowOpacity": 0,
-                    "shadowRadius": 6,
-                    "top": 65.5,
-                    "width": 70,
-                    "zIndex": 1,
-                  },
-                  Object {
-                    "transform": Array [
-                      Object {
-                        "translateX": -35,
-                      },
-                      Object {
-                        "translateY": -35,
-                      },
-                    ],
-                  },
-                ]
-              }
-              top={65.5}
-              zIndex={1}
-            >
-              <CMIFColorMatrixImageFilter
-                matrix={
-                  Array [
-                    0.6065,
-                    0.3575,
-                    0.036,
-                    0,
-                    0,
-                    0.1065,
-                    0.8574999999999999,
-                    0.036,
-                    0,
-                    0,
-                    0.1065,
-                    0.3575,
-                    0.536,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]
-                }
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#fff0",
-                    },
-                    undefined,
-                  ]
-                }
-              />
-            </View>
-          </View>
-        </View>
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "marginBottom": 20,
-                "marginLeft": 20,
-                "marginRight": 20,
-                "marginTop": 0,
-                "paddingBottom": 8,
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "center",
-                },
-              ]
-            }
-          >
-            <Text
-              isSynthetic={false}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Medium",
-                    "fontSize": 36,
-                    "lineHeight": 54,
-                    "textAlign": "center",
-                    "textAlignVertical": "center",
-                  },
-                ]
-              }
-            >
-              tokenValue
-            </Text>
-          </View>
-          <View
-            style={
-              Array [
-                Object {
-                  "flexDirection": "row",
-                },
-              ]
-            }
-          >
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 12,
-                    "lineHeight": 18,
-                    "textAlign": "center",
-                    "textAlignVertical": "center",
-                  },
-                ]
-              }
-            >
-              £ 0
-            </Text>
-          </View>
-        </View>
-        <View
-          style={
-            Array [
-              Object {
-                "borderBottomWidth": 1,
-                "borderColor": "#EBF0F6",
-                "borderTopWidth": 1,
-                "flexBasis": 0,
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "flex-start",
-                "marginTop": 4,
-                "paddingBottom": 30,
-                "paddingTop": 10,
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "flexDirection": "row",
-                  "justifyContent": "center",
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "paddingBottom": 0,
-                  "paddingLeft": 10,
-                  "paddingRight": 10,
-                  "paddingTop": 0,
-                },
-              ]
-            }
-          >
-            <View
-              accessible={true}
-              focusable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "justifyContent": "center",
-                  "marginBottom": 16,
-                  "marginLeft": "5%",
-                  "marginRight": "5%",
-                  "marginTop": 16,
-                  "opacity": 1,
-                }
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "position": "relative",
-                    },
-                  ]
-                }
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "position": "relative",
-                      },
-                      Object {
-                        "margin": 4,
-                        "marginBottom": 12,
-                      },
-                    ]
-                  }
-                >
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 64,
-                          "position": "relative",
-                          "width": 64,
-                        },
-                        Object {
-                          "marginVertical": 0,
-                        },
-                      ]
-                    }
-                  >
-                    <RNSVGSvgView
-                      bbHeight={148}
-                      bbWidth={148}
-                      focusable={false}
-                      height={148}
-                      style={
-                        Array [
-                          Object {
-                            "backgroundColor": "transparent",
-                            "borderWidth": 0,
-                          },
-                          Object {
-                            "left": -9,
-                            "position": "absolute",
-                            "top": -6,
-                          },
-                          Object {
-                            "flex": 0,
-                            "height": 148,
-                            "width": 148,
-                          },
-                        ]
-                      }
-                      width={148}
-                    >
-                      <RNSVGGroup>
-                        <RNSVGDefs>
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="top"
-                            x1="0%"
-                            x2="0%"
-                            y1="100%"
-                            y2="0%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="bottom"
-                            x1="0%"
-                            x2="0%"
-                            y1="0%"
-                            y2="100%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="left"
-                            x1="100%"
-                            x2="0%"
-                            y1="0%"
-                            y2="0%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="right"
-                            x1="0%"
-                            x2="100%"
-                            y1="0%"
-                            y2="0%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="100%"
-                            cy="100%"
-                            fx="100%"
-                            fy="100%"
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                0.7619047619047619,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-left-top"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="100%"
-                            cy="0%"
-                            fx="100%"
-                            fy="0%"
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                0.7619047619047619,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-left-bottom"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="0%"
-                            cy="100%"
-                            fx="0%"
-                            fy="100%"
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                0.7619047619047619,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-right-top"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="0%"
-                            cy="0%"
-                            fx="0%"
-                            fy="0%"
-                            gradient={
-                              Array [
-                                0,
-                                218562682,
-                                0.7619047619047619,
-                                218562682,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-right-bottom"
-                            rx="100%"
-                            ry="100%"
-                          />
-                        </RNSVGDefs>
-                        <RNSVGPath
-                          d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-left-top",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-right-top",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-right-bottom",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-left-bottom",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "top",
-                            ]
-                          }
-                          height={10}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={0}
-                          x={42}
-                          y="0"
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "left",
-                            ]
-                          }
-                          height={0}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={10}
-                          x="0"
-                          y={42}
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "right",
-                            ]
-                          }
-                          height={0}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={10}
-                          x={74}
-                          y={42}
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "bottom",
-                            ]
-                          }
-                          height={10}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={0}
-                          x={42}
-                          y={74}
-                        />
-                        <RNSVGPath
-                          d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                          fill={218562682}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                      </RNSVGGroup>
-                    </RNSVGSvgView>
-                    <View
-                      style={
-                        Array [
-                          Object {
-                            "alignItems": "center",
-                            "height": 64,
-                            "justifyContent": "center",
-                            "position": "absolute",
-                            "width": 64,
-                          },
-                        ]
-                      }
-                    >
-                      <RNSVGSvgView
-                        align="xMidYMid"
-                        bbHeight={64}
-                        bbWidth={64}
-                        focusable={false}
-                        height={64}
-                        meetOrSlice={0}
-                        minX={0}
-                        minY={0}
-                        style={
-                          Array [
-                            Object {
-                              "backgroundColor": "transparent",
-                              "borderWidth": 0,
-                            },
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "height": 64,
-                                "justifyContent": "center",
-                                "position": "absolute",
-                                "width": 64,
-                              },
-                            ],
-                            Object {
-                              "flex": 0,
-                              "height": 64,
-                              "width": 64,
-                            },
-                          ]
-                        }
-                        vbHeight={64}
-                        vbWidth={64}
-                        width={64}
-                      >
-                        <RNSVGGroup>
-                          <RNSVGDefs>
-                            <RNSVGLinearGradient
-                              gradient={
-                                Array [
-                                  0,
-                                  -328966,
-                                  1,
-                                  -854791,
-                                ]
-                              }
-                              gradientTransform={null}
-                              gradientUnits={0}
-                              name="grad"
-                              x1="0"
-                              x2="0"
-                              y1="0"
-                              y2="1"
-                            />
-                          </RNSVGDefs>
-                          <RNSVGCircle
-                            cx={32}
-                            cy={32}
-                            fill={
-                              Array [
-                                1,
-                                "grad",
-                              ]
-                            }
-                            propList={
-                              Array [
-                                "fill",
-                              ]
-                            }
-                            r={32}
-                          />
-                        </RNSVGGroup>
-                      </RNSVGSvgView>
-                      <View
-                        borderColor="rgba(250, 250, 250, 1)"
-                        style={
-                          Array [
-                            Object {
-                              "alignItems": "center",
-                              "borderColor": "rgba(250, 250, 250, 1)",
-                              "borderRadius": 31.5,
-                              "borderStyle": "solid",
-                              "borderWidth": 0.5,
-                              "height": 63,
-                              "justifyContent": "center",
-                              "position": "absolute",
-                              "width": 63,
-                            },
-                          ]
-                        }
-                      />
-                      <View
-                        name="qrDetailed"
-                        style={
-                          Object {
-                            "alignSelf": "center",
-                            "color": "#007AFF",
-                            "fontSize": 22,
-                            "opacity": 1,
-                          }
-                        }
-                      />
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <Text
-                disabled={false}
-                style={
-                  Array [
-                    Object {
-                      "color": "#007AFF",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 16,
-                      "letterSpacing": 0.1,
-                      "opacity": 1,
-                      "textAlign": "center",
-                      "textAlignVertical": "center",
-                    },
-                  ]
-                }
-              >
-                button.addFunds
-              </Text>
-            </View>
-            <View
-              accessible={true}
-              focusable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "justifyContent": "center",
-                  "marginBottom": 16,
-                  "marginLeft": "5%",
-                  "marginRight": "5%",
-                  "marginTop": 16,
-                  "opacity": 1,
-                }
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "position": "relative",
-                    },
-                  ]
-                }
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "position": "relative",
-                      },
-                      Object {
-                        "margin": 4,
-                        "marginBottom": 12,
-                      },
-                    ]
-                  }
-                >
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 64,
-                          "position": "relative",
-                          "width": 64,
-                        },
-                        Object {
-                          "marginVertical": 0,
-                        },
-                      ]
-                    }
-                  >
-                    <RNSVGSvgView
-                      bbHeight={148}
-                      bbWidth={148}
-                      focusable={false}
-                      height={148}
-                      style={
-                        Array [
-                          Object {
-                            "backgroundColor": "transparent",
-                            "borderWidth": 0,
-                          },
-                          Object {
-                            "left": -9,
-                            "position": "absolute",
-                            "top": -6,
-                          },
-                          Object {
-                            "flex": 0,
-                            "height": 148,
-                            "width": 148,
-                          },
-                        ]
-                      }
-                      width={148}
-                    >
-                      <RNSVGGroup>
-                        <RNSVGDefs>
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="top"
-                            x1="0%"
-                            x2="0%"
-                            y1="100%"
-                            y2="0%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="bottom"
-                            x1="0%"
-                            x2="0%"
-                            y1="0%"
-                            y2="100%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="left"
-                            x1="100%"
-                            x2="0%"
-                            y1="0%"
-                            y2="0%"
-                          />
-                          <RNSVGLinearGradient
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="right"
-                            x1="0%"
-                            x2="100%"
-                            y1="0%"
-                            y2="0%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="100%"
-                            cy="100%"
-                            fx="100%"
-                            fy="100%"
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                0.7619047619047619,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-left-top"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="100%"
-                            cy="0%"
-                            fx="100%"
-                            fy="0%"
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                0.7619047619047619,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-left-bottom"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="0%"
-                            cy="100%"
-                            fx="0%"
-                            fy="100%"
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                0.7619047619047619,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-right-top"
-                            rx="100%"
-                            ry="100%"
-                          />
-                          <RNSVGRadialGradient
-                            cx="0%"
-                            cy="0%"
-                            fx="0%"
-                            fy="0%"
-                            gradient={
-                              Array [
-                                0,
-                                458874,
-                                0.7619047619047619,
-                                458874,
-                                1,
-                                458874,
-                              ]
-                            }
-                            gradientTransform={null}
-                            gradientUnits={0}
-                            name="border-right-bottom"
-                            rx="100%"
-                            ry="100%"
-                          />
-                        </RNSVGDefs>
-                        <RNSVGPath
-                          d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-left-top",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-right-top",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-right-bottom",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGPath
-                          d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
-                          fill={
-                            Array [
-                              1,
-                              "border-left-bottom",
-                            ]
-                          }
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "top",
-                            ]
-                          }
-                          height={10}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={0}
-                          x={42}
-                          y="0"
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "left",
-                            ]
-                          }
-                          height={0}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={10}
-                          x="0"
-                          y={42}
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "right",
-                            ]
-                          }
-                          height={0}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={10}
-                          x={74}
-                          y={42}
-                        />
-                        <RNSVGRect
-                          fill={
-                            Array [
-                              1,
-                              "bottom",
-                            ]
-                          }
-                          height={10}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                          width={0}
-                          x={42}
-                          y={74}
-                        />
-                        <RNSVGPath
-                          d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                          fill={458874}
-                          propList={
-                            Array [
-                              "fill",
-                            ]
-                          }
-                        />
-                      </RNSVGGroup>
-                    </RNSVGSvgView>
-                    <View
-                      style={
-                        Array [
-                          Object {
-                            "alignItems": "center",
-                            "height": 64,
-                            "justifyContent": "center",
-                            "position": "absolute",
-                            "width": 64,
-                          },
-                        ]
-                      }
-                    >
-                      <RNSVGSvgView
-                        align="xMidYMid"
-                        bbHeight={64}
-                        bbWidth={64}
-                        focusable={false}
-                        height={64}
-                        meetOrSlice={0}
-                        minX={0}
-                        minY={0}
-                        style={
-                          Array [
-                            Object {
-                              "backgroundColor": "transparent",
-                              "borderWidth": 0,
-                            },
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "height": 64,
-                                "justifyContent": "center",
-                                "position": "absolute",
-                                "width": 64,
-                              },
-                            ],
-                            Object {
-                              "flex": 0,
-                              "height": 64,
-                              "width": 64,
-                            },
-                          ]
-                        }
-                        vbHeight={64}
-                        vbWidth={64}
-                        width={64}
-                      >
-                        <RNSVGGroup>
-                          <RNSVGDefs>
-                            <RNSVGLinearGradient
-                              gradient={
-                                Array [
-                                  0,
-                                  -328966,
-                                  1,
-                                  -854791,
-                                ]
-                              }
-                              gradientTransform={null}
-                              gradientUnits={0}
-                              name="grad"
-                              x1="0"
-                              x2="0"
-                              y1="0"
-                              y2="1"
-                            />
-                          </RNSVGDefs>
-                          <RNSVGCircle
-                            cx={32}
-                            cy={32}
-                            fill={
-                              Array [
-                                1,
-                                "grad",
-                              ]
-                            }
-                            propList={
-                              Array [
-                                "fill",
-                              ]
-                            }
-                            r={32}
-                          />
-                        </RNSVGGroup>
-                      </RNSVGSvgView>
-                      <View
-                        borderColor="rgba(250, 250, 250, 1)"
-                        style={
-                          Array [
-                            Object {
-                              "alignItems": "center",
-                              "borderColor": "rgba(250, 250, 250, 1)",
-                              "borderRadius": 31.5,
-                              "borderStyle": "solid",
-                              "borderWidth": 0.5,
-                              "height": 63,
-                              "justifyContent": "center",
-                              "position": "absolute",
-                              "width": 63,
-                            },
-                          ]
-                        }
-                      />
-                      <View
-                        name="paperPlane"
-                        style={
-                          Object {
-                            "alignSelf": "center",
-                            "color": "#007AFF",
-                            "fontSize": 22,
-                            "opacity": 0.5,
-                          }
-                        }
-                      />
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <Text
-                disabled={true}
-                style={
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 16,
-                      "letterSpacing": 0.1,
-                      "opacity": 1,
-                      "textAlign": "center",
-                      "textAlignVertical": "center",
-                    },
-                  ]
-                }
-              >
-                button.send
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </RCTScrollView>
     <View
-      forwardedRef={[Function]}
-      onLayout={[Function]}
-      pointerEvents="box-none"
       style={
-        Object {
-          "bottom": 0,
-          "left": 0,
-          "paddingBottom": 0,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "paddingTop": 0,
-          "position": "absolute",
-          "right": 0,
-        }
+        Array [
+          Object {
+            "backgroundColor": "#060f1ecc",
+            "borderRadius": 16,
+            "marginBottom": 16,
+            "marginHorizontal": 16,
+            "paddingBottom": 16,
+            "paddingLeft": 16,
+            "paddingRight": 16,
+            "paddingTop": 16,
+          },
+          Object {
+            "transform": Array [
+              Object {
+                "translateY": 1334,
+              },
+            ],
+          },
+        ]
       }
     >
-      <View
+      <Text
         style={
           Array [
             Object {
-              "backgroundColor": "#060f1ecc",
-              "borderRadius": 16,
-              "marginBottom": 16,
-              "marginHorizontal": 16,
-              "paddingBottom": 16,
-              "paddingLeft": 16,
-              "paddingRight": 16,
-              "paddingTop": 16,
-            },
-            Object {
-              "transform": Array [
-                Object {
-                  "translateY": 1334,
-                },
-              ],
+              "color": "#ffffff",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "marginBottom": 8,
+              "textAlign": "center",
+              "textAlignVertical": "center",
             },
           ]
         }
       >
-        <Text
+        error.theGraphQueryFailed.isTokenSupportedByUniswap
+      </Text>
+      <View
+        style={
+          Array [
+            Object {
+              "flexDirection": "row",
+            },
+          ]
+        }
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
-            Array [
-              Object {
-                "color": "#ffffff",
-                "fontFamily": "EuclidCircularB-Regular",
-                "fontSize": 12,
-                "lineHeight": 18,
-                "marginBottom": 8,
-                "textAlign": "center",
-                "textAlignVertical": "center",
-              },
-            ]
+            Object {
+              "alignItems": "center",
+              "alignSelf": "auto",
+              "backgroundColor": "#BD573A",
+              "borderRadius": 3,
+              "flexBasis": 0,
+              "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
+              "height": 32,
+              "justifyContent": "center",
+              "marginBottom": 0,
+              "marginLeft": 0,
+              "marginRight": 0,
+              "marginTop": 0,
+              "opacity": 1,
+              "paddingBottom": 0,
+              "paddingLeft": 20,
+              "paddingRight": 20,
+              "paddingTop": 0,
+              "width": "100%",
+            }
           }
         >
-          error.theGraphQueryFailed.isTokenSupportedByUniswap
-        </Text>
+          <Text
+            small={true}
+            style={
+              Array [
+                Object {
+                  "color": "#FFFFFF",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 14,
+                  "marginTop": 2.52,
+                  "textAlign": "center",
+                  "textAlignVertical": "center",
+                },
+              ]
+            }
+            variant="danger"
+          >
+            button.cancel
+          </Text>
+        </View>
         <View
           style={
             Array [
               Object {
-                "flexDirection": "row",
+                "height": 0,
+                "width": 8,
               },
             ]
           }
-        >
-          <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "alignSelf": "auto",
-                "backgroundColor": "#BD573A",
-                "borderRadius": 3,
-                "flexBasis": 0,
-                "flexDirection": "row",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "height": 32,
-                "justifyContent": "center",
-                "marginBottom": 0,
-                "marginLeft": 0,
-                "marginRight": 0,
-                "marginTop": 0,
-                "opacity": 1,
-                "paddingBottom": 0,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 0,
-                "width": "100%",
-              }
+          w={8}
+        />
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "alignItems": "center",
+              "alignSelf": "auto",
+              "backgroundColor": "#007AFF",
+              "borderRadius": 3,
+              "flexBasis": 0,
+              "flexDirection": "row",
+              "flexGrow": 1,
+              "flexShrink": 1,
+              "height": 32,
+              "justifyContent": "center",
+              "marginBottom": 0,
+              "marginLeft": 0,
+              "marginRight": 0,
+              "marginTop": 0,
+              "opacity": 1,
+              "paddingBottom": 0,
+              "paddingLeft": 20,
+              "paddingRight": 20,
+              "paddingTop": 0,
+              "width": "100%",
             }
-          >
-            <Text
-              small={true}
-              style={
-                Array [
-                  Object {
-                    "color": "#FFFFFF",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 14,
-                    "lineHeight": 14,
-                    "marginTop": 2.52,
-                    "textAlign": "center",
-                    "textAlignVertical": "center",
-                  },
-                ]
-              }
-              variant="danger"
-            >
-              button.cancel
-            </Text>
-          </View>
-          <View
+          }
+        >
+          <Text
+            small={true}
             style={
               Array [
                 Object {
-                  "height": 0,
-                  "width": 8,
+                  "color": "#FFFFFF",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 14,
+                  "marginTop": 2.52,
+                  "textAlign": "center",
+                  "textAlignVertical": "center",
                 },
               ]
             }
-            w={8}
-          />
-          <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "alignSelf": "auto",
-                "backgroundColor": "#007AFF",
-                "borderRadius": 3,
-                "flexBasis": 0,
-                "flexDirection": "row",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "height": 32,
-                "justifyContent": "center",
-                "marginBottom": 0,
-                "marginLeft": 0,
-                "marginRight": 0,
-                "marginTop": 0,
-                "opacity": 1,
-                "paddingBottom": 0,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 0,
-                "width": "100%",
-              }
-            }
+            variant="default"
           >
-            <Text
-              small={true}
-              style={
-                Array [
-                  Object {
-                    "color": "#FFFFFF",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 14,
-                    "lineHeight": 14,
-                    "marginTop": 2.52,
-                    "textAlign": "center",
-                    "textAlignVertical": "center",
-                  },
-                ]
-              }
-              variant="default"
-            >
-              button.retry
-            </Text>
-          </View>
+            button.retry
+          </Text>
         </View>
       </View>
     </View>
