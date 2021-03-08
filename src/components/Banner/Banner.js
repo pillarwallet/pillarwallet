@@ -18,69 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 
-// Components
-import { Paragraph } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import Image from 'components/Image';
-
-// Utils
+import { Paragraph } from 'components/Typography';
 import { fontSizes, spacing } from 'utils/variables';
-import { useThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+
 
 type Props = {
   bannerText: string,
-  onClose?: () => void,
+  onClose: () => void,
   onPress?: () => void,
   wrapperStyle?: Object,
   isVisible?: boolean,
   imageProps?: Object,
+  theme: Theme,
 };
 
-const Banner = ({
-  bannerText,
-  onClose,
-  isVisible = true,
-  wrapperStyle,
-  imageProps,
-  onPress,
-}: Props) => {
-  const colors = useThemeColors();
-
-  if (!isVisible) return null;
-
-  return (
-    <Wrapper style={{ padding: spacing.mediumLarge, ...wrapperStyle }}>
-      <BannerContentWrapper onPress={onPress} disabled={!onPress}>
-        <BannerTextWrapper>
-          <BannerParagraph small>
-            {bannerText}
-          </BannerParagraph>
-        </BannerTextWrapper>
-
-        {!!imageProps && <BannerImage {...imageProps} resizeMode="contain" />}
-
-        {!!onClose && (
-          <Close
-            icon="rounded-close"
-            color={colors.basic020}
-            onPress={onClose}
-            fontSize={fontSizes.small}
-            horizontalAlign="flex-end"
-            hitSlop={{
-              top: 8, bottom: 10, left: 10, right: 8,
-            }}
-          />
-        )}
-      </BannerContentWrapper>
-    </Wrapper>
-  );
-};
-
-export default Banner;
-
-const Wrapper = styled.View``;
+const Wrapper = styled.View`
+`;
 
 const BannerContentWrapper = styled.TouchableOpacity`
   position: relative;
@@ -113,3 +72,43 @@ const BannerParagraph = styled(Paragraph)`
 const BannerImage = styled(Image)`
   align-self: flex-end;
 `;
+
+const Banner = (props: Props) => {
+  const {
+    bannerText,
+    onClose,
+    isVisible,
+    wrapperStyle,
+    imageProps,
+    onPress,
+    theme,
+  } = props;
+
+  const colors = getThemeColors(theme);
+
+  if (!isVisible) return null;
+  return (
+    <Wrapper style={{ padding: spacing.mediumLarge, ...wrapperStyle }}>
+      <BannerContentWrapper onPress={onPress} disabled={!onPress}>
+        <BannerTextWrapper>
+          <BannerParagraph small>
+            {bannerText}
+          </BannerParagraph>
+        </BannerTextWrapper>
+        {!!imageProps && <BannerImage {...imageProps} resizeMode="contain" />}
+        <Close
+          icon="rounded-close"
+          color={colors.basic020}
+          onPress={onClose}
+          fontSize={fontSizes.small}
+          horizontalAlign="flex-end"
+          hitSlop={{
+            top: 8, bottom: 10, left: 10, right: 8,
+          }}
+        />
+      </BannerContentWrapper>
+    </Wrapper>
+  );
+};
+
+export default withTheme(Banner);

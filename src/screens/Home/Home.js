@@ -552,24 +552,21 @@ class HomeScreen extends React.Component<Props> {
                     />}
                     <Requests showLastOneOnly />
                   </RequestsWrapper>}
-
-                  {!referFriendsOnHomeScreenDismissed && (
-                    <Banner
-                      onPress={goToInvitationFlow}
-                      bannerText={referralBannerText}
-                      imageProps={{
-                        style: {
-                          width: 96,
-                          height: 60,
-                          marginRight: -4,
-                          marginTop: 15,
-                        },
-                        source: referralImage,
-                      }}
-                      onClose={dismissReferFriends}
-                    />
-                  )}
-
+                  <Banner
+                    isVisible={!referFriendsOnHomeScreenDismissed}
+                    onPress={goToInvitationFlow}
+                    bannerText={referralBannerText}
+                    imageProps={{
+                      style: {
+                        width: 96,
+                        height: 60,
+                        marginRight: -4,
+                        marginTop: 15,
+                      },
+                      source: referralImage,
+                    }}
+                    onClose={dismissReferFriends}
+                  />
                   <CollapsibleSection
                     label={t('badgesContent.badgesList.title')}
                     collapseContent={
