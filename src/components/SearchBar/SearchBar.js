@@ -20,47 +20,19 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Animated, Dimensions, Keyboard, TextInput as RNTextInput } from 'react-native';
+import { Animated, Dimensions, Keyboard } from 'react-native';
 import { BaseText } from 'components/Typography';
-import IconButton from 'components/IconButton';
-import TextInput from 'components/Input';
 import t from 'translations/translate';
 
-import { fontSizes, appFont, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
 
-import type { Theme, ThemeColors } from 'models/Theme';
+import type { Theme } from 'models/Theme';
 // $FlowFixMe
 import type { Event } from 'react-native';
 
+import SearchInput, { type CommonComponentsProps } from './SearchInput';
 
-type Value = ?string;
-
-type InputPropsType = {
-  placeholder?: string,
-  backgroundColor?: string,
-  onChange: (Value) => void,
-  onBlur?: (Value) => void,
-  onFocus?: () => void,
-  value: Value,
-  validator?: (val: string) => string,
-};
-
-type IconProps = {|
-  icon: string,
-  style?: Object,
-  onPress?: () => void,
-  persistIconOnFocus?: boolean,
-|};
-
-type CommonComponentsProps = {
-  inputProps: InputPropsType,
-  placeholder?: string,
-  backgroundColor?: string,
-  inputRef?: React.ElementRef<typeof RNTextInput>,
-  inputIconName?: string,
-  iconProps?: IconProps,
-};
 
 type Props = CommonComponentsProps & {
   marginTop?: number,
@@ -75,17 +47,6 @@ type State = {
   animShrink: Animated.Value,
   isFocused: boolean,
   errorMessage: string,
-};
-
-type SearchInputProps = CommonComponentsProps & {
-  isFocused: boolean,
-  colors: ThemeColors,
-  value: ?string,
-  onFocus: () => void,
-  onChange: (e: Event) => void,
-  onBlur: () => void,
-  handleSubmit: () => void,
-  borderColor: string,
 };
 
 const { width } = Dimensions.get('window');
@@ -114,39 +75,11 @@ const CancelButton = styled.TouchableOpacity`
   margin-right: -${spacing.large}px;
 `;
 
-const InputField = styled(TextInput)`
-  flex: 1;
-  height: 42px;
-  padding: 10px;
-  padding-left: ${({ needsExtraPadding }) => needsExtraPadding ? 40 : 14}px;
-  padding-right: 16px;
-  color: ${({ theme }) => theme.colors.basic010};
-  font-size: ${fontSizes.regular}px;
-  font-family: "${appFont.regular}";
-`;
-
-const InputIcon = styled(IconButton)`
-  flex: 0 0 20px;
-  position: absolute;
-  left: 10px;
-  top: 7px;
-`;
-
-const InputWrapper = styled.View`
-  height: 40px;
-  border-width: 1px;
-  border-color: ${({ borderColor }) => borderColor};
-  border-radius: 20px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  width: 100%;
-`;
-
 const Error = styled(BaseText)`
   text-align: center;
   color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-top: ${spacing.medium}px;
 `;
-
 
 const getBorderColor = ({
   isFocused, error, colors, defaultColor,
@@ -155,69 +88,6 @@ const getBorderColor = ({
   if (isFocused) return colors.basic000;
   return defaultColor;
 };
-
-const SearchInput = (props: SearchInputProps) => {
-  const {
-    inputProps,
-    isFocused,
-    colors,
-    backgroundColor,
-    value,
-    placeholder,
-    inputRef,
-    onFocus,
-    onChange,
-    onBlur,
-    handleSubmit,
-    iconProps = {},
-    borderColor,
-  } = props;
-
-  const {
-    icon,
-    style: iconStyle = {},
-    onPress,
-    persistIconOnFocus,
-  } = iconProps;
-  const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
-  const onIconPress = onPress || defaultOnIconPress;
-  const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
-  const showIcon = persistIconOnFocus || !isFocused;
-
-  return (
-    <InputWrapper
-      borderColor={borderColor}
-      backgroundColor={backgroundColor}
-    >
-      <InputField
-        {...inputProps}
-        onFocus={onFocus}
-        onChange={onChange}
-        onBlur={onBlur}
-        value={value}
-        placeholder={placeholder}
-        placeholderTextColor={colors.secondaryText}
-        underlineColorAndroid="transparent"
-        autoCorrect={false}
-        ref={inputRef}
-        needsExtraPadding={showIcon}
-      />
-      {showIcon &&
-      <InputIcon
-        icon={iconName}
-        onPress={onIconPress}
-        iconStyle={{
-          width: 24,
-          height: 24,
-          color: colors.basic020,
-          fontSize: 24,
-          ...iconStyle,
-        }}
-      />}
-    </InputWrapper>
-  );
-};
-
 class SearchBar extends React.Component<Props, State> {
   value: string;
 
