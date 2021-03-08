@@ -19,18 +19,22 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
 import { Animated, Dimensions, Keyboard } from 'react-native';
-import { BaseText } from 'components/Typography';
+import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-import { spacing } from 'utils/variables';
+// Components
+import { BaseText } from 'components/Typography';
+
+// Utils
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
+// Types
+import type { SyntheticEvent } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
-// $FlowFixMe
-import type { Event } from 'react-native';
 
+// Local
 import SearchInput, { type CommonComponentsProps } from './SearchInput';
 
 
@@ -115,7 +119,7 @@ class SearchBar extends React.Component<Props, State> {
     }
   }
 
-  handleChange = (e: Event) => {
+  handleChange = (e: SyntheticEvent<any>) => {
     this.value = e.nativeEvent.text;
 
     const { onChange } = this.props.inputProps;
@@ -140,7 +144,10 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleBlur = () => {
-    const { inputProps: { onBlur }, forceShowCloseButton } = this.props;
+    const {
+      inputProps: { onBlur },
+      forceShowCloseButton,
+    } = this.props;
     if (forceShowCloseButton) return;
     if (!this.value) {
       this.hideKeyboard();
@@ -153,7 +160,9 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleCancel = () => {
-    const { inputProps: { onChange, onBlur } } = this.props;
+    const {
+      inputProps: { onChange, onBlur },
+    } = this.props;
     this.value = '';
     if (onChange) {
       onChange(this.value);
@@ -175,7 +184,9 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
-    const { inputProps: { onFocus } } = this.props;
+    const {
+      inputProps: { onFocus },
+    } = this.props;
     if (onFocus) {
       onFocus();
     }
@@ -188,7 +199,9 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
-    const { inputProps: { onChange, value } } = this.props;
+    const {
+      inputProps: { onChange, value },
+    } = this.props;
     onChange(value);
   };
 
@@ -211,7 +224,8 @@ class SearchBar extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const currentTheme = getThemeType(theme);
     const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
-      lightKey: 'basic060', darkKey: 'basic080',
+      lightKey: 'basic060',
+      darkKey: 'basic080',
     });
     const borderColor = getBorderColor({
       isFocused,
@@ -258,11 +272,11 @@ class SearchBar extends React.Component<Props, State> {
           >
             <SearchInput {...customInputProps} />
           </Animated.View>
-          {(isFocused || !!value || forceShowCloseButton) &&
-          <CancelButton onPress={customCloseAction || this.handleCancel}>
-            <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
-          </CancelButton>
-          }
+          {(isFocused || !!value || forceShowCloseButton) && (
+            <CancelButton onPress={customCloseAction || this.handleCancel}>
+              <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
+            </CancelButton>
+          )}
         </Row>
         {!!errorMessage && <Error>{errorMessage}</Error>}
       </SearchHolder>

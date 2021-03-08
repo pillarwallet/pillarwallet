@@ -19,26 +19,27 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { TextInput as RNTextInput } from 'react-native';
+import styled from 'styled-components/native';
+
+// Components
 import IconButton from 'components/IconButton';
 import TextInput from 'components/Input';
 
+// Utils
 import { fontSizes, appFont } from 'utils/variables';
 
+// Types
+import type { SyntheticEvent } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
-// $FlowFixMe
-import type { Event } from 'react-native';
-
-type Value = ?string;
 
 type InputPropsType = {
   placeholder?: string,
   backgroundColor?: string,
-  onChange: (Value) => void,
-  onBlur?: (Value) => void,
+  onChange: (?string) => void,
+  onBlur?: (?string) => void,
   onFocus?: () => void,
-  value: Value,
+  value: ?string,
   validator?: (val: string) => string,
 };
 
@@ -58,36 +59,35 @@ export type CommonComponentsProps = {
   iconProps?: IconProps,
 };
 
-
-type SearchInputProps = CommonComponentsProps & {
+type Props = CommonComponentsProps & {
   isFocused: boolean,
   colors: ThemeColors,
   value: ?string,
   onFocus: () => void,
-  onChange: (e: Event) => void,
+  onChange: (e: SyntheticEvent<any>) => void,
   onBlur: () => void,
   handleSubmit: () => void,
   borderColor: string,
 };
 
-const SearchInput = (props: SearchInputProps) => {
+const SearchInput = ({
+  inputProps,
+  isFocused,
+  colors,
+  backgroundColor,
+  value,
+  placeholder,
+  inputRef,
+  onFocus,
+  onChange,
+  onBlur,
+  handleSubmit,
+  iconProps = {},
+  borderColor,
+}: Props) => {
   const {
-    inputProps,
-    isFocused,
-    colors,
-    backgroundColor,
-    value,
-    placeholder,
-    inputRef,
-    onFocus,
-    onChange,
-    onBlur,
-    handleSubmit,
-    iconProps = {},
-    borderColor,
-  } = props;
-
-  const { icon, style: iconStyle = {}, onPress, persistIconOnFocus } = iconProps;
+    icon, style: iconStyle = {}, onPress, persistIconOnFocus
+  } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
   const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
