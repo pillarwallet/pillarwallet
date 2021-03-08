@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import IconButton from 'components/IconButton';
-import TextInput from 'components/Input';
+import Input from 'components/Input';
 
 // Utils
 import { fontSizes, appFont } from 'utils/variables';
@@ -33,7 +33,7 @@ import { fontSizes, appFont } from 'utils/variables';
 import type { SyntheticEvent } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
-type InputPropsType = {
+type InputPropsType = {|
   placeholder?: string,
   backgroundColor?: string,
   onChange: (?string) => void,
@@ -41,7 +41,7 @@ type InputPropsType = {
   onFocus?: () => void,
   value: ?string,
   validator?: (val: string) => string,
-};
+|};
 
 type IconProps = {|
   icon: string,
@@ -50,16 +50,17 @@ type IconProps = {|
   persistIconOnFocus?: boolean,
 |};
 
-export type CommonComponentsProps = {
+export type CommonComponentsProps = {|
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: React.ElementRef<typeof RNTextInput>,
   inputIconName?: string,
   iconProps?: IconProps,
-};
+|};
 
-type Props = CommonComponentsProps & {
+type Props = {|
+  ...CommonComponentsProps,
   isFocused: boolean,
   colors: ThemeColors,
   value: ?string,
@@ -68,7 +69,7 @@ type Props = CommonComponentsProps & {
   onBlur: () => void,
   handleSubmit: () => void,
   borderColor: string,
-};
+|};
 
 const SearchInput = ({
   inputProps,
@@ -86,7 +87,7 @@ const SearchInput = ({
   borderColor,
 }: Props) => {
   const {
-    icon, style: iconStyle = {}, onPress, persistIconOnFocus
+    icon, style: iconStyle = {}, onPress, persistIconOnFocus,
   } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
@@ -127,7 +128,7 @@ const SearchInput = ({
 
 export default SearchInput;
 
-const InputField = styled(TextInput)`
+const InputField = styled(Input)`
   flex: 1;
   height: 42px;
   padding: 10px;

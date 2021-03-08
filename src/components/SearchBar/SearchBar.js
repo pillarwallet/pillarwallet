@@ -38,52 +38,26 @@ import type { Theme } from 'models/Theme';
 import SearchInput, { type CommonComponentsProps } from './SearchInput';
 
 
-type Props = CommonComponentsProps & {
+type Props = {|
+  ...CommonComponentsProps,
   marginTop?: number,
   marginBottom?: number | string, // if '0'
   customCloseAction?: Function,
   forceShowCloseButton?: boolean,
   theme: Theme,
   noClose?: boolean,
-};
+|};
 
-type State = {
+type State = {|
   animShrink: Animated.Value,
   isFocused: boolean,
   errorMessage: string,
-};
+|};
 
 const { width } = Dimensions.get('window');
 const componentWidth = width - (spacing.large * 2);
 const closeButtonWidth = 58;
 const inputShrinkSize = ((componentWidth - closeButtonWidth) * 100) / componentWidth;
-
-const SearchHolder = styled.View`
-  margin-bottom: ${props => props.marginBottom || 20}px;
-  margin-top: ${props => props.marginTop || 0}px;
-  display: flex;
-  align-items: center;
-`;
-
-const Row = styled.View`
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const CancelButton = styled.TouchableOpacity`
-  width: ${closeButtonWidth + spacing.large}px;
-  align-items: flex-end;
-  padding: ${spacing.small}px ${spacing.large}px;
-  margin-right: -${spacing.large}px;
-`;
-
-const Error = styled(BaseText)`
-  text-align: center;
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  margin-top: ${spacing.medium}px;
-`;
 
 const getBorderColor = ({
   isFocused, error, colors, defaultColor,
@@ -246,7 +220,6 @@ class SearchBar extends React.Component<Props, State> {
       onChange: this.handleChange,
       onBlur: this.handleBlur,
       handleSubmit: this.handleSubmit,
-      error: errorMessage,
       borderColor,
     };
 
@@ -285,3 +258,30 @@ class SearchBar extends React.Component<Props, State> {
 }
 
 export default withTheme(SearchBar);
+
+const SearchHolder = styled.View`
+  margin-bottom: ${(props) => props.marginBottom || 20}px;
+  margin-top: ${(props) => props.marginTop || 0}px;
+  display: flex;
+  align-items: center;
+`;
+
+const Row = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CancelButton = styled.TouchableOpacity`
+  width: ${closeButtonWidth + spacing.large}px;
+  align-items: flex-end;
+  padding: ${spacing.small}px ${spacing.large}px;
+  margin-right: -${spacing.large}px;
+`;
+
+const Error = styled(BaseText)`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  margin-top: ${spacing.medium}px;
+`;
