@@ -21,7 +21,7 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import { Keyboard, FlatList } from 'react-native';
+import { Keyboard, View, FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 import styled, { useTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
@@ -202,6 +202,7 @@ const ContactSelectorOptions = ({
       noClose
       backgroundColor={colors.basic050}
       noTopPadding
+      avoidKeyboard={false}
     >
       <ContainerWithHeader
         headerProps={{
@@ -217,7 +218,7 @@ const ContactSelectorOptions = ({
             },
           ],
         }}
-        inset={{ bottom: 'never' }}
+        footer={<View />}
       >
         <SearchContainer>
           <SearchBarWrapper>

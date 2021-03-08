@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
 import { BaseText } from 'components/Typography';
@@ -68,9 +69,9 @@ FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 160;
 
 export default FloatingButtons;
 
-const Container = styled.View`
+const Container = styled(SafeAreaView)`
   position: absolute;
-  bottom: 50px;
+  bottom: ${spacing.large}px;
   flex-direction: row;
   align-self: center;
   align-items: center;
