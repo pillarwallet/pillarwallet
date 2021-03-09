@@ -20,7 +20,7 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import { Animated, Dimensions, Keyboard } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
@@ -49,15 +49,9 @@ type Props = {|
 |};
 
 type State = {|
-  animShrink: Animated.Value,
   isFocused: boolean,
   errorMessage: string,
 |};
-
-const { width } = Dimensions.get('window');
-const componentWidth = width - (2 * spacing.large);
-const sideButtonWidth = 68;
-const inputShrinkSize = ((componentWidth - sideButtonWidth) * 100) / componentWidth;
 
 const getBorderColor = ({
   isFocused, error, colors, defaultColor,
@@ -66,16 +60,16 @@ const getBorderColor = ({
   if (isFocused) return colors.basic000;
   return defaultColor;
 };
+
+
 class SearchBar extends React.Component<Props, State> {
   value: string;
 
   constructor(props: Props) {
     super(props);
-    const { showPasteButton } = this.props;
     this.value = '';
 
     this.state = {
-      animShrink: new Animated.Value(showPasteButton ? inputShrinkSize : 100),
       isFocused: false,
       errorMessage: '',
     };
@@ -117,12 +111,10 @@ class SearchBar extends React.Component<Props, State> {
     const { onFocus } = this.props.inputProps;
     onFocus?.();
     this.setState({ isFocused: true });
-    this.animateShowButton();
   };
 
   handleBlur = () => {
     const { onBlur } = this.props.inputProps;
-    this.animateHideButtonIfNeeded();
     this.setState({ isFocused: false });
     onBlur?.();
   };
@@ -145,25 +137,6 @@ class SearchBar extends React.Component<Props, State> {
     this.validateInput(this.value);
   };
 
-  animateShowButton = () => {
-    Animated.timing(this.state.animShrink, {
-      toValue: inputShrinkSize,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  animateHideButtonIfNeeded = () => {
-    const { showPasteButton } = this.props;
-    if (this.value || showPasteButton) return;
-
-    Animated.timing(this.state.animShrink, {
-      toValue: 100,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  };
-
   handleSubmit = () => {
     const { value, onChange } = this.props.inputProps;
     onChange(value);
@@ -181,7 +154,7 @@ class SearchBar extends React.Component<Props, State> {
       theme,
       iconProps,
     } = this.props;
-    const { animShrink, isFocused, errorMessage } = this.state;
+    const { isFocused, errorMessage } = this.state;
     const { value = '' } = inputProps;
     const colors = getThemeColors(theme);
     const currentTheme = getThemeType(theme);
@@ -214,17 +187,12 @@ class SearchBar extends React.Component<Props, State> {
 
     const showCancelButton = isFocused || !!value;
 
-    const animWidth = animShrink.interpolate({
-      inputRange: [0, 100],
-      outputRange: (['0%', '100%']: string[]),
-    });
-
     return (
       <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
         <Row>
-          <Animated.View style={{ width: animWidth }}>
+          <View style={{flex: 1}}>
             <SearchInput {...customInputProps} iconProps={iconProps} />
-          </Animated.View>
+          </View>
 
           {showCancelButton && (
             <SideButton onPress={this.handleCancel}>
@@ -262,7 +230,6 @@ const Row = styled.View`
 `;
 
 const SideButton = styled.TouchableOpacity`
-  width: ${sideButtonWidth + spacing.large}px;
   align-items: flex-end;
   padding: ${spacing.small}px ${spacing.large}px;
   margin-right: -${spacing.large}px;
