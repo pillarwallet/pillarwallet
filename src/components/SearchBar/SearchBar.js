@@ -94,9 +94,7 @@ const SearchBar = ({
   const handleCancel = () => {
     valueRef.current = '';
     inputProps.onChange?.(valueRef.current);
-
     Keyboard.dismiss();
-    handleBlur();
   };
 
   const handlePaste = async () => {
