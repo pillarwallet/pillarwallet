@@ -81,11 +81,6 @@ class SearchBar extends React.Component<Props, State> {
     };
   }
 
-  static defaultProps = {
-    inputType: 'default',
-    trim: true,
-  };
-
   componentDidUpdate() {
     // Validate value changes orginating from props
     if (this.props.inputProps.value !== this.value) {
