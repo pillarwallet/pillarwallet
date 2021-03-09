@@ -176,7 +176,6 @@ const ContactsList = () => {
       <SearchBar
         query={query}
         onChangeQuery={handleChangeQuery}
-        inputProps={{ autoCapitalize: 'none' }}
         iconProps={{
           persistIconOnFocus: true,
         }}

@@ -130,7 +130,6 @@ class SearchBlock extends React.Component<Props, State> {
               inputProps={{
                 onBlur: this.handleSearchBlur,
                 onFocus: this.handleSearchFocus,
-                autoCapitalize: 'none',
               }}
               placeholder={searchInputPlaceholder}
               inputRef={inputRef}

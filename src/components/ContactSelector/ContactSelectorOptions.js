@@ -220,7 +220,6 @@ const ContactSelectorOptions = ({
           validator={validateSearch}
           inputRef={searchInputRef}
           placeholder={searchPlaceholder}
-          inputProps={{ autoCapitalize: 'none' }}
           iconProps={{ persistIconOnFocus: true }}
           showPasteButton
         />

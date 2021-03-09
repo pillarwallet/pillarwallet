@@ -90,15 +90,16 @@ const SearchInput = ({
   return (
     <InputWrapper borderColor={borderColor} backgroundColor={backgroundColor}>
       <InputField
+        autoCapitalize={false}
+        autoCorrect={false}
         {...inputProps}
+        value={value}
         onFocus={onFocus}
         onChangeText={onChangeText}
         onBlur={onBlur}
-        value={value}
         placeholder={placeholder}
         placeholderTextColor={colors.secondaryText}
         underlineColorAndroid="transparent"
-        autoCorrect={false}
         ref={inputRef}
         needsExtraPadding={showIcon}
       />

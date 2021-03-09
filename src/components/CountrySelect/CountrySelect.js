@@ -67,11 +67,7 @@ export default class CountrySelect extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SearchBar
-          query={query}
-          onChangeQuery={this.handleCountrySearch}
-          inputProps={{ autoCapitalize: 'none' }}
-        />
+        <SearchBar query={query} onChangeQuery={this.handleCountrySearch} />
 
         <FlatList
           data={filteredCountries || sortedCountries}

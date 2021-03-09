@@ -443,7 +443,6 @@ class SelectorOptions extends React.Component<Props, State> {
             query={query}
             onChangeQuery={this.handleInputChange}
             validator={this.validateSearch}
-            inputProps={{ autoCapitalize: 'none' }}
             placeholder={searchPlaceholder}
             inputRef={(ref) => {
               this.searchInput = ref;
