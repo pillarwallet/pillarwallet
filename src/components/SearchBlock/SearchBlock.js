@@ -126,7 +126,7 @@ class SearchBlock extends React.Component<Props, State> {
           >
             <SearchBar
               inputProps={{
-                onChange: this.handleSearchChange,
+                onChangeText: this.handleSearchChange,
                 onBlur: this.handleSearchBlur,
                 onFocus: this.handleSearchFocus,
                 value: query,

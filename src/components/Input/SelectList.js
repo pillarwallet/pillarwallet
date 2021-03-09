@@ -80,7 +80,7 @@ export default class SelectList extends React.Component<Props, State> {
         <SearchBarWrapper>
           <SearchBar
             inputProps={{
-              onChange: this.handleSearch,
+              onChangeText: this.handleSearch,
               value: query,
               autoCapitalize: 'none',
             }}

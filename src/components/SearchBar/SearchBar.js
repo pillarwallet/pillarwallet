@@ -33,9 +33,6 @@ import { SIDE_BUTTON_APPEARANCE } from 'utils/layoutAnimations';
 import { getColorByThemeOutsideStyled, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// Types
-import type { SyntheticEvent } from 'utils/types/react-native';
-
 // Local
 import SearchInput, { type CommonComponentsProps } from './SearchInput';
 
@@ -71,10 +68,9 @@ const SearchBar = ({
     setErrorMessage(error);
   };
 
-  const handleChange = (e: SyntheticEvent<any>) => {
-    const value = e.nativeEvent.text;
-    inputProps.onChange?.(value);
-    validateInput(value);
+  const handleChangeText = (input: string) => {
+    inputProps.onChangeText?.(input);
+    validateInput(input);
   };
 
   const handleFocus = () => {
@@ -84,24 +80,24 @@ const SearchBar = ({
   };
 
   const handleBlur = () => {
-    setIsFocused(false);
     LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
+    setIsFocused(false);
     inputProps.onBlur?.();
   };
 
   const handleCancel = () => {
-    inputProps.onChange?.('');
+    inputProps.onChangeText?.('');
     Keyboard.dismiss();
   };
 
   const handlePaste = async () => {
     const value = await Clipboard.getString();
-    inputProps.onChange?.(value);
+    inputProps.onChangeText?.(value);
     validateInput(value);
   };
 
   const handleSubmit = () => {
-    inputProps.onChange(inputProps.value ?? '');
+    inputProps.onChangeText?.(inputProps.value ?? '');
   };
 
   const defaultBackgroundColor = getColorByThemeOutsideStyled(theme.current, {
@@ -124,7 +120,7 @@ const SearchBar = ({
     placeholder,
     inputRef,
     onFocus: handleFocus,
-    onChange: handleChange,
+    onChangeText: handleChangeText,
     onBlur: handleBlur,
     handleSubmit,
     borderColor: getBorderColor(),
@@ -162,8 +158,8 @@ export default SearchBar;
 export type { IconProps } from './SearchInput';
 
 const SearchHolder = styled.View`
-  margin-bottom: ${(props) => props.marginBottom || 20}px;
-  margin-top: ${(props) => props.marginTop || 0}px;
+  margin-bottom: ${(props) => props.marginBottom ?? 20}px;
+  margin-top: ${(props) => props.marginTop ?? 0}px;
   display: flex;
   align-items: center;
 `;

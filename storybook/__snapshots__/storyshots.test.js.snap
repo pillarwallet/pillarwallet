@@ -44795,7 +44795,7 @@ exports[`Storyshots SearchBlock default 1`] = `
           <View
             style={
               Object {
-                "width": "100%",
+                "flex": 1,
               }
             }
           >
@@ -44822,7 +44822,7 @@ exports[`Storyshots SearchBlock default 1`] = `
                 keyboardAppearance="light"
                 needsExtraPadding={true}
                 onBlur={[Function]}
-                onChange={[Function]}
+                onChangeText={[Function]}
                 onFocus={[Function]}
                 placeholder="label.search"
                 placeholderTextColor="#8B939E"

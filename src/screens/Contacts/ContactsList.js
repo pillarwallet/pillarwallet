@@ -177,7 +177,7 @@ const ContactsList = () => {
         <SearchBar
           inputProps={{
             value: query,
-            onChange: handleChangeQuery,
+            onChangeText: handleChangeQuery,
             autoCapitalize: 'none',
           }}
           iconProps={{
@@ -188,7 +188,6 @@ const ContactsList = () => {
           showPasteButton
         />
       </SearchBarWrapper>
-
 
       <FlatList
         data={items}

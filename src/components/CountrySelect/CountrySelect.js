@@ -77,7 +77,7 @@ export default class CountrySelect extends React.Component<Props, State> {
         <SearchBarWrapper>
           <SearchBar
             inputProps={{
-              onChange: this.handleCountrySearch,
+              onChangeText: this.handleCountrySearch,
               value: query,
               autoCapitalize: 'none',
             }}

@@ -106,8 +106,7 @@ const ContactSelector = ({
       );
     }
 
-    let { name } = selectedContact;
-
+    let name = selectedContact.name || selectedContact.ensName || selectedContact.ethAddress;
     if (isValidAddress(name)) {
       name = t('ellipsedMiddleString', {
         stringStart: name.slice(0, 6),

@@ -30,13 +30,11 @@ import Input from 'components/Input';
 import { fontSizes, appFont } from 'utils/variables';
 
 // Types
-import type { TextInputProps, SyntheticEvent } from 'utils/types/react-native';
+import type { TextInputProps } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
 type InputPropsType = {|
   ...TextInputProps,
-  value: ?string,
-  onChange: (string) => void,
   placeholder?: string,
   backgroundColor?: string,
   onBlur?: (?string) => void,
@@ -67,7 +65,7 @@ type Props = {|
   value: ?string,
   onFocus: () => void,
   onBlur: () => void,
-  onChange: (e: SyntheticEvent<any>) => void,
+  onChangeText: (input: string) => void,
   handleSubmit: () => void,
   borderColor: string,
 |};
@@ -81,7 +79,7 @@ const SearchInput = ({
   placeholder,
   inputRef,
   onFocus,
-  onChange,
+  onChangeText,
   onBlur,
   handleSubmit,
   iconProps = {},
@@ -100,7 +98,7 @@ const SearchInput = ({
       <InputField
         {...inputProps}
         onFocus={onFocus}
-        onChange={onChange}
+        onChangeText={onChangeText}
         onBlur={onBlur}
         value={value}
         placeholder={placeholder}

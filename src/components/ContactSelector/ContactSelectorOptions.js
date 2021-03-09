@@ -218,7 +218,7 @@ const ContactSelectorOptions = ({
           <SearchBar
             inputProps={{
               value: query,
-              onChange: handleInputChange,
+              onChangeText: handleInputChange,
               autoCapitalize: 'none',
               validator: validateSearch,
             }}
@@ -226,6 +226,7 @@ const ContactSelectorOptions = ({
             placeholder={searchPlaceholder}
             marginBottom={0}
             iconProps={{ persistIconOnFocus: true }}
+            showPasteButton
           />
         </SearchBarWrapper>
 

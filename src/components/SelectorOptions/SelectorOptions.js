@@ -446,7 +446,7 @@ class SelectorOptions extends React.Component<Props, State> {
           <SearchBarWrapper>
             <SearchBar
               inputProps={{
-                onChange: this.handleInputChange,
+                onChangeText: this.handleInputChange,
                 value: query,
                 autoCapitalize: 'none',
                 validator: this.validateSearch,
