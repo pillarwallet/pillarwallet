@@ -39816,7 +39816,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
       <RCTScrollView
         contentContainerStyle={
           Object {
-            "paddingBottom": 160,
+            "paddingBottom": 120,
           }
         }
         data={
