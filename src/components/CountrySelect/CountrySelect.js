@@ -67,7 +67,7 @@ export default class CountrySelect extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SearchBar query={query} onChangeQuery={this.handleCountrySearch} />
+        <SearchBar query={query} onChangeQuery={this.handleCountrySearch} cancelButtonTitle={t('button.close')} />
 
         <FlatList
           data={filteredCountries || sortedCountries}

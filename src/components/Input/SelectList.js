@@ -70,7 +70,7 @@ export default class SelectList extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SearchBar query={query} onChangeQuery={this.handleSearch} />
+        <SearchBar query={query} onChangeQuery={this.handleSearch} cancelButtonTitle={t('button.close')} />
 
         <FlatList
           data={filteredOptions}

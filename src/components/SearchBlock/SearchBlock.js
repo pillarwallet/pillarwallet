@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 import { Keyboard, TextInput } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import Overlay from './Overlay';
@@ -131,6 +132,7 @@ class SearchBlock extends React.Component<Props, State> {
               onBlur={this.handleSearchBlur}
               placeholder={searchInputPlaceholder}
               inputRef={inputRef}
+              cancelButtonTitle={t('button.close')}
             />
           </SearchBarWrapper>
         )}

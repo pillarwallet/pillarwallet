@@ -275,8 +275,6 @@ class WalletView extends React.Component<Props, State> {
               }
               onSearchChange={this.handleSearchChange}
               wrapperStyle={{
-                paddingHorizontal: spacing.layoutSides,
-                paddingVertical: spacing.mediumLarge,
                 marginBottom: searchMarginBottom,
               }}
               onSearchFocus={() => this.setState({ hideInsightForSearch: true })}

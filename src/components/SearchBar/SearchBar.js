@@ -55,6 +55,7 @@ type Props = {|
   style?: ViewStyleProp,
   onFocus?: () => void,
   onBlur?: () => void,
+  cancelButtonTitle?: string;
 |};
 
 const SearchBar = ({
@@ -70,6 +71,7 @@ const SearchBar = ({
   style,
   onFocus,
   onBlur,
+  cancelButtonTitle,
 }: Props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -153,7 +155,7 @@ const SearchBar = ({
 
         {showCancelButton && (
           <SideButton onPress={handleCancel}>
-            <SideButtonTitle>{t('button.cancel')}</SideButtonTitle>
+            <SideButtonTitle>{cancelButtonTitle || t('button.cancel')}</SideButtonTitle>
           </SideButton>
         )}
 
