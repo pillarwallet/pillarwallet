@@ -47,14 +47,13 @@ type Props = {|
   validator?: (string) => ?string,
   placeholder?: string,
   inputRef?: React.ElementRef<typeof RNTextInput>,
-  inputIconName?: string,
-  inputProps?: InputPropsType,
-  iconProps?: IconProps,
   showPasteButton?: boolean,
-  style?: ViewStyleProp,
   onFocus?: () => void,
   onBlur?: () => void,
-  cancelButtonTitle?: string;
+  cancelButtonTitle?: string,
+  inputProps?: InputPropsType,
+  iconProps?: IconProps,
+  style?: ViewStyleProp,
 |};
 
 const SearchBar = ({

@@ -48,7 +48,6 @@ type Props = {|
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: React.ElementRef<typeof RNTextInput>,
-  inputIconName?: string,
   iconProps?: IconProps,
   isFocused: boolean,
   colors: ThemeColors,
