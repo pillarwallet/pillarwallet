@@ -38,8 +38,6 @@ import { LabelBadge } from 'components/LabelBadge';
 import SWActivationCard from 'components/SWActivationCard';
 import CollectiblesList from 'components/CollectiblesList';
 
-import { spacing } from 'utils/variables';
-
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';

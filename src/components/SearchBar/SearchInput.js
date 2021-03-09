@@ -85,7 +85,7 @@ const SearchInput = ({
   return (
     <InputWrapper borderColor={borderColor} backgroundColor={backgroundColor}>
       <InputField
-        autoCapitalize={false}
+        autoCapitalize="none"
         autoCorrect={false}
         {...inputProps}
         value={value}
