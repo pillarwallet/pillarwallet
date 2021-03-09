@@ -57,8 +57,6 @@ const SearchBar = ({
   showPasteButton,
   iconProps,
 }: Props) => {
-  const valueRef = React.useRef('');
-
   const [isFocused, setIsFocused] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
 
@@ -74,9 +72,9 @@ const SearchBar = ({
   };
 
   const handleChange = (e: SyntheticEvent<any>) => {
-    valueRef.current = e.nativeEvent.text;
-    inputProps.onChange?.(valueRef.current);
-    validateInput(valueRef.current);
+    const value = e.nativeEvent.text;
+    inputProps.onChange?.(value);
+    validateInput(value);
   };
 
   const handleFocus = () => {
@@ -92,15 +90,14 @@ const SearchBar = ({
   };
 
   const handleCancel = () => {
-    valueRef.current = '';
-    inputProps.onChange?.(valueRef.current);
+    inputProps.onChange?.('');
     Keyboard.dismiss();
   };
 
   const handlePaste = async () => {
-    valueRef.current = await Clipboard.getString();
-    inputProps.onChange?.(valueRef.current);
-    validateInput(valueRef.current);
+    const value = await Clipboard.getString();
+    inputProps.onChange?.(value);
+    validateInput(value);
   };
 
   const handleSubmit = () => {
