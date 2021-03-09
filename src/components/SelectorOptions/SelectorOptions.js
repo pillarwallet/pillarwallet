@@ -440,45 +440,45 @@ class SelectorOptions extends React.Component<Props, State> {
           }}
         >
           <SearchBar
-            inputProps={{
-              onChangeText: this.handleInputChange,
-              value: query,
-              autoCapitalize: 'none',
-              validator: this.validateSearch,
-            }}
+            query={query}
+            onChangeQuery={this.handleInputChange}
+            validator={this.validateSearch}
+            inputProps={{ autoCapitalize: 'none' }}
             placeholder={searchPlaceholder}
-            inputRef={ref => { this.searchInput = ref; }}
+            inputRef={(ref) => {
+              this.searchInput = ref;
+            }}
             // $FlowFixMe
             iconProps={{ ...iconProps, persistIconOnFocus: true }}
           />
 
-          {!!optionTabs && <Tabs
-            tabs={updatedOptionTabs}
-            wrapperStyle={{ paddingTop: 22 }}
-            activeTab={activeTab || updatedOptionTabs[0].name}
-          />}
-          {
-            collectibles ? (
-              <CollectiblesList
-                collectibles={filteredOptions}
-                onCollectiblePress={this.selectValue}
-                isSearching={isSearching}
-              />
-            ) : (
-              <FlatList
-                stickyHeaderIndices={[0]}
-                data={allFeedListData}
-                renderItem={this.renderOption}
-                // $FlowFixMe: react-native types
-                keyExtractor={this.optionKeyExtractor}
-                keyboardShouldPersistTaps="always"
-                initialNumToRender={10}
-                viewabilityConfig={viewConfig}
-                windowSize={10}
-                hideModalContentWhileAnimating
-              />
-            )
-          }
+          {!!optionTabs && (
+            <Tabs
+              tabs={updatedOptionTabs}
+              wrapperStyle={{ paddingTop: 22 }}
+              activeTab={activeTab || updatedOptionTabs[0].name}
+            />
+          )}
+          {collectibles ? (
+            <CollectiblesList
+              collectibles={filteredOptions}
+              onCollectiblePress={this.selectValue}
+              isSearching={isSearching}
+            />
+          ) : (
+            <FlatList
+              stickyHeaderIndices={[0]}
+              data={allFeedListData}
+              renderItem={this.renderOption}
+              // $FlowFixMe: react-native types
+              keyExtractor={this.optionKeyExtractor}
+              keyboardShouldPersistTaps="always"
+              initialNumToRender={10}
+              viewabilityConfig={viewConfig}
+              windowSize={10}
+              hideModalContentWhileAnimating
+            />
+          )}
         </ContainerWithHeader>
       </SlideModal>
     );

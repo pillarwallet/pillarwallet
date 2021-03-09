@@ -71,11 +71,9 @@ export default class SelectList extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <SearchBar
-          inputProps={{
-            onChangeText: this.handleSearch,
-            value: query,
-            autoCapitalize: 'none',
-          }}
+          query={query}
+          onChangeQuery={this.handleSearch}
+          inputProps={{ autoCapitalize: 'none' }}
           placeholder={t('label.search')}
         />
 

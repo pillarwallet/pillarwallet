@@ -68,12 +68,9 @@ export default class CountrySelect extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <SearchBar
-          inputProps={{
-            onChangeText: this.handleCountrySearch,
-            value: query,
-            autoCapitalize: 'none',
-          }}
-          placeholder={t('label.search')}
+          query={query}
+          onChangeQuery={this.handleCountrySearch}
+          inputProps={{ autoCapitalize: 'none' }}
         />
 
         <FlatList

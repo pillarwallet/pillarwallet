@@ -20,7 +20,7 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import { Keyboard, LayoutAnimation, View } from 'react-native';
+import { Keyboard, LayoutAnimation, View, TextInput as RNTextInput } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
@@ -37,16 +37,28 @@ import { spacing } from 'utils/variables';
 import type { ViewStyleProp } from 'utils/types/react-native';
 
 // Local
-import SearchInput, { type CommonComponentsProps } from './SearchInput';
+import SearchInput from './SearchInput';
+import type { InputPropsType, IconProps } from './SearchInput';
 
 
 type Props = {|
-  ...CommonComponentsProps,
-  showPasteButton?: boolean;
-  style?: ViewStyleProp;
+  query: ?string,
+  onChangeQuery: (string) => mixed,
+  validator?: (string) => ?string,
+  placeholder?: string,
+  backgroundColor?: string,
+  inputRef?: React.ElementRef<typeof RNTextInput>,
+  inputIconName?: string,
+  inputProps?: InputPropsType,
+  iconProps?: IconProps,
+  showPasteButton?: boolean,
+  style?: ViewStyleProp,
 |};
 
 const SearchBar = ({
+  query,
+  onChangeQuery,
+  validator,
   inputProps,
   placeholder = t('label.search'),
   backgroundColor,
@@ -62,7 +74,6 @@ const SearchBar = ({
   const colors = useThemeColors();
 
   const validateInput = (input: string) => {
-    const { validator } = inputProps;
     if (!validator) return;
 
     const error = validator(input);
@@ -70,12 +81,12 @@ const SearchBar = ({
   };
 
   const handleChangeText = (input: string) => {
-    inputProps.onChangeText?.(input);
+    onChangeQuery(input);
     validateInput(input);
   };
 
   const handleFocus = () => {
-    inputProps.onFocus?.();
+    inputProps?.onFocus?.();
     LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     setIsFocused(true);
   };
@@ -83,22 +94,22 @@ const SearchBar = ({
   const handleBlur = () => {
     LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     setIsFocused(false);
-    inputProps.onBlur?.();
+    inputProps?.onBlur?.();
   };
 
   const handleCancel = () => {
-    inputProps.onChangeText?.('');
+    onChangeQuery('');
     Keyboard.dismiss();
   };
 
   const handlePaste = async () => {
     const value = await Clipboard.getString();
-    inputProps.onChangeText?.(value);
+    onChangeQuery(value);
     validateInput(value);
   };
 
   const handleSubmit = () => {
-    inputProps.onChangeText?.(inputProps.value ?? '');
+    onChangeQuery(query ?? '');
   };
 
   const defaultBackgroundColor = getColorByThemeOutsideStyled(theme.current, {
@@ -113,21 +124,21 @@ const SearchBar = ({
   };
 
   const customInputProps = {
+    value: query,
+    onChangeText: handleChangeText,
     inputProps,
     isFocused,
     colors,
     backgroundColor: backgroundColor || defaultBackgroundColor,
-    value: inputProps.value,
     placeholder,
     inputRef,
     onFocus: handleFocus,
-    onChangeText: handleChangeText,
     onBlur: handleBlur,
     handleSubmit,
     borderColor: getBorderColor(),
   };
 
-  const showCancelButton = isFocused || !!inputProps.value;
+  const showCancelButton = isFocused || !!query;
 
   return (
     <SearchHolder style={style}>

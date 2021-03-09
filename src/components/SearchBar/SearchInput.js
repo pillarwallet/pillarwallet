@@ -33,13 +33,12 @@ import { fontSizes, appFont } from 'utils/variables';
 import type { TextInputProps } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
-type InputPropsType = {|
+export type InputPropsType = {|
   ...TextInputProps,
   placeholder?: string,
   backgroundColor?: string,
   onBlur?: (?string) => void,
   onFocus?: () => void,
-  validator?: (val: string) => ?string,
 |};
 
 export type IconProps = {|
@@ -48,18 +47,13 @@ export type IconProps = {|
   onPress?: () => void,
   persistIconOnFocus?: boolean,
 |};
-
-export type CommonComponentsProps = {|
-  inputProps: InputPropsType,
+type Props = {|
+  inputProps?: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: React.ElementRef<typeof RNTextInput>,
   inputIconName?: string,
   iconProps?: IconProps,
-|};
-
-type Props = {|
-  ...CommonComponentsProps,
   isFocused: boolean,
   colors: ThemeColors,
   value: ?string,

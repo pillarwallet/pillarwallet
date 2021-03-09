@@ -118,25 +118,25 @@ class SearchBlock extends React.Component<Props, State> {
             handleClick={this.handleOverlayClick}
           />
         )}
-        {!hideSearch &&
+        {!hideSearch && (
           <SearchBarWrapper
             style={wrapperStyle}
             isFocused={!!searchIsFocused && !inSearchMode}
             pointerEvents={disabled ? 'none' : 'auto'}
           >
             <SearchBar
+              query={query}
+              onChangeQuery={this.handleSearchChange}
               inputProps={{
-                onChangeText: this.handleSearchChange,
                 onBlur: this.handleSearchBlur,
                 onFocus: this.handleSearchFocus,
-                value: query,
                 autoCapitalize: 'none',
               }}
               placeholder={searchInputPlaceholder}
               inputRef={inputRef}
             />
           </SearchBarWrapper>
-        }
+        )}
       </React.Fragment>
     );
   }

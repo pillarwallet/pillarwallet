@@ -28,7 +28,7 @@ const stories = storiesOf('SearchBar', module).addDecorator(WithThemeDecorator);
 
 const Wrapper = (props) => {
   const [query, setQuery] = React.useState('');
-  return <SearchBar inputProps={{ value: query, onChangeText: setQuery }} {...props} />;
+  return <SearchBar query={query} onChangeQuery={setQuery} {...props} />;
 };
 
 stories.add('basic', () => <Wrapper />);

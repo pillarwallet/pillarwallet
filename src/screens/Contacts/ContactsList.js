@@ -174,11 +174,9 @@ const ContactsList = () => {
       shouldFooterAvoidKeyboard
     >
       <SearchBar
-        inputProps={{
-          value: query,
-          onChangeText: handleChangeQuery,
-          autoCapitalize: 'none',
-        }}
+        query={query}
+        onChangeQuery={handleChangeQuery}
+        inputProps={{ autoCapitalize: 'none' }}
         iconProps={{
           persistIconOnFocus: true,
         }}
@@ -214,11 +212,6 @@ const styles = {
     paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
   },
 };
-
-const SearchBarWrapper = styled.View`
-  padding-vertical: ${spacing.small}px;
-  padding-horizontal: ${spacing.layoutSides}px;
-`;
 
 const EmptyStateWrapper = styled.View`
   flex: 1;
