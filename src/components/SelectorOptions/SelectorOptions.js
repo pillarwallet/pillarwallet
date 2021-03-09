@@ -47,6 +47,7 @@ import { isValidAddressOrEnsName } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
 import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
+import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
@@ -62,7 +63,7 @@ type OwnProps = {|
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   inputIconName?: string,
-  iconProps?: Object,
+  iconProps?: IconProps,
   onHide?: () => void,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
@@ -453,6 +454,7 @@ class SelectorOptions extends React.Component<Props, State> {
               placeholder={searchPlaceholder}
               inputRef={ref => { this.searchInput = ref; }}
               marginBottom={0}
+              // $FlowFixMe
               iconProps={{ ...iconProps, persistIconOnFocus: true }}
             />
           </SearchBarWrapper>

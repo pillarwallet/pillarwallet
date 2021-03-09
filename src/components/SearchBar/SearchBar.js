@@ -106,7 +106,7 @@ const SearchBar = ({
   };
 
   const handleSubmit = () => {
-    inputProps.onChange(inputProps.value);
+    inputProps.onChange(inputProps.value ?? '');
   };
 
   const defaultBackgroundColor = getColorByThemeOutsideStyled(theme.current, {
@@ -163,6 +163,8 @@ const SearchBar = ({
 };
 
 export default SearchBar;
+
+export type { IconProps } from './SearchInput';
 
 const SearchHolder = styled.View`
   margin-bottom: ${(props) => props.marginBottom || 20}px;

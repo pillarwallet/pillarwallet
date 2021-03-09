@@ -35,16 +35,16 @@ import type { ThemeColors } from 'models/Theme';
 
 type InputPropsType = {|
   ...TextInputProps,
-  value: string,
+  value: ?string,
   onChange: (string) => void,
   placeholder?: string,
   backgroundColor?: string,
   onBlur?: (?string) => void,
   onFocus?: () => void,
-  validator?: (val: string) => string,
+  validator?: (val: string) => ?string,
 |};
 
-type IconProps = {|
+export type IconProps = {|
   icon?: string,
   style?: Object,
   onPress?: () => void,
