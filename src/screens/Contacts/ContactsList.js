@@ -173,21 +173,18 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      <SearchBarWrapper>
-        <SearchBar
-          inputProps={{
-            value: query,
-            onChangeText: handleChangeQuery,
-            autoCapitalize: 'none',
-          }}
-          iconProps={{
-            persistIconOnFocus: true,
-          }}
-          placeholder={t('label.walletAddressEnsUser')}
-          marginBottom={0}
-          showPasteButton
-        />
-      </SearchBarWrapper>
+      <SearchBar
+        inputProps={{
+          value: query,
+          onChangeText: handleChangeQuery,
+          autoCapitalize: 'none',
+        }}
+        iconProps={{
+          persistIconOnFocus: true,
+        }}
+        placeholder={t('label.walletAddressEnsUser')}
+        showPasteButton
+      />
 
       <FlatList
         data={items}

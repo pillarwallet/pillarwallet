@@ -214,21 +214,18 @@ const ContactSelectorOptions = ({
         }}
         footer={<View />}
       >
-        <SearchBarWrapper>
-          <SearchBar
-            inputProps={{
-              value: query,
-              onChangeText: handleInputChange,
-              autoCapitalize: 'none',
-              validator: validateSearch,
-            }}
-            inputRef={searchInputRef}
-            placeholder={searchPlaceholder}
-            marginBottom={0}
-            iconProps={{ persistIconOnFocus: true }}
-            showPasteButton
-          />
-        </SearchBarWrapper>
+        <SearchBar
+          inputProps={{
+            value: query,
+            onChangeText: handleInputChange,
+            autoCapitalize: 'none',
+            validator: validateSearch,
+          }}
+          inputRef={searchInputRef}
+          placeholder={searchPlaceholder}
+          iconProps={{ persistIconOnFocus: true }}
+          showPasteButton
+        />
 
         <FlatList
           data={items}
@@ -271,11 +268,6 @@ const EmptyStateWrapper = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`;
-
-const SearchBarWrapper = styled.View`
-  padding-vertical: ${spacing.small}px;
-  padding-horizontal: ${spacing.layoutSides}px;
 `;
 
 const ActionButtonsContainer = styled.View`

@@ -22,17 +22,10 @@ import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 import SearchBlock from 'components/SearchBlock';
-import { spacing } from 'utils/variables';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 storiesOf('SearchBlock', module)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <SearchBlock
-      onSearchChange={() => {}}
-      wrapperStyle={{
-        paddingHorizontal: spacing.layoutSides,
-        paddingVertical: spacing.mediumLarge,
-      }}
-    />
+    <SearchBlock onSearchChange={() => {}} />
   ));

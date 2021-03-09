@@ -120,10 +120,6 @@ const EmptyStateWrapper = styled.View`
   align-items: center;
 `;
 
-const SearchBarWrapper = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
-`;
-
 const IconCircle = styled.View`
   width: ${DIAMETER}px;
   height: ${DIAMETER}px;
@@ -443,21 +439,19 @@ class SelectorOptions extends React.Component<Props, State> {
             centerItems: [{ title }],
           }}
         >
-          <SearchBarWrapper>
-            <SearchBar
-              inputProps={{
-                onChangeText: this.handleInputChange,
-                value: query,
-                autoCapitalize: 'none',
-                validator: this.validateSearch,
-              }}
-              placeholder={searchPlaceholder}
-              inputRef={ref => { this.searchInput = ref; }}
-              marginBottom={0}
-              // $FlowFixMe
-              iconProps={{ ...iconProps, persistIconOnFocus: true }}
-            />
-          </SearchBarWrapper>
+          <SearchBar
+            inputProps={{
+              onChangeText: this.handleInputChange,
+              value: query,
+              autoCapitalize: 'none',
+              validator: this.validateSearch,
+            }}
+            placeholder={searchPlaceholder}
+            inputRef={ref => { this.searchInput = ref; }}
+            // $FlowFixMe
+            iconProps={{ ...iconProps, persistIconOnFocus: true }}
+          />
+
           {!!optionTabs && <Tabs
             tabs={updatedOptionTabs}
             wrapperStyle={{ paddingTop: 22 }}

@@ -33,26 +33,27 @@ import { SIDE_BUTTON_APPEARANCE } from 'utils/layoutAnimations';
 import { getColorByThemeOutsideStyled, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
 // Local
 import SearchInput, { type CommonComponentsProps } from './SearchInput';
 
 
 type Props = {|
   ...CommonComponentsProps,
-  marginTop?: number,
-  marginBottom?: number,
   showPasteButton?: boolean;
+  style?: ViewStyleProp;
 |};
 
 const SearchBar = ({
   inputProps,
   placeholder = t('label.search'),
   backgroundColor,
-  marginTop,
-  marginBottom,
   inputRef,
   showPasteButton,
   iconProps,
+  style,
 }: Props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -129,7 +130,7 @@ const SearchBar = ({
   const showCancelButton = isFocused || !!inputProps.value;
 
   return (
-    <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
+    <SearchHolder style={style}>
       <Row>
         <View style={{ flex: 1 }}>
           <SearchInput {...customInputProps} iconProps={iconProps} />
@@ -158,10 +159,9 @@ export default SearchBar;
 export type { IconProps } from './SearchInput';
 
 const SearchHolder = styled.View`
-  margin-bottom: ${(props) => props.marginBottom ?? 20}px;
-  margin-top: ${(props) => props.marginTop ?? 0}px;
   display: flex;
   align-items: center;
+  padding: ${spacing.small}px ${spacing.layoutSides}px;
 `;
 
 const Row = styled.View`

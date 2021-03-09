@@ -133,7 +133,6 @@ class SearchBlock extends React.Component<Props, State> {
                 autoCapitalize: 'none',
               }}
               placeholder={searchInputPlaceholder}
-              marginBottom={0}
               inputRef={inputRef}
             />
           </SearchBarWrapper>
