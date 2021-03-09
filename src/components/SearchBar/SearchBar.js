@@ -20,7 +20,7 @@
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
-import { Keyboard, View } from 'react-native';
+import { Keyboard, LayoutAnimation, View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
@@ -29,7 +29,8 @@ import t from 'translations/translate';
 import { BaseText } from 'components/Typography';
 
 // Utils
-import { getColorByThemeOutsideStyled, getThemeType, useThemeColors } from 'utils/themes';
+import { SIDE_BUTTON_APPEARANCE } from 'utils/layoutAnimations';
+import { getColorByThemeOutsideStyled, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -46,14 +47,6 @@ type Props = {|
   showPasteButton?: boolean;
 |};
 
-const getBorderColor = ({
-  isFocused, error, colors, defaultColor,
-}) => {
-  if (error) return colors.secondaryAccent240;
-  if (isFocused) return colors.basic000;
-  return defaultColor;
-};
-
 const SearchBar = ({
   inputProps,
   placeholder = t('label.search'),
@@ -64,7 +57,7 @@ const SearchBar = ({
   showPasteButton,
   iconProps,
 }: Props) => {
-  const value = React.useRef('');
+  const valueRef = React.useRef('');
 
   const [isFocused, setIsFocused] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -81,57 +74,57 @@ const SearchBar = ({
   };
 
   const handleChange = (e: SyntheticEvent<any>) => {
-    value.current = e.nativeEvent.text;
-    inputProps.onChange?.(value.current);
-    validateInput(value.current);
+    valueRef.current = e.nativeEvent.text;
+    inputProps.onChange?.(valueRef.current);
+    validateInput(valueRef.current);
   };
 
   const handleFocus = () => {
     inputProps.onFocus?.();
+    LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     setIsFocused(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     inputProps.onBlur?.();
   };
 
   const handleCancel = () => {
-    value.current = '';
-    inputProps.onChange?.(value.current);
+    valueRef.current = '';
+    inputProps.onChange?.(valueRef.current);
 
     Keyboard.dismiss();
     handleBlur();
   };
 
   const handlePaste = async () => {
-    value.current = await Clipboard.getString();
-    inputProps.onChange?.(value.current);
-    validateInput(value.current);
+    valueRef.current = await Clipboard.getString();
+    inputProps.onChange?.(valueRef.current);
+    validateInput(valueRef.current);
   };
 
   const handleSubmit = () => {
     inputProps.onChange(inputProps.value);
   };
 
-  const currentTheme = getThemeType(theme);
-  const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
+  const defaultBackgroundColor = getColorByThemeOutsideStyled(theme.current, {
     lightKey: 'basic060',
     darkKey: 'basic080',
   });
 
-  const borderColor = getBorderColor({
-    isFocused,
-    error: !!errorMessage,
-    colors,
-    defaultColor: defaultInputBackgroundColor,
-  });
+  const getBorderColor = (): string => {
+    if (errorMessage) return colors.secondaryAccent240;
+    if (isFocused) return colors.basic000;
+    return defaultBackgroundColor;
+  };
 
   const customInputProps = {
     inputProps,
     isFocused,
     colors,
-    backgroundColor: backgroundColor || defaultInputBackgroundColor,
+    backgroundColor: backgroundColor || defaultBackgroundColor,
     value: inputProps.value,
     placeholder,
     inputRef,
@@ -139,7 +132,7 @@ const SearchBar = ({
     onChange: handleChange,
     onBlur: handleBlur,
     handleSubmit,
-    borderColor,
+    borderColor: getBorderColor(),
   };
 
   const showCancelButton = isFocused || !!inputProps.value;
