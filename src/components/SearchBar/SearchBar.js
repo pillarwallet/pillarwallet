@@ -53,6 +53,8 @@ type Props = {|
   iconProps?: IconProps,
   showPasteButton?: boolean,
   style?: ViewStyleProp,
+  onFocus?: () => void,
+  onBlur?: () => void,
 |};
 
 const SearchBar = ({
@@ -66,6 +68,8 @@ const SearchBar = ({
   showPasteButton,
   iconProps,
   style,
+  onFocus,
+  onBlur,
 }: Props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -86,7 +90,7 @@ const SearchBar = ({
   };
 
   const handleFocus = () => {
-    inputProps?.onFocus?.();
+    onFocus?.();
     LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     setIsFocused(true);
   };
@@ -94,7 +98,7 @@ const SearchBar = ({
   const handleBlur = () => {
     LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
     setIsFocused(false);
-    inputProps?.onBlur?.();
+    onBlur?.();
   };
 
   const handleCancel = () => {

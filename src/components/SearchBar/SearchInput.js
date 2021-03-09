@@ -35,10 +35,6 @@ import type { ThemeColors } from 'models/Theme';
 
 export type InputPropsType = {|
   ...TextInputProps,
-  placeholder?: string,
-  backgroundColor?: string,
-  onBlur?: (?string) => void,
-  onFocus?: () => void,
 |};
 
 export type IconProps = {|
