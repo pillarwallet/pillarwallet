@@ -1010,6 +1010,8 @@ export class ActivityFeedItem extends React.Component<Props> {
     if (!color) return null;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
+
+    // $FlowFixMe: js hacks
     return colors[color] || color;
   };
 

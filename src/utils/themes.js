@@ -297,14 +297,12 @@ export function getThemeName(currentTheme: Theme = defaultTheme) {
 // in case there's no color by the key
 const FALLBACK_COLOR = '#808080';
 
-const generateColorsByTheme = (props: ColorsByThemeProps) => {
-  const {
-    lightKey,
-    darkKey,
-    lightCustom,
-    darkCustom,
-  } = props;
-
+const generateColorsByTheme = ({
+  lightKey,
+  darkKey,
+  lightCustom,
+  darkCustom,
+}: ColorsByThemeProps) => {
   return ({
     lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
     darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),

@@ -76,7 +76,7 @@ const RariPoolItem = ({ pool, balanceInUSD }: Props) => {
   const renderEarnedInterestsPercent = (interestsPercentage: number) => {
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
     let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
-    let earnedPercentColor = colors.basic10;
+    let earnedPercentColor = colors.basic010;
 
     if (interestsPercentage > 0) {
       earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
