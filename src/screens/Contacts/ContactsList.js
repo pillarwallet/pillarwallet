@@ -184,7 +184,7 @@ const ContactsList = () => {
             persistIconOnFocus: true,
           }}
           placeholder={t('label.walletAddressEnsUser')}
-          marginBottom="0"
+          marginBottom={0}
           showPasteButton
         />
       </SearchBarWrapper>

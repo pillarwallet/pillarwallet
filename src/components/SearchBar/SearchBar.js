@@ -21,7 +21,7 @@
 
 import * as React from 'react';
 import { Keyboard, View } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
@@ -29,12 +29,11 @@ import t from 'translations/translate';
 import { BaseText } from 'components/Typography';
 
 // Utils
-import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
+import { getColorByThemeOutsideStyled, getThemeType, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { SyntheticEvent } from 'utils/types/react-native';
-import type { Theme } from 'models/Theme';
 
 // Local
 import SearchInput, { type CommonComponentsProps } from './SearchInput';
@@ -44,13 +43,7 @@ type Props = {|
   ...CommonComponentsProps,
   marginTop?: number,
   marginBottom?: number,
-  theme: Theme,
   showPasteButton?: boolean;
-|};
-
-type State = {|
-  isFocused: boolean,
-  errorMessage: string,
 |};
 
 const getBorderColor = ({
@@ -61,159 +54,122 @@ const getBorderColor = ({
   return defaultColor;
 };
 
+const SearchBar = ({
+  inputProps,
+  placeholder = t('label.search'),
+  backgroundColor,
+  marginTop,
+  marginBottom,
+  inputRef,
+  showPasteButton,
+  iconProps,
+}: Props) => {
+  const value = React.useRef('');
 
-class SearchBar extends React.Component<Props, State> {
-  value: string;
+  const [isFocused, setIsFocused] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
-  constructor(props: Props) {
-    super(props);
-    this.value = '';
+  const theme = useTheme();
+  const colors = useThemeColors();
 
-    this.state = {
-      isFocused: false,
-      errorMessage: '',
-    };
-  }
-
-  componentDidUpdate() {
-    // Validate value changes orginating from props
-    if (this.props.inputProps.value !== this.value) {
-      this.value = this.props.inputProps.value ?? '';
-      this.validateInput(this.value);
-    }
-  }
-
-  handleChange = (e: SyntheticEvent<any>) => {
-    this.value = e.nativeEvent.text;
-
-    const { onChange } = this.props.inputProps;
-    onChange?.(this.value);
-
-    this.validateInput(this.value);
-  };
-
-  validateInput = (value: string) => {
-    const { validator } = this.props.inputProps;
+  const validateInput = (input: string) => {
+    const { validator } = inputProps;
     if (!validator) return;
 
-    const error = validator(value);
-    if (error) {
-      this.setState({ errorMessage: error });
-      return;
-    }
-
-    if (this.state.errorMessage) {
-      this.setState({ errorMessage: '' });
-    }
+    const error = validator(input);
+    setErrorMessage(error);
   };
 
-  handleFocus = () => {
-    const { onFocus } = this.props.inputProps;
-    onFocus?.();
-    this.setState({ isFocused: true });
+  const handleChange = (e: SyntheticEvent<any>) => {
+    value.current = e.nativeEvent.text;
+    inputProps.onChange?.(value.current);
+    validateInput(value.current);
   };
 
-  handleBlur = () => {
-    const { onBlur } = this.props.inputProps;
-    this.setState({ isFocused: false });
-    onBlur?.();
+  const handleFocus = () => {
+    inputProps.onFocus?.();
+    setIsFocused(true);
   };
 
-  handleCancel = () => {
-    const { onChange } = this.props.inputProps;
-    this.value = '';
-    onChange?.(this.value);
+  const handleBlur = () => {
+    setIsFocused(false);
+    inputProps.onBlur?.();
+  };
+
+  const handleCancel = () => {
+    value.current = '';
+    inputProps.onChange?.(value.current);
 
     Keyboard.dismiss();
-    this.handleBlur();
+    handleBlur();
   };
 
-  handlePaste = async () => {
-    this.value = await Clipboard.getString();
-
-    const { onChange } = this.props.inputProps;
-    onChange?.(this.value);
-
-    this.validateInput(this.value);
+  const handlePaste = async () => {
+    value.current = await Clipboard.getString();
+    inputProps.onChange?.(value.current);
+    validateInput(value.current);
   };
 
-  handleSubmit = () => {
-    const { value, onChange } = this.props.inputProps;
-    onChange(value);
+  const handleSubmit = () => {
+    inputProps.onChange(inputProps.value);
   };
 
-  render() {
-    const {
-      inputProps,
-      placeholder = t('label.search'),
-      backgroundColor,
-      marginTop,
-      marginBottom,
-      inputRef,
-      showPasteButton,
-      theme,
-      iconProps,
-    } = this.props;
-    const { isFocused, errorMessage } = this.state;
-    const { value = '' } = inputProps;
-    const colors = getThemeColors(theme);
-    const currentTheme = getThemeType(theme);
-    const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
-      lightKey: 'basic060',
-      darkKey: 'basic080',
-    });
+  const currentTheme = getThemeType(theme);
+  const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
+    lightKey: 'basic060',
+    darkKey: 'basic080',
+  });
 
-    const borderColor = getBorderColor({
-      isFocused,
-      error: !!errorMessage,
-      colors,
-      defaultColor: defaultInputBackgroundColor,
-    });
+  const borderColor = getBorderColor({
+    isFocused,
+    error: !!errorMessage,
+    colors,
+    defaultColor: defaultInputBackgroundColor,
+  });
 
-    const customInputProps = {
-      inputProps,
-      isFocused,
-      colors,
-      backgroundColor: backgroundColor || defaultInputBackgroundColor,
-      value,
-      placeholder,
-      inputRef,
-      onFocus: this.handleFocus,
-      onChange: this.handleChange,
-      onBlur: this.handleBlur,
-      handleSubmit: this.handleSubmit,
-      borderColor,
-    };
+  const customInputProps = {
+    inputProps,
+    isFocused,
+    colors,
+    backgroundColor: backgroundColor || defaultInputBackgroundColor,
+    value: inputProps.value,
+    placeholder,
+    inputRef,
+    onFocus: handleFocus,
+    onChange: handleChange,
+    onBlur: handleBlur,
+    handleSubmit,
+    borderColor,
+  };
 
-    const showCancelButton = isFocused || !!value;
+  const showCancelButton = isFocused || !!inputProps.value;
 
-    return (
-      <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-        <Row>
-          <View style={{flex: 1}}>
-            <SearchInput {...customInputProps} iconProps={iconProps} />
-          </View>
+  return (
+    <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
+      <Row>
+        <View style={{ flex: 1 }}>
+          <SearchInput {...customInputProps} iconProps={iconProps} />
+        </View>
 
-          {showCancelButton && (
-            <SideButton onPress={this.handleCancel}>
-              <SideButtonTitle>{t('button.cancel')}</SideButtonTitle>
-            </SideButton>
-          )}
+        {showCancelButton && (
+          <SideButton onPress={handleCancel}>
+            <SideButtonTitle>{t('button.cancel')}</SideButtonTitle>
+          </SideButton>
+        )}
 
-          {!showCancelButton && showPasteButton && (
-            <SideButton onPress={this.handlePaste}>
-              <SideButtonTitle>{t('button.paste')}</SideButtonTitle>
-            </SideButton>
-          )}
-        </Row>
+        {!showCancelButton && showPasteButton && (
+          <SideButton onPress={handlePaste}>
+            <SideButtonTitle>{t('button.paste')}</SideButtonTitle>
+          </SideButton>
+        )}
+      </Row>
 
-        {!!errorMessage && <Error>{errorMessage}</Error>}
-      </SearchHolder>
-    );
-  }
-}
+      {!!errorMessage && <Error>{errorMessage}</Error>}
+    </SearchHolder>
+  );
+};
 
-export default withTheme(SearchBar);
+export default SearchBar;
 
 const SearchHolder = styled.View`
   margin-bottom: ${(props) => props.marginBottom || 20}px;

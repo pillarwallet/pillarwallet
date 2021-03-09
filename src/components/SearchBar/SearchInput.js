@@ -34,17 +34,18 @@ import type { SyntheticEvent } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
 type InputPropsType = {|
+  value: string,
+  onChange: (string) => void,
   placeholder?: string,
   backgroundColor?: string,
-  onChange: (?string) => void,
   onBlur?: (?string) => void,
   onFocus?: () => void,
-  value: ?string,
   validator?: (val: string) => string,
+  autoCapitalize?: boolean,
 |};
 
 type IconProps = {|
-  icon: string,
+  icon?: string,
   style?: Object,
   onPress?: () => void,
   persistIconOnFocus?: boolean,
