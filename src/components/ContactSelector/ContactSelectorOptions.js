@@ -231,7 +231,7 @@ const ContactSelectorOptions = ({
               }}
               inputRef={searchInputRef}
               placeholder={searchPlaceholder}
-              marginBottom="0"
+              marginBottom={0}
               iconProps={{ persistIconOnFocus: true }}
             />
           </SearchBarWrapper>

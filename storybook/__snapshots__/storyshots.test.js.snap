@@ -44768,7 +44768,7 @@ exports[`Storyshots SearchBlock default 1`] = `
       }
     >
       <View
-        marginBottom="0"
+        marginBottom={0}
         style={
           Array [
             Object {

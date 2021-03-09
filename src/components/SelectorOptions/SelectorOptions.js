@@ -452,7 +452,7 @@ class SelectorOptions extends React.Component<Props, State> {
               }}
               placeholder={searchPlaceholder}
               inputRef={ref => { this.searchInput = ref; }}
-              marginBottom="0"
+              marginBottom={0}
               iconProps={{ ...iconProps, persistIconOnFocus: true }}
             />
           </SearchBarWrapper>

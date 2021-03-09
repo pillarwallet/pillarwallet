@@ -30,10 +30,11 @@ import Input from 'components/Input';
 import { fontSizes, appFont } from 'utils/variables';
 
 // Types
-import type { SyntheticEvent } from 'utils/types/react-native';
+import type { TextInputProps, SyntheticEvent } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
 type InputPropsType = {|
+  ...TextInputProps,
   value: string,
   onChange: (string) => void,
   placeholder?: string,
@@ -41,7 +42,6 @@ type InputPropsType = {|
   onBlur?: (?string) => void,
   onFocus?: () => void,
   validator?: (val: string) => string,
-  autoCapitalize?: boolean,
 |};
 
 type IconProps = {|
