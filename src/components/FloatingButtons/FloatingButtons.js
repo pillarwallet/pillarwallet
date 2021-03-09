@@ -65,7 +65,7 @@ const FloatingButtons = ({ items: falsyItems }: Props) => {
 
 // Bottom content inset to apply to ScrollView/FlatView in order allow for interaction
 // with all content underneath. It assumes icon size of 24 px.
-FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 160;
+FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 120;
 
 export default FloatingButtons;
 

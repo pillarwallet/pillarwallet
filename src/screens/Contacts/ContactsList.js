@@ -23,7 +23,7 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSelector, useDispatch } from 'react-redux';
-import styled, { useTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';
 import Swipeout from 'react-native-swipeout';
 import t from 'translations/translate';
@@ -48,7 +48,7 @@ import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { filterContacts } from 'utils/contacts';
-import { getThemeColors } from 'utils/themes';
+import { useThemeColors } from 'utils/themes';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
@@ -69,8 +69,7 @@ const ContactsList = () => {
 
   const navigation = useNavigation();
 
-  const theme = useTheme();
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
 
   const openContactDetails = (contact: ?Contact) => Modal.open(() => {
     const isEdit = !!contact?.name;
@@ -207,7 +206,7 @@ const ContactsList = () => {
         contentContainerStyle={styles.flatListContantContainer}
       />
 
-      {customAddressContact ? (
+      {!filteredContacts.length && customAddressContact ? (
         <ActionButtonsContainer>
           <Button title={t('button.addToAddressBook')} onPress={() => openContactDetails(customAddressContact)} />
         </ActionButtonsContainer>
@@ -222,7 +221,7 @@ export default ContactsList;
 
 const styles = {
   flatListContantContainer: {
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
   },
 };

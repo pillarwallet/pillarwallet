@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
@@ -246,7 +246,7 @@ const ContactSelectorOptions = ({
           keyExtractor={(contact) => contact.ethAddress || contact.name}
           keyboardShouldPersistTaps="always"
           ListEmptyComponent={renderEmptyStateIfNeeded()}
-          contentContainerStyle={{ flex: 1, paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+          contentContainerStyle={styles.flatListContantContainer}
         />
 
         {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
@@ -269,6 +269,13 @@ const ContactSelectorOptions = ({
 };
 
 export default ContactSelectorOptions;
+
+const styles = {
+  flatListContantContainer: {
+    flexGrow: 1,
+    paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
+  },
+};
 
 const EmptyStateWrapper = styled.View`
   flex: 1;
