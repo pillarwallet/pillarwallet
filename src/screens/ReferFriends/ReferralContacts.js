@@ -23,7 +23,7 @@
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch, connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
@@ -50,6 +50,9 @@ import Toast from 'components/Toast';
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // Utils
 import {
   getRemainingDailyInvitations,
@@ -62,49 +65,36 @@ import { spacing } from 'utils/variables';
 import { isValidPhone, isValidEmail } from 'utils/validators';
 
 // Types
-import type { NavigationScreenProp } from 'react-navigation';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
 
 const MIN_QUERY_LENGTH = 3;
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  phoneContacts: ReferralContact[],
-  isFetchingPhoneContacts: boolean,
-  isFetchingPhoneContactsComplete: boolean,
-  phoneContactsFetchError: boolean,
-  isEmailVerified: boolean,
-  isPhoneVerified: boolean,
-  alreadyInvitedContacts: ReferralContact[],
-  sentInvitationsCount: SentInvitationsCount,
-  userPhone: string,
-  userEmail: string,
-  isSendingInvite: boolean,
-  isPillarRewardCampaignActive: boolean,
-  hasAllowedToAccessContacts: boolean,
-};
 
-const ReferralContacts = ({
-  phoneContacts,
-  isFetchingPhoneContactsComplete,
-  isFetchingPhoneContacts,
-  alreadyInvitedContacts,
-  sentInvitationsCount,
-  userEmail,
-  userPhone,
-  isPillarRewardCampaignActive,
-  isSendingInvite,
-  phoneContactsFetchError,
-  isEmailVerified,
-  isPhoneVerified,
-}: Props) => {
+const ReferralContacts = () => {
   const navigation = useNavigation();
 
   const [query, setQuery] = React.useState('');
   const [selectedContacts, setSelectedContacts] = React.useState([]);
 
   const dispatch = useDispatch();
+  const {
+    isEmailVerified,
+    isPhoneVerified,
+    phone: userPhone,
+    email: userEmail,
+  } = useRootSelector(root => root.user.data);
+  const {
+    alreadyInvitedContacts,
+    sentInvitationsCount,
+    isPillarRewardCampaignActive,
+    isSendingInvite,
+  } = useRootSelector(root => root.referrals);
+  const {
+    data: phoneContacts,
+    isFetching: isFetchingPhoneContacts,
+    isFetchComplete: isFetchingPhoneContactsComplete,
+    fetchError: phoneContactsFetchError,
+  } = useRootSelector(root => root.phoneContacts);
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
@@ -309,45 +299,7 @@ const ReferralContacts = ({
   );
 };
 
-const mapStateToProps = ({
-  user: {
-    data: {
-      isEmailVerified,
-      isPhoneVerified,
-      phone: userPhone,
-      email: userEmail,
-    },
-  },
-  referrals: {
-    alreadyInvitedContacts,
-    sentInvitationsCount,
-    isPillarRewardCampaignActive,
-    isSendingInvite,
-    hasAllowedToAccessContacts,
-  },
-  phoneContacts: {
-    data: phoneContacts,
-    isFetching: isFetchingPhoneContacts,
-    isFetchComplete: isFetchingPhoneContactsComplete,
-    fetchError: phoneContactsFetchError,
-  },
-}: RootReducerState): $Shape<Props> => ({
-  alreadyInvitedContacts,
-  sentInvitationsCount,
-  isFetchingPhoneContacts,
-  isFetchingPhoneContactsComplete,
-  phoneContacts,
-  phoneContactsFetchError,
-  isEmailVerified,
-  isPhoneVerified,
-  userPhone,
-  userEmail,
-  isPillarRewardCampaignActive,
-  isSendingInvite,
-  hasAllowedToAccessContacts,
-});
-
-export default withTheme(connect(mapStateToProps, null)(ReferralContacts));
+export default withTheme(ReferralContacts);
 
 const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
   const contact = {
