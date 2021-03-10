@@ -20,26 +20,36 @@
 
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
-import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
+// Actions
+import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
+import { fetchSentReferralInvitationsAction, sendReferralInvitationsAction } from 'actions/referralsActions';
+
+// Components
 import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import SearchBlock from 'components/SearchBlock';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import MissingInfoNote from 'screens/ReferFriends/MissingInfoNote';
+import SearchBlock from 'components/SearchBlock';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
-import { BaseText } from 'components/Typography';
-import MissingInfoNote from 'screens/ReferFriends/MissingInfoNote';
 
-import { spacing } from 'utils/variables';
+// Contstants
+import { ADD_EDIT_USER } from 'constants/navigationConstants';
+import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
+
+// Utils
 import {
   getRemainingDailyInvitations,
   isSameContact,
@@ -47,17 +57,12 @@ import {
   filterAllowedContacts,
   searchContacts,
 } from 'utils/referrals';
+import { spacing } from 'utils/variables';
 import { isValidPhone, isValidEmail } from 'utils/validators';
 
-import type { NavigationScreenProp } from 'react-navigation';
+// Types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
-
-import { fetchSentReferralInvitationsAction, sendReferralInvitationsAction } from 'actions/referralsActions';
-import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
-
-import { ADD_EDIT_USER } from 'constants/navigationConstants';
-import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 
 
 type Props = {
