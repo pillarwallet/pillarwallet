@@ -5160,7 +5160,7 @@ exports[`Storyshots ActivityFeedItem Liquidity added 1`] = `
                       ]
                     }
                   >
-                    negativeTokenValue
+                    negativeValue
                   </Text>
                   <Text
                     style={
@@ -5437,7 +5437,7 @@ exports[`Storyshots ActivityFeedItem Liquidity removed 1`] = `
                       ]
                     }
                   >
-                    positiveTokenValue
+                    positiveValue
                   </Text>
                 </View>
               </View>
