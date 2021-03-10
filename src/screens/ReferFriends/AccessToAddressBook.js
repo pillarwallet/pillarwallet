@@ -22,28 +22,21 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { Paragraph } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Button from 'components/Button';
+// Components
 import { Wrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
+import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+
+// Utils
 import { spacing } from 'utils/variables';
 
 
-type Props = {
+type Props = {|
   allowToAccessPhoneContacts: () => void,
-};
+|};
 
-const ButtonWrapper = styled.View`
-  flex: 1;
-  justify-content: center;
-`;
-
-const AccessToAddressBook = (props: Props) => {
-  const allowAccess = () => {
-    const { allowToAccessPhoneContacts } = props;
-    allowToAccessPhoneContacts();
-  };
-
+const AccessToAddressBook = ({ allowToAccessPhoneContacts }: Props) => {
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: t('addressBookContent.title.allowAccess') }] }}>
       <Wrapper flex={1} regularPadding>
@@ -51,7 +44,7 @@ const AccessToAddressBook = (props: Props) => {
           {t('addressBookContent.paragraph.allowAccess')}
         </Paragraph>
         <ButtonWrapper>
-          <Button title={t('button.confirm')} onPress={allowAccess} />
+          <Button title={t('button.confirm')} onPress={allowToAccessPhoneContacts} />
         </ButtonWrapper>
       </Wrapper>
     </ContainerWithHeader>
@@ -59,3 +52,8 @@ const AccessToAddressBook = (props: Props) => {
 };
 
 export default AccessToAddressBook;
+
+const ButtonWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
