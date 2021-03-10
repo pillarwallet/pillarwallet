@@ -24,7 +24,7 @@ import * as React from 'react';
 import { FlatList, Keyboard, ScrollView } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
@@ -287,7 +287,11 @@ const ReferralContacts = () => {
                   large
                 >
                   {phoneContactsFetchError && (
-                    <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                    <Button
+                      title={t('button.tryAgain')}
+                      onPress={() => dispatch(fetchPhoneContactsAction())}
+                      marginTop={spacing.large}
+                    />
                   )}
                 </EmptyStateParagraph>
               </EmptyStateWrapper>
@@ -299,7 +303,7 @@ const ReferralContacts = () => {
   );
 };
 
-export default withTheme(ReferralContacts);
+export default ReferralContacts;
 
 const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
   const contact = {
