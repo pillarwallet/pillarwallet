@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@ethersproject/shims": "^5.0.7",
+    "@hookform/resolvers": "^1.3.5",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.48.1890",
     "@rari-capital/rari-sdk": "^1.4.0",
@@ -100,6 +101,7 @@
     "proxy-polyfill": "^0.3.1",
     "querystring-es3": "~0.2.0",
     "react": "16.13.1",
+    "react-hook-form": "^6.15.4",
     "react-i18next": "^11.7.0",
     "react-native": "0.63.4",
     "react-native-android-badge": "^0.4.3",
@@ -185,7 +187,8 @@
     "uuid": "^3.3.2",
     "vm-browserify": "0.0.4",
     "wallet-address-validator": "^0.2.4",
-    "web3": "^1.2.11"
+    "web3": "^1.2.11",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
@@ -263,7 +266,7 @@
       "./node_modules/react-native-gesture-handler/jestSetup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet|@react-native-community/datetimepicker|@codler/react-native-keyboard-aware-scroll-view|@react-native-picker|@rari-capital/rari-sdk)/)"
+      "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet|@react-native-community/datetimepicker|@codler/react-native-keyboard-aware-scroll-view|@react-native-picker|@hookform|@rari-capital/rari-sdk)/)"
     ],
     "moduleNameMapper": {
       "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",

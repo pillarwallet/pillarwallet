@@ -465,8 +465,8 @@
       "cantCalculateFee": "Unable to calculate transaction fee"
     },
     "emptyAddress": "Address cannot be empty",
-    "contactWithAddressExist": "Contact with this address already exist",
-    "contactWithNameExist": "Contact with this name already exist",
+    "contactWithAddressExists": "Contact with this address already exists",
+    "contactWithNameExists": "Contact with this name already exists",
     "emptyName": "Name cannot be empty",
     "invalid": {
       "address": "Invalid address",

@@ -352,20 +352,23 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
-export const resolveEnsName = (ensName: string): Promise<?string> => {
+export const resolveEnsName = async (ensName: string): Promise<?string> => {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.resolveName(ensName);
+  try {
+    return await provider.resolveName(ensName);
+  } catch (error) {
+    reportLog('getReceiverWithEnsName failed', { error });
+    return null;
+  }
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let ensName;
   try {
-    ensName = await provider.lookupAddress(address);
+    return await provider.lookupAddress(address);
   } catch (_) {
-    //
+    return null;
   }
-  return ensName;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {
