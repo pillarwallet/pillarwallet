@@ -62,6 +62,7 @@ type Props = {|
   onModalShow?: () => void,
   onSwipeStart?: () => void,
   onSwipeMove?: (percentageShown: number) => void,
+  onSwipeComplete?: ({ swipingDirection: SwipeDirection}) => void,
   scrollOffset?: number,
   scrollOffsetMax?: number,
   scrollTo?: (_: ScrollToProps) => void,

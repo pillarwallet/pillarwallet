@@ -95,19 +95,22 @@ const ReferFriendsScreen = () => {
   const phoneContactsFetchError = useRootSelector((root) => root.phoneContacts.fetchError);
 
   React.useEffect(() => {
-    if (!hasAllowedToAccessContacts) {
-      Modal.open(() => <ContactsPermissionModal onCancel={() => navigation.goBack(null)} />);
-    }
-  }, [hasAllowedToAccessContacts]);
-
-  React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
-
-    fetchPhoneContactsIfNeeded();
   }, []);
 
-  const fetchPhoneContactsIfNeeded = () => {
-    if (!hasAllowedToAccessContacts || isFetchingPhoneContacts || isFetchingPhoneContactsComplete) return;
+  React.useEffect(() => {
+    if (!hasAllowedToAccessContacts) {
+      Modal.open(() => (
+        <ContactsPermissionModal onAllow={fetchPhoneContacts} onCancel={() => navigation.goBack(null)} />
+      ));
+      return;
+    }
+
+    fetchPhoneContacts();
+  }, [hasAllowedToAccessContacts]);
+
+  const fetchPhoneContacts = () => {
+    if (isFetchingPhoneContacts || isFetchingPhoneContactsComplete) return;
 
     dispatch(fetchPhoneContactsAction());
   };
@@ -297,7 +300,7 @@ const ReferFriendsScreen = () => {
                   {phoneContactsFetchError && (
                     <Button
                       title={t('button.tryAgain')}
-                      onPress={fetchPhoneContactsIfNeeded}
+                      onPress={fetchPhoneContacts}
                       marginTop={spacing.large}
                     />
                   )}

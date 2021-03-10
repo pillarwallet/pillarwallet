@@ -41,10 +41,11 @@ import { images } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 type Props = {|
+  onAllow: () => mixed;
   onCancel: () => mixed;
 |};
 
-const ContactsPermissionModal = ({ onCancel }: Props) => {
+const ContactsPermissionModal = ({ onAllow, onCancel }: Props) => {
   const modalRef = useRef();
 
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ const ContactsPermissionModal = ({ onCancel }: Props) => {
   const handleAllowPress = () => {
     dispatch(allowToAccessPhoneContactsAction());
     modalRef.current?.close();
+    onAllow();
   };
 
   const handleCancelPress = () => {
@@ -62,7 +64,7 @@ const ContactsPermissionModal = ({ onCancel }: Props) => {
   };
 
   return (
-    <SlideModal ref={modalRef} noClose hideHeader>
+    <SlideModal ref={modalRef} onDismiss={handleCancelPress} noClose hideHeader>
       <SafeAreaContent>
         <Spacing h={spacing.large} />
 
