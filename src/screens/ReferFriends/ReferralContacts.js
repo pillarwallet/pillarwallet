@@ -23,7 +23,7 @@
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { connect } from 'react-redux';
+import { useDispatch, connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
@@ -63,7 +63,7 @@ import { isValidPhone, isValidEmail } from 'utils/validators';
 
 // Types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
 
@@ -74,15 +74,12 @@ type Props = {
   isFetchingPhoneContacts: boolean,
   isFetchingPhoneContactsComplete: boolean,
   phoneContactsFetchError: boolean,
-  fetchPhoneContacts: () => void,
   isEmailVerified: boolean,
   isPhoneVerified: boolean,
   alreadyInvitedContacts: ReferralContact[],
   sentInvitationsCount: SentInvitationsCount,
   userPhone: string,
   userEmail: string,
-  fetchSentReferralInvitations: () => void,
-  sendInvitation: (invitations: ReferralContact[]) => void,
   isSendingInvite: boolean,
   isPillarRewardCampaignActive: boolean,
   hasAllowedToAccessContacts: boolean,
@@ -92,9 +89,6 @@ const ReferralContacts = ({
   phoneContacts,
   isFetchingPhoneContactsComplete,
   isFetchingPhoneContacts,
-  fetchPhoneContacts,
-  fetchSentReferralInvitations,
-  sendInvitation,
   alreadyInvitedContacts,
   sentInvitationsCount,
   userEmail,
@@ -110,16 +104,18 @@ const ReferralContacts = ({
   const [query, setQuery] = React.useState('');
   const [selectedContacts, setSelectedContacts] = React.useState([]);
 
+  const dispatch = useDispatch();
+
   React.useEffect(() => {
-    fetchSentReferralInvitations();
+    dispatch(fetchSentReferralInvitationsAction());
 
     if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
-      fetchPhoneContacts();
+      dispatch(fetchPhoneContactsAction());
     }
   }, []);
 
   const sendInvites = () => {
-    sendInvitation(selectedContacts);
+    dispatch(sendReferralInvitationsAction(selectedContacts));
   };
 
   const renderContact = ({ item }: { item: ReferralContact }, canInvite: boolean) => {
@@ -351,15 +347,7 @@ const mapStateToProps = ({
   hasAllowedToAccessContacts,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchPhoneContacts: () => dispatch(fetchPhoneContactsAction()),
-  fetchSentReferralInvitations: () => dispatch(fetchSentReferralInvitationsAction()),
-  sendInvitation: (invitations: ReferralContact[]) => dispatch(
-    sendReferralInvitationsAction(invitations),
-  ),
-});
-
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferralContacts));
+export default withTheme(connect(mapStateToProps, null)(ReferralContacts));
 
 const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
   const contact = {
