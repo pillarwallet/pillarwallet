@@ -55,7 +55,6 @@ import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 import { useRootSelector } from 'selectors';
 import { useUser } from 'selectors/user';
 
-
 // Utils
 import {
   getRemainingDailyInvitations,
@@ -73,10 +72,9 @@ import type { ReferralContact } from 'reducers/referralsReducer';
 // Local
 import ContactsPermissionModal from './ContactsPermissionModal';
 
-
 const MIN_QUERY_LENGTH = 3;
 
-const ReferralContacts = () => {
+const ReferFriendsScreen = () => {
   const navigation = useNavigation();
 
   const [query, setQuery] = React.useState('');
@@ -85,6 +83,7 @@ const ReferralContacts = () => {
   const dispatch = useDispatch();
   const user = useUser();
 
+  const hasAllowedToAccessContacts = useRootSelector((root) => root.referrals.hasAllowedToAccessContacts);
   const alreadyInvitedContacts = useRootSelector((root) => root.referrals.alreadyInvitedContacts);
   const sentInvitationsCount = useRootSelector((root) => root.referrals.sentInvitationsCount);
   const isPillarRewardCampaignActive = useRootSelector((root) => root.referrals.isPillarRewardCampaignActive);
@@ -96,15 +95,15 @@ const ReferralContacts = () => {
   const phoneContactsFetchError = useRootSelector((root) => root.phoneContacts.fetchError);
 
   React.useEffect(() => {
+    if (!hasAllowedToAccessContacts) {
+      Modal.open(() => <ContactsPermissionModal onCancel={() => navigation.goBack(null)} />);
+    }
+  }, [hasAllowedToAccessContacts]);
+
+  React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
 
     fetchPhoneContactsIfNeeded();
-  }, []);
-
-  React.useEffect(() => {
-    if (!hasAllowedToAccessContacts) {
-      Modal.open(() => <ContactsPermissionModal />);
-    }
   }, []);
 
   const fetchPhoneContactsIfNeeded = () => {
@@ -312,7 +311,7 @@ const ReferralContacts = () => {
   );
 };
 
-export default ReferralContacts;
+export default ReferFriendsScreen;
 
 const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
   const contact = {

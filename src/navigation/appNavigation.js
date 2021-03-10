@@ -73,7 +73,7 @@ import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
-import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
+import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
@@ -442,7 +442,7 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-  [REFER_FLOW]: ReferralContactsScreen,
+  [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
