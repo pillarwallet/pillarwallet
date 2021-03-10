@@ -65,6 +65,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
 
+const MIN_QUERY_LENGTH = 3;
 type Props = {
   navigation: NavigationScreenProp<*>,
   phoneContacts: ReferralContact[],
@@ -88,46 +89,6 @@ type Props = {
 type State = {
   query: string,
   selectedContacts: ReferralContact[],
-};
-
-const EmptyStateWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  padding: 20px 30px 30px;
-  flex: 1;
-  justify-content: center;
-`;
-
-const FooterWrapper = styled.View`
-  padding: ${spacing.layoutSides}px;
-`;
-
-const FooterText = styled(BaseText)`
-  color: ${({ theme }) => theme.colors.accent};
-  text-align: center;
-`;
-
-const MIN_QUERY_LENGTH = 3;
-
-const createCustomContact = (
-  query: string,
-  isPhoneVerified: boolean,
-  isEmailVerified: boolean,
-): ?ReferralContact => {
-  const contact = {
-    id: 'custom-contact',
-    name: query,
-  };
-
-  if (isPhoneVerified && isValidPhone(query)) {
-    return { ...contact, phone: query };
-  }
-
-  if (isEmailVerified && isValidEmail(query)) {
-    return { ...contact, email: query };
-  }
-
-  return null;
 };
 
 class ReferralContacts extends React.PureComponent<Props, State> {
@@ -434,3 +395,37 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferralContacts));
+
+const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
+  const contact = {
+    id: 'custom-contact',
+    name: query,
+  };
+
+  if (isPhoneVerified && isValidPhone(query)) {
+    return { ...contact, phone: query };
+  }
+
+  if (isEmailVerified && isValidEmail(query)) {
+    return { ...contact, email: query };
+  }
+
+  return null;
+};
+
+const EmptyStateWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+  padding: 20px 30px 30px;
+  flex: 1;
+  justify-content: center;
+`;
+
+const FooterWrapper = styled.View`
+  padding: ${spacing.layoutSides}px;
+`;
+
+const FooterText = styled(BaseText)`
+  color: ${({ theme }) => theme.colors.accent};
+  text-align: center;
+`;
