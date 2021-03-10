@@ -181,6 +181,7 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
                   onBlur,
                   placeholder: t('label.address'),
                   autoCapitalize: 'none',
+                  autoFocus: !contact?.ethAddress,
                 }}
               />
             </InputWrapper>

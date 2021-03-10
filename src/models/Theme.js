@@ -19,26 +19,23 @@
 */
 
 import lightThemeColors from 'utils/themes/lightTheme';
-import darkThemeColors from 'utils/themes/darkTheme';
+import { lightThemeColorsOld } from 'utils/themes';
 
+export type ColorKeyModern = $Keys<typeof lightThemeColors>;
+export type ColorKeyOld = $Keys<typeof lightThemeColorsOld>;
 
+export type ColorKey = ColorKeyOld | ColorKeyModern;
 export type ThemeColors = {
-  [colorName: string]: string,
+  [ColorKey]: string,
 };
-
 export type Theme = {
   current: string,
-  colors: any,
+  colors: ThemeColors,
 };
 
-type LightThemeColorKey = $Keys<typeof lightThemeColors>;
-type DarkThemeColorKey = $Keys<typeof darkThemeColors>;
-
-export type ColorKey = LightThemeColorKey | DarkThemeColorKey;
-
 export type ColorsByThemeProps = {|
-  lightKey?: LightThemeColorKey,
-  darkKey?: DarkThemeColorKey,
+  lightKey?: ColorKeyModern,
+  darkKey?: ColorKeyModern,
   lightCustom?: string,
   darkCustom?: string,
-|}
+|};

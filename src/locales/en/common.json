@@ -190,7 +190,6 @@
     "onHold": "On hold",
     "deviceAddress": "Device address",
     "noContacts": "No contacts",
-    "noContactsAdded": "No contacts added",
     "comingSoon": "Coming soon",
     "buy": "Buy",
     "sell": "Sell",
@@ -280,7 +279,6 @@
     "withdraw": "Withdraw",
     "withdrawMore": "Withdraw more",
     "delete": "Delete",
-    "addNew": "Add new",
     "save": "Save",
     "next": "Next",
     "confirmWithdraw": "Confirm withdraw",
@@ -1627,11 +1625,11 @@
 
   "alert": {
     "deleteContact": {
-      "title": "Delete {{contactName}}",
-      "message": "Are you sure you would like to delete this contact?",
+      "title": "Delete address",
+      "message": "Are you sure you would like to remove {{name}} from address book?",
       "button": {
         "cancel": "Cancel",
-        "ok": "Yes, delete"
+        "ok": "Confirm"
       }
     },
     "hideAsset": {

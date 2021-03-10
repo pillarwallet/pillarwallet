@@ -102,3 +102,30 @@ export const getContactWithEnsName = async (contact: Contact, ensName: string): 
     ethAddress: receiver || contact?.ethAddress,
   };
 };
+
+const isMatchingContact = (contact: Contact, query: ?string) => {
+  if (!query) return true;
+
+  return contact.name.toUpperCase().includes(query.toUpperCase())
+    || contact.ethAddress.toUpperCase().includes(query.toUpperCase())
+    || contact.ensName?.toUpperCase().includes(query.toUpperCase());
+};
+
+const isExactMatch = (contact: Contact, query: ?string) => {
+  if (!query) return false;
+
+  return (
+    contact.name.toUpperCase() === query.toUpperCase() ||
+    contact.ethAddress.toUpperCase() === query.toUpperCase() ||
+    contact.ensName?.toUpperCase() === query.toUpperCase()
+  );
+};
+
+// Filter by query and put exact matches at the beginning of the list.
+export const filterContacts = (contacts: Contact[], query: ?string): Contact[] => {
+  if (!query) return contacts;
+
+  return contacts
+    .filter((contact) => isMatchingContact(contact, query))
+    .sort((contact) => isExactMatch(contact, query) ? 0 : 1);
+};

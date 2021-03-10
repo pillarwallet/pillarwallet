@@ -20,8 +20,9 @@
 import * as React from 'react';
 import { Platform, StatusBar, View, Dimensions, ScrollView, Animated } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { withNavigation, SafeAreaView } from 'react-navigation';
+import { withNavigation } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 
