@@ -25,7 +25,6 @@ import { FlatList, Keyboard, ScrollView } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
@@ -118,10 +117,6 @@ const ReferralContacts = ({
       fetchPhoneContacts();
     }
   }, []);
-
-  const handleSearch = debounce((text: string) => {
-    setQuery(text);
-  }, 500);
 
   const sendInvites = () => {
     sendInvitation(selectedContacts);
@@ -271,7 +266,7 @@ const ReferralContacts = ({
         <ScrollView stickyHeaderIndices={[0]} contentContainerStyle={{ flexGrow: 1 }}>
           <SearchBlock
             searchInputPlaceholder={t('label.emailOrPhone')}
-            onSearchChange={(q) => handleSearch(q)}
+            onSearchChange={setQuery}
             itemSearchState={query.length >= MIN_QUERY_LENGTH}
             wrapperStyle={{ paddingVertical: spacing.small }}
           />
