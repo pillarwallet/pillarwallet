@@ -19,6 +19,7 @@
 */
 import axios from 'axios';
 import { reportLog } from 'utils/common';
+import { retryOnNetworkError } from 'utils/retry';
 
 export class GraphQueryError extends Error {
   subgraphName: string;
@@ -38,8 +39,8 @@ export class GraphQueryError extends Error {
 export const callSubgraph = (subgraphName: string, query: string) => {
   // eslint-disable-next-line i18next/no-literal-string
   const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`;
-  return axios
-    .post(url, { query })
+
+  return retryOnNetworkError(() => axios.post(url, { query }))
     .then(({ data: response }) => response.data)
     .catch((error) => {
       reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query });

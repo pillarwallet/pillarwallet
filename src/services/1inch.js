@@ -37,6 +37,7 @@ import {
   parseTokenAmount,
 } from 'utils/1inch';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
+import { retryOnNetworkError } from 'utils/retry';
 
 // constants
 import { PROVIDER_1INCH, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
@@ -59,7 +60,8 @@ const ethProvider = () => {
 };
 
 export const get1InchSpenderAddress = async (): Promise<?string> => {
-  const response = await axios.get(`${EXCHANGE_URL}/approve/spender`).catch((error) => error);
+  const response = await retryOnNetworkError(() => axios.get(`${EXCHANGE_URL}/approve/spender`))
+    .catch((error) => error);
 
   const spenderAddress = response?.data?.address;
 
@@ -160,7 +162,8 @@ export const create1inchAllowanceTx =
   };
 
 export const fetch1inchSupportedTokens = async (): Promise<string[]> => {
-  const response = await axios.get(`${EXCHANGE_URL}/tokens`).catch((error) => error);
+  const response = await retryOnNetworkError(() => axios.get(`${EXCHANGE_URL}/tokens`))
+    .catch((error) => error);
 
   const supportedTokens = response?.data?.tokens;
 

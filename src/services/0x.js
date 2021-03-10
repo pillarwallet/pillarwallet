@@ -21,6 +21,7 @@
 import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
 import { reportErrorLog } from 'utils/common';
+import { retryOnNetworkError } from 'utils/retry';
 
 
 export class NotEnoughLiquidityError extends Error {}
@@ -40,7 +41,7 @@ export const get0xSwapOrders = async (
     url += `&sellAmount=${maxInputAmountBN.toString()}`;
   }
 
-  const { data: decoded } = await axios.get(url)
+  const { data: decoded } = await retryOnNetworkError(() => axios.get(url))
     .catch((error) => {
       if (error.response?.data?.validationErrors?.[0]?.reason === 'INSUFFICIENT_ASSET_LIQUIDITY') {
         throw new NotEnoughLiquidityError();

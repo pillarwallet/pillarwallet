@@ -20,6 +20,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { getEnv } from 'configs/envConfig';
 
+// utils
+import { retryOnNetworkError } from 'utils/retry';
+
 // services
 import { API_REQUEST_TIMEOUT } from './api';
 
@@ -36,7 +39,7 @@ const requestConfig = {
 export const getLimitedData =
   (url: string, data: Array<Object>, limit: number, offset: number,
     responseDataKey: string, resolve: Function, reject: Function) => {
-    axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig)
+    retryOnNetworkError(() => axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig))
       .then(({ data: responseData }: AxiosResponse) => {
         const retrievedData = data.concat(responseData[responseDataKey]);
         const newOffset = offset + limit;

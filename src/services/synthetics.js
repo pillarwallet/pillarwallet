@@ -19,6 +19,7 @@
 */
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getEnv } from 'configs/envConfig';
+import { retryOnNetworkError } from 'utils/retry';
 import { API_REQUEST_TIMEOUT } from './api';
 
 
@@ -70,7 +71,7 @@ class SyntheticsService {
   }
 
   getDataFromLiquidityPool() {
-    return axios.get(buildApiUrl('exchange/data'), this.apiConfig)
+    return retryOnNetworkError(() => axios.get(buildApiUrl('exchange/data'), this.apiConfig))
       .then(this.handleResponse)
       .catch((error: AxiosError) => ({ error }));
   }

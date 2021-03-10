@@ -36,6 +36,7 @@ import type {
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
 
+import { retryOnNetworkError } from 'utils/retry';
 import { API_REQUEST_TIMEOUT } from './api';
 
 
@@ -77,7 +78,7 @@ class EthplorerSdk {
       if (params.type) paramsArray.push(`type=${params.type}`);
       if (params.limit) paramsArray.push(`limit=${params.limit}`);
     }
-    return this.pubRequest(`getTokenHistory/${address}`, paramsArray);
+    return retryOnNetworkError(() => this.pubRequest(`getTokenHistory/${address}`, paramsArray));
   }
 
   /*
@@ -85,7 +86,7 @@ class EthplorerSdk {
    * @param {string} address of the token
    */
   getTokenInfo(address: string): Promise<GetTokenInfoResponse> {
-    return this.pubRequest(`getTokenInfo/${address}`);
+    return retryOnNetworkError(() => this.pubRequest(`getTokenInfo/${address}`));
   }
 
   /*
@@ -99,7 +100,7 @@ class EthplorerSdk {
       if (params.token) paramsArray.push(`token=${params.token}`);
       if (params.showETHTotals) paramsArray.push(`showETHTotals=${params.showETHTotals}`);
     }
-    return this.pubRequest(`getAddressInfo/${address}`, paramsArray);
+    return retryOnNetworkError(() => this.pubRequest(`getAddressInfo/${address}`, paramsArray));
   }
 
   /*
@@ -107,7 +108,7 @@ class EthplorerSdk {
    * @param {string} address of the transaction
    */
   getTxInfo(address: string): Promise<GetTxInfoResponse> {
-    return this.pubRequest(`getTxInfo/${address}`);
+    return retryOnNetworkError(() => this.pubRequest(`getTxInfo/${address}`));
   }
 
   /**
@@ -123,7 +124,7 @@ class EthplorerSdk {
       if (params.limit) paramsArray.push(`limit=${params.limit}`);
       if (params.timestamp) paramsArray.push(`timestamp=${params.timestamp}`);
     }
-    return this.pubRequest(`getAddressHistory/${address}`, paramsArray);
+    return retryOnNetworkError(() => this.pubRequest(`getAddressHistory/${address}`, paramsArray));
   }
 
   /*
@@ -139,7 +140,7 @@ class EthplorerSdk {
       if (params.timestamp) paramsArray.push(`timestamp=${params.timestamp}`);
       if (params.showZeroValues) paramsArray.push(`showZeroValues=${params.showZeroValues}`);
     }
-    return this.pubRequest(`getAddressTransactions/${address}`, paramsArray)
+    return retryOnNetworkError(() => this.pubRequest(`getAddressTransactions/${address}`, paramsArray))
       .then(history => history.map(tx => ({
         ...tx,
         value: parseEthValue(tx.value),
@@ -153,7 +154,7 @@ class EthplorerSdk {
    */
   getTokenPriceHistoryGrouped(address: number, period: number): Promise<GetTokenPriceHistoryGroupedResponse> {
     const paramsArray = [`period=${period}`];
-    return this.pubRequest(`getTokenPriceHistoryGrouped/${address}`, paramsArray);
+    return retryOnNetworkError(() => this.pubRequest(`getTokenPriceHistoryGrouped/${address}`, paramsArray));
   }
 
   pubRequest(uri: string, params: string[] = []) {
