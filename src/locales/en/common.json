@@ -1731,7 +1731,9 @@
     },
     "button": {
       "addLiquidity": "Add liquidity",
+      "addLiquidityWrapped": "Add\nliquidity",
       "removeLiquidity": "Remove liquidity",
+      "removeLiquidityWrapped": "Remove\nliquidity",
       "stake": "Stake",
       "unstake": "Unstake",
       "claimRewards": "Claim rewards"

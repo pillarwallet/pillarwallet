@@ -20,7 +20,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -33,7 +33,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
-import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
 import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
@@ -57,7 +56,7 @@ import {
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
-import { images } from 'utils/images';
+import { images, getImageUrl } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -65,7 +64,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Balances, Rates, Asset } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
-import type { Theme } from 'models/Theme';
 
 import StakingEnabledModal from './StakingEnabledModal';
 
@@ -79,7 +77,6 @@ type Props = {
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
   supportedAssets: Asset[],
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-  theme: Theme,
   shownStakingEnabledModal: {[string]: boolean},
   setShownStakingEnabledModal: string => void,
 };
@@ -130,7 +127,7 @@ const ButtonWrapper = styled.View`
 
 const AbsolutePositioning = styled.View`
   position: absolute;
-  top: 0; 
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -143,6 +140,13 @@ const Overlay = styled(AbsolutePositioning)`
   opacity: 0.9;
 `;
 
+const AssetIcon = styled(Image)`
+  width: 64px;
+  height: 64px;
+  align-self: center;
+  margin: 70px 0 20px 0;
+`;
+
 const LiquidityPoolDashboard = ({
   navigation,
   baseFiatCurrency,
@@ -152,7 +156,6 @@ const LiquidityPoolDashboard = ({
   supportedAssets,
   liquidityPoolsReducer,
   rates,
-  theme,
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
@@ -252,6 +255,9 @@ const LiquidityPoolDashboard = ({
     });
   }
 
+  const theme = useTheme();
+  const { genericToken } = images(theme);
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -268,10 +274,10 @@ const LiquidityPoolDashboard = ({
         scrollEnabled={scrollEnabled}
       >
         <MainContainter>
-          <AssetPattern
-            token="PLR"
-            icon={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
-            isListed
+          <AssetIcon
+            source={{ uri: getImageUrl(pool.iconUrl, 3) }}
+            defaultSource={genericToken}
+            fallback
           />
           <MediumText giant center>{formattedBalance}{' '}
             <MediumText secondary fontSize={20}>{pool.symbol}</MediumText>
@@ -290,12 +296,12 @@ const LiquidityPoolDashboard = ({
             {balance > 0 ? (
               <ButtonsRow>
                 <CircleButton
-                  label={t('liquidityPoolsContent.button.addLiquidity')}
+                  label={t('liquidityPoolsContent.button.addLiquidityWrapped')}
                   fontIcon="plus"
                   onPress={onAddLiquidity}
                 />
                 <CircleButton
-                  label={t('liquidityPoolsContent.button.removeLiquidity')}
+                  label={t('liquidityPoolsContent.button.removeLiquidityWrapped')}
                   fontIcon="up-arrow"
                   onPress={onRemoveLiquidity}
                 />
@@ -414,8 +420,6 @@ const LiquidityPoolDashboard = ({
                   : poolStats.tokensLiquidity[tokenSymbol];
               const formattedQuantity = formatTokenAmount(quantity, tokenSymbol);
 
-              const { genericToken } = images(theme);
-
               return (
                 <View key={tokenSymbol}>
                   <StretchedRow>
@@ -499,4 +503,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setShownStakingEnabledModal: (poolName: string) => dispatch(setShownStakingEnabledModalAction(poolName)),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard));
+export default connect(mapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard);
