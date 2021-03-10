@@ -18,9 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/* eslint-disable no-use-before-define */
+
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
@@ -61,6 +63,7 @@ import { spacing } from 'utils/variables';
 import { isValidPhone, isValidEmail } from 'utils/validators';
 
 // Types
+import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
@@ -86,52 +89,46 @@ type Props = {
   hasAllowedToAccessContacts: boolean,
 };
 
-type State = {
-  query: string,
-  selectedContacts: ReferralContact[],
-};
+const ReferralContacts = ({
+  phoneContacts,
+  isFetchingPhoneContactsComplete,
+  isFetchingPhoneContacts,
+  fetchPhoneContacts,
+  fetchSentReferralInvitations,
+  sendInvitation,
+  alreadyInvitedContacts,
+  sentInvitationsCount,
+  userEmail,
+  userPhone,
+  isPillarRewardCampaignActive,
+  isSendingInvite,
+  phoneContactsFetchError,
+  isEmailVerified,
+  isPhoneVerified,
+}: Props) => {
+  const navigation = useNavigation();
 
-class ReferralContacts extends React.PureComponent<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.handleSearch = debounce(this.handleSearch, 500);
-    this.state = {
-      query: '',
-      selectedContacts: [],
-    };
-  }
+  const [query, setQuery] = React.useState('');
+  const [selectedContacts, setSelectedContacts] = React.useState([]);
 
-  componentDidMount() {
-    const {
-      isFetchingPhoneContactsComplete,
-      isFetchingPhoneContacts,
-      fetchPhoneContacts,
-      fetchSentReferralInvitations,
-    } = this.props;
-
+  React.useEffect(() => {
     fetchSentReferralInvitations();
 
     if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
       fetchPhoneContacts();
     }
-  }
+  }, []);
 
-  handleSearch = (query: string) => {
-    this.setState({ query });
-  };
+  const handleSearch = debounce((text: string) => {
+    setQuery(text);
+  }, 500);
 
-  sendInvites = () => {
-    const { selectedContacts } = this.state;
-    const { sendInvitation } = this.props;
+  const sendInvites = () => {
     sendInvitation(selectedContacts);
   };
 
-  renderContact = ({ item }: { item: ReferralContact }, canInvite: boolean) => {
-    const { selectedContacts } = this.state;
-    const { alreadyInvitedContacts } = this.props;
-
-    const isPreviouslyInvited = alreadyInvitedContacts
-      .some(contact => isSameContact(item, contact));
+  const renderContact = ({ item }: { item: ReferralContact }, canInvite: boolean) => {
+    const isPreviouslyInvited = alreadyInvitedContacts.some((contact) => isSameContact(item, contact));
 
     const isSelected = selectedContacts.some(({ id }) => id === item.id) || isPreviouslyInvited;
     const canSelect = canInvite && !isPreviouslyInvited;
@@ -141,26 +138,24 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         label={item.name}
         subtext={item.email || item.phone}
         itemImageUrl={item.photo}
-        onPress={canSelect ? () => this.toggleContact(item) : null}
+        onPress={canSelect ? () => toggleContact(item) : null}
         wrapperOpacity={canSelect ? 1 : 0.5}
-        customAddon={(
+        customAddon={
           <Checkbox
             checked={isSelected}
-            onPress={() => this.toggleContact(item)}
+            onPress={() => toggleContact(item)}
             disabled={!canSelect}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
             positive
           />
-        )}
+        }
         noSeparator
       />
     );
   };
 
-  toggleContact = (contact: ReferralContact) => {
-    const { selectedContacts } = this.state;
-    const { sentInvitationsCount, userEmail, userPhone } = this.props;
+  const toggleContact = (contact: ReferralContact) => {
     const { id: relatedContactId, phone } = contact;
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
 
@@ -195,13 +190,10 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       }
       updatedSelectedContacts.push(contact);
     }
-    this.setState({ selectedContacts: updatedSelectedContacts });
+    setSelectedContacts(updatedSelectedContacts);
   };
 
-  renderFooter = (availableInvites) => {
-    const { selectedContacts } = this.state;
-    const { isPillarRewardCampaignActive, isSendingInvite } = this.props;
-
+  const renderFooter = (availableInvites) => {
     const availableInvitesText = !availableInvites
       ? 0
       : t('referralsContent.label.remainingCount', { amount: availableInvites });
@@ -218,134 +210,113 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       return (
         <FooterWrapper>
           <FooterText>
-            {t('referralsContent.label.selectedInvitesCount',
-              { selectedCount: selectedContacts.length, amountText: availableInvitesText },
-            )}
+            {t('referralsContent.label.selectedInvitesCount', {
+              selectedCount: selectedContacts.length,
+              amountText: availableInvitesText,
+            })}
           </FooterText>
-          {!!isPillarRewardCampaignActive &&
-          <FooterText>
-            {t('referralsContent.paragraph.rewardMechanics')}
-          </FooterText>}
-          <Button
-            title={t('button.sendInvites')}
-            onPress={this.sendInvites}
-            isLoading={isSendingInvite}
-            marginTop={16}
-          />
+          {!!isPillarRewardCampaignActive && <FooterText>{t('referralsContent.paragraph.rewardMechanics')}</FooterText>}
+          <Button title={t('button.sendInvites')} onPress={sendInvites} isLoading={isSendingInvite} marginTop={16} />
         </FooterWrapper>
       );
     }
 
     return null;
+  };
+
+  const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
+  const isSearching = query && query.length >= MIN_QUERY_LENGTH;
+  const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
+
+  if (isSearching && isEmpty(filteredContacts)) {
+    const customContact = createCustomContact(query, isPhoneVerified, isEmailVerified);
+
+    if (customContact) {
+      filteredContacts.push(customContact);
+    }
   }
 
-  render() {
-    const { query, selectedContacts } = this.state;
-    const {
-      phoneContacts,
-      isFetchingPhoneContacts,
-      phoneContactsFetchError,
-      fetchPhoneContacts,
-      isEmailVerified,
-      isPhoneVerified,
-      navigation,
-      sentInvitationsCount,
-      isPillarRewardCampaignActive,
-    } = this.props;
+  const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
 
-    const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
-    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-    const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
-
-    if (isSearching && isEmpty(filteredContacts)) {
-      const customContact = createCustomContact(query, isPhoneVerified, isEmailVerified);
-
-      if (customContact) {
-        filteredContacts.push(customContact);
-      }
-    }
-
-    const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{
+  return (
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [
+          {
             title: isPillarRewardCampaignActive
               ? t('referralsContent.title.referMain')
               : t('referralsContent.title.inviteMain'),
-          }],
-          rightItems: [
-            {
-              link: t('button.support'),
-              onPress: () => Intercom.displayMessenger(),
-            },
-          ],
-          sideFlex: 2,
-        }}
-        inset={{ bottom: 0 }}
-        footerContainerInset={{ bottom: 'always' }}
-        footer={this.renderFooter(availableInvites)}
-        footerContainerStyle={{ flexWrap: 'nowrap' }}
-      >
-        {!!isFetchingPhoneContacts &&
+          },
+        ],
+        rightItems: [
+          {
+            link: t('button.support'),
+            onPress: () => Intercom.displayMessenger(),
+          },
+        ],
+        sideFlex: 2,
+      }}
+      inset={{ bottom: 0 }}
+      footerContainerInset={{ bottom: 'always' }}
+      footer={renderFooter(availableInvites)}
+      footerContainerStyle={{ flexWrap: 'nowrap' }}
+    >
+      {!!isFetchingPhoneContacts && (
         <Wrapper flex={1} center>
           <Spinner />
-        </Wrapper>}
+        </Wrapper>
+      )}
 
-        {!isFetchingPhoneContacts &&
-          <ScrollView
-            stickyHeaderIndices={[0]}
-            contentContainerStyle={{ flexGrow: 1 }}
-          >
-            <SearchBlock
-              searchInputPlaceholder={t('label.emailOrPhone')}
-              onSearchChange={(q) => this.handleSearch(q)}
-              itemSearchState={query.length >= MIN_QUERY_LENGTH}
-              wrapperStyle={{ paddingVertical: spacing.small }}
-            />
-            <MissingInfoNote
-              isEmailVerified={isEmailVerified}
-              isPhoneVerified={isPhoneVerified}
-              onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
-            />
-            <FlatList
-              data={filteredContacts}
-              extraData={selectedContacts}
-              keyExtractor={(item) => item.id}
-              renderItem={(props) => this.renderContact(props, !!availableInvites)}
-              initialNumToRender={8}
-              onScroll={() => Keyboard.dismiss()}
-              style={{ flex: 1 }}
-              contentContainerStyle={{
-                paddingVertical: spacing.rhythm,
-                paddingTop: 0,
-                flexGrow: 1,
-              }}
-              ListEmptyComponent={(
-                <EmptyStateWrapper>
-                  <EmptyStateParagraph
-                    title={!phoneContactsFetchError
+      {!isFetchingPhoneContacts && (
+        <ScrollView stickyHeaderIndices={[0]} contentContainerStyle={{ flexGrow: 1 }}>
+          <SearchBlock
+            searchInputPlaceholder={t('label.emailOrPhone')}
+            onSearchChange={(q) => handleSearch(q)}
+            itemSearchState={query.length >= MIN_QUERY_LENGTH}
+            wrapperStyle={{ paddingVertical: spacing.small }}
+          />
+          <MissingInfoNote
+            isEmailVerified={isEmailVerified}
+            isPhoneVerified={isPhoneVerified}
+            onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
+          />
+          <FlatList
+            data={filteredContacts}
+            extraData={selectedContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={(props) => renderContact(props, !!availableInvites)}
+            initialNumToRender={8}
+            onScroll={() => Keyboard.dismiss()}
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+              paddingVertical: spacing.rhythm,
+              paddingTop: 0,
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={
+              <EmptyStateWrapper>
+                <EmptyStateParagraph
+                  title={
+                    !phoneContactsFetchError
                       ? t('phoneBookContactsList.emptyState.noneFound.title')
-                      : t('phoneBookContactsList.emptyState.couldNotGetContacts.title')}
-                    bodyText={!phoneContactsFetchError
-                      ? t('phoneBookContactsList.emptyState.noneFound.paragraph')
-                      : ''}
-                    wide
-                    large
-                  >
-                    {phoneContactsFetchError &&
-                    <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />}
-                  </EmptyStateParagraph>
-                </EmptyStateWrapper>
-              )}
-            />
-          </ScrollView>
-        }
-      </ContainerWithHeader>
-    );
-  }
-}
+                      : t('phoneBookContactsList.emptyState.couldNotGetContacts.title')
+                  }
+                  bodyText={!phoneContactsFetchError ? t('phoneBookContactsList.emptyState.noneFound.paragraph') : ''}
+                  wide
+                  large
+                >
+                  {phoneContactsFetchError && (
+                    <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                  )}
+                </EmptyStateParagraph>
+              </EmptyStateWrapper>
+            }
+          />
+        </ScrollView>
+      )}
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   user: {
@@ -384,7 +355,6 @@ const mapStateToProps = ({
   isSendingInvite,
   hasAllowedToAccessContacts,
 });
-
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPhoneContacts: () => dispatch(fetchPhoneContactsAction()),
