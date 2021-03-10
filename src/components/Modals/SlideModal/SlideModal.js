@@ -116,6 +116,11 @@ const ContentWrapper = styled.View`
   ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
 `;
 
+const FillSpacer = styled.View`
+  width: 100%;
+  height: 100%;
+`;
+
 const Backdrop = styled.TouchableWithoutFeedback`
   width: 100%;
   height: 100%;
@@ -306,7 +311,7 @@ class SlideModal extends React.Component<Props, State> {
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           {!fullScreen && (
             <Backdrop onPress={this.close}>
-              <ContentWrapper />
+              <FillSpacer />
             </Backdrop>
           )}
           {!!centerFloatingItem && (
