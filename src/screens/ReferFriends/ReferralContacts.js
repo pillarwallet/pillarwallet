@@ -52,6 +52,8 @@ import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
+import { useUser } from 'selectors/user';
+
 
 // Utils
 import {
@@ -77,24 +79,17 @@ const ReferralContacts = () => {
   const [selectedContacts, setSelectedContacts] = React.useState([]);
 
   const dispatch = useDispatch();
-  const {
-    isEmailVerified,
-    isPhoneVerified,
-    phone: userPhone,
-    email: userEmail,
-  } = useRootSelector(root => root.user.data);
-  const {
-    alreadyInvitedContacts,
-    sentInvitationsCount,
-    isPillarRewardCampaignActive,
-    isSendingInvite,
-  } = useRootSelector(root => root.referrals);
-  const {
-    data: phoneContacts,
-    isFetching: isFetchingPhoneContacts,
-    isFetchComplete: isFetchingPhoneContactsComplete,
-    fetchError: phoneContactsFetchError,
-  } = useRootSelector(root => root.phoneContacts);
+  const user = useUser();
+
+  const alreadyInvitedContacts = useRootSelector((root) => root.referrals.alreadyInvitedContacts);
+  const sentInvitationsCount = useRootSelector((root) => root.referrals.sentInvitationsCount);
+  const isPillarRewardCampaignActive = useRootSelector((root) => root.referrals.isPillarRewardCampaignActive);
+  const isSendingInvite = useRootSelector((root) => root.referrals.isSendingInvite);
+
+  const phoneContacts = useRootSelector((root) => root.phoneContacts.data);
+  const isFetchingPhoneContacts = useRootSelector((root) => root.phoneContacts.isFetching);
+  const isFetchingPhoneContactsComplete = useRootSelector((root) => root.phoneContacts.isFetchComplete);
+  const phoneContactsFetchError = useRootSelector((root) => root.phoneContacts.fetchError);
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
@@ -143,7 +138,7 @@ const ReferralContacts = () => {
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
       const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
 
-      if (isSameContactData(contact, userEmail, userPhone)) {
+      if (isSameContactData(contact, user.email, user.phone)) {
         Toast.show({
           message: t('toast.cantInviteYourself'),
           emoji: 'point_up',
@@ -205,12 +200,12 @@ const ReferralContacts = () => {
     return null;
   };
 
-  const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
+  const allowedContacts = filterAllowedContacts(phoneContacts, user.isPhoneVerified, user.isEmailVerified);
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
   const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
 
   if (isSearching && isEmpty(filteredContacts)) {
-    const customContact = createCustomContact(query, isPhoneVerified, isEmailVerified);
+    const customContact = createCustomContact(query, user.isPhoneVerified, user.isEmailVerified);
 
     if (customContact) {
       filteredContacts.push(customContact);
@@ -257,8 +252,8 @@ const ReferralContacts = () => {
             wrapperStyle={{ paddingVertical: spacing.small }}
           />
           <MissingInfoNote
-            isEmailVerified={isEmailVerified}
-            isPhoneVerified={isPhoneVerified}
+            isEmailVerified={user.isEmailVerified}
+            isPhoneVerified={user.isPhoneVerified}
             onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
           />
           <FlatList
