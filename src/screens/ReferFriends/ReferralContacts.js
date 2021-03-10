@@ -42,6 +42,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import MissingInfoNote from 'screens/ReferFriends/MissingInfoNote';
+import Modal from 'components/Modal';
 import SearchBlock from 'components/SearchBlock';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
@@ -69,6 +70,9 @@ import { isValidPhone, isValidEmail } from 'utils/validators';
 // Types
 import type { ReferralContact } from 'reducers/referralsReducer';
 
+// Local
+import ContactsPermissionModal from './ContactsPermissionModal';
+
 
 const MIN_QUERY_LENGTH = 3;
 
@@ -94,10 +98,20 @@ const ReferralContacts = () => {
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
 
-    if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
-      dispatch(fetchPhoneContactsAction());
+    fetchPhoneContactsIfNeeded();
+  }, []);
+
+  React.useEffect(() => {
+    if (!hasAllowedToAccessContacts) {
+      Modal.open(() => <ContactsPermissionModal />);
     }
   }, []);
+
+  const fetchPhoneContactsIfNeeded = () => {
+    if (!hasAllowedToAccessContacts || isFetchingPhoneContacts || isFetchingPhoneContactsComplete) return;
+
+    dispatch(fetchPhoneContactsAction());
+  };
 
   const sendInvites = () => {
     dispatch(sendReferralInvitationsAction(selectedContacts));
@@ -284,7 +298,7 @@ const ReferralContacts = () => {
                   {phoneContactsFetchError && (
                     <Button
                       title={t('button.tryAgain')}
-                      onPress={() => dispatch(fetchPhoneContactsAction())}
+                      onPress={fetchPhoneContactsIfNeeded}
                       marginTop={spacing.large}
                     />
                   )}
