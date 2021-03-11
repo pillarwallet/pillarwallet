@@ -296,15 +296,10 @@ const ReferFriendsScreen = () => {
                   bodyText={!phoneContactsFetchError ? t('phoneBookContactsList.emptyState.noneFound.paragraph') : ''}
                   wide
                   large
-                >
-                  {phoneContactsFetchError && (
-                    <Button
-                      title={t('button.tryAgain')}
-                      onPress={fetchPhoneContacts}
-                      marginTop={spacing.large}
-                    />
-                  )}
-                </EmptyStateParagraph>
+                />
+                {phoneContactsFetchError && (
+                  <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                )}
               </EmptyStateWrapper>
             }
           />
@@ -335,7 +330,6 @@ const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVer
 
 const EmptyStateWrapper = styled.View`
   width: 100%;
-  align-items: center;
   padding: 20px 30px 30px;
   flex: 1;
   justify-content: center;
