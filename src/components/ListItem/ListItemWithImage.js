@@ -102,6 +102,7 @@ type Props = {
   itemImageRoundedSquare?: boolean,
   cornerIcon?: any,
   cornerIconSize?: number,
+  leftAddon?: React.Node,
 };
 
 type AddonProps = {
@@ -161,9 +162,25 @@ const InfoWrapper = styled.View`
 
 const Column = styled.View`
   flex-direction: column;
-  align-items: ${props => props.rightColumn ? 'flex-end' : 'flex-start'};
+  align-items: flex-start;
   justify-content: center;
-  ${props => props.rightColumn ? 'margin-left: 10px;' : 'flex: 1;'}
+  flex: 1;
+  min-height: 54px;
+`;
+
+const LeftColumn = styled.View`
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-right: ${spacing.rhythm}px;
+  min-height: 54px;
+`;
+
+const RightColumn = styled.View`
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  margin-left: 10px;
   min-height: 54px;
 `;
 
@@ -594,6 +611,7 @@ const ListItemWithImage = (props: Props) => {
     badge,
     customLabel,
     padding,
+    leftAddon,
   } = props;
 
   const type = getType(props);
@@ -609,6 +627,8 @@ const ListItemWithImage = (props: Props) => {
         horizontalAlign={innerWrapperHorizontalAlign}
         padding={padding}
       >
+        {!!leftAddon && <LeftColumn>{leftAddon}</LeftColumn>}
+
         <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
           <ItemImage {...props} />
           {hasImageAddon && <ImageAddon {...props} />}
@@ -616,38 +636,42 @@ const ListItemWithImage = (props: Props) => {
         <View style={{ flex: 1 }}>
           <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
             <Column type={type} style={{ flexGrow: 1 }}>
-              {(!!label || !!customLabel) &&
-              <Row>
-                {!!customLabel && customLabel}
-                {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
-              </Row>
-              }
-              {!!paragraph &&
-              <Row>
-                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-              </Row>
-              }
-              {!!subtext &&
-              <React.Fragment>
-                <Spacing h={2} />
-                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
-              </React.Fragment>
-              }
-              {!!badge &&
-              <React.Fragment>
-                <Spacing h={4} />
-                <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
-              </React.Fragment>
-              }
+              {(!!label || !!customLabel) && (
+                <Row>
+                  {!!customLabel && customLabel}
+                  {!!label && (
+                    <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>
+                      {label}
+                    </ItemTitle>
+                  )}
+                </Row>
+              )}
+              {!!paragraph && (
+                <Row>
+                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                </Row>
+              )}
+              {!!subtext && (
+                <React.Fragment>
+                  <Spacing h={2} />
+                  <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+                </React.Fragment>
+              )}
+              {!!badge && (
+                <React.Fragment>
+                  <Spacing h={4} />
+                  <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
+                </React.Fragment>
+              )}
             </Column>
-            <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
+            <RightColumn type={type} style={{ maxWidth: '50%' }}>
               <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
                 {!!customAddonAlignLeft && customAddon}
                 <Addon {...props} type={type} colors={colors} />
                 {!customAddonAlignLeft && customAddon}
                 {children}
               </View>
-            </Column>
+            </RightColumn>
           </InfoWrapper>
         </View>
       </InnerWrapper>
