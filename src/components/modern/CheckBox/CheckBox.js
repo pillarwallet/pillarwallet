@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -18,20 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
-import styled, { css } from 'styled-components/native';
+/* eslint-disable i18next/no-literal-string */
+/* eslint-disable no-unused-expressions */
 
-// Constants
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import * as React from 'react';
+import { View, TouchableWithoutFeedback } from 'react-native';
+import styled from 'styled-components/native';
 
 // Components
 import Icon from 'components/Icon';
 
-// Utils
-import { getColorByTheme, useThemeColors } from 'utils/themes';
-import { fontSizes, spacing } from 'utils/variables';
-
+// Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {
@@ -41,9 +37,12 @@ type Props = {
   style?: ViewStyleProp
 };
 
-const Checkbox = ({ value, onValueChange, disabled, style }: Props) => {
-  const colors = useThemeColors();
-
+const Checkbox = ({
+  value,
+  onValueChange,
+  disabled,
+  style,
+}: Props) => {
   const handlePress = () => {
     if (disabled) return;
 
@@ -51,58 +50,30 @@ const Checkbox = ({ value, onValueChange, disabled, style }: Props) => {
   };
 
   return (
-    <TouchableOpacity onPress={!disabled ? handlePress : null} disabled={disabled || !onValueChange} style={style}>
-      <CheckboxWrapper disabled={disabled}>
-        <CheckboxBox active={value} clickable={!disabled}>
-          {!!value && (
-            <Icon
-              name="check"
-              style={{
-                color: colors.primary,
-                fontSize: fontSizes.tiny,
-              }}
-            />
-          )}
-        </CheckboxBox>
-      </CheckboxWrapper>
-    </TouchableOpacity>
+    <View style={style}>
+      <TouchableWithoutFeedback onPress={handlePress} disabled={disabled || !onValueChange}>
+        <Field disabled={disabled} testID="checkBox">
+          {!!value && <CheckMark />}
+        </Field>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 
 export default Checkbox;
 
-const CheckboxBox = styled.View`
-  width: 24px;
-  height: 24px;
-  margin-right: ${spacing.mediumLarge}px;
-  border-radius: ${({ rounded }) => (rounded ? 12 : 2)}px;
-  flex: 0 0 24px;
-  border-width: 1px;
-  border-color: ${({ active }) =>
-    active
-      ? css`
-          ${getColorByTheme({ lightKey: 'primaryAccent130', darkKey: 'basic090' })}
-        `
-      : css`
-          ${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic090' })}
-        `};
+const Field = styled.View`
   justify-content: center;
   align-items: center;
-  background-color: ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic090' })};
-  ${({ rounded, clickable, theme }) =>
-    rounded && clickable && theme.current === LIGHT_THEME
-      ? `
-      shadow-color: #000000;
-      shadow-radius: 3px;
-      shadow-opacity: 0.15;
-      shadow-offset: 0px 2px;
-      elevation: 4;`
-      : ''}
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  border-radius: 2px;
+  background-color: ${({ theme }) => theme.colors.checkBoxField};
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
-const CheckboxWrapper = styled.View`
-  flex-direction: row;
-  align-items: flex-start;
-  width: 100%;
-  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+const CheckMark = styled(Icon).attrs({ name: 'check' })`
+  font-size: 10px;
+  color: ${({ theme }) => theme.colors.checkMark};
 `;
