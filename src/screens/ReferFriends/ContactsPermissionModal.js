@@ -22,7 +22,6 @@
 
 import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import styled, { useTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -35,6 +34,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Image from 'components/Image';
 import SlideModal from 'components/Modals/SlideModal';
+import SlideModalSafeAreaContent from 'components/Modals/SlideModalSafeAreaContent';
 
 // Utils
 import { images } from 'utils/images';
@@ -65,7 +65,7 @@ const ContactsPermissionModal = ({ onAllow, onCancel }: Props) => {
 
   return (
     <SlideModal ref={modalRef} onDismiss={handleCancelPress} noClose hideHeader>
-      <SafeAreaContent>
+      <SlideModalSafeAreaContent>
         <Spacing h={spacing.large} />
 
         <MediumText medium>{t('referralsContent.modal.contactsPermission.title')}</MediumText>
@@ -87,16 +87,12 @@ const ContactsPermissionModal = ({ onAllow, onCancel }: Props) => {
         <Spacing h={spacing.small} />
 
         <Button onPress={handleCancelPress} title={t('button.cancel')} transparent danger />
-      </SafeAreaContent>
+      </SlideModalSafeAreaContent>
     </SlideModal>
   );
 };
 
 export default ContactsPermissionModal;
-
-const SafeAreaContent = styled(SafeAreaView)`
-  align-items: center;
-`;
 
 const IconImage = styled(Image)`
   width: 64px;
