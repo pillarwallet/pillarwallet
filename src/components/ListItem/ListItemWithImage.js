@@ -636,33 +636,29 @@ const ListItemWithImage = (props: Props) => {
         <View style={{ flex: 1 }}>
           <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
             <Column type={type} style={{ flexGrow: 1 }}>
-              {(!!label || !!customLabel) && (
-                <Row>
-                  {!!customLabel && customLabel}
-                  {!!label && (
-                    <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>
-                      {label}
-                    </ItemTitle>
-                  )}
-                </Row>
-              )}
-              {!!paragraph && (
-                <Row>
-                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                </Row>
-              )}
-              {!!subtext && (
-                <React.Fragment>
-                  <Spacing h={2} />
-                  <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
-                </React.Fragment>
-              )}
-              {!!badge && (
-                <React.Fragment>
-                  <Spacing h={4} />
-                  <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
-                </React.Fragment>
-              )}
+              {(!!label || !!customLabel) &&
+              <Row>
+                {!!customLabel && customLabel}
+                {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
+              </Row>
+              }
+              {!!paragraph &&
+              <Row>
+                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+              </Row>
+              }
+              {!!subtext &&
+              <React.Fragment>
+                <Spacing h={2} />
+                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+              </React.Fragment>
+              }
+              {!!badge &&
+              <React.Fragment>
+                <Spacing h={4} />
+                <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
+              </React.Fragment>
+              }
             </Column>
             <RightColumn type={type} style={{ maxWidth: '50%' }}>
               <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
