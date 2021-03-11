@@ -308,6 +308,7 @@ class SlideModal extends React.Component<Props, State> {
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
         swipeDirection={noSwipeToDismiss ? undefined : 'down'}
+        onBackButtonPress={this.handleDismiss}
         onSwipeComplete={this.handleDismiss}
         style={{
           margin: 0,

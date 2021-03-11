@@ -56,6 +56,7 @@ type Props = {|
   customBackdrop?: ReactNode,
   deviceHeight?: number,
   deviceWidth?: number,
+  onBackButtonPress?: () => void,
   onModalWillHide?: () => void,
   onModalHide?: () => void,
   onModalWillShow?: () => void,
