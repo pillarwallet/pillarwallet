@@ -205,7 +205,12 @@ const ReferFriendsScreen = () => {
             })}
           </FooterText>
           {!!isPillarRewardCampaignActive && <FooterText>{t('referralsContent.paragraph.rewardMechanics')}</FooterText>}
-          <Button title={t('button.sendInvites')} onPress={sendInvites} isLoading={isSendingInvite} marginTop={16} />
+          <Button
+            title={t('referralsContent.button.invite')}
+            onPress={sendInvites}
+            isLoading={isSendingInvite}
+            marginTop={16}
+          />
         </FooterWrapper>
       );
     }
@@ -233,8 +238,8 @@ const ReferFriendsScreen = () => {
         centerItems: [
           {
             title: isPillarRewardCampaignActive
-              ? t('referralsContent.title.referMain')
-              : t('referralsContent.title.inviteMain'),
+              ? t('referralsContent.title.referFriends')
+              : t('referralsContent.title.inviteFriends'),
           },
         ],
         rightItems: [
@@ -259,7 +264,6 @@ const ReferFriendsScreen = () => {
       {!isFetchingPhoneContacts && (
         <ScrollView stickyHeaderIndices={[0]} contentContainerStyle={{ flexGrow: 1 }}>
           <SearchBlock
-            searchInputPlaceholder={t('label.emailOrPhone')}
             onSearchChange={setQuery}
             itemSearchState={query.length >= MIN_QUERY_LENGTH}
             wrapperStyle={{ paddingVertical: spacing.small }}

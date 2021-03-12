@@ -103,7 +103,6 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
-    "emailOrPhone": "Email or phone",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -254,7 +253,6 @@
     "sendAll": "Send all",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
-    "sendInvites": "Send invites",
     "sendMore": "Send more",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
@@ -966,9 +964,9 @@
     },
     "referralRewardText": "{{rewardsList}} and a badge",
     "title": {
-      "inviteMain": "Invite Friends",
+      "inviteFriends": "Invite friends",
+      "referFriends": "Refer friends",
       "invitationsSent": "Invitations sent",
-      "referMain": "Refer friends",
       "incomingReward": "Your reward is on the way",
       "thanksForJoining": "Thanks for joining Pillar",
       "thanksForUsing": "Thank you for using Pillar",
@@ -999,6 +997,9 @@
       "inviteFriends": "Invite friends to Pillar",
       "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
       "noMoreDailyInvitesAvailable": "No more invites available today"
+    },
+    "button": {
+      "invite": "Invite"
     }
   },
 
