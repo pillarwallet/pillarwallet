@@ -156,6 +156,7 @@ const SendAsset = ({
     estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateTxFeeDebounced = useCallback(
     debounce(updateTxFee, 100),
     [amount, selectedContact, useGasToken, assetData],
@@ -187,6 +188,7 @@ const SendAsset = ({
     if (!formattedSelectedAsset) return;
 
     handleAmountChange({ selector: formattedSelectedAsset, input: '' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFormSubmit = async () => {

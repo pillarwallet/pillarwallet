@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -151,6 +153,7 @@ const BackupPhraseValidate = ({
   useEffect(() => {
     setShuffledPhrase(shuffle(mnemonicWords, { copy: true }).join(' '));
     setWordsToValidate(generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicWords.length));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [enteredWords, setEnteredWords] = useState([]);
@@ -174,6 +177,7 @@ const BackupPhraseValidate = ({
     setIsFormValid(validPhrase.toString() === enteredWords.toString());
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { validateForm(); }, [enteredWords]);
 
   const handleWordSetting = (word) => {

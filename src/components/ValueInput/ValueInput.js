@@ -162,6 +162,7 @@ export const ValueInputComponent = (props: Props) => {
       const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleValueChange = (newValue: string) => {
@@ -275,6 +276,7 @@ export const ValueInputComponent = (props: Props) => {
     if (onFormValid) {
       onFormValid(!errorMessage);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
 
   const colors = getThemeColors(theme);

@@ -115,6 +115,7 @@ const AccountsScreen = ({
   availableStake,
   keyBasedWalletHasPositiveBalance,
 }: Props) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsBalances(); }, []);
 
   const [switchingToWalletId, setSwitchingToWalletId] = useState(false);

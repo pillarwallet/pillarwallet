@@ -107,6 +107,7 @@ const RariAddDepositScreen = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [selectedAsset, setSelectedAsset] = useState(assets[ETH]);
@@ -196,6 +197,7 @@ const RariAddDepositScreen = ({
       }
       setEstimatingTransaction(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAssetValue, selectedAsset]);
 
   const onNextButtonPress = () => {
