@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,14 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
-import { storiesOf } from '@storybook/react-native';
+import { LayoutAnimation } from 'react-native';
 
-import SearchBlock from 'components/SearchBlock';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-
-storiesOf('SearchBlock', module)
-  .addDecorator(WithThemeDecorator)
-  .add('default', () => (
-    <SearchBlock onSearchChange={() => {}} />
-  ));
+export const SIDE_BUTTON_APPEARANCE = {
+  duration: 150,
+  create: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+    delay: 50,
+  },
+  update: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+  },
+  delete: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+  },
+};

@@ -47,6 +47,7 @@ import { isValidAddressOrEnsName } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
 import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
+import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
@@ -62,7 +63,7 @@ type OwnProps = {|
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   inputIconName?: string,
-  iconProps?: Object,
+  iconProps?: IconProps,
   onHide?: () => void,
   validator?: (value: string) => ?string,
   allowEnteringCustomAddress?: boolean,
@@ -117,10 +118,6 @@ const EmptyStateWrapper = styled.View`
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;
-`;
-
-const SearchBarWrapper = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
 `;
 
 const IconCircle = styled.View`
@@ -442,48 +439,45 @@ class SelectorOptions extends React.Component<Props, State> {
             centerItems: [{ title }],
           }}
         >
-          <SearchBarWrapper>
-            <SearchBar
-              inputProps={{
-                onChange: this.handleInputChange,
-                value: query,
-                autoCapitalize: 'none',
-                validator: this.validateSearch,
-              }}
-              placeholder={searchPlaceholder}
-              inputRef={ref => { this.searchInput = ref; }}
-              noClose
-              marginBottom="0"
-              iconProps={{ ...iconProps, persistIconOnFocus: true }}
+          <SearchBar
+            query={query}
+            onChangeQuery={this.handleInputChange}
+            validator={this.validateSearch}
+            placeholder={searchPlaceholder}
+            inputRef={(ref) => {
+              this.searchInput = ref;
+            }}
+            // $FlowFixMe
+            iconProps={{ ...iconProps, persistIconOnFocus: true }}
+          />
+
+          {!!optionTabs && (
+            <Tabs
+              tabs={updatedOptionTabs}
+              wrapperStyle={{ paddingTop: 22 }}
+              activeTab={activeTab || updatedOptionTabs[0].name}
             />
-          </SearchBarWrapper>
-          {!!optionTabs && <Tabs
-            tabs={updatedOptionTabs}
-            wrapperStyle={{ paddingTop: 22 }}
-            activeTab={activeTab || updatedOptionTabs[0].name}
-          />}
-          {
-            collectibles ? (
-              <CollectiblesList
-                collectibles={filteredOptions}
-                onCollectiblePress={this.selectValue}
-                isSearching={isSearching}
-              />
-            ) : (
-              <FlatList
-                stickyHeaderIndices={[0]}
-                data={allFeedListData}
-                renderItem={this.renderOption}
-                // $FlowFixMe: react-native types
-                keyExtractor={this.optionKeyExtractor}
-                keyboardShouldPersistTaps="always"
-                initialNumToRender={10}
-                viewabilityConfig={viewConfig}
-                windowSize={10}
-                hideModalContentWhileAnimating
-              />
-            )
-          }
+          )}
+          {collectibles ? (
+            <CollectiblesList
+              collectibles={filteredOptions}
+              onCollectiblePress={this.selectValue}
+              isSearching={isSearching}
+            />
+          ) : (
+            <FlatList
+              stickyHeaderIndices={[0]}
+              data={allFeedListData}
+              renderItem={this.renderOption}
+              // $FlowFixMe: react-native types
+              keyExtractor={this.optionKeyExtractor}
+              keyboardShouldPersistTaps="always"
+              initialNumToRender={10}
+              viewabilityConfig={viewConfig}
+              windowSize={10}
+              hideModalContentWhileAnimating
+            />
+          )}
         </ContainerWithHeader>
       </SlideModal>
     );

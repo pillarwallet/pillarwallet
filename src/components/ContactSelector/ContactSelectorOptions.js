@@ -22,7 +22,6 @@ import * as React from 'react';
 import { Keyboard, View, FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 import styled, { useTheme } from 'styled-components/native';
-import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
 // Actions
@@ -105,11 +104,6 @@ const ContactSelectorOptions = ({
   const selectValue = async (contact: Contact) => {
     onSelectContact?.(contact);
     close();
-  };
-
-  const handlePaste = async () => {
-    const clipboardValue = await Clipboard.getString();
-    handleInputChange(clipboardValue);
   };
 
   const handleAddToContactsPress = async (contact?: Contact) => {
@@ -218,25 +212,15 @@ const ContactSelectorOptions = ({
         }}
         footer={<View />}
       >
-        <SearchContainer>
-          <SearchBarWrapper>
-            <SearchBar
-              inputProps={{
-                value: query,
-                onChange: handleInputChange,
-                autoCapitalize: 'none',
-                validator: validateSearch,
-              }}
-              inputRef={searchInputRef}
-              placeholder={searchPlaceholder}
-              noClose
-              marginBottom="0"
-              iconProps={{ persistIconOnFocus: true }}
-            />
-          </SearchBarWrapper>
-
-          <Button onPress={handlePaste} title={t('button.paste')} transparent small />
-        </SearchContainer>
+        <SearchBar
+          query={query}
+          onChangeQuery={handleInputChange}
+          validator={validateSearch}
+          inputRef={searchInputRef}
+          placeholder={searchPlaceholder}
+          iconProps={{ persistIconOnFocus: true }}
+          showPasteButton
+        />
 
         <FlatList
           data={items}
@@ -279,17 +263,6 @@ const EmptyStateWrapper = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`;
-
-const SearchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-vertical: ${spacing.small}px;
-  padding-start: ${spacing.layoutSides}px;
-`;
-
-const SearchBarWrapper = styled.View`
-  flex: 1;
 `;
 
 const ActionButtonsContainer = styled.View`

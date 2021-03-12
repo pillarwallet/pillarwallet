@@ -34,6 +34,7 @@ import { ScrollView } from 'react-native';
 // Props
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
 export type { TextProps } from 'react-native/Libraries/Text/TextProps';
+export type { Props as TextInputProps } from 'react-native/Libraries/Components/TextInput/TextInput';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
@@ -46,4 +47,4 @@ export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar
 export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;
 
 // Events
-export type { LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
+export type { SyntheticEvent, LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
