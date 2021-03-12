@@ -42,6 +42,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import MissingInfoNote from 'screens/ReferFriends/MissingInfoNote';
+import Modal from 'components/Modal';
 import SearchBlock from 'components/SearchBlock';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
@@ -53,7 +54,6 @@ import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { useUser } from 'selectors/user';
-
 
 // Utils
 import {
@@ -69,10 +69,12 @@ import { isValidPhone, isValidEmail } from 'utils/validators';
 // Types
 import type { ReferralContact } from 'reducers/referralsReducer';
 
+// Local
+import ContactsPermissionModal from './ContactsPermissionModal';
 
 const MIN_QUERY_LENGTH = 3;
 
-const ReferralContacts = () => {
+const ReferFriendsScreen = () => {
   const navigation = useNavigation();
 
   const [query, setQuery] = React.useState('');
@@ -81,6 +83,7 @@ const ReferralContacts = () => {
   const dispatch = useDispatch();
   const user = useUser();
 
+  const hasAllowedToAccessContacts = useRootSelector((root) => root.referrals.hasAllowedToAccessContacts);
   const alreadyInvitedContacts = useRootSelector((root) => root.referrals.alreadyInvitedContacts);
   const sentInvitationsCount = useRootSelector((root) => root.referrals.sentInvitationsCount);
   const isPillarRewardCampaignActive = useRootSelector((root) => root.referrals.isPillarRewardCampaignActive);
@@ -93,11 +96,24 @@ const ReferralContacts = () => {
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
-
-    if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
-      dispatch(fetchPhoneContactsAction());
-    }
   }, []);
+
+  React.useEffect(() => {
+    if (!hasAllowedToAccessContacts) {
+      Modal.open(() => (
+        <ContactsPermissionModal onAllow={fetchPhoneContacts} onCancel={() => navigation.goBack(null)} />
+      ));
+      return;
+    }
+
+    fetchPhoneContacts();
+  }, [hasAllowedToAccessContacts]);
+
+  const fetchPhoneContacts = () => {
+    if (isFetchingPhoneContacts || isFetchingPhoneContactsComplete) return;
+
+    dispatch(fetchPhoneContactsAction());
+  };
 
   const sendInvites = () => {
     dispatch(sendReferralInvitationsAction(selectedContacts));
@@ -280,15 +296,10 @@ const ReferralContacts = () => {
                   bodyText={!phoneContactsFetchError ? t('phoneBookContactsList.emptyState.noneFound.paragraph') : ''}
                   wide
                   large
-                >
-                  {phoneContactsFetchError && (
-                    <Button
-                      title={t('button.tryAgain')}
-                      onPress={() => dispatch(fetchPhoneContactsAction())}
-                      marginTop={spacing.large}
-                    />
-                  )}
-                </EmptyStateParagraph>
+                />
+                {phoneContactsFetchError && (
+                  <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                )}
               </EmptyStateWrapper>
             }
           />
@@ -298,7 +309,7 @@ const ReferralContacts = () => {
   );
 };
 
-export default ReferralContacts;
+export default ReferFriendsScreen;
 
 const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVerified: boolean): ?ReferralContact => {
   const contact = {
@@ -319,7 +330,6 @@ const createCustomContact = (query: string, isPhoneVerified: boolean, isEmailVer
 
 const EmptyStateWrapper = styled.View`
   width: 100%;
-  align-items: center;
   padding: 20px 30px 30px;
   flex: 1;
   justify-content: center;

@@ -269,13 +269,9 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
   };
 };
 
-export const allowToAccessPhoneContactsAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: ALLOW_ACCESS_PHONE_CONTACTS,
-    });
-  };
-};
+export const allowToAccessPhoneContactsAction = () => ({
+  type: ALLOW_ACCESS_PHONE_CONTACTS,
+});
 
 export const goToInvitationFlowAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {

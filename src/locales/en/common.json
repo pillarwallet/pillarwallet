@@ -957,6 +957,11 @@
         "button": {
           "toUserData": "Verify email or phone"
         }
+      },
+      "contactsPermission": {
+        "title": "Allow access to phone contacts",
+        "body": "It is required to easily select your friends to invite. Pillar never stores nor uses personal data.",
+        "allow": "Allow"
       }
     },
     "referralRewardText": "{{rewardsList}} and a badge",
