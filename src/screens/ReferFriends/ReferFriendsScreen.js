@@ -93,7 +93,7 @@ const ReferFriendsScreen = () => {
   const phoneContactsFetchError = useRootSelector((root) => root.phoneContacts.fetchError);
 
   const totalInvites = getRemainingDailyInvitations(sentInvitationsCount);
-  const availableInvites = totalInvites - selectedContacts.length;
+  const availableInvites = Math.max(totalInvites - selectedContacts.length, 0);
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
@@ -182,7 +182,7 @@ const ReferFriendsScreen = () => {
   };
 
   const renderFooter = () => {
-    if (!availableInvites) {
+    if (!totalInvites) {
       return (
         <FooterWrapper>
           <FooterText>{t('referralsContent.label.noMoreDailyInvitesAvailable')}</FooterText>
@@ -270,7 +270,7 @@ const ReferFriendsScreen = () => {
             data={filteredContacts}
             extraData={selectedContacts}
             keyExtractor={(item) => item.id}
-            renderItem={(props) => renderContact(props, !!availableInvites)}
+            renderItem={(props) => renderContact(props, !!totalInvites)}
             initialNumToRender={8}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{

@@ -74,7 +74,7 @@ export const getRemainingDailyInvitations = (sentInvitationsCount: SentInvitatio
   const { count, date } = sentInvitationsCount;
   const currentDate = new Date().toJSON().slice(0, 10);
   if (date !== currentDate) return ALLOWED_DAILY_INVITES;
-  return ALLOWED_DAILY_INVITES - count;
+  return Math.max(ALLOWED_DAILY_INVITES - count, 0);
 };
 
 
