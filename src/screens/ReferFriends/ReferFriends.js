@@ -19,44 +19,31 @@
 */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useDispatch } from 'react-redux';
 
-// actions
+// Actions
 import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 
-// types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// Selectors
+import { useRootSelector } from 'selectors';
 
-// screens
+// Local
 import ReferralContacts from './ReferralContacts';
 import AccessToAddressBook from './AccessToAddressBook';
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  hasAllowedToAccessContacts: boolean,
-  allowToAccessPhoneContacts: () => void,
+
+const ReferFriends = () => {
+  const dispatch = useDispatch();
+  const hasAllowedToAccessContacts = useRootSelector((root) => root.referrals.hasAllowedToAccessContacts);
+
+  if (hasAllowedToAccessContacts) {
+    return <ReferralContacts />;
+  }
+  return (
+    <AccessToAddressBook
+      allowToAccessPhoneContacts={() => dispatch(allowToAccessPhoneContactsAction())}
+    />
+  );
 };
 
-class ReferFriends extends React.PureComponent<Props> {
-  render() {
-    const { hasAllowedToAccessContacts, navigation, allowToAccessPhoneContacts } = this.props;
-
-    if (hasAllowedToAccessContacts) {
-      return <ReferralContacts navigation={navigation} />;
-    }
-    return <AccessToAddressBook allowToAccessPhoneContacts={allowToAccessPhoneContacts} />;
-  }
-}
-
-const mapStateToProps = ({
-  referrals: { hasAllowedToAccessContacts },
-}: RootReducerState): $Shape<Props> => ({
-  hasAllowedToAccessContacts,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  allowToAccessPhoneContacts: () => dispatch(allowToAccessPhoneContactsAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReferFriends);
+export default ReferFriends;
