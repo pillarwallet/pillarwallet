@@ -989,8 +989,7 @@
       "phoneVerified": "Your phone has been verified"
     },
     "label": {
-      "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
-      "remainingCount": "{{amount}} more",
+      "remainingCount": "Available {{remainingCount}}/{{totalCount}}",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
       "claiming": "Claiming...",
