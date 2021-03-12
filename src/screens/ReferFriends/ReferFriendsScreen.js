@@ -198,13 +198,8 @@ const ReferFriendsScreen = () => {
     if (selectedContacts.length) {
       return (
         <FooterWrapper>
-          <FooterText>
-            {t('referralsContent.label.selectedInvitesCount', {
-              selectedCount: selectedContacts.length,
-              amountText: availableInvitesText,
-            })}
-          </FooterText>
           {!!isPillarRewardCampaignActive && <FooterText>{t('referralsContent.paragraph.rewardMechanics')}</FooterText>}
+
           <Button
             title={t('referralsContent.button.invite')}
             onPress={sendInvites}
@@ -242,12 +237,12 @@ const ReferFriendsScreen = () => {
               : t('referralsContent.title.inviteFriends'),
           },
         ],
-        rightItems: [
-          {
-            link: t('button.support'),
-            onPress: () => Intercom.displayMessenger(),
-          },
-        ],
+        // rightItems: [
+        //   {
+        //     link: t('button.support'),
+        //     onPress: () => Intercom.displayMessenger(),
+        //   },
+        // ],
         sideFlex: 2,
       }}
       inset={{ bottom: 0 }}
