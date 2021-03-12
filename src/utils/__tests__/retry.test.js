@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,19 +38,19 @@ describe('auto-retry', () => {
       if (attemptNo > 3) return attemptNo;
       throw new Error();
     });
-    const value = retry(fn);
+    const promise = retry(fn);
 
     jest.runAllTimers();
-    await expect(value).resolves.toEqual(4);
+    await expect(promise).resolves.toEqual(4);
     expect(fn).toHaveBeenCalledTimes(4);
   });
 
   it('is rejected if none of the attempts succeed', async () => {
     const fn = jest.fn(async (bail, attemptNo) => { throw new Error(`#${attemptNo}`); });
-    const value = retry(fn, { retries: 4 });
+    const promise = retry(fn, { retries: 4 });
 
     jest.runAllTimers();
-    await expect(value).rejects.toThrow('#5');
+    await expect(promise).rejects.toThrow('#5');
     expect(fn).toHaveBeenCalledTimes(5);
   });
 
@@ -59,10 +59,10 @@ describe('auto-retry', () => {
       if (attemptNo === 3) return bail();
       throw new Error();
     });
-    const value = retry(fn);
+    const promise = retry(fn);
 
     jest.runAllTimers();
-    await expect(value).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
     expect(fn).toHaveBeenCalledTimes(3);
   });
 });
@@ -77,7 +77,7 @@ describe('retryOnNetworkError', () => {
   });
 
   it('retries request if no response was received', async () => {
-    const value = retryOnNetworkError(async (bail, attemptNo) => {
+    const promise = retryOnNetworkError(async (bail, attemptNo) => {
       if (attemptNo === 2) return true;
       const error = new Error();
       (error: any).isAxiosError = true;
@@ -85,11 +85,11 @@ describe('retryOnNetworkError', () => {
     });
 
     jest.runAllTimers();
-    await expect(value).resolves.toEqual(true);
+    await expect(promise).resolves.toEqual(true);
   });
 
   it('does not retry for server errors', async () => {
-    const value = retryOnNetworkError(async (bail, attemptNo) => {
+    const promise = retryOnNetworkError(async (bail, attemptNo) => {
       if (attemptNo === 2) return true;
       const error = new Error();
       (error: any).isAxiosError = true;
@@ -98,16 +98,16 @@ describe('retryOnNetworkError', () => {
     });
 
     jest.runAllTimers();
-    await expect(value).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
   });
 
   it('does not retry for errors not caused by the request', async () => {
-    const value = retryOnNetworkError(async (bail, attemptNo) => {
+    const promise = retryOnNetworkError(async (bail, attemptNo) => {
       if (attemptNo === 2) return true;
       throw new Error();
     });
 
     jest.runAllTimers();
-    await expect(value).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
   });
 });

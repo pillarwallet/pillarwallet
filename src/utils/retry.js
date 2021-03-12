@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,14 +41,17 @@ function retry<T>(fn: Retrier<T>, options: Options = {}): Promise<T> {
   });
 }
 
-// handles errors thrown by requests made using axios
+// retryOnNetworkError will not make another attempt to call fn if the thrown exception:
+// - was not caused by the (axios) network request, or
+// - contains a response from the server
 export function retryOnNetworkError<T>(fn: Retrier<T>, options?: Options): Promise<T> {
   return retry<T>(async (bail, attemptNo): Promise<T> => {
     try {
       const result: T = await fn(bail, attemptNo);
       return result;
     } catch (error) {
-      if (!error.isAxiosError || error.response) {
+      const isNetworkError = error.isAxiosError && !error.response;
+      if (!isNetworkError) {
         // the error can't be rethrown here because of
         // https://github.com/vercel/async-retry/issues/69
         // $FlowFixMe
