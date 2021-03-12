@@ -960,7 +960,7 @@
       },
       "contactsPermission": {
         "title": "Allow access to phone contacts",
-        "body": "It is required to easily select your friends to invite. Pillar never store or use personal data.",
+        "body": "It is required to easily select your friends to invite. Pillar never stores nor uses personal data.",
         "allow": "Allow"
       }
     },
