@@ -198,7 +198,7 @@ type RootReducerAction =
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
-  dispatch: Dispatch, // eslint-disable-line no-use-before-define
+  dispatch: Dispatch,
   getState: GetState,
   api: SDKWrapper,
 ) => any;
