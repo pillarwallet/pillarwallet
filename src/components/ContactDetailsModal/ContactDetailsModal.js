@@ -99,7 +99,9 @@ const ContactDetailsModal = ({
       ),
   });
 
-  const { control, handleSubmit, errors, watch, getValues, setValue } = useForm({
+  const {
+    control, handleSubmit, errors, watch, getValues, setValue,
+  } = useForm({
     defaultValues: { address: contact?.ethAddress || '', name: contact?.name || '' },
     resolver: yupResolver(formSchema),
     mode: 'onTouched',

@@ -52,6 +52,10 @@ type Props = {|
   textToCopy?: string,
 |};
 
+const hitSlop = {
+  top: 15, bottom: 15, left: 15, right: 15,
+};
+
 const TextWithCopy = ({
   theme,
   children,
@@ -69,7 +73,7 @@ const TextWithCopy = ({
   };
 
   return (
-    <Container hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} onPress={handleCopyToClipboard}>
+    <Container hitSlop={hitSlop} onPress={handleCopyToClipboard}>
       <Text {...rest}>{children}</Text>
       <Image source={images(theme).copy} />
     </Container>
