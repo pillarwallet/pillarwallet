@@ -18,8 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/* eslint-disable object-curly-newline */
-
 import * as React from 'react';
 import { Image } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
@@ -54,7 +52,16 @@ type Props = {|
   textToCopy?: string,
 |};
 
-const TextWithCopy = ({ theme, children, textToCopy, ...rest }: Props) => {
+const hitSlop = {
+  top: 15, bottom: 15, left: 15, right: 15,
+};
+
+const TextWithCopy = ({
+  theme,
+  children,
+  textToCopy,
+  ...rest
+}: Props) => {
   const { t } = useTranslation();
 
   const handleCopyToClipboard = () => {
@@ -66,7 +73,7 @@ const TextWithCopy = ({ theme, children, textToCopy, ...rest }: Props) => {
   };
 
   return (
-    <Container hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} onPress={handleCopyToClipboard}>
+    <Container hitSlop={hitSlop} onPress={handleCopyToClipboard}>
       <Text {...rest}>{children}</Text>
       <Image source={images(theme).copy} />
     </Container>
