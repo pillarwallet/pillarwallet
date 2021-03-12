@@ -21,11 +21,10 @@
 /* eslint-disable no-use-before-define */
 
 import * as React from 'react';
-import { View, FlatList, Keyboard, ScrollView } from 'react-native';
+import { Keyboard, FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // Actions
@@ -213,7 +212,7 @@ const ReferFriendsScreen = () => {
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
   const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
 
-  if (isSearching && isEmpty(filteredContacts)) {
+  if (isSearching && !filteredContacts.length) {
     const customContact = createCustomContact(query, user.isPhoneVerified, user.isEmailVerified);
 
     if (customContact) {
@@ -255,17 +254,18 @@ const ReferFriendsScreen = () => {
       )}
 
       {!isFetchingPhoneContacts && (
-        <ScrollView stickyHeaderIndices={[0]} contentContainerStyle={{ flexGrow: 1 }}>
+        <>
           <SearchBlock
             onSearchChange={setQuery}
             itemSearchState={query.length >= MIN_QUERY_LENGTH}
-            wrapperStyle={{ paddingVertical: spacing.small }}
           />
+
           <MissingInfoNote
             isEmailVerified={user.isEmailVerified}
             isPhoneVerified={user.isPhoneVerified}
             onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
           />
+
           <FlatList
             data={filteredContacts}
             extraData={selectedContacts}
@@ -273,7 +273,6 @@ const ReferFriendsScreen = () => {
             renderItem={(props) => renderContact(props, !!availableInvites)}
             initialNumToRender={8}
             onScroll={() => Keyboard.dismiss()}
-            style={{ flex: 1 }}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,
               paddingTop: 0,
@@ -297,7 +296,7 @@ const ReferFriendsScreen = () => {
               </EmptyStateWrapper>
             }
           />
-        </ScrollView>
+        </>
       )}
     </ContainerWithHeader>
   );
