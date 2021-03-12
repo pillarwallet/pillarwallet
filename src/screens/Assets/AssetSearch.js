@@ -335,10 +335,6 @@ class AssetSearch extends React.Component<Props, State> {
             <SearchBlock
               searchInputPlaceholder={t('label.searchAsset')}
               onSearchChange={this.handleSearchChange}
-              wrapperStyle={{
-                paddingHorizontal: 20,
-                paddingVertical: 16,
-              }}
               itemSearchState={!!isInSearchMode}
               navigation={navigation}
             />

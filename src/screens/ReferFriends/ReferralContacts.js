@@ -336,7 +336,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
               searchInputPlaceholder={t('label.emailOrPhone')}
               onSearchChange={(q) => this.handleSearch(q)}
               itemSearchState={query.length >= MIN_QUERY_LENGTH}
-              wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
+              wrapperStyle={{ paddingVertical: spacing.small }}
             />
             <MissingInfoNote
               isEmailVerified={isEmailVerified}

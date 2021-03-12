@@ -21,7 +21,7 @@ import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import React, { Suspense } from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, Platform, Linking, View } from 'react-native';
+import { StatusBar, Platform, Linking, View, UIManager } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -90,6 +90,10 @@ import configureStore from './src/configureStore';
 const { store, persistor } = configureStore();
 
 const queryClient = new QueryClient();
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;

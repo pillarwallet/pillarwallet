@@ -18,14 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
-import SearchBlock from 'components/SearchBlock';
+import SearchBar from './SearchBar';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-storiesOf('SearchBlock', module)
-  .addDecorator(WithThemeDecorator)
-  .add('default', () => (
-    <SearchBlock onSearchChange={() => {}} />
-  ));
+const stories = storiesOf('SearchBar', module).addDecorator(WithThemeDecorator);
+
+const Wrapper = (props) => {
+  const [query, setQuery] = React.useState('');
+  return <SearchBar query={query} onChangeQuery={setQuery} {...props} />;
+};
+
+stories.add('basic', () => <Wrapper />);
+
+stories.add('with paste button', () => <Wrapper showPasteButton />);
