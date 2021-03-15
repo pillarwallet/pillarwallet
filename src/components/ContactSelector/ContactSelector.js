@@ -31,8 +31,8 @@ import Spinner from 'components/Spinner';
 
 // Utils
 import { resolveContact } from 'utils/contacts';
-import { getColorByTheme } from 'utils/themes';
 import { isValidAddress } from 'utils/validators';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
@@ -50,9 +50,9 @@ export type ContactSelectorProps = {|
 |};
 
 const SelectorPill = styled.TouchableOpacity`
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
-  padding: 10px 16px;
-  border-radius: 24px;
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  background-color: ${({ theme }) => theme.colors.inputField};
+  border-radius: 1000px;
 `;
 
 const SelectedOption = styled.View`
