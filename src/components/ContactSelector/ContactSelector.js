@@ -50,6 +50,8 @@ export type ContactSelectorProps = {|
 |};
 
 const SelectorPill = styled.TouchableOpacity`
+  min-height: 44px;
+  justify-content: center;
   padding: ${spacing.medium}px ${spacing.mediumLarge}px;
   background-color: ${({ theme }) => theme.colors.inputField};
   border-radius: 1000px;
@@ -105,19 +107,14 @@ const ContactSelector = ({
       );
     }
 
-    let name = selectedContact.name || selectedContact.ensName || selectedContact.ethAddress;
-    if (isValidAddress(name)) {
-      name = t('ellipsedMiddleString', {
-        stringStart: name.slice(0, 6),
-        stringEnd: name.slice(-6),
-      });
-    }
+    const name = selectedContact.name || selectedContact.ensName || selectedContact.ethAddress;
+    const textProps = isValidAddress(name) ? { tiny: true } : { medium: true };
 
     return (
       <SelectedOption>
         <ProfileImage userName={name} diameter={16} borderWidth={0} />
         <Spacing w={8} />
-        <MediumText medium>{name}</MediumText>
+        <MediumText {...textProps}>{name}</MediumText>
       </SelectedOption>
     );
   };
