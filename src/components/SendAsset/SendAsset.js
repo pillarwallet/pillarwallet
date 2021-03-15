@@ -309,7 +309,6 @@ const SendAsset = ({
         onAssetDataChange: setAssetData,
         showCollectibles: true,
         txFeeInfo: feeInfo,
-        hideMaxSend: isEstimating || !selectedContact,
         updateTxFee: calculateBalancePercentTxFee,
         onFormValid: setInputIsValid,
       }}
