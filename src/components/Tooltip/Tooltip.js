@@ -86,8 +86,8 @@ const BalloonWrapper = styled.View`
 const TooltipBalloon = styled.View`
   background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
   opacity: 0.8;
-  padding: ${spacing.mediumLarge}px;
-  border-radius: 14px;
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  border-radius: 1000px;
   align-items: center;
 `;
 
