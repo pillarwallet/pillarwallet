@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { appFont } from 'utils/variables';
+import { appFont, fontSizes, lineHeights } from 'utils/variables';
 
 const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
 
@@ -40,15 +40,15 @@ export const getMatchingSortedData: (data: Object[], query: ?string) => Object[]
   );
 
 export const getFontSize = (value: string | number, numeric?: boolean) => {
-  if (numeric) return 34;
-  if (value || value === 0) return 16;
-  return 14;
+  if (numeric) return fontSizes.large;
+  if (value || value === 0) return fontSizes.medium;
+  return fontSizes.regular;
 };
 
 export const getLineHeight = (value: string | number, numeric?: boolean) => {
-  if (numeric) return 42;
-  if (value || value === 0) return 20;
-  return 14;
+  if (numeric) return lineHeights.large;
+  if (value || value === 0) return lineHeights.medium;
+  return lineHeights.regular;
 };
 
 export const getFontFamily = (value: string | number, numeric?: boolean) => {
