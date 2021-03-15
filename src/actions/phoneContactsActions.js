@@ -140,36 +140,38 @@ const sortContacts = (contacts: ReferralContact[]): ReferralContact[] => {
   });
 };
 
-const askPermission = () => {
-  if (Platform.OS === 'ios') {
-    return Promise.resolve();
-  }
+const requestPermission = async () => {
+  if (Platform.OS !== 'android') return;
 
-  return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+  const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
     title: t('alert.contactsPermission.title'),
     message: t('alert.contactsPermission.message'),
     buttonPositive: t('alert.contactsPermission.button.ok'),
   });
+
+  if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+    // eslint-disable-next-line i18next/no-literal-string
+    throw new Error('Read contacts permission rejected');
+  }
 };
 
 export const fetchPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
-    askPermission()
-      .then(() => {
-        dispatch(fetchingPhoneContacts());
-        Contacts.getAll((err, contacts) => {
-          if (typeof err === 'string' && err.toLowerCase() === PHONE_CONTACTS_ACCESS_DENIED) {
-            dispatch(phoneContactsError());
-            return;
-          }
+    try {
+      await requestPermission();
 
-          const formattedContacts = formatContacts(contacts);
-          dispatch(phoneContactsReceived(sortContacts(formattedContacts)));
-        });
-      })
-      .catch(() => {
-        dispatch(phoneContactsError());
-        return null;
+      dispatch(fetchingPhoneContacts());
+      Contacts.getAll((err, contacts) => {
+        if (typeof err === 'string' && err.toLowerCase() === PHONE_CONTACTS_ACCESS_DENIED) {
+          dispatch(phoneContactsError());
+          return;
+        }
+
+        const formattedContacts = formatContacts(contacts);
+        dispatch(phoneContactsReceived(sortContacts(formattedContacts)));
       });
+    } catch (error) {
+      dispatch(phoneContactsError());
+    }
   };
 };
