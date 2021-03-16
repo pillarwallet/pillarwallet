@@ -20,38 +20,29 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import {
-  View,
-  TextInput,
-  Keyboard,
-  FlatList,
-} from 'react-native';
+import { TextInput, Keyboard, FlatList } from 'react-native';
 import t from 'translations/translate';
 
-import { BaseText, MediumText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Image from 'components/Image';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
 import CollectiblesList from 'components/CollectiblesList';
 
 import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
 import { isValidAddressOrEnsName } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
-import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
+import type { Option, OptionTabs } from 'models/Selector';
 import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  horizontalOptionsData?: HorizontalOption[],
   showOptionsTitles?: boolean,
   renderOption?: (option: Option, onSelect: (option: Option) => void) => React.Node,
   onOptionSelect?: (option: Option) => mixed,
@@ -87,31 +78,10 @@ type State = {|
 |};
 
 
-const DIAMETER = 64;
-const ITEM_SPACING = 13;
-
 const OptionsHeader = styled(MediumText)`
   margin: ${spacing.large}px ${spacing.layoutSides}px 0;
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic010};
-`;
-
-const HorizontalOptions = styled.View`
-  margin-bottom: ${spacing.small}px;
-  background-color: ${({ theme }) => theme.colors.basic070};
-`;
-
-const HorizontalOptionItem = styled.TouchableOpacity`
-  align-items: center;
-  width: ${DIAMETER + (ITEM_SPACING * 2)}px;
-  padding-top: ${spacing.medium}px;
-`;
-
-const HorizontalOptionItemName = styled(BaseText)`
-  ${fontStyles.small};
-  color: ${({ theme }) => theme.colors.basic010};
-  padding: 0 4px;
-  margin-top: 8px;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -119,23 +89,6 @@ const EmptyStateWrapper = styled.View`
   padding-bottom: 90px;
   align-items: center;
 `;
-
-const IconCircle = styled.View`
-  width: ${DIAMETER}px;
-  height: ${DIAMETER}px;
-  border-radius: ${DIAMETER / 2}px;
-  background-color: ${({ theme }) => theme.colors.basic020};
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-`;
-
-const IconImage = styled(Image)`
-  height: ${DIAMETER}px;
-  width: ${DIAMETER}px;
-`;
-
 
 const viewConfig = {
   minimumViewTime: 300,
@@ -213,66 +166,6 @@ class SelectorOptions extends React.Component<Props, State> {
     }
 
     return option;
-  };
-
-  renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
-    const { showOptionsTitles } = this.props;
-    if (!horizontalOptionsData) return null;
-
-    return horizontalOptionsData.map<React.Node>((optionsInfo: HorizontalOption, index) => {
-      const { title, data } = optionsInfo;
-      if (!data?.length) return null;
-      return (
-        <HorizontalOptions key={title || index.toString()}>
-          {(showOptionsTitles && !!title) && <OptionsHeader>{title}</OptionsHeader>}
-          <FlatList
-            data={data}
-            keyExtractor={({ value, id }) => value || id || ''}
-            keyboardShouldPersistTaps="always"
-            renderItem={this.renderHorizontalOption}
-            horizontal
-            contentContainerStyle={{ paddingHorizontal: 7, paddingVertical: spacing.medium }}
-            ItemSeparatorComponent={() => <View style={{ width: 2, height: 1 }} />}
-          />
-        </HorizontalOptions>
-      );
-    });
-  };
-
-  renderHorizontalOption = ({ item }: { item: Option }) => {
-    const { theme } = this.props;
-    const {
-      value,
-      name,
-      imageUrl,
-      imageSource,
-    } = item;
-    const { genericToken } = images(theme);
-
-    return (
-      <HorizontalOptionItem
-        key={value}
-        onPress={() => this.selectValue(item)}
-      >
-        {imageSource
-        ?
-          <IconCircle>
-            <IconImage
-              source={imageSource}
-              resizeMode="cover"
-            />
-          </IconCircle>
-        :
-          <ProfileImage
-            uri={imageUrl}
-            userName={name}
-            diameter={DIAMETER}
-            fallbackImage={genericToken}
-          />
-          }
-        <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
-      </HorizontalOptionItem>
-    );
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -359,7 +252,6 @@ class SelectorOptions extends React.Component<Props, State> {
       optionTabs,
       showOptionsTitles,
       optionsTitle,
-      horizontalOptionsData = [],
       searchPlaceholder,
       iconProps = {},
       allowEnteringCustomAddress,
@@ -383,18 +275,8 @@ class SelectorOptions extends React.Component<Props, State> {
     const collectibles = activeTabInfo?.collectibles;
 
     const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
-    const filteredHorizontalOptionsData = isSearching && horizontalOptionsData.length
-      ? horizontalOptionsData.reduce((mappedInfo, info) => {
-        const { data } = info;
-        if (data.length) {
-          mappedInfo.push({ ...info, data: getMatchingSortedData(data, query) });
-        }
-        return mappedInfo;
-      }, [])
-      : horizontalOptionsData;
 
-    const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
-      && !filteredHorizontalOptionsData.some(({ data }) => data.length);
+    const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length;
     const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
       ? t('error.invalid.address')
       : t('label.nothingFound');
@@ -403,7 +285,6 @@ class SelectorOptions extends React.Component<Props, State> {
       value: 'extendedHeaderItems', /* eslint-disable-line i18next/no-literal-string */
       component: (
         <>
-          {this.renderHorizontalOptions(filteredHorizontalOptionsData)}
           {!!showOptionsTitles && !!optionsTitle &&
           <OptionsHeader>{optionsTitle}</OptionsHeader>}
           {showEmptyState &&

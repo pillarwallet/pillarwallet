@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import { getEnv } from 'configs/envConfig';
@@ -44,7 +43,7 @@ import { reportErrorLog, formatUnits } from 'utils/common';
 import { calculateRariWithdrawTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
-import { ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
@@ -241,15 +240,6 @@ const RariWithdrawScreen = ({
 
   const customAssets = getCustomAssetOptions(supportedAssets, rariPool);
 
-  const popularOptions = POPULAR_EXCHANGE_TOKENS
-    .map(popularSymbol => customAssets.find(({ symbol }) => symbol === popularSymbol))
-    .filter(asset => !!asset && !isEmpty(asset));
-
-  const horizontalOptions = [{
-    title: t('label.popular'),
-    data: popularOptions,
-  }];
-
   return (
     <ContainerWithHeader
       inset={{ bottom: 'never' }}
@@ -288,7 +278,6 @@ const RariWithdrawScreen = ({
           customBalances={customBalances}
           hideMaxSend={isCalculatingMaxAmount}
           customAssets={customAssets}
-          horizontalOptions={horizontalOptions}
         />
       </ValueInputWrapper>
     </ContainerWithHeader>

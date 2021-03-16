@@ -314,7 +314,6 @@ class TextInput extends React.Component<Props, State> {
       optionTabs,
       selectorModalTitle,
       optionsSearchPlaceholder,
-      horizontalOptions,
     } = selectorOptions;
 
     Keyboard.dismiss();
@@ -328,7 +327,6 @@ class TextInput extends React.Component<Props, State> {
         optionKeyExtractor={this.optionKeyExtractor}
         onOptionSelect={this.selectValue}
         renderOption={renderOption}
-        horizontalOptionsData={horizontalOptions}
         onOpen={this.props.inputProps.onSelectorOpen}
       />
     ));
@@ -446,19 +444,14 @@ class TextInput extends React.Component<Props, State> {
     const {
       options = [],
       optionTabs,
-      horizontalOptions,
     } = selectorOptions;
 
-    const horizontalOptionsLength = !horizontalOptions ? 0 : horizontalOptions.reduce((sum, item) => {
-      if (item.data?.length) sum += item.data?.length;
-      return sum;
-    }, 0);
     const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
       if (tab.options?.length) sum += tab.options?.length;
       return sum;
     }, 0);
 
-    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
+    const selectorOptionsCount = options.length + optionsInTabsLength;
     return selectorOptionsCount;
   }
 

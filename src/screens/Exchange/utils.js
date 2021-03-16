@@ -25,7 +25,7 @@ import Intercom from 'react-native-intercom';
 
 import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
@@ -33,7 +33,7 @@ import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Option, HorizontalOption } from 'models/Selector';
+import type { Option } from 'models/Selector';
 import type { Rates, Asset, Assets, Balances } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
@@ -133,18 +133,6 @@ const generateSupportedAssetsOptions = (
     .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
 };
 
-const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS
-  .map(popularSymbol => assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol) || {})
-  .filter(asset => !!asset && !isEmpty(asset));
-
-const generateHorizontalOptions = (assetsOptionsBuying: Option[]): HorizontalOption[] => {
-  const popularOptions = generatePopularOptions(assetsOptionsBuying);
-  return [{
-    title: t('label.popular'),
-    data: popularOptions,
-  }];
-};
-
 export const provideOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
@@ -169,7 +157,6 @@ export const provideOptions = (
   return {
     fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
     toOptions: assetsOptionsBuying,
-    horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };
 };
 

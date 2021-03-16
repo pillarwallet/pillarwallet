@@ -263,7 +263,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   getFromInput = () => {
     const { fromAsset, fromAmount, toAsset } = this.state;
-    const { fromOptions, horizontalOptions } = this.options;
+    const { fromOptions } = this.options;
 
     return (
       <>
@@ -276,7 +276,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           onValueChange={this.handleFromInputChange}
           selectorOptionsTitle={t('label.sell')}
           customAssets={fromOptions}
-          horizontalOptions={horizontalOptions}
           leftSideSymbol="minus" // eslint-disable-line i18next/no-literal-string
           getInputRef={ref => { this.fromInputRef = ref; }}
           onBlur={this.blurFromInput}
@@ -292,7 +291,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       toAsset, fromAmount, fromAsset, wbtcData,
     } = this.state;
-    const { toOptions, horizontalOptions } = this.options;
+    const { toOptions } = this.options;
 
     let toAmount;
     const isWbtc = isWbtcCafe(fromAsset.symbol);
@@ -311,7 +310,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         onAssetDataChange={(assetData) => this.setState({ toAsset: assetData })}
         selectorOptionsTitle={t('label.buy')}
         customAssets={toOptions}
-        horizontalOptions={horizontalOptions}
         leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
         hideMaxSend

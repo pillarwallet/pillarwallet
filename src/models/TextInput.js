@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import type { HorizontalOption, Option, OptionTabs } from './Selector';
+import type { Option, OptionTabs } from './Selector';
 
 type Value = string | number;
 
@@ -56,12 +56,10 @@ export type InputPropsType = {
 
 export type SelectorOptions = {
   options?: Option[],
-  horizontalOptions: HorizontalOption[],
   optionTabs: OptionTabs[],
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,
-  horizontalOptionsTitle?: string,
   optionsTitle?: string,
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,

@@ -46,11 +46,6 @@ export type Option = {
   },
 };
 
-export type HorizontalOption = {
-  title?: string,
-  data: Option[],
-};
-
 export type OptionTabs = {
   name: string,
   id: string,

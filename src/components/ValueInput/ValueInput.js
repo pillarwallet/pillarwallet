@@ -51,7 +51,7 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates, Balances } from 'models/Asset';
-import type { Option, HorizontalOption } from 'models/Selector';
+import type { Option } from 'models/Selector';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
@@ -66,7 +66,6 @@ export type ExternalProps = {
   onAssetDataChange: (Option) => void,
   value: string,
   onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
-  horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
   txFeeInfo?: ?TransactionFeeInfo,
   hideMaxSend?: boolean,
@@ -132,7 +131,6 @@ export const ValueInputComponent = (props: Props) => {
     onAssetDataChange,
     value,
     onValueChange,
-    horizontalOptions,
     showCollectibles,
     txFeeInfo,
     hideMaxSend,
@@ -238,7 +236,6 @@ export const ValueInputComponent = (props: Props) => {
       <SelectorOptions
         title={selectorOptionsTitle}
         options={assetsOptions}
-        horizontalOptionsData={horizontalOptions}
         onOptionSelect={onAssetDataChange}
         optionTabs={optionTabs}
       />
