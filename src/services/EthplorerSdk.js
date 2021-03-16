@@ -20,7 +20,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { BigNumber } from 'bignumber.js';
-import axios, { AxiosResponse } from 'axios';
 
 import type {
   GetAddressHistoryParams,
@@ -36,7 +35,7 @@ import type {
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
 
-import { retryOnNetworkError } from 'utils/retry';
+import httpRequest from 'utils/httpRequest';
 import { API_REQUEST_TIMEOUT } from './api';
 
 
@@ -78,7 +77,7 @@ class EthplorerSdk {
       if (params.type) paramsArray.push(`type=${params.type}`);
       if (params.limit) paramsArray.push(`limit=${params.limit}`);
     }
-    return retryOnNetworkError(() => this.pubRequest(`getTokenHistory/${address}`, paramsArray));
+    return this.pubRequest(`getTokenHistory/${address}`, paramsArray);
   }
 
   /*
@@ -86,7 +85,7 @@ class EthplorerSdk {
    * @param {string} address of the token
    */
   getTokenInfo(address: string): Promise<GetTokenInfoResponse> {
-    return retryOnNetworkError(() => this.pubRequest(`getTokenInfo/${address}`));
+    return this.pubRequest(`getTokenInfo/${address}`);
   }
 
   /*
@@ -100,7 +99,7 @@ class EthplorerSdk {
       if (params.token) paramsArray.push(`token=${params.token}`);
       if (params.showETHTotals) paramsArray.push(`showETHTotals=${params.showETHTotals}`);
     }
-    return retryOnNetworkError(() => this.pubRequest(`getAddressInfo/${address}`, paramsArray));
+    return this.pubRequest(`getAddressInfo/${address}`, paramsArray);
   }
 
   /*
@@ -108,7 +107,7 @@ class EthplorerSdk {
    * @param {string} address of the transaction
    */
   getTxInfo(address: string): Promise<GetTxInfoResponse> {
-    return retryOnNetworkError(() => this.pubRequest(`getTxInfo/${address}`));
+    return this.pubRequest(`getTxInfo/${address}`);
   }
 
   /**
@@ -124,7 +123,7 @@ class EthplorerSdk {
       if (params.limit) paramsArray.push(`limit=${params.limit}`);
       if (params.timestamp) paramsArray.push(`timestamp=${params.timestamp}`);
     }
-    return retryOnNetworkError(() => this.pubRequest(`getAddressHistory/${address}`, paramsArray));
+    return this.pubRequest(`getAddressHistory/${address}`, paramsArray);
   }
 
   /*
@@ -140,7 +139,7 @@ class EthplorerSdk {
       if (params.timestamp) paramsArray.push(`timestamp=${params.timestamp}`);
       if (params.showZeroValues) paramsArray.push(`showZeroValues=${params.showZeroValues}`);
     }
-    return retryOnNetworkError(() => this.pubRequest(`getAddressTransactions/${address}`, paramsArray))
+    return this.pubRequest(`getAddressTransactions/${address}`, paramsArray)
       .then(history => history.map(tx => ({
         ...tx,
         value: parseEthValue(tx.value),
@@ -154,13 +153,13 @@ class EthplorerSdk {
    */
   getTokenPriceHistoryGrouped(address: number, period: number): Promise<GetTokenPriceHistoryGroupedResponse> {
     const paramsArray = [`period=${period}`];
-    return retryOnNetworkError(() => this.pubRequest(`getTokenPriceHistoryGrouped/${address}`, paramsArray));
+    return this.pubRequest(`getTokenPriceHistoryGrouped/${address}`, paramsArray);
   }
 
   pubRequest(uri: string, params: string[] = []) {
     params.push(`apiKey=${this.apiKey}`);
     const url = `${this.baseURL}${uri}?${params.join('&')}`;
-    return axios.get(url, { timeout: API_REQUEST_TIMEOUT }).then(({ data }: AxiosResponse) => data);
+    return httpRequest.get(url, { timeout: API_REQUEST_TIMEOUT }).then(({ data }) => data);
   }
 }
 

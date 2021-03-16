@@ -18,10 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
 import { reportErrorLog } from 'utils/common';
-import { retryOnNetworkError } from 'utils/retry';
+import httpRequest from 'utils/httpRequest';
 
 
 export class NotEnoughLiquidityError extends Error {}
@@ -41,7 +40,7 @@ export const get0xSwapOrders = async (
     url += `&sellAmount=${maxInputAmountBN.toString()}`;
   }
 
-  const { data: decoded } = await retryOnNetworkError(() => axios.get(url))
+  const { data: decoded } = await httpRequest.get(url)
     .catch((error) => {
       if (error.response?.data?.validationErrors?.[0]?.reason === 'INSUFFICIENT_ASSET_LIQUIDITY') {
         throw new NotEnoughLiquidityError();

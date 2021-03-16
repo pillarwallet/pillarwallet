@@ -17,15 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import axios, { AxiosResponse } from 'axios';
 import { getEnv } from 'configs/envConfig';
 
-// utils
-import { retryOnNetworkError } from 'utils/retry';
-
 // services
-import { API_REQUEST_TIMEOUT } from './api';
+import { API_REQUEST_TIMEOUT } from 'services/api';
 
+// utils
+import httpRequest from 'utils/httpRequest';
 
 const requestConfig = {
   timeout: API_REQUEST_TIMEOUT,
@@ -39,8 +37,8 @@ const requestConfig = {
 export const getLimitedData =
   (url: string, data: Array<Object>, limit: number, offset: number,
     responseDataKey: string, resolve: Function, reject: Function) => {
-    retryOnNetworkError(() => axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig))
-      .then(({ data: responseData }: AxiosResponse) => {
+    httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig)
+      .then(({ data: responseData }) => {
         const retrievedData = data.concat(responseData[responseDataKey]);
         const newOffset = offset + limit;
         if (responseData[responseDataKey].length === limit) {

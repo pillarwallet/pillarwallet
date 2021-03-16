@@ -17,9 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import axios from 'axios';
 import { reportLog } from 'utils/common';
-import { retryOnNetworkError } from 'utils/retry';
+import httpRequest from 'utils/httpRequest';
 
 export class GraphQueryError extends Error {
   subgraphName: string;
@@ -40,7 +39,7 @@ export const callSubgraph = (subgraphName: string, query: string) => {
   // eslint-disable-next-line i18next/no-literal-string
   const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`;
 
-  return retryOnNetworkError(() => axios.post(url, { query }))
+  return httpRequest.post(url, { query }, { retry: true })
     .then(({ data: response }) => response.data)
     .catch((error) => {
       reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query });

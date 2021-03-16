@@ -35,14 +35,14 @@ describe('auto-retry', () => {
 
   it('resolves to the value of first resolved promise', async () => {
     const fn = jest.fn(async (bail, attemptNo) => {
-      if (attemptNo > 3) return attemptNo;
+      if (attemptNo > 2) return attemptNo;
       throw new Error();
     });
     const promise = retry(fn);
 
     jest.runAllTimers();
-    await expect(promise).resolves.toEqual(4);
-    expect(fn).toHaveBeenCalledTimes(4);
+    await expect(promise).resolves.toEqual(3);
+    expect(fn).toHaveBeenCalledTimes(3);
   });
 
   it('is rejected if none of the attempts succeed', async () => {
@@ -56,14 +56,14 @@ describe('auto-retry', () => {
 
   it('stops retries when bail() is called', async () => {
     const fn = jest.fn(async (bail, attemptNo) => {
-      if (attemptNo === 3) return bail();
+      if (attemptNo === 2) return bail();
       throw new Error();
     });
     const promise = retry(fn);
 
     jest.runAllTimers();
     await expect(promise).rejects.toThrow();
-    expect(fn).toHaveBeenCalledTimes(3);
+    expect(fn).toHaveBeenCalledTimes(2);
   });
 });
 

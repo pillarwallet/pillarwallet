@@ -22,7 +22,7 @@ import asyncRetry from 'async-retry';
 
 type Retrier<T> = (bail: (error?: Error) => void, attemptNo: number) => T | Promise<T>;
 
-type Options = {
+export type Options = {
   retries?: number,
   factor?: number,
   minTimeout?: number,
@@ -33,7 +33,7 @@ type Options = {
 
 function retry<T>(fn: Retrier<T>, options: Options = {}): Promise<T> {
   return asyncRetry(fn, {
-    retries: 10,
+    retries: 3,
     factor: 1,
     minTimeout: 6000,
     randomize: false,

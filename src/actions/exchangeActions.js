@@ -21,7 +21,6 @@
 import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
 import t from 'translations/translate';
-import axios from 'axios';
 
 // components
 import Toast from 'components/Toast';
@@ -54,6 +53,7 @@ import { getSmartWalletAddress } from 'utils/accounts';
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 import { isOrderAmountTooLow } from 'utils/exchange';
+import httpRequest from 'utils/httpRequest';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -428,7 +428,7 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 };
 
 export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
-  axios.post(
+  httpRequest.post(
     getEnv().WBTC_FEES_API,
     JSON.stringify({
       id: 67,
