@@ -50,7 +50,7 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances } from 'models/Asset';
+import type { Asset, Rates, Balances } from 'models/Asset';
 import type { Option } from 'models/Selector';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -59,7 +59,7 @@ import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {
   disabled?: boolean,
-  customAssets?: Option[],
+  customAssets?: Asset[],
   customBalances?: Balances,
   selectorOptionsTitle?: string,
   assetData: Option,
@@ -78,7 +78,7 @@ export type ExternalProps = {
 };
 
 type InnerProps = {
-  assets: Option[],
+  assets: Asset[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,

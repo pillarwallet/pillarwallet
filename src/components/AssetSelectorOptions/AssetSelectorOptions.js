@@ -34,6 +34,7 @@ import CollectiblesList from 'components/CollectiblesList';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 
+import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { Option, OptionTabs } from 'models/Selector';
 import type { IconProps } from 'components/SearchBar';
@@ -44,7 +45,7 @@ type OwnProps = {|
   onOptionSelect?: (option: Option) => mixed,
   optionKeyExtractor?: (item: Object) => string,
   title?: string,
-  options?: Option[],
+  options?: Asset[],
   optionTabs?: OptionTabs[],
   searchPlaceholder?: string,
   noImageFallback?: boolean,
