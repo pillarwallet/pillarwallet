@@ -62,7 +62,7 @@ class EtherspotService {
   }
 
   async logout(): Promise<void> {
-    if (!this.sdk) return Promise.resolve(); // not initialized, nothing to do
+    if (!this.sdk) return; // not initialized, nothing to do
 
     await this.sdk.destroy();
     this.sdk = null;

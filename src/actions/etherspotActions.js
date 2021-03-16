@@ -69,6 +69,13 @@ export const importEtherspotAccountsAction = () => {
       return;
     }
 
+    const { walletId } = user;
+
+    if (!walletId) {
+      reportErrorLog('importEtherspotAccountsAction failed: no walletId', { user });
+      return;
+    }
+
     const etherspotAccounts = await etherspot.getAccounts();
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
@@ -82,13 +89,6 @@ export const importEtherspotAccountsAction = () => {
       ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
       etherspotAccount, // full object as extras
     ))));
-
-    const { walletId } = user;
-
-    if (!walletId) {
-      reportErrorLog('importEtherspotAccountsAction failed: no walletId', { user });
-      return;
-    }
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
 
