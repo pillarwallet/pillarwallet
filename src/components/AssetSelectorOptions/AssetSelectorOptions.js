@@ -23,7 +23,6 @@ import styled, { withTheme } from 'styled-components/native';
 import { TextInput, Keyboard, FlatList } from 'react-native';
 import t from 'translations/translate';
 
-import { MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -32,7 +31,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
 import CollectiblesList from 'components/CollectiblesList';
 
-import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 
@@ -70,12 +68,6 @@ const EmptyStateWrapper = styled.View`
   padding-bottom: 90px;
   align-items: center;
 `;
-
-const viewConfig = {
-  minimumViewTime: 300,
-  viewAreaCoveragePercentThreshold: 100,
-  waitForInteraction: true,
-};
 
 const MIN_QUERY_LENGTH = 2;
 
@@ -125,7 +117,9 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     }
     if (!option) return null;
 
-    const { name, imageUrl, imageSource, opacity, disabled } = option;
+    const {
+      name, imageUrl, imageSource, opacity, disabled,
+    } = option;
 
     return (
       <ListItemWithImage
@@ -250,10 +244,6 @@ class AssetSelectorOptions extends React.Component<Props, State> {
               // $FlowFixMe: react-native types
               keyExtractor={this.optionKeyExtractor}
               keyboardShouldPersistTaps="always"
-              initialNumToRender={10}
-              viewabilityConfig={viewConfig}
-              windowSize={10}
-              hideModalContentWhileAnimating
               ListEmptyComponent={this.renderEmptyState()}
             />
           )}
