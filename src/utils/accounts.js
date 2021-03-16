@@ -85,6 +85,10 @@ export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };
 
+export const findFirstEtherspotAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
+};
+
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {

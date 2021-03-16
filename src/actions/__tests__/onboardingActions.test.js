@@ -131,6 +131,7 @@ const mockOauthTokens: Object = {
 };
 
 const mockFcmToken = '12x2342x212';
+const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
 describe('Onboarding actions', () => {
   let store;
@@ -275,7 +276,7 @@ describe('Onboarding actions', () => {
       { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKeyF'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -300,7 +301,7 @@ describe('Onboarding actions', () => {
       },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKey'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

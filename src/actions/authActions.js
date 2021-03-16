@@ -62,7 +62,11 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
+import {
+  findFirstEtherspotAccount,
+  findFirstSmartAccount,
+  getActiveAccountType,
+} from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
@@ -102,6 +106,10 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+} from './etherspotActions';
 
 
 const storage = Storage.getInstance('db');
@@ -240,6 +248,9 @@ export const loginAction = (
       // init smart wallet
       await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
 
+      // init Etherspot SDK
+      await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
+
       const smartWalletAccount = findFirstSmartAccount(accounts);
 
       // key based wallet migration – switch to smart wallet if key based was active
@@ -268,6 +279,12 @@ export const loginAction = (
         if (!smartWalletAccount) {
           // this will import and set Smart Wallet as current active account
           await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+        }
+
+        // silent Etherspot Smart Wallet creation
+        const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
+        if (!etherspotSmartWalletAccount) {
+          dispatch(importEtherspotAccountsAction());
         }
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
