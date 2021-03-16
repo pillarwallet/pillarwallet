@@ -18,8 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/* eslint-disable no-use-before-define */
-
 import * as React from 'react';
 import { Keyboard, FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
