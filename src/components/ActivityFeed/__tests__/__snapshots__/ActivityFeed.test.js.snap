@@ -295,7 +295,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                     </View>
                   </View>
                   <View
-                    rightColumn={true}
                     style={
                       Array [
                         Object {
@@ -669,7 +668,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                     </View>
                   </View>
                   <View
-                    rightColumn={true}
                     style={
                       Array [
                         Object {

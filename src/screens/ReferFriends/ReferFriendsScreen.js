@@ -37,7 +37,7 @@ import { fetchSentReferralInvitationsAction, sendReferralInvitationsAction } fro
 import { Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import Checkbox from 'components/Checkbox';
+import CheckBox from 'components/modern/CheckBox';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -132,14 +132,11 @@ const ReferFriendsScreen = () => {
         itemImageUrl={item.photo}
         onPress={canSelect ? () => toggleContact(item) : null}
         wrapperOpacity={canSelect ? 1 : 0.5}
-        customAddon={
-          <Checkbox
-            checked={isSelected}
-            onPress={() => toggleContact(item)}
+        leftAddon={
+          <CheckBox
+            value={isSelected}
+            onValueChange={() => toggleContact(item)}
             disabled={!canSelect}
-            rounded
-            wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
-            positive
           />
         }
         noSeparator
