@@ -17,9 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable no-unused-expressions */
 /* eslint-disable i18next/no-literal-string */
-/* eslint-disable object-curly-newline */
 
 import React, { useEffect, useState, useRef } from 'react';
 import { View } from 'react-native';
@@ -67,7 +65,14 @@ type FormData = {|
   name: string,
 |};
 
-const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, onModalHide }: Props) => {
+const ContactDetailsModal = ({
+  contact,
+  onSave,
+  title,
+  contacts,
+  showQRScanner,
+  onModalHide,
+}: Props) => {
   const modalRef = useRef();
 
   const formSchema = yup.object().shape({
@@ -94,7 +99,9 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
       ),
   });
 
-  const { control, handleSubmit, errors, watch, getValues, setValue } = useForm({
+  const {
+    control, handleSubmit, errors, watch, getValues, setValue,
+  } = useForm({
     defaultValues: { address: contact?.ethAddress || '', name: contact?.name || '' },
     resolver: yupResolver(formSchema),
     mode: 'onTouched',
