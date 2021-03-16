@@ -21,12 +21,10 @@
 /* eslint-disable no-use-before-define */
 
 import * as React from 'react';
-import { FlatList, Keyboard, ScrollView } from 'react-native';
+import { Keyboard, FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
-import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 // Actions
@@ -34,7 +32,7 @@ import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 import { fetchSentReferralInvitationsAction, sendReferralInvitationsAction } from 'actions/referralsActions';
 
 // Components
-import { Wrapper } from 'components/Layout';
+import { Spacing, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
@@ -63,7 +61,7 @@ import {
   filterAllowedContacts,
   searchContacts,
 } from 'utils/referrals';
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { isValidPhone, isValidEmail } from 'utils/validators';
 
 // Types
@@ -93,6 +91,9 @@ const ReferFriendsScreen = () => {
   const isFetchingPhoneContacts = useRootSelector((root) => root.phoneContacts.isFetching);
   const isFetchingPhoneContactsComplete = useRootSelector((root) => root.phoneContacts.isFetchComplete);
   const phoneContactsFetchError = useRootSelector((root) => root.phoneContacts.fetchError);
+
+  const totalInvites = getRemainingDailyInvitations(sentInvitationsCount);
+  const availableInvites = Math.max(totalInvites - selectedContacts.length, 0);
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
@@ -149,8 +150,6 @@ const ReferFriendsScreen = () => {
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
 
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
-      const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
-
       if (isSameContactData(contact, user.email, user.phone)) {
         Toast.show({
           message: t('toast.cantInviteYourself'),
@@ -182,12 +181,8 @@ const ReferFriendsScreen = () => {
     setSelectedContacts(updatedSelectedContacts);
   };
 
-  const renderFooter = (availableInvites) => {
-    const availableInvitesText = !availableInvites
-      ? 0
-      : t('referralsContent.label.remainingCount', { amount: availableInvites });
-
-    if (!availableInvites) {
+  const renderFooter = () => {
+    if (!totalInvites) {
       return (
         <FooterWrapper>
           <FooterText>{t('referralsContent.label.noMoreDailyInvitesAvailable')}</FooterText>
@@ -198,14 +193,14 @@ const ReferFriendsScreen = () => {
     if (selectedContacts.length) {
       return (
         <FooterWrapper>
-          <FooterText>
-            {t('referralsContent.label.selectedInvitesCount', {
-              selectedCount: selectedContacts.length,
-              amountText: availableInvitesText,
-            })}
-          </FooterText>
-          {!!isPillarRewardCampaignActive && <FooterText>{t('referralsContent.paragraph.rewardMechanics')}</FooterText>}
-          <Button title={t('button.sendInvites')} onPress={sendInvites} isLoading={isSendingInvite} marginTop={16} />
+          {!!isPillarRewardCampaignActive && (
+            <>
+              <FooterText>{t('referralsContent.paragraph.rewardMechanics')}</FooterText>
+              <Spacing h={spacing.mediumLarge} />
+            </>
+          )}
+
+          <Button title={t('referralsContent.button.invite')} onPress={sendInvites} isLoading={isSendingInvite} />
         </FooterWrapper>
       );
     }
@@ -217,7 +212,7 @@ const ReferFriendsScreen = () => {
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
   const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
 
-  if (isSearching && isEmpty(filteredContacts)) {
+  if (isSearching && !filteredContacts.length) {
     const customContact = createCustomContact(query, user.isPhoneVerified, user.isEmailVerified);
 
     if (customContact) {
@@ -225,7 +220,10 @@ const ReferFriendsScreen = () => {
     }
   }
 
-  const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
+  const selectedText = t('referralsContent.label.remainingCount', {
+    remainingCount: availableInvites,
+    totalCount: totalInvites,
+  });
 
   return (
     <ContainerWithHeader
@@ -233,21 +231,20 @@ const ReferFriendsScreen = () => {
         centerItems: [
           {
             title: isPillarRewardCampaignActive
-              ? t('referralsContent.title.referMain')
-              : t('referralsContent.title.inviteMain'),
+              ? t('referralsContent.title.referFriends')
+              : t('referralsContent.title.inviteFriends'),
           },
         ],
         rightItems: [
           {
-            link: t('button.support'),
-            onPress: () => Intercom.displayMessenger(),
+            custom: <HeaderSideText secondary>{selectedText}</HeaderSideText>,
+            style: { position: 'absolute' },
           },
         ],
-        sideFlex: 2,
       }}
       inset={{ bottom: 0 }}
       footerContainerInset={{ bottom: 'always' }}
-      footer={renderFooter(availableInvites)}
+      footer={renderFooter()}
       footerContainerStyle={{ flexWrap: 'nowrap' }}
     >
       {!!isFetchingPhoneContacts && (
@@ -257,26 +254,25 @@ const ReferFriendsScreen = () => {
       )}
 
       {!isFetchingPhoneContacts && (
-        <ScrollView stickyHeaderIndices={[0]} contentContainerStyle={{ flexGrow: 1 }}>
+        <>
           <SearchBlock
-            searchInputPlaceholder={t('label.emailOrPhone')}
             onSearchChange={setQuery}
             itemSearchState={query.length >= MIN_QUERY_LENGTH}
-            wrapperStyle={{ paddingVertical: spacing.small }}
           />
+
           <MissingInfoNote
             isEmailVerified={user.isEmailVerified}
             isPhoneVerified={user.isPhoneVerified}
             onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
           />
+
           <FlatList
             data={filteredContacts}
             extraData={selectedContacts}
             keyExtractor={(item) => item.id}
-            renderItem={(props) => renderContact(props, !!availableInvites)}
+            renderItem={(props) => renderContact(props, !!totalInvites)}
             initialNumToRender={8}
             onScroll={() => Keyboard.dismiss()}
-            style={{ flex: 1 }}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,
               paddingTop: 0,
@@ -300,7 +296,7 @@ const ReferFriendsScreen = () => {
               </EmptyStateWrapper>
             }
           />
-        </ScrollView>
+        </>
       )}
     </ContainerWithHeader>
   );
@@ -330,6 +326,10 @@ const EmptyStateWrapper = styled.View`
   padding: 20px 30px 30px;
   flex: 1;
   justify-content: center;
+`;
+
+const HeaderSideText = styled(BaseText)`
+  ${fontStyles.regular};
 `;
 
 const FooterWrapper = styled.View`
