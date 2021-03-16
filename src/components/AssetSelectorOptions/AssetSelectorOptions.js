@@ -42,14 +42,12 @@ import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  showOptionsTitles?: boolean,
   renderOption?: (option: Option, onSelect: (option: Option) => void) => React.Node,
   onOptionSelect?: (option: Option) => mixed,
   optionKeyExtractor?: (item: Object) => string,
   title?: string,
   options?: Option[],
   optionTabs?: OptionTabs[],
-  optionsTitle?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: IconProps,
@@ -66,12 +64,6 @@ type State = {|
   query: ?string,
   activeTab: ?string,
 |};
-
-const OptionsHeader = styled(MediumText)`
-  margin: ${spacing.large}px ${spacing.layoutSides}px 0;
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic010};
-`;
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;
@@ -177,14 +169,20 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     if (onOpen) onOpen();
   };
 
+  renderEmptyState = () => {
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph title={t('label.nothingFound')} />
+      </EmptyStateWrapper>
+    );
+  };
+
   render() {
     const {
       theme,
       title,
       options = [],
       optionTabs,
-      showOptionsTitles,
-      optionsTitle,
       searchPlaceholder,
       iconProps = {},
     } = this.props;
@@ -202,27 +200,6 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     const collectibles = activeTabInfo?.collectibles;
 
     const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
-
-    const showEmptyState = !filteredOptions?.length;
-
-    const extendedHeaderItems = {
-      value: 'extendedHeaderItems' /* eslint-disable-line i18next/no-literal-string */,
-      component: (
-        <>
-          {!!showOptionsTitles && !!optionsTitle && <OptionsHeader>{optionsTitle}</OptionsHeader>}
-          {showEmptyState && (
-            <EmptyStateWrapper fullScreen>
-              <EmptyStateParagraph title={t('label.nothingFound')} />
-            </EmptyStateWrapper>
-          )}
-        </>
-      ),
-    };
-
-    let allFeedListData = [extendedHeaderItems];
-    if (filteredOptions.length) {
-      allFeedListData = [extendedHeaderItems, ...filteredOptions];
-    }
 
     return (
       <SlideModal
@@ -268,8 +245,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
             />
           ) : (
             <FlatList
-              stickyHeaderIndices={[0]}
-              data={allFeedListData}
+              data={filteredOptions}
               renderItem={this.renderOption}
               // $FlowFixMe: react-native types
               keyExtractor={this.optionKeyExtractor}
@@ -278,6 +254,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
               viewabilityConfig={viewConfig}
               windowSize={10}
               hideModalContentWhileAnimating
+              ListEmptyComponent={this.renderEmptyState()}
             />
           )}
         </ContainerWithHeader>
