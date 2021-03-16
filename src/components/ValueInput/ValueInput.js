@@ -28,7 +28,7 @@ import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import SelectorOptions from 'components/SelectorOptions';
+import AssetSelectorOptions from 'components/AssetSelectorOptions';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -233,7 +233,7 @@ export const ValueInputComponent = (props: Props) => {
     Keyboard.dismiss();
 
     Modal.open(() => (
-      <SelectorOptions
+      <AssetSelectorOptions
         title={selectorOptionsTitle}
         options={assetsOptions}
         onOptionSelect={onAssetDataChange}
