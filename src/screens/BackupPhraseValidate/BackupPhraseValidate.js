@@ -32,7 +32,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { generateWordsToValidate } from 'utils/wallet';
 import { reportErrorLog } from 'utils/common';
-import { makeViewPrivate } from 'utils/ui';
+import { excludeFromMonitoring } from 'utils/monitoring';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -232,7 +232,7 @@ const BackupPhraseValidate = ({
       headerProps={{ centerItems: [{ title: t('title.verifyBackupPhrase') }] }}
       footer={(
         <FooterWrapper>
-          <ShuffledWordWrapper ref={makeViewPrivate}>
+          <ShuffledWordWrapper ref={excludeFromMonitoring}>
             {renderShuffledWordList()}
             {!!__DEV__ && (
               <MnemonicPhraseWord
@@ -258,7 +258,7 @@ const BackupPhraseValidate = ({
         <Paragraph>
           {t('paragraph.backupPhraseVerificationInstructions')}
         </Paragraph>
-        <WordInputFields ref={makeViewPrivate}>
+        <WordInputFields ref={excludeFromMonitoring}>
           {renderInputFields()}
         </WordInputFields>
         {enteredWords.length === 3 && !isFormValid && (

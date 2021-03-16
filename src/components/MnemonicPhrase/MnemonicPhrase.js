@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { BaseText, MediumText } from 'components/Typography';
 import { fontSizes } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
-import { makeViewPrivate } from 'utils/ui';
+import { excludeFromMonitoring } from 'utils/monitoring';
 
 const MnemonicPhraseWrapper = styled.View`
   flex-direction: row;
@@ -72,7 +72,7 @@ const MnemonicPhrase = (props: Props) => {
   const mnemonicList = phrase.split(' ');
 
   return (
-    <MnemonicPhraseWrapper ref={makeViewPrivate}>
+    <MnemonicPhraseWrapper ref={excludeFromMonitoring}>
       {
         mnemonicList.map((word, index) => (
           <MnemonicPhraseItem key={`${word}+${index}`}>

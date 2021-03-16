@@ -35,7 +35,7 @@ import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import Instabug, { NetworkLogger } from 'instabug-reactnative';
+import Instabug from 'instabug-reactnative';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -72,6 +72,7 @@ import Modal from 'components/Modal';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
+import { initInstabug, setInstabugTheme } from 'utils/monitoring';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
@@ -146,13 +147,7 @@ class App extends React.Component<Props, *> {
       env: null,
     };
 
-    Instabug.startWithToken(getEnv().INSTABUG_TOKEN, [Instabug.invocationEvent.shake]);
-
-    // Temporary workaround: In dev mode, the app crashes while loading
-    // the home screen if network logging is enabled.
-    if (__DEV__) {
-      NetworkLogger.setEnabled(false);
-    }
+    initInstabug();
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -245,11 +240,11 @@ class App extends React.Component<Props, *> {
     if (themeType !== prevThemeType) {
       if (themeType === DARK_THEME) {
         StatusBar.setBarStyle('light-content');
-        Instabug.setColorTheme(Instabug.colorTheme.dark);
       } else {
         StatusBar.setBarStyle('dark-content');
-        Instabug.setColorTheme(Instabug.colorTheme.light);
       }
+
+      setInstabugTheme(themeType);
     }
   }
 
