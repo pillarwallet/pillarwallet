@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import type { Node as ReactNode } from 'react';
 import styled, { withTheme } from 'styled-components/native';
@@ -66,6 +67,7 @@ type OwnProps = {|
   noTopPadding?: boolean,
   headerProps?: HeaderProps,
   insetTop?: boolean,
+  onDismiss?: () => mixed,
 |};
 
 type Props = {|
@@ -114,6 +116,11 @@ const ContentWrapper = styled.View`
   height: 100%;
   ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
   ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
+`;
+
+const FillSpacer = styled.View`
+  width: 100%;
+  height: 100%;
 `;
 
 const Backdrop = styled.TouchableWithoutFeedback`
@@ -168,7 +175,7 @@ class SlideModal extends React.Component<Props, State> {
   };
 
   close: () => void = () => {
-    if (this._modalRef.current) this._modalRef.current.close();
+    this._modalRef.current?.close();
   }
 
   onModalBoxLayout = (event: LayoutEvent) => {
@@ -178,6 +185,11 @@ class SlideModal extends React.Component<Props, State> {
         contentHeight: height,
       });
     }
+  }
+
+  handleDismiss = () => {
+    this.props.onDismiss?.();
+    this.close();
   }
 
   render() {
@@ -229,7 +241,7 @@ class SlideModal extends React.Component<Props, State> {
             rightItems={rightItems}
             noBottomBorder
             noPaddingTop
-            onClose={this.close}
+            onClose={this.handleDismiss}
             wrapperStyle={{ backgroundColor: 'transparent' }}
             noHorizontalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? undefined : 4}
@@ -296,6 +308,8 @@ class SlideModal extends React.Component<Props, State> {
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
         swipeDirection={noSwipeToDismiss ? undefined : 'down'}
+        onBackButtonPress={this.handleDismiss}
+        onSwipeComplete={this.handleDismiss}
         style={{
           margin: 0,
           position: 'relative',
@@ -305,8 +319,8 @@ class SlideModal extends React.Component<Props, State> {
       >
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           {!fullScreen && (
-            <Backdrop onPress={this.close}>
-              <ContentWrapper />
+            <Backdrop onPress={this.handleDismiss}>
+              <FillSpacer />
             </Backdrop>
           )}
           {!!centerFloatingItem && (
