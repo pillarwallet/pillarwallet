@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ import CollectiblesList from 'components/CollectiblesList';
 import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
-import { isValidAddressOrEnsName } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
 import type { Option, OptionTabs } from 'models/Selector';
@@ -53,14 +52,8 @@ type OwnProps = {|
   optionsTitle?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
-  inputIconName?: string,
   iconProps?: IconProps,
   onHide?: () => void,
-  validator?: (value: string) => ?string,
-  allowEnteringCustomAddress?: boolean,
-  forceTab?: string,
-  customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onOpen?: () => void,
 |};
 
@@ -71,9 +64,6 @@ type Props = {|
 
 type State = {|
   query: ?string,
-  hasSearchError: boolean,
-  customAddressAsAnOption: ?Option,
-  isQueryValidAddress: boolean,
   activeTab: ?string,
 |};
 
@@ -97,7 +87,7 @@ const viewConfig = {
 
 const MIN_QUERY_LENGTH = 2;
 
-class SelectorOptions extends React.Component<Props, State> {
+class AssetSelectorOptions extends React.Component<Props, State> {
   searchInput: React.ElementRef<typeof TextInput>;
   modalRef = React.createRef<SlideModalInstance>();
 
@@ -105,9 +95,6 @@ class SelectorOptions extends React.Component<Props, State> {
     super(props);
     this.state = {
       query: null,
-      customAddressAsAnOption: null,
-      isQueryValidAddress: false,
-      hasSearchError: false,
       activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
   }
@@ -132,36 +119,7 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   handleInputChange = (query: string) => {
-    const { allowEnteringCustomAddress } = this.props;
     this.handleSearch(query);
-    if (allowEnteringCustomAddress) this.handleCustomAddress(query);
-  };
-
-  handleCustomAddress = (query: string) => {
-    const isValid = isValidAddressOrEnsName(query);
-
-    this.setState({
-      isQueryValidAddress: isValid,
-      customAddressAsAnOption: isValid && query ? this.getCustomOption(query) : null,
-    });
-  };
-
-  getCustomOption = (address: string) => {
-    let option = {
-      value: address,
-      name: address,
-      ethAddress: address,
-    };
-    const { customOptionButtonLabel, customOptionButtonOnPress } = this.props;
-    if (customOptionButtonLabel && customOptionButtonOnPress) {
-      option = {
-        ...option,
-        buttonActionLabel: customOptionButtonLabel,
-        buttonAction: () => customOptionButtonOnPress(option),
-      };
-    }
-
-    return option;
   };
 
   renderOption = ({ item: option }: Object) => {
@@ -209,28 +167,13 @@ class SelectorOptions extends React.Component<Props, State> {
     return option.value;
   };
 
-  validateSearch = (val: string) => {
-    const { validator } = this.props;
-    const { hasSearchError } = this.state;
-    if (!validator) return null;
-    const hasError = validator(val);
-    if (hasError) {
-      this.setState({ hasSearchError: !!hasError });
-      return hasError;
-    } else if (hasSearchError) {
-      this.setState({ hasSearchError: false });
-    }
-    return null;
-  };
-
   setActiveTab = (tabId: string) => {
     this.setState({ activeTab: tabId });
   };
 
   handleOptionsOpen = () => {
-    const { forceTab, onOpen } = this.props;
+    const { onOpen } = this.props;
     this.focusInput();
-    if (forceTab) this.setState({ activeTab: forceTab });
     if (onOpen) onOpen();
   };
 
@@ -244,9 +187,8 @@ class SelectorOptions extends React.Component<Props, State> {
       optionsTitle,
       searchPlaceholder,
       iconProps = {},
-      allowEnteringCustomAddress,
     } = this.props;
-    const { query, customAddressAsAnOption, isQueryValidAddress, hasSearchError, activeTab } = this.state;
+    const { query, activeTab } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
     const updatedOptionTabs =
@@ -261,11 +203,7 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
 
-    const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length;
-    const emptyStateMessage =
-      allowEnteringCustomAddress && !!query && !isQueryValidAddress
-        ? t('error.invalid.address')
-        : t('label.nothingFound');
+    const showEmptyState = !filteredOptions?.length;
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems' /* eslint-disable-line i18next/no-literal-string */,
@@ -274,7 +212,7 @@ class SelectorOptions extends React.Component<Props, State> {
           {!!showOptionsTitles && !!optionsTitle && <OptionsHeader>{optionsTitle}</OptionsHeader>}
           {showEmptyState && (
             <EmptyStateWrapper fullScreen>
-              <EmptyStateParagraph title={emptyStateMessage} />
+              <EmptyStateParagraph title={t('label.nothingFound')} />
             </EmptyStateWrapper>
           )}
         </>
@@ -284,8 +222,6 @@ class SelectorOptions extends React.Component<Props, State> {
     let allFeedListData = [extendedHeaderItems];
     if (filteredOptions.length) {
       allFeedListData = [extendedHeaderItems, ...filteredOptions];
-    } else if (!hasSearchError && customAddressAsAnOption) {
-      allFeedListData = [extendedHeaderItems, customAddressAsAnOption];
     }
 
     return (
@@ -309,7 +245,6 @@ class SelectorOptions extends React.Component<Props, State> {
           <SearchBar
             query={query}
             onChangeQuery={this.handleInputChange}
-            validator={this.validateSearch}
             placeholder={searchPlaceholder}
             inputRef={(ref) => {
               this.searchInput = ref;
@@ -351,5 +286,5 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const ThemedSelectorOptions: React.AbstractComponent<OwnProps, SelectorOptions> = withTheme(SelectorOptions);
+const ThemedSelectorOptions: React.AbstractComponent<OwnProps, AssetSelectorOptions> = withTheme(AssetSelectorOptions);
 export default ThemedSelectorOptions;

@@ -52,10 +52,8 @@ type OwnProps = {|
   optionsTitle?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
-  inputIconName?: string,
   iconProps?: IconProps,
   onHide?: () => void,
-  forceTab?: string,
   onOpen?: () => void,
 |};
 
@@ -182,9 +180,8 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   handleOptionsOpen = () => {
-    const { forceTab, onOpen } = this.props;
+    const { onOpen } = this.props;
     this.focusInput();
-    if (forceTab) this.setState({ activeTab: forceTab });
     if (onOpen) onOpen();
   };
 
