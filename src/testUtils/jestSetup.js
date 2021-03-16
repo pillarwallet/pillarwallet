@@ -28,7 +28,7 @@ import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova 
 import { View as mockView } from 'react-native';
 import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
-import { Account, AccountStates, AccountStores, AccountTypes } from 'etherspot';
+import * as Etherspot from 'etherspot';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -473,11 +473,11 @@ export const mockEtherspotAccount = {
   type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 };
 
-export const mockEtherspotApiAccount: Account = {
+export const mockEtherspotApiAccount: Etherspot.Account = {
   address: '0x9e',
-  type: AccountTypes.Contract,
-  state: AccountStates.UnDeployed,
-  store: AccountStores.PersonalAccountRegistry,
+  type: Etherspot.AccountTypes.Contract,
+  state: Etherspot.AccountStates.UnDeployed,
+  store: Etherspot.AccountStores.PersonalAccountRegistry,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
