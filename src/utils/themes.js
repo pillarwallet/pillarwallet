@@ -67,6 +67,8 @@ export const lightThemeColorsOld = {
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ededed',
   graphPrimaryColor: '#a945ff',
+  checkMark: lightThemeColors.primaryAccent130,
+  checkBoxField: '#e0eeff',
 };
 
 // will be removed after transition
@@ -110,6 +112,8 @@ export const darkThemeColorsOld = {
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ebf0f5',
   graphPrimaryColor: '#a945ff',
+  checkMark: darkThemeColors.primaryAccent140,
+  checkBoxField: darkThemeColors.basic090,
 };
 
 export const themedColors = {

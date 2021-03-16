@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable no-unused-expressions */
 
 import * as React from 'react';
 import { Keyboard, LayoutAnimation, View, TextInput as RNTextInput } from 'react-native';
