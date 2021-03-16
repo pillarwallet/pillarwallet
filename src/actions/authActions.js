@@ -74,6 +74,7 @@ import Storage from 'services/storage';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
+import etherspotService from 'services/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -505,6 +506,8 @@ export const resetAppServicesAction = () => {
     if (!getState().onboarding.isPortalRecovery) {
       await smartWalletService.reset();
     }
+
+    await etherspotService.logout();
 
     // reset data stored in keychain
     await resetKeychainDataObject();

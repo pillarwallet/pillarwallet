@@ -28,21 +28,20 @@ import {
 
 // utils
 import { reportErrorLog } from 'utils/common';
-
-// config
-import { getEnv } from 'configs/envConfig';
+import { isProdEnv } from 'utils/environment';
 
 
 class EtherspotService {
   sdk: EtherspotSdk;
-  subscription: any;
 
-  async init(privateKey: string) {
-    const networkName = getEnv().NETWORK_PROVIDER === 'homestead'
+  async init(privateKey: string): Promise<void> {
+    const isMainnet = isProdEnv();
+
+    const networkName = isMainnet
       ? NetworkNames.Mainnet
       : NetworkNames.Kovan;
 
-    const envName = getEnv().NETWORK_PROVIDER === 'homestead'
+    const envName = isMainnet
       ? EnvNames.MainNets
       : EnvNames.TestNets;
 
