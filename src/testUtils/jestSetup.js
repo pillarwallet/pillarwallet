@@ -482,3 +482,4 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
   updatedAt: new Date(),
 };
 
+jest.setMock('instabug-reactnative', {});

@@ -32,6 +32,7 @@ import CheckAuth from 'components/CheckAuth';
 import Header from 'components/Header';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { themedColors } from 'utils/themes';
+import { excludeFromMonitoring } from 'utils/monitoring';
 
 
 type Props = {
@@ -104,7 +105,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Paragraph>{t('paragraph.privateKeyRevealedPurpose')}</Paragraph>
           <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
-          <PrivateKeyWrapper>{wallet.privateKey}</PrivateKeyWrapper>
+          <PrivateKeyWrapper ref={excludeFromMonitoring}>{wallet.privateKey}</PrivateKeyWrapper>
         </Wrapper>
       </Container>
     );
