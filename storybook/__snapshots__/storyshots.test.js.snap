@@ -21545,12 +21545,14 @@ exports[`Storyshots ContactSelector default 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
@@ -21623,12 +21625,14 @@ exports[`Storyshots ContactSelector disabled 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
@@ -21749,12 +21753,14 @@ exports[`Storyshots ContactSelector selected contact 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
