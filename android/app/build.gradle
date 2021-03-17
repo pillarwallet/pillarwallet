@@ -184,6 +184,8 @@ android {
         resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
         resValue "string", "branch_io_key_live", ""
         resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
+
+        resValue "string", "instabug_token", ""
     }
 
     splits {
@@ -216,6 +218,8 @@ android {
             resValue "string", "branch_io_app_link", "plr.app.link"
             resValue "string", "branch_io_app_link_alternate", "plr-alternate.app.link"
             resValue "string", "branch_io_key_live", System.getenv("BRANCH_IO_KEY_LIVE") ? System.getenv("BRANCH_IO_KEY_LIVE") : ""
+
+            resValue "string", "instabug_token", System.getenv("INSTABUG_TOKEN") ? System.getenv("INSTABUG_TOKEN") : ""
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

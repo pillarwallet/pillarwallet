@@ -460,3 +460,5 @@ jest.setMock('services/1inch', {
   create1inchOrder: () => Promise.resolve({}),
   fetch1inchSupportedTokens: jest.fn(() => Promise.resolve([])),
 });
+
+jest.setMock('instabug-reactnative', {});
