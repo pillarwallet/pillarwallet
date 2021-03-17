@@ -76,18 +76,14 @@ const AssetSelectorOptions = ({
   const renderItem = (option: AssetOption) => {
     if (!option) return null;
 
-    const {
-      name, imageUrl, imageSource, opacity, disabled,
-    } = option;
+    const { name, imageUrl } = option;
 
     return (
       <ListItemWithImage
-        onPress={!disabled ? () => selectValue(option) : null}
+        onPress={() => selectValue(option)}
         label={name}
         itemImageUrl={imageUrl}
-        iconSource={imageSource}
         fallbackToGenericToken
-        wrapperOpacity={opacity}
         {...option}
       />
     );
@@ -103,17 +99,16 @@ const AssetSelectorOptions = ({
 
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-  const updatedOptionTabs =
-    !!optionTabs && optionTabs.length
-      ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => setActiveTab(id), id }))
-      : [];
+  const updatedOptionTabs = optionTabs?.length
+    ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => setActiveTab(id), id }))
+    : [];
 
   const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
-  const activeTabOptions = activeTabInfo?.options;
-  const relatedOptions = activeTabOptions || options || [];
-  const collectibles = activeTabInfo?.collectibles;
 
+  const relatedOptions = activeTabInfo?.options || options || [];
   const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+
+  const collectibles = activeTabInfo?.collectibles;
 
   return (
     <SlideModal
@@ -146,6 +141,7 @@ const AssetSelectorOptions = ({
             activeTab={activeTab || updatedOptionTabs[0].name}
           />
         )}
+
         {collectibles ? (
           <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
         ) : (
