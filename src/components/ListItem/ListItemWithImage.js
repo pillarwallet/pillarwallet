@@ -36,7 +36,6 @@ import CollectibleImage from 'components/CollectibleImage';
 
 import { ACTION, DEFAULT } from 'constants/listItemConstants';
 
-import { formatAmount, getDecimalPlaces } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 'utils/variables';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
