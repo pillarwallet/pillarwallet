@@ -41,12 +41,10 @@ import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  renderOption?: (option: Option, onSelect: (option: Option) => void) => React.Node,
-  onOptionSelect?: (option: Option) => mixed,
-  optionKeyExtractor?: (item: Object) => string,
-  title?: string,
   options?: Asset[],
   optionTabs?: OptionTabs[],
+  onOptionSelect?: (option: Option) => mixed,
+  title?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
   iconProps?: IconProps,
@@ -108,16 +106,9 @@ class AssetSelectorOptions extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
-    if (option?.value === 'extendedHeaderItems') {
-      return option.component;
-    }
-    const { renderOption, noImageFallback } = this.props;
-
-    if (renderOption) {
-      return renderOption(option, () => this.selectValue(option));
-    }
     if (!option) return null;
 
+    const { noImageFallback } = this.props;
     const {
       name, imageUrl, imageSource, opacity, disabled,
     } = option;
@@ -144,14 +135,6 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     this.close();
     const { onOptionSelect } = this.props;
     if (onOptionSelect) onOptionSelect(selectedValue);
-  };
-
-  optionKeyExtractor = (option: Option): string => {
-    const { optionKeyExtractor } = this.props;
-    if (optionKeyExtractor) {
-      return optionKeyExtractor(option);
-    }
-    return option.value;
   };
 
   setActiveTab = (tabId: string) => {
@@ -242,8 +225,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
             <FlatList
               data={filteredOptions}
               renderItem={this.renderOption}
-              // $FlowFixMe: react-native types
-              keyExtractor={this.optionKeyExtractor}
+              keyExtractor={(option) => option.symbol}
               keyboardShouldPersistTaps="always"
               ListEmptyComponent={this.renderEmptyState()}
             />
