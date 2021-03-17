@@ -54,7 +54,7 @@ import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transac
 import type { Balances, AssetData } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { Option } from 'models/Selector';
+import type { AssetOption } from 'models/Selector';
 import type { Contact } from 'models/Contact';
 
 
@@ -65,8 +65,8 @@ type Props = {
   balances: Balances,
   session: SessionData,
   useGasToken: boolean,
-  assetsWithBalance: Option[],
-  collectibles: Option[],
+  assetsWithBalance: AssetOption[],
+  collectibles: AssetOption[],
   contacts: Contact[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
@@ -134,7 +134,7 @@ const SendAsset = ({
     symbol: defaultAssetData.token,
     value: defaultAssetData.token,
   };
-  const [assetData, setAssetData] = useState<Option>(defaultAssetOption || assetsWithBalance[0]);
+  const [assetData, setAssetData] = useState<AssetOption>(defaultAssetOption || assetsWithBalance[0]);
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);

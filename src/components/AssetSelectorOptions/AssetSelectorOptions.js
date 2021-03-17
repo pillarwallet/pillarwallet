@@ -34,16 +34,15 @@ import CollectiblesList from 'components/CollectiblesList';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 
-import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
-import type { Option, OptionTabs } from 'models/Selector';
+import type { AssetOption, AssetTab } from 'models/Selector';
 import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  options?: Option[],
-  optionTabs?: OptionTabs[],
-  onOptionSelect?: (option: Option) => mixed,
+  options?: AssetOption[],
+  optionTabs?: AssetTab[],
+  onOptionSelect?: (option: AssetOption) => mixed,
   title?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
@@ -109,9 +108,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     if (!option) return null;
 
     const { noImageFallback } = this.props;
-    const {
-      name, imageUrl, imageSource, opacity, disabled,
-    } = option;
+    const { name, imageUrl, imageSource, opacity, disabled } = option;
 
     return (
       <ListItemWithImage
@@ -131,7 +128,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     if (this.modalRef.current) this.modalRef.current.close();
   };
 
-  selectValue = (selectedValue: Option) => {
+  selectValue = (selectedValue: AssetOption) => {
     this.close();
     const { onOptionSelect } = this.props;
     if (onOptionSelect) onOptionSelect(selectedValue);
@@ -156,14 +153,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      theme,
-      title,
-      options = [],
-      optionTabs,
-      searchPlaceholder,
-      iconProps = {},
-    } = this.props;
+    const { theme, title, options = [], optionTabs, searchPlaceholder, iconProps = {} } = this.props;
     const { query, activeTab } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;

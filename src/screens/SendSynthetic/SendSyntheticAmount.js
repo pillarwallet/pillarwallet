@@ -52,7 +52,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Option } from 'models/Selector';
+import type { AssetOption } from 'models/Selector';
 import type { Contact } from 'models/Contact';
 
 // services
@@ -69,7 +69,7 @@ type Props = {
   isOnline: boolean,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
-  syntheticAssets: Option[],
+  syntheticAssets: AssetOption[],
 };
 
 type State = {
@@ -80,7 +80,7 @@ type State = {
   receiver?: string,
   receiverEnsName?: string,
   selectedContact: ?Contact,
-  assetData: ?Option,
+  assetData: ?AssetOption,
 };
 
 
@@ -170,7 +170,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.setState(stateToUpdate);
   };
 
-  handleAssetValueSelect = (value: string, assetData: ?Option) => {
+  handleAssetValueSelect = (value: string, assetData: ?AssetOption) => {
     const { intentError } = this.state;
     const { fetchSingleAssetRates } = this.props;
     let updatedState = { value, assetData };
@@ -268,7 +268,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       assetData,
     } = this.state;
 
-    const defaultAssetData: Option = syntheticAssets.find(({ symbol }) => symbol === PLR) || syntheticAssets[0];
+    const defaultAssetData: AssetOption = syntheticAssets.find(({ symbol }) => symbol === PLR) || syntheticAssets[0];
 
     const showFeesLabel = !isEmpty(value) && !!receiver && !intentError;
     const showNextButton = showFeesLabel;
