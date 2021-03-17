@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import * as React from 'react';
+
 export type Option = {
   name: string,
   value: string,
@@ -54,9 +56,7 @@ export type OptionTabs = {
 }
 
 export type AssetOption = {|
-  balance?: {
-    syntheticBalance?: string,
-  },
+  balance?: AssetBalance,
   decimals?: number,
   name: string,
   id?: string,
@@ -65,6 +65,15 @@ export type AssetOption = {|
   token?: string,
   tokenId?: string,
   tokenType?: string,
+|};
+
+export type AssetBalance = {|
+  balance?: string,
+  token?: string,
+  value?: string,
+  syntheticBalance?: string,
+  custom: React.Node,
+  customOnRight: React.Node,
 |};
 
 export type AssetTab = {|

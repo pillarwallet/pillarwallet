@@ -42,6 +42,7 @@ import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
+import type { AssetBalance } from 'models/Selector';
 
 
 type Props = {
@@ -79,7 +80,7 @@ type Props = {
   customAddonAlignLeft?: boolean,
   customImage?: React.Node,
   imageDiameter?: number,
-  balance?: Object,
+  balance?: AssetBalance,
   innerWrapperHorizontalAlign?: string,
   itemImageSource?: string,
   wrapperOpacity?: number,
@@ -115,7 +116,7 @@ type AddonProps = {
   secondaryButton?: boolean,
   actionLabel?: ?string,
   actionLabelColor?: ?string,
-  balance?: Object,
+  balance?: AssetBalance,
   colors: ThemeColors,
   statusIconColor?: string,
 };
