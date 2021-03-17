@@ -254,13 +254,13 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
-const BalanceValue = styled(BaseText)`
+const BalanceFiatValue = styled(BaseText)`
   ${fontStyles.big};
   color: ${({ color, theme }) => color || theme.colors.basic010};
   text-align: right;
 `;
 
-const BalanceFiatValue = styled(BaseText)`
+const BalanceValue = styled(BaseText)`
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic030};
   text-align: right;
@@ -554,24 +554,18 @@ const Addon = (props: AddonProps) => {
       token = '',
       value = '',
     } = balance;
-    const decimalPlaces = getDecimalPlaces(token);
-    const roundedBalance = formatAmount(tokenBalance, decimalPlaces);
     return (
       <View style={{ flexDirection: 'row' }}>
         <Wrapper style={{ alignItems: 'flex-end' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {!!tokenBalance.toString() &&
-              <BalanceValue>{t('tokenValue', { value: roundedBalance, token })}</BalanceValue>
-            }
+            {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
 
-            {!!syntheticBalance.toString() &&
-            <TankAssetBalance
-              amount={syntheticBalance}
-              token={token}
-            />}
+            {!!syntheticBalance.toString() && <TankAssetBalance amount={syntheticBalance} token={token} />}
           </View>
 
-          {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
+          {!!tokenBalance.toString() && (
+            <BalanceValue>{t('tokenValue', { value: tokenBalance, token })}</BalanceValue>
+          )}
         </Wrapper>
       </View>
     );

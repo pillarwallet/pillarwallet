@@ -31,7 +31,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { getRate } from 'utils/assets';
-import { formatMoney, formatFiat } from 'utils/common';
+import { formatTokenAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -73,7 +73,7 @@ class UnsettledAssets extends React.Component<Props> {
 
     const tokenSymbol = get(item, 'symbol', '');
     const tokenBalance = get(item, 'balance', '0');
-    const paymentNetworkBalanceFormatted = formatMoney(tokenBalance, 4);
+    const paymentNetworkBalanceFormatted = formatTokenAmount(tokenBalance, tokenSymbol);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
