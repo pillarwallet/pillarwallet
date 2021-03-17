@@ -41,7 +41,7 @@ import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|
-  options?: Asset[],
+  options?: Option[],
   optionTabs?: OptionTabs[],
   onOptionSelect?: (option: Option) => mixed,
   title?: string,

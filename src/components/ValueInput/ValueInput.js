@@ -59,7 +59,7 @@ import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {
   disabled?: boolean,
-  customAssets?: Asset[],
+  customAssets?: Option[],
   customBalances?: Balances,
   selectorOptionsTitle?: string,
   assetData: Option,
@@ -78,7 +78,7 @@ export type ExternalProps = {
 };
 
 type InnerProps = {
-  assets: Asset[],
+  assets: Option[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
