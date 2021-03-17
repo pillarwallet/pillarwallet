@@ -45,16 +45,18 @@ import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
 type Props = {|
-  options?: AssetOption[],
+  assets?: AssetOption[],
   collectibles?: Collectible[],
-  onOptionSelect?: (option: AssetOption) => mixed,
+  onSelectAsset?: (asset: AssetOption) => mixed,
+  onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
 |};
 
 const AssetSelectorOptions = ({
-  options,
+  assets,
   collectibles,
-  onOptionSelect,
+  onSelectAsset,
+  onSelectCollectible,
   title,
 }: Props) => {
   const colors = useThemeColors();
@@ -80,9 +82,14 @@ const AssetSelectorOptions = ({
     ]
     : null;
 
-  const selectValue = (selectedValue: AssetOption) => {
+  const selectAsset = (asset: AssetOption) => {
     close();
-    onOptionSelect?.(selectedValue);
+    onSelectAsset?.(asset);
+  };
+
+  const selectCollectible = (collectible: Collectible) => {
+    close();
+    onSelectCollectible?.(collectible);
   };
 
   const close = () => {
@@ -95,7 +102,7 @@ const AssetSelectorOptions = ({
 
     return (
       <ListItemWithImage
-        onPress={() => selectValue(option)}
+        onPress={() => selectAsset(option)}
         label={option.name}
         itemImageUrl={option.imageUrl}
         balance={option.balance}
@@ -117,7 +124,7 @@ const AssetSelectorOptions = ({
       return (
         <CollectiblesList
           collectibles={getCollectibles(collectibles ?? [], query)}
-          onCollectiblePress={selectValue}
+          onCollectiblePress={selectCollectible}
           isSearching={!!query}
         />
       );
@@ -125,7 +132,7 @@ const AssetSelectorOptions = ({
 
     return (
       <FlatList
-        data={getOptions(options || [], query)}
+        data={getAssets(assets || [], query)}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(option) => option.symbol}
         keyboardShouldPersistTaps="always"
@@ -171,18 +178,10 @@ const AssetSelectorOptions = ({
 export default AssetSelectorOptions;
 
 
-export type Tab = {|
-  name: string,
-  id: string,
-  options?: AssetOption[],
-  displayAsCollectibles?: boolean,
-|};
-
-
-export const getOptions = (options: AssetOption[], query: ?string): AssetOption[] => {
-  const filteredOptions = options.filter((option) => isMatchingOption(option, query));
+export const getAssets = (assets: AssetOption[], query: ?string): AssetOption[] => {
+  const filteredAssets = assets.filter((asset) => isMatchingOption(asset, query));
   return orderBy(
-    filteredOptions,
+    filteredAssets,
     [
       (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
       (option: AssetOption) => option.name?.trim().toLowerCase(),

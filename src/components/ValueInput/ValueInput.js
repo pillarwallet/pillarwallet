@@ -221,9 +221,11 @@ export const ValueInputComponent = (props: Props) => {
 
     Modal.open(() => (
       <AssetSelectorOptions
-        options={assetsOptions}
+        assets={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
-        onOptionSelect={onAssetDataChange}
+        onSelectAsset={onAssetDataChange}
+        // $FlowFixMe: can also return Collectible
+        onSelectCollectible={onAssetDataChange}
         title={selectorOptionsTitle}
       />
     ));
