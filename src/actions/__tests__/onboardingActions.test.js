@@ -52,12 +52,15 @@ import { transformAssetsToObject } from 'utils/assets';
 
 // services
 import PillarSdk from 'services/api';
+import etherspotService from 'services/etherspot';
 
 // other
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 // test utils
 import {
+  mockEtherspotAccount,
+  mockEtherspotApiAccount,
   mockExchangeRates,
   mockSmartWalletAccount,
   mockSmartWalletAccountApiData,
@@ -97,6 +100,8 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   fetchBadges: jest.fn(() => mockUserBadges),
 })));
 
+jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
+
 const pillarSdk = new PillarSdk();
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -131,6 +136,11 @@ const mockOauthTokens: Object = {
 };
 
 const mockFcmToken = '12x2342x212';
+const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
+
+
+const mockNewSmartWalletAccount = { ...mockSmartWalletAccount, extra: mockSmartWalletAccountApiData };
+const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
 
 describe('Onboarding actions', () => {
   let store;
@@ -263,7 +273,7 @@ describe('Onboarding actions', () => {
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, extra: mockSmartWalletAccountApiData }] },
+      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount] },
       {
         type: SET_INITIAL_ASSETS,
         payload: {
@@ -273,9 +283,12 @@ describe('Onboarding actions', () => {
       },
       { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
+
+      // appends new Etherspot account to reducer
+      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount, mockNewEtherspotAccount] },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKeyF'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -300,7 +313,7 @@ describe('Onboarding actions', () => {
       },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKey'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
