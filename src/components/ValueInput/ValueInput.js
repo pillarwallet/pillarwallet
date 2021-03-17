@@ -234,10 +234,10 @@ export const ValueInputComponent = (props: Props) => {
 
     Modal.open(() => (
       <AssetSelectorOptions
-        title={selectorOptionsTitle}
         options={assetsOptions}
-        onOptionSelect={onAssetDataChange}
         optionTabs={optionTabs}
+        onOptionSelect={onAssetDataChange}
+        title={selectorOptionsTitle}
       />
     ));
   };

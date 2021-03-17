@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,27 +19,31 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-import { TextInput, Keyboard, FlatList } from 'react-native';
+import styled from 'styled-components/native';
+import { Keyboard, FlatList } from 'react-native';
 import t from 'translations/translate';
 
-import SearchBar from 'components/SearchBar';
-import SlideModal from 'components/Modals/SlideModal';
+// Components
+import CollectiblesList from 'components/CollectiblesList';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import SearchBar from 'components/SearchBar';
+import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
-import CollectiblesList from 'components/CollectiblesList';
 
-import { getThemeColors } from 'utils/themes';
+// Utils
 import { getMatchingSortedData } from 'utils/textInput';
+import { useThemeColors } from 'utils/themes';
 
-import type { Theme } from 'models/Theme';
+// Types
 import type { AssetOption, AssetTab } from 'models/Selector';
 import type { IconProps } from 'components/SearchBar';
-import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
-type OwnProps = {|
+
+const MIN_QUERY_LENGTH = 2;
+
+type Props = {|
   options?: AssetOption[],
   optionTabs?: AssetTab[],
   onOptionSelect?: (option: AssetOption) => mixed,
@@ -51,68 +55,58 @@ type OwnProps = {|
   onOpen?: () => void,
 |};
 
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
-|};
+const AssetSelectorOptions = ({
+  options,
+  optionTabs,
+  onOptionSelect,
+  title,
+  searchPlaceholder,
+  iconProps,
+  noImageFallback,
+  onOpen,
+  onHide,
+}: Props) => {
+  const colors = useThemeColors();
 
-type State = {|
-  query: ?string,
-  activeTab: ?string,
-|};
+  const searchInputRef = React.useRef(null);
+  const modalRef = React.useRef(null);
 
-const EmptyStateWrapper = styled.View`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  align-items: center;
-`;
+  const [query, setQuery] = React.useState('');
+  const [activeTab, setActiveTab] = React.useState(optionTabs ? optionTabs[0]?.id : null);
 
-const MIN_QUERY_LENGTH = 2;
-
-class AssetSelectorOptions extends React.Component<Props, State> {
-  searchInput: React.ElementRef<typeof TextInput>;
-  modalRef = React.createRef<SlideModalInstance>();
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      query: null,
-      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
-    };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { activeTab } = this.state;
-    const { optionTabs } = this.props;
-    if (!activeTab && !prevProps.optionTabs && optionTabs && !!optionTabs.length) {
-      this.setActiveTab(optionTabs[0]?.id);
-    }
-  }
-
-  focusInput = () => {
-    if (this.searchInput) this.searchInput.focus();
+  const focusInput = () => {
+    searchInputRef.current?.focus();
   };
 
-  handleSearch = (query: string) => {
-    const formattedQuery = !query ? '' : query.trim();
-    this.setState({
-      query: formattedQuery,
-    });
+  const handleOptionsOpen = () => {
+    focusInput();
+    onOpen?.();
   };
 
-  handleInputChange = (query: string) => {
-    this.handleSearch(query);
+  const handleSearch = (query: string) => {
+    setQuery(!query ? '' : query.trim());
   };
 
-  renderOption = ({ item: option }: Object) => {
+  const selectValue = (selectedValue: AssetOption) => {
+    close();
+    onOptionSelect?.(selectedValue);
+  };
+
+  const close = () => {
+    Keyboard.dismiss();
+    modalRef.current?.close();
+  };
+
+  const renderOption = ({ item: option }: Object) => {
     if (!option) return null;
 
-    const { noImageFallback } = this.props;
-    const { name, imageUrl, imageSource, opacity, disabled } = option;
+    const {
+      name, imageUrl, imageSource, opacity, disabled,
+    } = option;
 
     return (
       <ListItemWithImage
-        onPress={!disabled ? () => this.selectValue(option) : null}
+        onPress={!disabled ? () => selectValue(option) : null}
         label={name}
         itemImageUrl={imageUrl}
         iconSource={imageSource}
@@ -123,28 +117,7 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     );
   };
 
-  close = () => {
-    Keyboard.dismiss();
-    if (this.modalRef.current) this.modalRef.current.close();
-  };
-
-  selectValue = (selectedValue: AssetOption) => {
-    this.close();
-    const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(selectedValue);
-  };
-
-  setActiveTab = (tabId: string) => {
-    this.setState({ activeTab: tabId });
-  };
-
-  handleOptionsOpen = () => {
-    const { onOpen } = this.props;
-    this.focusInput();
-    if (onOpen) onOpen();
-  };
-
-  renderEmptyState = () => {
+  const renderEmptyState = () => {
     return (
       <EmptyStateWrapper>
         <EmptyStateParagraph title={t('label.nothingFound')} />
@@ -152,79 +125,78 @@ class AssetSelectorOptions extends React.Component<Props, State> {
     );
   };
 
-  render() {
-    const { theme, title, options = [], optionTabs, searchPlaceholder, iconProps = {} } = this.props;
-    const { query, activeTab } = this.state;
-    const colors = getThemeColors(theme);
-    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-    const updatedOptionTabs =
-      !!optionTabs && optionTabs.length
-        ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => this.setActiveTab(id), id }))
-        : [];
+  const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-    const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
-    const activeTabOptions = activeTabInfo?.options;
-    const relatedOptions = activeTabOptions || options || [];
-    const collectibles = activeTabInfo?.collectibles;
+  const updatedOptionTabs =
+    !!optionTabs && optionTabs.length
+      ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => setActiveTab(id), id }))
+      : [];
 
-    const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+  const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
+  const activeTabOptions = activeTabInfo?.options;
+  const relatedOptions = activeTabOptions || options || [];
+  const collectibles = activeTabInfo?.collectibles;
 
-    return (
-      <SlideModal
-        ref={this.modalRef}
-        fullScreen
-        onModalShow={this.handleOptionsOpen}
-        onModalHide={this.props.onHide}
-        noSwipeToDismiss
-        noClose
-        backgroundColor={colors.basic050}
-        noTopPadding
+  const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+
+  return (
+    <SlideModal
+      ref={modalRef}
+      fullScreen
+      onModalShow={handleOptionsOpen}
+      onModalHide={onHide}
+      noSwipeToDismiss
+      noClose
+      backgroundColor={colors.basic050}
+      noTopPadding
+    >
+      <ContainerWithHeader
+        headerProps={{
+          noPaddingTop: true,
+          customOnBack: close,
+          centerItems: [{ title }],
+        }}
       >
-        <ContainerWithHeader
-          headerProps={{
-            noPaddingTop: true,
-            customOnBack: this.close,
-            centerItems: [{ title }],
-          }}
-        >
-          <SearchBar
-            query={query}
-            onChangeQuery={this.handleInputChange}
-            placeholder={searchPlaceholder}
-            inputRef={(ref) => {
-              this.searchInput = ref;
-            }}
-            // $FlowFixMe
-            iconProps={{ ...iconProps, persistIconOnFocus: true }}
+        <SearchBar
+          query={query}
+          onChangeQuery={handleSearch}
+          placeholder={searchPlaceholder}
+          inputRef={searchInputRef}
+          // $FlowFixMe
+          iconProps={{ ...iconProps, persistIconOnFocus: true }}
+        />
+
+        {!!optionTabs && (
+          <Tabs
+            tabs={updatedOptionTabs}
+            wrapperStyle={{ paddingTop: 22 }}
+            activeTab={activeTab || updatedOptionTabs[0].name}
           />
+        )}
+        {collectibles ? (
+          <CollectiblesList
+            collectibles={filteredOptions}
+            onCollectiblePress={selectValue}
+            isSearching={isSearching}
+          />
+        ) : (
+          <FlatList
+            data={filteredOptions}
+            renderItem={renderOption}
+            keyExtractor={(option) => option.symbol}
+            keyboardShouldPersistTaps="always"
+            ListEmptyComponent={renderEmptyState()}
+          />
+        )}
+      </ContainerWithHeader>
+    </SlideModal>
+  );
+};
 
-          {!!optionTabs && (
-            <Tabs
-              tabs={updatedOptionTabs}
-              wrapperStyle={{ paddingTop: 22 }}
-              activeTab={activeTab || updatedOptionTabs[0].name}
-            />
-          )}
-          {collectibles ? (
-            <CollectiblesList
-              collectibles={filteredOptions}
-              onCollectiblePress={this.selectValue}
-              isSearching={isSearching}
-            />
-          ) : (
-            <FlatList
-              data={filteredOptions}
-              renderItem={this.renderOption}
-              keyExtractor={(option) => option.symbol}
-              keyboardShouldPersistTaps="always"
-              ListEmptyComponent={this.renderEmptyState()}
-            />
-          )}
-        </ContainerWithHeader>
-      </SlideModal>
-    );
-  }
-}
+export default AssetSelectorOptions;
 
-const ThemedSelectorOptions: React.AbstractComponent<OwnProps, AssetSelectorOptions> = withTheme(AssetSelectorOptions);
-export default ThemedSelectorOptions;
+const EmptyStateWrapper = styled.View`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
+`;
