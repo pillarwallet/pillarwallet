@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import type { Option, OptionTabs } from './Selector';
+import type { Option } from './Selector';
 
 type Value = string | number;
 
@@ -56,7 +56,6 @@ export type InputPropsType = {
 
 export type SelectorOptions = {
   options?: Option[],
-  optionTabs: OptionTabs[],
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,

@@ -29,15 +29,13 @@ import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Tabs from 'components/Tabs';
-import CollectiblesList from 'components/CollectiblesList';
 
 import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { getMatchingSortedData } from 'utils/textInput';
 
 import type { Theme } from 'models/Theme';
-import type { Option, OptionTabs } from 'models/Selector';
+import type { Option } from 'models/Selector';
 import type { IconProps } from 'components/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
@@ -48,7 +46,6 @@ type OwnProps = {|
   optionKeyExtractor?: (item: Object) => string,
   title?: string,
   options?: Option[],
-  optionTabs?: OptionTabs[],
   optionsTitle?: string,
   searchPlaceholder?: string,
   noImageFallback?: boolean,
@@ -64,7 +61,6 @@ type Props = {|
 
 type State = {|
   query: ?string,
-  activeTab: ?string,
 |};
 
 
@@ -97,16 +93,7 @@ class SelectorOptions extends React.Component<Props, State> {
     super(props);
     this.state = {
       query: null,
-      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { activeTab } = this.state;
-    const { optionTabs } = this.props;
-    if (!activeTab && !prevProps.optionTabs && optionTabs && !!optionTabs.length) {
-      this.setActiveTab(optionTabs[0]?.id);
-    }
   }
 
   focusInput = () => {
@@ -175,10 +162,6 @@ class SelectorOptions extends React.Component<Props, State> {
     return option.value;
   };
 
-  setActiveTab = (tabId: string) => {
-    this.setState({ activeTab: tabId });
-  };
-
   handleOptionsOpen = () => {
     const { onOpen } = this.props;
     this.focusInput();
@@ -190,7 +173,6 @@ class SelectorOptions extends React.Component<Props, State> {
       theme,
       title,
       options = [],
-      optionTabs,
       showOptionsTitles,
       optionsTitle,
       searchPlaceholder,
@@ -198,18 +180,11 @@ class SelectorOptions extends React.Component<Props, State> {
     } = this.props;
     const {
       query,
-      activeTab,
     } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-    const updatedOptionTabs = !!optionTabs && optionTabs.length
-      ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => this.setActiveTab(id), id }))
-      : [];
 
-    const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
-    const activeTabOptions = activeTabInfo?.options;
-    const relatedOptions = activeTabOptions || options || [];
-    const collectibles = activeTabInfo?.collectibles;
+    const relatedOptions = options || [];
 
     const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
 
@@ -263,33 +238,18 @@ class SelectorOptions extends React.Component<Props, State> {
             iconProps={{ ...iconProps, persistIconOnFocus: true }}
           />
 
-          {!!optionTabs && (
-            <Tabs
-              tabs={updatedOptionTabs}
-              wrapperStyle={{ paddingTop: 22 }}
-              activeTab={activeTab || updatedOptionTabs[0].name}
-            />
-          )}
-          {collectibles ? (
-            <CollectiblesList
-              collectibles={filteredOptions}
-              onCollectiblePress={this.selectValue}
-              isSearching={isSearching}
-            />
-          ) : (
-            <FlatList
-              stickyHeaderIndices={[0]}
-              data={allFeedListData}
-              renderItem={this.renderOption}
-              // $FlowFixMe: react-native types
-              keyExtractor={this.optionKeyExtractor}
-              keyboardShouldPersistTaps="always"
-              initialNumToRender={10}
-              viewabilityConfig={viewConfig}
-              windowSize={10}
-              hideModalContentWhileAnimating
-            />
-          )}
+          <FlatList
+            stickyHeaderIndices={[0]}
+            data={allFeedListData}
+            renderItem={this.renderOption}
+            // $FlowFixMe: react-native types
+            keyExtractor={this.optionKeyExtractor}
+            keyboardShouldPersistTaps="always"
+            initialNumToRender={10}
+            viewabilityConfig={viewConfig}
+            windowSize={10}
+            hideModalContentWhileAnimating
+          />
         </ContainerWithHeader>
       </SlideModal>
     );

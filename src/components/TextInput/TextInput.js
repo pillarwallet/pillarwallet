@@ -311,7 +311,6 @@ class TextInput extends React.Component<Props, State> {
 
     const {
       options = [],
-      optionTabs,
       selectorModalTitle,
       optionsSearchPlaceholder,
     } = selectorOptions;
@@ -322,7 +321,6 @@ class TextInput extends React.Component<Props, State> {
         onHide={this.props.inputProps.onSelectorClose}
         title={selectorModalTitle}
         options={options}
-        optionTabs={optionTabs}
         searchPlaceholder={optionsSearchPlaceholder}
         optionKeyExtractor={this.optionKeyExtractor}
         onOptionSelect={this.selectValue}
@@ -440,19 +438,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   getSelectorOptionsCount = (selectorOptions?: SelectorOptionsType): number => {
-    if (!selectorOptions) return 0;
-    const {
-      options = [],
-      optionTabs,
-    } = selectorOptions;
-
-    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
-      if (tab.options?.length) sum += tab.options?.length;
-      return sum;
-    }, 0);
-
-    const selectorOptionsCount = options.length + optionsInTabsLength;
-    return selectorOptionsCount;
+    return selectorOptions?.options?.length ?? 0;
   }
 
   render() {
