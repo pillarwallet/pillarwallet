@@ -19,8 +19,9 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { Keyboard, FlatList } from 'react-native';
+import styled from 'styled-components/native';
+import { orderBy } from 'lodash';
 import t from 'translations/translate';
 
 // Components
@@ -102,24 +103,22 @@ const AssetSelectorOptions = ({
   const renderList = () => {
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-    const activeOptions = activeTab?.options || options || [];
-    const filteredOptions = isSearching
-      ? activeOptions.filter((option) => isMatchingOption(option, query))
-      : activeOptions;
+    const resolvedOptions = getOptions(activeTab?.options || options || [], isSearching ? query : null);
 
     if (activeTab?.displayAsCollectibles) {
       return (
-        <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
+        <CollectiblesList collectibles={resolvedOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
       );
     }
 
     return (
       <FlatList
-        data={filteredOptions}
+        data={resolvedOptions}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(option) => option.symbol}
         keyboardShouldPersistTaps="always"
         ListEmptyComponent={renderEmptyState()}
+        contentInsetAdjustmentBehavior="scrollableAxes"
       />
     );
   };
@@ -142,6 +141,7 @@ const AssetSelectorOptions = ({
           customOnBack: close,
           centerItems: [{ title }],
         }}
+        inset={{ bottom: 'never' }}
       >
         <SearchBar
           query={query}
@@ -150,13 +150,7 @@ const AssetSelectorOptions = ({
           iconProps={{ persistIconOnFocus: true }}
         />
 
-        {!!optionTabs && (
-          <Tabs
-            tabs={tabs}
-            wrapperStyle={{ paddingTop: 22 }}
-            activeTab={activeTabId || tabs[0].name}
-          />
-        )}
+        {!!optionTabs && <Tabs tabs={tabs} wrapperStyle={{ paddingTop: 22 }} activeTab={activeTabId || tabs[0].name} />}
 
         {renderList()}
       </ContainerWithHeader>
@@ -165,6 +159,19 @@ const AssetSelectorOptions = ({
 };
 
 export default AssetSelectorOptions;
+
+export const getOptions = (options: AssetOption[], query: ?string): AssetOption[] => {
+  const filteredOptions = options.filter((option) => isMatchingOption(option, query));
+  return orderBy(
+    filteredOptions,
+    [
+      (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
+      (option: AssetOption) => !!option.imageUrl,
+      (option: AssetOption) => option.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
 
 export const isMatchingOption = (option: AssetOption, query: ?string) => {
   return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);

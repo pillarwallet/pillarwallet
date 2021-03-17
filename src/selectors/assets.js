@@ -23,7 +23,7 @@ import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
-import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {
@@ -121,6 +121,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
         // $FlowFixMe: flow update to 0.122
@@ -129,6 +130,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
           formattedBalanceInFiat,
           balance: !!formattedBalanceInFiat && {
             balance: assetBalance,
+            balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
           },
