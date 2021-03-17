@@ -226,7 +226,7 @@ export const ValueInputComponent = (props: Props) => {
         name: t('label.collectibles'),
         options: collectibles,
         id: COLLECTIBLES,
-        collectibles: true,
+        displayAsCollectibles: true,
       }]
       : undefined;
 

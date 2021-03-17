@@ -33,7 +33,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
 // Utils
-import { getMatchingSortedData } from 'utils/textInput';
+import { caseInsensitiveIncludes } from 'utils/strings';
 import { useThemeColors } from 'utils/themes';
 
 // Types
@@ -62,6 +62,8 @@ const AssetSelectorOptions = ({
 
   const [query, setQuery] = React.useState('');
   const [activeTabId, setActiveTabId] = React.useState(optionTabs ? optionTabs[0]?.id : null);
+
+  const activeTab = optionTabs?.find(({ id }) => id === activeTabId);
 
   const selectValue = (selectedValue: AssetOption) => {
     close();
@@ -97,11 +99,15 @@ const AssetSelectorOptions = ({
     );
   };
 
-  const renderList = (activeTab: ?AssetTab) => {
-    const relatedOptions = activeTab?.options || options || [];
-    const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+  const renderList = () => {
+    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-    if (activeTab?.collectibles) {
+    const activeOptions = activeTab?.options || options || [];
+    const filteredOptions = isSearching
+      ? activeOptions.filter((option) => isMatchingOption(option, query))
+      : activeOptions;
+
+    if (activeTab?.displayAsCollectibles) {
       return (
         <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
       );
@@ -118,10 +124,7 @@ const AssetSelectorOptions = ({
     );
   };
 
-  const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-
   const tabs = optionTabs?.map((tab) => ({ ...tab, onPress: () => setActiveTabId(tab.id) })) ?? [];
-  const activeTab = optionTabs?.find(({ id }) => id === activeTabId);
 
   return (
     <SlideModal
@@ -155,13 +158,17 @@ const AssetSelectorOptions = ({
           />
         )}
 
-        {renderList(activeTab)}
+        {renderList()}
       </ContainerWithHeader>
     </SlideModal>
   );
 };
 
 export default AssetSelectorOptions;
+
+export const isMatchingOption = (option: AssetOption, query: ?string) => {
+  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+};
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;

@@ -40,7 +40,7 @@ import type {
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Option } from 'models/Selector';
+import type { Option, AssetOption } from 'models/Selector';
 import type { Value } from 'utils/common';
 
 

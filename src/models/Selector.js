@@ -78,5 +78,5 @@ export type AssetTab = {|
   name: string,
   id: string,
   options?: AssetOption[],
-  collectibles?: boolean,
+  displayAsCollectibles?: boolean,
 |};
