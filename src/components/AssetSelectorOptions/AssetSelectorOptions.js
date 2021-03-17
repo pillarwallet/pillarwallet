@@ -79,15 +79,13 @@ const AssetSelectorOptions = ({
   const renderItem = (option: AssetOption) => {
     if (!option) return null;
 
-    const { name, imageUrl } = option;
-
     return (
       <ListItemWithImage
         onPress={() => selectValue(option)}
-        label={name}
-        itemImageUrl={imageUrl}
+        label={option.name}
+        itemImageUrl={option.imageUrl}
+        balance={option.balance}
         fallbackToGenericToken
-        {...option}
       />
     );
   };
@@ -166,10 +164,9 @@ export const getOptions = (options: AssetOption[], query: ?string): AssetOption[
     filteredOptions,
     [
       (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
-      (option: AssetOption) => !!option.imageUrl,
       (option: AssetOption) => option.name?.trim().toLowerCase(),
     ],
-    ['desc', 'desc', 'asc'],
+    ['desc', 'asc'],
   );
 };
 

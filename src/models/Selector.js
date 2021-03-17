@@ -54,6 +54,7 @@ export type OptionTabs = {
 }
 
 export type AssetOption = {|
+  address?: string,
   balance?: AssetBalance,
   decimals?: number,
   name: string,

@@ -26,6 +26,9 @@ import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
+
+import type { AssetOption } from 'models/Selector';
+
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -111,8 +114,14 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: Balance, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
-    if (!activeAccountId || !balances || !assets) return {};
+  (
+    activeAccountId: string,
+    balances: Balance,
+    rates: Rates,
+    baseFiatCurrency: ?string,
+    assets: Assets,
+  ): AssetOption[] => {
+    if (!activeAccountId || !balances || !assets) return [];
     const activeAccountBalance = balances[activeAccountId] || {};
 
     return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
