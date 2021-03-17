@@ -21,7 +21,7 @@
 import Instabug, { NetworkLogger } from 'instabug-reactnative';
 
 import { getEnv } from 'configs/envConfig';
-import { LIGHT_THEME, DARK_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 import type { ElementRef } from 'react';
 
@@ -40,10 +40,7 @@ export const excludeFromMonitoring = (element: ElementRef<any> | null) => {
 };
 
 export const setInstabugTheme = (appThemeName: string) => {
-  const instabugTheme = {
-    [LIGHT_THEME]: Instabug.colorTheme.light,
-    [DARK_THEME]: Instabug.colorTheme.dark,
-  }[appThemeName];
+  const instabugTheme = appThemeName === DARK_THEME ? Instabug.colorTheme.dark : Instabug.colorTheme.light;
 
   if (instabugTheme) {
     Instabug.setColorTheme(instabugTheme);
