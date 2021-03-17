@@ -77,6 +77,7 @@ import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -256,6 +257,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
       // add wallet created / imported events
       dispatch(getWalletsCreationEventsAction());
+
+      // Etherspot smart wallet silent account creation
+      await dispatch(initEtherspotServiceAction(privateKey));
+      dispatch(importEtherspotAccountsAction());
     }
 
     // if wallet was imported let's check its balance for key based assets migration

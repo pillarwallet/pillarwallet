@@ -19,6 +19,7 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
+import { useTheme } from 'styled-components/native';
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme, ColorsByThemeProps } from 'models/Theme';
@@ -66,6 +67,8 @@ export const lightThemeColorsOld = {
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ededed',
   graphPrimaryColor: '#a945ff',
+  checkMark: lightThemeColors.primaryAccent130,
+  checkBoxField: '#e0eeff',
 };
 
 // will be removed after transition
@@ -109,6 +112,8 @@ export const darkThemeColorsOld = {
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ebf0f5',
   graphPrimaryColor: '#a945ff',
+  checkMark: darkThemeColors.primaryAccent140,
+  checkBoxField: darkThemeColors.basic090,
 };
 
 export const themedColors = {
@@ -281,6 +286,10 @@ export function getThemeColors(currentTheme: Theme = defaultTheme) {
   return currentTheme.colors;
 }
 
+export function useThemeColors() {
+  return getThemeColors(useTheme());
+}
+
 export function getThemeType(currentTheme: Theme = defaultTheme) {
   return currentTheme.current;
 }
@@ -292,14 +301,12 @@ export function getThemeName(currentTheme: Theme = defaultTheme) {
 // in case there's no color by the key
 const FALLBACK_COLOR = '#808080';
 
-const generateColorsByTheme = (props: ColorsByThemeProps) => {
-  const {
-    lightKey,
-    darkKey,
-    lightCustom,
-    darkCustom,
-  } = props;
-
+const generateColorsByTheme = ({
+  lightKey,
+  darkKey,
+  lightCustom,
+  darkCustom,
+}: ColorsByThemeProps) => {
   return ({
     lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
     darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),

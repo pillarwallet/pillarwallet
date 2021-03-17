@@ -751,7 +751,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           customAddon: (
             <ListWrapper>
               <BaseText big>
-                {t('negativeTokenValue', { value: t('label.multiple') })}
+                {t('negativeValue', { value: t('label.multiple') })}
               </BaseText>
               <ItemValue>
                 {t('positiveTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
@@ -774,7 +774,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                 {t('negativeTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </BaseText>
               <ItemValue>
-                {t('positiveTokenValue', { value: t('label.multiple') })}
+                {t('positiveValue', { value: t('label.multiple') })}
               </ItemValue>
             </ListWrapper>
           ),
@@ -1010,6 +1010,8 @@ export class ActivityFeedItem extends React.Component<Props> {
     if (!color) return null;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
+
+    // $FlowFixMe: js hacks
     return colors[color] || color;
   };
 

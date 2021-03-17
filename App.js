@@ -21,7 +21,7 @@ import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import React, { Suspense } from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, Platform, Linking, View } from 'react-native';
+import { StatusBar, Platform, Linking, View, UIManager } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -35,6 +35,7 @@ import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Instabug from 'instabug-reactnative';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -71,6 +72,7 @@ import Modal from 'components/Modal';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
+import { initInstabug, setInstabugTheme } from 'utils/monitoring';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
@@ -90,6 +92,10 @@ import configureStore from './src/configureStore';
 const { store, persistor } = configureStore();
 
 const queryClient = new QueryClient();
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
@@ -140,6 +146,8 @@ class App extends React.Component<Props, *> {
     this.state = {
       env: null,
     };
+
+    initInstabug();
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -235,6 +243,8 @@ class App extends React.Component<Props, *> {
       } else {
         StatusBar.setBarStyle('dark-content');
       }
+
+      setInstabugTheme(themeType);
     }
   }
 
@@ -285,6 +295,8 @@ class App extends React.Component<Props, *> {
     if (!!nextRouteName && nextRouteName !== previousRouteName) {
       this.props.logScreenView(nextRouteName);
     }
+
+    Instabug.onNavigationStateChange(prevState, nextState, action);
   }
 
   render() {

@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
 import { BaseText } from 'components/Typography';
@@ -64,13 +65,13 @@ const FloatingButtons = ({ items: falsyItems }: Props) => {
 
 // Bottom content inset to apply to ScrollView/FlatView in order allow for interaction
 // with all content underneath. It assumes icon size of 24 px.
-FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 160;
+FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 120;
 
 export default FloatingButtons;
 
-const Container = styled.View`
+const Container = styled(SafeAreaView)`
   position: absolute;
-  bottom: 50px;
+  bottom: ${spacing.large}px;
   flex-direction: row;
   align-self: center;
   align-items: center;
@@ -86,7 +87,7 @@ const Container = styled.View`
 
 const ItemView = styled.TouchableOpacity`
   align-items: center;
-  padding-horizontal: ${spacing.extraLarge / 2}px;
+  padding-horizontal: ${spacing.largePlus / 2}px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
 `;
@@ -95,7 +96,7 @@ const ItemIconWrapper = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  margin-horizontal: ${spacing.extraLarge}px;
+  margin-horizontal: ${spacing.largePlus}px;
 `;
 
 const ItemIcon = styled(Icon)`

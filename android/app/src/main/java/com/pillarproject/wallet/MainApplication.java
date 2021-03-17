@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import com.instabug.reactlibrary.RNInstabugReactnativePackage;
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
 
@@ -60,6 +61,11 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         // react-native-async-storage custom max storage
         long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
         com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
+
+        new RNInstabugReactnativePackage
+            .Builder(getString(R.string.instabug_token), MainApplication.this)
+            .setInvocationEvent("shake")
+            .build();
     }
 
     /**

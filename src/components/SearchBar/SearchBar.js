@@ -19,85 +19,162 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-import { Animated, Dimensions, Keyboard, TextInput as RNTextInput } from 'react-native';
-import { BaseText } from 'components/Typography';
-import IconButton from 'components/IconButton';
-import TextInput from 'components/Input';
+import { Keyboard, LayoutAnimation, View, TextInput as RNTextInput } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
+import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
-import { fontSizes, appFont, spacing } from 'utils/variables';
-import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
+// Components
+import { BaseText } from 'components/Typography';
 
-import type { Theme, ThemeColors } from 'models/Theme';
-// $FlowFixMe
-import type { Event } from 'react-native';
+// Utils
+import { SIDE_BUTTON_APPEARANCE } from 'utils/layoutAnimations';
+import { getColorByThemeOutsideStyled, useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
+// Local
+import SearchInput from './SearchInput';
+import type { InputPropsType, IconProps } from './SearchInput';
 
 
-type Value = ?string;
-
-type InputPropsType = {
+type Props = {|
+  query: ?string,
+  onChangeQuery: (string) => mixed,
+  validator?: (string) => ?string,
   placeholder?: string,
-  backgroundColor?: string,
-  onChange: (Value) => void,
-  onBlur?: (Value) => void,
+  inputRef?: React.ElementRef<typeof RNTextInput>,
+  showPasteButton?: boolean,
   onFocus?: () => void,
-  value: Value,
-  validator?: (val: string) => string,
-};
-
-type IconProps = {|
-  icon: string,
-  style?: Object,
-  onPress?: () => void,
-  persistIconOnFocus?: boolean,
+  onBlur?: () => void,
+  cancelButtonTitle?: string,
+  inputProps?: InputPropsType,
+  iconProps?: IconProps,
+  style?: ViewStyleProp,
 |};
 
-type CommonComponentsProps = {
-  inputProps: InputPropsType,
-  placeholder?: string,
-  backgroundColor?: string,
-  inputRef?: React.ElementRef<typeof RNTextInput>,
-  inputIconName?: string,
-  iconProps?: IconProps,
+const SearchBar = ({
+  query,
+  onChangeQuery,
+  validator,
+  inputProps,
+  placeholder = t('label.search'),
+  inputRef,
+  showPasteButton,
+  iconProps,
+  style,
+  onFocus,
+  onBlur,
+  cancelButtonTitle,
+}: Props) => {
+  const [isFocused, setIsFocused] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+
+  const theme = useTheme();
+  const colors = useThemeColors();
+
+  const validateInput = (input: string) => {
+    if (!validator) return;
+
+    const error = validator(input);
+    setErrorMessage(error);
+  };
+
+  const handleChangeText = (input: string) => {
+    onChangeQuery(input);
+    validateInput(input);
+  };
+
+  const handleFocus = () => {
+    onFocus?.();
+    LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    LayoutAnimation.configureNext(SIDE_BUTTON_APPEARANCE);
+    setIsFocused(false);
+    onBlur?.();
+  };
+
+  const handleCancel = () => {
+    onChangeQuery('');
+    Keyboard.dismiss();
+  };
+
+  const handlePaste = async () => {
+    const value = await Clipboard.getString();
+    onChangeQuery(value);
+    validateInput(value);
+  };
+
+  const handleSubmit = () => {
+    onChangeQuery(query ?? '');
+  };
+
+  const defaultBackgroundColor = getColorByThemeOutsideStyled(theme.current, {
+    lightKey: 'basic060',
+    darkKey: 'basic080',
+  });
+
+  const getBorderColor = (): string => {
+    if (errorMessage) return colors.secondaryAccent240;
+    if (isFocused) return colors.basic000;
+    return defaultBackgroundColor;
+  };
+
+  const customInputProps = {
+    value: query,
+    onChangeText: handleChangeText,
+    inputProps,
+    isFocused,
+    colors,
+    backgroundColor: defaultBackgroundColor,
+    placeholder,
+    inputRef,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    handleSubmit,
+    borderColor: getBorderColor(),
+  };
+
+  const showCancelButton = isFocused || !!query;
+
+  return (
+    <SearchHolder style={style}>
+      <Row>
+        <View style={{ flex: 1 }}>
+          <SearchInput {...customInputProps} iconProps={iconProps} />
+        </View>
+
+        {showCancelButton && (
+          <SideButton onPress={handleCancel}>
+            <SideButtonTitle>{cancelButtonTitle || t('button.cancel')}</SideButtonTitle>
+          </SideButton>
+        )}
+
+        {!showCancelButton && showPasteButton && (
+          <SideButton onPress={handlePaste}>
+            <SideButtonTitle>{t('button.paste')}</SideButtonTitle>
+          </SideButton>
+        )}
+      </Row>
+
+      {!!errorMessage && <Error>{errorMessage}</Error>}
+    </SearchHolder>
+  );
 };
 
-type Props = CommonComponentsProps & {
-  marginTop?: number,
-  marginBottom?: number | string, // if '0'
-  customCloseAction?: Function,
-  forceShowCloseButton?: boolean,
-  theme: Theme,
-  noClose?: boolean,
-};
+export default SearchBar;
 
-type State = {
-  animShrink: Animated.Value,
-  isFocused: boolean,
-  errorMessage: string,
-};
-
-type SearchInputProps = CommonComponentsProps & {
-  isFocused: boolean,
-  colors: ThemeColors,
-  value: ?string,
-  onFocus: () => void,
-  onChange: (e: Event) => void,
-  onBlur: () => void,
-  handleSubmit: () => void,
-  borderColor: string,
-};
-
-const { width } = Dimensions.get('window');
-const componentWidth = width - (spacing.large * 2);
-const closeButtonWidth = 58;
-const inputShrinkSize = ((componentWidth - closeButtonWidth) * 100) / componentWidth;
+export type { IconProps } from './SearchInput';
 
 const SearchHolder = styled.View`
-  margin-bottom: ${props => props.marginBottom || 20}px;
-  margin-top: ${props => props.marginTop || 0}px;
   display: flex;
   align-items: center;
+  padding: ${spacing.small}px ${spacing.layoutSides}px;
 `;
 
 const Row = styled.View`
@@ -107,38 +184,16 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const CancelButton = styled.TouchableOpacity`
-  width: ${closeButtonWidth + spacing.large}px;
+const SideButton = styled.TouchableOpacity`
   align-items: flex-end;
   padding: ${spacing.small}px ${spacing.large}px;
   margin-right: -${spacing.large}px;
 `;
-
-const InputField = styled(TextInput)`
-  flex: 1;
-  height: 42px;
-  padding: 10px;
-  padding-left: ${({ needsExtraPadding }) => needsExtraPadding ? 40 : 14}px;
-  padding-right: 16px;
-  color: ${({ theme }) => theme.colors.basic010};
-  font-size: ${fontSizes.regular}px;
-  font-family: "${appFont.regular}";
-`;
-
-const InputIcon = styled(IconButton)`
-  flex: 0 0 20px;
-  position: absolute;
-  left: 10px;
-  top: 7px;
-`;
-
-const InputWrapper = styled.View`
-  height: 40px;
-  border-width: 1px;
-  border-color: ${({ borderColor }) => borderColor};
-  border-radius: 20px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  width: 100%;
+const SideButtonTitle = styled(BaseText).attrs({
+  numberOfLines: 1,
+  adjustsFontSizeToFit: true,
+})`
+  color: ${({ theme }) => theme.colors.basic000};
 `;
 
 const Error = styled(BaseText)`
@@ -146,258 +201,3 @@ const Error = styled(BaseText)`
   color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-top: ${spacing.medium}px;
 `;
-
-
-const getBorderColor = ({
-  isFocused, error, colors, defaultColor,
-}) => {
-  if (error) return colors.secondaryAccent240;
-  if (isFocused) return colors.basic000;
-  return defaultColor;
-};
-
-const SearchInput = (props: SearchInputProps) => {
-  const {
-    inputProps,
-    isFocused,
-    colors,
-    backgroundColor,
-    value,
-    placeholder,
-    inputRef,
-    onFocus,
-    onChange,
-    onBlur,
-    handleSubmit,
-    iconProps = {},
-    borderColor,
-  } = props;
-
-  const {
-    icon,
-    style: iconStyle = {},
-    onPress,
-    persistIconOnFocus,
-  } = iconProps;
-  const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
-  const onIconPress = onPress || defaultOnIconPress;
-  const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
-  const showIcon = persistIconOnFocus || !isFocused;
-
-  return (
-    <InputWrapper
-      borderColor={borderColor}
-      backgroundColor={backgroundColor}
-    >
-      <InputField
-        {...inputProps}
-        onFocus={onFocus}
-        onChange={onChange}
-        onBlur={onBlur}
-        value={value}
-        placeholder={placeholder}
-        placeholderTextColor={colors.secondaryText}
-        underlineColorAndroid="transparent"
-        autoCorrect={false}
-        ref={inputRef}
-        needsExtraPadding={showIcon}
-      />
-      {showIcon &&
-      <InputIcon
-        icon={iconName}
-        onPress={onIconPress}
-        iconStyle={{
-          width: 24,
-          height: 24,
-          color: colors.basic020,
-          fontSize: 24,
-          ...iconStyle,
-        }}
-      />}
-    </InputWrapper>
-  );
-};
-
-class SearchBar extends React.Component<Props, State> {
-  value: string;
-
-  constructor(props: Props) {
-    super(props);
-    const { forceShowCloseButton } = props;
-    this.value = '';
-    this.state = {
-      animShrink: new Animated.Value(forceShowCloseButton ? inputShrinkSize : 100),
-      isFocused: !!forceShowCloseButton,
-      errorMessage: '',
-    };
-  }
-
-  static defaultProps = {
-    inputType: 'default',
-    trim: true,
-  };
-
-  componentDidUpdate() {
-    // Validate value changes orginating from props
-    if (this.props.inputProps.value !== this.value) {
-      this.value = this.props.inputProps.value ?? '';
-      this.validateInput(this.value);
-    }
-  }
-
-  handleChange = (e: Event) => {
-    this.value = e.nativeEvent.text;
-
-    const { onChange } = this.props.inputProps;
-    if (onChange) onChange(this.value);
-
-    this.validateInput(this.value);
-  };
-
-  validateInput = (value: string) => {
-    const { validator } = this.props.inputProps;
-    if (!validator) return;
-
-    const error = validator(value);
-    if (error) {
-      this.setState({ errorMessage: error });
-      return;
-    }
-
-    if (this.state.errorMessage) {
-      this.setState({ errorMessage: '' });
-    }
-  };
-
-  handleBlur = () => {
-    const { inputProps: { onBlur }, forceShowCloseButton } = this.props;
-    if (forceShowCloseButton) return;
-    if (!this.value) {
-      this.hideKeyboard();
-    }
-    if (onBlur) {
-      onBlur(this.value);
-    }
-    Keyboard.dismiss();
-    this.setState({ isFocused: false });
-  };
-
-  handleCancel = () => {
-    const { inputProps: { onChange, onBlur } } = this.props;
-    this.value = '';
-    if (onChange) {
-      onChange(this.value);
-    }
-    this.hideKeyboard();
-    if (onBlur) {
-      onBlur(this.value);
-    }
-    this.setState({ isFocused: false });
-  };
-
-  hideKeyboard = () => {
-    Animated.timing(this.state.animShrink, {
-      toValue: 100,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-    Keyboard.dismiss();
-  };
-
-  handleFocus = () => {
-    const { inputProps: { onFocus } } = this.props;
-    if (onFocus) {
-      onFocus();
-    }
-    this.setState({ isFocused: true });
-    Animated.timing(this.state.animShrink, {
-      toValue: inputShrinkSize,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  handleSubmit = () => {
-    const { inputProps: { onChange, value } } = this.props;
-    onChange(value);
-  };
-
-  render() {
-    const {
-      inputProps,
-      placeholder = t('label.search'),
-      backgroundColor,
-      marginTop,
-      marginBottom,
-      inputRef,
-      customCloseAction,
-      forceShowCloseButton,
-      theme,
-      noClose,
-      iconProps,
-    } = this.props;
-    const { animShrink, isFocused, errorMessage } = this.state;
-    const { value = '' } = inputProps;
-    const colors = getThemeColors(theme);
-    const currentTheme = getThemeType(theme);
-    const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
-      lightKey: 'basic060', darkKey: 'basic080',
-    });
-    const borderColor = getBorderColor({
-      isFocused,
-      error: !!errorMessage,
-      colors,
-      defaultColor: defaultInputBackgroundColor,
-    });
-
-    const customInputProps = {
-      inputProps,
-      isFocused,
-      colors,
-      backgroundColor: backgroundColor || defaultInputBackgroundColor,
-      value,
-      placeholder,
-      inputRef,
-      onFocus: this.handleFocus,
-      onChange: this.handleChange,
-      onBlur: this.handleBlur,
-      handleSubmit: this.handleSubmit,
-      error: errorMessage,
-      borderColor,
-    };
-
-    if (noClose) {
-      return (
-        <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-          <SearchInput {...customInputProps} iconProps={iconProps} />
-          {!!errorMessage && <Error>{errorMessage}</Error>}
-        </SearchHolder>
-      );
-    }
-
-    return (
-      <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-        <Row>
-          <Animated.View
-            style={{
-              width: animShrink.interpolate({
-                inputRange: [0, 1],
-                outputRange: (['0%', '1%']: string[]),
-              }),
-            }}
-          >
-            <SearchInput {...customInputProps} />
-          </Animated.View>
-          {(isFocused || !!value || forceShowCloseButton) &&
-          <CancelButton onPress={customCloseAction || this.handleCancel}>
-            <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
-          </CancelButton>
-          }
-        </Row>
-        {!!errorMessage && <Error>{errorMessage}</Error>}
-      </SearchHolder>
-    );
-  }
-}
-
-export default withTheme(SearchBar);

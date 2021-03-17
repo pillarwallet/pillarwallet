@@ -41,6 +41,7 @@ import { TWORDSPHRASE } from 'constants/walletConstants';
 // utils
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { excludeFromMonitoring } from 'utils/monitoring';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -357,7 +358,7 @@ class ImportWallet extends React.Component<Props, State> {
               {t('auth:label.enterSeedPhrase')}
             </MediumText>
             }
-            <InputWrapper>
+            <InputWrapper ref={excludeFromMonitoring}>
               <FormWrapper>
                 {this.renderForm(tabsInfo)}
               </FormWrapper>

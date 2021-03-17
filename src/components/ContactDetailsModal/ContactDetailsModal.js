@@ -17,54 +17,224 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
+
 import React, { useEffect, useState, useRef } from 'react';
-import type { AbstractComponent } from 'react';
 import { View } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import styled, { useTheme } from 'styled-components/native';
+import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
-// components
-import ModalBox from 'components/ModalBox';
-import Title from 'components/Title';
-import Button from 'components/Button';
+// Components
 import { BaseText } from 'components/Typography';
-import TextInput from 'components/TextInput';
-import Spinner from 'components/Spinner';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
+import Button from 'components/Button';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import Modal from 'components/Modal';
+import ModalBox from 'components/ModalBox';
+import Spinner from 'components/Spinner';
+import TextInput from 'components/TextInput';
+import Title from 'components/Title';
 
-// utils
-import { fontStyles, spacing } from 'utils/variables';
+// Utils
+import { addressesEqual } from 'utils/assets';
+import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddressOrEnsName } from 'utils/validators';
-import { addressesEqual } from 'utils/assets';
+import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
+import { fontStyles, spacing } from 'utils/variables';
 
-import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
-import { getReceiverWithEnsName } from 'utils/contacts';
-
-// types
-import type { Theme } from 'models/Theme';
+// Types
 import type { Contact } from 'models/Contact';
 
-type OwnProps = {|
+type Props = {|
   onSave: (contact: Contact) => void,
   contact: ?Contact,
-  dirtyInputs?: boolean,
-  isDefaultNameEns?: boolean,
   title?: string,
   contacts: Contact[],
   showQRScanner?: boolean,
   onModalHide?: () => void,
 |};
 
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
+type FormData = {|
+  address: string,
+  name: string,
 |};
+
+const ContactDetailsModal = ({
+  contact,
+  onSave,
+  title,
+  contacts,
+  showQRScanner,
+  onModalHide,
+}: Props) => {
+  const modalRef = useRef();
+
+  const formSchema = yup.object().shape({
+    address: yup
+      .string()
+      .required(t('error.emptyAddress'))
+      .test('isValid', t('error.invalid.address'), (value) => isValidAddressOrEnsName(value))
+      .test(
+        'alreadyExists',
+        t('error.contactWithAddressExists'),
+        (value) =>
+          addressesEqual(contact?.ethAddress, value) ||
+          !contacts.some(({ ethAddress }) => addressesEqual(ethAddress, value)),
+      ),
+    name: yup
+      .string()
+      .required(t('error.emptyName'))
+      .test(
+        'alreadyExists',
+        t('error.contactWithNameExists'),
+        (value) =>
+          isCaseInsensitiveMatch(contact?.name, value) ||
+          !contacts.some(({ name }) => isCaseInsensitiveMatch(name, value)),
+      ),
+  });
+
+  const {
+    control, handleSubmit, errors, watch, getValues, setValue,
+  } = useForm({
+    defaultValues: { address: contact?.ethAddress || '', name: contact?.name || '' },
+    resolver: yupResolver(formSchema),
+    mode: 'onTouched',
+  });
+
+  const [isResolvingEns, setIsResolvingEns] = useState(false);
+  const [hasEnsFailedToResolve, setHasEnsFailedToResolve] = useState(false);
+
+  const [debouncedAddress] = useDebounce(watch('address'), 500);
+
+  useEffect(() => {
+    const handleAddressChange = async () => {
+      if (isEnsName(debouncedAddress)) {
+        setIsResolvingEns(true);
+        const resolvedAddress = await resolveEnsName(debouncedAddress);
+        setIsResolvingEns(false);
+
+        setHasEnsFailedToResolve(!resolvedAddress);
+        if (resolvedAddress && !getValues('name')) {
+          setValue('name', debouncedAddress, { shouldValidate: true, shouldDirty: true });
+        }
+        return;
+      }
+
+      setHasEnsFailedToResolve(false);
+
+      if (isValidAddress(debouncedAddress) && !getValues('name')) {
+        setIsResolvingEns(true);
+        const ensName = await lookupAddress(debouncedAddress);
+        setIsResolvingEns(false);
+
+        if (ensName && !getValues('name')) {
+          setValue('name', ensName, { shouldValidate: true, shouldDirty: true });
+        }
+      }
+    };
+    handleAddressChange();
+  }, [debouncedAddress]);
+
+  const onSubmit = async ({ address, name }: FormData) => {
+    if (hasEnsFailedToResolve) return;
+
+    modalRef.current?.close();
+    onSave({ ethAddress: address, name });
+  };
+
+  const theme = useTheme();
+  const colors = getThemeColors(theme);
+  const { walletIcon, personIcon } = images(theme);
+
+  const handleScannerRead = (address: string) => {
+    setValue('address', address, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerRead} />);
+
+  const errorMessage = errors.address?.message ?? errors.name?.message;
+
+  return (
+    <ModalBox ref={modalRef} onModalHide={onModalHide} showModalClose noBoxMinHeight>
+      <View style={{ padding: spacing.rhythm }}>
+        <TitleWrapper>
+          {!!title && <Title align="center" title={title} style={{ marginBottom: spacing.small }} noMargin />}
+
+          {showQRScanner && (
+            <QRCodeButton onPress={openScanner}>
+              <QRCodeIcon name="qrcode" color={colors.link} />
+            </QRCodeButton>
+          )}
+        </TitleWrapper>
+
+        <Controller
+          name="address"
+          control={control}
+          render={({ value, onChange, onBlur }) => (
+            <InputWrapper>
+              <FieldIcon source={walletIcon} />
+              <TextInput
+                theme={theme}
+                inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+                inputProps={{
+                  value,
+                  onChangeText: onChange,
+                  onBlur,
+                  placeholder: t('label.address'),
+                  autoCapitalize: 'none',
+                  autoFocus: !contact?.ethAddress,
+                }}
+              />
+            </InputWrapper>
+          )}
+        />
+
+        <Controller
+          name="name"
+          control={control}
+          render={({ value, onChange, onBlur }) => (
+            <InputWrapper>
+              <FieldIcon source={personIcon} />
+              <TextInput
+                theme={theme}
+                inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+                inputProps={{
+                  value,
+                  onChangeText: onChange,
+                  onBlur,
+                  placeholder: t('label.name'),
+                }}
+              />
+            </InputWrapper>
+          )}
+        />
+
+        {isResolvingEns && <LoadingSpinner size={25} />}
+
+        {!!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
+
+        {hasEnsFailedToResolve && !isResolvingEns && (
+          <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>
+        )}
+
+        <Button
+          title={isResolvingEns ? `${t('label.resolvingEnsName')}...` : t('button.save')}
+          disabled={isResolvingEns}
+          onPress={handleSubmit(onSubmit)}
+          marginTop={spacing.large}
+        />
+      </View>
+    </ModalBox>
+  );
+};
+
+export default ContactDetailsModal;
 
 const InputWrapper = styled.View`
   flex-direction: row;
@@ -79,201 +249,31 @@ const FieldIcon = styled(Image)`
 `;
 
 const StatusMessage = styled(BaseText)`
+  ${fontStyles.small};
   margin-top: ${spacing.large}px;
   text-align: center;
-  ${fontStyles.small};
 `;
 
-export const LoadingSpinner = styled(Spinner)`
+const LoadingSpinner = styled(Spinner)`
   margin-top: ${spacing.large}px;
   align-items: center;
   justify-content: center;
 `;
 
-export const TitleWrapper = styled.View`
+const TitleWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
 `;
 
-export const QRCodeButton = styled.TouchableOpacity`
+const QRCodeButton = styled.TouchableOpacity`
   position: absolute;
   top: 0;
   right: 0;
 `;
 
-
-export const QRCodeIcon = styled(Icon)`
+const QRCodeIcon = styled(Icon)`
   color: ${({ color }) => color};
   font-size: 20px;
 `;
-
-const renderContactInput = (
-  value: string,
-  onChangeText: (value: string) => void,
-  placeholder: string,
-  icon: string,
-  theme: Theme,
-) => (
-  <InputWrapper>
-    <FieldIcon source={icon} />
-    <TextInput
-      theme={theme}
-      inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
-      inputProps={{
-        value,
-        onChangeText,
-        placeholder,
-      }}
-    />
-  </InputWrapper>
-);
-
-const ContactDetailsModal = ({
-  theme,
-  contact,
-  onSave,
-  isDefaultNameEns,
-  title,
-  contacts,
-  showQRScanner,
-  onModalHide,
-}: Props) => {
-  const [addressValue, setAddressValue] = useState('');
-  const [nameValue, setNameValue] = useState('');
-  const [dirtyInputs, setDirtyInputs] = useState(false);
-  const [resolvingEns, setResolvingEns] = useState(false);
-  const [ensUnresolved, setEnsUnresolved] = useState(false);
-  const { walletIcon, personIcon } = images(theme);
-
-  // reset input value on default change
-  useEffect(() => {
-    setDirtyInputs(false);
-    setAddressValue(contact?.ethAddress || '');
-    const defaultName = isDefaultNameEns ? contact?.ensName : contact?.name;
-    setNameValue(defaultName || '');
-  }, [contact]);
-
-  useEffect(() => {
-    if (!dirtyInputs && (!isEmpty(nameValue) || !isEmpty(addressValue))) {
-      setDirtyInputs(true);
-    }
-    if (ensUnresolved) setEnsUnresolved(false); // reset
-  }, [nameValue, addressValue]);
-
-  useEffect(() => {
-    if (resolvingEns
-      || !isEmpty(nameValue)
-      || !isValidAddressOrEnsName(addressValue)
-      || isEnsName(addressValue)) return;
-
-    setResolvingEns(true);
-    lookupAddress(addressValue)
-      .then((ensName) => {
-        if (ensName) setNameValue(ensName);
-        setResolvingEns(false);
-      })
-      .catch(() => setResolvingEns(false));
-  }, [addressValue]);
-
-  useEffect(() => {
-    if (resolvingEns
-      || !isEmpty(addressValue)
-      || !isEnsName(nameValue)) return;
-
-    setEnsUnresolved(false);
-    setResolvingEns(true);
-    getReceiverWithEnsName(nameValue)
-      .then(({ receiver }) => {
-        if (receiver) {
-          setAddressValue(receiver);
-        } else {
-          setEnsUnresolved(true);
-        }
-        setResolvingEns(false);
-      })
-      .catch(() => {
-        setEnsUnresolved(true);
-        setResolvingEns(false);
-      });
-  }, [nameValue]);
-
-  let errorMessage;
-  if (isEmpty(addressValue)) {
-    errorMessage = t('error.emptyAddress');
-  } if (!isValidAddressOrEnsName(addressValue)) {
-    errorMessage = t('error.invalid.address');
-  } else if (!addressesEqual(contact?.ethAddress, addressValue)
-    && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
-    errorMessage = t('error.contactWithAddressExist');
-  } else if (!isCaseInsensitiveMatch(contact?.name, nameValue)
-    && contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))) {
-    errorMessage = t('error.contactWithNameExist');
-  } else if (isEmpty(nameValue)) {
-    errorMessage = t('error.emptyName');
-  }
-
-  const colors = getThemeColors(theme);
-  const modalRef = useRef();
-
-  const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
-  const onButtonPress = () => {
-    if (!errorMessage && !resolvingEns) {
-      if (modalRef.current) modalRef.current.close();
-
-      onSave({ ...contact, name: nameValue, ethAddress: addressValue });
-    }
-  };
-
-  const handleScannerReadResult = (address: string) => {
-    if (isEnsName(address)) {
-      setAddressValue('');
-      setNameValue(address);
-    } else {
-      setAddressValue(address);
-    }
-  };
-
-  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
-
-  return (
-    <ModalBox
-      ref={modalRef}
-      onModalHide={onModalHide}
-      showModalClose
-      noBoxMinHeight
-    >
-      <View style={{ padding: spacing.rhythm }}>
-        <TitleWrapper>
-          {!!title && (
-            <Title
-              align="center"
-              title={title}
-              style={{ marginBottom: spacing.small }}
-              noMargin
-            />
-          )}
-          {showQRScanner && (
-            <QRCodeButton onPress={openScanner}>
-              <QRCodeIcon name="qrcode" color={colors.link} />
-            </QRCodeButton>
-          )}
-        </TitleWrapper>
-        {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
-        {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
-        {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
-        {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
-        {resolvingEns && <LoadingSpinner size={25} />}
-        <Button
-          marginTop={spacing.large}
-          disabled={!dirtyInputs || !!errorMessage || resolvingEns}
-          onPress={onButtonPress}
-          title={buttonTitle}
-        />
-      </View>
-    </ModalBox>
-  );
-};
-
-export default (withTheme(ContactDetailsModal): AbstractComponent<OwnProps>);

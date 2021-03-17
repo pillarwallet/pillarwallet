@@ -226,7 +226,8 @@ export const spacing = {
   medium: 12,
   mediumLarge: 16,
   large: 20,
-  extraLarge: 24,
+  largePlus: 24,
+  extraLarge: 32,
   layoutSides: 16,
 };
 

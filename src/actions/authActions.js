@@ -62,7 +62,11 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
+import {
+  findFirstEtherspotAccount,
+  findFirstSmartAccount,
+  getActiveAccountType,
+} from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
@@ -70,6 +74,7 @@ import Storage from 'services/storage';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
+import etherspotService from 'services/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -102,6 +107,10 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+} from './etherspotActions';
 
 
 const storage = Storage.getInstance('db');
@@ -240,6 +249,9 @@ export const loginAction = (
       // init smart wallet
       await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
 
+      // init Etherspot SDK
+      await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
+
       const smartWalletAccount = findFirstSmartAccount(accounts);
 
       // key based wallet migration – switch to smart wallet if key based was active
@@ -268,6 +280,12 @@ export const loginAction = (
         if (!smartWalletAccount) {
           // this will import and set Smart Wallet as current active account
           await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+        }
+
+        // silent Etherspot Smart Wallet creation
+        const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
+        if (!etherspotSmartWalletAccount) {
+          dispatch(importEtherspotAccountsAction());
         }
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
@@ -488,6 +506,8 @@ export const resetAppServicesAction = () => {
     if (!getState().onboarding.isPortalRecovery) {
       await smartWalletService.reset();
     }
+
+    await etherspotService.logout();
 
     // reset data stored in keychain
     await resetKeychainDataObject();

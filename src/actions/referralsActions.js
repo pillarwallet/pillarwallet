@@ -67,6 +67,7 @@ import { navigate } from 'services/navigation';
 
 // utils
 import { printLog, reportLog } from 'utils/common';
+import { omitNilProps } from 'utils/object';
 
 
 export type ClaimTokenAction = {
@@ -175,11 +176,8 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         return;
       }
 
-      const referralLink = await getUserReferralLink(walletId, {
-        email,
-        phone,
-        token: token.token,
-      });
+      const userData = omitNilProps({ email, phone, token: token.token });
+      const referralLink = await getUserReferralLink(walletId, userData);
 
       const { error } = await api.sendReferralInvitation({
         token: token.token,
@@ -269,13 +267,9 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
   };
 };
 
-export const allowToAccessPhoneContactsAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: ALLOW_ACCESS_PHONE_CONTACTS,
-    });
-  };
-};
+export const allowToAccessPhoneContactsAction = () => ({
+  type: ALLOW_ACCESS_PHONE_CONTACTS,
+});
 
 export const goToInvitationFlowAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {

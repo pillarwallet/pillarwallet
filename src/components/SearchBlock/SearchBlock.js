@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 import { Keyboard, TextInput } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import Overlay from './Overlay';
@@ -118,26 +119,23 @@ class SearchBlock extends React.Component<Props, State> {
             handleClick={this.handleOverlayClick}
           />
         )}
-        {!hideSearch &&
+        {!hideSearch && (
           <SearchBarWrapper
             style={wrapperStyle}
             isFocused={!!searchIsFocused && !inSearchMode}
             pointerEvents={disabled ? 'none' : 'auto'}
           >
             <SearchBar
-              inputProps={{
-                onChange: this.handleSearchChange,
-                onBlur: this.handleSearchBlur,
-                onFocus: this.handleSearchFocus,
-                value: query,
-                autoCapitalize: 'none',
-              }}
+              query={query}
+              onChangeQuery={this.handleSearchChange}
+              onFocus={this.handleSearchFocus}
+              onBlur={this.handleSearchBlur}
               placeholder={searchInputPlaceholder}
-              marginBottom="0"
               inputRef={inputRef}
+              cancelButtonTitle={t('button.close')}
             />
           </SearchBarWrapper>
-        }
+        )}
       </React.Fragment>
     );
   }

@@ -103,7 +103,6 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
-    "emailOrPhone": "Email or phone",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -190,7 +189,6 @@
     "onHold": "On hold",
     "deviceAddress": "Device address",
     "noContacts": "No contacts",
-    "noContactsAdded": "No contacts added",
     "comingSoon": "Coming soon",
     "buy": "Buy",
     "sell": "Sell",
@@ -255,7 +253,6 @@
     "sendAll": "Send all",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
-    "sendInvites": "Send invites",
     "sendMore": "Send more",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
@@ -280,7 +277,6 @@
     "withdraw": "Withdraw",
     "withdrawMore": "Withdraw more",
     "delete": "Delete",
-    "addNew": "Add new",
     "save": "Save",
     "next": "Next",
     "confirmWithdraw": "Confirm withdraw",
@@ -465,8 +461,8 @@
       "cantCalculateFee": "Unable to calculate transaction fee"
     },
     "emptyAddress": "Address cannot be empty",
-    "contactWithAddressExist": "Contact with this address already exist",
-    "contactWithNameExist": "Contact with this name already exist",
+    "contactWithAddressExists": "Contact with this address already exists",
+    "contactWithNameExists": "Contact with this name already exists",
     "emptyName": "Name cannot be empty",
     "invalid": {
       "address": "Invalid address",
@@ -959,13 +955,18 @@
         "button": {
           "toUserData": "Verify email or phone"
         }
+      },
+      "contactsPermission": {
+        "title": "Allow access to phone contacts",
+        "body": "It is required to easily select your friends to invite. Pillar never stores nor uses personal data.",
+        "allow": "Allow"
       }
     },
     "referralRewardText": "{{rewardsList}} and a badge",
     "title": {
-      "inviteMain": "Invite Friends",
+      "inviteFriends": "Invite friends",
+      "referFriends": "Refer friends",
       "invitationsSent": "Invitations sent",
-      "referMain": "Refer friends",
       "incomingReward": "Your reward is on the way",
       "thanksForJoining": "Thanks for joining Pillar",
       "thanksForUsing": "Thank you for using Pillar",
@@ -988,14 +989,16 @@
       "phoneVerified": "Your phone has been verified"
     },
     "label": {
-      "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
-      "remainingCount": "{{amount}} more",
+      "remainingCount": "Available {{remainingCount}}/{{totalCount}}",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
       "claiming": "Claiming...",
       "inviteFriends": "Invite friends to Pillar",
       "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
       "noMoreDailyInvitesAvailable": "No more invites available today"
+    },
+    "button": {
+      "invite": "Invite"
     }
   },
 
@@ -1627,11 +1630,11 @@
 
   "alert": {
     "deleteContact": {
-      "title": "Delete {{contactName}}",
-      "message": "Are you sure you would like to delete this contact?",
+      "title": "Delete address",
+      "message": "Are you sure you would like to remove {{name}} from address book?",
       "button": {
         "cancel": "Cancel",
-        "ok": "Yes, delete"
+        "ok": "Confirm"
       }
     },
     "hideAsset": {
@@ -1731,7 +1734,9 @@
     },
     "button": {
       "addLiquidity": "Add liquidity",
+      "addLiquidityWrapped": "Add\nliquidity",
       "removeLiquidity": "Remove liquidity",
+      "removeLiquidityWrapped": "Remove\nliquidity",
       "stake": "Stake",
       "unstake": "Unstake",
       "claimRewards": "Claim rewards"

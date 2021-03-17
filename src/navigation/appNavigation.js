@@ -73,7 +73,7 @@ import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
-import ReferFriendsScreen from 'screens/ReferFriends';
+import ReferFriendsScreen from 'screens/ReferFriends/ReferFriendsScreen';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';

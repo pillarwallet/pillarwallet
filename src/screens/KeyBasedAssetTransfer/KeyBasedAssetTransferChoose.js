@@ -344,7 +344,7 @@ const KeyBasedAssetTransferChoose = ({
           onSearchChange={(query) => setSearchQuery(query)}
           itemSearchState={searchQuery.length >= 2}
           navigation={navigation}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+          wrapperStyle={{ paddingVertical: spacing.small }}
           onSearchFocus={() => setInSearchMode(true)}
           onSearchBlur={() => setInSearchMode(false)}
           hideOverlay

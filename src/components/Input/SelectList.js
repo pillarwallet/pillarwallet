@@ -19,19 +19,12 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import SearchBar from 'components/SearchBar';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Wrapper } from 'components/Layout';
-import { spacing } from 'utils/variables';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
-
-
-const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-`;
 
 type Props = {
   onSelect: Function,
@@ -77,16 +70,8 @@ export default class SelectList extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SearchBarWrapper>
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearch,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-            placeholder={t('label.search')}
-          />
-        </SearchBarWrapper>
+        <SearchBar query={query} onChangeQuery={this.handleSearch} cancelButtonTitle={t('button.close')} />
+
         <FlatList
           data={filteredOptions}
           extraData={filteredOptions}

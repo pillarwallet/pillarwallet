@@ -17,72 +17,87 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useCallback } from 'react';
-import { FlatList } from 'react-native';
+
+import * as React from 'react';
+import { FlatList, View } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
 import Swipeout from 'react-native-swipeout';
-import { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
-// components
+// Components
+import Button from 'components/Button';
+import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import ContactDetailsModal from 'components/ContactDetailsModal';
-import SwipeoutButton from 'components/SwipeoutButton';
 import Modal from 'components/Modal';
+import SearchBar from 'components/SearchBar';
+import SwipeoutButton from 'components/SwipeoutButton';
 
-// utils
-import { getThemeColors } from 'utils/themes';
+// Constants
+import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 
-// types
-import type { RootReducerState } from 'reducers/rootReducer';
+// Utils
+import { filterContacts } from 'utils/contacts';
+import { useThemeColors } from 'utils/themes';
+import { isValidAddressOrEnsName } from 'utils/validators';
+import { spacing } from 'utils/variables';
+
+// Types
 import type { Contact } from 'models/Contact';
-import type { Theme } from 'models/Theme';
+import type { RootReducerState } from 'reducers/rootReducer';
 
-// partials
+// Partials
 import DeleteContactModal from './DeleteContactModal';
 
-type Props = {
-  theme: Theme,
-  contacts: Contact[],
-  addContact: (contact: Contact) => void,
-  updateContact: (prevEthAddress: string, contact: Contact) => void,
-};
 
-const ContactsList = ({ theme }: Props) => {
+const ContactsList = () => {
+  const [query, setQuery] = React.useState('');
+  const [customAddressContact, setCustomAddressContact] = React.useState(null);
+
   const dispatch = useDispatch();
   const contacts = useSelector(({ contacts: { data } }: RootReducerState) => data);
-  const colors = getThemeColors(theme);
+
+  const navigation = useNavigation();
+
+  const colors = useThemeColors();
+
+  const openContactDetails = (contact: ?Contact) => Modal.open(() => {
+    const isEdit = !!contact?.name;
+
+    return (
+      <ContactDetailsModal
+        title={isEdit ? t('title.editContact') : t('title.addNewContact')}
+        contact={contact}
+        contacts={contacts}
+        onSave={(newContact: Contact) => {
+          dispatch(
+            isEdit && contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact),
+          );
+        }}
+        showQRScanner
+      />
+    );
+  });
 
   const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
     <DeleteContactModal contact={contact} />
   ));
 
-  const openContactDetails = useCallback((contact: null | Contact) => {
-    Modal.open(() => (
-      <ContactDetailsModal
-        title={contact === null ? t('title.addNewContact') : t('title.editContact')}
-        dirtyInputs={contact !== null}
-        contact={contact}
-        onSave={(newContact: Contact) => {
-          if (contact === null) {
-            dispatch(addContactAction(newContact));
-          } else {
-            dispatch(updateContactAction(contact.ethAddress, newContact));
-          }
-        }}
-        contacts={contacts}
-        showQRScanner
-      />
-    ));
-  }, [contacts, dispatch]);
+  const handleChangeQuery = (value: string) => {
+    setQuery(value);
+    const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
+    setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
+  };
 
-  const renderListItem = ({ item }: { item: Contact }) => {
-    const { name, ethAddress, ensName } = item;
+  const renderItem = ({ item }: { item: Contact }) => {
     return (
       <Swipeout
         right={[{
@@ -101,7 +116,7 @@ const ContactsList = ({ theme }: Props) => {
         buttonWidth={80}
       >
         <ListItemWithImage
-          label={name || ensName || ethAddress}
+          label={item.name || item.ensName || item.ethAddress}
           onPress={() => openContactDetails(item)}
           diameter={48}
           rightColumnInnerStyle={{ alignItems: 'flex-end' }}
@@ -110,26 +125,99 @@ const ContactsList = ({ theme }: Props) => {
     );
   };
 
-  const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
+  const buttons = [
+    {
+      title: t('button.addContact'),
+      iconName: 'add-contact',
+      onPress: () => openContactDetails(null),
+    },
+    {
+      title: t('button.inviteFriend'),
+      iconName: 'plus',
+      onPress: () => dispatch(goToInvitationFlowAction()),
+    },
+    !!contacts.length && {
+      title: t('button.send'),
+      iconName: 'paperPlane',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW),
+    },
+  ];
+
+  const filteredContacts = filterContacts(contacts, query);
+
+  let items: Contact[] = [];
+  if (filteredContacts.length) {
+    items = [...filteredContacts];
+  } else if (customAddressContact) {
+    items = [customAddressContact];
+  }
+
+  const renderEmptyState = () => {
+    return !query ? (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph title={t('label.noContacts')} bodyText={t('paragraph.addContacts')} />
+      </EmptyStateWrapper>
+    ) : (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph title={t('label.nothingFound')} />
+      </EmptyStateWrapper>
+    );
+  };
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('title.addressBook') }],
-        rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => openContactDetails(null) }],
-        sideFlex: 2,
       }}
+      footer={<View />}
+      shouldFooterAvoidKeyboard
     >
-      <FlatList
-        data={contacts}
-        keyExtractor={({ ethAddress }) => ethAddress}
-        renderItem={renderListItem}
-        initialNumToRender={9}
-        contentContainerStyle={!contacts.length && emptyStyle}
-        ListEmptyComponent={<EmptyStateParagraph title={t('label.noContactsAdded')} />}
+      <SearchBar
+        query={query}
+        onChangeQuery={handleChangeQuery}
+        iconProps={{
+          persistIconOnFocus: true,
+        }}
+        placeholder={t('label.walletAddressEnsUser')}
+        showPasteButton
       />
+
+      <FlatList
+        data={items}
+        keyExtractor={({ ethAddress }) => ethAddress}
+        renderItem={renderItem}
+        initialNumToRender={9}
+        ListEmptyComponent={renderEmptyState}
+        contentContainerStyle={styles.flatListContantContainer}
+      />
+
+      {!filteredContacts.length && customAddressContact ? (
+        <ActionButtonsContainer>
+          <Button title={t('button.addToAddressBook')} onPress={() => openContactDetails(customAddressContact)} />
+        </ActionButtonsContainer>
+      ) : (
+        <FloatingButtons items={buttons} />
+      )}
     </ContainerWithHeader>
   );
 };
 
-export default withTheme(ContactsList);
+export default ContactsList;
+
+const styles = {
+  flatListContantContainer: {
+    flexGrow: 1,
+    paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
+  },
+};
+
+const EmptyStateWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ActionButtonsContainer = styled.View`
+  padding-horizontal: ${spacing.large}px;
+  padding-bottom: ${spacing.largePlus}px;
+`;

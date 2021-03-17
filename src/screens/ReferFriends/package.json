@@ -2,5 +2,5 @@
   "name": "ReferFriends",
   "version": "0.0.0",
   "private": true,
-  "main": "./ReferFriends.js"
+  "main": "./ReferFriendsScreen.js"
 }
