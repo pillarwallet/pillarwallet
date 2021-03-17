@@ -553,8 +553,6 @@ const Addon = (props: AddonProps) => {
       balance: tokenBalance = '',
       token = '',
       value = '',
-      custom,
-      customOnRight,
     } = balance;
     const decimalPlaces = getDecimalPlaces(token);
     const roundedBalance = formatAmount(tokenBalance, decimalPlaces);
@@ -565,16 +563,16 @@ const Addon = (props: AddonProps) => {
             {!!tokenBalance.toString() &&
               <BalanceValue>{t('tokenValue', { value: roundedBalance, token })}</BalanceValue>
             }
+
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
               amount={syntheticBalance}
               token={token}
             />}
-            {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
           </View>
+
           {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
         </Wrapper>
-        {customOnRight}
       </View>
     );
   }

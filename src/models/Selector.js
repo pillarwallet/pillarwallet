@@ -72,8 +72,6 @@ export type AssetBalance = {|
   token?: string,
   value?: string,
   syntheticBalance?: string,
-  custom: React.Node,
-  customOnRight: React.Node,
 |};
 
 export type AssetTab = {|
