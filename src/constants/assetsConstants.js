@@ -77,6 +77,7 @@ const testBTC = 'testBTC'; // testnet
 
 export const TOKENS = 'TOKENS';
 export const COLLECTIBLES = 'COLLECTIBLES';
+
 export const BADGES = 'BADGES';
 export const SYNTHETIC = 'SYNTHETIC';
 export const NONSYNTHETIC = 'NONSYNTHETIC';

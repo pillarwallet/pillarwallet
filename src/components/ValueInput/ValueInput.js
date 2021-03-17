@@ -51,6 +51,7 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates, Balances, AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
@@ -81,7 +82,7 @@ type InnerProps = {
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-  collectibles: AssetOption[],
+  collectibles: Collectible[],
   theme: Theme,
 };
 
@@ -216,25 +217,12 @@ export const ValueInputComponent = (props: Props) => {
   const assetsOptions = customAssets || assets;
 
   const openAssetSelector = () => {
-    const optionTabs = showCollectibles
-      ? [{
-        name: t('label.tokens'),
-        options: assetsOptions,
-        id: TOKENS,
-      }, {
-        name: t('label.collectibles'),
-        options: collectibles,
-        id: COLLECTIBLES,
-        displayAsCollectibles: true,
-      }]
-      : undefined;
-
     Keyboard.dismiss();
 
     Modal.open(() => (
       <AssetSelectorOptions
         options={assetsOptions}
-        optionTabs={optionTabs}
+        collectibles={showCollectibles ? collectibles : undefined}
         onOptionSelect={onAssetDataChange}
         title={selectorOptionsTitle}
       />

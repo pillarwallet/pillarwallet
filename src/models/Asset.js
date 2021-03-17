@@ -109,6 +109,7 @@ export type KeyBasedAssetTransfer = {|
 |};
 
 export type AssetOption = {|
+  tokenType?: string, // TOKENS or COLLECTIBLES
   address?: string,
   balance?: AssetBalance,
   decimals?: number,
@@ -118,7 +119,6 @@ export type AssetOption = {|
   symbol: string,
   token?: string,
   tokenId?: string,
-  tokenType?: string,
 |};
 
 export type AssetBalance = {|
@@ -127,11 +127,4 @@ export type AssetBalance = {|
   token?: string,
   value?: string,
   syntheticBalance?: string,
-|};
-
-export type AssetTab = {|
-  name: string,
-  id: string,
-  options?: AssetOption[],
-  displayAsCollectibles?: boolean,
 |};

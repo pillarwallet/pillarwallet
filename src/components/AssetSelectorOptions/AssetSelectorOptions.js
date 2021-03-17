@@ -33,26 +33,27 @@ import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
+// Constants
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
 // Utils
 import { caseInsensitiveIncludes } from 'utils/strings';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { AssetOption, AssetTab } from 'models/Asset';
-
-
-const MIN_QUERY_LENGTH = 2;
+import type { AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 
 type Props = {|
   options?: AssetOption[],
-  optionTabs?: AssetTab[],
+  collectibles?: Collectible[],
   onOptionSelect?: (option: AssetOption) => mixed,
   title?: string,
 |};
 
 const AssetSelectorOptions = ({
   options,
-  optionTabs,
+  collectibles,
   onOptionSelect,
   title,
 }: Props) => {
@@ -62,9 +63,22 @@ const AssetSelectorOptions = ({
   const modalRef = React.useRef(null);
 
   const [query, setQuery] = React.useState('');
-  const [activeTabId, setActiveTabId] = React.useState(optionTabs ? optionTabs[0]?.id : null);
+  const [activeTabId, setActiveTabId] = React.useState(TOKENS);
 
-  const activeTab = optionTabs?.find(({ id }) => id === activeTabId);
+  const tabs = collectibles
+    ? [
+      {
+        id: TOKENS,
+        name: t('label.tokens'),
+        onPress: () => setActiveTabId(TOKENS),
+      },
+      {
+        id: COLLECTIBLES,
+        name: t('label.collectibles'),
+        onPress: () => setActiveTabId(COLLECTIBLES),
+      },
+    ]
+    : null;
 
   const selectValue = (selectedValue: AssetOption) => {
     close();
@@ -99,19 +113,19 @@ const AssetSelectorOptions = ({
   };
 
   const renderList = () => {
-    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
-
-    const resolvedOptions = getOptions(activeTab?.options || options || [], isSearching ? query : null);
-
-    if (activeTab?.displayAsCollectibles) {
+    if (activeTabId === COLLECTIBLES) {
       return (
-        <CollectiblesList collectibles={resolvedOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
+        <CollectiblesList
+          collectibles={getCollectibles(collectibles ?? [], query)}
+          onCollectiblePress={selectValue}
+          isSearching={!!query}
+        />
       );
     }
 
     return (
       <FlatList
-        data={resolvedOptions}
+        data={getOptions(options || [], query)}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(option) => option.symbol}
         keyboardShouldPersistTaps="always"
@@ -120,8 +134,6 @@ const AssetSelectorOptions = ({
       />
     );
   };
-
-  const tabs = optionTabs?.map((tab) => ({ ...tab, onPress: () => setActiveTabId(tab.id) })) ?? [];
 
   return (
     <SlideModal
@@ -148,7 +160,7 @@ const AssetSelectorOptions = ({
           iconProps={{ persistIconOnFocus: true }}
         />
 
-        {!!optionTabs && <Tabs tabs={tabs} wrapperStyle={{ paddingTop: 22 }} activeTab={activeTabId || tabs[0].name} />}
+        {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22 }} />}
 
         {renderList()}
       </ContainerWithHeader>
@@ -157,6 +169,15 @@ const AssetSelectorOptions = ({
 };
 
 export default AssetSelectorOptions;
+
+
+export type Tab = {|
+  name: string,
+  id: string,
+  options?: AssetOption[],
+  displayAsCollectibles?: boolean,
+|};
+
 
 export const getOptions = (options: AssetOption[], query: ?string): AssetOption[] => {
   const filteredOptions = options.filter((option) => isMatchingOption(option, query));
@@ -170,9 +191,16 @@ export const getOptions = (options: AssetOption[], query: ?string): AssetOption[
   );
 };
 
-export const isMatchingOption = (option: AssetOption, query: ?string) => {
-  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+export const getCollectibles = (collectibles: Collectible[], query: ?string): Collectible[] => {
+  const filteredCollectibles = collectibles.filter((collectible) => isMatchingCollectible(collectible, query));
+  return orderBy(filteredCollectibles, [(option: AssetOption) => option.name?.trim().toLowerCase()], ['asc']);
 };
+
+export const isMatchingOption = (option: AssetOption, query: ?string) =>
+  caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+
+export const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
+  caseInsensitiveIncludes(collectible.name, query);
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;
