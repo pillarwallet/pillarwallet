@@ -20,12 +20,10 @@
 
 import React from 'react';
 import { FlatList } from 'react-native';
-import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
+import styled, { useTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-// components
+// Components
 import { BaseText } from 'components/Typography';
 import CollectibleImage from 'components/CollectibleImage';
 import Button from 'components/Button';
@@ -34,24 +32,23 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-// utils
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+
+// Utils
 import { smallScreen, getDeviceWidth } from 'utils/common';
 import { fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
 
-import { activeAccountAddressSelector } from 'selectors';
-
-import type { Theme } from 'models/Theme';
+// Types
 import type { Collectible } from 'models/Collectible';
 
 
-type Props = {
+type Props = {|
   collectibles: Collectible[],
   onCollectiblePress: Collectible => void,
   isSearching: boolean,
-  theme: Theme,
-  activeAccountAddress: string
-};
+|};
 
 type CollectibleItem = {
   item: Collectible,
@@ -91,24 +88,21 @@ const viewConfig = {
   waitForInteraction: true,
 };
 
-const CollectiblesList = ({
-  collectibles, onCollectiblePress, isSearching, theme, activeAccountAddress,
-}: Props) => {
-  const openReceiveModal = () => Modal.open(() => (
-    <ReceiveModal address={activeAccountAddress} />
-  ));
+const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Props) => {
+  const theme = useTheme();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+
+  const openReceiveModal = () => Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
 
   const renderCollectible = ({ item }: CollectibleItem) => {
     const { name, image: icon } = item;
     const { genericToken } = images(theme);
 
-    const collectibleSize = (screenWidth / 2) - collectibleMargins;
+    const collectibleSize = screenWidth / 2 - collectibleMargins;
 
     return (
       <CardWrapper>
-        <Card
-          onPress={() => onCollectiblePress(item)}
-        >
+        <Card onPress={() => onCollectiblePress(item)}>
           <CollectibleImage
             width={collectibleSize}
             height={collectibleSize}
@@ -117,7 +111,9 @@ const CollectiblesList = ({
             resizeMode="contain"
           />
           <Spacing h={10} />
-          <Name center numberOfLines={1} ellipsizeMode="tail" smallScreen={smallScreen()}>{name}</Name>
+          <Name center numberOfLines={1} ellipsizeMode="tail" smallScreen={smallScreen()}>
+            {name}
+          </Name>
         </Card>
       </CardWrapper>
     );
@@ -137,7 +133,9 @@ const CollectiblesList = ({
     <>
       <FlatList
         data={collectibles}
-        keyExtractor={(it) => { return `${it.assetContract}${it.id}`; }}
+        keyExtractor={(it) => {
+          return `${it.assetContract}${it.id}`;
+        }}
         renderItem={renderCollectible}
         numColumns={2}
         style={{ flexGrow: 1 }}
@@ -148,12 +146,7 @@ const CollectiblesList = ({
         ListEmptyComponent={
           <EmptyStateWrapper>
             <EmptyStateParagraph {...emptyStateInfo} />
-            <Button
-              title={t('button.receive')}
-              marginTop={40}
-              secondary
-              onPress={openReceiveModal}
-            />
+            <Button title={t('button.receive')} marginTop={40} secondary onPress={openReceiveModal} />
           </EmptyStateWrapper>
         }
         removeClippedSubviews
@@ -164,8 +157,4 @@ const CollectiblesList = ({
   );
 };
 
-const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
-});
-
-export default connect(structuredSelector)(withTheme(CollectiblesList));
+export default CollectiblesList;
