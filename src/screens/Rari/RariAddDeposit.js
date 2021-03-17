@@ -59,8 +59,7 @@ import { usePoolCurrentApy } from 'services/rariSdk';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates, Asset, Balances, Assets } from 'models/Asset';
-import type { AssetOption } from 'models/Selector';
+import type { Rates, Asset, Balances, Assets, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 type Props = {

@@ -50,8 +50,7 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances } from 'models/Asset';
-import type { AssetOption } from 'models/Selector';
+import type { Rates, Balances, AssetOption } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 

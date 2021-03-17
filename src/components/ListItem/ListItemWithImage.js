@@ -40,8 +40,8 @@ import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
+import type { AssetBalance } from 'models/Asset';
 import type { Theme, ThemeColors } from 'models/Theme';
-import type { AssetBalance } from 'models/Selector';
 
 
 type Props = {

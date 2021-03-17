@@ -51,10 +51,9 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, AssetData } from 'models/Asset';
+import type { Balances, AssetData, AssetOption } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { AssetOption } from 'models/Selector';
 import type { Contact } from 'models/Contact';
 
 

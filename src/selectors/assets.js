@@ -21,13 +21,13 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
-import type { Assets, Balance, Rates } from 'models/Asset';
+
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 
-import type { AssetOption } from 'models/Selector';
+import type { Assets, Balance, Rates, AssetOption } from 'models/Asset';
 
 import {
   assetsSelector,

@@ -52,31 +52,3 @@ export type OptionTabs = {
   options?: Option[],
   collectibles?: boolean,
 }
-
-export type AssetOption = {|
-  address?: string,
-  balance?: AssetBalance,
-  decimals?: number,
-  name: string,
-  id?: string,
-  imageUrl?: string,
-  symbol: string,
-  token?: string,
-  tokenId?: string,
-  tokenType?: string,
-|};
-
-export type AssetBalance = {|
-  balance?: string,
-  balanceInFiat?: string,
-  token?: string,
-  value?: string,
-  syntheticBalance?: string,
-|};
-
-export type AssetTab = {|
-  name: string,
-  id: string,
-  options?: AssetOption[],
-  displayAsCollectibles?: boolean,
-|};

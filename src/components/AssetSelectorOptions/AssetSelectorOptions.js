@@ -38,7 +38,7 @@ import { caseInsensitiveIncludes } from 'utils/strings';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { AssetOption, AssetTab } from 'models/Selector';
+import type { AssetOption, AssetTab } from 'models/Asset';
 
 
 const MIN_QUERY_LENGTH = 2;
