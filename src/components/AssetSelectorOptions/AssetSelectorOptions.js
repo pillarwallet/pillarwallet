@@ -61,7 +61,7 @@ const AssetSelectorOptions = ({
   const modalRef = React.useRef(null);
 
   const [query, setQuery] = React.useState('');
-  const [activeTab, setActiveTab] = React.useState(optionTabs ? optionTabs[0]?.id : null);
+  const [activeTabId, setActiveTabId] = React.useState(optionTabs ? optionTabs[0]?.id : null);
 
   const selectValue = (selectedValue: AssetOption) => {
     close();
@@ -97,18 +97,31 @@ const AssetSelectorOptions = ({
     );
   };
 
+  const renderList = (activeTab: ?AssetTab) => {
+    const relatedOptions = activeTab?.options || options || [];
+    const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
+
+    if (activeTab?.collectibles) {
+      return (
+        <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
+      );
+    }
+
+    return (
+      <FlatList
+        data={filteredOptions}
+        renderItem={({ item }) => renderItem(item)}
+        keyExtractor={(option) => option.symbol}
+        keyboardShouldPersistTaps="always"
+        ListEmptyComponent={renderEmptyState()}
+      />
+    );
+  };
+
   const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
-  const updatedOptionTabs = optionTabs?.length
-    ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => setActiveTab(id), id }))
-    : [];
-
-  const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
-
-  const relatedOptions = activeTabInfo?.options || options || [];
-  const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
-
-  const collectibles = activeTabInfo?.collectibles;
+  const tabs = optionTabs?.map((tab) => ({ ...tab, onPress: () => setActiveTabId(tab.id) })) ?? [];
+  const activeTab = optionTabs?.find(({ id }) => id === activeTabId);
 
   return (
     <SlideModal
@@ -136,23 +149,13 @@ const AssetSelectorOptions = ({
 
         {!!optionTabs && (
           <Tabs
-            tabs={updatedOptionTabs}
+            tabs={tabs}
             wrapperStyle={{ paddingTop: 22 }}
-            activeTab={activeTab || updatedOptionTabs[0].name}
+            activeTab={activeTabId || tabs[0].name}
           />
         )}
 
-        {collectibles ? (
-          <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
-        ) : (
-          <FlatList
-            data={filteredOptions}
-            renderItem={({ item }) => renderItem(item)}
-            keyExtractor={(option) => option.symbol}
-            keyboardShouldPersistTaps="always"
-            ListEmptyComponent={renderEmptyState()}
-          />
-        )}
+        {renderList(activeTab)}
       </ContainerWithHeader>
     </SlideModal>
   );
