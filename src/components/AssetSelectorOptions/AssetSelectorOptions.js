@@ -38,7 +38,6 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { AssetOption, AssetTab } from 'models/Selector';
-import type { IconProps } from 'components/SearchBar';
 
 
 const MIN_QUERY_LENGTH = 2;
@@ -48,11 +47,6 @@ type Props = {|
   optionTabs?: AssetTab[],
   onOptionSelect?: (option: AssetOption) => mixed,
   title?: string,
-  searchPlaceholder?: string,
-  noImageFallback?: boolean,
-  iconProps?: IconProps,
-  onHide?: () => void,
-  onOpen?: () => void,
 |};
 
 const AssetSelectorOptions = ({
@@ -60,11 +54,6 @@ const AssetSelectorOptions = ({
   optionTabs,
   onOptionSelect,
   title,
-  searchPlaceholder,
-  iconProps,
-  noImageFallback,
-  onOpen,
-  onHide,
 }: Props) => {
   const colors = useThemeColors();
 
@@ -73,19 +62,6 @@ const AssetSelectorOptions = ({
 
   const [query, setQuery] = React.useState('');
   const [activeTab, setActiveTab] = React.useState(optionTabs ? optionTabs[0]?.id : null);
-
-  const focusInput = () => {
-    searchInputRef.current?.focus();
-  };
-
-  const handleOptionsOpen = () => {
-    focusInput();
-    onOpen?.();
-  };
-
-  const handleSearch = (query: string) => {
-    setQuery(!query ? '' : query.trim());
-  };
 
   const selectValue = (selectedValue: AssetOption) => {
     close();
@@ -97,7 +73,7 @@ const AssetSelectorOptions = ({
     modalRef.current?.close();
   };
 
-  const renderOption = ({ item: option }: Object) => {
+  const renderItem = (option: AssetOption) => {
     if (!option) return null;
 
     const {
@@ -110,7 +86,7 @@ const AssetSelectorOptions = ({
         label={name}
         itemImageUrl={imageUrl}
         iconSource={imageSource}
-        fallbackToGenericToken={!noImageFallback}
+        fallbackToGenericToken
         wrapperOpacity={opacity}
         {...option}
       />
@@ -143,8 +119,7 @@ const AssetSelectorOptions = ({
     <SlideModal
       ref={modalRef}
       fullScreen
-      onModalShow={handleOptionsOpen}
-      onModalHide={onHide}
+      onModalShow={() => searchInputRef.current?.focus()}
       noSwipeToDismiss
       noClose
       backgroundColor={colors.basic050}
@@ -159,11 +134,9 @@ const AssetSelectorOptions = ({
       >
         <SearchBar
           query={query}
-          onChangeQuery={handleSearch}
-          placeholder={searchPlaceholder}
+          onChangeQuery={(text) => setQuery(text?.trim() ?? '')}
           inputRef={searchInputRef}
-          // $FlowFixMe
-          iconProps={{ ...iconProps, persistIconOnFocus: true }}
+          iconProps={{ persistIconOnFocus: true }}
         />
 
         {!!optionTabs && (
@@ -174,15 +147,11 @@ const AssetSelectorOptions = ({
           />
         )}
         {collectibles ? (
-          <CollectiblesList
-            collectibles={filteredOptions}
-            onCollectiblePress={selectValue}
-            isSearching={isSearching}
-          />
+          <CollectiblesList collectibles={filteredOptions} onCollectiblePress={selectValue} isSearching={isSearching} />
         ) : (
           <FlatList
             data={filteredOptions}
-            renderItem={renderOption}
+            renderItem={({ item }) => renderItem(item)}
             keyExtractor={(option) => option.symbol}
             keyboardShouldPersistTaps="always"
             ListEmptyComponent={renderEmptyState()}
