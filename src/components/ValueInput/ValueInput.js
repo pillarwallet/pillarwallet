@@ -62,8 +62,10 @@ export type ExternalProps = {
   customAssets?: AssetOption[],
   customBalances?: Balances,
   selectorOptionsTitle?: string,
-  assetData: AssetOption,
-  onAssetDataChange: (AssetOption) => void,
+  assetData: AssetOption | Collectible,
+  onAssetDataChange: (AssetOption) => mixed,
+  // Called iff selected asset is Collectible
+  onCollectibleAssetDataChange?: (Collectible) => mixed,
   value: string,
   onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
   showCollectibles?: boolean,
@@ -129,6 +131,7 @@ export const ValueInputComponent = (props: Props) => {
     selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
     assetData,
     onAssetDataChange,
+    onCollectibleAssetDataChange,
     value,
     onValueChange,
     showCollectibles,
@@ -224,8 +227,7 @@ export const ValueInputComponent = (props: Props) => {
         assets={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
         onSelectAsset={onAssetDataChange}
-        // $FlowFixMe: can also return Collectible
-        onSelectCollectible={onAssetDataChange}
+        onSelectCollectible={onCollectibleAssetDataChange}
         title={selectorOptionsTitle}
       />
     ));

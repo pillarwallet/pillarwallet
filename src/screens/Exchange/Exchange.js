@@ -272,6 +272,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           onAssetDataChange={(assetData) => this.setState({
             fromAsset: assetData, toAsset: assetData.symbol === BTC ? getToOption(WBTC, this.options) : toAsset,
           })}
+          onCollectibleAssetDataChange={(collectible) => this.setState({ fromAsset: collectible })}
           value={fromAmount}
           onValueChange={this.handleFromInputChange}
           selectorOptionsTitle={t('label.sell')}
