@@ -119,34 +119,33 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInputComponent = (props: Props) => {
-  const {
-    disabled,
-    assets,
-    customAssets,
-    balances,
-    customBalances,
-    baseFiatCurrency,
-    rates,
-    selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
-    assetData,
-    onAssetDataChange,
-    onCollectibleAssetDataChange,
-    value,
-    onValueChange,
-    showCollectibles,
-    txFeeInfo,
-    hideMaxSend,
-    updateTxFee,
-    collectibles,
-    theme,
-    leftSideSymbol,
-    getInputRef,
-    onFormValid,
-    disableAssetChange,
-    customRates,
-  } = props;
-
+export const ValueInputComponent = ({
+  disabled,
+  assets,
+  customAssets,
+  balances,
+  customBalances,
+  baseFiatCurrency,
+  rates,
+  selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
+  // $FlowFixMe: weird `Property assetData is missing in InnerProps` flow error
+  assetData,
+  onAssetDataChange,
+  onCollectibleAssetDataChange,
+  value,
+  onValueChange,
+  showCollectibles,
+  txFeeInfo,
+  hideMaxSend,
+  updateTxFee,
+  collectibles,
+  theme,
+  leftSideSymbol,
+  getInputRef,
+  onFormValid,
+  disableAssetChange,
+  customRates,
+}: Props) => {
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
 

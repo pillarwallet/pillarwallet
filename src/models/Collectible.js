@@ -25,6 +25,7 @@ export type Collectible = {
   description: string,
   icon: ?string,
   image: ?string,
+  imageUrl?: string,
   contractAddress: string,
   assetContract: string,
   tokenType: string,

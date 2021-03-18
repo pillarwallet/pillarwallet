@@ -34,13 +34,13 @@ import type {
   Asset,
   AssetData,
   Assets,
+  AssetOption,
   Balance,
   Balances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Option } from 'models/Selector';
 import type { Value } from 'utils/common';
 
 
@@ -369,7 +369,7 @@ export const getFormattedBalanceInFiat = (
 
 export const generateAssetSelectorOption = (
   asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
-): Option => {
+): AssetOption => {
   const { symbol, iconUrl, ...rest } = asset;
   const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
   const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';

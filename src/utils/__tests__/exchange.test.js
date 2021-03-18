@@ -22,8 +22,8 @@ import {
 } from 'utils/exchange';
 import { validateInput, shouldTriggerSearch, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-const assetEth = { value: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
-const assetPlr = { value: 'PLR', assetBalance: '0.001', name: 'Pillar' };
+const assetEth = { symbol: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
+const assetPlr = { symbol: 'PLR', assetBalance: '0.001', name: 'Pillar' };
 
 describe('Exchange Utility function tests', () => {
   it('Should call isFiatCurrency for EUR, GBP and USD to return true, for other symbols returns false.', () => {

@@ -108,7 +108,7 @@ export type KeyBasedAssetTransfer = {|
   status?: string,
 |};
 
-export type AssetOption = {|
+export type AssetOption = {
   address?: string,
   assetBalance?: string,
   balance?: AssetBalance,
@@ -128,7 +128,8 @@ export type AssetOption = {|
   token?: string,
   tokenId?: string,
   tokenType?: string, // TOKENS or COLLECTIBLES
-|};
+};
+
 export type AssetBalance = {|
   balance?: string,
   balanceInFiat?: string,
