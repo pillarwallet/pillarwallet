@@ -92,7 +92,9 @@ const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Pro
   const theme = useTheme();
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const openReceiveModal = () => Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
+  const openReceiveModal = () => Modal.open(() => (
+    <ReceiveModal address={activeAccountAddress} />
+  ));
 
   const renderCollectible = ({ item }: CollectibleItem) => {
     const { name, image: icon } = item;
@@ -133,9 +135,7 @@ const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Pro
     <>
       <FlatList
         data={collectibles}
-        keyExtractor={(it) => {
-          return `${it.assetContract}${it.id}`;
-        }}
+        keyExtractor={(it) => `${it.assetContract}${it.id}`}
         renderItem={renderCollectible}
         numColumns={2}
         style={{ flexGrow: 1 }}
