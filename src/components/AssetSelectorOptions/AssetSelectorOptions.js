@@ -45,17 +45,17 @@ import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
 type Props = {|
-  assets?: AssetOption[],
+  options?: AssetOption[],
   collectibles?: Collectible[],
-  onSelectAsset?: (asset: AssetOption) => mixed,
+  onSelectOption?: (asset: AssetOption) => mixed,
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
 |};
 
 const AssetSelectorOptions = ({
-  assets,
+  options,
   collectibles,
-  onSelectAsset,
+  onSelectOption,
   onSelectCollectible,
   title,
 }: Props) => {
@@ -80,9 +80,9 @@ const AssetSelectorOptions = ({
     ]
     : null;
 
-  const selectAsset = (asset: AssetOption) => {
+  const selectOption = (option: AssetOption) => {
     close();
-    onSelectAsset?.(asset);
+    onSelectOption?.(option);
   };
 
   const selectCollectible = (collectible: Collectible) => {
@@ -97,12 +97,12 @@ const AssetSelectorOptions = ({
 
   const colors = useThemeColors();
 
-  const renderItem = (option: AssetOption) => {
+  const renderOption = (option: AssetOption) => {
     if (!option) return null;
 
     return (
       <ListItemWithImage
-        onPress={() => selectAsset(option)}
+        onPress={() => selectOption(option)}
         label={option.name}
         itemImageUrl={option.imageUrl}
         balance={option.balance}
@@ -123,7 +123,7 @@ const AssetSelectorOptions = ({
     if (activeTabId === COLLECTIBLES) {
       return (
         <CollectiblesList
-          collectibles={getCollectibles(collectibles ?? [], query)}
+          collectibles={getCollectibles(collectibles, query)}
           onCollectiblePress={selectCollectible}
           isSearching={!!query}
         />
@@ -132,8 +132,8 @@ const AssetSelectorOptions = ({
 
     return (
       <FlatList
-        data={getAssets(assets || [], query)}
-        renderItem={({ item }) => renderItem(item)}
+        data={getAssets(options, query)}
+        renderItem={({ item }) => renderOption(item)}
         keyExtractor={(option) => option.symbol}
         keyboardShouldPersistTaps="always"
         ListEmptyComponent={renderEmptyState()}
@@ -177,12 +177,12 @@ const AssetSelectorOptions = ({
 
 export default AssetSelectorOptions;
 
-const getAssets = (assets: AssetOption[], query: ?string): AssetOption[] => {
-  const filteredAssets = assets.filter((asset) => isMatchingAsset(asset, query));
+const getAssets = (options: AssetOption[] = [], query: ?string): AssetOption[] => {
+  const filteredOptions = options.filter((option) => isMatchingAsset(option, query));
   return orderBy(
-    filteredAssets,
+    filteredOptions,
     [
-      (option: AssetOption) => getAssetSortPriority(option),
+      (option: AssetOption) => getOptionSortPriority(option),
       (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
       (option: AssetOption) => option.name?.trim().toLowerCase(),
     ],
@@ -190,7 +190,7 @@ const getAssets = (assets: AssetOption[], query: ?string): AssetOption[] => {
   );
 };
 
-const getCollectibles = (collectibles: Collectible[], query: ?string): Collectible[] => {
+const getCollectibles = (collectibles: Collectible[] = [], query: ?string): Collectible[] => {
   const filteredCollectibles = collectibles.filter((collectible) => isMatchingCollectible(collectible, query));
   return orderBy(filteredCollectibles, [(option: AssetOption) => option.name?.trim().toLowerCase()], ['asc']);
 };
@@ -201,10 +201,10 @@ const isMatchingAsset = (option: AssetOption, query: ?string) =>
 const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
   caseInsensitiveIncludes(collectible.name, query);
 
-const getAssetSortPriority = (asset: AssetOption) => {
-  if (asset.symbol === ETH || asset.symbol === PLR) return 3;
-  if (asset.balance?.balance) return 2;
-  if (asset.imageUrl) return 1;
+const getOptionSortPriority = (option: AssetOption) => {
+  if (option.symbol === ETH || option.symbol === PLR) return 3;
+  if (option.balance?.balance) return 2;
+  if (option.imageUrl) return 1;
   return 0;
 };
 

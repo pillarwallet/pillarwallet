@@ -223,9 +223,9 @@ export const ValueInputComponent = ({
 
     Modal.open(() => (
       <AssetSelectorOptions
-        assets={assetsOptions}
+        options={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
-        onSelectAsset={onAssetDataChange}
+        onSelectOption={onAssetDataChange}
         onSelectCollectible={onCollectibleAssetDataChange}
         title={selectorOptionsTitle}
       />
