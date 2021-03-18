@@ -237,8 +237,8 @@ export const ValueInputComponent = ({
       <ValueInputHeader
         asset={assetData}
         onAssetPress={openAssetSelector}
-        labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
-        onLabelPress={() => !disabled && handleUsePercent(100)}
+        labelText={hideMaxSend ? undefined : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
+        onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
         disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
     );

@@ -19,25 +19,26 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
-import type { Option } from 'models/Selector';
+
 import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
-import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
+import type { AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
+
 
 type Props = {
-  theme: Theme,
-  asset: Option,
-  labelText: string,
-  onLabelPress: () => void,
-  onAssetPress: () => void,
+  asset: AssetOption | Collectible,
+  labelText: ?string,
+  onLabelPress: () => mixed,
+  onAssetPress: () => mixed,
   disableAssetSelection: boolean,
 };
 
@@ -83,19 +84,23 @@ const LabelText = styled(BaseText)`
   margin-top: 1px;
 `;
 
-const ValueInputHeader = (props: Props) => {
-  const {
-    asset, labelText, onLabelPress, onAssetPress, theme, disableAssetSelection,
-  } = props;
+const ValueInputHeader = ({
+  asset,
+  labelText,
+  onLabelPress,
+  onAssetPress,
+  disableAssetSelection,
+}: Props) => {
   const { id, name, iconUrl } = asset;
-  let imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-  imageUrl = asset.imageUrl || imageUrl;
+  const imageUrl = asset.imageUrl || (iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '');
   const optionImageSource = resolveAssetSource(imageUrl);
+
+  const theme = useTheme();
   const { genericToken } = images(theme);
 
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress}>
         <StyledImage
           key={id}
           source={optionImageSource}
@@ -103,18 +108,25 @@ const ValueInputHeader = (props: Props) => {
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
+
         {!disableAssetSelection && (
           <ChevronWrapper>
             <SelectorChevron name="selector" />
           </ChevronWrapper>
         )}
+
         <Spacing w={4} />
       </SideWrapper>
-      <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
+
+      <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>
+        {name}
+      </AssetName>
+
       <Spacing w={8} />
+
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>
   );
 };
 
-export default withTheme(ValueInputHeader);
+export default ValueInputHeader;

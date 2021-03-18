@@ -56,8 +56,7 @@ import { NotEnoughLiquidityError } from 'services/0x';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, Balances, Assets } from 'models/Asset';
-import type { Option } from 'models/Selector';
+import type { Asset, AssetOption, Balances, Assets } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 type Props = {
@@ -85,7 +84,7 @@ const ValueInputWrapper = styled.View`
   align-items: center;
 `;
 
-const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): Option[] => {
+const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): AssetOption[] => {
   const poolAssets = rariPool === RARI_POOLS.ETH_POOL
     ? supportedAssets.filter(asset => asset.symbol === ETH)
     : supportedAssets;
