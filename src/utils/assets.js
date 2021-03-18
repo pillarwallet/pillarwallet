@@ -378,7 +378,6 @@ export const generateAssetSelectorOption = (
 
   return {
     ...rest,
-    key: symbol,
     imageUrl,
     icon: iconUrl,
     iconUrl,

@@ -116,7 +116,6 @@ export type AssetOption = {
   decimals?: number,
   ethAddress?: string,
   formattedBalanceInFiat?: string,
-  key?: string,
   name: string,
   icon?: string,
   iconUrl?: string,
