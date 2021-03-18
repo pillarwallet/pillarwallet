@@ -35,7 +35,7 @@ export const activeSyntheticAssetsSelector = createSelector(
     if (!syntheticAssets) return [];
 
     return mapNotNil(syntheticAssets, (asset) => {
-      if (asset.availableBalance) return null;
+      if (asset.availableBalance < 0) return null;
 
       return {
         ...asset,
