@@ -98,7 +98,7 @@ const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Pro
     const { name, image: icon } = item;
     const { genericToken } = images(theme);
 
-    const collectibleSize = screenWidth / 2 - collectibleMargins;
+    const collectibleSize = (screenWidth / 2) - collectibleMargins;
 
     return (
       <CardWrapper>

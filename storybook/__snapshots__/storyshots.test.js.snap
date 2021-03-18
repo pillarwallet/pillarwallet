@@ -50644,7 +50644,7 @@ exports[`Storyshots Value Input default 1`] = `
                     allowFontScaling={true}
                     autoCorrect={false}
                     customLabel={
-                      <WithTheme(ValueInputHeader)
+                      <ValueInputHeader
                         asset={
                           Object {
                             "address": "0x0000000000000000000000000000000000000000",
