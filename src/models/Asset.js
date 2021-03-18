@@ -109,18 +109,26 @@ export type KeyBasedAssetTransfer = {|
 |};
 
 export type AssetOption = {|
-  tokenType?: string, // TOKENS or COLLECTIBLES
   address?: string,
+  assetBalance?: string,
   balance?: AssetBalance,
+  contractAddress?: string,
   decimals?: number,
+  ethAddress?: string,
+  formattedBalanceInFiat?: string,
+  key?: string,
   name: string,
+  icon?: string,
+  iconUrl?: string,
   id?: string,
+  imageSource?: string,
   imageUrl?: string,
+  lastUpdateTime?: string,
   symbol: string,
   token?: string,
   tokenId?: string,
+  tokenType?: string, // TOKENS or COLLECTIBLES
 |};
-
 export type AssetBalance = {|
   balance?: string,
   balanceInFiat?: string,
