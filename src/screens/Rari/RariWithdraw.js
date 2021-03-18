@@ -97,7 +97,6 @@ const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): As
     const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return {
       ...rest,
-      value: rest.symbol,
       iconUrl,
       icon: iconUrl,
       imageUrl,

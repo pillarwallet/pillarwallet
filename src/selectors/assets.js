@@ -124,32 +124,38 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
     if (!activeAccountId || !balances || !assets) return [];
     const activeAccountBalance = balances[activeAccountId] || {};
 
-    return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
+    const assetsWithBalance: AssetOption[] = [];
+
+    Object.keys(assets).forEach((symbol) => {
       const relatedAsset = assets[symbol];
       const assetBalance = getBalance(activeAccountBalance, symbol);
+
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
         const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        // $FlowFixMe: flow update to 0.122
-        assetsWithBalance.push({
-          imageUrl,
-          formattedBalanceInFiat,
-          balance: !!formattedBalanceInFiat && {
+        const balance = formattedBalanceInFiat
+          ? {
             balance: assetBalance,
             balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
-          },
-          token: symbol,
-          value: symbol,
-          contractAddress: address,
+          }
+          : undefined;
+
+        assetsWithBalance.push({
           ...relatedAsset,
+          imageUrl,
+          formattedBalanceInFiat,
+          balance,
+          token: symbol,
+          contractAddress: address,
         });
       }
-      return assetsWithBalance;
-    }, []);
+    });
+
+    return assetsWithBalance;
   },
 );

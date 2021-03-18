@@ -376,21 +376,16 @@ export const generateAssetSelectorOption = (
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-  // $FlowFixMe: flow update to 0.122
-  return ({
+  return {
+    ...rest,
     key: symbol,
-    value: symbol,
     imageUrl,
     icon: iconUrl,
     iconUrl,
     symbol,
-    ...rest,
     assetBalance,
     formattedBalanceInFiat,
-    customProps: {
-      rightColumnInnerStyle: { alignItems: 'flex-end' },
-    },
-  });
+  };
 };
 
 export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {

@@ -131,8 +131,8 @@ export type AssetOption = {
 };
 
 export type AssetBalance = {|
-  balance?: string,
-  balanceInFiat?: string,
+  balance?: number,
+  balanceInFiat?: number,
   token?: string,
   value?: string,
   syntheticBalance?: string,
