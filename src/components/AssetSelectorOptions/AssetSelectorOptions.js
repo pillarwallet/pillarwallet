@@ -34,7 +34,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
 // Constants
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { TOKENS, COLLECTIBLES, ETH, PLR } from 'constants/assetsConstants';
 
 // Utils
 import { caseInsensitiveIncludes } from 'utils/strings';
@@ -177,29 +177,36 @@ const AssetSelectorOptions = ({
 
 export default AssetSelectorOptions;
 
-
-export const getAssets = (assets: AssetOption[], query: ?string): AssetOption[] => {
-  const filteredAssets = assets.filter((asset) => isMatchingOption(asset, query));
+const getAssets = (assets: AssetOption[], query: ?string): AssetOption[] => {
+  const filteredAssets = assets.filter((asset) => isMatchingAsset(asset, query));
   return orderBy(
     filteredAssets,
     [
+      (option: AssetOption) => getAssetSortPriority(option),
       (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
       (option: AssetOption) => option.name?.trim().toLowerCase(),
     ],
-    ['desc', 'asc'],
+    ['desc', 'desc', 'asc'],
   );
 };
 
-export const getCollectibles = (collectibles: Collectible[], query: ?string): Collectible[] => {
+const getCollectibles = (collectibles: Collectible[], query: ?string): Collectible[] => {
   const filteredCollectibles = collectibles.filter((collectible) => isMatchingCollectible(collectible, query));
   return orderBy(filteredCollectibles, [(option: AssetOption) => option.name?.trim().toLowerCase()], ['asc']);
 };
 
-export const isMatchingOption = (option: AssetOption, query: ?string) =>
+const isMatchingAsset = (option: AssetOption, query: ?string) =>
   caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
 
-export const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
+const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
   caseInsensitiveIncludes(collectible.name, query);
+
+const getAssetSortPriority = (asset: AssetOption) => {
+  if (asset.symbol === ETH || asset.symbol === PLR) return 3;
+  if (asset.balance?.balance) return 2;
+  if (asset.imageUrl) return 1;
+  return 0;
+};
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;
