@@ -21,6 +21,7 @@
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
+import { mapNotNil } from 'utils/array';
 import { formatAmount } from 'utils/common';
 
 import type { SyntheticAsset, AssetOption } from 'models/Asset';
@@ -33,9 +34,10 @@ export const activeSyntheticAssetsSelector = createSelector(
   (syntheticAssets: SyntheticAsset[]): AssetOption[] => {
     if (!syntheticAssets) return [];
 
-    return syntheticAssets
-      .filter((asset) => asset.availableBalance >= 0)
-      .map((asset) => ({
+    return mapNotNil(syntheticAssets, (asset) => {
+      if (asset.availableBalance) return null;
+
+      return {
         ...asset,
         token: asset.symbol,
         imageUrl: asset.iconUrl ? `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` : '',
@@ -44,6 +46,7 @@ export const activeSyntheticAssetsSelector = createSelector(
           syntheticBalance: formatAmount(asset.availableBalance),
           token: asset.symbol,
         },
-      }));
+      };
+    });
   },
 );
