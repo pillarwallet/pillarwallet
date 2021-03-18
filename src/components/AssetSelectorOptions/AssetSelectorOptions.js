@@ -59,8 +59,6 @@ const AssetSelectorOptions = ({
   onSelectCollectible,
   title,
 }: Props) => {
-  const colors = useThemeColors();
-
   const searchInputRef = React.useRef(null);
   const modalRef = React.useRef(null);
 
@@ -96,6 +94,8 @@ const AssetSelectorOptions = ({
     Keyboard.dismiss();
     modalRef.current?.close();
   };
+
+  const colors = useThemeColors();
 
   const renderItem = (option: AssetOption) => {
     if (!option) return null;
