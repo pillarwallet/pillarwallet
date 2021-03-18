@@ -136,20 +136,16 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
         const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        const balance = formattedBalanceInFiat
-          ? {
-            balance: assetBalance,
-            balanceInFiat,
-            value: formattedBalanceInFiat,
-            token: symbol,
-          }
-          : undefined;
-
         assetsWithBalance.push({
           ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
-          balance,
+          balance: {
+            balance: assetBalance,
+            balanceInFiat,
+            value: formattedBalanceInFiat,
+            token: symbol,
+          },
           token: symbol,
           contractAddress: address,
         });
