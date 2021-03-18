@@ -21,39 +21,29 @@
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
-import type { SyntheticAsset } from 'models/Asset';
 import { formatAmount } from 'utils/common';
+
+import type { SyntheticAsset, AssetOption } from 'models/Asset';
 
 import { syntheticAssetsSelector } from './selectors';
 
 
 export const activeSyntheticAssetsSelector = createSelector(
   syntheticAssetsSelector,
-  (syntheticAssets: SyntheticAsset[]) => {
+  (syntheticAssets: SyntheticAsset[]): AssetOption[] => {
     if (!syntheticAssets) return [];
-    return syntheticAssets.reduce((availableAssets, asset) => {
-      const {
-        symbol,
-        iconUrl,
-        availableBalance,
-        address,
-      } = asset;
-      if (availableBalance < 0) return availableAssets;
 
-      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-      // $FlowFixMe: flow update to 0.122// $FlowFixMe: flow update to 0.122
-      availableAssets.push({
-        token: symbol,
-        value: symbol,
-        imageUrl,
-        contractAddress: address,
-        balance: {
-          syntheticBalance: formatAmount(availableBalance),
-          token: symbol,
-        },
+    return syntheticAssets
+      .filter((asset) => asset.availableBalance >= 0)
+      .map((asset) => ({
         ...asset,
-      });
-      return availableAssets;
-    }, []);
+        token: asset.symbol,
+        imageUrl: asset.iconUrl ? `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` : '',
+        contractAddress: asset.address,
+        balance: {
+          syntheticBalance: formatAmount(asset.availableBalance),
+          token: asset.symbol,
+        },
+      }));
   },
 );
