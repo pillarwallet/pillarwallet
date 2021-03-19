@@ -47,7 +47,7 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 // utils
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
-import { formatMoney, formatFiat, formatTokenAmount } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
@@ -233,6 +233,7 @@ class AssetsList extends React.Component<Props, State> {
       description: asset.description,
       decimals,
     };
+
     return (
       <Swipeout
         right={[{
@@ -270,7 +271,7 @@ class AssetsList extends React.Component<Props, State> {
           label={name}
           avatarUrl={fullIconUrl}
           balance={{
-            balance: formatTokenAmount(balance, symbol),
+            balance,
             value: formattedBalanceInFiat,
             token: symbol,
           }}

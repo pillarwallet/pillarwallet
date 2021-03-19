@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
 import { mapNotNil } from 'utils/array';
-import { formatAmount } from 'utils/common';
+import { formatTokenAmount } from 'utils/common';
 
 import type { SyntheticAsset, AssetOption } from 'models/Asset';
 
@@ -43,7 +43,7 @@ export const activeSyntheticAssetsSelector = createSelector(
         imageUrl: asset.iconUrl ? `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` : '',
         contractAddress: asset.address,
         balance: {
-          syntheticBalance: formatAmount(asset.availableBalance),
+          syntheticBalance: formatTokenAmount(asset.availableBalance, asset.symbol),
           token: asset.symbol,
         },
       };
