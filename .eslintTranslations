@@ -130,6 +130,7 @@
         "t",
         "toString",
         "uniqBy",
+        "useTranslationWithPrefix",
         "updateAppSettingsAction",
         "variants"
       ],

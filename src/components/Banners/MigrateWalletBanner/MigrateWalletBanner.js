@@ -21,16 +21,19 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 import Text from 'components/modern/Text';
 
 import { spacing } from 'utils/variables';
 
 function MigrateWalletBanner() {
+  const { t } = useTranslationWithPrefix('smartWalletContent.banner');
+
   return (
     <Container>
-      <Text variant="big">Migrate to Smart Wallet</Text>
-      <Text>Transfer all your assets to an advanced platform and start earning with new features.</Text>
+      <Text variant="big">{t('title')}</Text>
+      <Text>{t('body')}</Text>
     </Container>
   );
 }

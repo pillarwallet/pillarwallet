@@ -20,10 +20,9 @@
 
 import * as React from 'react';
 import i18next from 'i18next';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { BaseText, MediumText } from 'components/Typography';
 import type { TranslationOptions, TranslatedString } from 'models/Translations';
-
 
 const t = (key: string | string[], options?: TranslationOptions = {}): TranslatedString => {
   const {
@@ -63,3 +62,15 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
 };
 
 export default t;
+
+export const useTranslationWithPrefix = (prefix: string) => {
+  const { t: tRoot } = useTranslation();
+
+  // eslint-disable-next-line no-shadow
+  const t = React.useCallback(
+    (key: string, options?: any) => (key != null ? tRoot(`${prefix}.${key}`, options) : undefined),
+    [tRoot, prefix],
+  );
+
+  return { t, tRoot };
+};
