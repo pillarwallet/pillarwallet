@@ -202,7 +202,8 @@ const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
   caseInsensitiveIncludes(collectible.name, query);
 
 const getOptionSortPriority = (option: AssetOption) => {
-  if (option.symbol === ETH || option.symbol === PLR) return 3;
+  if (option.balance?.balance && option.symbol === ETH) return 4;
+  if (option.balance?.balance && option.symbol === PLR) return 3;
   if (option.balance?.balance) return 2;
   if (option.imageUrl) return 1;
   return 0;
