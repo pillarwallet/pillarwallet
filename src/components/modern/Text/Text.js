@@ -29,17 +29,21 @@ import { appFont, fontStyles } from 'utils/variables';
 import type { TextProps } from 'utils/types/react-native';
 
 type TextVariant = $Keys<typeof fontStyles>;
+type Font = $Keys<typeof appFont>;
 
 type Props = {|
   ...TextProps,
-  variant?: TextVariant
-|}
+  variant?: TextVariant,
+  font?: Font,
+  color?: string,
+|};
 
 const Text: React.ComponentType<Props> = styled.Text`
-  font-family: '${appFont.regular}';
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
-  ${({ variant }) => fontStyles[variant]}
+  ${({ variant = 'regular' }) => fontStyles[variant]}
+  ${({ font = 'regular' }) => `font-family: ${appFont[font]}`};
+  ${({ color }) => `color: ${color};`}
 `;
 
 export default Text;
