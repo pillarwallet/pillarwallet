@@ -27,7 +27,7 @@ import { getEnv } from 'configs/envConfig';
 import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
+import { formatFiat, formatAmount, formatTokenAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 
 // types
 import type {
@@ -84,7 +84,9 @@ export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => 
 /**
  * @deprecated: do not use because of rounding issues
  */
-export const getBalance = (balances: Balances = {}, asset: string): number => {
+export const getBalance = (balances: ?Balances, asset: string): number => {
+  if (!balances) return 0;
+
   const assetBalance = get(balances, asset);
   if (!assetBalance) {
     return 0;
@@ -367,23 +369,31 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
-export const generateAssetSelectorOption = (
-  asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
+export const getAssetOption = (
+  asset: Asset,
+  balances: ?Balances,
+  rates: ?Rates,
+  baseFiatCurrency: ?string,
 ): AssetOption => {
-  const { symbol, iconUrl, ...rest } = asset;
-  const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
-  const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
+  const { symbol, iconUrl } = asset;
+
+  const assetBalance = getBalance(balances, symbol);
+  const formattedAssetBalance = assetBalance ? formatTokenAmount(assetBalance, symbol) : '';
+  const balanceInFiat = rates ? getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : undefined;
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
-  const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
   return {
-    ...rest,
-    imageUrl,
-    icon: iconUrl,
-    iconUrl,
-    symbol,
-    assetBalance,
+    ...asset,
+    imageUrl: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
     formattedBalanceInFiat,
+    icon: iconUrl,
+    assetBalance: formattedAssetBalance,
+    balance: {
+      token: symbol,
+      balance: assetBalance,
+      balanceInFiat,
+      value: formattedBalanceInFiat,
+    },
   };
 };
 

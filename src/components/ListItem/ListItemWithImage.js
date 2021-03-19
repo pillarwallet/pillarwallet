@@ -36,6 +36,7 @@ import CollectibleImage from 'components/CollectibleImage';
 
 import { ACTION, DEFAULT } from 'constants/listItemConstants';
 
+import { formatTokenAmount } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 'utils/variables';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
@@ -549,22 +550,24 @@ const Addon = (props: AddonProps) => {
   if (balance) {
     const {
       syntheticBalance = '',
-      balance: tokenBalance = '',
+      balance: tokenBalance = 0,
       token = '',
       value = '',
     } = balance;
+
     return (
       <View style={{ flexDirection: 'row' }}>
         <Wrapper style={{ alignItems: 'flex-end' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
-
-            {!!syntheticBalance.toString() && <TankAssetBalance amount={syntheticBalance} token={token} />}
+            {!!syntheticBalance && <TankAssetBalance amount={syntheticBalance} token={token} />}
           </View>
 
-          {!!tokenBalance.toString() && (
-            <BalanceValue>{t('tokenValue', { value: tokenBalance, token })}</BalanceValue>
+          {!!tokenBalance && (
+            <BalanceValue>{t('tokenValue', { value: formatTokenAmount(tokenBalance, token), token })}</BalanceValue>
           )}
+
+          {!tokenBalance && !syntheticBalance && <BalanceValue>{token}</BalanceValue>}
         </Wrapper>
       </View>
     );

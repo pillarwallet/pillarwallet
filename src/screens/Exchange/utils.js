@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
 import Intercom from 'react-native-intercom';
 
-import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
+import { getRate, getBalance, sortAssets, getAssetOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
@@ -105,31 +105,35 @@ const getBtcOption = (): AssetOption => {
     iconMonoUrl: '',
     wallpaperUrl: '',
   };
-  return generateAssetSelectorOption(btcAsset);
+  return getAssetOption(btcAsset);
 };
 
-const generateAssetsOptions = (
+const getExchangeFromAssetOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
 ): AssetOption[] => {
+  const isMatching = (asset: Asset) => (asset.symbol === ETH || getBalance(balances, asset.symbol) !== 0);
+  const isSupported = (asset: Asset) =>
+    exchangeSupportedAssets.some((supportedAsset) => asset.symbol === supportedAsset.symbol);
+
   return sortAssets(assets)
-    .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
-      && exchangeSupportedAssets.some(asset => asset.symbol === symbol))
-    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
+    .filter((asset) => isMatching(asset) && isSupported(asset))
+    .map((asset) => getAssetOption(asset, balances, rates, baseFiatCurrency));
 };
 
-const generateSupportedAssetsOptions = (
+const getExchangeToAssetOptions = (
   exchangeSupportedAssets: Asset[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
 ): AssetOption[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
+
   return exchangeSupportedAssets
-    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
+    .map((asset) => getAssetOption(asset, balances, rates, baseFiatCurrency));
 };
 
 export const provideOptions = (
@@ -140,19 +144,21 @@ export const provideOptions = (
   baseFiatCurrency: ?string,
   isWbtcCafeActive?: boolean,
 ): ExchangeOptions => {
-  const assetsOptionsBuying = generateSupportedAssetsOptions(
-    exchangeSupportedAssets,
-    balances,
-    baseFiatCurrency,
-    rates,
-  );
-  const assetsOptionsFrom = generateAssetsOptions(
+  const assetsOptionsFrom = getExchangeFromAssetOptions(
     assets,
     exchangeSupportedAssets,
     balances,
     baseFiatCurrency,
     rates,
   );
+
+  const assetsOptionsBuying = getExchangeToAssetOptions(
+    exchangeSupportedAssets,
+    balances,
+    baseFiatCurrency,
+    rates,
+  );
+
   return {
     fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
     toOptions: assetsOptionsBuying,
