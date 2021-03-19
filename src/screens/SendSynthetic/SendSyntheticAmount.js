@@ -227,6 +227,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       syntheticsService
         .createExchangeIntent(receiver, amount, assetCode)
         .then((result) => {
+          if (result.error) throw result.error;
+
           const { output: { transactionId, exchangeAmount } } = result;
           this.formSubmitComplete(() => {
             const syntheticTransaction: SyntheticTransaction = {

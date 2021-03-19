@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import axios from 'axios';
 
 import type { Asset } from 'models/Asset';
 
 import Toast from 'components/Toast';
 import { convertToBaseUnits, convertToNominalUnits, reportLog } from 'utils/common';
 import { getFixedQuantity } from 'utils/exchange';
+import httpRequest from 'utils/httpRequest';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const EXCHANGE_URL = 'https://api.1inch.exchange/v2.0';
@@ -70,7 +70,7 @@ const handle1inchError = (e: ?Object, errorMessage: string, toastMessage?: strin
 export const getResponseData = async (url: string, errorMessage: string, toastMessage?: string): Object | null => {
   let response;
   try {
-    response = await axios.get(url);
+    response = await httpRequest.get(url);
   } catch (e) {
     return handle1inchError(e, errorMessage, toastMessage);
   }

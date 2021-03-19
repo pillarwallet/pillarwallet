@@ -21,7 +21,6 @@ import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { Platform } from 'react-native';
 import { getEnv } from 'configs/envConfig';
-import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
 import https from 'https';
@@ -36,6 +35,8 @@ import { isTransactionEvent } from 'utils/history';
 import { reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
+import { retryOnNetworkError } from 'utils/retry';
+import httpRequest from 'utils/httpRequest';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -45,6 +46,7 @@ import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
+import type { AxiosXHR } from 'axios';
 
 // services
 import {
@@ -141,7 +143,7 @@ class SDKWrapper {
 
   listAccounts(walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId })))
       .then(({ data }) => data.wallets || [])
       .catch(() => {
         reportErrorLog('listAccounts failed', { walletId });
@@ -216,7 +218,7 @@ class SDKWrapper {
 
   fetchInitialAssets(walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.asset.defaults({ walletId })))
       .then(({ data }) => {
         if (!Array.isArray(data)) {
           reportLog('Wrong initial assets received', { data });
@@ -340,7 +342,7 @@ class SDKWrapper {
 
   getSentReferralInvites(walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.referral.list({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.referral.list({ walletId })))
       .then(({ data }) => data.data)
       .catch(() => []);
   }
@@ -348,7 +350,7 @@ class SDKWrapper {
   getReferralCampaignsInfo(walletId: string, referralToken: ?string) {
     const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload)))
       .then(({ data }) => get(data, 'campaigns', {}))
       .catch(() => ({}));
   }
@@ -356,7 +358,7 @@ class SDKWrapper {
   getReferralRewardIssuerAddress(walletId: string, referralToken: ?string) {
     const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload)))
       .then(({ data }) => {
         const campaignsData = get(data, 'campaigns', {});
         return Object.keys(campaignsData).reduce((memo, campaign) => {
@@ -378,7 +380,7 @@ class SDKWrapper {
 
   getUserAvatar(userId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.imageByUserId(userId)))
       .catch(() => null);
   }
 
@@ -394,7 +396,7 @@ class SDKWrapper {
 
   userInfo(walletId: string): Promise<Object> {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.info({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.info({ walletId })))
       .then(({ data }) => ({ ...data, walletId }))
       .catch((error) => {
         reportErrorLog('userInfo failed', { error, walletId });
@@ -404,21 +406,21 @@ class SDKWrapper {
 
   userInfoById(targetUserId: string, myWalletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId })))
       .then(({ data }) => ({ ...data }))
       .catch(() => ({}));
   }
 
   userSearch(query: string, walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.search({ query, walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.search({ query, walletId })))
       .then(({ data }) => data)
       .catch(() => []);
   }
 
   usernameSearch(username: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.user.usernameSearch({ username })))
       .then(({ data }) => data)
       .catch(error => {
         const status = get(error, 'response.status');
@@ -448,7 +450,7 @@ class SDKWrapper {
 
   fetchSupportedAssets(walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.asset.list({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.asset.list({ walletId })))
       .then(({ data }) => {
         if (!Array.isArray(data)) {
           reportLog('Wrong supported assets received', { data });
@@ -461,7 +463,7 @@ class SDKWrapper {
 
   assetsSearch(query: string, walletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.asset.search({ query, walletId })))
       .then(({ data }) => data)
       .catch(() => []);
   }
@@ -483,7 +485,7 @@ class SDKWrapper {
     // eslint-disable-next-line i18next/no-literal-string, max-len
     const url = `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
-      .then(() => axios.get(url, {
+      .then(() => httpRequest.get(url, {
         ...defaultAxiosRequestConfig,
         headers: {
           Accept: 'application/json',
@@ -491,7 +493,7 @@ class SDKWrapper {
           'X-API-KEY': getEnv().OPEN_SEA_API_KEY,
         },
       }))
-      .then(({ data }: AxiosResponse) => data)
+      .then(({ data }) => data)
       .catch(() => ({ error: true }));
   }
 
@@ -502,11 +504,11 @@ class SDKWrapper {
   ): Promise<ApiNotification[]> {
     if (!walletId) return Promise.resolve([]);
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.notification.list({
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.notification.list({
         walletId,
         fromTimestamp,
         type,
-      }))
+      })))
       .then(({ data }) => data)
       .then(({ notifications }) => notifications || [])
       .then(notifications => {
@@ -572,7 +574,7 @@ class SDKWrapper {
 
   fetchBadges(walletId: string): Promise<UserBadgesResponse> {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.badge.my({ walletId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.badge.my({ walletId })))
       .then(({ data }) => data)
       .then(data => uniqBy(data, 'id'))
       .catch(() => []);
@@ -580,7 +582,7 @@ class SDKWrapper {
 
   fetchContactBadges(walletId: string, userId: string): Promise<Badges> {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
+      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.badge.get({ walletId, userId })))
       .then(({ data }) => data)
       .then(data => uniqBy(data, 'id'))
       .catch(() => []);
@@ -726,8 +728,8 @@ class SDKWrapper {
       // eslint-disable-next-line i18next/no-literal-string
       const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
-        .then(() => axios.get(url, defaultAxiosRequestConfig))
-        .then(({ data }: AxiosResponse) => data)
+        .then(() => httpRequest.get<$FlowFixMe>(url, defaultAxiosRequestConfig))
+        .then(({ data }) => data)
         .catch(() => []);
     }
     return Promise.resolve()
@@ -736,7 +738,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  makeDirectSdkRequest({ path, method = 'GET', ...rest }: DirectSdkRequestOptions): Promise<AxiosResponse> {
+  makeDirectSdkRequest({ path, method = 'GET', ...rest }: DirectSdkRequestOptions): Promise<AxiosXHR<$FlowFixMe>> {
     const requestOptions = {
       url: getEnv().SDK_PROVIDER + path,
       defaultRequest: {
@@ -766,10 +768,10 @@ class SDKWrapper {
   }
 
   fetchAltalixAvailability(walletId: string): Promise<boolean> {
-    return this.makeDirectSdkRequest({
+    return retryOnNetworkError(() => this.makeDirectSdkRequest({
       path: '/user/location',
       params: { walletId },
-    })
+    }))
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
         reportErrorLog(
@@ -781,10 +783,10 @@ class SDKWrapper {
   }
 
   getSendwyreRates(walletId: string): Promise<SendwyreRates> {
-    return this.makeDirectSdkRequest({
+    return retryOnNetworkError(() => this.makeDirectSdkRequest({
       path: '/partners/wyre/exchange-rates',
       params: { walletId },
-    })
+    }))
       .then(response => response.data.exchangeRates)
       .catch(error => {
         reportErrorLog(
@@ -804,11 +806,11 @@ class SDKWrapper {
     // 400 Bad Request => country is supported
     // 403 Forbidden   => country is not supported
 
-    return this.makeDirectSdkRequest({
+    return retryOnNetworkError(() => this.makeDirectSdkRequest({
       path: '/partners/wyre/generate-order-reservation',
       method: 'POST',
       data: { walletId },
-    })
+    }))
       .then(() => true)
       .catch(error => {
         const { response: { status, data } = {} } = error;

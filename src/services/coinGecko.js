@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import axios, { AxiosResponse } from 'axios';
 
 // utils
 import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import httpRequest from 'utils/httpRequest';
 
 // constants
 import { ETH, supportedFiatCurrencies, BTC, WBTC } from 'constants/assetsConstants';
@@ -96,13 +96,13 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
   const contractAddressesQuery = assetsContractAddresses.join(',');
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
 
-  return axios.get(
+  return httpRequest.get(
     `${COINGECKO_API_URL}/simple/token_price/ethereum`
     + `?contract_addresses=${contractAddressesQuery}`
     + `&vs_currencies=${vsCurrenciesQuery}`,
     requestConfig,
   )
-    .then(({ data: responseData }: AxiosResponse) => {
+    .then(({ data: responseData }) => {
       if (!responseData) {
         reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', {
           response: responseData,
@@ -125,13 +125,13 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
 export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
   const walletCurrencies = supportedFiatCurrencies.concat(ETH); // for consistency, price returned is 1:1
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
-  return axios.get(
+  return httpRequest.get(
     `${COINGECKO_API_URL}/simple/price`
     + `?ids=${ETH_ID}`
     + `&vs_currencies=${vsCurrenciesQuery}`,
     requestConfig,
   )
-    .then(({ data: responseData }: AxiosResponse) => {
+    .then(({ data: responseData }) => {
       if (!responseData) {
         reportErrorLog('getCoinGeckoEtherPrice failed: unexpected response', { response: responseData });
         return null;
@@ -148,11 +148,11 @@ export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
 export const getCoinGeckoBitcoinAndWBTCPrices = async (): Promise<?Object> => {
   const walletCurrencies = supportedFiatCurrencies.concat(ETH);
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
-  return axios.get(
+  return httpRequest.get(
     `${COINGECKO_API_URL}/simple/price?ids=${BTC_ID},${WBTC_ID}&vs_currencies=${vsCurrenciesQuery}`,
     requestConfig,
   )
-    .then(({ data: responseData }: AxiosResponse) => {
+    .then(({ data: responseData }) => {
       if (!responseData) {
         reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: unexpected response', { response: responseData });
         return null;
