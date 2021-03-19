@@ -180,6 +180,7 @@
         "testID",
         "underlineColorAndroid",
         "url",
+        "variant",
         "viewBox",
         "d",
         "preserveAspectRatio",

@@ -42,6 +42,7 @@ import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
 import Modal from 'components/Modal';
+import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 
 // constants
 import {
@@ -308,6 +309,10 @@ const Menu = ({
     }
   };
 
+  const renderHeader = () => {
+    return <MigrateWalletBanner />;
+  };
+
   return (
     <ContainerWithHeader
       headerProps={{ leftItems: [{ close: true }], centerItems: [{ custom: <HeaderLogo source={logo} /> }] }}
@@ -318,6 +323,7 @@ const Menu = ({
         keyExtractor={item => item.key}
         renderItem={renderMenuItem}
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
+        ListHeaderComponent={renderHeader()}
         ListFooterComponent={
           <Footer>
             <LinksSection>

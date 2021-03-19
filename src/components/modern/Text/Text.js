@@ -1,7 +1,8 @@
+/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,29 +19,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import lightThemeColors from 'utils/themes/lightTheme';
-import { lightThemeColorsOld } from 'utils/themes';
+import * as React from 'react';
+import styled from 'styled-components/native';
 
-export type ColorKeyModern = $Keys<typeof lightThemeColors>;
-export type ColorKeyOld = $Keys<typeof lightThemeColorsOld>;
+// Utils
+import { appFont, fontStyles } from 'utils/variables';
 
-export type ColorKey = ColorKeyOld | ColorKeyModern;
-export type ThemeColors = {
-  [ColorKey]: string,
-};
-export type Theme = {
-  current: string,
-  colors: ThemeColors,
-};
+// Types
+import type { TextProps } from 'utils/types/react-native';
 
-export type ColorsByThemeProps = {|
-  lightKey?: ColorKeyModern,
-  darkKey?: ColorKeyModern,
-  lightCustom?: string,
-  darkCustom?: string,
-|};
+type TextVariant = $Keys<typeof fontStyles>;
 
-export type ThemedProps<T = {}> = {
-  ...T,
-  theme: Theme,
-};
+type Props = {|
+  ...TextProps,
+  variant?: TextVariant
+|}
+
+const Text: React.ComponentType<Props> = styled.Text`
+  font-family: '${appFont.regular}';
+  text-align-vertical: center;
+  color: ${({ theme }) => theme.colors.basic010};
+  ${({ variant }) => fontStyles[variant]}
+`;
+
+export default Text;

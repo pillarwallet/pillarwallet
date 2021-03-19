@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,29 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import lightThemeColors from 'utils/themes/lightTheme';
-import { lightThemeColorsOld } from 'utils/themes';
+import * as React from 'react';
+import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-export type ColorKeyModern = $Keys<typeof lightThemeColors>;
-export type ColorKeyOld = $Keys<typeof lightThemeColorsOld>;
+import Text from 'components/modern/Text';
 
-export type ColorKey = ColorKeyOld | ColorKeyModern;
-export type ThemeColors = {
-  [ColorKey]: string,
-};
-export type Theme = {
-  current: string,
-  colors: ThemeColors,
-};
+import { spacing } from 'utils/variables';
 
-export type ColorsByThemeProps = {|
-  lightKey?: ColorKeyModern,
-  darkKey?: ColorKeyModern,
-  lightCustom?: string,
-  darkCustom?: string,
-|};
+function MigrateWalletBanner() {
+  return (
+    <Container>
+      <Text variant="big">Migrate to Smart Wallet</Text>
+      <Text>Transfer all your assets to an advanced platform and start earning with new features.</Text>
+    </Container>
+  );
+}
 
-export type ThemedProps<T = {}> = {
-  ...T,
-  theme: Theme,
-};
+const Container: typeof View = styled.View`
+  margin-bottom: ${spacing.large}px;
+  padding: ${spacing.large}px;
+  background-color: green;
+`;
+
+export default MigrateWalletBanner;
