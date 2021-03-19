@@ -152,7 +152,7 @@ export const provideOptions = (
     rates,
   );
 
-  const assetsOptionsBuying = getExchangeToAssetOptions(
+  const assetsOptionsTo = getExchangeToAssetOptions(
     exchangeSupportedAssets,
     balances,
     baseFiatCurrency,
@@ -161,7 +161,7 @@ export const provideOptions = (
 
   return {
     fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
-    toOptions: assetsOptionsBuying,
+    toOptions: assetsOptionsTo,
   };
 };
 
