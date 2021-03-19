@@ -20,7 +20,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { BigNumber } from 'bignumber.js';
-import axios, { AxiosResponse } from 'axios';
 
 import type {
   GetAddressHistoryParams,
@@ -36,6 +35,7 @@ import type {
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
 
+import httpRequest from 'utils/httpRequest';
 import { API_REQUEST_TIMEOUT } from './api';
 
 
@@ -159,7 +159,7 @@ class EthplorerSdk {
   pubRequest(uri: string, params: string[] = []) {
     params.push(`apiKey=${this.apiKey}`);
     const url = `${this.baseURL}${uri}?${params.join('&')}`;
-    return axios.get(url, { timeout: API_REQUEST_TIMEOUT }).then(({ data }: AxiosResponse) => data);
+    return httpRequest.get(url, { timeout: API_REQUEST_TIMEOUT }).then(({ data }) => data);
   }
 }
 
