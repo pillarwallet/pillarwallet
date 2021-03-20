@@ -1218,10 +1218,10 @@
     testrpc "0.0.1"
     web3-utils "^1.0.0-beta.31"
 
-"@etherspot/contracts@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.1.0.tgz#6ec0d9ed4092cf84a5d0fa82a352f7f0c69730d6"
-  integrity sha512-8n/aQvNt/e58HB+tKFWPHDUXfdq9pCIc1eamyYZEKSZAZOw+xPfzOR8mrkIy9f4vSGKJTEbotiJmhWJueHUumg==
+"@etherspot/contracts@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.2.0.tgz#6db659b68537f301ce484c795f4e99d3f10f552f"
+  integrity sha512-UgkEJvv54lZaaiH4gS6EC07q2sRq1teuIJ0WPNFF+8nKc9u392+c6AyaTluzBrmdqHV1l6V+zkN20wMPkbtmSg==
 
 "@ethersproject/abi@5.0.7", "@ethersproject/abi@^5.0.5":
   version "5.0.7"
@@ -7840,11 +7840,6 @@ ethereumjs-wallet@^0.6.0:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-ethers-typed-data@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/ethers-typed-data/-/ethers-typed-data-0.1.0.tgz#e4dabdec8e0579e70e45f22643dc86f6e1d3f87e"
-  integrity sha512-BJVkeP+byTlZDiQS24SAUIGn8RM5HBshyRmj/yJwffroGWLMx8rVGRFdbjyIrPqo08+QRIjgjWfOpWPT/Ix/Xw==
-
 ethers@5.0.19:
   version "5.0.19"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.0.19.tgz#a4636f62a180135b13fd1f0a393477beafd535b7"
@@ -7880,17 +7875,16 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.1.1.tgz#69d6267dba3a6747ceb2ac8325b967d754ee3282"
-  integrity sha512-gDsTSMLab8dKfWhNEbKFIUaq6EuVJvNZDXPHy9m1oQ6GJp5AN6l6HYRloWSFfj8YaPs5P1baw4cLQIHZDrxsbg==
+etherspot@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.0.tgz#87b1a9a8757bb7d9c16f320170c92c1785615960"
+  integrity sha512-YJBKeV3GRfewm2NNkfV4Tgw80lmjZOI9svEHY/NsAhgZBleVT0Eb2xyibrcKgQwY7OHSen6ldppbf631jeQwgQ==
   dependencies:
     "@apollo/client" "3.3.11"
-    "@etherspot/contracts" "1.1.0"
+    "@etherspot/contracts" "1.2.0"
     class-transformer "0.4.0"
     class-validator "0.13.1"
     cross-fetch "3.0.6"
-    ethers-typed-data "0.1.0"
     graphql "15.5.0"
     subscriptions-transport-ws "0.9.18"
     validator "13.5.2"
