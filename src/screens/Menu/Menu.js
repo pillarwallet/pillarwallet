@@ -92,6 +92,10 @@ type Props = {
 const Footer = styled.View`
 `;
 
+const FooterBanner = styled.View`
+  margin: ${spacing.small}px 0 ${spacing.large}px;
+`;
+
 const LinksSection = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -138,10 +142,6 @@ const LogoutTextLink = styled(TextLink)`
 
 const LockScreenTextLink = styled(TextLink)`
   ${fontStyles.regular};
-`;
-
-const FooterBanner = styled(MigrateWalletBanner)`
-  margin: ${spacing.small}px 0 ${spacing.large}px;
 `;
 
 const SEPARATOR_SYMBOL = '  •  ';
@@ -251,6 +251,7 @@ const Menu = ({
   ];
 
   const navigateToKeyBasedAssetMigration = () => {
+    console.log("AAA");
     navigation.navigate(
       hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
     );

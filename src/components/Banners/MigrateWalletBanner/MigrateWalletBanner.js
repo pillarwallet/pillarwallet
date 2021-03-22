@@ -19,40 +19,55 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
+// Components
 import { Spacing } from 'components/Layout';
 import Text from 'components/modern/Text';
 
+// Utils
 import { spacing } from 'utils/variables';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 const logo = require('assets/images/no_logo.png');
 
-function MigrateWalletBanner() {
+type Props = {|
+  onPress: () => void;
+  style?: ViewStyleProp;
+|};
+
+function MigrateWalletBanner({ onPress, style }: Props) {
   const { t } = useTranslationWithPrefix('smartWalletContent.banner');
 
   return (
-    <Container colors={['#008606', '#000100']} locations={[0.05, 0.65]} useAngle angle={171}>
-      <Logo source={logo} />
+    <TouchableOpacity onPress={onPress} style={style}>
+      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
+        <Logo source={logo} />
 
-      <Summary>
-        <Text variant="big" font="medium" color="#fcfdff">
-          {t('title')}
-        </Text>
+        <Summary>
+          <Text variant="big" font="medium" color={TITLE_COLOR}>
+            {t('title')}
+          </Text>
 
-        <Spacing h={spacing.small} />
+          <Spacing h={spacing.small} />
 
-        <Text color="#fcfdff">{t('body')}</Text>
-      </Summary>
-    </Container>
+          <Text color={TITLE_COLOR}>{t('body')}</Text>
+        </Summary>
+      </BackgroundGradient>
+    </TouchableOpacity>
   );
 }
 
-const Container = styled(LinearGradient)`
+const GRADIENT_COLORS = ['#008606', '#000100'];
+const TITLE_COLOR = '#fcfdff';
+
+const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
-  margin-bottom: ${spacing.large}px;
   padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: green;
   border-radius: 20px;
