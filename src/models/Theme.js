@@ -39,8 +39,3 @@ export type ColorsByThemeProps = {|
   lightCustom?: string,
   darkCustom?: string,
 |};
-
-export type ThemedProps<T = {}> = {
-  ...T,
-  theme: Theme,
-};
