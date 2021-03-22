@@ -68,7 +68,7 @@ export const useTranslationWithPrefix = (prefix: string) => {
 
   // eslint-disable-next-line no-shadow
   const t = React.useCallback(
-    (key: string, options?: any) => (key != null ? tRoot(`${prefix}.${key}`, options) : undefined),
+    (key: string, options?: any): string => (key != null ? tRoot(`${prefix}.${key}`, options) : ''),
     [tRoot, prefix],
   );
 

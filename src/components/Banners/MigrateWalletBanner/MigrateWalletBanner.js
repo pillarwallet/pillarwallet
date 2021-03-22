@@ -29,7 +29,7 @@ import { Spacing } from 'components/Layout';
 import Text from 'components/modern/Text';
 
 // Utils
-import { spacing } from 'utils/variables';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -50,13 +50,11 @@ function MigrateWalletBanner({ onPress, style }: Props) {
         <Icon source={smartWalletIcon} />
 
         <Summary>
-          <Text variant="big" font="medium" color={TITLE_COLOR}>
-            {t('title')}
-          </Text>
+          <Title>{t('title')}</Title>
 
           <Spacing h={spacing.small} />
 
-          <Text color={TITLE_COLOR}>{t('body')}</Text>
+          <Body>{t('body')}</Body>
         </Summary>
       </BackgroundGradient>
     </TouchableOpacity>
@@ -64,7 +62,6 @@ function MigrateWalletBanner({ onPress, style }: Props) {
 }
 
 const GRADIENT_COLORS = ['#008606', '#000100'];
-const TITLE_COLOR = '#fcfdff';
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
@@ -79,6 +76,16 @@ const Icon = styled.Image`
 
 const Summary = styled.View`
   flex: 1;
+`;
+
+const Title = styled(Text)`
+  font-family: '${appFont.medium}';
+  ${fontStyles.big};
+  color: #fcfdff;
+`;
+
+const Body = styled(Text)`
+  color: #fcfdff;
 `;
 
 export default MigrateWalletBanner;
