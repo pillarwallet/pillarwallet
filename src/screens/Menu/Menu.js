@@ -89,7 +89,8 @@ type Props = {
   keyBasedWalletHasPositiveBalance: boolean,
 };
 
-const Footer = styled.View``;
+const Footer = styled.View`
+`;
 
 const LinksSection = styled.View`
   flex-direction: row;
@@ -137,6 +138,10 @@ const LogoutTextLink = styled(TextLink)`
 
 const LockScreenTextLink = styled(TextLink)`
   ${fontStyles.regular};
+`;
+
+const FooterBanner = styled(MigrateWalletBanner)`
+  margin: ${spacing.small}px 0 ${spacing.large}px;
 `;
 
 const SEPARATOR_SYMBOL = '  •  ';
@@ -236,16 +241,6 @@ const Menu = ({
       action: () => Intercom.displayHelpCenter(),
     },
     {
-      key: 'assetsMigration',
-      title: t('settingsContent.settingsItem.assetsMigration.title'),
-      icon: 'send-asset',
-      iconColor: colors.accent,
-      hidden: isKeyBasedAssetsMigrationHidden,
-      action: () => navigation.navigate(
-        hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
-      ),
-    },
-    {
       key: 'storybook',
       title: 'Storybook', // eslint-disable-line i18next/no-literal-string
       icon: 'dictionary',
@@ -254,6 +249,12 @@ const Menu = ({
       hidden: !__DEV__,
     },
   ];
+
+  const navigateToKeyBasedAssetMigration = () => {
+    navigation.navigate(
+      hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
+    );
+  };
 
   const renderMenuItem = ({ item }) => {
     const {
@@ -309,10 +310,6 @@ const Menu = ({
     }
   };
 
-  const renderHeader = () => {
-    return <MigrateWalletBanner />;
-  };
-
   return (
     <ContainerWithHeader
       headerProps={{ leftItems: [{ close: true }], centerItems: [{ custom: <HeaderLogo source={logo} /> }] }}
@@ -320,12 +317,17 @@ const Menu = ({
     >
       <FlatList
         data={menuItems}
-        keyExtractor={item => item.key}
+        keyExtractor={(item) => item.key}
         renderItem={renderMenuItem}
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
-        ListHeaderComponent={renderHeader()}
         ListFooterComponent={
           <Footer>
+            {!isKeyBasedAssetsMigrationHidden && (
+              <FooterBanner>
+                <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} />
+              </FooterBanner>
+            )}
+
             <LinksSection>
               <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
                 {t('settingsContent.button.termOfUse')}
@@ -336,15 +338,11 @@ const Menu = ({
               </LegalTextLink>
             </LinksSection>
             <LockScreenSection>
-              <LockScreenTextLink onPress={lockScreen}>
-                {t('settingsContent.button.lockWallet')}
-              </LockScreenTextLink>
+              <LockScreenTextLink onPress={lockScreen}>{t('settingsContent.button.lockWallet')}</LockScreenTextLink>
             </LockScreenSection>
             <LogoutSection>
               <LogoutIcon name="signout" />
-              <LogoutTextLink onPress={deleteWallet}>
-                {t('settingsContent.button.signOut')}
-              </LogoutTextLink>
+              <LogoutTextLink onPress={deleteWallet}>{t('settingsContent.button.signOut')}</LogoutTextLink>
             </LogoutSection>
           </Footer>
         }

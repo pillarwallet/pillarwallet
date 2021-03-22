@@ -744,9 +744,6 @@
       "appSettings": {
         "title": "App settings"
       },
-      "assetsMigration": {
-        "title": "Migrate assets to Smart Wallet"
-      },
       "backup": {
         "title": "Backup not finished",
         "label": {
