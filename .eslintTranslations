@@ -24,6 +24,7 @@
         "dashed",
         "deg",
         "elevation",
+        "font-family",
         "font-size",
         "flex:",
         "flex-direction:",
