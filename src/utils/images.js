@@ -19,6 +19,7 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
+import { useTheme } from 'styled-components/native';
 import MD5 from 'crypto-js/md5';
 import { getEnv } from 'configs/envConfig';
 import type { Theme } from 'models/Theme';
@@ -158,6 +159,8 @@ export const images = (theme: Theme) => {
     }),
   };
 };
+
+export const useThemedImages = () => images(useTheme());
 
 export const staticImages = {
   uniswapLightVertical,

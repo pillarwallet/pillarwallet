@@ -20,18 +20,19 @@
 
 import React from 'react';
 import { FlatList, Alert, View } from 'react-native';
-import Emoji from 'react-native-emoji';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
-import Intercom from 'react-native-intercom';
-import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
+import Intercom from 'react-native-intercom';
+import Emoji from 'react-native-emoji';
+
 import t from 'translations/translate';
-import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
-import { getColorByTheme, getThemeColors } from 'utils/themes';
+import { getColorByTheme, useThemeColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
-import { images } from 'utils/images';
+import { useThemedImages } from 'utils/images';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -71,14 +72,11 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
 
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  theme: Theme,
+type Props = {|
   user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
@@ -87,68 +85,9 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   hasKeyBasedAssetsTransferInProgress: boolean,
   keyBasedWalletHasPositiveBalance: boolean,
-};
-
-const Footer = styled.View`
-`;
-
-const FooterBanner = styled.View`
-  margin: ${spacing.small}px 0 ${spacing.large}px;
-`;
-
-const LinksSection = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: ${spacing.mediumLarge}px 0;
-`;
-
-const LogoutSection = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-`;
-
-const LockScreenSection = styled.View`
-  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.mediumLarge}px;
-`;
-
-const HeaderLogo = styled(Image)`
-  width: 68px;
-  height: 20px;
-`;
-
-const LogoutIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  ${fontStyles.regular};
-  margin-right: 5px;
-`;
-
-const LegalTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
-const LogoutTextLink = styled(TextLink)`
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  ${fontStyles.regular};
-`;
-
-const LockScreenTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
-const SEPARATOR_SYMBOL = '  •  ';
+|};
 
 const Menu = ({
-  theme,
-  navigation,
   goToInvitationFlow,
   isPillarRewardCampaignActive,
   hasKeyBasedAssetsTransferInProgress,
@@ -157,18 +96,16 @@ const Menu = ({
   lockScreen,
   keyBasedWalletHasPositiveBalance,
 }: Props) => {
-  const openLegalModal = (endpoint: string) => Modal.open(() => (
-    <HTMLContentModal htmlEndpoint={endpoint} />
-  ));
+  const navigation = useNavigation();
 
-  const { pillarLogoSmall: logo } = images(theme);
+  const { pillarLogoSmall: logo } = useThemedImages();
+  const colors = useThemeColors();
+
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
-  const colors = getThemeColors(theme);
 
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
-  const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
-    !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
-  );
+  const showMigrateWallet =
+    (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
 
   type MenuItem = {|
     key: string,
@@ -250,8 +187,9 @@ const Menu = ({
     },
   ];
 
+  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+
   const navigateToKeyBasedAssetMigration = () => {
-    console.log("AAA");
     navigation.navigate(
       hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
     );
@@ -323,7 +261,7 @@ const Menu = ({
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         ListFooterComponent={
           <Footer>
-            {!isKeyBasedAssetsMigrationHidden && (
+            {showMigrateWallet && (
               <FooterBanner>
                 <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} />
               </FooterBanner>
@@ -378,4 +316,60 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(Menu));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(Menu);
+
+const SEPARATOR_SYMBOL = '  •  ';
+
+const Footer = styled.View``;
+
+const FooterBanner = styled.View`
+  margin: ${spacing.small}px 0 ${spacing.large}px;
+`;
+
+const LinksSection = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: ${spacing.mediumLarge}px 0;
+`;
+
+const LogoutSection = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+`;
+
+const LockScreenSection = styled.View`
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.mediumLarge}px;
+`;
+
+const HeaderLogo = styled(Image)`
+  width: 68px;
+  height: 20px;
+`;
+
+const LogoutIcon = styled(Icon)`
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  ${fontStyles.regular};
+  margin-right: 5px;
+`;
+
+const LegalTextLink = styled(TextLink)`
+  ${fontStyles.regular};
+`;
+
+const LogoutTextLink = styled(TextLink)`
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  ${fontStyles.regular};
+`;
+
+const LockScreenTextLink = styled(TextLink)`
+  ${fontStyles.regular};
+`;
