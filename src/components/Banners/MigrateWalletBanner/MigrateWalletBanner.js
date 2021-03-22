@@ -34,7 +34,7 @@ import { spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-const logo = require('assets/images/no_logo.png');
+const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
 
 type Props = {|
   onPress: () => void;
@@ -47,7 +47,7 @@ function MigrateWalletBanner({ onPress, style }: Props) {
   return (
     <TouchableOpacity onPress={onPress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
-        <Logo source={logo} />
+        <Icon source={smartWalletIcon} />
 
         <Summary>
           <Text variant="big" font="medium" color={TITLE_COLOR}>
@@ -73,14 +73,12 @@ const BackgroundGradient = styled(LinearGradient)`
   border-radius: 20px;
 `;
 
-const Logo = styled.Image`
-  width: 45px;
-  height: 45px;
+const Icon = styled.Image`
+  margin-right: ${spacing.mediumLarge}px;
 `;
 
 const Summary = styled.View`
   flex: 1;
-  margin-left: ${spacing.mediumLarge}px;
 `;
 
 export default MigrateWalletBanner;
