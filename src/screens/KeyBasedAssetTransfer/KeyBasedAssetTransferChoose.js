@@ -18,11 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, RefreshControl } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
+import { SectionList, RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
@@ -38,6 +38,7 @@ import {
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
+import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
 import { BaseText } from 'components/Typography';
 import Checkbox from 'components/Checkbox';
@@ -45,7 +46,8 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
-import { fontStyles, spacing } from 'utils/variables';
+import { compactFalsy } from 'utils/array';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 import {
   addressesEqual,
   getAssetData,
@@ -112,13 +114,6 @@ const KeyBasedAssetTransferChoose = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const availableAssets: AssetData[] = Object.keys(availableBalances)
-    // filter those with extremely low balances that are shown as 0 in app anyway
-    .filter((symbol) => !!getBalance(availableBalances, symbol))
-    .map((symbol) => getAssetData(supportedAssets, [], symbol))
-    .filter((assetData) => !isEmpty(assetData))
-    .map(mapAssetToAssetData);
-
   const onAssetSelect = (assetData: AssetData, amount?: number) => {
     const assetExist = keyBasedAssetsToTransfer.some(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, assetData),
@@ -127,42 +122,60 @@ const KeyBasedAssetTransferChoose = ({
     if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };
 
-  const mappedAvailableCollectible: AssetData[] = availableCollectibles.map(mapCollectibleToAssetData);
+  const prepareSectionsData = () => {
+    const assets = Object.keys(availableBalances)
+      // filter out extremely low balances that are shown as 0 in app anyway
+      .filter((symbol) => !!getBalance(availableBalances, symbol))
+      .map((symbol) => getAssetData(supportedAssets, [], symbol))
+      .filter((assetData) => !isEmpty(assetData))
+      .map(mapAssetToAssetData);
 
-  const renderAsset = ({ item }) => {
-    const { icon, name: assetName, token: assetSymbol } = item;
-    const assetBalance = getBalance(availableBalances, assetSymbol);
+    const collectibles = availableCollectibles.map(mapCollectibleToAssetData);
+
+    return compactFalsy([
+      !!assets?.length && { title: t('label.tokens'), data: assets },
+      !!collectibles?.length && { title: t('label.collectibles'), data: collectibles },
+    ]);
+  };
+
+  const sections = prepareSectionsData();
+
+  const renderSectionHeader = (section) => {
+    return <SectionTitle>{section.title}</SectionTitle>;
+  };
+
+  const renderItem = (item: AssetData) => {
+    if (item.tokenType === COLLECTIBLES) {
+      const isChecked = keyBasedAssetsToTransfer.some((assetToTransfer) =>
+        isMatchingAssetToTransfer(assetToTransfer, item),
+      );
+      const onCheck = () => onAssetSelect(item);
+
+      return (
+        <ListItemWithImage
+          label={item.name}
+          itemImageUrl={item.icon}
+          fallbackToGenericToken
+          onPress={onCheck}
+          customAddon={renderCheckbox(onCheck, isChecked, { marginRight: 4 })}
+          rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
+        />
+      );
+    }
+
     const checkedAsset = keyBasedAssetsToTransfer.find((assetToTransfer) =>
       isMatchingAssetToTransfer(assetToTransfer, item),
     );
-    const assetAmount = checkedAsset?.draftAmount || assetBalance;
-    const formattedAmount = formatFullAmount(assetAmount);
+    const assetAmount = checkedAsset?.draftAmount || getBalance(availableBalances, item.token);
     const onCheck = () => onAssetSelect(item, assetAmount);
-    return (
-      <ListItemWithImage
-        label={assetName}
-        itemImageUrl={icon}
-        itemValue={t('tokenValue', { value: formattedAmount, token: assetSymbol })}
-        fallbackToGenericToken
-        onPress={onCheck}
-        customAddon={renderCheckbox(onCheck, !!checkedAsset, { marginLeft: 12 })}
-        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
-      />
-    );
-  };
-
-  const renderCollectible = ({ item }) => {
-    const isChecked = keyBasedAssetsToTransfer.some(
-      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
-    );
-    const onCheck = () => onAssetSelect(item);
     return (
       <ListItemWithImage
         label={item.name}
         itemImageUrl={item.icon}
+        itemValue={t('tokenValue', { value: formatFullAmount(assetAmount), token: item.token })}
         fallbackToGenericToken
         onPress={onCheck}
-        customAddon={renderCheckbox(onCheck, isChecked, { marginRight: 4 })}
+        customAddon={renderCheckbox(onCheck, !!checkedAsset, { marginLeft: 12 })}
         rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
@@ -207,15 +220,15 @@ const KeyBasedAssetTransferChoose = ({
         <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
       </WalletInfoContainer>
 
-      <FlatList
-        data={availableAssets}
+      <SectionList
+        sections={sections}
+        renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.token}
-        renderItem={renderAsset}
-        initialNumToRender={9}
-        ListEmptyComponent={renderEmptyResult(t('transactions.label.noAssetsFound'), isFetchingAvailableBalances)}
         refreshControl={
           <RefreshControl refreshing={isFetchingAvailableBalances} onRefresh={onAvailableBalancesRefresh} />
         }
+        ListEmptyComponent={renderEmptyResult(t('transactions.label.noAssetsFound'), isFetchingAvailableBalances)}
       />
     </ContainerWithHeader>
   );
@@ -281,6 +294,27 @@ const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
   </CheckboxWrapper>
 );
 
+const WalletInfoContainer = styled.View`
+  align-items: center;
+  margin-vertical: ${spacing.medium}px;
+`;
+
+const WalletInfoText = styled(Text)`
+  margin-bottom: ${spacing.small}px;
+  color: ${({ theme }) => theme.colors.basic030};
+`;
+
+const WalletInfoAddress = styled(TextWithCopy)`
+  ${fontStyles.small};
+`;
+
+const SectionTitle = styled(Text)`
+  padding: ${spacing.largePlus}px ${spacing.large}px ${spacing.extraSmall}px;
+  font-family: '${appFont.medium}';
+  ${fontStyles.big};
+  background-color: ${({ theme }) => theme.colors.basic070};
+`;
+
 const FooterInner = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -294,19 +328,4 @@ const CheckboxWrapper = styled.View`
   top: 0;
   height: 100%;
   justify-content: center;
-`;
-
-const WalletInfoContainer = styled.View`
-  align-items: center;
-  margin-top: ${spacing.medium}px;
-`;
-
-const WalletInfoText = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
-  margin-bottom: ${spacing.small}px;
-`;
-
-const WalletInfoAddress = styled(TextWithCopy)`
-  ${fontStyles.small};
 `;

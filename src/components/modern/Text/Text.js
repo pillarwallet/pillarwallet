@@ -23,7 +23,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Utils
-import { fontStyles } from 'utils/variables';
+import { appFont, fontStyles } from 'utils/variables';
 
 // Types
 import type { TextProps } from 'utils/types/react-native';
@@ -37,6 +37,7 @@ type Props = {|
 
 const Text: React.ComponentType<Props> = styled.Text`
   text-align-vertical: center;
+  font-family: "${appFont.regular}";
   color: ${({ theme }) => theme.colors.basic010};
   ${({ variant = 'regular' }) => fontStyles[variant]};
 `;
