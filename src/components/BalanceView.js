@@ -25,7 +25,6 @@ import { MediumText } from 'components/Typography';
 import { getCurrencySymbol, formatFiatValue } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-
 type Props = {
   balance: number,
   fiatCurrency: ?string,
@@ -34,7 +33,6 @@ type Props = {
   currencyTextStyle?: Object,
   balanceTextStyle?: Object,
 };
-
 
 const BalanceText = styled(MediumText)`
   font-size: 36px;
@@ -53,7 +51,6 @@ const BalanceWrapper = styled.View`
   justify-content: center;
   align-items: flex-start;
 `;
-
 
 class BalanceView extends React.PureComponent<Props> {
   render() {

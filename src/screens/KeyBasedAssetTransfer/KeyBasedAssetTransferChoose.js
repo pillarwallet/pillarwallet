@@ -37,7 +37,7 @@ import {
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
-import BalanceView from 'components/PortfolioBalance/BalanceView';
+import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
 import Text from 'components/modern/Text';
@@ -56,7 +56,6 @@ import {
   getBalanceInFiat,
   getFormattedBalanceInFiat,
 } from 'utils/assets';
-import { formatFiat } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 
