@@ -17,8 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import * as React from 'react';
+import { FlatList, RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
@@ -37,9 +37,7 @@ import {
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
-import SearchBlock from 'components/SearchBlock';
 import Button from 'components/Button';
-import Tabs from 'components/Tabs';
 import TextWithCopy from 'components/TextWithCopy';
 import { BaseText } from 'components/Typography';
 import Checkbox from 'components/Checkbox';
@@ -66,7 +64,6 @@ import type { Asset, AssetData, Balances, KeyBasedAssetTransfer } from 'models/A
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAvailableBalancesToTransfer: () => void,
@@ -83,69 +80,6 @@ type Props = {
   calculateTransactionsGas: () => void,
 };
 
-const FooterInner = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-`;
-
-const CheckboxWrapper = styled.View`
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  justify-content: center;
-`;
-
-const WalletInfoContainer = styled.View`
-  align-items: center;
-  margin-top: ${spacing.medium}px;
-`;
-
-const WalletInfoText = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
-  margin-bottom: ${spacing.small}px;
-`;
-
-const WalletInfoAddress = styled(TextWithCopy)`
-  ${fontStyles.small};
-`;
-
-const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
-  <Wrapper
-    flex={1}
-    style={{
-      paddingTop: 90,
-      paddingBottom: 90,
-      alignItems: 'center',
-    }}
-  >
-    {!isLoading && <EmptyStateParagraph title={emptyMessage} />}
-  </Wrapper>
-);
-
-const isMatchingAssetToTransfer = (
-  assetToTransfer: KeyBasedAssetTransfer,
-  assetData: AssetData,
-) => {
-  if (assetData?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === assetData?.token;
-  return assetToTransfer?.assetData?.id === assetData?.id
-    && addressesEqual(assetToTransfer?.assetData?.contractAddress, assetData?.contractAddress);
-};
-
-const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
-  <CheckboxWrapper>
-    <Checkbox
-      onPress={onPress}
-      checked={isChecked}
-      rounded
-      wrapperStyle={{ width: 24, ...wrapperStyle }}
-    />
-  </CheckboxWrapper>
-);
-
 const KeyBasedAssetTransferChoose = ({
   navigation,
   isFetchingAvailableBalances,
@@ -161,10 +95,6 @@ const KeyBasedAssetTransferChoose = ({
   keyBasedAssetsToTransfer,
   calculateTransactionsGas,
 }: Props) => {
-  const [activeTab, setActiveTab] = useState(TOKENS);
-  const [inSearchMode, setInSearchMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
   const onAvailableBalancesRefresh = () => {
     if (isFetchingAvailableBalances) return;
     fetchAvailableBalancesToTransfer();
@@ -176,7 +106,7 @@ const KeyBasedAssetTransferChoose = ({
   };
 
   // initial fetching
-  useEffect(() => {
+  React.useEffect(() => {
     onAvailableBalancesRefresh();
     onAvailableCollectiblesRefresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -189,12 +119,6 @@ const KeyBasedAssetTransferChoose = ({
     .filter((assetData) => !isEmpty(assetData))
     .map(mapAssetToAssetData);
 
-  const filteredAvailableAssets = !searchQuery || searchQuery.trim().length < 2
-    ? availableAssets
-    : availableAssets.filter(
-      (assetData: AssetData) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
-    );
-
   const onAssetSelect = (assetData: AssetData, amount?: number) => {
     const assetExist = keyBasedAssetsToTransfer.some(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, assetData),
@@ -203,15 +127,13 @@ const KeyBasedAssetTransferChoose = ({
     if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };
 
+  const mappedAvailableCollectible: AssetData[] = availableCollectibles.map(mapCollectibleToAssetData);
+
   const renderAsset = ({ item }) => {
-    const {
-      icon,
-      name: assetName,
-      token: assetSymbol,
-    } = item;
+    const { icon, name: assetName, token: assetSymbol } = item;
     const assetBalance = getBalance(availableBalances, assetSymbol);
-    const checkedAsset = keyBasedAssetsToTransfer.find(
-      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
+    const checkedAsset = keyBasedAssetsToTransfer.find((assetToTransfer) =>
+      isMatchingAssetToTransfer(assetToTransfer, item),
     );
     const assetAmount = checkedAsset?.draftAmount || assetBalance;
     const formattedAmount = formatFullAmount(assetAmount);
@@ -228,30 +150,6 @@ const KeyBasedAssetTransferChoose = ({
       />
     );
   };
-
-  const renderAssets = () => (
-    <FlatList
-      data={filteredAvailableAssets}
-      scrollEnabled={!inSearchMode}
-      keyExtractor={(item) => item.token}
-      renderItem={renderAsset}
-      initialNumToRender={9}
-      ListEmptyComponent={renderEmptyResult(t('transactions.label.noAssetsFound'), isFetchingAvailableBalances)}
-      refreshControl={
-        <RefreshControl
-          refreshing={isFetchingAvailableBalances}
-          onRefresh={onAvailableBalancesRefresh}
-        />
-      }
-    />
-  );
-
-  const mappedAvailableCollectible: AssetData[] = availableCollectibles.map(mapCollectibleToAssetData);
-  const filteredAvailableCollectibles = !searchQuery || searchQuery.trim().length < 2
-    ? mappedAvailableCollectible
-    : mappedAvailableCollectible.filter(
-      (assetData: AssetData) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
-    );
 
   const renderCollectible = ({ item }) => {
     const isChecked = keyBasedAssetsToTransfer.some(
@@ -270,38 +168,6 @@ const KeyBasedAssetTransferChoose = ({
     );
   };
 
-  const renderCollectibles = () => (
-    <FlatList
-      data={filteredAvailableCollectibles}
-      scrollEnabled={!inSearchMode}
-      keyExtractor={(item) => `${item.contractAddress ?? ''}${item.id ?? ''}`}
-      renderItem={renderCollectible}
-      initialNumToRender={9}
-      ListEmptyComponent={
-        renderEmptyResult(t('transactions.label.noCollectiblesFound'), isFetchingAvailableCollectibles)
-      }
-      refreshControl={
-        <RefreshControl
-          refreshing={isFetchingAvailableCollectibles}
-          onRefresh={onAvailableCollectiblesRefresh}
-        />
-      }
-    />
-  );
-
-  const assetsTabs = [
-    {
-      id: TOKENS,
-      name: t('label.tokens'),
-      onPress: () => setActiveTab(TOKENS),
-    },
-    {
-      id: COLLECTIBLES,
-      name: t('label.collectibles'),
-      onPress: () => setActiveTab(COLLECTIBLES),
-    },
-  ];
-
   const editAmountSetting = {
     link: t('button.edit'),
     onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT),
@@ -315,46 +181,42 @@ const KeyBasedAssetTransferChoose = ({
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('transactions.title.transferAssetsToSmartWalletScreen') }],
-        rightItems: [hasTokensSelected && activeTab !== COLLECTIBLES ? editAmountSetting : {}],
+        rightItems: [hasTokensSelected ? editAmountSetting : {}],
       }}
-      footer={!isEmpty(keyBasedAssetsToTransfer) && !inSearchMode && (
-        <Footer>
-          <FooterInner>
-            <Button
-              style={{ marginLeft: 'auto' }}
-              small
-              title={t('button.next')}
-              onPress={() => {
-                calculateTransactionsGas(); // start calculating
-                navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
-              }}
-              block={false}
-            />
-          </FooterInner>
-        </Footer>
-      )}
+      footer={
+        !isEmpty(keyBasedAssetsToTransfer) && (
+          <Footer>
+            <FooterInner>
+              <Button
+                style={{ marginLeft: 'auto' }}
+                small
+                title={t('button.next')}
+                onPress={() => {
+                  calculateTransactionsGas(); // start calculating
+                  navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
+                }}
+                block={false}
+              />
+            </FooterInner>
+          </Footer>
+        )
+      }
     >
-      <ScrollView stickyHeaderIndices={[2]} scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
-        <WalletInfoContainer>
-          <WalletInfoText>{t('transactions.label.migratingFrom')}</WalletInfoText>
-          <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
-        </WalletInfoContainer>
+      <WalletInfoContainer>
+        <WalletInfoText>{t('transactions.label.migratingFrom')}</WalletInfoText>
+        <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
+      </WalletInfoContainer>
 
-        <SearchBlock
-          searchInputPlaceholder={t('label.searchAsset')}
-          onSearchChange={(query) => setSearchQuery(query)}
-          itemSearchState={searchQuery.length >= 2}
-          navigation={navigation}
-          wrapperStyle={{ paddingVertical: spacing.small }}
-          onSearchFocus={() => setInSearchMode(true)}
-          onSearchBlur={() => setInSearchMode(false)}
-          hideOverlay
-        />
-
-        <Tabs tabs={assetsTabs} activeTab={activeTab} />
-        {activeTab === TOKENS && renderAssets()}
-        {activeTab === COLLECTIBLES && renderCollectibles()}
-      </ScrollView>
+      <FlatList
+        data={availableAssets}
+        keyExtractor={(item) => item.token}
+        renderItem={renderAsset}
+        initialNumToRender={9}
+        ListEmptyComponent={renderEmptyResult(t('transactions.label.noAssetsFound'), isFetchingAvailableBalances)}
+        refreshControl={
+          <RefreshControl refreshing={isFetchingAvailableBalances} onRefresh={onAvailableBalancesRefresh} />
+        }
+      />
     </ContainerWithHeader>
   );
 };
@@ -390,3 +252,61 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferChoose);
+
+
+const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
+  <Wrapper
+    flex={1}
+    style={{
+      paddingTop: 90,
+      paddingBottom: 90,
+      alignItems: 'center',
+    }}
+  >
+    {!isLoading && <EmptyStateParagraph title={emptyMessage} />}
+  </Wrapper>
+);
+
+const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, assetData: AssetData) => {
+  if (assetData?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === assetData?.token;
+  return (
+    assetToTransfer?.assetData?.id === assetData?.id &&
+    addressesEqual(assetToTransfer?.assetData?.contractAddress, assetData?.contractAddress)
+  );
+};
+
+const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
+  <CheckboxWrapper>
+    <Checkbox onPress={onPress} checked={isChecked} rounded wrapperStyle={{ width: 24, ...wrapperStyle }} />
+  </CheckboxWrapper>
+);
+
+const FooterInner = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+`;
+
+const CheckboxWrapper = styled.View`
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  justify-content: center;
+`;
+
+const WalletInfoContainer = styled.View`
+  align-items: center;
+  margin-top: ${spacing.medium}px;
+`;
+
+const WalletInfoText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin-bottom: ${spacing.small}px;
+`;
+
+const WalletInfoAddress = styled(TextWithCopy)`
+  ${fontStyles.small};
+`;
