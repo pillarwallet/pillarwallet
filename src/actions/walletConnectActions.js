@@ -63,7 +63,7 @@ import {
   getAccountAddress,
   findFirstArchanovaAccount,
   getActiveAccount,
-  checkIfSmartWalletAccount,
+  isSmartWalletAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
@@ -440,7 +440,7 @@ export const approveSessionAction = (peerId: string) => {
     } = getState();
     try {
       let account = getActiveAccount(accounts);
-      if (!account || !checkIfSmartWalletAccount(account)) {
+      if (!account || !isSmartWalletAccount(account)) {
         account = findFirstArchanovaAccount(accounts);
       }
       if (!account) {

@@ -27,7 +27,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
-import { checkIfSmartWalletAccount } from 'utils/accounts';
+import { isSmartWalletAccount } from 'utils/accounts';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -69,6 +69,6 @@ export const useGasTokenSelector = createSelector(
 export const isActiveAccountSmartWalletSelector = createSelector(
   activeAccountSelector,
   (activeAccount) => {
-    return activeAccount && checkIfSmartWalletAccount(activeAccount);
+    return activeAccount && isSmartWalletAccount(activeAccount);
   },
 );

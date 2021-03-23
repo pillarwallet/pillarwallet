@@ -108,9 +108,10 @@ export const getActiveAccountWalletId = (accounts: Accounts): string => {
   return activeAccount.walletId;
 };
 
-export const checkIfSmartWalletAccount = (account: Account): boolean => {
-  return account.type === ACCOUNT_TYPES.SMART_WALLET;
-};
+export const isSmartWalletAccount = (account: ?Account): boolean => [
+  ACCOUNT_TYPES.SMART_WALLET,
+  ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+].includes(account?.type);
 
 export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
@@ -154,10 +155,7 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
   return {};
 };
 
-export const getEnsName = (accounts: Accounts): string => {
-  const SWAccount = findFirstArchanovaAccount(accounts);
-  return get(SWAccount, 'extra.ensName', '');
-};
+export const getEnsName = (account: ?Account): ?string => account?.extra?.ensName;
 
 export const getSmartWalletAddress = (accounts: Accounts): ?string => {
   const swAccount = findFirstArchanovaAccount(accounts);

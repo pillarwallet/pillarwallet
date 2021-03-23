@@ -47,7 +47,6 @@ import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
@@ -64,8 +63,8 @@ import {
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
   findFirstEtherspotAccount,
-  getActiveAccountType,
   findFirstSmartWalletAccount,
+  isSmartWalletAccount,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
@@ -75,6 +74,9 @@ import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -112,7 +114,6 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
-
 
 const storage = Storage.getInstance('db');
 
@@ -254,13 +255,10 @@ export const loginAction = (
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
       const smartWalletAccount = findFirstSmartWalletAccount(accounts);
-      const isAnySmartWalletAccountActive = [
-        ACCOUNT_TYPES.SMART_WALLET,
-        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
-      ].includes(getActiveAccountType(accounts));
+      const activeAccount = activeAccountSelector(getState());
 
       // key based wallet migration – switch to smart wallet if key based was active
-      if (!isAnySmartWalletAccountActive && smartWalletAccount) {
+      if (!isSmartWalletAccount(activeAccount) && smartWalletAccount) {
         await dispatch(setActiveAccountAction(smartWalletAccount.id));
       }
 

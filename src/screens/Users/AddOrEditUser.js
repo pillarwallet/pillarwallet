@@ -59,9 +59,10 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { updatedProfileImageSelector } from 'selectors/user';
+import { activeAccountSelector } from 'selectors';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
 // partials
@@ -70,13 +71,14 @@ import CautionModal from './CautionModal';
 import VerifiedModal from './VerifiedModal';
 import InviteBanner from './InviteBanner';
 import ProfileImageModal from './ProfileImageModal';
+import { createStructuredSelector } from 'reselect';
 
 type Props = {
   oneTimePasswordSent: boolean,
   user: User,
   profileImage: string | null,
   updateUser: (walletId: string, field: Object) => void,
-  accounts: Accounts,
+  activeAccount: ?Account,
   theme: Theme,
   privacyInsightDismissed: boolean,
   verificationNoteDismissed: boolean,
@@ -561,11 +563,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { value, focusedField } = this.state;
     const {
       user: { username },
-      accounts,
+      activeAccount,
       profileImage,
     } = this.props;
 
-    const ensName = getEnsName(accounts);
+    const ensName = getEnsName(activeAccount);
+    const usernameOrEnsNamePresent = !!ensName || !!username;
 
     return (
       <ContainerWithHeader
@@ -591,8 +594,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                 </TouchableOpacity>
                 <Spacing h={20} />
                 {!!username && <MediumText large center>{username}</MediumText>}
-                <BaseText regular secondary center>{ensName}</BaseText>
-                <Spacing h={32} />
+                {!!ensName && <BaseText regular secondary center>{ensName}</BaseText>}
+                {usernameOrEnsNamePresent && <Spacing h={32} />}
               </View>
               <Form
                 ref={ref => { this.formRef = ref; }}
@@ -617,26 +620,28 @@ const mapStateToProps = ({
     data: user,
     oneTimePasswordSent,
   },
-  accounts: { data: accounts },
   insights: { privacyInsightDismissed, verificationNoteDismissed },
   referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   oneTimePasswordSent,
-  accounts,
   privacyInsightDismissed,
   verificationNoteDismissed,
   isPillarRewardCampaignActive,
 });
 
-const combinedMapStateToProps = state => ({
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+  profileImage: updatedProfileImageSelector
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
   ...mapStateToProps(state),
-  profileImage: updatedProfileImageSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  updateUser: (walletId: string, field: Object) =>
-    dispatch(updateUserAction(walletId, field)),
+  updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
   dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
   dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
