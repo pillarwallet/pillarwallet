@@ -64,7 +64,6 @@ import {
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
   findFirstEtherspotAccount,
-  findFirstArchanovaAccount,
   getActiveAccountType,
   findAnyFirstSmartWalletAccount,
 } from 'utils/accounts';
@@ -256,7 +255,7 @@ export const loginAction = (
       const smartWalletAccount = findAnyFirstSmartWalletAccount(accounts);
       const isAnySmartWalletAccountActive = [
         ACCOUNT_TYPES.SMART_WALLET,
-        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET
+        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
       ].includes(getActiveAccountType(accounts));
 
       // key based wallet migration – switch to smart wallet if key based was active
