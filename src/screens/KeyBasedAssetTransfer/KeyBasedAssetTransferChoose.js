@@ -214,18 +214,14 @@ const KeyBasedAssetTransferChoose = ({
       footer={
         !isEmpty(keyBasedAssetsToTransfer) && (
           <Footer>
-            <FooterInner>
               <Button
                 style={{ marginLeft: 'auto' }}
-                small
                 title={t('button.next')}
                 onPress={() => {
                   calculateTransactionsGas(); // start calculating
                   navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
                 }}
-                block={false}
               />
-            </FooterInner>
           </Footer>
         )
       }
@@ -332,11 +328,4 @@ const SectionTitle = styled(Text)`
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   background-color: ${({ theme }) => theme.colors.basic070};
-`;
-
-const FooterInner = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
 `;
