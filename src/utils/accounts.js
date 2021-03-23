@@ -94,11 +94,10 @@ export const findFirstEtherspotAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
-export const findAnyFirstSmartWalletAccount = (
+export const findFirstSmartWalletAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET)
   || findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
-
 
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);

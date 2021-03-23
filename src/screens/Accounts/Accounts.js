@@ -173,12 +173,13 @@ const AccountsScreen = ({
     );
   };
 
-  const sortedAccountsByEtherspotFirst = sortBy(
+  // etherspot account first
+  const sortedAccounts = sortBy(
     accounts,
     ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
   );
 
-  const walletsToShow: ListItem[] = sortedAccountsByEtherspotFirst
+  const walletsToShow: ListItem[] = sortedAccounts
     .filter(isNotKeyBasedType) // filter key based due deprecation
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;

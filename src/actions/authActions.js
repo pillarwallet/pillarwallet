@@ -65,7 +65,7 @@ import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
   findFirstEtherspotAccount,
   getActiveAccountType,
-  findAnyFirstSmartWalletAccount,
+  findFirstSmartWalletAccount,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
@@ -253,7 +253,7 @@ export const loginAction = (
       // init Etherspot SDK
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
-      const smartWalletAccount = findAnyFirstSmartWalletAccount(accounts);
+      const smartWalletAccount = findFirstSmartWalletAccount(accounts);
       const isAnySmartWalletAccountActive = [
         ACCOUNT_TYPES.SMART_WALLET,
         ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
