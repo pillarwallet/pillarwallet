@@ -30,6 +30,6 @@ export function mapNotNil<Item, Result>(items: Item[], selector: (Item, number, 
  * Type-safe version of `filter(Boolean)`
  */
 export function compactFalsy<Item>(items: (?Item | false)[]): Item[] {
-  // $FlowExpectError: flow cannot infer filtering behavior.
+  // $FlowFixMe: flow cannot infer filtering behavior.
   return items.filter(Boolean);
 }

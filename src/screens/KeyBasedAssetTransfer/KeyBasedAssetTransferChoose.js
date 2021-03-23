@@ -213,16 +213,15 @@ const KeyBasedAssetTransferChoose = ({
       }}
       footer={
         !isEmpty(keyBasedAssetsToTransfer) && (
-          <Footer>
-              <Button
-                style={{ marginLeft: 'auto' }}
-                title={t('button.next')}
-                onPress={() => {
-                  calculateTransactionsGas(); // start calculating
-                  navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
-                }}
-              />
-          </Footer>
+        <Footer>
+          <Button
+            title={t('button.next')}
+            onPress={() => {
+              calculateTransactionsGas(); // start calculating
+              navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
+            }}
+          />
+        </Footer>
         )
       }
     >
