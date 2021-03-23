@@ -87,7 +87,7 @@ const TooltipBalloon = styled.View`
   background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
   opacity: 0.8;
   padding: ${spacing.medium}px ${spacing.mediumLarge}px;
-  border-radius: 1000px;
+  border-radius: 21px;
   align-items: center;
 `;
 
