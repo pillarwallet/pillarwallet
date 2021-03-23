@@ -18,17 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { constants as EthersConstants, utils as EthersUtils } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
   Account as EtherspotAccount,
   Accounts as EtherspotAccounts,
   EnvNames,
+  ENSNode,
 } from 'etherspot';
 
 // utils
-import { reportErrorLog } from 'utils/common';
+import { getFullENSName, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// types
+import type { Asset, Balance } from 'models/Asset';
 
 
 class EtherspotService {
@@ -59,6 +67,73 @@ class EtherspotService {
         reportErrorLog('EtherspotService getAccounts -> getConnectedAccounts failed', { error });
         return null;
       });
+  }
+
+  async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
+    const assetAddresses = assets
+      // 0x0...0 is default ETH address in our assets, but it's not a token
+      .filter(({ address }) => !isCaseInsensitiveMatch(address, EthersConstants.AddressZero))
+      .map(({ address }) => address);
+
+    let balancesRequestPayload = {
+      account: accountAddress,
+    };
+
+    if (assetAddresses.length) {
+      balancesRequestPayload = {
+        ...balancesRequestPayload,
+        tokens: assetAddresses,
+      };
+    }
+
+    // gets balances by provided token (asset) address and ETH balance regardless
+    const accountBalances = await this.sdk
+      .getAccountBalances(balancesRequestPayload)
+      .catch((error) => {
+        reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
+        return null;
+      });
+
+    if (!accountBalances) {
+      return []; // logged above, no balances
+    }
+
+    // map to our Balance type
+    return accountBalances.items.reduce((balances, { balance, token }) => {
+      // if SDK returned token value is null then it's ETH
+      const asset = assets.find(({
+        address,
+        symbol,
+      }) => token === null ? symbol === ETH : isCaseInsensitiveMatch(address, token));
+
+      if (!asset) {
+        reportErrorLog('EtherspotService getBalances asset mapping failed', { token });
+        return balances;
+      }
+
+      return [
+        ...balances,
+        {
+          symbol: asset.symbol,
+          balance: EthersUtils.formatUnits(balance, asset.decimals),
+        },
+      ];
+    }, []);
+  }
+
+  reserveENSName(username: string): Promise<?ENSNode> {
+    const fullENSName = getFullENSName(username);
+    return this.sdk.reserveENSName({ name: fullENSName }).catch((error) => {
+      reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullENSName });
+      return null;
+    });
+  }
+
+  getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
+    return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
+      reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
+      return null;
+    });
   }
 
   async logout(): Promise<void> {

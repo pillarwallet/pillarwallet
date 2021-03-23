@@ -155,15 +155,16 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   setReceiver = async (value: ?Contact) => {
-    const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
+    const resolved = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
-    if (!receiver) {
+    if (!resolved?.receiver) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
     } else {
+      const { receiver, receiverEnsName = '' } = resolved;
       stateToUpdate = { selectedContact: value, receiver, receiverEnsName };
     }
 

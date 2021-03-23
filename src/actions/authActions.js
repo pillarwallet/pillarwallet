@@ -64,8 +64,9 @@ import {
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
   findFirstEtherspotAccount,
-  findFirstSmartAccount,
+  findFirstArchanovaAccount,
   getActiveAccountType,
+  findAnyFirstSmartWalletAccount,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
@@ -252,10 +253,14 @@ export const loginAction = (
       // init Etherspot SDK
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
-      const smartWalletAccount = findFirstSmartAccount(accounts);
+      const smartWalletAccount = findAnyFirstSmartWalletAccount(accounts);
+      const isAnySmartWalletAccountActive = [
+        ACCOUNT_TYPES.SMART_WALLET,
+        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET
+      ].includes(getActiveAccountType(accounts));
 
       // key based wallet migration – switch to smart wallet if key based was active
-      if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
+      if (!isAnySmartWalletAccountActive && smartWalletAccount) {
         await dispatch(setActiveAccountAction(smartWalletAccount.id));
       }
 

@@ -67,7 +67,10 @@
         "top:",
         "transparent",
         "width:",
-        "z-index"
+        "z-index",
+        "eth",
+        "crypto",
+        "zil"
       ],
       "ignoreCallee": [
         "Buffer.from",
@@ -131,7 +134,8 @@
         "toString",
         "uniqBy",
         "updateAppSettingsAction",
-        "variants"
+        "variants",
+        "getENSPrefix"
       ],
       "ignoreAttribute": [
         "align",

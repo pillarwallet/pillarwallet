@@ -40,7 +40,7 @@ import Image from 'components/Image';
 import Loader from 'components/Loader';
 
 // utils
-import { findFirstSmartAccount } from 'utils/accounts';
+import { findFirstArchanovaAccount } from 'utils/accounts';
 import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -108,7 +108,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     this.setState({ showLoader: true });
     await importSmartWalletAccounts(wallet.privateKey);
     const { accounts } = this.props;
-    const smartAccount = findFirstSmartAccount(accounts) || { id: '' };
+    const smartAccount = findFirstArchanovaAccount(accounts) || { id: '' };
     await switchAccount(smartAccount.id);
     navigation.navigate(ASSETS);
   };

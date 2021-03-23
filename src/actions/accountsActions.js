@@ -38,10 +38,10 @@ import {
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // utils
-import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
@@ -166,7 +166,7 @@ export const switchAccountAction = (accountId: string) => {
     if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
       if (sdkInitialized) {
         await dispatch(connectSmartWalletAccountAction(accountId));
-        dispatch(setUserEnsIfEmptyAction());
+        dispatch(checkUserENSNameAction());
       } else {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
@@ -190,7 +190,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       user: { data: user },
     } = getState();
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
@@ -212,7 +212,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     // following code should not be done if user is not registered on back-end
     if (!user?.walletId) return;
 
-    dispatch(setUserEnsIfEmptyAction());
+    dispatch(checkUserENSNameAction());
     dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };

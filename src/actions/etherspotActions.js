@@ -23,8 +23,9 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 
 // actions
-import { addAccountAction } from 'actions/accountsActions';
+import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
+import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
@@ -32,6 +33,7 @@ import etherspot from 'services/etherspot';
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
 import { reportErrorLog } from 'utils/common';
+import { findFirstEtherspotAccount } from 'utils/accounts';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -92,6 +94,12 @@ export const importEtherspotAccountsAction = () => {
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
 
+    // set active
+    dispatch(setActiveAccountAction(accountId));
+
+    // check ENS
+    dispatch(checkUserENSNameAction());
+
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
     await dispatch({
@@ -102,5 +110,27 @@ export const importEtherspotAccountsAction = () => {
     const assets = { [accountId]: initialAssets };
 
     dispatch(saveDbAction('assets', { assets }, true));
+  };
+};
+
+export const reserveEtherspotENSNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+    } = getState();
+
+    if (!isOnline) return; // nothing to do
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportErrorLog('reserveEtherspotENSNameAction failed: no Etherspot account found');
+      return;
+    }
+
+    const reserved = await etherspot.reserveENSName(username);
+    if (!reserved) {
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+    }
   };
 };

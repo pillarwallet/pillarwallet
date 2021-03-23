@@ -32,7 +32,7 @@ import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { images } from 'utils/images';
 import { switchAccountAction } from 'actions/accountsActions';
-import { getActiveAccountType, findFirstSmartAccount } from 'utils/accounts';
+import { getActiveAccountType, findFirstArchanovaAccount } from 'utils/accounts';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -66,7 +66,7 @@ class WalletActivated extends React.PureComponent<Props> {
     const { navigation, accounts, switchAccount } = this.props;
     const activeAccountType = getActiveAccountType(accounts);
     if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
-      const smartWallet = findFirstSmartAccount(accounts);
+      const smartWallet = findFirstArchanovaAccount(accounts);
       if (smartWallet) {
         await switchAccount(smartWallet.id);
       }

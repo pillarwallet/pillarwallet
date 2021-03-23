@@ -61,7 +61,7 @@ import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
 import {
   getAccountAddress,
-  findFirstSmartAccount,
+  findFirstArchanovaAccount,
   getActiveAccount,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
@@ -441,7 +441,7 @@ export const approveSessionAction = (peerId: string) => {
     try {
       let account = getActiveAccount(accounts);
       if (!account || !checkIfSmartWalletAccount(account)) {
-        account = findFirstSmartAccount(accounts);
+        account = findFirstArchanovaAccount(accounts);
       }
       if (!account) {
         Toast.show({

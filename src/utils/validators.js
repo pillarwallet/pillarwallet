@@ -32,8 +32,6 @@ type AddressValidator = {
   message: string,
 };
 
-const ETH_DOMAIN = 'eth';
-
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
     return t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
@@ -45,17 +43,19 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   return '';
 };
 
-export const isEnsName = (input: ?string): boolean => {
+
+const supportedDomains = [
+  'eth',
+  'crypto',
+  'zil',
+];
+
+export const isENSName = (input: ?string): boolean => {
   if (!input || !input.toString().includes('.')) return false;
 
   const domain = input.split('.').pop().toLowerCase();
-  const supportedDomains = [ETH_DOMAIN];
 
-  if (supportedDomains.includes(domain)) {
-    return true;
-  }
-
-  return false;
+  return supportedDomains.includes(domain);
 };
 
 export const isValidAddress = (input: ?string): boolean => {
@@ -70,7 +70,7 @@ export const isValidAddress = (input: ?string): boolean => {
 };
 
 export const isValidAddressOrEnsName = (input: ?string): boolean => {
-  return isEnsName(input) || isValidAddress(input);
+  return isENSName(input) || isValidAddress(input);
 };
 
 export const supportedAddressValidator = (address: string): boolean => {

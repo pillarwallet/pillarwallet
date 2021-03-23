@@ -113,7 +113,7 @@ import type SDKWrapper from 'services/api';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   findAccountById,
-  findFirstSmartAccount,
+  findFirstArchanovaAccount,
   getActiveAccountAddress,
   getActiveAccountId,
   normalizeForEns,
@@ -454,7 +454,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
@@ -1406,7 +1406,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
     }
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1442,7 +1442,7 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
     }
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1464,7 +1464,7 @@ export const setSmartWalletEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1504,7 +1504,7 @@ export const switchToGasTokenRelayerAction = () => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);

@@ -86,13 +86,19 @@ export const findKeyBasedAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.KEY_BASED);
 
-export const findFirstSmartAccount = (
+export const findFirstArchanovaAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
 
 export const findFirstEtherspotAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
+
+export const findAnyFirstSmartWalletAccount = (
+  accounts: Accounts,
+): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET)
+  || findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
+
 
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
@@ -114,6 +120,8 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
+      return t('legacySmartWallet');
+    case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWallet');
     default:
       return '';
@@ -148,12 +156,12 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 };
 
 export const getEnsName = (accounts: Accounts): string => {
-  const SWAccount = findFirstSmartAccount(accounts);
+  const SWAccount = findFirstArchanovaAccount(accounts);
   return get(SWAccount, 'extra.ensName', '');
 };
 
 export const getSmartWalletAddress = (accounts: Accounts): ?string => {
-  const swAccount = findFirstSmartAccount(accounts);
+  const swAccount = findFirstArchanovaAccount(accounts);
   if (!swAccount) return null;
   return getAccountAddress(swAccount);
 };

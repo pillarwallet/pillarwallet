@@ -46,6 +46,9 @@ import {
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 
+// services
+import etherspot from 'services/etherspot';
+
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
@@ -352,23 +355,17 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
+
 export const resolveEnsName = async (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  try {
-    return await provider.resolveName(ensName);
-  } catch (error) {
-    reportLog('getReceiverWithEnsName failed', { error });
-    return null;
-  }
+  const resolved = await etherspot.getENSNode(ensName);
+
+  return resolved?.address;
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  try {
-    return await provider.lookupAddress(address);
-  } catch (_) {
-    return null;
-  }
+  const resolved = await etherspot.getENSNode(address);
+
+  return resolved?.name;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {
@@ -608,9 +605,9 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv()
+export const getENSPrefix = () => isProdEnv()
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar.kovan';
+  : '.pillar'; // eslint-disable-line i18next/no-literal-string
 
 export const hitSlop10 = {
   top: 10,
@@ -660,3 +657,5 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
+
+export const getFullENSName = (username: string) => `${username}${getENSPrefix()}`;
