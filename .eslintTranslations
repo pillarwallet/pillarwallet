@@ -80,6 +80,8 @@
         "addListener",
         "axios.get",
         "axios.post",
+        "httpRequest.get",
+        "httpRequest.post",
         "buildApiUrl",
         "catchTransactionError",
         "debug",

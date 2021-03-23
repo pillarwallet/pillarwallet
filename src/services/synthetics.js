@@ -17,10 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getEnv } from 'configs/envConfig';
-import { API_REQUEST_TIMEOUT } from './api';
+import httpRequest from 'utils/httpRequest';
+import { API_REQUEST_TIMEOUT } from 'services/api';
 
+import type { $AxiosError, AxiosXHR } from 'axios';
 
 type SyntheticsConfig = {
   accessToken: string,
@@ -50,32 +51,32 @@ class SyntheticsService {
    * assetTo – asset symbol code
    */
   createExchangeIntent(assetToRecipient: string, assetToQuantity: number, assetTo: string) {
-    return axios.post(
+    return httpRequest.post(
       buildApiUrl('exchange/intent'),
       JSON.stringify({ assetToRecipient, assetToQuantity, assetTo }),
       this.apiConfig,
     )
       .then(this.handleResponse)
-      .catch((error: AxiosError) => ({ error }));
+      .catch((error: $AxiosError<$FlowFixMe>) => ({ error }));
   }
 
   commitTransaction(transactionId: string, transactionHash: string) {
-    return axios.post(
+    return httpRequest.post(
       buildApiUrl('exchange/commit'),
       JSON.stringify({ transactionId, transactionHash }),
       this.apiConfig,
     )
       .then(this.handleResponse)
-      .catch((error: AxiosError) => ({ error }));
+      .catch((error: $AxiosError<$FlowFixMe>) => ({ error }));
   }
 
   getDataFromLiquidityPool() {
-    return axios.get(buildApiUrl('exchange/data'), this.apiConfig)
+    return httpRequest.get(buildApiUrl('exchange/data'), this.apiConfig)
       .then(this.handleResponse)
-      .catch((error: AxiosError) => ({ error }));
+      .catch((error: $AxiosError<$FlowFixMe>) => ({ error }));
   }
 
-  handleResponse(response: AxiosResponse) {
+  handleResponse(response: AxiosXHR<$FlowFixMe>) {
     if (response.status === 200) return response.data;
     return Promise.reject(response.data);
   }

@@ -19,20 +19,33 @@
 */
 
 import { Contract } from 'ethers';
-import axios from 'axios';
+import t from 'translations/translate';
+
+// constants
 import { WBTC, BTC } from 'constants/assetsConstants';
 import { WBTC_PENDING_TRANSACTION, WBTC_SETTLED_TRANSACTION } from 'constants/exchangeConstants';
 import { TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import CURVE_ABI from 'abi/WBTCCurve.json';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// utils
 import { getEthereumProvider, reportLog } from 'utils/common';
+import httpRequest from 'utils/httpRequest';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+import { API_REQUEST_TIMEOUT } from 'services/api';
+
+// components
+import Toast from 'components/Toast';
+
+// other
+import CURVE_ABI from 'abi/WBTCCurve.json';
+import { getEnv } from 'configs/envConfig';
+
+// types
 import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction, FetchedWBTCTx } from 'models/WBTC';
 import type { Transaction } from 'models/Transaction';
-import { getEnv } from 'configs/envConfig';
-import Toast from 'components/Toast';
-import t from 'translations/translate';
-import { firebaseRemoteConfig } from 'services/firebase';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { API_REQUEST_TIMEOUT } from './api';
+
 /* eslint-disable i18next/no-literal-string */
 
 export const showWbtcErrorToast = () => {
@@ -123,7 +136,7 @@ export const isWbtcCafeActive = (): boolean => firebaseRemoteConfig.getBoolean(R
 export const fetchWBTCCafeTransactions = async (address: string) => {
   const { ETHPLORER_API_KEY, ETHPLORER_API_URL, WBTC_FROM_ADDRESS } = getEnv();
   try {
-    const response = await axios.get(
+    const response = await httpRequest.get(
       `${ETHPLORER_API_URL}/getAddressHistory/${address}?apiKey=${ETHPLORER_API_KEY}&type=transfer`,
       { timeout: API_REQUEST_TIMEOUT },
     );

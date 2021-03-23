@@ -171,3 +171,5 @@ export const getInitials = (fullName: string = '') => {
 };
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
+
+export const isNotEtherspotType = ({ type }: Account) => type !== ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET;
