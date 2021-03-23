@@ -53,15 +53,15 @@ import {
   getBalance,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
+  getFormattedBalanceInFiat,
 } from 'utils/assets';
-import { formatFullAmount } from 'utils/common';
 
 // constants
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 
 // types
-import type { Asset, AssetData, Balances, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Asset, AssetData, Balances, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -79,9 +79,15 @@ type Props = {
   walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
+  rates: ?Rates,
+  baseFiatCurrency: ?string,
 };
 
 const KeyBasedAssetTransferChoose = ({
+  walletAddress,
+  supportedAssets,
+  rates,
+  baseFiatCurrency,
   navigation,
   isFetchingAvailableBalances,
   isFetchingAvailableCollectibles,
@@ -89,8 +95,6 @@ const KeyBasedAssetTransferChoose = ({
   fetchAvailableCollectiblesToTransfer,
   availableBalances,
   availableCollectibles,
-  supportedAssets,
-  walletAddress,
   addKeyBasedAssetToTransfer,
   removeKeyBasedAssetToTransfer,
   keyBasedAssetsToTransfer,
@@ -114,15 +118,14 @@ const KeyBasedAssetTransferChoose = ({
   }, []);
 
   const onAssetSelect = (assetData: AssetData, amount?: number) => {
-    const assetExist = keyBasedAssetsToTransfer.some(
-      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, assetData),
+    const assetExist = keyBasedAssetsToTransfer.some((assetToTransfer) =>
+      isMatchingAssetToTransfer(assetToTransfer, assetData),
     );
     removeKeyBasedAssetToTransfer(assetData);
     if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };
 
   const prepareSectionsData = () => {
-    console.log('AAA', availableBalances);
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
@@ -165,16 +168,23 @@ const KeyBasedAssetTransferChoose = ({
     const checkedAsset = keyBasedAssetsToTransfer.find((assetToTransfer) =>
       isMatchingAssetToTransfer(assetToTransfer, item),
     );
+
     const assetAmount = checkedAsset?.draftAmount || getBalance(availableBalances, item.token);
+    const assetValue = getFormattedBalanceInFiat(baseFiatCurrency, assetAmount, rates || {}, item.token);
     const onCheck = () => onAssetSelect(item, assetAmount);
+
     return (
       <ListItemWithImage
         label={item.name}
         itemImageUrl={item.icon}
-        itemValue={t('tokenValue', { value: formatFullAmount(assetAmount), token: item.token })}
         onPress={onCheck}
         leftAddon={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
         fallbackToGenericToken
+        balance={{
+          token: item.token,
+          balance: assetAmount,
+          value: assetValue,
+        }}
       />
     );
   };
@@ -233,7 +243,11 @@ const KeyBasedAssetTransferChoose = ({
 };
 
 const mapStateToProps = ({
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
   assets: { supportedAssets },
+  rates: { data: rates },
   keyBasedAssetTransfer: {
     data: keyBasedAssetsToTransfer,
     availableBalances,
@@ -243,13 +257,15 @@ const mapStateToProps = ({
   },
   wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
+  walletAddress: walletData?.address,
+  supportedAssets,
+  rates,
+  baseFiatCurrency,
   keyBasedAssetsToTransfer,
   isFetchingAvailableBalances,
   isFetchingAvailableCollectibles,
   availableBalances,
   availableCollectibles,
-  supportedAssets,
-  walletAddress: walletData?.address,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
