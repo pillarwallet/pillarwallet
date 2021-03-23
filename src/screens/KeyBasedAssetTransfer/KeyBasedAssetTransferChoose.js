@@ -122,6 +122,7 @@ const KeyBasedAssetTransferChoose = ({
   };
 
   const prepareSectionsData = () => {
+    console.log('AAA', availableBalances);
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
@@ -278,11 +279,14 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
 );
 
 const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, asset: AssetData) => {
-  if (asset?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === asset?.token;
-  return (
-    assetToTransfer?.assetData?.id === asset?.id &&
-    addressesEqual(assetToTransfer?.assetData?.contractAddress, asset?.contractAddress)
-  );
+  if (asset?.tokenType === COLLECTIBLES) {
+    return (
+      assetToTransfer?.assetData?.id === asset?.id &&
+      addressesEqual(assetToTransfer?.assetData?.contractAddress, asset?.contractAddress)
+    );
+  }
+
+  return assetToTransfer?.assetData?.token === asset?.token;
 };
 
 const WalletInfoContainer = styled.View`
