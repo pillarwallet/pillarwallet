@@ -45,7 +45,7 @@ import { addressesEqual } from 'utils/assets';
 import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isENSName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
+import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
 // Types
@@ -114,7 +114,7 @@ const ContactDetailsModal = ({
 
   useEffect(() => {
     const handleAddressChange = async () => {
-      if (isENSName(debouncedAddress)) {
+      if (isEnsName(debouncedAddress)) {
         setIsResolvingEns(true);
         const resolvedAddress = await resolveEnsName(debouncedAddress);
         setIsResolvingEns(false);

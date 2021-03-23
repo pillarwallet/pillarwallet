@@ -357,13 +357,13 @@ export const getEthereumProvider = (network: string) => {
 
 
 export const resolveEnsName = async (ensName: string): Promise<?string> => {
-  const resolved = await etherspot.getENSNode(ensName);
+  const resolved = await etherspot.getEnsNode(ensName);
 
   return resolved?.address;
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const resolved = await etherspot.getENSNode(address);
+  const resolved = await etherspot.getEnsNode(address);
 
   return resolved?.name;
 };
@@ -605,9 +605,9 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getENSPrefix = () => isProdEnv()
-  ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar'; // eslint-disable-line i18next/no-literal-string
+export const getEnsPrefix = () => isProdEnv()
+  ? '.pillar.eth'
+  : '.pillar';
 
 export const hitSlop10 = {
   top: 10,
@@ -658,4 +658,4 @@ export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
 
-export const getFullENSName = (username: string) => `${username}${getENSPrefix()}`;
+export const getFullEnsName = (username: string) => `${username}${getEnsPrefix()}`;

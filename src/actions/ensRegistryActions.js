@@ -21,7 +21,7 @@
 import get from 'lodash.get';
 
 // actions
-import { reserveEtherspotENSNameAction } from 'actions/etherspotActions';
+import { reserveEtherspotEnsNameAction } from 'actions/etherspotActions';
 
 // constants
 import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
@@ -31,7 +31,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // utils
 import {
-  getFullENSName,
+  getFullEnsName,
   lookupAddress,
   reportErrorLog,
   resolveEnsName,
@@ -45,7 +45,7 @@ import { accountsSelector } from 'selectors';
 import { saveDbAction } from './dbActions';
 
 
-export const checkUserENSNameAction = () => {
+export const setEnsNameIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const user = getState().user.data;
     const { username } = user;
@@ -55,7 +55,7 @@ export const checkUserENSNameAction = () => {
       return;
     }
 
-    const fullEnsName = getFullENSName(username);
+    const fullEnsName = getFullEnsName(username);
     const resolvedAddress = await resolveEnsName(fullEnsName);
 
     // if address is resolved then it's either already taken or reserved
@@ -67,7 +67,7 @@ export const checkUserENSNameAction = () => {
     // perform clean Etherspot ENS reserve only for new accounts that does not have any Archanova account
     if (legacySmartWallet) return;
 
-    dispatch(reserveEtherspotENSNameAction(username));
+    dispatch(reserveEtherspotEnsNameAction(username));
   };
 };
 

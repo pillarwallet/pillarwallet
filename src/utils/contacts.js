@@ -27,7 +27,7 @@ import type { Contact } from 'models/Contact';
 
 // utils
 import { resolveEnsName } from './common';
-import { isValidAddress, isENSName } from './validators';
+import { isValidAddress, isEnsName } from './validators';
 
 type ResolveContactOptions = {|
   showNotification: boolean;
@@ -51,7 +51,7 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
     return contact;
   }
 
-  if (isENSName(contact.ethAddress)) {
+  if (isEnsName(contact.ethAddress)) {
     const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {
@@ -73,7 +73,7 @@ export const getReceiverWithEnsName = async (
 ): Promise<?{ receiverEnsName?: string, receiver: ?string}> => {
   if (!ethAddressOrEnsName) return null;
 
-  if (isENSName(ethAddressOrEnsName)) {
+  if (isEnsName(ethAddressOrEnsName)) {
     const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
 
     if (!resolvedAddress && showNotification) {

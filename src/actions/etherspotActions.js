@@ -25,7 +25,7 @@ import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 // actions
 import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
-import { checkUserENSNameAction } from 'actions/ensRegistryActions';
+import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
@@ -98,7 +98,7 @@ export const importEtherspotAccountsAction = () => {
     dispatch(setActiveAccountAction(accountId));
 
     // check ENS
-    dispatch(checkUserENSNameAction());
+    dispatch(setEnsNameIfNeededAction());
 
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
@@ -113,7 +113,7 @@ export const importEtherspotAccountsAction = () => {
   };
 };
 
-export const reserveEtherspotENSNameAction = (username: string) => {
+export const reserveEtherspotEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -128,7 +128,7 @@ export const reserveEtherspotENSNameAction = (username: string) => {
       return;
     }
 
-    const reserved = await etherspot.reserveENSName(username);
+    const reserved = await etherspot.reserveEnsName(username);
     if (!reserved) {
       reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
     }

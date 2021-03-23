@@ -29,7 +29,7 @@ import {
 } from 'etherspot';
 
 // utils
-import { getFullENSName, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { getFullEnsName, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 
 // constants
@@ -121,15 +121,15 @@ class EtherspotService {
     }, []);
   }
 
-  reserveENSName(username: string): Promise<?ENSNode> {
-    const fullENSName = getFullENSName(username);
-    return this.sdk.reserveENSName({ name: fullENSName }).catch((error) => {
-      reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullENSName });
+  reserveEnsName(username: string): Promise<?ENSNode> {
+    const fullEnsName = getFullEnsName(username);
+    return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
+      reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;
     });
   }
 
-  getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
+  getEnsNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
       return null;

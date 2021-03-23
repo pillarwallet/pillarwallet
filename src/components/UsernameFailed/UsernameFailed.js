@@ -42,7 +42,7 @@ import { getUsernameInputIcon } from 'screens/NewProfile';
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { validateUsername } from 'utils/validators';
-import { getENSPrefix } from 'utils/common';
+import { getEnsPrefix } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -160,7 +160,7 @@ const UsernameFailed = ({
           <TextInput
             errorMessage={usernameValidationErrorMessage || errorMessage}
             loading={isCheckingUsername}
-            rightPlaceholder={getENSPrefix()}
+            rightPlaceholder={getEnsPrefix()}
             iconProps={{
               icon: statusIcon,
               color: iconColor,

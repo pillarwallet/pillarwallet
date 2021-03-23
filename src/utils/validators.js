@@ -50,7 +50,7 @@ const supportedDomains = [
   'zil',
 ];
 
-export const isENSName = (input: ?string): boolean => {
+export const isEnsName = (input: ?string): boolean => {
   if (!input || !input.toString().includes('.')) return false;
 
   const domain = input.split('.').pop().toLowerCase();
@@ -70,7 +70,7 @@ export const isValidAddress = (input: ?string): boolean => {
 };
 
 export const isValidAddressOrEnsName = (input: ?string): boolean => {
-  return isENSName(input) || isValidAddress(input);
+  return isEnsName(input) || isValidAddress(input);
 };
 
 export const supportedAddressValidator = (address: string): boolean => {
