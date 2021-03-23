@@ -18,14 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
 import { SectionList, RefreshControl } from 'react-native';
-import styled from 'styled-components/native';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
+import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import {
   addKeyBasedAssetToTransferAction,
   calculateKeyBasedAssetsToTransferTransactionGasAction,
@@ -34,16 +34,16 @@ import {
   removeKeyBasedAssetToTransferAction,
 } from 'actions/keyBasedAssetTransferActions';
 
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+// Components
 import { Footer, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
 import { compactFalsy } from 'utils/array';
@@ -58,18 +58,16 @@ import {
 } from 'utils/assets';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
-
-// constants
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+// Constants
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 
-// types
+// Types
 import type { Asset, AssetData, Balances, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   fetchAvailableBalancesToTransfer: () => void,
   fetchAvailableCollectiblesToTransfer: () => void,
   isFetchingAvailableBalances: boolean,
@@ -91,7 +89,6 @@ const KeyBasedAssetTransferChoose = ({
   supportedAssets,
   rates,
   baseFiatCurrency,
-  navigation,
   isFetchingAvailableBalances,
   isFetchingAvailableCollectibles,
   fetchAvailableBalancesToTransfer,
@@ -103,6 +100,8 @@ const KeyBasedAssetTransferChoose = ({
   keyBasedAssetsToTransfer,
   calculateTransactionsGas,
 }: Props) => {
+  const navigation = useNavigation();
+
   const onAvailableBalancesRefresh = () => {
     if (isFetchingAvailableBalances) return;
     fetchAvailableBalancesToTransfer();
