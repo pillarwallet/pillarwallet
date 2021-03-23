@@ -38,10 +38,9 @@ import {
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
+import CheckBox from 'components/modern/CheckBox';
 import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
-import { BaseText } from 'components/Typography';
-import Checkbox from 'components/Checkbox';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
@@ -155,10 +154,9 @@ const KeyBasedAssetTransferChoose = ({
         <ListItemWithImage
           label={item.name}
           itemImageUrl={item.icon}
-          fallbackToGenericToken
           onPress={onCheck}
-          customAddon={renderCheckbox(onCheck, isChecked, { marginRight: 4 })}
-          rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
+          leftAddon={<CheckBox value={isChecked} onValueChange={onCheck} />}
+          fallbackToGenericToken
         />
       );
     }
@@ -173,10 +171,9 @@ const KeyBasedAssetTransferChoose = ({
         label={item.name}
         itemImageUrl={item.icon}
         itemValue={t('tokenValue', { value: formatFullAmount(assetAmount), token: item.token })}
-        fallbackToGenericToken
         onPress={onCheck}
-        customAddon={renderCheckbox(onCheck, !!checkedAsset, { marginLeft: 12 })}
-        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
+        leftAddon={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
+        fallbackToGenericToken
       />
     );
   };
@@ -280,19 +277,13 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
   </Wrapper>
 );
 
-const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, assetData: AssetData) => {
-  if (assetData?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === assetData?.token;
+const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, asset: AssetData) => {
+  if (asset?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === asset?.token;
   return (
-    assetToTransfer?.assetData?.id === assetData?.id &&
-    addressesEqual(assetToTransfer?.assetData?.contractAddress, assetData?.contractAddress)
+    assetToTransfer?.assetData?.id === asset?.id &&
+    addressesEqual(assetToTransfer?.assetData?.contractAddress, asset?.contractAddress)
   );
 };
-
-const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
-  <CheckboxWrapper>
-    <Checkbox onPress={onPress} checked={isChecked} rounded wrapperStyle={{ width: 24, ...wrapperStyle }} />
-  </CheckboxWrapper>
-);
 
 const WalletInfoContainer = styled.View`
   align-items: center;
@@ -320,12 +311,4 @@ const FooterInner = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-`;
-
-const CheckboxWrapper = styled.View`
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  justify-content: center;
 `;
