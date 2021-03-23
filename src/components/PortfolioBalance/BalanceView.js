@@ -22,13 +22,13 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 import { MediumText } from 'components/Typography';
-import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { getCurrencySymbol, formatFiatValue } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 
 type Props = {
   balance: number,
-  fiatCurrency: string,
+  fiatCurrency: ?string,
   label?: string,
   style?: Object,
   currencyTextStyle?: Object,
@@ -61,7 +61,7 @@ class BalanceView extends React.PureComponent<Props> {
       style, fiatCurrency, balance, currencyTextStyle, balanceTextStyle,
     } = this.props;
 
-    const portfolioBalance = formatMoney(balance, 2, 3, ',', '.', false);
+    const portfolioBalance = formatFiatValue(balance);
     const currency = fiatCurrency || defaultFiatCurrency;
     const currencySymbol = getCurrencySymbol(currency);
 

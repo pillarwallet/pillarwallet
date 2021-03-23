@@ -37,6 +37,7 @@ import {
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
+import BalanceView from 'components/PortfolioBalance/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
 import Text from 'components/modern/Text';
@@ -46,15 +47,18 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
 import { compactFalsy } from 'utils/array';
-import { appFont, fontStyles, spacing } from 'utils/variables';
 import {
   addressesEqual,
   getAssetData,
   getBalance,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
+  getBalanceInFiat,
   getFormattedBalanceInFiat,
 } from 'utils/assets';
+import { formatFiat } from 'utils/common';
+import { appFont, fontStyles, spacing } from 'utils/variables';
+
 
 // constants
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
@@ -198,6 +202,11 @@ const KeyBasedAssetTransferChoose = ({
     keyBasedAssetsToTransfer.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
   );
 
+  let totalValue = 0;
+  keyBasedAssetsToTransfer.forEach((asset) => {
+    totalValue += getBalanceInFiat(baseFiatCurrency, asset.draftAmount, rates || {}, asset.assetData.token);
+  });
+
   return (
     <ContainerWithHeader
       headerProps={{
@@ -224,7 +233,8 @@ const KeyBasedAssetTransferChoose = ({
       }
     >
       <WalletInfoContainer>
-        <WalletInfoText>{t('transactions.label.migratingFrom')}</WalletInfoText>
+        <BalanceView fiatCurrency={baseFiatCurrency} balance={totalValue} />
+        <WalletInfo>{t('transactions.label.migratingFrom')}</WalletInfo>
         <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
       </WalletInfoContainer>
 
@@ -307,11 +317,11 @@ const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, asset
 
 const WalletInfoContainer = styled.View`
   align-items: center;
-  margin-vertical: ${spacing.medium}px;
+  margin: ${spacing.extraLarge}px 0 ${spacing.medium}px;
 `;
 
-const WalletInfoText = styled(Text)`
-  margin-bottom: ${spacing.small}px;
+const WalletInfo = styled(Text)`
+  margin: ${spacing.extraSmall}px 0 ${spacing.small}px;
   color: ${({ theme }) => theme.colors.basic030};
 `;
 

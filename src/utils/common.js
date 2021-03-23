@@ -265,15 +265,16 @@ export const commify = (
   return formatedValue;
 };
 
-export const formatFiat = (
-  src: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
-): string => {
-  const formatedValue = commify(src, options);
-  const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const currencySymbol = getCurrencySymbol(fiatCurrency);
+export const formatFiatValue = (value: number | string, options?: { skipCents?: boolean }): string => {
+  const formatedValue = commify(value, options);
+  return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
+};
 
-  return `${currencySymbol} ${value}`;
+export const formatFiat = (
+  value: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
+): string => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  return `${getCurrencySymbol(fiatCurrency)} ${formatFiatValue(value, options)}`;
 };
 
 export const partial = (fn: Function, ...fixedArgs: any) => {
