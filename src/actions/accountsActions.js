@@ -38,7 +38,6 @@ import {
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
@@ -164,13 +163,12 @@ export const switchAccountAction = (accountId: string) => {
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
     if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
-      if (sdkInitialized) {
-        await dispatch(connectSmartWalletAccountAction(accountId));
-        dispatch(setEnsNameIfNeededAction());
-      } else {
+      if (!sdkInitialized) {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
       }
+
+      await dispatch(connectSmartWalletAccountAction(accountId));
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
@@ -212,7 +210,6 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     // following code should not be done if user is not registered on back-end
     if (!user?.walletId) return;
 
-    dispatch(setEnsNameIfNeededAction());
     dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };

@@ -111,6 +111,7 @@ import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
 } from './etherspotActions';
+import { setEnsNameIfNeededAction } from './ensRegistryActions';
 
 
 const storage = Storage.getInstance('db');
@@ -286,10 +287,12 @@ export const loginAction = (
           await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
         }
 
-        // silent Etherspot Smart Wallet creation
+        // silent Etherspot Smart Wallet creation or ENS check routine
         const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
         if (!etherspotSmartWalletAccount) {
           dispatch(importEtherspotAccountsAction());
+        } else {
+          dispatch(setEnsNameIfNeededAction());
         }
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());

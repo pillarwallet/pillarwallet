@@ -134,8 +134,7 @@
         "toString",
         "uniqBy",
         "updateAppSettingsAction",
-        "variants",
-        "getENSPrefix"
+        "variants"
       ],
       "ignoreAttribute": [
         "align",

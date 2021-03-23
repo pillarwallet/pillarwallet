@@ -97,7 +97,7 @@ export const importEtherspotAccountsAction = () => {
     // set active
     dispatch(setActiveAccountAction(accountId));
 
-    // check ENS
+    // set ENS if needed
     dispatch(setEnsNameIfNeededAction());
 
     // set default assets for active Etherspot wallet
