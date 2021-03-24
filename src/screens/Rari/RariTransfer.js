@@ -108,6 +108,7 @@ const RariTransferScreen = ({
 
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { rariPool } = navigation.state.params;
@@ -131,6 +132,7 @@ const RariTransferScreen = ({
     estimateTransaction(selectedContact.ethAddress, value, rariTokenData);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateTxFeeDebounced = useCallback(
     debounce(updateTxFee, 100),
     [amount, selectedContact, useGasToken],

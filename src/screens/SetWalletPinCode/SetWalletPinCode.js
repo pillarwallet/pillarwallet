@@ -64,6 +64,7 @@ const SetWalletPinCode = ({
 
   useEffect(() => {
     if (errorMessage) setErrorMessage(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pinCode]);
 
   const handlePinSubmit = (submittedPinCode: string) => {

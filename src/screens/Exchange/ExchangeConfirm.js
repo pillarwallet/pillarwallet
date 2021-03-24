@@ -124,6 +124,7 @@ const ExchangeConfirmScreen = ({
 
   useEffect(() => {
     if (!isWbtcCafe && !executingExchangeTransaction) navigation.goBack();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [executingExchangeTransaction]);
 
   const offerOrder: MixedOfferOrder = navigation.getParam('offerOrder', {});
@@ -178,6 +179,7 @@ const ExchangeConfirmScreen = ({
 
   useEffect(() => {
     if (isWbtcCafe) { fetchWbtcAddress(); } else { fetchTransactionEstimate(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onConfirmTransactionPress = () => {

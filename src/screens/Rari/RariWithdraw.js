@@ -115,6 +115,7 @@ const RariWithdrawScreen = ({
 }) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [selectedAsset, setSelectedAsset] = useState(assets[ETH]);
@@ -177,6 +178,7 @@ const RariWithdrawScreen = ({
           });
         }
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAssetValue, selectedAsset]);
 
   useEffect(() => {
@@ -218,6 +220,7 @@ const RariWithdrawScreen = ({
         }
       })
       .then(() => setIsCalculatingMaxAmount(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAsset]);
 
   const onNextButtonPress = () => {

@@ -168,6 +168,7 @@ const LiquidityPoolDashboard = ({
     if (!poolStats) {
       fetchLiquidityPoolsData(supportedLiquidityPools(supportedAssets));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -186,7 +187,10 @@ const LiquidityPoolDashboard = ({
       ));
       setShownStakingEnabledModal(pool.name);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolStats]);
+
+  const theme = useTheme();
 
   if (!poolStats) return <Loader />;
 
@@ -255,7 +259,6 @@ const LiquidityPoolDashboard = ({
     });
   }
 
-  const theme = useTheme();
   const { genericToken } = images(theme);
 
   return (
