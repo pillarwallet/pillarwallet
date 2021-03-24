@@ -57,7 +57,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 
 import ValueInputHeader from './ValueInputHeader';
 
-export type ExternalProps = {
+export type ExternalProps = {|
   disabled?: boolean,
   customAssets?: AssetOption[],
   customBalances?: Balances,
@@ -78,18 +78,18 @@ export type ExternalProps = {
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
   customRates?: Rates,
-};
+|};
 
-type InnerProps = {
+type InnerProps = {|
   assets: AssetOption[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
   collectibles: Collectible[],
   theme: Theme,
-};
+|};
 
-type Props = InnerProps & ExternalProps;
+type Props = {| ...InnerProps, ...ExternalProps |};
 
 const CollectibleWrapper = styled.View`
   align-items: center;
@@ -129,7 +129,6 @@ export const ValueInputComponent = ({
   baseFiatCurrency,
   rates,
   selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
-  // $FlowFixMe: weird `Property assetData is missing in InnerProps` flow error
   assetData,
   onAssetDataChange,
   onCollectibleAssetDataChange,

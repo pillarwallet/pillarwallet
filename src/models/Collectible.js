@@ -30,6 +30,7 @@ export type Collectible = {
   contractAddress: string,
   assetContract: string,
   tokenType: string,
+  symbol?: void,
 };
 
 export type CollectibleTrx = {
