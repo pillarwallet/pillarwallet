@@ -36,7 +36,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, noop, toFixedString } from 'utils/common';
+import { formatAmount, isValidNumber, wrapBigNumber, noop, toFixedString } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -104,12 +104,15 @@ export const getErrorMessage = (
   assetSymbol: string,
   fiatValue?: ?string,
 ): string => {
+  const amountBN = wrapBigNumber(amount);
+  const assetBalanceBN = wrapBigNumber(assetBalance);
+
   const isValid = isValidNumber(amount);
   if (!isValid || (!!fiatValue && !isValidNumber(fiatValue))) {
     return t('error.amount.invalidNumber');
-  } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
+  } else if (assetSymbol !== BTC && assetBalanceBN.lt(amountBN)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
-  } else if (assetSymbol === BTC && +amount && Number(amount) < MIN_WBTC_CAFE_AMOUNT) {
+  } else if (assetSymbol === BTC && amountBN.lt(MIN_WBTC_CAFE_AMOUNT)) {
     return t('wbtcCafe.higherAmount');
   }
   return '';
@@ -313,7 +316,6 @@ export const ValueInputComponent = (props: Props) => {
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
           inputWrapperStyle={{ zIndex: 10 }}
-          customInputHeight={62}
         />
       )}
       {tokenType === COLLECTIBLES && (

@@ -21545,12 +21545,14 @@ exports[`Storyshots ContactSelector default 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
@@ -21623,12 +21625,14 @@ exports[`Storyshots ContactSelector disabled 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
@@ -21749,12 +21753,14 @@ exports[`Storyshots ContactSelector selected contact 1`] = `
         style={
           Object {
             "backgroundColor": "#EBF0F6",
-            "borderRadius": 24,
+            "borderRadius": 1000,
+            "justifyContent": "center",
+            "minHeight": 44,
             "opacity": 1,
-            "paddingBottom": 10,
+            "paddingBottom": 12,
             "paddingLeft": 16,
             "paddingRight": 16,
-            "paddingTop": 10,
+            "paddingTop": 12,
           }
         }
       >
@@ -48081,7 +48087,7 @@ exports[`Storyshots TextInput multiline 1`] = `
                           "fontFamily": "EuclidCircularB-Medium",
                           "fontSize": 14,
                           "height": 120,
-                          "lineHeight": 14,
+                          "lineHeight": 22,
                           "textAlignVertical": "top",
                         },
                         Object {
@@ -48368,7 +48374,7 @@ exports[`Storyshots TextInput numeric 1`] = `
                           "color": "#0A1427",
                           "flex": 1,
                           "fontFamily": "EuclidCircularB-Medium",
-                          "fontSize": 34,
+                          "fontSize": 24,
                           "height": 54,
                           "lineHeight": null,
                           "textAlignVertical": "center",
@@ -48626,7 +48632,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                           "color": "#0A1427",
                           "flex": 1,
                           "fontFamily": "EuclidCircularB-Medium",
-                          "fontSize": 34,
+                          "fontSize": 24,
                           "height": 54,
                           "lineHeight": null,
                           "textAlignVertical": "center",
@@ -50597,7 +50603,7 @@ exports[`Storyshots Value Input default 1`] = `
                   "borderTopWidth": 0,
                   "borderWidth": undefined,
                   "flexDirection": "row",
-                  "height": 62,
+                  "height": 54,
                   "marginBottom": 0,
                   "marginLeft": 0,
                   "marginRight": 0,
@@ -50704,8 +50710,8 @@ exports[`Storyshots Value Input default 1`] = `
                           "color": "#0A1427",
                           "flex": 1,
                           "fontFamily": "EuclidCircularB-Medium",
-                          "fontSize": 34,
-                          "height": 62,
+                          "fontSize": 24,
+                          "height": 54,
                           "lineHeight": null,
                           "textAlignVertical": "center",
                         },

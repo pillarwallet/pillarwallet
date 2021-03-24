@@ -71,7 +71,7 @@ export const setEstimatingErrorAction = (errorMessage: string) => ({
 
 export const estimateTransactionAction = (
   recipientAddress: string,
-  value: number,
+  value: string | number,
   data: ?string,
   assetData: ?AssetData,
   sequential: ?AccountTransaction[],

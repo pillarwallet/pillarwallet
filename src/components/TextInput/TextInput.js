@@ -126,8 +126,8 @@ const InputBorder = styled.View`
 `;
 
 const ItemHolder = styled.View`
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   position: relative;
+  background-color: ${({ theme }) => theme.colors.inputField};
   border-radius: 4px;
 `;
 
