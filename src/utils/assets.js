@@ -347,19 +347,19 @@ export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
 
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
+  assetBalance: ?Value,
   rates: Rates,
   symbol: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
+    parseFloat(assetBalance.toString()) * getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceInFiat;
 };
 
 export const getFormattedBalanceInFiat = (
   baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
+  assetBalance: ?Value,
   rates: Rates,
   symbol: string,
 ): string => {

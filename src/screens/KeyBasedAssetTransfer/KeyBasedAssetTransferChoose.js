@@ -37,11 +37,11 @@ import {
 // Components
 import { Footer, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
 
@@ -54,7 +54,6 @@ import {
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
-  getFormattedBalanceInFiat,
 } from 'utils/assets';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -157,12 +156,11 @@ const KeyBasedAssetTransferChoose = ({
       const onCheck = () => onAssetSelect(item);
 
       return (
-        <ListItemWithImage
-          label={item.name}
-          itemImageUrl={item.icon}
+        <AssetListItem
+          name={item.name}
+          iconUrl={item.icon}
           onPress={onCheck}
-          leftAddon={<CheckBox value={isChecked} onValueChange={onCheck} />}
-          fallbackToGenericToken
+          leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}
         />
       );
     }
@@ -172,21 +170,16 @@ const KeyBasedAssetTransferChoose = ({
     );
 
     const assetAmount = checkedAsset?.draftAmount || getBalance(availableBalances, item.token);
-    const assetValue = getFormattedBalanceInFiat(baseFiatCurrency, assetAmount, rates || {}, item.token);
     const onCheck = () => onAssetSelect(item, assetAmount);
 
     return (
-      <ListItemWithImage
-        label={item.name}
-        itemImageUrl={item.icon}
+      <AssetListItem
+        name={item.name}
+        symbol={item.token}
+        iconUrl={item.icon}
+        balance={assetAmount}
         onPress={onCheck}
-        leftAddon={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
-        fallbackToGenericToken
-        balance={{
-          token: item.token,
-          balance: assetAmount,
-          value: assetValue,
-        }}
+        leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
       />
     );
   };
