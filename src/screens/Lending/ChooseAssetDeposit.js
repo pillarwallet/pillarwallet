@@ -73,6 +73,7 @@ const ChooseAssetDeposit = ({
 }: Props) => {
   useEffect(() => {
     fetchAssetsToDeposit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderListItem = ({

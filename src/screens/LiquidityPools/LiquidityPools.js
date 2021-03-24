@@ -136,6 +136,7 @@ const LiquidityPoolsScreen = ({
 
   useEffect(() => {
     fetchLiquidityPoolsData(supportedPools);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

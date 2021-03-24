@@ -96,6 +96,7 @@ const WBTCCafe = ({
 }: Props) => {
   const [showIntro, setShowIntro] = React.useState<boolean>(!hasSeenWbtcCafeIntro);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { updateWBTCCafeTransactions(); }, []);
 
   const toggleIntro = () => {

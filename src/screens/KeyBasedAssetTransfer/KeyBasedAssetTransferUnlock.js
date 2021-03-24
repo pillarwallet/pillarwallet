@@ -56,6 +56,7 @@ const KeyBasedAssetTransferUnlock = ({
     if (!creatingTransactions && isPinValid) {
       navigation.navigate(SEND_TOKEN_TRANSACTION, { isSuccess: true, transactionPayload: {} });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [creatingTransactions]);
 
   return (

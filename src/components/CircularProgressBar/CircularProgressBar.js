@@ -57,6 +57,7 @@ const CircularProgressBar = ({
 
   useEffect(() => {
     Animated.timing(circleAnim, { toValue: progress, duration: 500, useNativeDriver: true }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress]);
 
   useEffect(() => {
@@ -75,6 +76,7 @@ const CircularProgressBar = ({
         Animated.timing(backgroundCircleAnim, { toValue: 0, duration: 1, useNativeDriver: true }),
       ]),
     ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const circleRadius = (size - circleWidth) / 2;

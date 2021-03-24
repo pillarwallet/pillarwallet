@@ -127,6 +127,7 @@ const Tooltip = (props: Props) => {
     if (isVisible) {
       setVisibilityState(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, tooltipLayout]);
 
   const measureBalloonPosition = () => {

@@ -179,6 +179,7 @@ const KeyBasedAssetTransferChoose = ({
   useEffect(() => {
     onAvailableBalancesRefresh();
     onAvailableCollectiblesRefresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const availableAssets: AssetData[] = Object.keys(availableBalances)
