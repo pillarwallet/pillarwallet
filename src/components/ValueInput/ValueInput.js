@@ -63,8 +63,9 @@ export type ExternalProps = {
   customBalances?: Balances,
   selectorOptionsTitle?: string,
   assetData: AssetOption | Collectible,
+  // Called when selected asset is AssetOption
   onAssetDataChange: (AssetOption) => mixed,
-  // Called iff selected asset is Collectible
+  // Called when selected asset is Collectible
   onCollectibleAssetDataChange?: (Collectible) => mixed,
   value: string,
   onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)

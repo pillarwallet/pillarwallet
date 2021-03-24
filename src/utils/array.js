@@ -21,7 +21,7 @@
 /**
  * Performs map operation and filters out `null` and `undefined` results.
  */
-export function mapNotNil<Item, Result>(items: Item[], selector: (Item) => ?Result): Result[] {
+export function mapNotNil<Item, Result>(items: Item[], selector: (Item, number, Item[]) => ?Result): Result[] {
   // $FlowFixMe: does not infer that `filter` removes nil values
-  return items.map((item) => selector(item)).filter((item) => item != null);
+  return items.map((item, index, array) => selector(item, index, array)).filter((item) => item != null);
 }

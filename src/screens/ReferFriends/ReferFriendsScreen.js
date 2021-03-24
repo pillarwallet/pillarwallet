@@ -95,7 +95,7 @@ const ReferFriendsScreen = () => {
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
-  }, []);
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (!hasAllowedToAccessContacts) {
