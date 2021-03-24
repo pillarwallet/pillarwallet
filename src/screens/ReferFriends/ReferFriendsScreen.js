@@ -106,6 +106,7 @@ const ReferFriendsScreen = () => {
     }
 
     fetchPhoneContacts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAllowedToAccessContacts]);
 
   const fetchPhoneContacts = () => {

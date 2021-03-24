@@ -19,6 +19,8 @@
 */
 
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
+
 export type AssetData = {|
   token: string,
   contractAddress?: string,
