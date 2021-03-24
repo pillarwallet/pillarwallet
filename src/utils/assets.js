@@ -76,6 +76,14 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
+export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => {
+  if (!balances || !asset) return BigNumber('0');
+  return BigNumber(balances[asset]?.balance ?? '0');
+};
+
+/**
+ * @deprecated: do not use because of rounding issues
+ */
 export const getBalance = (balances: Balances = {}, asset: string): number => {
   const assetBalance = get(balances, asset);
   if (!assetBalance) {

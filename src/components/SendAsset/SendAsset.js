@@ -39,8 +39,8 @@ import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 
 // utils
-import { isValidNumber, reportErrorLog } from 'utils/common';
-import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { wrapBigNumber, reportErrorLog } from 'utils/common';
+import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -72,7 +72,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
+  estimateTransaction: (recipient: string, value: string, assetData: AssetData) => void,
 };
 
 const renderFeeToggle = (
@@ -140,20 +140,22 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  // parse value
-  const currentValue = parseFloat(amount || 0);
-  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
+  const token = get(assetData, 'token');
+  const balance = getBalanceBN(balances, token);
+  const currentValue = wrapBigNumber(amount || 0);
+
+  const isValidAmount = currentValue.isFinite() && !currentValue.isZero();
+  const isAboveBalance = currentValue.gt(balance);
 
   const updateTxFee = () => {
-    const value = Number(amount || 0);
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
     // specified amount is always valid and not necessarily matches input amount
-    if ((!isCollectible && (!isValidAmount || value === 0)) || !assetData || !selectedContact) {
+    if ((!isCollectible && (!isValidAmount || isAboveBalance)) || !assetData || !selectedContact) {
       return;
     }
 
-    estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
+    estimateTransaction(selectedContact.ethAddress, currentValue.toString(), mapToAssetDataType(assetData));
   };
 
   const updateTxFeeDebounced = useCallback(
@@ -181,7 +183,7 @@ const SendAsset = ({
     if (assetData.tokenType === COLLECTIBLES) {
       formattedSelectedAsset = collectibles.find(({ tokenId }) => assetData.id === tokenId);
     } else {
-      formattedSelectedAsset = assetsWithBalance.find(({ token }) => assetData.token === token);
+      formattedSelectedAsset = assetsWithBalance.find((asset) => assetData.token === asset.token);
     }
 
     if (!formattedSelectedAsset) return;
@@ -243,30 +245,23 @@ const SendAsset = ({
   };
 
   const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
-    const maxBalance = parseFloat(getBalance(balances, assetSymbol));
-    const calculatedBalanceAmount = maxBalance * percentageModifier;
+    const calculatedBalanceAmount = balance.multipliedBy(percentageModifier);
 
     // update fee only on max balance
-    if (maxBalance === calculatedBalanceAmount && selectedContact) {
+    if (percentageModifier === 1.00 && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
       await estimateTransaction(
         selectedContact.ethAddress,
-        Number(calculatedBalanceAmount),
+        calculatedBalanceAmount.toString(),
         mapToAssetDataType(assetData),
       );
     }
     return null;
   };
 
-  const token = get(assetData, 'token');
-
-  // balance
-  const balance = getBalance(balances, token);
-
-  const enteredMoreThanBalance = currentValue > balance;
   const hasAllFeeData = !isEstimating && !!selectedContact;
 
-  const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
+  const showFeeForAsset = !isAboveBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
   const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
   const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
@@ -356,7 +351,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (
     recipient: string,
-    value: number,
+    value: string,
     assetData: AssetData,
   ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
 });
