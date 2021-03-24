@@ -25,7 +25,7 @@ import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 // actions
 import {
   addAccountAction,
-  setAccountExtraAction,
+  updateAccountExtraIfNeededAction,
   setActiveAccountAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
@@ -71,7 +71,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     // update account extras
-    dispatch(setAccountExtraAction(accountId, etherspotAccount));
+    dispatch(updateAccountExtraIfNeededAction(accountId, etherspotAccount));
   };
 };
 

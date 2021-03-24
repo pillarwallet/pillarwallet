@@ -148,7 +148,7 @@ import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 import {
   addAccountAction,
   initOnLoginSmartWalletAccountAction,
-  setAccountExtraAction,
+  updateAccountExtraIfNeededAction,
   setActiveAccountAction,
 } from './accountsActions';
 import { saveDbAction } from './dbActions';
@@ -284,17 +284,15 @@ export const fetchConnectedAccountAction = () => {
   };
 };
 
-export const connectSmartWalletAccountAction = (
-  accountId: string,
-  setAccountActive: boolean = true,
-) => {
+export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    let { smartWallet: { connectedAccount } } = getState();
+    let { smartWallet: { connectedAccount: accountWithDevices } } = getState();
 
-    if (isEmpty(connectedAccount)) {
-      connectedAccount = await smartWalletService.connectAccount(accountId);
-      if (isEmpty(connectedAccount)) {
+    if (isEmpty(accountWithDevices)) {
+      accountWithDevices = await smartWalletService.connectAccount(accountId);
+
+      if (isEmpty(accountWithDevices)) {
         Toast.show({
           message: t('toast.failedToLogIn'),
           emoji: 'hushed',
@@ -303,14 +301,16 @@ export const connectSmartWalletAccountAction = (
         });
         return;
       }
-      dispatch(setSmartWalletConnectedAccount(connectedAccount));
-      dispatch(setAccountExtraAction(accountId, connectedAccount));
+
+      dispatch(setSmartWalletConnectedAccount(accountWithDevices));
+
+      // raw API account as extra
+      const apiAccount = smartWalletService.getConnectedAccountFromSdkState();
+      dispatch(updateAccountExtraIfNeededAction(accountId, apiAccount));
     }
 
-    if (setAccountActive) dispatch(setActiveAccountAction(accountId));
-
     // sync deployed account state
-    const connectedAccountState = connectedAccount?.state;
+    const connectedAccountState = accountWithDevices?.state;
     const currentUpgradeStatus = getState().smartWallet.upgrade?.status;
     if (currentUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
       && connectedAccountState === sdkConstants.AccountStates.Deployed) {

@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkConstants } from '@smartwallet/sdk';
+import { isEqual } from 'lodash';
 
 // constants
 import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
@@ -98,7 +99,7 @@ export const addAccountAction = (
   };
 };
 
-export const setAccountExtraAction = (
+export const updateAccountExtraIfNeededAction = (
   accountId: string,
   accountExtra: AccountExtra,
 ) => {
@@ -106,6 +107,9 @@ export const setAccountExtraAction = (
     const accounts = accountsSelector(getState());
     const accountIndex = accounts.findIndex((account) => getAccountId(account) === accountId);
     if (accountIndex === -1) return;
+
+    const accountExtraNeedsUpdate = !isEqual(accounts[accountIndex]?.extra, accountExtra);
+    if (!accountExtraNeedsUpdate) return;
 
     const updatedAccounts = accounts.reduce((updated, account) => {
       if (getAccountId(account) === accountId) {
