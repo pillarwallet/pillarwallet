@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 export type AssetData = {|
   token: string,
   contractAddress?: string,
@@ -108,6 +110,7 @@ export type KeyBasedAssetTransfer = {|
   status?: string,
 |};
 
+export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetOption = {
   address?: string,
   assetBalance?: string,
@@ -126,7 +129,7 @@ export type AssetOption = {
   symbol: string,
   token?: string,
   tokenId?: string,
-  tokenType?: string, // TOKENS or COLLECTIBLES
+  tokenType?: TokenType,
 };
 
 export type AssetBalance = {|
