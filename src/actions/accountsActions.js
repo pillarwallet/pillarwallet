@@ -38,6 +38,7 @@ import {
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { connectEtherspotAccountAction } from 'actions/etherspotActions';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
@@ -47,7 +48,7 @@ import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { navigate } from 'services/navigation';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { accountsSelector, activeAccountSelector } from 'selectors';
 
 // types
 import type { AccountExtra, AccountTypes } from 'models/Account';
@@ -93,6 +94,28 @@ export const addAccountAction = (
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
     });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
+export const setAccountExtraAction = (
+  accountId: string,
+  accountExtra: AccountExtra,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+    const accountIndex = accounts.findIndex((account) => getAccountId(account) === accountId);
+    if (accountIndex === -1) return;
+
+    const updatedAccounts = accounts.reduce((updated, account) => {
+      if (getAccountId(account) === accountId) {
+        return [...updated, { ...account, extra: accountExtra }];
+      }
+
+      return [...updated, account];
+    }, []);
+
+    dispatch({ type: UPDATE_ACCOUNTS, payload: updatedAccounts });
     await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
@@ -158,19 +181,23 @@ export const switchAccountAction = (accountId: string) => {
       accounts: { data: accounts },
       smartWallet: { sdkInitialized },
     } = getState();
-    const account = accounts.find(_acc => _acc.id === accountId) || {};
+
+    const activeAccount = accounts.find((account) => getAccountId(account) === accountId);
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+    if (activeAccount?.type === ACCOUNT_TYPES.SMART_WALLET) {
       if (!sdkInitialized) {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
       }
 
       await dispatch(connectSmartWalletAccountAction(accountId));
+    } else if (activeAccount?.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
+      dispatch(connectEtherspotAccountAction(accountId));
     }
 
+    dispatch(setActiveAccountAction(accountId));
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
@@ -196,7 +223,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
 
     const activeAccountType = getActiveAccountType(accounts);
     const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
-    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
+    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 
     if (setAccountActive && blockchainNetwork) {

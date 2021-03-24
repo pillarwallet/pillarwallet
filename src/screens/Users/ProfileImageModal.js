@@ -46,7 +46,7 @@ import { updateUserAvatarAction } from 'actions/userActions';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
 // utils
-import { getEnsName } from 'utils/accounts';
+import { getAccountEnsName } from 'utils/accounts';
 import { reportLog } from 'utils/common';
 
 // partials
@@ -60,7 +60,7 @@ const Wrapper = styled.View`
 const ProfileImageModal: AbstractComponent<{||}> = () => {
   const profileImage = useSelector(updatedProfileImageSelector);
   const username = useSelector(usernameSelector) ?? '';
-  const ensName = getEnsName(useSelector(activeAccountSelector));
+  const ensName = getAccountEnsName(useSelector(activeAccountSelector));
   const walletId = useSelector(walletIdSelector);
 
   const dispatch = useDispatch();

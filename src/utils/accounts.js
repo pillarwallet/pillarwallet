@@ -68,11 +68,9 @@ export const getAccountAddress = (account: Account): string => {
   return account.id;
 };
 
-export const getActiveAccountAddress = (accounts: Accounts): string => {
+export const getActiveAccountAddress = (accounts: Accounts): ?string => {
   const activeAccount = getActiveAccount(accounts);
-  if (!activeAccount) {
-    return '';
-  }
+  if (!activeAccount) return null;
 
   return getAccountAddress(activeAccount);
 };
@@ -155,12 +153,15 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
   return {};
 };
 
-export const getEnsName = (account: ?Account): ?string => account?.extra?.ensName;
-
-export const getSmartWalletAddress = (accounts: Accounts): ?string => {
-  const swAccount = findFirstArchanovaAccount(accounts);
-  if (!swAccount) return null;
-  return getAccountAddress(swAccount);
+export const getAccountEnsName = (account: ?Account): ?string => {
+  switch (account?.type) {
+    case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+      return account?.extra?.ensNode?.name;
+    case ACCOUNT_TYPES.SMART_WALLET:
+      return account?.extra?.ensName;
+    default:
+      return null;
+  }
 };
 
 const getSupportedAccountTypes = () => Object.values(ACCOUNT_TYPES);
@@ -176,5 +177,3 @@ export const getInitials = (fullName: string = '') => {
 };
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
-
-export const isNotEtherspotType = ({ type }: Account) => type !== ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET;

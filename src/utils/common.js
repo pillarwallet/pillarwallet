@@ -658,4 +658,4 @@ export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
 
-export const getFullEnsName = (username: string) => `${username}${getEnsPrefix()}`;
+export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;

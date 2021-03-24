@@ -38,7 +38,7 @@ import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { getEnsName, isSmartWalletAccount } from 'utils/accounts';
+import { getAccountEnsName, isSmartWalletAccount } from 'utils/accounts';
 
 // models and types
 import type { Account } from 'models/Account';
@@ -137,7 +137,7 @@ const ReceiveModal = ({
   }, [address]);
 
   const { profileImage, lastUpdateTime = 0, username = '' } = user;
-  const ensName = getEnsName(activeAccount);
+  const ensName = getAccountEnsName(activeAccount);
   const isSmartWallet = isSmartWalletAccount(activeAccount);
   const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
   const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;

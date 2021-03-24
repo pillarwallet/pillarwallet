@@ -63,12 +63,12 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 // services
 import smartWalletInstance from 'services/smartWallet';
@@ -524,7 +524,7 @@ export class EventDetail extends React.Component<Props> {
 
   topUpSW = () => {
     const { accounts } = this.props;
-    const smartWalletAddress = getSmartWalletAddress(accounts);
+    const smartWalletAddress = getActiveAccountAddress(accounts);
     if (!smartWalletAddress) return;
     this.openReceiveModal(smartWalletAddress);
   };

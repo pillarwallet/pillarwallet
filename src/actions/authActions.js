@@ -61,11 +61,7 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstEtherspotAccount,
-  findFirstSmartWalletAccount,
-  isSmartWalletAccount,
-} from 'utils/accounts';
+import { findFirstEtherspotAccount, findFirstSmartWalletAccount, isSmartWalletAccount } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
@@ -114,6 +110,7 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
+
 
 const storage = Storage.getInstance('db');
 

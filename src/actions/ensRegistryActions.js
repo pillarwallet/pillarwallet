@@ -31,7 +31,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // utils
 import {
-  getFullEnsName,
+  getEnsName,
   lookupAddress,
   reportErrorLog,
   resolveEnsName,
@@ -55,7 +55,7 @@ export const setEnsNameIfNeededAction = () => {
       return;
     }
 
-    const fullEnsName = getFullEnsName(username);
+    const fullEnsName = getEnsName(username);
     const resolvedAddress = await resolveEnsName(fullEnsName);
 
     // if address is resolved then it's either already taken or reserved

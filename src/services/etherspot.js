@@ -29,8 +29,9 @@ import {
 } from 'etherspot';
 
 // utils
-import { getFullEnsName, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { getEnsName, reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
+import { addressesEqual } from 'utils/assets';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -60,6 +61,13 @@ class EtherspotService {
     });
   }
 
+  getAccount(accountAddress: string): Promise<?EtherspotAccount> {
+    return this.sdk.getAccount({ address: accountAddress }).catch((error) => {
+      reportErrorLog('EtherspotService getAccount failed', { error });
+      return null;
+    });
+  }
+
   getAccounts(): Promise<?EtherspotAccount[]> {
     return this.sdk.getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items)
@@ -72,7 +80,7 @@ class EtherspotService {
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
     const assetAddresses = assets
       // 0x0...0 is default ETH address in our assets, but it's not a token
-      .filter(({ address }) => !isCaseInsensitiveMatch(address, EthersConstants.AddressZero))
+      .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
@@ -94,7 +102,7 @@ class EtherspotService {
         return null;
       });
 
-    if (!accountBalances) {
+    if (!accountBalances?.items) {
       return []; // logged above, no balances
     }
 
@@ -104,7 +112,7 @@ class EtherspotService {
       const asset = assets.find(({
         address,
         symbol,
-      }) => token === null ? symbol === ETH : isCaseInsensitiveMatch(address, token));
+      }) => token === null ? symbol === ETH : addressesEqual(address, token));
 
       if (!asset) {
         reportErrorLog('EtherspotService getBalances asset mapping failed', { token });
@@ -122,7 +130,7 @@ class EtherspotService {
   }
 
   reserveEnsName(username: string): Promise<?ENSNode> {
-    const fullEnsName = getFullEnsName(username);
+    const fullEnsName = getEnsName(username);
     return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;

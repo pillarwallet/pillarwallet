@@ -49,7 +49,7 @@ import Icon from 'components/Icon';
 import { spacing, appFont, fontSizes } from 'utils/variables';
 import countries from 'utils/countries.json';
 import { getThemeColors } from 'utils/themes';
-import { getEnsName } from 'utils/accounts';
+import { getAccountEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
 
@@ -567,7 +567,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       profileImage,
     } = this.props;
 
-    const ensName = getEnsName(activeAccount);
+    const ensName = getAccountEnsName(activeAccount);
     const usernameOrEnsNamePresent = !!ensName || !!username;
 
     return (

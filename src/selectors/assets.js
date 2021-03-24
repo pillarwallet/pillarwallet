@@ -22,7 +22,7 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 import type { Assets, Balance, Rates } from 'models/Asset';
-import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
+import { getActiveAccountId, getEnabledAssets } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
@@ -61,7 +61,7 @@ export const smartAccountAssetsSelector = createSelector(
   (assets, accounts, hiddenAssets) => {
     const userHasSW = userHasSmartWallet(accounts);
     if (!userHasSW) return {};
-    const smartAccountId = getSmartWalletAddress(accounts);
+    const smartAccountId = getActiveAccountId(accounts);
     if (!smartAccountId) return {};
 
     const activeAccountAssets = get(assets, smartAccountId, {});
