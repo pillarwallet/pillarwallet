@@ -34,13 +34,13 @@ import type {
   Asset,
   AssetData,
   Assets,
+  AssetOption,
   Balance,
   Balances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Option } from 'models/Selector';
 import type { Value } from 'utils/common';
 
 
@@ -369,28 +369,22 @@ export const getFormattedBalanceInFiat = (
 
 export const generateAssetSelectorOption = (
   asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
-): Option => {
+): AssetOption => {
   const { symbol, iconUrl, ...rest } = asset;
   const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
   const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
-  // $FlowFixMe: flow update to 0.122
-  return ({
-    key: symbol,
-    value: symbol,
+  return {
+    ...rest,
     imageUrl,
     icon: iconUrl,
     iconUrl,
     symbol,
-    ...rest,
     assetBalance,
     formattedBalanceInFiat,
-    customProps: {
-      rightColumnInnerStyle: { alignItems: 'flex-end' },
-    },
-  });
+  };
 };
 
 export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {

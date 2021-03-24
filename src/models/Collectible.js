@@ -24,10 +24,13 @@ export type Collectible = {
   name: string,
   description: string,
   icon: ?string,
+  iconUrl?: void,
   image: ?string,
+  imageUrl?: string,
   contractAddress: string,
   assetContract: string,
   tokenType: string,
+  symbol?: void,
 };
 
 export type CollectibleTrx = {

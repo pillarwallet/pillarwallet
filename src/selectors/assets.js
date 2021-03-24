@@ -21,11 +21,14 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
-import type { Assets, Balance, Rates } from 'models/Asset';
+
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
-import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
+
+import type { Assets, Balance, Rates, AssetOption } from 'models/Asset';
+
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -111,34 +114,44 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: Balance, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
-    if (!activeAccountId || !balances || !assets) return {};
+  (
+    activeAccountId: string,
+    balances: Balance,
+    rates: Rates,
+    baseFiatCurrency: ?string,
+    assets: Assets,
+  ): AssetOption[] => {
+    if (!activeAccountId || !balances || !assets) return [];
     const activeAccountBalance = balances[activeAccountId] || {};
 
-    return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
+    const assetsWithBalance: AssetOption[] = [];
+
+    Object.keys(assets).forEach((symbol) => {
       const relatedAsset = assets[symbol];
       const assetBalance = getBalance(activeAccountBalance, symbol);
+
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        // $FlowFixMe: flow update to 0.122
         assetsWithBalance.push({
+          ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
-          balance: !!formattedBalanceInFiat && {
+          balance: {
             balance: assetBalance,
+            balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
           },
           token: symbol,
-          value: symbol,
           contractAddress: address,
-          ...relatedAsset,
         });
       }
-      return assetsWithBalance;
-    }, []);
+    });
+
+    return assetsWithBalance;
   },
 );

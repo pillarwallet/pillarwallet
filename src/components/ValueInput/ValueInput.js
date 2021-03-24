@@ -28,7 +28,7 @@ import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import SelectorOptions from 'components/SelectorOptions';
+import AssetSelectorOptions from 'components/AssetSelectorOptions';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -50,23 +50,25 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances } from 'models/Asset';
-import type { Option, HorizontalOption } from 'models/Selector';
+import type { Rates, Balances, AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
 import ValueInputHeader from './ValueInputHeader';
 
-export type ExternalProps = {
+export type ExternalProps = {|
   disabled?: boolean,
-  customAssets?: Option[],
+  customAssets?: AssetOption[],
   customBalances?: Balances,
   selectorOptionsTitle?: string,
-  assetData: Option,
-  onAssetDataChange: (Option) => void,
+  assetData: AssetOption | Collectible,
+  // Called when selected asset is AssetOption
+  onAssetDataChange: (AssetOption) => mixed,
+  // Called when selected asset is Collectible
+  onCollectibleAssetDataChange?: (Collectible) => mixed,
   value: string,
   onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
-  horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
   txFeeInfo?: ?TransactionFeeInfo,
   hideMaxSend?: boolean,
@@ -76,18 +78,18 @@ export type ExternalProps = {
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
   customRates?: Rates,
-};
+|};
 
-type InnerProps = {
-  assets: Option[],
+type InnerProps = {|
+  assets: AssetOption[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-  collectibles: Option[],
+  collectibles: Collectible[],
   theme: Theme,
-};
+|};
 
-type Props = InnerProps & ExternalProps;
+type Props = {| ...InnerProps, ...ExternalProps |};
 
 const CollectibleWrapper = styled.View`
   align-items: center;
@@ -118,34 +120,32 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInputComponent = (props: Props) => {
-  const {
-    disabled,
-    assets,
-    customAssets,
-    balances,
-    customBalances,
-    baseFiatCurrency,
-    rates,
-    selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
-    assetData,
-    onAssetDataChange,
-    value,
-    onValueChange,
-    horizontalOptions,
-    showCollectibles,
-    txFeeInfo,
-    hideMaxSend,
-    updateTxFee,
-    collectibles,
-    theme,
-    leftSideSymbol,
-    getInputRef,
-    onFormValid,
-    disableAssetChange,
-    customRates,
-  } = props;
-
+export const ValueInputComponent = ({
+  disabled,
+  assets,
+  customAssets,
+  balances,
+  customBalances,
+  baseFiatCurrency,
+  rates,
+  selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
+  assetData,
+  onAssetDataChange,
+  onCollectibleAssetDataChange,
+  value,
+  onValueChange,
+  showCollectibles,
+  txFeeInfo,
+  hideMaxSend,
+  updateTxFee,
+  collectibles,
+  theme,
+  leftSideSymbol,
+  getInputRef,
+  onFormValid,
+  disableAssetChange,
+  customRates,
+}: Props) => {
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
 
@@ -219,28 +219,15 @@ export const ValueInputComponent = (props: Props) => {
   const assetsOptions = customAssets || assets;
 
   const openAssetSelector = () => {
-    const optionTabs = showCollectibles
-      ? [{
-        name: t('label.tokens'),
-        options: assetsOptions,
-        id: TOKENS,
-      }, {
-        name: t('label.collectibles'),
-        options: collectibles,
-        id: COLLECTIBLES,
-        collectibles: true,
-      }]
-      : undefined;
-
     Keyboard.dismiss();
 
     Modal.open(() => (
-      <SelectorOptions
-        title={selectorOptionsTitle}
+      <AssetSelectorOptions
         options={assetsOptions}
-        horizontalOptionsData={horizontalOptions}
-        onOptionSelect={onAssetDataChange}
-        optionTabs={optionTabs}
+        collectibles={showCollectibles ? collectibles : undefined}
+        onSelectOption={onAssetDataChange}
+        onSelectCollectible={onCollectibleAssetDataChange}
+        title={selectorOptionsTitle}
       />
     ));
   };
@@ -251,7 +238,7 @@ export const ValueInputComponent = (props: Props) => {
         asset={assetData}
         onAssetPress={openAssetSelector}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
-        onLabelPress={() => !disabled && handleUsePercent(100)}
+        onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
         disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
     );

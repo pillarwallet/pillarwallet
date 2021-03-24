@@ -25,7 +25,7 @@ import Intercom from 'react-native-intercom';
 
 import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
@@ -33,8 +33,7 @@ import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Option, HorizontalOption } from 'models/Selector';
-import type { Rates, Asset, Assets, Balances } from 'models/Asset';
+import type { Rates, Asset, Assets, AssetOption, Balances } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -90,12 +89,12 @@ export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string
 
 export const validateInput = (
   fromAmount: string,
-  fromAsset: ?Option,
-  toAsset: ?Option,
+  fromAsset: ?AssetOption,
+  toAsset: ?AssetOption,
 ): boolean =>
   !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
-const getBtcOption = (): Option => {
+const getBtcOption = (): AssetOption => {
   const btcAsset = {
     name: 'Bitcoin',
     address: '',
@@ -115,7 +114,7 @@ const generateAssetsOptions = (
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-): Option[] => {
+): AssetOption[] => {
   return sortAssets(assets)
     .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
       && exchangeSupportedAssets.some(asset => asset.symbol === symbol))
@@ -127,22 +126,10 @@ const generateSupportedAssetsOptions = (
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-): Option[] => {
+): AssetOption[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
   return exchangeSupportedAssets
     .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
-};
-
-const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS
-  .map(popularSymbol => assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol) || {})
-  .filter(asset => !!asset && !isEmpty(asset));
-
-const generateHorizontalOptions = (assetsOptionsBuying: Option[]): HorizontalOption[] => {
-  const popularOptions = generatePopularOptions(assetsOptionsBuying);
-  return [{
-    title: t('label.popular'),
-    data: popularOptions,
-  }];
 };
 
 export const provideOptions = (
@@ -169,7 +156,6 @@ export const provideOptions = (
   return {
     fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
     toOptions: assetsOptionsBuying,
-    horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };
 };
 
@@ -212,10 +198,10 @@ const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean =>
 };
 
 export const shouldTriggerSearch = (
-  fromAsset: Option,
-  toAsset: Option,
+  fromAsset: AssetOption,
+  toAsset: AssetOption,
   fromAmount: string,
-) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
+) => !!+fromAmount && fromAsset.symbol !== toAsset.symbol && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
   const deploymentData = getDeploymentData(smartWalletState);
@@ -227,25 +213,24 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
 };
 
 export const getToOption =
-  (symbol: string, options: ExchangeOptions): Option => options.toOptions.find(a => a.value === symbol) || {};
+  (symbol: string, options: ExchangeOptions): AssetOption => options.toOptions.find(a => a.symbol === symbol) || {};
 
 export const shouldResetAndTriggerSearch = (
   fromAmount: string,
   prevFromAmount: string,
-  fromAsset: Option,
-  prevFromAsset: Option,
-  toAsset: Option,
-  prevToAsset: Option,
+  fromAsset: AssetOption,
+  prevFromAsset: AssetOption,
+  toAsset: AssetOption,
+  prevToAsset: AssetOption,
   accessToken: ?string,
   prevAccesToken: ?string,
 ): boolean => {
   // access token has changed, init search again
-  return (prevAccesToken !== accessToken) ||
-  // valid input provided or asset changed
-  ((
-    fromAsset !== prevFromAsset ||
-    toAsset !== prevToAsset ||
-    fromAmount !== prevFromAmount) &&
-    validateInput(fromAmount, fromAsset, toAsset) &&
-    shouldTriggerSearch(fromAsset, toAsset, fromAmount));
+  return (
+    prevAccesToken !== accessToken ||
+    // valid input provided or asset changed
+    ((fromAsset !== prevFromAsset || toAsset !== prevToAsset || fromAmount !== prevFromAmount) &&
+      validateInput(fromAmount, fromAsset, toAsset) &&
+      shouldTriggerSearch(fromAsset, toAsset, fromAmount))
+  );
 };

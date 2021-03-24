@@ -51,10 +51,10 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, AssetData } from 'models/Asset';
+import type { Balances, AssetData, AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { Option } from 'models/Selector';
 import type { Contact } from 'models/Contact';
 
 
@@ -65,8 +65,8 @@ type Props = {
   balances: Balances,
   session: SessionData,
   useGasToken: boolean,
-  assetsWithBalance: Option[],
-  collectibles: Option[],
+  assetsWithBalance: AssetOption[],
+  collectibles: AssetOption[],
   contacts: Contact[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
@@ -132,9 +132,8 @@ const SendAsset = ({
   const defaultAssetOption = defaultAssetData && {
     ...defaultAssetData,
     symbol: defaultAssetData.token,
-    value: defaultAssetData.token,
   };
-  const [assetData, setAssetData] = useState<Option>(defaultAssetOption || assetsWithBalance[0]);
+  const [assetData, setAssetData] = useState<AssetOption | Collectible>(defaultAssetOption || assetsWithBalance[0]);
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
@@ -184,6 +183,7 @@ const SendAsset = ({
     if (assetData.tokenType === COLLECTIBLES) {
       formattedSelectedAsset = collectibles.find(({ tokenId }) => assetData.id === tokenId);
     } else {
+      // $FlowFixMe: collectible
       formattedSelectedAsset = assetsWithBalance.find((asset) => assetData.token === asset.token);
     }
 
@@ -278,6 +278,7 @@ const SendAsset = ({
     enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
+      // $FlowFixMe: collecible does not have `deciamals`
       decimals: assetData.decimals,
       amount,
       symbol: token,
@@ -303,7 +304,8 @@ const SendAsset = ({
         value: amount,
         onValueChange: setAmount,
         assetData,
-        onAssetDataChange: setAssetData,
+        onAssetDataChange: (asset) => setAssetData(asset),
+        onCollectibleAssetDataChange: (collectible) => setAssetData(collectible),
         showCollectibles: true,
         txFeeInfo: feeInfo,
         updateTxFee: calculateBalancePercentTxFee,

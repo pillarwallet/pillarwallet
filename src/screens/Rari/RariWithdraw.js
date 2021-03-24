@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import { getEnv } from 'configs/envConfig';
@@ -44,7 +43,7 @@ import { reportErrorLog, formatUnits } from 'utils/common';
 import { calculateRariWithdrawTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
-import { ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
@@ -57,8 +56,7 @@ import { NotEnoughLiquidityError } from 'services/0x';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, Balances, Assets } from 'models/Asset';
-import type { Option } from 'models/Selector';
+import type { Asset, AssetOption, Balances, Assets } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 type Props = {
@@ -86,7 +84,7 @@ const ValueInputWrapper = styled.View`
   align-items: center;
 `;
 
-const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): Option[] => {
+const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): AssetOption[] => {
   const poolAssets = rariPool === RARI_POOLS.ETH_POOL
     ? supportedAssets.filter(asset => asset.symbol === ETH)
     : supportedAssets;
@@ -99,7 +97,6 @@ const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): Op
     const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return {
       ...rest,
-      value: rest.symbol,
       iconUrl,
       icon: iconUrl,
       imageUrl,
@@ -241,15 +238,6 @@ const RariWithdrawScreen = ({
 
   const customAssets = getCustomAssetOptions(supportedAssets, rariPool);
 
-  const popularOptions = POPULAR_EXCHANGE_TOKENS
-    .map(popularSymbol => customAssets.find(({ symbol }) => symbol === popularSymbol))
-    .filter(asset => !!asset && !isEmpty(asset));
-
-  const horizontalOptions = [{
-    title: t('label.popular'),
-    data: popularOptions,
-  }];
-
   return (
     <ContainerWithHeader
       inset={{ bottom: 'never' }}
@@ -288,7 +276,6 @@ const RariWithdrawScreen = ({
           customBalances={customBalances}
           hideMaxSend={isCalculatingMaxAmount}
           customAssets={customAssets}
-          horizontalOptions={horizontalOptions}
         />
       </ValueInputWrapper>
     </ContainerWithHeader>
