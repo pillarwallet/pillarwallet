@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import tForm from 'tcomb-form-native';
 import get from 'lodash.get';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -71,7 +72,6 @@ import CautionModal from './CautionModal';
 import VerifiedModal from './VerifiedModal';
 import InviteBanner from './InviteBanner';
 import ProfileImageModal from './ProfileImageModal';
-import { createStructuredSelector } from 'reselect';
 
 type Props = {
   oneTimePasswordSent: boolean,
@@ -632,7 +632,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
-  profileImage: updatedProfileImageSelector
+  profileImage: updatedProfileImageSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
