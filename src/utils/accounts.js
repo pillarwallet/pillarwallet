@@ -77,13 +77,22 @@ export const getActiveAccountAddress = (accounts: Accounts): string => {
   return getAccountAddress(activeAccount);
 };
 
-export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
-  return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-};
+export const findAccountByType = (
+  accounts: Accounts,
+  accountType: AccountTypes,
+): ?Account => accounts.find(({ type }) => type === accountType);
 
-export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
-  return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-};
+export const findKeyBasedAccount = (
+  accounts: Accounts,
+): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.KEY_BASED);
+
+export const findFirstSmartAccount = (
+  accounts: Accounts,
+): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
+
+export const findFirstEtherspotAccount = (
+  accounts: Accounts,
+): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
@@ -162,3 +171,5 @@ export const getInitials = (fullName: string = '') => {
 };
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
+
+export const isNotEtherspotType = ({ type }: Account) => type !== ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET;

@@ -34,7 +34,7 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
+import { getAccountName, isNotEtherspotType, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -175,6 +175,7 @@ const AccountsScreen = ({
 
   const walletsToShow: ListItem[] = accounts
     .filter(isNotKeyBasedType) // filter key based due deprecation
+    .filter(isNotEtherspotType) // temporary hide etherspot account
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;
       const accountBalances: Balances = balances[id];

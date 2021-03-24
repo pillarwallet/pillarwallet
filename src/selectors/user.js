@@ -25,6 +25,10 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { Selector } from 'selectors';
 
+import { useRootSelector } from './selectors';
+
+export const useUser = () => useRootSelector((root) => root.user.data);
+
 export const userSelector = ({ user: { data } }: RootReducerState): User => data;
 
 export const usernameSelector: Selector<?string> =

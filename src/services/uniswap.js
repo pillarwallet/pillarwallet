@@ -30,7 +30,6 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
-import axios, { AxiosResponse } from 'axios';
 
 // utils
 import {
@@ -52,6 +51,7 @@ import {
   getUniswapChainId,
 } from 'utils/uniswap';
 import { parseOffer, createAllowanceTx, getFixedQuantity } from 'utils/exchange';
+import httpRequest from 'utils/httpRequest';
 
 // services
 import { defaultAxiosRequestConfig } from 'services/api';
@@ -311,18 +311,18 @@ export const createUniswapAllowanceTx =
     return allowanceTx;
   };
 
-export const fetchUniswapSupportedTokens = (): Promise<?string[]> => axios
-  .get(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, defaultAxiosRequestConfig)
-  .then(({ data: responseData }: AxiosResponse) => {
-    if (!responseData) {
-      reportErrorLog('fetchUniswapSupportedTokens failed: unexpected response', { response: responseData });
-      return null;
-    }
+export const fetchUniswapSupportedTokens = (): Promise<?string[]> =>
+  httpRequest.get<string>(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, defaultAxiosRequestConfig)
+    .then(({ data: responseData }) => {
+      if (!responseData) {
+        reportErrorLog('fetchUniswapSupportedTokens failed: unexpected response', { response: responseData });
+        return null;
+      }
 
-    // response is CSV
-    return responseData.split(',');
-  })
-  .catch((error) => {
-    reportErrorLog('fetchUniswapSupportedTokens failed: API request error', { error });
-    return null;
-  });
+      // response is CSV
+      return responseData.split(',');
+    })
+    .catch((error) => {
+      reportErrorLog('fetchUniswapSupportedTokens failed: API request error', { error });
+      return null;
+    });

@@ -37,6 +37,7 @@ import {
   SET_UNISWAP_TOKENS_QUERY_STATUS,
   UNISWAP_TOKENS_QUERY_STATUS,
 } from 'constants/exchangeConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -44,10 +45,15 @@ import { loginAction } from 'actions/authActions';
 // services
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
-
+import etherspotService from 'services/etherspot';
 
 // test utils
-import { mockSmartWalletAccount, mockSmartWalletConnectedAccount } from 'testUtils/jestSetup';
+import {
+  mockEtherspotAccount,
+  mockEtherspotApiAccount,
+  mockSmartWalletAccount,
+  mockSmartWalletConnectedAccount,
+} from 'testUtils/jestSetup';
 
 
 const mockUpdatedUser = {
@@ -60,6 +66,8 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   setUsername: jest.fn(),
   userInfo: jest.fn(() => mockUpdatedUser),
 })));
+
+jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -76,6 +84,9 @@ const mockRegisteredUser: Object = {
   username: 'JonR',
   walletId: 'walletIdUnique',
 };
+
+const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
+const mockActiveSmartWalletAccount = { ...mockSmartWalletAccount, isActive: true };
 
 pillarSdk.userInfo.mockResolvedValue(mockUpdatedUser);
 
@@ -102,13 +113,13 @@ describe('Auth actions', () => {
         backupStatus: { isBackedUp: false, isImported: false },
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
-      accounts: { data: [{ ...mockSmartWalletAccount, isActive: true }] },
+      accounts: { data: [mockActiveSmartWalletAccount] },
       featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
       balances: { data: {} },
-      user: { data: {} },
+      user: { data: { walletId: 'test-wallet-id' } },
     });
   });
 
@@ -132,6 +143,9 @@ describe('Auth actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
+
+      // appends new Etherspot account to reducer
+      { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
     ];
 
     const pin = '123456';
@@ -156,6 +170,10 @@ describe('Auth actions', () => {
       { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
+
+      // appends new Etherspot account to reducer
+      { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
+
       { type: UPDATE_USER, payload: merge({}, mockRegisteredUser, mockUpdatedUser) },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },

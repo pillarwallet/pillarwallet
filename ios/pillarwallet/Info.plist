@@ -65,6 +65,8 @@
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Give Pillar Wallet permission to access your microphone to allow you to attach voice notes with bug reports.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto_medium.ttf</string>
