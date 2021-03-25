@@ -20,10 +20,13 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
+
 import Image from 'components/Image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
+
+import type { Theme } from 'models/Theme';
 import { fontStyles } from 'utils/variables';
 
 const Title = styled(MediumText)`
@@ -41,15 +44,15 @@ const Body = styled(BaseText)`
 `;
 
 type Props = {
-  title: string;
-  subtitle: string;
-  imageUrl: string;
-  body: string;
-  order: any
-}
+  theme: Theme,
+  title: string,
+  subtitle: string,
+  imageUrl: string,
+  body: string,
+};
 
 const CMSView = ({
-  title, subtitle, imageUrl, body, order,
+  title, subtitle, imageUrl, body,
 }: Props) => {
   return (
     <ContainerWithHeader>
@@ -63,4 +66,4 @@ const CMSView = ({
   );
 };
 
-export default CMSView;
+export default withTheme(CMSView);

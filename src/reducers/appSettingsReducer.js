@@ -37,6 +37,7 @@ export type AppSettingsReducerState = {
     optOutTracking?: boolean,
     hasSeenExchangeIntro?: boolean,
     hasSeenWbtcCafeIntro?: boolean,
+    hasSeenTutorial?: boolean,
     hideBalance?: boolean,
     hasDismissedConnectAppsIntro?: boolean,
     hideBadges?: boolean,
