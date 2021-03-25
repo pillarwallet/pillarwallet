@@ -1299,7 +1299,7 @@
       "poolTogetherTransactionSuccess": "You're in the pool!",
       "sablierTransactionSuccess": "Your stream has begun",
       "transferAssetsToSmartWalletScreen": "Migration to Smart Wallet",
-      "amountEditScreen": "Edit amount",
+      "amountEditScreen": "Set amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
       "creatingTransactions": "Creating transactions",
       "keyBasedAssetsMigrationComplete": "Key based assets migration complete"

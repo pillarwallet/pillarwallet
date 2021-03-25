@@ -35,6 +35,7 @@ import type {
   AssetData,
   Assets,
   AssetOption,
+  AssetBalance,
   Balance,
   Balances,
   Rates,
@@ -369,6 +370,21 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
+const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fiatCurrency: ?string): ?AssetBalance => {
+  if (!balances) return null;
+
+  const balance = getBalance(balances, symbol);
+  const balanceInFiat = rates ? getBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
+  const value = rates ? getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
+
+  return {
+    token: symbol,
+    balance,
+    balanceInFiat,
+    value,
+  };
+};
+
 export const getAssetOption = (
   asset: Asset,
   balances: ?Balances,
@@ -379,7 +395,6 @@ export const getAssetOption = (
 
   const assetBalance = getBalance(balances, symbol);
   const formattedAssetBalance = assetBalance ? formatAmount(assetBalance) : '';
-  const balanceInFiat = rates ? getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : undefined;
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
 
   return {
@@ -388,12 +403,22 @@ export const getAssetOption = (
     formattedBalanceInFiat,
     icon: iconUrl,
     assetBalance: formattedAssetBalance,
-    balance: {
-      token: symbol,
-      balance: assetBalance,
-      balanceInFiat,
-      value: formattedBalanceInFiat,
-    },
+    balance: getAssetBalance(symbol, balances, rates, baseFiatCurrency),
+  };
+};
+
+export const mapAssetDataToAssetOption = (
+  assetData: AssetData,
+  balances?: ?Balances,
+  rates?: ?Rates,
+  fiatCurrency?: ?string,
+): AssetOption => {
+  return {
+    symbol: assetData.token,
+    name: assetData.name ?? '',
+    imageUrl: assetData.icon,
+    tokenType: assetData.tokenType ?? TOKENS,
+    balance: getAssetBalance(assetData.token, balances, rates, fiatCurrency),
   };
 };
 

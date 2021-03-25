@@ -116,7 +116,7 @@ export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetOption = {
   address?: string,
   assetBalance?: string,
-  balance?: AssetBalance,
+  balance?: ?AssetBalance,
   contractAddress?: string,
   decimals?: number,
   ethAddress?: string,
