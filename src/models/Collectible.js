@@ -31,6 +31,7 @@ export type Collectible = {
   assetContract: string,
   tokenType: string,
   symbol?: void,
+  decimals?: void,
 };
 
 export type CollectibleTrx = {

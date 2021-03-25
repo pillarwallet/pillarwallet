@@ -28,7 +28,7 @@ import { buildERC721TransactionData } from 'services/assets';
 
 // utils
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { getEthereumProvider } from 'utils/common';
+import { getEthereumProvider, truncateAmount } from 'utils/common';
 
 // config
 import { getEnv } from 'configs/envConfig';
@@ -48,6 +48,7 @@ import { COLLECTIBLES } from 'constants/assetsConstants';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { AccountTransaction } from 'services/smartWallet';
+import type { Value } from 'utils/common';
 import type { AssetData } from 'models/Asset';
 
 
@@ -71,7 +72,7 @@ export const setEstimatingErrorAction = (errorMessage: string) => ({
 
 export const estimateTransactionAction = (
   recipientAddress: string,
-  value: string | number,
+  value: Value,
   data: ?string,
   assetData: ?AssetData,
   sequential: ?AccountTransaction[],
@@ -83,7 +84,7 @@ export const estimateTransactionAction = (
 
     let transaction: AccountTransaction = {
       recipient: recipientAddress,
-      value,
+      value: truncateAmount(value, assetData?.decimals),
     };
 
     if (sequential) {

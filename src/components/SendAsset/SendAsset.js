@@ -39,14 +39,13 @@ import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 
 // utils
-import { wrapBigNumber, reportErrorLog } from 'utils/common';
+import { wrapBigNumber, truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
-import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,7 +65,6 @@ type Props = {
   session: SessionData,
   useGasToken: boolean,
   assetsWithBalance: AssetOption[],
-  collectibles: AssetOption[],
   contacts: Contact[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
@@ -119,7 +117,6 @@ const SendAsset = ({
   session,
   useGasToken,
   assetsWithBalance,
-  collectibles,
   contacts,
   defaultContact,
   feeInfo,
@@ -168,28 +165,9 @@ const SendAsset = ({
     return updateTxFeeDebounced.cancel;
   }, [updateTxFeeDebounced]);
 
-  const handleAmountChange = (value: ?Object) => {
-    if (amount !== value?.input) setAmount(value?.input || '0');
-    if (value && assetData !== value.selector) setAssetData(value.selector);
-  };
-
   // initial
   useEffect(() => {
     resetEstimateTransaction();
-
-    if (!defaultAssetData) return;
-
-    let formattedSelectedAsset;
-    if (assetData.tokenType === COLLECTIBLES) {
-      formattedSelectedAsset = collectibles.find(({ tokenId }) => assetData.id === tokenId);
-    } else {
-      // $FlowFixMe: collectible
-      formattedSelectedAsset = assetsWithBalance.find((asset) => assetData.token === asset.token);
-    }
-
-    if (!formattedSelectedAsset) return;
-
-    handleAmountChange({ selector: formattedSelectedAsset, input: '' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -225,7 +203,7 @@ const SendAsset = ({
       to: selectedContact.ethAddress,
       // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
-      amount: amount || 0,
+      amount: truncateAmount(currentValue.toString(), assetData.decimals),
       // $FlowFixMe: bignumber.js types
       txFeeInWei: feeInfo.fee,
       // $FlowFixMe: flow update to 0.122
@@ -342,7 +320,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   useGasToken: useGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
-  collectibles: activeAccountMappedCollectiblesSelector,
   contacts: contactsSelector,
 });
 
