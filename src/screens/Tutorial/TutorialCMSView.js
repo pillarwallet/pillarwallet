@@ -19,27 +19,27 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 
 import Image from 'components/Image';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 
 import type { Theme } from 'models/Theme';
 import type { ParsedCMSDocument } from 'models/CMSData';
 
-import { fontStyles } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
 
-const Title = styled(MediumText)`
+export const Title = styled(MediumText)`
   ${fontStyles.large};
-  margin: 40px 0px;
+  text-align: center;
 `;
 
-const SubTitle = styled(MediumText)`
+export const SubTitle = styled(MediumText)`
   ${fontStyles.regular};
-  margin: 20px 0px;
+  margin: ${spacing.rhythm / 2}px 0px;
+  text-align: center;
 `;
 
 const Body = styled(BaseText)`
@@ -51,19 +51,36 @@ type Props = {
   document: ParsedCMSDocument,
 };
 
+const DEVICE_WIDTH = getDeviceWidth();
+
 const CMSView = ({ document }: Props) => {
   const {
-    title, subtitle, body, imageUrl,
+    title, subtitle, body, imageUrl, imageWidth, imageHeight,
   } = document;
+
+  const getImageStyle = () => {
+    const width = DEVICE_WIDTH - (2 * spacing.rhythm);
+    const ratio = imageHeight / imageWidth;
+    const height = width * ratio;
+    return { width, height };
+  };
+
   return (
-    <ContainerWithHeader style={{ width: getDeviceWidth() }}>
-      <View>
-        <Title>{title}</Title>
-        <SubTitle>{subtitle}</SubTitle>
-        <Image source={{ url: imageUrl }} />
-        <Body>{body}</Body>
-      </View>
-    </ContainerWithHeader>
+    <ScrollView
+      style={{ flex: 1, width: DEVICE_WIDTH }}
+      contentContainerStyle={{ padding: spacing.rhythm }}
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+    >
+      <Title>{title}</Title>
+      <SubTitle>{subtitle}</SubTitle>
+      <Image
+        source={{ uri: imageUrl }}
+        style={getImageStyle()}
+        resizeMode="contain"
+      />
+      <Body>{body}</Body>
+    </ScrollView>
   );
 };
 

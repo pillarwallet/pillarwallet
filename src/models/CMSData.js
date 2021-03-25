@@ -28,14 +28,14 @@ export type CMSDocument = {
     title: { text: string }[],
     subtitle: { text: string }[],
     body: { text: string }[],
-  },
-  image: {
-    url: string,
-    dimensions: {
-      width: number,
-      height: number,
+    image: {
+      url: string,
+      dimensions: {
+        width: number,
+        height: number,
+      }
     }
-  }
+  },
 };
 
 export type ParsedCMSDocument = {
@@ -48,6 +48,8 @@ export type ParsedCMSDocument = {
   subtitle: string,
   body: string,
   imageUrl: string,
+  imageHeight: number,
+  imageWidth: number,
 }
 
 export type CMSData = {

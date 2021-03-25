@@ -20,72 +20,66 @@
 
 import React, { useEffect, useState } from 'react';
 import Prismic from '@prismicio/client';
-import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Button from 'components/Button';
-import { BaseText, MediumText } from 'components/Typography';
+import { HOME } from 'constants/navigationConstants';
+
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { CMSData, CMSDocument, ParsedCMSDocument } from 'models/CMSData';
 
 import prismicClient from 'services/prismic';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
-import { reportErrorLog, getDeviceWidth } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 import { getSortedOnboardingData } from 'utils/cms';
 import TutorialSwiper from './TutorialSwiper';
-
-const InitialScreenWrapper = styled.View`
-  height: 100%;
-  width: ${getDeviceWidth()}px;
-`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
 }
 
-const { ONBOARDING_SCREENS_FOR_NATIVES, ONBOARDING_SCREENS_FOR_NEWBIES } = CMS_DATA_TYPES;
+const {
+  ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
+  ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
+} = CMS_DATA_TYPES;
 
-type TUTORIAL_PATH = typeof ONBOARDING_SCREENS_FOR_NATIVES | typeof ONBOARDING_SCREENS_FOR_NEWBIES;
+type TUTORIAL_PATH = typeof NATIVES | typeof NEWBIES;
 
 type CMSSortedDocuments = {
   [key: string]: ParsedCMSDocument[],
 };
 
 const INITIAL_STATE: CMSSortedDocuments = {
-  [ONBOARDING_SCREENS_FOR_NATIVES]: [],
-  [ONBOARDING_SCREENS_FOR_NEWBIES]: [],
+  [NATIVES]: [],
+  [NEWBIES]: [],
 };
 
-const Tutorial = ({ navigation }: Props) => {
+export default ({ navigation }: Props) => {
   const [data, setData] = useState<CMSSortedDocuments>(INITIAL_STATE);
-  const [activePath, setActivePath] = useState<TUTORIAL_PATH>(ONBOARDING_SCREENS_FOR_NEWBIES);
+  const [activePath, setActivePath] = useState<TUTORIAL_PATH>(NEWBIES);
 
   const handleFetchedResults = (docs: CMSDocument[]) => {
     setData({
-      [ONBOARDING_SCREENS_FOR_NATIVES]: getSortedOnboardingData(docs, ONBOARDING_SCREENS_FOR_NATIVES),
-      [ONBOARDING_SCREENS_FOR_NEWBIES]: getSortedOnboardingData(docs, ONBOARDING_SCREENS_FOR_NEWBIES),
+      [NATIVES]: getSortedOnboardingData(docs, NATIVES),
+      [NEWBIES]: getSortedOnboardingData(docs, NEWBIES),
     });
   };
 
   useEffect(() => {
-    prismicClient.query(Prismic.Predicates.any(DOCUMENT_TYPE, [
-      ONBOARDING_SCREENS_FOR_NATIVES, ONBOARDING_SCREENS_FOR_NEWBIES,
-    ]))
+    prismicClient.query(Prismic.Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
       .then((res: CMSData) => handleFetchedResults(res.results))
       .catch(e => reportErrorLog(e));
   }, []);
   if (!data) return null;
+
+  const handleFinish = () => {
+    // TODO: change seen tutorial flag
+    navigation.navigate(HOME);
+  };
+
   return (
     <ContainerWithHeader style={{ flex: 1 }}>
-      <TutorialSwiper data={data[activePath]}>
-        <InitialScreenWrapper>
-          <Button title={'newbie TODO change'} onPress={() => setActivePath(ONBOARDING_SCREENS_FOR_NEWBIES)} />
-          <Button title={'pro TODO change'} onPress={() => setActivePath(ONBOARDING_SCREENS_FOR_NATIVES)} />
-        </InitialScreenWrapper>
-      </TutorialSwiper>
+      <TutorialSwiper data={data[activePath]} onButtonPress={val => setActivePath(val)} onFinish={handleFinish} />
     </ContainerWithHeader>
   );
 };
-
-export default withTheme(Tutorial);

@@ -26,8 +26,8 @@ export const getSortedOnboardingData = (docs: CMSDocument[], type: string): Pars
 
 const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
   const {
-    id, type, href, slugs, image, data: {
-      order = 0, title, subtitle, body,
+    id, type, href, slugs, data: {
+      order = 0, title, subtitle, body, image,
     } = {},
   } = doc;
   return {
@@ -40,5 +40,7 @@ const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
     subtitle: subtitle[0]?.text || '',
     body: body[0]?.text || '',
     imageUrl: image?.url || '',
+    imageHeight: image?.dimensions?.height || 0,
+    imageWidth: image?.dimensions?.width || 0,
   };
 };
