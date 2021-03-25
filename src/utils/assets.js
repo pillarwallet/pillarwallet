@@ -415,6 +415,7 @@ export const mapAssetDataToAssetOption = (
 ): AssetOption => {
   return {
     symbol: assetData.token,
+    address: assetData.contractAddress,
     name: assetData.name ?? '',
     imageUrl: assetData.icon,
     tokenType: assetData.tokenType ?? TOKENS,

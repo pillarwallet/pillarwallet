@@ -30,6 +30,7 @@ import TokenIcon from 'components/modern/TokenIcon';
 import { useRootSelector } from 'selectors';
 
 // Utils
+import { formatTokenAmount } from 'utils/common';
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -77,6 +78,7 @@ export function Balance({
   const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
   const rates = useRootSelector((root) => root.rates.data);
 
+  const formattedBalance = formatTokenAmount(balance, symbol);
   const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol);
 
   return (
@@ -84,7 +86,7 @@ export function Balance({
       {!!formattedFiatValue && <BalanceFiatValue>{formattedFiatValue}</BalanceFiatValue>}
       {balance != null && (
         <BalanceToken>
-          {balance} {symbol}
+          {formattedBalance} {symbol}
         </BalanceToken>
       )}
     </BalanceWrapper>
