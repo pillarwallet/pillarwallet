@@ -74,6 +74,7 @@ export const initialState: AppSettingsReducerState = {
     useBiometrics: false,
     hasSeenExchangeIntro: false,
     hasSeenWbtcCafeIntro: false,
+    hasSeenTutorial: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
     hideBadges: false,

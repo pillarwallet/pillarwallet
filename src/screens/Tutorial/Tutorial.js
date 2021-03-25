@@ -19,12 +19,13 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import Prismic from '@prismicio/client';
+import { Predicates } from '@prismicio/client';
+import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { HOME } from 'constants/navigationConstants';
 
-import type { NavigationScreenProp } from 'react-navigation';
-import type { Theme } from 'models/Theme';
 import type { CMSData, CMSDocument, ParsedCMSDocument } from 'models/CMSData';
 
 import prismicClient from 'services/prismic';
@@ -32,10 +33,11 @@ import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { reportErrorLog } from 'utils/common';
 import { getSortedOnboardingData } from 'utils/cms';
 import TutorialSwiper from './TutorialSwiper';
+import { hasSeenTutorialAction } from '../../actions/appSettingsActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  theme: Theme,
+  hasSeenTutorial: () => void,
 }
 
 const {
@@ -54,7 +56,7 @@ const INITIAL_STATE: CMSSortedDocuments = {
   [NEWBIES]: [],
 };
 
-export default ({ navigation }: Props) => {
+const TutorialScreen = ({ navigation, hasSeenTutorial }: Props) => {
   const [data, setData] = useState<CMSSortedDocuments>(INITIAL_STATE);
   const [activePath, setActivePath] = useState<TUTORIAL_PATH>(NEWBIES);
 
@@ -66,14 +68,14 @@ export default ({ navigation }: Props) => {
   };
 
   useEffect(() => {
-    prismicClient.query(Prismic.Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
+    prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
       .then((res: CMSData) => handleFetchedResults(res.results))
       .catch(e => reportErrorLog(e));
   }, []);
   if (!data) return null;
 
   const handleFinish = () => {
-    // TODO: change seen tutorial flag
+    hasSeenTutorial();
     navigation.navigate(HOME);
   };
 
@@ -83,3 +85,9 @@ export default ({ navigation }: Props) => {
     </ContainerWithHeader>
   );
 };
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  hasSeenTutorial: () => dispatch(hasSeenTutorialAction()),
+});
+
+export default connect(null, mapDispatchToProps)(TutorialScreen);
