@@ -20,18 +20,19 @@
 
 import React from 'react';
 import { FlatList, Alert, View } from 'react-native';
-import Emoji from 'react-native-emoji';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
-import Intercom from 'react-native-intercom';
-import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
+import Intercom from 'react-native-intercom';
+import Emoji from 'react-native-emoji';
+
 import t from 'translations/translate';
-import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
-import { getColorByTheme, getThemeColors } from 'utils/themes';
+import { getColorByTheme, useThemeColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
-import { images } from 'utils/images';
+import { useThemedImages } from 'utils/images';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,6 +43,7 @@ import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
 import Modal from 'components/Modal';
+import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 
 // constants
 import {
@@ -70,14 +72,11 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
 
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  theme: Theme,
+type Props = {|
   user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
@@ -86,63 +85,9 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   hasKeyBasedAssetsTransferInProgress: boolean,
   keyBasedWalletHasPositiveBalance: boolean,
-};
-
-const Footer = styled.View``;
-
-const LinksSection = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: ${spacing.mediumLarge}px 0;
-`;
-
-const LogoutSection = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-`;
-
-const LockScreenSection = styled.View`
-  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.mediumLarge}px;
-`;
-
-const HeaderLogo = styled(Image)`
-  width: 68px;
-  height: 20px;
-`;
-
-const LogoutIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  ${fontStyles.regular};
-  margin-right: 5px;
-`;
-
-const LegalTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
-const LogoutTextLink = styled(TextLink)`
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  ${fontStyles.regular};
-`;
-
-const LockScreenTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
-const SEPARATOR_SYMBOL = '  •  ';
+|};
 
 const Menu = ({
-  theme,
-  navigation,
   goToInvitationFlow,
   isPillarRewardCampaignActive,
   hasKeyBasedAssetsTransferInProgress,
@@ -151,18 +96,16 @@ const Menu = ({
   lockScreen,
   keyBasedWalletHasPositiveBalance,
 }: Props) => {
-  const openLegalModal = (endpoint: string) => Modal.open(() => (
-    <HTMLContentModal htmlEndpoint={endpoint} />
-  ));
+  const navigation = useNavigation();
 
-  const { pillarLogoSmall: logo } = images(theme);
+  const { pillarLogoSmall: logo } = useThemedImages();
+  const colors = useThemeColors();
+
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
-  const colors = getThemeColors(theme);
 
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
-  const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
-    !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
-  );
+  const showMigrateWallet =
+    (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
 
   type MenuItem = {|
     key: string,
@@ -235,16 +178,6 @@ const Menu = ({
       action: () => Intercom.displayHelpCenter(),
     },
     {
-      key: 'assetsMigration',
-      title: t('settingsContent.settingsItem.assetsMigration.title'),
-      icon: 'send-asset',
-      iconColor: colors.accent,
-      hidden: isKeyBasedAssetsMigrationHidden,
-      action: () => navigation.navigate(
-        hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
-      ),
-    },
-    {
       key: 'storybook',
       title: 'Storybook', // eslint-disable-line i18next/no-literal-string
       icon: 'dictionary',
@@ -253,6 +186,14 @@ const Menu = ({
       hidden: !__DEV__,
     },
   ];
+
+  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+
+  const navigateToKeyBasedAssetMigration = () => {
+    navigation.navigate(
+      hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
+    );
+  };
 
   const renderMenuItem = ({ item }) => {
     const {
@@ -315,11 +256,17 @@ const Menu = ({
     >
       <FlatList
         data={menuItems}
-        keyExtractor={item => item.key}
+        keyExtractor={(item) => item.key}
         renderItem={renderMenuItem}
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         ListFooterComponent={
           <Footer>
+            {showMigrateWallet && (
+              <FooterBanner>
+                <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} />
+              </FooterBanner>
+            )}
+
             <LinksSection>
               <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
                 {t('settingsContent.button.termOfUse')}
@@ -330,15 +277,11 @@ const Menu = ({
               </LegalTextLink>
             </LinksSection>
             <LockScreenSection>
-              <LockScreenTextLink onPress={lockScreen}>
-                {t('settingsContent.button.lockWallet')}
-              </LockScreenTextLink>
+              <LockScreenTextLink onPress={lockScreen}>{t('settingsContent.button.lockWallet')}</LockScreenTextLink>
             </LockScreenSection>
             <LogoutSection>
               <LogoutIcon name="signout" />
-              <LogoutTextLink onPress={deleteWallet}>
-                {t('settingsContent.button.signOut')}
-              </LogoutTextLink>
+              <LogoutTextLink onPress={deleteWallet}>{t('settingsContent.button.signOut')}</LogoutTextLink>
             </LogoutSection>
           </Footer>
         }
@@ -373,4 +316,60 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(Menu));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(Menu);
+
+const SEPARATOR_SYMBOL = '  •  ';
+
+const Footer = styled.View``;
+
+const FooterBanner = styled.View`
+  margin: ${spacing.small}px 0 ${spacing.large}px;
+`;
+
+const LinksSection = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: ${spacing.mediumLarge}px 0;
+`;
+
+const LogoutSection = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+`;
+
+const LockScreenSection = styled.View`
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.mediumLarge}px;
+`;
+
+const HeaderLogo = styled(Image)`
+  width: 68px;
+  height: 20px;
+`;
+
+const LogoutIcon = styled(Icon)`
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  ${fontStyles.regular};
+  margin-right: 5px;
+`;
+
+const LegalTextLink = styled(TextLink)`
+  ${fontStyles.regular};
+`;
+
+const LogoutTextLink = styled(TextLink)`
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  ${fontStyles.regular};
+`;
+
+const LockScreenTextLink = styled(TextLink)`
+  ${fontStyles.regular};
+`;

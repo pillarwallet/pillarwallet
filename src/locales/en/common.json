@@ -631,6 +631,10 @@
     "title": {
       "smartWalletIsActivated": "Your Smart Wallet is now activated",
       "walletActivatedScreen": "What's next"
+    },
+    "banner": {
+      "title": "Migrate to Smart Wallet",
+      "body": "Transfer all your assets to an advanced platform and start earning with new features."
     }
   },
 
@@ -739,9 +743,6 @@
       },
       "appSettings": {
         "title": "App settings"
-      },
-      "assetsMigration": {
-        "title": "Migrate assets to Smart Wallet"
       },
       "backup": {
         "title": "Backup not finished",
