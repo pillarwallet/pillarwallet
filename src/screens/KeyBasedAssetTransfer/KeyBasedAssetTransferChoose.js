@@ -51,10 +51,12 @@ import {
   addressesEqual,
   getAssetData,
   getBalance,
+  getBalanceBN,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
 } from 'utils/assets';
+import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Constants
@@ -73,7 +75,7 @@ type Props = {
   isFetchingAvailableCollectibles: boolean,
   availableBalances: Balances,
   availableCollectibles: Collectibles,
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => void,
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   supportedAssets: Asset[],
   walletAddress: ?string,
@@ -118,7 +120,7 @@ const KeyBasedAssetTransferChoose = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onAssetSelect = (assetData: AssetData, amount?: number) => {
+  const onAssetSelect = (assetData: AssetData, amount?: BigNumber) => {
     const assetExist = keyBasedAssetsToTransfer.some((assetToTransfer) =>
       isMatchingAssetToTransfer(assetToTransfer, assetData),
     );
@@ -169,20 +171,20 @@ const KeyBasedAssetTransferChoose = ({
       isMatchingAssetToTransfer(assetToTransfer, item),
     );
 
-    const assetAmount = checkedAsset?.draftAmount || getBalance(availableBalances, item.token);
-    const onCheck = () => onAssetSelect(item, assetAmount);
+    const assetAmountBN = checkedAsset?.draftAmount || getBalanceBN(availableBalances, item.token);
+    const onCheck = () => onAssetSelect(item, assetAmountBN);
 
     return (
       <AssetListItem
         name={item.name}
         symbol={item.token}
         iconUrl={item.icon}
-        balance={assetAmount}
+        balance={assetAmountBN}
         onPress={onCheck}
         onPressBalance={() =>
           navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT, {
             assetData: item,
-            value: assetAmount,
+            value: assetAmountBN,
           })
         }
         leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
@@ -262,7 +264,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => dispatch(
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => dispatch(
     addKeyBasedAssetToTransferAction(assetData, amount),
   ),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),

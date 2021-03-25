@@ -55,6 +55,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import { humanizeDateString, formatDate } from './date';
 import { isProdEnv, isTest } from './environment';
 
+export { BigNumber } from 'bignumber.js';
 export { isIphoneX } from 'react-native-iphone-x-helper';
 
 const WWW_URL_PATTERN = /^www\./i;
