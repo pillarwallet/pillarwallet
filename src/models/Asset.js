@@ -20,11 +20,11 @@
 
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
-
+export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetData = {|
   token: string,
   contractAddress?: string,
-  tokenType?: string,
+  tokenType?: TokenType,
   name?: string,
   decimals: number,
   icon?: string,
@@ -111,27 +111,29 @@ export type KeyBasedAssetTransfer = {|
   signedTransaction?: Object,
   status?: string,
 |};
-
-export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetOption = {
+  // Core props
+  balance?: ?AssetBalance,
+  decimals?: number,
+  imageUrl: string,
+  name: string,
+  symbol: string,
+  tokenType?: TokenType,
+
+  // Additional props
   address?: string,
   assetBalance?: string,
-  balance?: ?AssetBalance,
   contractAddress?: string,
-  decimals?: number,
   ethAddress?: string,
   formattedBalanceInFiat?: string,
-  name: string,
   icon?: string,
   iconUrl?: string,
   id?: string,
   imageSource?: string,
   imageUrl?: string,
   lastUpdateTime?: string,
-  symbol: string,
   token?: string,
   tokenId?: string,
-  tokenType?: TokenType,
 };
 
 export type AssetBalance = {|

@@ -30,6 +30,10 @@ export type Selector<Result, Props = void> = (state: RootReducerState, props?: P
 export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T =>
   useSelector((root: RootReducerState) => selector(root));
 
+// Most commonly used selectors
+export const useFiatCurrency = () => useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
+export const useRates = () => useRootSelector((root) => root.rates.data);
+
 //
 // Global selectors here
 //
