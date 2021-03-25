@@ -75,7 +75,7 @@ const Summary = styled.View`
 `;
 
 const Title = styled(Text)`
-  font-family: '${appFont.medium}';
+  font-family: '${appFont.archiaMedium}';
   ${fontStyles.big};
   color: #fcfdff;
   margin-bottom: ${spacing.small}px;
