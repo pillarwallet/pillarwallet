@@ -40,7 +40,7 @@ import { useRootSelector, useFiatCurrency, useRates } from 'selectors';
 
 // Utils
 import { mapAssetDataToAssetOption } from 'utils/assets';
-import { formatAmount } from 'utils/common';
+import { BigNumber, formatAmount } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // types
@@ -82,7 +82,7 @@ function KeyBasedAssetTransferEditAmount() {
     if (!assetData) return;
 
     dispatch(removeKeyBasedAssetToTransferAction(assetData));
-    dispatch(addKeyBasedAssetToTransferAction(assetData, +value));
+    dispatch(addKeyBasedAssetToTransferAction(assetData, BigNumber(value)));
     navigation.goBack(null);
   };
 

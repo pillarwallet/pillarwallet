@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { BigNumber } from 'bignumber.js';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
@@ -104,7 +105,7 @@ export type DepositedAsset = Asset & {
 export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
   assetData: AssetData,
-  draftAmount?: number,
+  draftAmount?: BigNumber,
   amount?: number,
   calculatedGasLimit?: number,
   gasPrice?: number,
