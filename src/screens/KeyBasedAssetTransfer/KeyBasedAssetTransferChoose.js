@@ -184,15 +184,6 @@ const KeyBasedAssetTransferChoose = ({
     );
   };
 
-  const editAmountSetting = {
-    link: t('button.edit'),
-    onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT),
-  };
-
-  const hasTokensSelected = !isEmpty(
-    keyBasedAssetsToTransfer.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
-  );
-
   let totalValue = 0;
   keyBasedAssetsToTransfer.forEach((asset) => {
     totalValue += getBalanceInFiat(baseFiatCurrency, asset.draftAmount, rates || {}, asset.assetData.token);
@@ -202,7 +193,6 @@ const KeyBasedAssetTransferChoose = ({
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('transactions.title.transferAssetsToSmartWalletScreen') }],
-        rightItems: [hasTokensSelected ? editAmountSetting : {}],
       }}
       footer={
         !isEmpty(keyBasedAssetsToTransfer) && (

@@ -19,25 +19,13 @@
 */
 
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
-
-// Components
-import Text from 'components/modern/Text';
-
-// Selectors
-import { useRootSelector } from 'selectors';
-
-// Utils
-import { getFormattedBalanceInFiat } from 'utils/assets';
-import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
 
 // Local
-import TokenIcon from './TokenIcon';
+import { Container, LeftAddOn, Icon, Name, Balance } from './components';
 
 type Props = {|
   name: ?string,
@@ -50,6 +38,11 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
+/**
+ * Standard Asset list item displaying icon, name, and optionally balance and left add-on (e.g. checkbox).
+ *
+ * In case you needed more customized asset item layout, please use individual parts exported from `./components` file.
+ */
 function AssetListItem({
   name,
   symbol,
@@ -60,67 +53,16 @@ function AssetListItem({
   leftAddOn,
   style,
 }: Props) {
-  const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
-  const rates = useRootSelector((root) => root.rates.data);
-
-  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol);
-
-  const hasBalance = !!balance || balance === 0;
-
   return (
-    <Container onPress={onPress} style={style}>
+    <Container onPress={onPress} disabled={!onPress} style={style}>
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
       <Icon url={iconUrl} />
-
       <Name>{name}</Name>
-
-      {hasBalance && (
-        <ValueWrapper onPress={onPressValue}>
-          {!!formattedFiatValue && <FiatValue>{formattedFiatValue}</FiatValue>}
-          {balance != null && <TokenBalance>{balance} {symbol}</TokenBalance>}
-        </ValueWrapper>
-      )}
+      {!!symbol && balance != null && <Balance symbol={symbol} balance={balance} onPress={onPressValue} />}
     </Container>
   );
 }
 
 export default AssetListItem;
 
-const Container = styled(TouchableOpacity)`
-  flex-direction: row;
-  align-items: center;
-  padding: ${spacing.medium}px ${spacing.large}px;
-  min-height: 76px;
-`;
-
-const LeftAddOn = styled.View`
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  margin-right: ${spacing.large}px;
-`;
-
-const Icon = styled(TokenIcon)`
-  margin-right: ${spacing.medium}px;
-`;
-
-const Name = styled(Text)`
-  flex: 1;
-  font-family: '${appFont.medium}';
-  ${fontStyles.medium};
-`;
-
-const ValueWrapper = styled(TouchableOpacity)`
-  align-self: stretch;
-  justify-content: center;
-  align-items: flex-end;
-`;
-
-const FiatValue = styled(Text)`
-  ${fontStyles.medium};
-`;
-
-const TokenBalance = styled(Text)`
-  color: ${({ theme }) => theme.colors.secondaryText};
-`;
