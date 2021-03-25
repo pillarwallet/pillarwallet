@@ -20,25 +20,25 @@
 import * as React from 'react';
 import { InteractionManager } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import styled from 'styled-components/native';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import {
   addKeyBasedAssetToTransferAction,
   removeKeyBasedAssetToTransferAction,
 } from 'actions/keyBasedAssetTransferActions';
 
-// components
+// Components
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, useFiatCurrency, useRates } from 'selectors';
 
-// utils
+// Utils
 import { mapAssetDataToAssetOption } from 'utils/assets';
 import { formatAmount } from 'utils/common';
 import { spacing } from 'utils/variables';
@@ -57,11 +57,11 @@ function KeyBasedAssetTransferEditAmount() {
   const [isValid, setIsValid] = React.useState(true);
 
   const dispatch = useDispatch();
-  const balances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
-  const rates = useRootSelector((root) => root.rates.data);
-  const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
+  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+  const fiatCurrency = useFiatCurrency();
+  const rates = useRates();
 
-  const assetOption = mapAssetDataToAssetOption(assetData, balances, rates, fiatCurrency);
+  const assetOption = mapAssetDataToAssetOption(assetData, keyWalletBalances, rates, fiatCurrency);
 
   const handleSubmit = () => {
     dispatch(removeKeyBasedAssetToTransferAction(assetData));
@@ -93,9 +93,11 @@ function KeyBasedAssetTransferEditAmount() {
           onValueChange={setValue}
           assetData={assetOption}
           customAssets={[]}
-          customBalances={balances}
+          customBalances={keyWalletBalances}
           onFormValid={setIsValid}
-          getInputRef={(ref) => { inputRef.current = ref; }}
+          getInputRef={(ref) => {
+            inputRef.current = ref;
+          }}
         />
       </Content>
     </ContainerWithHeader>
