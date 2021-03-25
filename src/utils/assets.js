@@ -27,7 +27,7 @@ import { getEnv } from 'configs/envConfig';
 import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { formatFiat, formatAmount, formatTokenAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
+import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 
 // types
 import type {
@@ -378,7 +378,7 @@ export const getAssetOption = (
   const { symbol, iconUrl } = asset;
 
   const assetBalance = getBalance(balances, symbol);
-  const formattedAssetBalance = assetBalance ? formatTokenAmount(assetBalance, symbol) : '';
+  const formattedAssetBalance = assetBalance ? formatAmount(assetBalance) : '';
   const balanceInFiat = rates ? getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : undefined;
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
 
