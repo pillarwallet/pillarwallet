@@ -27,7 +27,10 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 
 import type { Theme } from 'models/Theme';
+import type { ParsedCMSDocument } from 'models/CMSData';
+
 import { fontStyles } from 'utils/variables';
+import { getDeviceWidth } from 'utils/common';
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -45,17 +48,15 @@ const Body = styled(BaseText)`
 
 type Props = {
   theme: Theme,
-  title: string,
-  subtitle: string,
-  imageUrl: string,
-  body: string,
+  document: ParsedCMSDocument,
 };
 
-const CMSView = ({
-  title, subtitle, imageUrl, body,
-}: Props) => {
+const CMSView = ({ document }: Props) => {
+  const {
+    title, subtitle, body, imageUrl,
+  } = document;
   return (
-    <ContainerWithHeader>
+    <ContainerWithHeader style={{ width: getDeviceWidth() }}>
       <View>
         <Title>{title}</Title>
         <SubTitle>{subtitle}</SubTitle>

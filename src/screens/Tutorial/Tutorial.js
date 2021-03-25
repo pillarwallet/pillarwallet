@@ -26,23 +26,30 @@ import Button from 'components/Button';
 import { BaseText, MediumText } from 'components/Typography';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
-import type { CMSData, CMSDocument } from 'models/CMSData';
+import type { CMSData, CMSDocument, ParsedCMSDocument } from 'models/CMSData';
 
 import prismicClient from 'services/prismic';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, getDeviceWidth } from 'utils/common';
 import { getSortedOnboardingData } from 'utils/cms';
+import TutorialSwiper from './TutorialSwiper';
+
+const InitialScreenWrapper = styled.View`
+  height: 100%;
+  width: ${getDeviceWidth()}px;
+`;
 
 type Props = {
-  navigation: NavigationScreenProp,
+  navigation: NavigationScreenProp<*>,
   theme: Theme,
 }
 
 const { ONBOARDING_SCREENS_FOR_NATIVES, ONBOARDING_SCREENS_FOR_NEWBIES } = CMS_DATA_TYPES;
 
+type TUTORIAL_PATH = typeof ONBOARDING_SCREENS_FOR_NATIVES | typeof ONBOARDING_SCREENS_FOR_NEWBIES;
+
 type CMSSortedDocuments = {
-  [ONBOARDING_SCREENS_FOR_NATIVES]: CMSDocument[],
-  [ONBOARDING_SCREENS_FOR_NEWBIES]: CMSDocument[],
+  [key: string]: ParsedCMSDocument[],
 };
 
 const INITIAL_STATE: CMSSortedDocuments = {
@@ -52,6 +59,7 @@ const INITIAL_STATE: CMSSortedDocuments = {
 
 const Tutorial = ({ navigation }: Props) => {
   const [data, setData] = useState<CMSSortedDocuments>(INITIAL_STATE);
+  const [activePath, setActivePath] = useState<TUTORIAL_PATH>(ONBOARDING_SCREENS_FOR_NEWBIES);
 
   const handleFetchedResults = (docs: CMSDocument[]) => {
     setData({
@@ -70,9 +78,12 @@ const Tutorial = ({ navigation }: Props) => {
   if (!data) return null;
   return (
     <ContainerWithHeader style={{ flex: 1 }}>
-      <Button title="newbie" onPress={() => {}} />
-
-      <Button title="pro" onPress={() => {}} />
+      <TutorialSwiper data={data[activePath]}>
+        <InitialScreenWrapper>
+          <Button title={'newbie TODO change'} onPress={() => setActivePath(ONBOARDING_SCREENS_FOR_NEWBIES)} />
+          <Button title={'pro TODO change'} onPress={() => setActivePath(ONBOARDING_SCREENS_FOR_NATIVES)} />
+        </InitialScreenWrapper>
+      </TutorialSwiper>
     </ContainerWithHeader>
   );
 };

@@ -38,6 +38,18 @@ export type CMSDocument = {
   }
 };
 
+export type ParsedCMSDocument = {
+  id: string,
+  type: string,
+  href: string,
+  slugs: string[],
+  order: number,
+  title: string,
+  subtitle: string,
+  body: string,
+  imageUrl: string,
+}
+
 export type CMSData = {
   results: CMSDocument[],
 };

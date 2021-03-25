@@ -18,27 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import orderBy from 'lodash.orderby';
-import type { CMSDocument, ParsedCMSDocument } from 'models/CMSData';
+import * as React from 'react';
+import { ScrollView } from 'react-native';
 
-export const getSortedOnboardingData = (docs: CMSDocument[], type: string): ParsedCMSDocument[] =>
-  orderBy(docs.map(d => parseCMSDocument(d)).filter(d => d.type === type), i => (i.order || 0), ['asc']);
+import type { ParsedCMSDocument } from 'models/CMSData';
+import TutorialCMSView from './TutorialCMSView';
 
-const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
-  const {
-    id, type, href, slugs, image, data: {
-      order = 0, title, subtitle, body,
-    } = {},
-  } = doc;
-  return {
-    id,
-    type,
-    href,
-    slugs,
-    order,
-    title: title[0]?.text || '',
-    subtitle: subtitle[0]?.text || '',
-    body: body[0]?.text || '',
-    imageUrl: image?.url || '',
-  };
+type Props = {
+  children: React.Node,
+  data: ParsedCMSDocument[],
+}
+
+export default ({ children, data }: Props) => {
+  return (
+    <ScrollView
+      horizontal
+      bounces={false}
+      pagingEnabled
+    >
+      {children}
+      {data.map(doc => <TutorialCMSView document={doc} key={doc.id} />)}
+    </ScrollView>
+  );
 };
