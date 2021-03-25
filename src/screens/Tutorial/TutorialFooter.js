@@ -56,7 +56,7 @@ export default withTheme(({
   onBackPress, onNextPress, onSkipPress, isLast,
 }: Props) => {
   const renderButton = (title: string, handler: ?Function) => (
-    <TouchableOpacity onPress={handler} hitSlop={hitSlop10}>
+    <TouchableOpacity disabled={!handler} onPress={handler} hitSlop={hitSlop10}>
       <ButtonText>{handler ? title : ''}</ButtonText>
     </TouchableOpacity>
   );

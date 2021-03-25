@@ -27,13 +27,15 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { HOME } from 'constants/navigationConstants';
 
 import type { CMSData, CMSDocument, ParsedCMSDocument } from 'models/CMSData';
+import type { Dispatch } from 'reducers/rootReducer';
+import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 
 import prismicClient from 'services/prismic';
-import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { reportErrorLog } from 'utils/common';
 import { getSortedOnboardingData } from 'utils/cms';
+import { hasSeenTutorialAction } from 'actions/appSettingsActions';
+
 import TutorialSwiper from './TutorialSwiper';
-import { hasSeenTutorialAction } from '../../actions/appSettingsActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
