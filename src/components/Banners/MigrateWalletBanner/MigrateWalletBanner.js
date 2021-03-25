@@ -25,7 +25,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Spacing } from 'components/Layout';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -51,9 +50,6 @@ function MigrateWalletBanner({ onPress, style }: Props) {
 
         <Summary>
           <Title>{t('title')}</Title>
-
-          <Spacing h={spacing.small} />
-
           <Body>{t('body')}</Body>
         </Summary>
       </BackgroundGradient>
@@ -82,6 +78,7 @@ const Title = styled(Text)`
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   color: #fcfdff;
+  margin-bottom: ${spacing.small}px;
 `;
 
 const Body = styled(Text)`
