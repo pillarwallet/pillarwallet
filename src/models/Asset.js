@@ -113,6 +113,7 @@ export type KeyBasedAssetTransfer = {|
 |};
 export type AssetOption = {
   // Core props
+  address?: string,
   balance?: ?AssetBalance,
   decimals?: number,
   imageUrl: string,
@@ -121,7 +122,6 @@ export type AssetOption = {
   tokenType?: TokenType,
 
   // Additional props
-  address?: string,
   assetBalance?: string,
   contractAddress?: string,
   ethAddress?: string,

@@ -48,12 +48,12 @@ import type { AssetData } from 'models/Asset';
 
 function KeyBasedAssetTransferEditAmount() {
   const navigation = useNavigation();
-  const assetData: AssetData = navigation.getParam('assetData');
+  const assetData: ?AssetData = navigation.getParam('assetData');
   const initialValue: ?number = navigation.getParam('value');
 
   const inputRef = React.useRef();
 
-  const [value, setValue] = React.useState(initialValue != null ? formatAmount(initialValue, assetData.decimals) : '');
+  const [value, setValue] = React.useState(initialValue != null ? formatAmount(initialValue, assetData?.decimals) : '');
   const [isValid, setIsValid] = React.useState(true);
 
   const dispatch = useDispatch();
@@ -61,19 +61,32 @@ function KeyBasedAssetTransferEditAmount() {
   const fiatCurrency = useFiatCurrency();
   const rates = useRates();
 
-  const assetOption = mapAssetDataToAssetOption(assetData, keyWalletBalances, rates, fiatCurrency);
-
-  const handleSubmit = () => {
-    dispatch(removeKeyBasedAssetToTransferAction(assetData));
-    dispatch(addKeyBasedAssetToTransferAction(assetData, +value));
-    navigation.goBack(null);
-  };
-
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       inputRef.current?.focus();
     });
   }, []);
+
+  // Fail safe
+  if (!assetData) {
+    return (
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: t('transactions.title.amountEditScreen') }],
+        }}
+      />
+    );
+  }
+
+  const handleSubmit = () => {
+    if (!assetData) return;
+
+    dispatch(removeKeyBasedAssetToTransferAction(assetData));
+    dispatch(addKeyBasedAssetToTransferAction(assetData, +value));
+    navigation.goBack(null);
+  };
+
+  const assetOption = assetData ? mapAssetDataToAssetOption(assetData, keyWalletBalances, rates, fiatCurrency) : null;
 
   return (
     <ContainerWithHeader
