@@ -27,7 +27,7 @@ import Image from 'components/Image';
 import { useThemedImages } from 'utils/images';
 
 // Types
-import { ViewStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {|
   url: ?string,
