@@ -21,9 +21,16 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 
-import { MediumText } from 'components/Typography';
-import { getCurrencySymbol, formatFiatValue } from 'utils/common';
+// Constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+
+// Components
+import Text from 'components/modern/Text';
+
+// Utils
+import { getCurrencySymbol, formatFiatValue } from 'utils/common';
+import { appFont, fontStyles } from 'utils/variables';
+
 
 type Props = {
   balance: number,
@@ -34,41 +41,40 @@ type Props = {
   balanceTextStyle?: Object,
 };
 
-const BalanceText = styled(MediumText)`
-  font-size: 36px;
-  line-height: 36px;
-`;
+function BalanceView({
+  style,
+  fiatCurrency,
+  balance,
+  currencyTextStyle,
+  balanceTextStyle,
+}: Props) {
+  return (
+    <Container style={style}>
+      <CurrencySymbol style={currencyTextStyle}>
+        {getCurrencySymbol(fiatCurrency || defaultFiatCurrency)}
+      </CurrencySymbol>
+      <Balance style={balanceTextStyle}>{formatFiatValue(balance)}</Balance>
+    </Container>
+  );
+}
 
-const CurrencyText = styled(MediumText)`
-  font-size: 20px;
-  line-height: 20px;
-  margin-top: 2px;
-  margin-right: 6px;
-`;
+export default BalanceView;
 
-const BalanceWrapper = styled.View`
+const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
 `;
 
-class BalanceView extends React.PureComponent<Props> {
-  render() {
-    const {
-      style, fiatCurrency, balance, currencyTextStyle, balanceTextStyle,
-    } = this.props;
+const CurrencySymbol = styled(Text)`
+  font-family: '${appFont.archiaMedium}';
+  ${fontStyles.big};
+  margin-top: 4px;
+  margin-right: 4px;
+`;
 
-    const portfolioBalance = formatFiatValue(balance);
-    const currency = fiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(currency);
-
-    return (
-      <BalanceWrapper style={style}>
-        <CurrencyText style={currencyTextStyle}>{currencySymbol}</CurrencyText>
-        <BalanceText style={balanceTextStyle}>{portfolioBalance}</BalanceText>
-      </BalanceWrapper>
-    );
-  }
-}
-
-export default BalanceView;
+const Balance = styled(Text)`
+  font-family: '${appFont.archiaMedium}';
+  font-size: 30px;
+  line-height: 46px;
+`;
