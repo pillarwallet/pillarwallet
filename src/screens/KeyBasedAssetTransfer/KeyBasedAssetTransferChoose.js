@@ -179,6 +179,12 @@ const KeyBasedAssetTransferChoose = ({
         iconUrl={item.icon}
         balance={assetAmount}
         onPress={onCheck}
+        onPressBalance={() =>
+          navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT, {
+            assetData: item,
+            value: assetAmount,
+          })
+        }
         leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
       />
     );

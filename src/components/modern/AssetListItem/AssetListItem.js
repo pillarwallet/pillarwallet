@@ -33,7 +33,7 @@ type Props = {|
   symbol?: string,
   balance?: ?Value,
   onPress?: () => mixed,
-  onPressValue?: () => mixed,
+  onPressBalance?: () => mixed,
   leftAddOn?: React.Node,
   style?: ViewStyleProp,
 |};
@@ -49,7 +49,7 @@ function AssetListItem({
   iconUrl,
   balance,
   onPress,
-  onPressValue,
+  onPressBalance,
   leftAddOn,
   style,
 }: Props) {
@@ -59,7 +59,7 @@ function AssetListItem({
 
       <Icon url={iconUrl} />
       <Name>{name}</Name>
-      {!!symbol && balance != null && <Balance symbol={symbol} balance={balance} onPress={onPressValue} />}
+      {!!symbol && balance != null && <Balance symbol={symbol} balance={balance} onPress={onPressBalance} />}
     </Container>
   );
 }
