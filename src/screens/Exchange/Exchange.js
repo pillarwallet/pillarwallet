@@ -65,12 +65,11 @@ import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
-import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, AssetOption, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { Option } from 'models/Selector';
 import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
 
 // partials
@@ -122,8 +121,8 @@ type State = {
   isSubmitted: boolean,
   showEmptyMessage: boolean,
   fromAmount: string,
-  fromAsset: Option,
-  toAsset: Option,
+  fromAsset: AssetOption,
+  toAsset: AssetOption,
   isFormValid: boolean,
   wbtcData: ?WBTCFeesWithRate,
 };
@@ -230,12 +229,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   }
 
-  getInitialAssets = (): { fromAsset: Option, toAsset: Option } => {
+  getInitialAssets = (): { fromAsset: AssetOption, toAsset: AssetOption } => {
     const { navigation, exchangeSearchRequest } = this.props;
     const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
     return {
-      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode) || {},
+      fromAsset: this.options.fromOptions.find(a => a.symbol === fromAssetCode) || {},
       toAsset: getToOption(toAssetCode, this.options),
     };
   }
@@ -263,7 +262,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   getFromInput = () => {
     const { fromAsset, fromAmount, toAsset } = this.state;
-    const { fromOptions, horizontalOptions } = this.options;
+    const { fromOptions } = this.options;
 
     return (
       <>
@@ -272,11 +271,11 @@ class ExchangeScreen extends React.Component<Props, State> {
           onAssetDataChange={(assetData) => this.setState({
             fromAsset: assetData, toAsset: assetData.symbol === BTC ? getToOption(WBTC, this.options) : toAsset,
           })}
+          onCollectibleAssetDataChange={(collectible) => this.setState({ fromAsset: collectible })}
           value={fromAmount}
           onValueChange={this.handleFromInputChange}
           selectorOptionsTitle={t('label.sell')}
           customAssets={fromOptions}
-          horizontalOptions={horizontalOptions}
           leftSideSymbol="minus" // eslint-disable-line i18next/no-literal-string
           getInputRef={ref => { this.fromInputRef = ref; }}
           onBlur={this.blurFromInput}
@@ -292,7 +291,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       toAsset, fromAmount, fromAsset, wbtcData,
     } = this.state;
-    const { toOptions, horizontalOptions } = this.options;
+    const { toOptions } = this.options;
 
     let toAmount;
     const isWbtc = isWbtcCafe(fromAsset.symbol);
@@ -311,7 +310,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         onAssetDataChange={(assetData) => this.setState({ toAsset: assetData })}
         selectorOptionsTitle={t('label.buy')}
         customAssets={toOptions}
-        horizontalOptions={horizontalOptions}
         leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
         hideMaxSend

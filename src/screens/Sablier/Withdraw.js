@@ -98,6 +98,7 @@ const Withdraw = (props: Props) => {
 
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -123,6 +124,7 @@ const Withdraw = (props: Props) => {
       || withdrawAmountInWei.eq(0)) return;
 
     calculateSablierWithdrawTransactionEstimate(stream, withdrawAmountInWei, assetData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [withdrawAmount, inputValid]);
 
   useEffect(() => {
@@ -134,6 +136,7 @@ const Withdraw = (props: Props) => {
         setMaxWithdraw(streamBalance);
         setIsFetchingMaxWithdraw(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goToReviewScreen = () => {

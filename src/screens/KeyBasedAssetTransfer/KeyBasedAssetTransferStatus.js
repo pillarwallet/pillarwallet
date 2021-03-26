@@ -84,6 +84,7 @@ const KeyBasedAssetTransferStatus = ({
   resetKeyBasedAssetsTransfer,
   creatingTransactions,
 }: Props) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { checkKeyBasedAssetTransferTransactions(); }, []);
 
   const assetTransferTransactions = keyBasedAssetsTransfer.map(({

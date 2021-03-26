@@ -92,6 +92,7 @@ const EnterWithdrawAmount = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
@@ -104,6 +105,7 @@ const EnterWithdrawAmount = ({
   useEffect(() => {
     if (!depositAmount || !inputValid || !depositedAsset || Number(depositAmount) === 0) return;
     calculateLendingWithdrawTransactionEstimate(depositAmount, depositedAsset);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [depositAmount, depositedAsset, inputValid]);
 
   let notEnoughForFee;

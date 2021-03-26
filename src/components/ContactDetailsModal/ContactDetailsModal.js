@@ -139,6 +139,7 @@ const ContactDetailsModal = ({
       }
     };
     handleAddressChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAddress]);
 
   const onSubmit = async ({ address, name }: FormData) => {

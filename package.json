@@ -226,6 +226,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-native": "^3.2.1",
     "flow-bin": "^0.122.0",
     "invariant": "^2.2.4",

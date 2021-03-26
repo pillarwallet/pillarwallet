@@ -34,13 +34,13 @@ import type {
   Asset,
   AssetData,
   Assets,
+  AssetOption,
   Balance,
   Balances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Option } from 'models/Selector';
 import type { Value } from 'utils/common';
 
 
@@ -76,7 +76,17 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
-export const getBalance = (balances: Balances = {}, asset: string): number => {
+export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => {
+  if (!balances || !asset) return BigNumber('0');
+  return BigNumber(balances[asset]?.balance ?? '0');
+};
+
+/**
+ * @deprecated: do not use because of rounding issues
+ */
+export const getBalance = (balances: ?Balances, asset: string): number => {
+  if (!balances) return 0;
+
   const assetBalance = get(balances, asset);
   if (!assetBalance) {
     return 0;
@@ -359,30 +369,32 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
-export const generateAssetSelectorOption = (
-  asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
-): Option => {
-  const { symbol, iconUrl, ...rest } = asset;
-  const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
-  const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
-  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
-  const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+export const getAssetOption = (
+  asset: Asset,
+  balances: ?Balances,
+  rates: ?Rates,
+  baseFiatCurrency: ?string,
+): AssetOption => {
+  const { symbol, iconUrl } = asset;
 
-  // $FlowFixMe: flow update to 0.122
-  return ({
-    key: symbol,
-    value: symbol,
-    imageUrl,
-    icon: iconUrl,
-    iconUrl,
-    symbol,
-    ...rest,
-    assetBalance,
+  const assetBalance = getBalance(balances, symbol);
+  const formattedAssetBalance = assetBalance ? formatAmount(assetBalance) : '';
+  const balanceInFiat = rates ? getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : undefined;
+  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
+
+  return {
+    ...asset,
+    imageUrl: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
     formattedBalanceInFiat,
-    customProps: {
-      rightColumnInnerStyle: { alignItems: 'flex-end' },
+    icon: iconUrl,
+    assetBalance: formattedAssetBalance,
+    balance: {
+      token: symbol,
+      balance: assetBalance,
+      balanceInFiat,
+      value: formattedBalanceInFiat,
     },
-  });
+  };
 };
 
 export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {

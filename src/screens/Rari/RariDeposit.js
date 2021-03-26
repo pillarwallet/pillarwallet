@@ -129,6 +129,7 @@ const RariDepositScreen = ({
 
   useEffect(() => {
     fetchRariData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const yieldApyQuery = usePoolCurrentApy(RARI_POOLS.YIELD_POOL);

@@ -26,11 +26,10 @@ import { getEnv } from 'configs/envConfig';
 
 // models
 import type { Offer } from 'models/Offer';
-import type { Asset } from 'models/Asset';
+import type { Asset, AssetOption } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import { BTC } from 'constants/assetsConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
-import type { Option, HorizontalOption } from 'models/Selector';
 import type { AllowanceTransaction } from 'models/Transaction';
 
 import { fiatCurrencies } from 'fixtures/assets';
@@ -43,10 +42,9 @@ import { staticImages } from './images';
 import { reportOrWarn, getEthereumProvider } from './common';
 
 export type ExchangeOptions = {
-  fromOptions: Option[],
-  toOptions: Option[],
-  horizontalOptions: HorizontalOption[],
-}
+  fromOptions: AssetOption[],
+  toOptions: AssetOption[],
+};
 
 export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
 

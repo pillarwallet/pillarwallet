@@ -91,6 +91,7 @@ const ClaimRewardReviewScreen = ({
   useEffect(() => {
     resetEstimateTransaction();
     calculateClaimRewardsTransactionEstimate(pool, rewardsToClaim);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNextButtonPress = async () => {

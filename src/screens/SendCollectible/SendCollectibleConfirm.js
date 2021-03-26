@@ -132,6 +132,7 @@ const SendCollectibleConfirm = ({
     resetEstimateTransaction();
     estimateTransaction(receiver, assetData);
     if (isKovanNetwork) fetchRinkebyEth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFormSubmit = () => {
