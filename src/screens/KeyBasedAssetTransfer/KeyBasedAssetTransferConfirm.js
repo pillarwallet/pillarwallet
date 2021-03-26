@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,86 +17,46 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { connect } from 'react-redux';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { formatEther } from 'ethers/lib/utils';
-import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
-import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+// Components
 import { Footer, Wrapper } from 'components/Layout';
-import Button from 'components/Button';
-import Spinner from 'components/Spinner';
 import { BaseText, MediumText } from 'components/Typography';
+import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import Spinner from 'components/Spinner';
 
-// utils
-import { fontStyles, spacing } from 'utils/variables';
-import { formatFullAmount, humanizeHexString } from 'utils/common';
-import { getBalance } from 'utils/assets';
-
-// constants
+// Constants
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 
-// selectors
-import { activeAccountAddressSelector } from 'selectors';
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
-// types
-import type { Balances, KeyBasedAssetTransfer } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+// Utils
+import { getBalance } from 'utils/assets';
+import { BigNumber, formatFullAmount, humanizeHexString } from 'utils/common';
+import { fontStyles, spacing } from 'utils/variables';
 
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
-  isCalculatingGas: boolean,
-  availableBalances: Balances,
-  activeAccountAddress: string,
-  keyBasedWalletAddress: ?string,
-};
+const KeyBasedAssetTransferConfirm = () => {
+  const navigation = useNavigation();
 
-const DetailsTitle = styled(BaseText)`
-  ${fontStyles.regular};
-  color: #999999;
-`;
+  const keyBasedAssetsToTransfer = useRootSelector((root) => root.keyBasedAssetTransfer.data);
+  const availableBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+  const isCalculatingGas = useRootSelector(root => root.keyBasedAssetTransfer.isCalculatingGas);
 
-const DetailsValue = styled(MediumText)`
-  ${fontStyles.big};
-`;
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+  const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
 
-const DetailsLine = styled.View`
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
-const DetailsWrapper = styled.View`
-  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
-`;
-
-const FooterInner = styled.View`
-  align-items: center;
-  width: 100%;
-`;
-
-const NotEnoughFee = styled(BaseText)`
-  margin-top: ${spacing.large}px;
-`;
-
-const KeyBasedAssetTransferConfirm = ({
-  keyBasedAssetsToTransfer,
-  isCalculatingGas,
-  availableBalances,
-  activeAccountAddress,
-  keyBasedWalletAddress,
-  navigation,
-}: Props) => {
-  const isLoading = isCalculatingGas;
 
   const tokensTransfer = keyBasedAssetsToTransfer.filter(
     ({ assetData }) => assetData?.tokenType !== COLLECTIBLES,
@@ -149,6 +109,7 @@ const KeyBasedAssetTransferConfirm = ({
           <DetailsTitle>{t('transactions.label.toSmartWallet')}</DetailsTitle>
           <DetailsValue>{humanizeHexString(activeAccountAddress)}</DetailsValue>
         </DetailsLine>
+
         {!isEmpty(tokensTransfer) && (
           <DetailsLine>
             <DetailsTitle>{t('transactions.label.tokensToTransfer')}</DetailsTitle>
@@ -159,6 +120,7 @@ const KeyBasedAssetTransferConfirm = ({
             ))}
           </DetailsLine>
         )}
+
         {!isEmpty(collectiblesTransfer) && (
           <DetailsLine>
             <DetailsTitle>{t('transactions.label.collectiblesToTransfer')}</DetailsTitle>
@@ -174,35 +136,38 @@ const KeyBasedAssetTransferConfirm = ({
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('title.confirm') }] }}
-      footer={!isLoading && renderFooter()}
+      footer={!isCalculatingGas && renderFooter()}
     >
-      {isLoading && <Wrapper flex={1} center><Spinner /></Wrapper>}
-      {!isLoading && renderDetails()}
+      {isCalculatingGas && <Wrapper flex={1} center><Spinner /></Wrapper>}
+      {!isCalculatingGas && renderDetails()}
     </ContainerWithHeader>
   );
 };
 
-const mapStateToProps = ({
-  keyBasedAssetTransfer: {
-    data: keyBasedAssetsToTransfer,
-    isCalculatingGas,
-    availableBalances,
-  },
-  wallet: { data: walletData },
-}: RootReducerState): $Shape<Props> => ({
-  keyBasedAssetsToTransfer,
-  isCalculatingGas,
-  availableBalances,
-  keyBasedWalletAddress: walletData?.address,
-});
+export default KeyBasedAssetTransferConfirm;
 
-const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
-});
+const DetailsTitle = styled(BaseText)`
+  ${fontStyles.regular};
+  color: #999999;
+`;
 
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
+const DetailsValue = styled(MediumText)`
+  ${fontStyles.big};
+`;
 
-export default connect(combinedMapStateToProps)(KeyBasedAssetTransferConfirm);
+const DetailsLine = styled.View`
+  padding-bottom: ${spacing.rhythm}px;
+`;
+
+const DetailsWrapper = styled.View`
+  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
+`;
+
+const FooterInner = styled.View`
+  align-items: center;
+  width: 100%;
+`;
+
+const NotEnoughFee = styled(BaseText)`
+  margin-top: ${spacing.large}px;
+`;
