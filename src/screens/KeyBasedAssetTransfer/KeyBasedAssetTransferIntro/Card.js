@@ -72,5 +72,6 @@ const EmojiCircle = styled.View`
 
 const Emoji = styled(Text)`
   font-size: 20px;
-  margin-top: 4px;
+  margin-top: 2px;
+  margin-left: 1px;
 `;

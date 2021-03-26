@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
 import { Image } from 'react-native';
@@ -39,7 +40,7 @@ import Text from 'components/modern/Text';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { getThemeByType } from 'utils/themes';
 
-// import Card from './Card';
+import Card from './Card';
 
 const smartWalletImage = require('assets/images/smart-wallet-migration.png');
 
@@ -75,18 +76,19 @@ function KeyBasedAssetTransferIntro() {
 
           <Spacing h={spacing.medium} />
 
-          {/* Disabled until provided with marketing copy.
-          <Card title={t('benefits.one')} emoji="💸" />
-          <Card title={t('benefits.two')} emoji="✌️" />
-          <Card title={t('benefits.three')} emoji="😇" />
+          <Card title={t('benefits.secure')} emoji="🔐" />
+          <Card title={t('benefits.ensName')} emoji="⚛️" />
+          <Card title={t('benefits.betterApp')} emoji="⚡" />
 
-          <Spacing h={spacing.extraLarge} /> */}
+          <Spacing h={spacing.extraLarge} />
 
           <Body>{t('footer')}</Body>
 
           <Spacing h={48} />
 
           <Button title={t('migrate')} onPress={navigateToMigration} />
+
+          <Spacing h={spacing.large} />
         </Content>
       </ContainerWithHeader>
     </ThemeProvider>
@@ -96,7 +98,7 @@ function KeyBasedAssetTransferIntro() {
 export default KeyBasedAssetTransferIntro;
 
 const Content = styled.View`
-  padding: 0 ${spacing.large}px ${spacing.large}px;
+  padding-horizontal: ${spacing.large}px;
 `;
 
 const Title = styled(Text)`

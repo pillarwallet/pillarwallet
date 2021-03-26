@@ -644,9 +644,9 @@
         "body": "In a few words: Pillar is making Ethereum more accessible and laying a foundation for further improvements of Pillar platform."
       },
       "benefits": {
-        "one": "Benefit number one",
-        "two": "Benefit number two is long enought to fit in two lines",
-        "three": "This third benefit is rather long and all of a sudden requires three lines for copy"
+        "secure": "Keep your funds secure in the event of losing your phone or key.",
+        "ensName": "Get your very own pillar.eth ENS address to use it across different platforms.",
+        "betterApp": "Enjoy a refreshed user interface and improved app performance."
       },
       "footer": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new Pillar Smart Wallet. The fee will be extremely small thanks to Pillar Etherspot technology.",
       "migrate": "Migrate"
