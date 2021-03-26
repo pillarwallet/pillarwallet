@@ -19,20 +19,22 @@
 */
 
 import React from 'react';
-import { ScrollView } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { formatEther } from 'ethers/lib/utils';
 import isEmpty from 'lodash.isempty';
-import t from 'translations/translate';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Footer, Wrapper } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import * as Form from 'components/modern/Form';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Spinner from 'components/Spinner';
+
+import Text from 'components/modern/Text';
 
 // Constants
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
@@ -43,11 +45,14 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { getBalance } from 'utils/assets';
-import { BigNumber, formatFullAmount, humanizeHexString } from 'utils/common';
-import { fontStyles, spacing } from 'utils/variables';
+import { BigNumber, formatFullAmount, formatTokenAmount, humanizeHexString } from 'utils/common';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 
+// Types
+import type { KeyBasedAssetTransfer } from 'models/Asset';
 
 const KeyBasedAssetTransferConfirm = () => {
+  const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
   const navigation = useNavigation();
 
   const keyBasedAssetsToTransfer = useRootSelector((root) => root.keyBasedAssetTransfer.data);
@@ -57,117 +62,51 @@ const KeyBasedAssetTransferConfirm = () => {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
 
-
-  const tokensTransfer = keyBasedAssetsToTransfer.filter(
-    ({ assetData }) => assetData?.tokenType !== COLLECTIBLES,
-  );
-  const collectiblesTransfer = keyBasedAssetsToTransfer.filter(
-    ({ assetData }) => assetData?.tokenType === COLLECTIBLES,
-  );
-
-  const renderFooter = () => {
-    let ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
-    const ethTransfer = keyBasedAssetsToTransfer.find(({ assetData }) => assetData?.token === ETH);
-    // $FlowFixMe: bignumber.js typing
-    if (ethTransfer) ethBalanceBN = ethBalanceBN.minus(new BigNumber(ethTransfer.amount));
-    const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransfer.reduce(
-      (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
-      new BigNumber(0),
-    );
-    const totalTransferFeeBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
-    const notEnoughFee = !isCalculatingGas && totalTransferFeeBN.isGreaterThan(ethBalanceBN);
+  const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
+    if (assetData.tokenType === COLLECTIBLES) {
+      return <Form.Item title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
+    }
 
     return (
-      <Footer>
-        <FooterInner>
-          <FeeLabelToggle
-            labelText={t('label.fee')}
-            txFeeInWei={totalTransferFeeWeiBN}
-            showFiatDefault={!notEnoughFee}
-            hasError={!!notEnoughFee}
-          />
-          {!!notEnoughFee && <NotEnoughFee negative>{t('error.notEnoughTokenForFee', { token: ETH })}</NotEnoughFee>}
-          <Button
-            style={{ marginTop: spacing.large }}
-            disabled={!!notEnoughFee}
-            title={t('button.confirm')}
-            onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK)}
-          />
-        </FooterInner>
-      </Footer>
+      <Form.Item
+        title={assetData.name}
+        value={`${formatTokenAmount(amount ?? 0, assetData.token)} ${assetData.token}`}
+        fontVariant="tabular-nums"
+        separator={index !== 0}
+      />
     );
   };
 
-  const renderDetails = () => (
-    <ScrollView>
-      <DetailsWrapper>
-        <DetailsLine>
-          <DetailsTitle>{t('transactions.label.fromKeyWallet')}</DetailsTitle>
-          <DetailsValue>{humanizeHexString(keyBasedWalletAddress)}</DetailsValue>
-        </DetailsLine>
-        <DetailsLine>
-          <DetailsTitle>{t('transactions.label.toSmartWallet')}</DetailsTitle>
-          <DetailsValue>{humanizeHexString(activeAccountAddress)}</DetailsValue>
-        </DetailsLine>
-
-        {!isEmpty(tokensTransfer) && (
-          <DetailsLine>
-            <DetailsTitle>{t('transactions.label.tokensToTransfer')}</DetailsTitle>
-            {tokensTransfer.map(({ assetData: { token: symbol }, amount }) => (
-              <DetailsValue key={symbol}>
-                {t('tokenValue', { value: formatFullAmount(amount || ''), token: symbol })}
-              </DetailsValue>
-            ))}
-          </DetailsLine>
-        )}
-
-        {!isEmpty(collectiblesTransfer) && (
-          <DetailsLine>
-            <DetailsTitle>{t('transactions.label.collectiblesToTransfer')}</DetailsTitle>
-            {collectiblesTransfer.map(({ assetData: { name } }) => (
-              <DetailsValue key={name}>{name}</DetailsValue>
-            ))}
-          </DetailsLine>
-        )}
-      </DetailsWrapper>
-    </ScrollView>
-  );
-
   return (
-    <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('title.confirm') }] }}
-      footer={!isCalculatingGas && renderFooter()}
-    >
-      {isCalculatingGas && <Wrapper flex={1} center><Spinner /></Wrapper>}
-      {!isCalculatingGas && renderDetails()}
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
+      <Content>
+        <Form.Header>{t('details.header')}</Form.Header>
+        <Form.Item
+          title={t('details.fromKeyWallet')}
+          value={humanizeHexString(keyBasedWalletAddress)}
+          fontVariant="tabular-nums"
+          separator={false}
+        />
+        <Form.Item
+          title={t('details.toSmartWallet')}
+          value={humanizeHexString(activeAccountAddress)}
+          fontVariant="tabular-nums"
+        />
+
+        <Form.Header>{t('assets.header')}</Form.Header>
+        {keyBasedAssetsToTransfer.map(renderItem)}
+
+        <Form.Header>{t('fees.header')}</Form.Header>
+        <Form.Item title={t('fees.ethereum')} value={''} separator={false} />
+        <Form.Item title={t('fees.pillar')} value={tRoot('label.free')} variant="positive" />
+        <Form.Item title={t('fees.total')} value={''} />
+      </Content>
     </ContainerWithHeader>
   );
 };
 
 export default KeyBasedAssetTransferConfirm;
 
-const DetailsTitle = styled(BaseText)`
-  ${fontStyles.regular};
-  color: #999999;
-`;
-
-const DetailsValue = styled(MediumText)`
-  ${fontStyles.big};
-`;
-
-const DetailsLine = styled.View`
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
-const DetailsWrapper = styled.View`
-  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
-`;
-
-const FooterInner = styled.View`
-  align-items: center;
-  width: 100%;
-`;
-
-const NotEnoughFee = styled(BaseText)`
-  margin-top: ${spacing.large}px;
+const Content = styled.View`
+  padding: 0 ${spacing.large}px;
 `;
