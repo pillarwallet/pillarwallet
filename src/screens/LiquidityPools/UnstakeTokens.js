@@ -96,6 +96,7 @@ const UnstakeTokensScreen = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { pool }: NavigationParams = navigation.state.params;
@@ -103,6 +104,7 @@ const UnstakeTokensScreen = ({
     if (pool.type !== LIQUIDITY_POOL_TYPES.UNIPOOL) {
       navigation.goBack();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
@@ -113,6 +115,7 @@ const UnstakeTokensScreen = ({
   useEffect(() => {
     if (!parseFloat(assetValue) || !isValid) return;
     calculateUnstakeTransactionEstimate(pool, (assetValue));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetValue, isValid]);
 
   if (!assetData) {

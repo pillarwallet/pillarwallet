@@ -95,7 +95,7 @@ const ReferFriendsScreen = () => {
 
   React.useEffect(() => {
     dispatch(fetchSentReferralInvitationsAction());
-  }, []);
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (!hasAllowedToAccessContacts) {
@@ -106,6 +106,7 @@ const ReferFriendsScreen = () => {
     }
 
     fetchPhoneContacts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAllowedToAccessContacts]);
 
   const fetchPhoneContacts = () => {

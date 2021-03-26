@@ -80,6 +80,7 @@ const RariClaimRgtScreen = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [assetValue, setAssetValue] = useState('');
@@ -95,6 +96,7 @@ const RariClaimRgtScreen = ({
   useEffect(() => {
     if (!assetValue || !inputValid) return;
     calculateRariClaimTransactionEstimate(assetValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetValue, inputValid]);
 
   let notEnoughForFee = false;

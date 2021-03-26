@@ -66,6 +66,7 @@ const ConfirmNewPin = ({
     if (!isChangingPin && newPinSubmitted && !pinSuccessfullyChanged) {
       setPinSuccessfullyChanged(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isChangingPin]);
 
   const handlePinSubmit = (enteredPin: string) => {

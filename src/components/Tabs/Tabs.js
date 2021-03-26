@@ -44,11 +44,11 @@ const TabsContainer = styled.View`
 `;
 
 const Underline = styled.View`
-  border-top-width: 3px;
-  border-color: ${({ theme }) => theme.colors.primaryAccent130};
+  margin-top: 3px;
+  border-top-width: 6px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  margin-top: 3px;
+  border-color: ${({ theme }) => theme.colors.primaryAccent130};
 `;
 
 const TabContainer = styled.TouchableOpacity`

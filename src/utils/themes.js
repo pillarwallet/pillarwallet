@@ -39,6 +39,7 @@ export const lightThemeColorsOld = {
   card: '#FFFFFF',
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
+  inputField: lightThemeColors.basic060,
   warning: '#ECA93A',
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
   userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
@@ -84,6 +85,7 @@ export const darkThemeColorsOld = {
   card: '#32426B',
   tertiary: '#171F31',
   control: '#FCFDFF',
+  inputField: darkThemeColors.basic080,
   warning: 'blue', // TODO: add correct one when added to Design System
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System

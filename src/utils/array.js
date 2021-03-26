@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,30 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type Option = {
-  name: string,
-  value: string,
-  token?: string,
-  symbol?: string,
-  tokenId?: string,
-  imageUrl?: string,
-  lastUpdateTime?: string,
-  imageSource?: string,
-  ethAddress?: string,
-  opacity?: number,
-  hasSmartWallet?: number,
-  disabled?: boolean,
-  key?: string,
-  icon?: string,
-  iconUrl?: string,
-  assetBalance?: string,
-  formattedBalanceInFiat?: string,
-  id?: string,
-  decimals?: number,
-  tokenType?: string,
-  contractAddress?: string,
-  address?: string,
-  balance?: {
-    syntheticBalance?: string,
-  },
-};
+/**
+ * Performs map operation and filters out `null` and `undefined` results.
+ */
+export function mapNotNil<Item, Result>(items: Item[], selector: (Item, number, Item[]) => ?Result): Result[] {
+  // $FlowFixMe: does not infer that `filter` removes nil values
+  return items.map((item, index, array) => selector(item, index, array)).filter((item) => item != null);
+}

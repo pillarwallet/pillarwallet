@@ -111,6 +111,7 @@ const EnterDepositAmount = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
@@ -123,11 +124,13 @@ const EnterDepositAmount = ({
   useEffect(() => {
     if (!isEmpty(assetsToDeposit) || isFetchingAssetsToDeposit) return;
     fetchAssetsToDeposit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetsToDeposit]);
 
   useEffect(() => {
     if (!depositAmount || !assetToDeposit || !inputValid || Number(depositAmount) === 0) return;
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [depositAmount, assetToDeposit, inputValid]);
 
   let notEnoughForFee;

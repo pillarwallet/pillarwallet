@@ -76,6 +76,7 @@ const RariWithdrawReviewScreen = ({
         setWithdrawalFeeRate(_withdrawalFeeRate);
       })
       .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNextButtonPress = () => navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });

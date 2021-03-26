@@ -28,7 +28,7 @@ import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import SelectorOptions from 'components/SelectorOptions';
+import AssetSelectorOptions from 'components/AssetSelectorOptions';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -36,7 +36,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, noop, toFixedString } from 'utils/common';
+import { formatAmount, isValidNumber, wrapBigNumber, noop } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -50,23 +50,25 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances } from 'models/Asset';
-import type { Option, HorizontalOption } from 'models/Selector';
+import type { Rates, Balances, AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
 import ValueInputHeader from './ValueInputHeader';
 
-export type ExternalProps = {
+export type ExternalProps = {|
   disabled?: boolean,
-  customAssets?: Option[],
+  customAssets?: AssetOption[],
   customBalances?: Balances,
   selectorOptionsTitle?: string,
-  assetData: Option,
-  onAssetDataChange: (Option) => void,
+  assetData: AssetOption | Collectible,
+  // Called when selected asset is AssetOption
+  onAssetDataChange: (AssetOption) => mixed,
+  // Called when selected asset is Collectible
+  onCollectibleAssetDataChange?: (Collectible) => mixed,
   value: string,
   onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
-  horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
   txFeeInfo?: ?TransactionFeeInfo,
   hideMaxSend?: boolean,
@@ -76,18 +78,18 @@ export type ExternalProps = {
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
   customRates?: Rates,
-};
+|};
 
-type InnerProps = {
-  assets: Option[],
+type InnerProps = {|
+  assets: AssetOption[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-  collectibles: Option[],
+  collectibles: Collectible[],
   theme: Theme,
-};
+|};
 
-type Props = InnerProps & ExternalProps;
+type Props = {| ...InnerProps, ...ExternalProps |};
 
 const CollectibleWrapper = styled.View`
   align-items: center;
@@ -104,45 +106,46 @@ export const getErrorMessage = (
   assetSymbol: string,
   fiatValue?: ?string,
 ): string => {
+  const amountBN = wrapBigNumber(amount);
+  const assetBalanceBN = wrapBigNumber(assetBalance);
+
   const isValid = isValidNumber(amount);
   if (!isValid || (!!fiatValue && !isValidNumber(fiatValue))) {
     return t('error.amount.invalidNumber');
-  } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
+  } else if (assetSymbol !== BTC && assetBalanceBN.lt(amountBN)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
-  } else if (assetSymbol === BTC && +amount && Number(amount) < MIN_WBTC_CAFE_AMOUNT) {
+  } else if (assetSymbol === BTC && amountBN.lt(MIN_WBTC_CAFE_AMOUNT)) {
     return t('wbtcCafe.higherAmount');
   }
   return '';
 };
 
-export const ValueInputComponent = (props: Props) => {
-  const {
-    disabled,
-    assets,
-    customAssets,
-    balances,
-    customBalances,
-    baseFiatCurrency,
-    rates,
-    selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
-    assetData,
-    onAssetDataChange,
-    value,
-    onValueChange,
-    horizontalOptions,
-    showCollectibles,
-    txFeeInfo,
-    hideMaxSend,
-    updateTxFee,
-    collectibles,
-    theme,
-    leftSideSymbol,
-    getInputRef,
-    onFormValid,
-    disableAssetChange,
-    customRates,
-  } = props;
-
+export const ValueInputComponent = ({
+  disabled,
+  assets,
+  customAssets,
+  balances,
+  customBalances,
+  baseFiatCurrency,
+  rates,
+  selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
+  assetData,
+  onAssetDataChange,
+  onCollectibleAssetDataChange,
+  value,
+  onValueChange,
+  showCollectibles,
+  txFeeInfo,
+  hideMaxSend,
+  updateTxFee,
+  collectibles,
+  theme,
+  leftSideSymbol,
+  getInputRef,
+  onFormValid,
+  disableAssetChange,
+  customRates,
+}: Props) => {
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
 
@@ -162,6 +165,7 @@ export const ValueInputComponent = (props: Props) => {
       const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleValueChange = (newValue: string) => {
@@ -188,20 +192,19 @@ export const ValueInputComponent = (props: Props) => {
     if (updateTxFee) {
       newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
     }
-    const newMaxValue = calculateMaxAmount(
+
+    const maxValueNetFee = wrapBigNumber(calculateMaxAmount(
       assetSymbol,
       assetBalance,
       newTxFeeInfo?.fee,
       newTxFeeInfo?.gasToken,
-    );
-    const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
-    if (percent === 100) {
-      onValueChange(newMaxValue, percent);
-    } else {
-      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)), percent);
-    }
-    const fiatValue = maxValueInFiat * (percent / 100);
-    setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
+    ));
+
+    const newValue = formatAmount(maxValueNetFee.multipliedBy(percent).dividedBy(100), assetData.decimals);
+    onValueChange(newValue, percent);
+
+    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
+    setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
   };
 
   const onInputBlur = () => {
@@ -215,28 +218,15 @@ export const ValueInputComponent = (props: Props) => {
   const assetsOptions = customAssets || assets;
 
   const openAssetSelector = () => {
-    const optionTabs = showCollectibles
-      ? [{
-        name: t('label.tokens'),
-        options: assetsOptions,
-        id: TOKENS,
-      }, {
-        name: t('label.collectibles'),
-        options: collectibles,
-        id: COLLECTIBLES,
-        collectibles: true,
-      }]
-      : undefined;
-
     Keyboard.dismiss();
 
     Modal.open(() => (
-      <SelectorOptions
-        title={selectorOptionsTitle}
+      <AssetSelectorOptions
         options={assetsOptions}
-        horizontalOptionsData={horizontalOptions}
-        onOptionSelect={onAssetDataChange}
-        optionTabs={optionTabs}
+        collectibles={showCollectibles ? collectibles : undefined}
+        onSelectOption={onAssetDataChange}
+        onSelectCollectible={onCollectibleAssetDataChange}
+        title={selectorOptionsTitle}
       />
     ));
   };
@@ -247,7 +237,7 @@ export const ValueInputComponent = (props: Props) => {
         asset={assetData}
         onAssetPress={openAssetSelector}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
-        onLabelPress={() => !disabled && handleUsePercent(100)}
+        onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
         disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
     );
@@ -275,6 +265,7 @@ export const ValueInputComponent = (props: Props) => {
     if (onFormValid) {
       onFormValid(!errorMessage);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
 
   const colors = getThemeColors(theme);
@@ -311,7 +302,6 @@ export const ValueInputComponent = (props: Props) => {
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
           inputWrapperStyle={{ zIndex: 10 }}
-          customInputHeight={62}
         />
       )}
       {tokenType === COLLECTIBLES && (

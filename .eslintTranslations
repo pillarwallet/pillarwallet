@@ -145,6 +145,7 @@
         "autoCapitalize",
         "backgroundColor",
         "contentAlign",
+        "contentInsetAdjustmentBehavior",
         "ellipsizeMode",
         "fill",
         "fill-rule",

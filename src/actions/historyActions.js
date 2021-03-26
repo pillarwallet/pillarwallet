@@ -42,6 +42,7 @@ import {
   getAccountAddress,
   getAccountId,
   findFirstArchanovaAccount,
+  checkIfArchanovaAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -61,9 +62,8 @@ import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import smartWalletService from 'services/smartWallet';
 
 // selectors
-import { smartAccountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
-import { historySelector } from 'selectors';
+import { archanovaAccountAssetsSelector } from 'selectors/assets';
+import { activeAccountSelector, historySelector } from 'selectors';
 
 // models, types
 import type { Transaction } from 'models/Transaction';
@@ -148,7 +148,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountAddress = getAccountAddress(smartWalletAccount);
 
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-    const accountAssets = smartAccountAssetsSelector(getState());
+    const accountAssets = archanovaAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
     const smartWalletTransactionHistory = parseSmartWalletTransactions(
@@ -201,14 +201,14 @@ export const updateTransactionStatusAction = (hash: string) => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
 
-    const isSmartAccount = isActiveAccountSmartWalletSelector(getState());
+    const isArchanovaAccount = checkIfArchanovaAccount(activeAccountSelector(getState()));
     dispatch(transactionUpdate(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
     let sdkTransactionInfo;
     let sdkToAppStatus;
-    if (isSmartAccount) {
+    if (isArchanovaAccount) {
       sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
         dispatch(transactionUpdate(''));
@@ -218,7 +218,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isSmartAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+    if (isArchanovaAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
       reportLog('Wrong transaction status', {
         hash,
         sdkToAppStatus,
@@ -230,7 +230,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = isSmartAccount
+    const stillPending = isArchanovaAccount
       ? sdkToAppStatus === TX_PENDING_STATUS
       : !trxInfo;
 
@@ -244,7 +244,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     let status;
     let feeWithGasToken;
 
-    if (isSmartAccount && sdkTransactionInfo) {
+    if (isArchanovaAccount && sdkTransactionInfo) {
       gasPrice = sdkTransactionInfo.gas.price;
       gasUsed = sdkTransactionInfo.gas.used;
       status = sdkToAppStatus;
@@ -254,7 +254,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       const transactionFee = sdkTransactionInfo.fee;
       if (!isEmpty(gasTokenAddress) && transactionFee) {
         const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-        const accountAssets = getAssetsAsList(smartAccountAssetsSelector(getState()));
+        const accountAssets = getAssetsAsList(archanovaAccountAssetsSelector(getState()));
         const gasToken = getGasTokenDetails(accountAssets, supportedAssets, gasTokenAddress);
         if (!isEmpty(gasToken)) {
           feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);

@@ -22,9 +22,8 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 import type { Assets, Balance, Rates } from 'models/Asset';
-import { getActiveAccountId, getEnabledAssets } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId, getEnabledAssets } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
-import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {
   assetsSelector,
@@ -54,18 +53,17 @@ export const accountAssetsSelector = createSelector(
   },
 );
 
-export const smartAccountAssetsSelector = createSelector(
+export const archanovaAccountAssetsSelector = createSelector(
   assetsSelector,
   accountsSelector,
   hiddenAssetsSelector,
   (assets, accounts, hiddenAssets) => {
-    const userHasSW = userHasSmartWallet(accounts);
-    if (!userHasSW) return {};
-    const smartAccountId = getActiveAccountId(accounts);
-    if (!smartAccountId) return {};
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    if (!archanovaAccount) return {};
+    const accountId = getAccountId(archanovaAccount);
 
-    const activeAccountAssets = get(assets, smartAccountId, {});
-    const activeAccountHiddenAssets = get(hiddenAssets, smartAccountId, []);
+    const activeAccountAssets = get(assets, accountId, {});
+    const activeAccountHiddenAssets = get(hiddenAssets, accountId, []);
 
     return getEnabledAssets(activeAccountAssets, activeAccountHiddenAssets);
   },

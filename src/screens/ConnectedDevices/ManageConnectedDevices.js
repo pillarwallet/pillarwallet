@@ -83,6 +83,7 @@ const ManageConnectedDevices = ({
 }: Props) => {
   useEffect(() => {
     fetchConnectedAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeDevice = (device: ConnectedDevice) => confirmConnectedDeviceRemove(device);

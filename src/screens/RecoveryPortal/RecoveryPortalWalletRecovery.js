@@ -42,6 +42,7 @@ const RecoveryPortalWalletRecovery = ({
 }: Props) => {
   useEffect(() => {
     initRecoveryPortalWalletRecover();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let webViewRef;

@@ -91,7 +91,7 @@ import { navigate } from 'services/navigation';
 import aaveService from 'services/aave';
 
 // selectors
-import { accountAssetsSelector, smartAccountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, archanovaAccountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -463,7 +463,7 @@ export const syncVirtualAccountTransactionsAction = () => {
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
-    const accountAssets = smartAccountAssetsSelector(getState());
+    const accountAssets = archanovaAccountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
 
     // filter out already stored payments

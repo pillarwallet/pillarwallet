@@ -55,9 +55,8 @@ import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector, visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // types
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, Assets, AssetOption } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Option } from 'models/Selector';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Contact } from 'models/Contact';
 
@@ -68,7 +67,7 @@ type Props = {
   supportedAssets: Asset[],
   activeAccountAddress: string,
   assets: Assets,
-  assetsWithBalance: Option[],
+  assetsWithBalance: AssetOption[],
   navigation: NavigationScreenProp<*>,
 };
 
@@ -76,7 +75,7 @@ type State = {
   startDate: ?Date,
   endDate: ?Date,
   assetValue: number,
-  selectedAsset: Option,
+  selectedAsset: AssetOption,
   selectedContact: ?Contact,
   isInputValid: boolean,
 };
