@@ -251,5 +251,5 @@ export const appFont = {
   light: 'EuclidCircularB-Light',
 
   // When designs specify Archia-Medium use this replacement font
-  archiaMedium: 'SpaceMono-Regular',
+  archiaMedium: 'SpaceGrotesk-Medium',
 };
