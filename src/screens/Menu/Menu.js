@@ -53,7 +53,7 @@ import {
   ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  KEY_BASED_ASSET_TRANSFER_CHOOSE,
+  KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
 } from 'constants/navigationConstants';
@@ -191,7 +191,7 @@ const Menu = ({
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(
-      hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_CHOOSE,
+      hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_INTRO,
     );
   };
 
