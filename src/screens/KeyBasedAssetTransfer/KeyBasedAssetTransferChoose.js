@@ -217,7 +217,7 @@ const KeyBasedAssetTransferChoose = ({
       }
     >
       <WalletInfoContainer>
-        <BalanceView fiatCurrency={baseFiatCurrency} balance={totalValue} />
+        <BalanceView balance={totalValue} />
         <WalletInfo>{t('transactions.label.migratingFrom')}</WalletInfo>
         <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
       </WalletInfoContainer>

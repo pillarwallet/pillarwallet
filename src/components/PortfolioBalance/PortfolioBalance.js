@@ -109,7 +109,6 @@ class PortfolioBalance extends React.PureComponent<Props> {
   render() {
     const {
       style,
-      fiatCurrency,
       showBalance,
       toggleBalanceVisibility,
     } = this.props;
@@ -126,7 +125,6 @@ class PortfolioBalance extends React.PureComponent<Props> {
               : (
                 <BalanceView
                   style={style}
-                  fiatCurrency={fiatCurrency}
                   balance={combinedBalance}
                 />)
             }

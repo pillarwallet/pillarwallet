@@ -21,38 +21,38 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 
-// Constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-
 // Components
 import Text from 'components/modern/Text';
+
+// Selectors
+import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { getCurrencySymbol, formatFiatValue } from 'utils/common';
 import { appFont, fontStyles } from 'utils/variables';
 
+// Types
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
+
 
 type Props = {
   balance: number,
-  fiatCurrency: ?string,
-  label?: string,
-  style?: Object,
-  currencyTextStyle?: Object,
-  balanceTextStyle?: Object,
+  style?: ViewStyleProp,
+  currencyTextStyle?: TextStyleProp,
+  balanceTextStyle?: TextStyleProp,
 };
 
 function BalanceView({
-  style,
-  fiatCurrency,
   balance,
+  style,
   currencyTextStyle,
   balanceTextStyle,
 }: Props) {
+  const fiatCurrency = useFiatCurrency();
+
   return (
     <Container style={style}>
-      <CurrencySymbol style={currencyTextStyle}>
-        {getCurrencySymbol(fiatCurrency || defaultFiatCurrency)}
-      </CurrencySymbol>
+      <CurrencySymbol style={currencyTextStyle}>{getCurrencySymbol(fiatCurrency)}</CurrencySymbol>
       <Balance style={balanceTextStyle}>{formatFiatValue(balance)}</Balance>
     </Container>
   );

@@ -194,9 +194,8 @@ const RariDepositScreen = ({
         <BaseText regular secondary center>{t('rariContent.label.poolBalance')}</BaseText>
         <Spacing h={4} />
         <BalanceView
-          fiatCurrency={fiatCurrency}
           balance={convertUSDToFiat(userDepositInUSD[activeTab], rates, fiatCurrency)}
-          currencyTextStyle={{ fontSize: 16, lineHeight: 16 }}
+          currencyTextStyle={{ marginTop: 0, fontSize: 16, lineHeight: 16 }}
           balanceTextStyle={{ fontSize: 24, lineHeight: 24 }}
         />
         <Spacing h={60} />
@@ -317,7 +316,6 @@ const RariDepositScreen = ({
           <RariLogo source={rariLogo} size={64} />
           <Spacing h={32} />
           <BalanceView
-            fiatCurrency={fiatCurrency}
             balance={convertUSDToFiat(summedUserDepositsInUSD, rates, fiatCurrency)}
           />
           <Spacing h={58} />

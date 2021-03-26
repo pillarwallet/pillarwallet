@@ -21,9 +21,12 @@
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import get from 'lodash.get';
-import { getAccountAddress } from 'utils/accounts';
+
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
+
+import { getAccountAddress } from 'utils/accounts';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -31,7 +34,9 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
   useSelector((root: RootReducerState) => selector(root));
 
 // Most commonly used selectors
-export const useFiatCurrency = () => useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
+export const useFiatCurrency = () =>
+  useRootSelector((root) => root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency);
+
 export const useRates = () => useRootSelector((root) => root.rates.data);
 
 //
