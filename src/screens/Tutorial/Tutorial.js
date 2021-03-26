@@ -72,7 +72,10 @@ const TutorialScreen = ({ navigation, hasSeenTutorial }: Props) => {
   useEffect(() => {
     prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
       .then((res: CMSData) => handleFetchedResults(res.results))
-      .catch(e => reportErrorLog(e));
+      .catch(e => {
+        reportErrorLog(e);
+        navigation.navigate(HOME);
+      });
   }, []);
   if (!data) return null;
 

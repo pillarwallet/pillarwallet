@@ -110,8 +110,8 @@ export default withTheme(({ onButtonPress, data, onFinish }: Props) => {
           </ContentWrapper>
           <ContentWrapper>
 
-            <TutorialButton title="newbie" onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
-            <TutorialButton title="pro" onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)} />
+            <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
+            <TutorialButton title={t('button.native')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)} />
           </ContentWrapper>
         </InitialScreenWrapper>
         {data.map(doc => <TutorialCMSView document={doc} key={doc.id} />)}

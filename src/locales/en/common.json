@@ -310,7 +310,9 @@
     "stakeMoreLiquidity": "Stake more",
     "unstakeMoreLiquidity": "Unstake more",
     "claimMoreRewards": "Claim more",
-    "back": "Back"
+    "back": "Back",
+    "native": "Crypto Native",
+    "new": "New to Crypto"
   },
 
   "paragraph": {
