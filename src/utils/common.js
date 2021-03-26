@@ -225,6 +225,17 @@ export const formatAmount = (amount: Value, precision: number = 6): string => {
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 
+/**
+ * Truncate amount if needed, preserves trailing zeros.
+ */
+export const truncateAmount = (amount: Value, precision: ?number): string => {
+  const amountBN = wrapBigNumber(amount);
+
+  return precision != null && amountBN.decimalPlaces() > precision
+    ? amountBN.toFixed(precision, 1) // 1 = ROUND_DOWN
+    : amountBN.toString();
+};
+
 export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
