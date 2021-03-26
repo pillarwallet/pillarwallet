@@ -26,6 +26,7 @@
         "elevation",
         "font-family",
         "font-size",
+        "font-variant",
         "flex:",
         "flex-direction:",
         "flex-end",

@@ -1349,7 +1349,7 @@
       "data": "Data",
       "message": "Message",
       "address": "Address",
-      "ethFee": "Ethereum fee",
+      "ethFee": "Max. Ethereum fee",
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",

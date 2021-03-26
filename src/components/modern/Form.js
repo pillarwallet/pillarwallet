@@ -68,6 +68,7 @@ type ItemRowProps = {|
 
 export const ItemRow: React.ComponentType<ItemRowProps> = styled.View`
   flex-direction: row;
+  align-items: center;
   padding: 10px 0;
   ${({ separator = true, theme }) =>
     separator ? `border-top-width: 1px; border-color: ${theme.colors.basic060};` : ''}
@@ -88,7 +89,8 @@ type ItemValueProps = {|
 
 export const ItemValue: React.ComponentType<ItemValueProps> = styled(Text)`
   margin-left: ${spacing.extraSmall}px;
-  ${({ variant, theme }) => (variant === 'secondary' ? `color: ${theme.colors.color060}` : '')};
+  ${({ fontVariant }) => (fontVariant ? `font-variant: ${fontVariant}` : '')};
+  ${({ variant, theme }) => (variant === 'secondary' ? `color: ${theme.colors.secondaryText}` : '')};
   ${({ variant, theme }) => (variant === 'positive' ? `color: ${theme.colors.positive}` : '')};
-  ${({ fontVariant }) => fontVariant ? `font-variant: ${fontVariant}` : ''};
 `;
+

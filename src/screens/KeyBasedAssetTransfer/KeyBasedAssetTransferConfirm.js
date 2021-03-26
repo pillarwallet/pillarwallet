@@ -22,38 +22,36 @@ import React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { formatEther } from 'ethers/lib/utils';
-import isEmpty from 'lodash.isempty';
+import { orderBy } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Footer, Wrapper } from 'components/Layout';
-import { BaseText, MediumText } from 'components/Typography';
-import Button from 'components/Button';
 import * as Form from 'components/modern/Form';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import FeeLabelToggle from 'components/FeeLabelToggle';
+import FeeForm from 'components/modern/FeeForm';
 import Spinner from 'components/Spinner';
 
-import Text from 'components/modern/Text';
-
 // Constants
-import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { getBalance } from 'utils/assets';
-import { BigNumber, formatFullAmount, formatTokenAmount, humanizeHexString } from 'utils/common';
-import { appFont, fontStyles, spacing } from 'utils/variables';
+import { getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
+import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
+import { spacing } from 'utils/variables';
 
 // Types
-import type { KeyBasedAssetTransfer } from 'models/Asset';
+import type { Rates, KeyBasedAssetTransfer } from 'models/Asset';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
   const navigation = useNavigation();
+
+  const rates = useRates();
+  const fiatCurrency = useFiatCurrency();
 
   const keyBasedAssetsToTransfer = useRootSelector((root) => root.keyBasedAssetTransfer.data);
   const availableBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
@@ -62,20 +60,43 @@ const KeyBasedAssetTransferConfirm = () => {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
 
+  if (isCalculatingGas) return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
+      <SpinnerContent>
+        <Spinner />
+      </SpinnerContent>
+    </ContainerWithHeader>
+  );
+
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
       return <Form.Item title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
     }
 
+    const valueInEth = tRoot('tokenValue', {
+      value: formatTokenAmount(amount ?? 0, assetData.token),
+      token: assetData.token,
+    });
+    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
+
     return (
-      <Form.Item
-        title={assetData.name}
-        value={`${formatTokenAmount(amount ?? 0, assetData.token)} ${assetData.token}`}
-        fontVariant="tabular-nums"
-        separator={index !== 0}
-      />
+      <Form.ItemRow separator={index !== 0}>
+        <Form.ItemTitle>{assetData.name}</Form.ItemTitle>
+
+        <Form.ItemValue fontVariant="tabular-nums">{valueInEth}</Form.ItemValue>
+
+        {!!valueInFiat && (
+          <Form.ItemValue variant="secondary" fontVariant="tabular-nums">
+            {valueInFiat}
+          </Form.ItemValue>
+        )}
+      </Form.ItemRow>
     );
   };
+
+  const sortedAssetTransfers = sortAssetTransfers(keyBasedAssetsToTransfer, rates, fiatCurrency);
+
+  const totalFee = getTotalFee(keyBasedAssetsToTransfer);
 
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
@@ -94,12 +115,9 @@ const KeyBasedAssetTransferConfirm = () => {
         />
 
         <Form.Header>{t('assets.header')}</Form.Header>
-        {keyBasedAssetsToTransfer.map(renderItem)}
+        {sortedAssetTransfers.map(renderItem)}
 
-        <Form.Header>{t('fees.header')}</Form.Header>
-        <Form.Item title={t('fees.ethereum')} value={''} separator={false} />
-        <Form.Item title={t('fees.pillar')} value={tRoot('label.free')} variant="positive" />
-        <Form.Item title={t('fees.total')} value={''} />
+        <FeeForm fee={totalFee} />
       </Content>
     </ContainerWithHeader>
   );
@@ -110,3 +128,37 @@ export default KeyBasedAssetTransferConfirm;
 const Content = styled.View`
   padding: 0 ${spacing.large}px;
 `;
+
+const SpinnerContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
+  let result = BigNumber(0);
+
+  assetTransfers.forEach(({ calculatedGasLimit, gasPrice }) => {
+    const txFee = BigNumber(calculatedGasLimit ?? 0).multipliedBy(formatEther(gasPrice ?? 0));
+    result = result.plus(txFee);
+  });
+
+  return result;
+};
+
+const sortAssetTransfers = (
+  assetTransfers: KeyBasedAssetTransfer[],
+  rates: Rates,
+  fiatCurrency: string,
+): KeyBasedAssetTransfer[] => {
+  return orderBy(
+    assetTransfers,
+    [
+      (transfer: KeyBasedAssetTransfer) => (transfer.assetData.tokenType !== COLLECTIBLES ? 1 : 0),
+      (transfer: KeyBasedAssetTransfer) =>
+        getBalanceInFiat(fiatCurrency, transfer.amount ?? 0, rates, transfer.assetData.token) ?? 0,
+      (transfer: KeyBasedAssetTransfer) => transfer.assetData.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
