@@ -31,7 +31,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { getAssetData, getAssetsAsList } from 'utils/assets';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
 import { getAaveDepositTransactions, getAaveWithdrawTransaction } from 'utils/aave';
 
 // constants
@@ -78,7 +78,7 @@ export const fetchDepositedAssetsAction = () => {
     } = getState();
 
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
@@ -101,7 +101,7 @@ export const fetchDepositedAssetAction = (symbol: string) => {
       lending: { depositedAssets, isFetchingDepositedAssets },
     } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
@@ -134,7 +134,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     // initiate state earlier
@@ -171,7 +171,7 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     // initiate state earlier

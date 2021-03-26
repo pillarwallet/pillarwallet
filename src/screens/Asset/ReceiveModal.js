@@ -18,12 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
 import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -37,15 +38,15 @@ import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { getEnsName, getAccountTypeByAddress } from 'utils/accounts';
+import { getAccountEnsName, isSmartWalletAccount } from 'utils/accounts';
 
 // models and types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 
-// constants
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+// selectors
+import { activeAccountSelector } from 'selectors';
 
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -55,7 +56,7 @@ const ContentWrapper = styled(SafeAreaView)`
 
 type StateProps = {|
   user: User,
-  accounts: Accounts,
+  activeAccount: ?Account,
 |};
 
 type OwnProps = {|
@@ -116,118 +117,119 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
-class ReceiveModal extends React.Component<Props> {
-  handleAddressShare = () => {
-    const { address } = this.props;
+const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
+  Clipboard.setString(addressOrEnsName);
+  const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
+  Toast.show({ message, emoji: 'ok_hand' });
+};
 
+const ReceiveModal = ({
+  activeAccount,
+  address,
+  handleBuyTokens,
+  onModalHide,
+  showBuyTokensButton = false,
+  showErc20Note,
+  user,
+}: Props) => {
+  const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
-  };
+  }, [address]);
 
-  handleCopyToClipboard = (address: string, ensCopy?: boolean) => {
-    Clipboard.setString(address);
-    const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
-    Toast.show({ message, emoji: 'ok_hand' });
-  };
+  const { profileImage, lastUpdateTime = 0, username = '' } = user;
+  const ensName = getAccountEnsName(activeAccount);
+  const isSmartWallet = isSmartWalletAccount(activeAccount);
+  const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
+  const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
-  render() {
-    const {
-      address,
-      handleBuyTokens,
-      onModalHide,
-      showBuyTokensButton = false,
-      showErc20Note,
-      accounts,
-      user,
-    } = this.props;
-
-    const { profileImage, lastUpdateTime = 0, username = '' } = user;
-    const ensName = getEnsName(accounts);
-    const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.SMART_WALLET;
-    const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
-    const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
-
-    return (
-      <SlideModal
-        onModalHide={onModalHide}
-        noPadding
-        noClose
-        headerLeftItems={showErc20Note ? [{
-          custom: (
-            <LabelBadge
-              label={t('label.erc20TokensOnly')}
-              labelStyle={{ fontSize: fontSizes.tiny }}
-              primary
-            />
-          ),
-        }] : undefined}
-        centerFloatingItem={
-          <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-            <ProfileImage
-              uri={profileImageURI}
-              userName={username}
-              diameter={48}
-            />
-          </ImageWrapper>
+  return (
+    <SlideModal
+      onModalHide={onModalHide}
+      noPadding
+      noClose
+      headerLeftItems={showErc20Note ? [{
+        custom: (
+          <LabelBadge
+            label={t('label.erc20TokensOnly')}
+            labelStyle={{ fontSize: fontSizes.tiny }}
+            primary
+          />
+        ),
+      }] : undefined}
+      centerFloatingItem={
+        <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
+          <ProfileImage
+            uri={profileImageURI}
+            userName={username}
+            diameter={48}
+          />
+        </ImageWrapper>
+      }
+    >
+      <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
+        <WarningBanner rounded small />
+        {!!ensName && !!isSmartWallet &&
+        <InfoView>
+          <BaseText
+            big
+            onPress={() => handleCopyToClipboard(ensName, true)}
+            center
+          >
+            {ensName}
+          </BaseText>
+          <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
+        </InfoView>
         }
-      >
-        <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-          <WarningBanner rounded small />
-          {!!ensName && !!isSmartWallet &&
-          <InfoView>
-            <BaseText
-              big
-              onPress={() => this.handleCopyToClipboard(ensName, true)}
-              center
-            >
-              {ensName}
-            </BaseText>
-            <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
-          </InfoView>
-          }
-          <QRCodeWrapper>
-            <View style={{ overflow: 'hidden', padding: 10 }}>
-              {!!address && <QRCodeWithTheme value={address} size={160} />}
-            </View>
-            <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
-              {address}
-            </WalletAddress>
-          </QRCodeWrapper>
-          <ButtonsRow>
-            {showBuyTokensButton && (
-            <Button
-              title={t('button.buyTokens')}
-              onPress={handleBuyTokens}
-              primarySecond
-              small={needsSmallButtons}
-              style={{ flex: 1, marginRight: 10 }}
-            />
-            )}
-            <Button
-              title={t('button.shareAddress')}
-              onPress={this.handleAddressShare}
-              small={needsSmallButtons}
-              style={{ flex: 1 }}
-            />
-          </ButtonsRow>
+        <QRCodeWrapper>
+          <View style={{ overflow: 'hidden', padding: 10 }}>
+            {!!address && <QRCodeWithTheme value={address} size={160} />}
+          </View>
+          <WalletAddress onPress={() => handleCopyToClipboard(address)}>
+            {address}
+          </WalletAddress>
+        </QRCodeWrapper>
+        <ButtonsRow>
           {showBuyTokensButton && (
-          <IconsContainer>
-            <Image source={visaIcon} />
-            <IconsSpacing />
-            <Image source={mastercardIcon} />
-          </IconsContainer>
+          <Button
+            title={t('button.buyTokens')}
+            onPress={handleBuyTokens}
+            primarySecond
+            small={needsSmallButtons}
+            style={{ flex: 1, marginRight: 10 }}
+          />
           )}
-        </ContentWrapper>
-      </SlideModal>
-    );
-  }
-}
+          <Button
+            title={t('button.shareAddress')}
+            onPress={handleAddressShare}
+            small={needsSmallButtons}
+            style={{ flex: 1 }}
+          />
+        </ButtonsRow>
+        {showBuyTokensButton && (
+        <IconsContainer>
+          <Image source={visaIcon} />
+          <IconsSpacing />
+          <Image source={mastercardIcon} />
+        </IconsContainer>
+        )}
+      </ContentWrapper>
+    </SlideModal>
+  );
+};
 
 const mapStateToProps = ({
   user: { data: user },
-  accounts: { data: accounts },
-}: RootReducerState): StateProps => ({
+}: RootReducerState): $Shape<StateProps> => ({
   user,
-  accounts,
 });
 
-export default (connect(mapStateToProps)(ReceiveModal): React.AbstractComponent<OwnProps>);
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<StateProps> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (connect(combinedMapStateToProps)(ReceiveModal): AbstractComponent<OwnProps>);

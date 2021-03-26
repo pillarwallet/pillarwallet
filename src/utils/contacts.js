@@ -67,40 +67,30 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
   return null;
 };
 
-export const getReceiverWithEnsName = async (ethAddress: ?string, showNotification: boolean = true) => {
-  let receiverEnsName = '';
-  let receiver = '';
-  if (!ethAddress) return { receiverEnsName, receiver };
+export const getReceiverWithEnsName = async (
+  ethAddressOrEnsName: ?string,
+  showNotification: boolean = true,
+): Promise<?{ receiverEnsName?: string, receiver: ?string}> => {
+  if (!ethAddressOrEnsName) return null;
 
-  if (isEnsName(ethAddress)) {
-    const resolvedAddress = await resolveEnsName(ethAddress);
+  if (isEnsName(ethAddressOrEnsName)) {
+    const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
 
     if (!resolvedAddress && showNotification) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
       });
-      return { receiverEnsName, receiver };
+      return null;
     }
 
-    receiverEnsName = ethAddress;
-    receiver = resolvedAddress;
-  } else {
-    receiver = ethAddress;
+    return {
+      receiverEnsName: ethAddressOrEnsName,
+      receiver: resolvedAddress,
+    };
   }
 
-  return { receiverEnsName, receiver };
-};
-
-export const getContactWithEnsName = async (contact: Contact, ensName: string): Promise<Contact> => {
-  const { receiverEnsName, receiver } = await getReceiverWithEnsName(ensName);
-
-  return {
-    ...contact,
-    name: contact?.name || receiverEnsName,
-    ensName: receiverEnsName,
-    ethAddress: receiver || contact?.ethAddress,
-  };
+  return { receiver: ethAddressOrEnsName };
 };
 
 const isMatchingContact = (contact: Contact, query: ?string) => {

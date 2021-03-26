@@ -67,7 +67,10 @@
         "top:",
         "transparent",
         "width:",
-        "z-index"
+        "z-index",
+        "eth",
+        "crypto",
+        "zil"
       ],
       "ignoreCallee": [
         "Buffer.from",

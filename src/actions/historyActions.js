@@ -41,7 +41,7 @@ import {
 import {
   getAccountAddress,
   getAccountId,
-  findFirstSmartAccount,
+  findFirstArchanovaAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -131,7 +131,7 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     if (!isOnline) return;
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount || !connectedAccount) {
       reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
       return;

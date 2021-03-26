@@ -232,11 +232,15 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    if (!get(this.getSdk(), 'state.account')) {
+    if (!this.getConnectedAccountFromSdkState()) {
       await this.getSdk().connectAccount(address).catch(this.handleError);
     }
 
     return this.fetchConnectedAccount();
+  }
+
+  getConnectedAccountFromSdkState() {
+    return this.getSdk()?.state?.account;
   }
 
   async syncSmartAccountsWithBackend(

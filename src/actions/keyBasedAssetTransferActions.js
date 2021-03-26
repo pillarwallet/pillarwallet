@@ -51,7 +51,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
 import { formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstSmartWalletAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
 // services
@@ -247,7 +247,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
       return;
     }
 
-    const firstSmartAccount = findFirstSmartAccount(accounts);
+    const firstSmartAccount = findFirstSmartWalletAccount(accounts);
     if (!firstSmartAccount) {
       reportLog('Failed to find smart wallet account in key based estimate calculations.');
       return;
@@ -404,7 +404,7 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
     if (creatingTransactions) return;
     dispatch({ type: SET_CREATING_KEY_BASED_ASSET_TRANSFER_TRANSACTIONS, payload: true });
 
-    const firstSmartAccount = findFirstSmartAccount(accounts);
+    const firstSmartAccount = findFirstSmartWalletAccount(accounts);
     if (!firstSmartAccount) {
       reportLog('Failed to find smart wallet account in key based asset transfer creation.');
       return;

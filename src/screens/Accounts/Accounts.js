@@ -22,6 +22,7 @@ import { withTheme } from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { sortBy } from 'lodash';
 import t from 'translations/translate';
 
 // components
@@ -34,7 +35,7 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, isNotEtherspotType, isNotKeyBasedType } from 'utils/accounts';
+import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -47,6 +48,7 @@ import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationCon
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
@@ -171,10 +173,14 @@ const AccountsScreen = ({
     );
   };
 
+  // etherspot account first
+  const sortedAccounts = sortBy(
+    accounts,
+    ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
+  );
 
-  const walletsToShow: ListItem[] = accounts
+  const walletsToShow: ListItem[] = sortedAccounts
     .filter(isNotKeyBasedType) // filter key based due deprecation
-    .filter(isNotEtherspotType) // temporary hide etherspot account
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;
       const accountBalances: Balances = balances[id];

@@ -47,7 +47,6 @@ import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
@@ -62,11 +61,7 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstEtherspotAccount,
-  findFirstSmartAccount,
-  getActiveAccountType,
-} from 'utils/accounts';
+import { findFirstEtherspotAccount, findFirstSmartWalletAccount, isSmartWalletAccount } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
@@ -75,6 +70,9 @@ import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
+
+// selectors
+import { activeAccountSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -111,6 +109,7 @@ import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
 } from './etherspotActions';
+import { setEnsNameIfNeededAction } from './ensRegistryActions';
 
 
 const storage = Storage.getInstance('db');
@@ -252,10 +251,11 @@ export const loginAction = (
       // init Etherspot SDK
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
-      const smartWalletAccount = findFirstSmartAccount(accounts);
+      const smartWalletAccount = findFirstSmartWalletAccount(accounts);
+      const activeAccount = activeAccountSelector(getState());
 
       // key based wallet migration – switch to smart wallet if key based was active
-      if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
+      if (!isSmartWalletAccount(activeAccount) && smartWalletAccount) {
         await dispatch(setActiveAccountAction(smartWalletAccount.id));
       }
 
@@ -282,10 +282,12 @@ export const loginAction = (
           await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
         }
 
-        // silent Etherspot Smart Wallet creation
+        // silent Etherspot Smart Wallet creation or ENS check routine
         const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
         if (!etherspotSmartWalletAccount) {
           dispatch(importEtherspotAccountsAction());
+        } else {
+          dispatch(setEnsNameIfNeededAction());
         }
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());

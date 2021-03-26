@@ -23,20 +23,57 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 
 // actions
-import { addAccountAction } from 'actions/accountsActions';
+import {
+  addAccountAction,
+  updateAccountExtraIfNeededAction,
+  setActiveAccountAction,
+} from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
+import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
 
+// selectors
+import { accountsSelector } from 'selectors';
+
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
 import { reportErrorLog } from 'utils/common';
+import {
+  findAccountById,
+  findFirstEtherspotAccount,
+  getAccountAddress,
+  getAccountId,
+} from 'utils/accounts';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
+
+export const connectEtherspotAccountAction = (accountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    const account = findAccountById(accountId, accounts);
+    if (!account) {
+      reportErrorLog('connectEtherspotAccountAction failed: no account', { accountId });
+      return;
+    }
+
+    const accountAddress = getAccountAddress(account);
+    const etherspotAccount = await etherspot.getAccount(accountAddress);
+
+    if (!etherspotAccount) {
+      reportErrorLog('connectEtherspotAccountAction failed: no etherspotAccount', { accountId, account });
+      return;
+    }
+
+    // update account extras
+    dispatch(updateAccountExtraIfNeededAction(accountId, etherspotAccount));
+  };
+};
 
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -47,6 +84,15 @@ export const initEtherspotServiceAction = (privateKey: string) => {
     if (!isOnline) return; // nothing to do
 
     await etherspot.init(privateKey);
+
+    const accounts = accountsSelector(getState());
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+
+    // not an issue at this point, just no etherspot account
+    if (!etherspotAccount) return;
+
+    const accountId = getAccountId(etherspotAccount);
+    dispatch(connectEtherspotAccountAction(accountId));
   };
 };
 
@@ -92,6 +138,12 @@ export const importEtherspotAccountsAction = () => {
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
 
+    // set active
+    dispatch(setActiveAccountAction(accountId));
+
+    // set ENS if needed
+    dispatch(setEnsNameIfNeededAction());
+
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
     await dispatch({
@@ -102,5 +154,27 @@ export const importEtherspotAccountsAction = () => {
     const assets = { [accountId]: initialAssets };
 
     dispatch(saveDbAction('assets', { assets }, true));
+  };
+};
+
+export const reserveEtherspotEnsNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+    } = getState();
+
+    if (!isOnline) return; // nothing to do
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportErrorLog('reserveEtherspotENSNameAction failed: no Etherspot account found');
+      return;
+    }
+
+    const reserved = await etherspot.reserveEnsName(username);
+    if (!reserved) {
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+    }
   };
 };

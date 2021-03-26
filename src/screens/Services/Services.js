@@ -54,7 +54,7 @@ import { openInAppBrowser } from 'utils/inAppBrowser';
 import {
   getActiveAccount,
   getAccountAddress,
-  checkIfSmartWalletAccount,
+  isSmartWalletAccount,
 } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
@@ -308,7 +308,7 @@ class ServicesScreen extends React.Component<Props> {
       return null;
     }
 
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
+    if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
       Modal.open(() => (
         <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE} />
       ));

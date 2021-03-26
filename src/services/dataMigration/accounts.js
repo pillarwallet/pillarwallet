@@ -19,7 +19,7 @@
 */
 import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
-import { findFirstSmartAccount } from 'utils/accounts';
+import { findFirstArchanovaAccount } from 'utils/accounts';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import type { Accounts } from 'models/Account';
 
@@ -41,7 +41,7 @@ export default async function (storageData: Object, dispatch: Function) {
   // wallet is not registered yet
   if (!user.walletId) return accounts;
 
-  const smartWalletAccount = findFirstSmartAccount(accounts);
+  const smartWalletAccount = findFirstArchanovaAccount(accounts);
 
   if (smartWalletAccount && !smartWalletAccount.walletId) {
     const migratedAccounts = addWalletIdToSmartWalletAccount(accounts, user.walletId);

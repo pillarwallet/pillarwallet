@@ -67,7 +67,7 @@ import type { EstimatePayload } from 'services/smartWallet';
 import type { TranslatedString } from 'models/Translations';
 
 // utils
-import { getActiveAccount } from './accounts';
+import { getActiveAccount, isSmartWalletAccount } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
@@ -100,9 +100,7 @@ const getMessage = (
   }
 };
 
-export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
-  return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-};
+export const userHasSmartWallet = (accounts: Accounts = []): boolean => accounts.some(isSmartWalletAccount);
 
 export const getSmartWalletStatus = (
   accounts: Accounts,
