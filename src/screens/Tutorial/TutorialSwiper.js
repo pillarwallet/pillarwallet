@@ -105,13 +105,16 @@ export default withTheme(({ onButtonPress, data, onFinish }: Props) => {
       >
         <InitialScreenWrapper>
           <ContentWrapper>
-            <Title>Welcome to Pillar!</Title>
-            <SubTitle>We probably need some cooler content to display here, and perhaps an image</SubTitle>
+            <Title>{t('tutorialTitle')}</Title>
+            <SubTitle>{t('tutorialSubtitle')}</SubTitle>
           </ContentWrapper>
           <ContentWrapper>
 
             <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
-            <TutorialButton title={t('button.native')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)} />
+            <TutorialButton
+              title={t('button.native')}
+              onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)}
+            />
           </ContentWrapper>
         </InitialScreenWrapper>
         {data.map(doc => <TutorialCMSView document={doc} key={doc.id} />)}

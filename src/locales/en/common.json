@@ -51,6 +51,8 @@
   "hour_plural": "{{count}} hours",
   "minute": "{{count}} minute",
   "minute_plural": "{{count}} minutes",
+  "tutorialTitle": "Welcome to Pillar!",
+  "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 
   "navigationTabs": {
     "home": "Home",

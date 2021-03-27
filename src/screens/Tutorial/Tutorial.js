@@ -69,19 +69,26 @@ const TutorialScreen = ({ navigation, hasSeenTutorial }: Props) => {
     });
   };
 
+  // fallback
+  const navigateHome = () => navigation.navigate(HOME);
+
   useEffect(() => {
     prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
       .then((res: CMSData) => handleFetchedResults(res.results))
       .catch(e => {
         reportErrorLog(e);
-        navigation.navigate(HOME);
+        navigateHome();
       });
   }, []);
-  if (!data) return null;
+
+  if (!data || data === INITIAL_STATE) {
+    navigateHome();
+    return null;
+  }
 
   const handleFinish = () => {
     hasSeenTutorial();
-    navigation.navigate(HOME);
+    navigateHome();
   };
 
   return (

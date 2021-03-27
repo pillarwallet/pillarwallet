@@ -42,6 +42,7 @@ import {
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
 import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
@@ -149,7 +150,11 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
+      appSettings: {
+        data: {
+          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted, hasSeenTutorial,
+        },
+      },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -344,7 +349,7 @@ export const loginAction = (
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: navigateToLastActiveScreen,
+        action: hasSeenTutorial ? navigateToLastActiveScreen : NavigationActions.navigate({ routeName: TUTORIAL_FLOW }),
       });
 
       if (!initialDeeplinkExecuted) {

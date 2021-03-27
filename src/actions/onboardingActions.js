@@ -28,7 +28,7 @@ import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } f
 import {
   APP_FLOW,
   NEW_WALLET,
-  HOME,
+  TUTORIAL_FLOW,
   REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
@@ -308,7 +308,7 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     }
 
     // check if user was referred to install the app and navigate accordingly
-    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
+    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : TUTORIAL_FLOW;
     navigate(NavigationActions.navigate({
       routeName: APP_FLOW,
       params: {},

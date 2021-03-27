@@ -35,7 +35,8 @@ const Wrapper = styled.View`
   width: 100%;
   bottom: 0;
   border-top-width: 1px;
-  border-color: green;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-color: ${({ theme }) => theme.colors.basic060};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
