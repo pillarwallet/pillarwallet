@@ -42,7 +42,7 @@ import { generateMnemonicPhrase } from 'utils/wallet';
 
 // services
 import { navigate } from 'services/navigation';
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -68,18 +68,18 @@ export const checkAndFinishSmartWalletRecoveryAction = () => {
     // in case deployment was faster than user encrypted the wallet (set pin flow)
     if (!getState()?.wallet?.data?.address) return;
 
-    const connectedAccount = get(smartWalletService, 'sdk.state.account');
+    const connectedAccount = get(archanovaService, 'sdk.state.account');
     if (isEmpty(connectedAccount)) {
-      const accounts = await smartWalletService.getAccounts();
+      const accounts = await archanovaService.getAccounts();
       if (isEmpty(accounts)) return;
-      await smartWalletService.connectAccount(accounts[0].address);
+      await archanovaService.connectAccount(accounts[0].address);
     }
 
     const {
       devices = [],
       activeDeviceAddress,
       address: connectedAccountAddress,
-    } = await smartWalletService.fetchConnectedAccount() || {};
+    } = await archanovaService.fetchConnectedAccount() || {};
 
     if (!activeDeviceAddress) return;
 
@@ -123,10 +123,10 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
       && !isEmpty(transactionType)) {
       if (transactionType === sdkConstants.AccountTransactionStates.Created) {
         // device was connected to account
-        const accounts = await smartWalletService.getAccounts();
+        const accounts = await archanovaService.getAccounts();
         // if account is attached to current instance then this means that new device has been connected
         if (!isEmpty(accounts)) {
-          await smartWalletService.connectAccount(accounts[0].address);
+          await archanovaService.connectAccount(accounts[0].address);
           // move to pin screen to encrypt wallet while recovery pending
           navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE, params: { noBack: true } }));
         }
@@ -143,7 +143,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
   return async (dispatch: Dispatch) => {
     // make sure everything onboarding wallet and smart wallet service are reset
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
-    await smartWalletService.reset();
+    await archanovaService.reset();
 
     dispatch({ type: SET_IS_PORTAL_RECOVERY });
 
@@ -157,7 +157,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
     };
 
     // set temporary smart wallet and subscribe for events
-    await smartWalletService.init(privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
+    await archanovaService.init(privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
     dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };

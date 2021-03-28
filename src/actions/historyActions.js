@@ -59,7 +59,7 @@ import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // selectors
 import { archanovaAccountAssetsSelector } from 'selectors/assets';
@@ -147,7 +147,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
 
-    const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
+    const smartWalletTransactions = await archanovaService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = archanovaAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
@@ -209,7 +209,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     let sdkTransactionInfo;
     let sdkToAppStatus;
     if (isArchanovaAccount) {
-      sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
+      sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
         dispatch(transactionUpdate(''));
         return;

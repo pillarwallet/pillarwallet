@@ -195,7 +195,6 @@ class WalletView extends React.Component<Props, State> {
       rates,
       balances,
       baseFiatCurrency,
-      accounts,
       smartWalletState,
       showDeploySmartWallet,
       theme,
@@ -211,10 +210,6 @@ class WalletView extends React.Component<Props, State> {
 
     const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
     const deploymentData = getDeploymentData(smartWalletState);
 
     const blockAssetsView = this.shouldBlockAssetsView();
@@ -303,7 +298,7 @@ class WalletView extends React.Component<Props, State> {
               isSearching={query.length >= MIN_QUERY_LENGTH}
             />
           )}
-          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
+          {!isInSearchMode && (!balance || showDeploySmartWallet) &&
           <ActionsWrapper>
             {!balance && !!activeAccountAddress && (
               <ListItemChevron

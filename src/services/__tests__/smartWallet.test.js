@@ -17,10 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import smartWalletService from 'services/smartWallet';
-import { BigNumber } from 'bignumber.js';
+import archanovaService from 'services/archanova';
 
-import type { AccountTransaction } from 'services/smartWallet';
+import type { AccountTransaction } from 'services/archanova';
 import type { AssetData } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
@@ -36,9 +35,8 @@ describe('Smart Wallet service', () => {
   };
 
   it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { ethCost = new BigNumber(0) } =
-      await smartWalletService.estimateAccountTransaction(accountTransaction, assetData) || {};
-    expect(ethCost.eq(350000000000000)).toBeTruthy();
+    const estimate = await archanovaService.estimateAccountTransaction(accountTransaction, assetData);
+    expect(estimate?.ethCost?.eq(350000000000000)).toBeTruthy();
   });
 });
 

@@ -36,7 +36,6 @@ import AssetSearchScreen from 'screens/Assets/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
-import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -68,7 +67,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
@@ -176,7 +174,6 @@ import {
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
-  EXCHANGE_RECEIVE_EXPLAINED,
   HOME,
   HOME_TAB,
   CHANGE_PIN_FLOW,
@@ -218,7 +215,6 @@ import {
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
@@ -390,7 +386,6 @@ assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-  [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -829,7 +824,6 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
-    [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,

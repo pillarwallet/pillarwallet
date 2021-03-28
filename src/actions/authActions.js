@@ -61,18 +61,18 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstEtherspotAccount, findFirstSmartWalletAccount, isSmartWalletAccount } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
+} from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
 import Storage from 'services/storage';
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
-
-// selectors
-import { activeAccountSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -82,7 +82,7 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
+import { initOnLoginArchanovaAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
   checkForWalletBackupToastAction,
@@ -99,7 +99,6 @@ import {
   checkAndFinishSmartWalletRecoveryAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
-import { importSmartWalletAccountsAction } from './smartWalletActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
@@ -209,7 +208,7 @@ export const loginAction = (
       if (getState().wallet.backupStatus.isRecoveryPending) {
         dispatch({ type: SET_WALLET, payload: unlockedWallet });
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
+        await archanovaService.init(
           decryptedPrivateKey,
           (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
         );
@@ -245,19 +244,14 @@ export const loginAction = (
 
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
 
-      // init smart wallet
-      await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
+      // Archanova init flow
+      const archanovaAccount = findFirstArchanovaAccount(accounts);
+      if (archanovaAccount) {
+        await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
+      }
 
       // init Etherspot SDK
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
-
-      const smartWalletAccount = findFirstSmartWalletAccount(accounts);
-      const activeAccount = activeAccountSelector(getState());
-
-      // key based wallet migration – switch to smart wallet if key based was active
-      if (!isSmartWalletAccount(activeAccount) && smartWalletAccount) {
-        await dispatch(setActiveAccountAction(smartWalletAccount.id));
-      }
 
       /**
        * set Ethereum network as active if we disable feature flag
@@ -276,19 +270,13 @@ export const loginAction = (
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
 
-        // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
-        if (!smartWalletAccount) {
-          // this will import and set Smart Wallet as current active account
-          await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+        // create etherspot account if does not exist, this also applies as migration from old key based wallets
+        const etherspotAccount = findFirstEtherspotAccount(accounts);
+        if (!etherspotAccount) {
+          dispatch(importEtherspotAccountsAction()); // imports and sets as active
         }
 
-        // silent Etherspot Smart Wallet creation or ENS check routine
-        const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
-        if (!etherspotSmartWalletAccount) {
-          dispatch(importEtherspotAccountsAction());
-        } else {
-          dispatch(setEnsNameIfNeededAction());
-        }
+        dispatch(setEnsNameIfNeededAction());
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
@@ -506,7 +494,7 @@ export const resetAppServicesAction = () => {
      *  portal recovery initially resets smart wallet instance in order to create it's own
      */
     if (!getState().onboarding.isPortalRecovery) {
-      await smartWalletService.reset();
+      await archanovaService.reset();
     }
 
     await etherspotService.logout();

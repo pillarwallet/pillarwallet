@@ -23,7 +23,7 @@ import t from 'translations/translate';
 import Toast from 'components/Toast';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 import { buildERC721TransactionData } from 'services/assets';
 
 // utils
@@ -47,7 +47,7 @@ import { COLLECTIBLES } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { AccountTransaction } from 'services/smartWallet';
+import type { AccountTransaction } from 'services/archanova';
 import type { Value } from 'utils/common';
 import type { AssetData } from 'models/Asset';
 
@@ -116,7 +116,7 @@ export const estimateTransactionAction = (
     let errorMessage;
     let feeInfo;
 
-    const estimated = await smartWalletService
+    const estimated = await archanovaService
       .estimateAccountTransaction(transaction, assetData)
       .catch((error) => {
         errorMessage = error?.message

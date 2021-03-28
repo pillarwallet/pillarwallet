@@ -66,7 +66,7 @@ import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // types
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AccountTransaction } from 'services/smartWallet';
+import type { AccountTransaction } from 'services/archanova';
 
 
 const ContentWrapper = styled.View`

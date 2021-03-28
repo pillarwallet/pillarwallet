@@ -273,6 +273,8 @@ describe('Onboarding actions', () => {
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
+
+      // archanova
       { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount] },
       {
         type: SET_INITIAL_ASSETS,
@@ -281,11 +283,19 @@ describe('Onboarding actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
+
+      // etherspot
+      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount, mockNewEtherspotAccount] },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockEtherspotAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
+
       { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
-
-      // appends new Etherspot account to reducer
-      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount, mockNewEtherspotAccount] },
     ];
 
     return store.dispatch(setupAppServicesAction(randomPrivateKey))

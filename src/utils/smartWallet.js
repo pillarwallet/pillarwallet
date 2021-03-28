@@ -49,7 +49,7 @@ import { ETH } from 'constants/assetsConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
 // services
-import { parseEstimatePayload } from 'services/smartWallet';
+import { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -63,7 +63,7 @@ import type {
 } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { EstimatePayload } from 'services/smartWallet';
+import type { EstimatePayload } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
 
 // utils
