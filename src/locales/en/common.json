@@ -122,6 +122,7 @@
     "needToActivate": "Need to activate",
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
+    "notEnoughGas": "Insufficient gas",
     "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",

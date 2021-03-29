@@ -36,20 +36,20 @@ import Spinner from 'components/Spinner';
 import Text from 'components/modern/Text';
 
 // Constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
+import { getBalanceBN, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { Rates, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Balances, Rates, KeyBasedAssetTransfer } from 'models/Asset';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
@@ -58,8 +58,8 @@ const KeyBasedAssetTransferConfirm = () => {
   const rates = useRates();
   const fiatCurrency = useFiatCurrency();
 
-  const keyBasedAssetsToTransfer = useRootSelector((root) => root.keyBasedAssetTransfer.data);
-  const availableBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+  const assetTransfers = useRootSelector((root) => root.keyBasedAssetTransfer.data);
+  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
   const isCalculatingGas = useRootSelector(root => root.keyBasedAssetTransfer.isCalculatingGas);
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
@@ -76,6 +76,10 @@ const KeyBasedAssetTransferConfirm = () => {
       </ContainerWithHeader>
     );
   }
+
+  const handleSubmit = () => {
+    navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK);
+  };
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
@@ -103,17 +107,24 @@ const KeyBasedAssetTransferConfirm = () => {
     );
   };
 
-  const sortedAssetTransfers = sortAssetTransfers(keyBasedAssetsToTransfer, rates, fiatCurrency);
+  const sortedAssetTransfers = sortAssetTransfers(assetTransfers, rates, fiatCurrency);
 
-  const totalValue = getTotalValue(keyBasedAssetsToTransfer, rates, fiatCurrency);
-  const totalFee = getTotalFee(keyBasedAssetsToTransfer);
+  const totalValue = getTotalValue(assetTransfers, rates, fiatCurrency);
+  const totalFee = getTotalFee(assetTransfers);
+
+  const remainingEthBalance = getRemainingBalance(keyWalletBalances, assetTransfers, ETH);
+  const hasEnoughGas = remainingEthBalance.gte(totalFee);
 
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('title') }] }}
       footer={
         <FooterContent>
-          <Button title={t('submit')} />
+          <Button
+            title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
+            onPress={handleSubmit}
+            disabled={!hasEnoughGas}
+          />
         </FooterContent>
       }
       putContentInScrollView
@@ -148,6 +159,13 @@ const KeyBasedAssetTransferConfirm = () => {
 };
 
 export default KeyBasedAssetTransferConfirm;
+
+const getRemainingBalance = (balances: Balances, assetTransfers: KeyBasedAssetTransfer[], token: string) => {
+  const balance = getBalanceBN(balances, token);
+  const transfer = assetTransfers.find(({ assetData }) => assetData?.token === ETH);
+
+  return transfer ? balance.minus(transfer.amount ?? 0) : balance;
+};
 
 const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: Rates, fiatCurrency: string) => {
   let result = 0;
