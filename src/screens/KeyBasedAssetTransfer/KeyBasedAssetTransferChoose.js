@@ -35,7 +35,7 @@ import {
 } from 'actions/keyBasedAssetTransferActions';
 
 // Components
-import { Footer, Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
