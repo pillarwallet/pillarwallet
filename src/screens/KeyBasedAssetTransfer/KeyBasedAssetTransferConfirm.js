@@ -26,9 +26,10 @@ import { orderBy } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import * as Form from 'components/modern/Form';
+import * as Table from 'components/modern/Table';
+import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import FeeForm from 'components/modern/FeeForm';
+import FeeTable from 'components/modern/FeeTable';
 import Spinner from 'components/Spinner';
 
 // Constants
@@ -60,17 +61,19 @@ const KeyBasedAssetTransferConfirm = () => {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
 
-  if (isCalculatingGas) return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
-      <SpinnerContent>
-        <Spinner />
-      </SpinnerContent>
-    </ContainerWithHeader>
-  );
+  if (isCalculatingGas) {
+    return (
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
+        <SpinnerContent>
+          <Spinner />
+        </SpinnerContent>
+      </ContainerWithHeader>
+    );
+  }
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
-      return <Form.Item title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
+      return <Table.Item title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
     }
 
     const valueInEth = tRoot('tokenValue', {
@@ -80,17 +83,17 @@ const KeyBasedAssetTransferConfirm = () => {
     const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
 
     return (
-      <Form.ItemRow separator={index !== 0}>
-        <Form.ItemTitle>{assetData.name}</Form.ItemTitle>
+      <Table.ItemRow separator={index !== 0}>
+        <Table.ItemTitle>{assetData.name}</Table.ItemTitle>
 
-        <Form.ItemValue fontVariant="tabular-nums">{valueInEth}</Form.ItemValue>
+        <Table.ItemValue fontVariant="tabular-nums">{valueInEth}</Table.ItemValue>
 
         {!!valueInFiat && (
-          <Form.ItemValue variant="secondary" fontVariant="tabular-nums">
+          <Table.ItemValue variant="secondary" fontVariant="tabular-nums">
             {valueInFiat}
-          </Form.ItemValue>
+          </Table.ItemValue>
         )}
-      </Form.ItemRow>
+      </Table.ItemRow>
     );
   };
 
@@ -99,25 +102,33 @@ const KeyBasedAssetTransferConfirm = () => {
   const totalFee = getTotalFee(keyBasedAssetsToTransfer);
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
+    <ContainerWithHeader
+      headerProps={{ centerItems: [{ title: t('title') }] }}
+      footer={
+        <FooterContent>
+          <Button title={t('submit')} />
+        </FooterContent>
+      }
+      putContentInScrollView
+    >
       <Content>
-        <Form.Header>{t('details.header')}</Form.Header>
-        <Form.Item
+        <Table.Header>{t('details.header')}</Table.Header>
+        <Table.Item
           title={t('details.fromKeyWallet')}
           value={humanizeHexString(keyBasedWalletAddress)}
           fontVariant="tabular-nums"
           separator={false}
         />
-        <Form.Item
+        <Table.Item
           title={t('details.toSmartWallet')}
           value={humanizeHexString(activeAccountAddress)}
           fontVariant="tabular-nums"
         />
 
-        <Form.Header>{t('assets.header')}</Form.Header>
+        <Table.Header>{t('assets.header')}</Table.Header>
         {sortedAssetTransfers.map(renderItem)}
 
-        <FeeForm fee={totalFee} />
+        <FeeTable fee={totalFee} />
       </Content>
     </ContainerWithHeader>
   );
@@ -133,6 +144,11 @@ const SpinnerContent = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+`;
+
+const FooterContent = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.large}px;
 `;
 
 const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {

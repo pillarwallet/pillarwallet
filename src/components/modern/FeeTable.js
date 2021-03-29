@@ -23,7 +23,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { useTranslationWithPrefix, useTranslation } from 'translations/translate';
 
 // Components
-import * as Form from 'components/modern/Form';
+import * as Table from 'components/modern/Table';
 import Tooltip from 'components/Tooltip';
 
 // Contansts
@@ -45,21 +45,21 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
-function FeeForm({ fee, style }: Props) {
+function FeeTable({ fee, style }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('transactions.label');
 
   return (
     <View style={style}>
-      <Form.Header>{t('fees')}</Form.Header>
+      <Table.Header>{t('fees')}</Table.Header>
 
-      <FeeItem title={t('ethFee')} symbol={ETH} fee={fee} separator={false} />
-      <Form.Item title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
-      <FeeItem title={t('totalFee')} symbol={ETH} fee={fee} separator={false} />
+      <FeeRow title={t('ethFee')} symbol={ETH} fee={fee} separator={false} />
+      <Table.Item title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
+      <FeeRow title={t('totalFee')} symbol={ETH} fee={fee} separator={false} />
     </View>
   );
 }
 
-export default FeeForm;
+export default FeeTable;
 
 type FeeItemProps = {|
   title: string,
@@ -68,7 +68,7 @@ type FeeItemProps = {|
   separator?: boolean,
 |};
 
-export function FeeItem({
+export function FeeRow({
   title,
   symbol,
   fee,
@@ -85,14 +85,14 @@ export function FeeItem({
   const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, rates, symbol);
 
   return (
-    <Form.ItemRow separator={separator}>
-      <Form.ItemTitle>{title}</Form.ItemTitle>
+    <Table.ItemRow separator={separator}>
+      <Table.ItemTitle>{title}</Table.ItemTitle>
 
       <Tooltip body={formattedFee} isVisible={showTooltip} positionOnBottom={false}>
         <TouchableOpacity hitSlop={hitSlop20} activeOpacity={1} onPress={() => setShowTooltip(!showTooltip)}>
-          <Form.ItemValue fontVariant="tabular-nums">{formattedFeeInFiat}</Form.ItemValue>
+          <Table.ItemValue fontVariant="tabular-nums">{formattedFeeInFiat}</Table.ItemValue>
         </TouchableOpacity>
       </Tooltip>
-    </Form.ItemRow>
+    </Table.ItemRow>
   );
 }
