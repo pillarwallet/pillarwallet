@@ -27,10 +27,13 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import * as Table from 'components/modern/Table';
+import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import FeeTable from 'components/modern/FeeTable';
+import Image from 'components/Image';
 import Spinner from 'components/Spinner';
+import Text from 'components/modern/Text';
 
 // Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
@@ -42,6 +45,7 @@ import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelecto
 // Utils
 import { getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
+import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -60,6 +64,8 @@ const KeyBasedAssetTransferConfirm = () => {
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
+
+  const images = useThemedImages();
 
   if (isCalculatingGas) {
     return (
@@ -83,7 +89,7 @@ const KeyBasedAssetTransferConfirm = () => {
     const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
 
     return (
-      <Table.ItemRow separator={index !== 0}>
+      <Table.ItemRow key={assetData.id} separator={index !== 0}>
         <Table.ItemTitle>{assetData.name}</Table.ItemTitle>
 
         <Table.ItemValue fontVariant="tabular-nums">{valueInEth}</Table.ItemValue>
@@ -99,6 +105,7 @@ const KeyBasedAssetTransferConfirm = () => {
 
   const sortedAssetTransfers = sortAssetTransfers(keyBasedAssetsToTransfer, rates, fiatCurrency);
 
+  const totalValue = getTotalValue(keyBasedAssetsToTransfer, rates, fiatCurrency);
   const totalFee = getTotalFee(keyBasedAssetsToTransfer);
 
   return (
@@ -112,6 +119,12 @@ const KeyBasedAssetTransferConfirm = () => {
       putContentInScrollView
     >
       <Content>
+        <Header>
+          <SmartWalletLogo source={images.smartWalletIcon} />
+          <BalanceLabel>{t('header')}</BalanceLabel>
+          <BalanceView fiatCurrency={fiatCurrency} balance={totalValue} />
+        </Header>
+
         <Table.Header>{t('details.header')}</Table.Header>
         <Table.Item
           title={t('details.fromKeyWallet')}
@@ -136,20 +149,15 @@ const KeyBasedAssetTransferConfirm = () => {
 
 export default KeyBasedAssetTransferConfirm;
 
-const Content = styled.View`
-  padding: 0 ${spacing.large}px;
-`;
+const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: Rates, fiatCurrency: string) => {
+  let result = 0;
 
-const SpinnerContent = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
+  assetTransfers.forEach(({ assetData, amount }) => {
+    result += getBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
+  });
 
-const FooterContent = styled.View`
-  width: 100%;
-  padding: ${spacing.small}px ${spacing.large}px ${spacing.large}px;
-`;
+  return result;
+};
 
 const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
   let result = BigNumber(0);
@@ -178,3 +186,33 @@ const sortAssetTransfers = (
     ['desc', 'desc', 'asc'],
   );
 };
+
+const Content = styled.View`
+  padding: 0 ${spacing.large}px;
+`;
+
+const SpinnerContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Header = styled.View`
+  align-items: center;
+  padding-vertical: ${spacing.mediumLarge}px;
+`;
+
+const SmartWalletLogo = styled(Image)`
+  height: 64px;
+  width: 64px;
+  margin-vertical: ${spacing.mediumLarge}px;
+`;
+
+const BalanceLabel = styled(Text)`
+  margin-vertical: ${spacing.mediumLarge}px;
+`;
+
+const FooterContent = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.mediumLarge}px;
+`;
