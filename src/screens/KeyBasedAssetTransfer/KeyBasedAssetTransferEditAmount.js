@@ -124,5 +124,5 @@ const Content = styled.View`
 
 const FooterContent = styled.View`
   width: 100%;
-  padding: ${spacing.small}px ${spacing.large}px ${spacing.large}px;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.mediumLarge}px;
 `;
