@@ -166,6 +166,7 @@ import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
 
 // constants
 import {
+  MAIN_FLOW,
   ASSETS,
   ASSET,
   ASSET_SEARCH,
@@ -617,13 +618,20 @@ const liquidityPoolsFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
-// APP NAVIGATION FLOW
-const AppFlowNavigation = createStackNavigator(
+const MainStack = createStackNavigator(
   {
     [HOME_FLOW]: homeFlow,
     [ASSETS]: assetsFlow,
     [CONNECT_FLOW]: walletConnectFlow,
     [SERVICES_FLOW]: servicesFlow,
+  },
+  StackNavigatorConfig,
+);
+
+// Below screens/flows will appear as modals
+const AppFlowNavigation = createStackNavigator(
+  {
+    [MAIN_FLOW]: MainStack,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
@@ -667,7 +675,7 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
   },
-  StackNavigatorConfig,
+  modalTransition,
 );
 
 type Props = {

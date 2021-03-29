@@ -20,6 +20,7 @@
 
 // APP FLOW
 export const APP_FLOW = 'APP_FLOW';
+export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const SERVICES_FLOW = 'SERVICES_FLOW';
