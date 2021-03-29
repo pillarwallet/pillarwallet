@@ -19,46 +19,56 @@
 */
 
 import * as React from 'react';
-import { Text, ScrollView } from 'react-native';
+import { Text } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Components
 import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
 import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
 
+// Selectors
+import { useUser } from 'selectors/user';
+
 function Home() {
   const navigation = useNavigation();
+  const user = useUser();
 
   return (
-    <Container contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
-      <Content>
-        <MainContent>
-          <Text>Hello Pillar!</Text>
-        </MainContent>
-        <NavActions>
-          <Button block title="Menu" onPress={() => navigation.navigate(MENU)} secondary />
-          <Button block title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-          <Button block title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
-          <Button block title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
-        </NavActions>
-      </Content>
-    </Container>
+    <ContainerWithHeader
+      headerProps={{
+        leftItems: [
+          {
+            icon: 'hamburger',
+            onPress: () => navigation.navigate(MENU),
+            iconProps: { secondary: true, style: { marginLeft: -4 } },
+          },
+        ],
+        // $FlowFixMe: react-navigation types
+        centerItems: [{ custom: <UserNameAndImage user={user} /> }],
+        sideFlex: '25px',
+      }}
+      inset={{ bottom: 0 }}
+      tab
+    >
+      <MainContent>
+        <Text>Hello Pillar!</Text>
+      </MainContent>
+      <NavActions>
+        <Button block title="Menu" onPress={() => navigation.navigate(MENU)} secondary />
+        <Button block title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
+        <Button block title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
+        <Button block title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
+      </NavActions>
+    </ContainerWithHeader>
   );
 }
 
 export default Home;
-
-const Container = styled(ScrollView)`
-    flex: 1;
-`;
-
-const Content = styled(SafeAreaView)`
-    flex: 1;
-`;
 
 const MainContent = styled.View`
     flex: 1;
