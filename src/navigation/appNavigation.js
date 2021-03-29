@@ -667,7 +667,7 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
   },
-  modalTransition,
+  StackNavigatorConfig,
 );
 
 type Props = {
