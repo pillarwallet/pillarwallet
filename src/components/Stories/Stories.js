@@ -34,7 +34,8 @@ const Stories = () => {
 
   const setCountOnLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
-  const logStorylyError = (errorMessage) => reportOrWarn('Storyly error', { message: errorMessage }, 'error');
+  const logStorylyError = ({ nativeEvent }) =>
+    reportOrWarn('Storyly error', { message: nativeEvent.errorMessage }, 'error');
 
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
 
