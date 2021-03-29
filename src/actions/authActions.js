@@ -38,7 +38,7 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  HOME,
+  HOME_TAB,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
@@ -337,7 +337,7 @@ export const loginAction = (
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || HOME,
+        routeName: lastActiveScreen || HOME_TAB,
         params: lastActiveScreenParams,
       });
 

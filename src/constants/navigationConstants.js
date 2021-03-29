@@ -20,7 +20,6 @@
 
 // APP FLOW
 export const APP_FLOW = 'APP_FLOW';
-export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const SERVICES_TAB = 'SERVICES_TAB';

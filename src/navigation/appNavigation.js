@@ -47,7 +47,7 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
-import HomeScreen from 'screens/LegacyHome';
+import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -184,7 +184,6 @@ import {
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
   CHANGE_PIN_CONFIRM_NEW_PIN,
-  TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
@@ -815,7 +814,10 @@ liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
-    [TAB_NAVIGATION]: tabNavigation,
+    [HOME_TAB]: homeFlow,
+    [ASSETS]: assetsFlow,
+    [CONNECT_TAB]: walletConnectFlow,
+    [SERVICES_TAB]: servicesFlow,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
