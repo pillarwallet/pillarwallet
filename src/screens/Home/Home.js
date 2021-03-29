@@ -26,6 +26,7 @@ import styled from 'styled-components/native';
 // Components
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
@@ -55,6 +56,19 @@ function Home() {
       inset={{ bottom: 0 }}
       tab
     >
+      <HeaderBlock
+        leftItems={[
+          {
+            icon: 'hamburger',
+            onPress: () => navigation.navigate(MENU),
+            iconProps: { secondary: true, style: { marginLeft: -4 } },
+          },
+        ]}
+        centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
+        sideFlex="25px"
+        navigation={navigation}
+        noPaddingTop
+      />
       <MainContent>
         <Text>Hello Pillar!</Text>
       </MainContent>
