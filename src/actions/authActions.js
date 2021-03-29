@@ -112,6 +112,7 @@ import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
 } from './etherspotActions';
+import { getTutorialDataAction } from './cmsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -345,11 +346,13 @@ export const loginAction = (
         routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
+      if (!hasSeenTutorial) await dispatch(getTutorialDataAction());
+      const { onboarding: { tutorialData } } = getState();
 
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: hasSeenTutorial ? navigateToLastActiveScreen : NavigationActions.navigate({ routeName: TUTORIAL_FLOW }),
+        action: tutorialData ? NavigationActions.navigate({ routeName: TUTORIAL_FLOW }) : navigateToLastActiveScreen,
       });
 
       if (!initialDeeplinkExecuted) {

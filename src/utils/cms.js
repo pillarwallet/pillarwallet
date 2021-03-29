@@ -19,9 +19,15 @@
 */
 
 import orderBy from 'lodash.orderby';
-import type { CMSDocument, ParsedCMSDocument } from 'models/CMSData';
+import type { CMSDocument, ParsedCMSDocument, TutorialDataObject, CMSData } from 'models/CMSData';
+import { CMS_DATA_TYPES } from 'constants/cmsConstants';
 
-export const getSortedOnboardingData = (docs: CMSDocument[], type: string): ParsedCMSDocument[] =>
+const {
+  ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
+  ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
+} = CMS_DATA_TYPES;
+
+const getSortedTutorialData = (docs: CMSDocument[], type: string): ParsedCMSDocument[] =>
   orderBy(docs.map(d => parseCMSDocument(d)).filter(d => d.type === type), i => (i.order || 0), ['asc']);
 
 const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
@@ -44,3 +50,14 @@ const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
     imageWidth: image?.dimensions?.width || 0,
   };
 };
+
+export const getTutorialDataObject = (res: CMSData): ?TutorialDataObject => {
+  if (!res?.results?.length) return null;
+  return {
+    [NATIVES]: getSortedTutorialData(res.results, NATIVES),
+    [NEWBIES]: getSortedTutorialData(res.results, NEWBIES),
+  };
+};
+
+export const isValidTutorialData = (data: ?TutorialDataObject): boolean =>
+  !!data && !!data[NATIVES]?.length && !!data[NEWBIES]?.length;

@@ -28,11 +28,13 @@ import type { Theme } from 'models/Theme';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
+import Image from 'components/Image';
 
 import { CMS_DATA_TYPES } from 'constants/cmsConstants';
-
 import { spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
+import { images } from 'utils/images';
+
 import TutorialCMSView, { Title, SubTitle } from './TutorialCMSView';
 import TutorialFooter from './TutorialFooter';
 
@@ -64,7 +66,15 @@ const TutorialButton = styled(Button)`
   width: 100%;
 `;
 
-export default withTheme(({ onButtonPress, data, onFinish }: Props) => {
+const Img = styled(Image)`
+  margin-top: 40px;
+  width: ${DEVICE_WIDTH * 0.7}px;
+  height: 100px;
+`;
+
+export default withTheme(({
+  onButtonPress, data, onFinish, theme,
+}: Props) => {
   const scrollViewRef = useRef(null);
   const [scrollIndex, setScrollIndex] = useState<number>(0);
   const [userHasScrolled, setUserHasScrolled] = useState<boolean>(false);
@@ -90,6 +100,23 @@ export default withTheme(({ onButtonPress, data, onFinish }: Props) => {
 
   const handleNextPress = () => isLast() ? onFinish() : scrollToIdx(scrollIndex + 1);
 
+  const renderInitialScreen = () => (
+    <InitialScreenWrapper>
+      <ContentWrapper>
+        <Title>{t('tutorialTitle')}</Title>
+        <SubTitle>{t('tutorialSubtitle')}</SubTitle>
+        <Img resizeMode="contain" source={images(theme).pillarLogo} />
+      </ContentWrapper>
+      <ContentWrapper>
+        <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
+        <TutorialButton
+          title={t('button.native')}
+          onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)}
+        />
+      </ContentWrapper>
+    </InitialScreenWrapper>
+  );
+
   return (
     <ContainerWithHeader headerProps={{ noBack: true, centerItems: [{ title: t('title.welcome') }] }}>
       <ScrollView
@@ -103,20 +130,7 @@ export default withTheme(({ onButtonPress, data, onFinish }: Props) => {
         scrollEnabled={userHasScrolled}
         onMomentumScrollEnd={() => { !userHasScrolled && setUserHasScrolled(true); }}
       >
-        <InitialScreenWrapper>
-          <ContentWrapper>
-            <Title>{t('tutorialTitle')}</Title>
-            <SubTitle>{t('tutorialSubtitle')}</SubTitle>
-          </ContentWrapper>
-          <ContentWrapper>
-
-            <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
-            <TutorialButton
-              title={t('button.native')}
-              onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)}
-            />
-          </ContentWrapper>
-        </InitialScreenWrapper>
+        {renderInitialScreen()}
         {data.map(doc => <TutorialCMSView document={doc} key={doc.id} />)}
       </ScrollView>
       <TutorialFooter

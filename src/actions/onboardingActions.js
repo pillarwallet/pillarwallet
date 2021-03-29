@@ -29,6 +29,7 @@ import {
   APP_FLOW,
   NEW_WALLET,
   TUTORIAL_FLOW,
+  HOME,
   REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
@@ -78,6 +79,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import { getTutorialDataAction } from 'actions/cmsActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -307,13 +309,28 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
       dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     }
 
-    // check if user was referred to install the app and navigate accordingly
-    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : TUTORIAL_FLOW;
-    navigate(NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName }),
-    }));
+    await dispatch(getTutorialDataAction());
+
+    const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
+    const BASIC_FLOW = tutorialData ? TUTORIAL_FLOW : HOME;
+
+    if (tutorialData && referralToken) {
+      // show Tutorial first, then navigate to Referral flow when it's finished/skipped
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: { nextNavigationRouteName: REFERRAL_INCOMING_REWARD },
+        action: NavigationActions.navigate({ routeName: TUTORIAL_FLOW }),
+      }));
+    } else {
+      // check if user was referred to install the app and navigate accordingly
+      const routeName = referralToken ? REFERRAL_INCOMING_REWARD : BASIC_FLOW;
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName }),
+      }));
+    }
+
 
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };

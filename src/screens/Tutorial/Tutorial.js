@@ -18,21 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect, useState } from 'react';
-import { Predicates } from '@prismicio/client';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { HOME } from 'constants/navigationConstants';
 
-import type { CMSData, CMSDocument, ParsedCMSDocument } from 'models/CMSData';
-import type { Dispatch } from 'reducers/rootReducer';
-import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
+import type { TutorialDataObject } from 'models/CMSData';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { CMS_DATA_TYPES } from 'constants/cmsConstants';
 
-import prismicClient from 'services/prismic';
-import { reportErrorLog } from 'utils/common';
-import { getSortedOnboardingData } from 'utils/cms';
 import { hasSeenTutorialAction } from 'actions/appSettingsActions';
 
 import TutorialSwiper from './TutorialSwiper';
@@ -40,6 +36,7 @@ import TutorialSwiper from './TutorialSwiper';
 type Props = {
   navigation: NavigationScreenProp<*>,
   hasSeenTutorial: () => void,
+  tutorialData: ?TutorialDataObject,
 }
 
 const {
@@ -49,51 +46,27 @@ const {
 
 type TUTORIAL_PATH = typeof NATIVES | typeof NEWBIES;
 
-type CMSSortedDocuments = {
-  [key: string]: ParsedCMSDocument[],
-};
-
-const INITIAL_STATE: CMSSortedDocuments = {
-  [NATIVES]: [],
-  [NEWBIES]: [],
-};
-
-const TutorialScreen = ({ navigation, hasSeenTutorial }: Props) => {
-  const [data, setData] = useState<CMSSortedDocuments>(INITIAL_STATE);
+const TutorialScreen = ({ navigation, hasSeenTutorial, tutorialData }: Props) => {
   const [activePath, setActivePath] = useState<TUTORIAL_PATH>(NEWBIES);
+  const routeName = navigation?.state?.params?.nextNavigationRouteName || HOME;
 
-  const handleFetchedResults = (docs: CMSDocument[]) => {
-    setData({
-      [NATIVES]: getSortedOnboardingData(docs, NATIVES),
-      [NEWBIES]: getSortedOnboardingData(docs, NEWBIES),
-    });
-  };
-
-  // fallback
-  const navigateHome = () => navigation.navigate(HOME);
-
-  useEffect(() => {
-    prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
-      .then((res: CMSData) => handleFetchedResults(res.results))
-      .catch(e => {
-        reportErrorLog(e);
-        navigateHome();
-      });
-  }, []);
-
-  if (!data || data === INITIAL_STATE) {
-    navigateHome();
+  if (!tutorialData) {
+    navigation.navigate(routeName);
     return null;
   }
 
   const handleFinish = () => {
     hasSeenTutorial();
-    navigateHome();
+    navigation.navigate(routeName);
   };
 
   return (
     <ContainerWithHeader style={{ flex: 1 }}>
-      <TutorialSwiper data={data[activePath]} onButtonPress={val => setActivePath(val)} onFinish={handleFinish} />
+      <TutorialSwiper
+        data={tutorialData[activePath]}
+        onButtonPress={val => setActivePath(val)}
+        onFinish={handleFinish}
+      />
     </ContainerWithHeader>
   );
 };
@@ -102,4 +75,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hasSeenTutorial: () => dispatch(hasSeenTutorialAction()),
 });
 
-export default connect(null, mapDispatchToProps)(TutorialScreen);
+const mapStateToProps = ({
+  onboarding: { tutorialData },
+}: RootReducerState): $Shape<Props> => ({
+  tutorialData,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TutorialScreen);

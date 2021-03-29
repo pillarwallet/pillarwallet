@@ -55,3 +55,7 @@ export type ParsedCMSDocument = {
 export type CMSData = {
   results: CMSDocument[],
 };
+
+export type TutorialDataObject = {
+  [key: string]: ParsedCMSDocument[],
+};
