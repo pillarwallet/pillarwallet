@@ -24,8 +24,8 @@ import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
 // Components
+import { Container, Content } from 'components/modern/Layout';
 import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
@@ -40,22 +40,7 @@ function Home() {
   const user = useUser();
 
   return (
-    <ContainerWithHeader
-      headerProps={{
-        leftItems: [
-          {
-            icon: 'hamburger',
-            onPress: () => navigation.navigate(MENU),
-            iconProps: { secondary: true, style: { marginLeft: -4 } },
-          },
-        ],
-        // $FlowFixMe: react-navigation types
-        centerItems: [{ custom: <UserNameAndImage user={user} /> }],
-        sideFlex: '25px',
-      }}
-      inset={{ bottom: 0 }}
-      tab
-    >
+    <Container>
       <HeaderBlock
         leftItems={[
           {
@@ -65,31 +50,31 @@ function Home() {
           },
         ]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
-        sideFlex="25px"
         navigation={navigation}
-        noPaddingTop
       />
-      <MainContent>
-        <Text>Hello Pillar!</Text>
-      </MainContent>
-      <NavActions>
-        <Button block title="Menu" onPress={() => navigation.navigate(MENU)} secondary />
-        <Button block title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-        <Button block title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
-        <Button block title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
-      </NavActions>
-    </ContainerWithHeader>
+      <Content>
+        <MainContent>
+          <Text>Hello Pillar!</Text>
+        </MainContent>
+        <NavActions>
+          <Button title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
+          <Button title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
+          <Button title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
+        </NavActions>
+      </Content>
+    </Container>
   );
 }
 
 export default Home;
 
 const MainContent = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 const NavActions = styled.View`
   width: 100%;
+  padding: 0 20px;
 `;
