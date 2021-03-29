@@ -23,6 +23,8 @@ import { retryOnNetworkError } from 'utils/retry';
 
 import type { AxiosXHR, AxiosXHRConfigBase, AxiosPromise } from 'axios';
 import type { Options as RetryOptions } from 'utils/retry';
+import { reportLog } from 'utils/common';
+import * as Sentry from '@sentry/react-native';
 
 type ExtendedConfigBase<T, R = T> = AxiosXHRConfigBase<T, R> & {
   retry?: boolean,
@@ -31,11 +33,34 @@ type ExtendedConfigBase<T, R = T> = AxiosXHRConfigBase<T, R> & {
 
 const retryOptionsNone = { retries: 0 };
 
+const axiosClient = axios.create();
+
+axiosClient.interceptors.response.use(async (response) => {
+  reportLog('Http response', response);
+  return response;
+});
+
+axiosClient.interceptors.request.use(async (response) => {
+  reportLog('Http response', response);
+  return response;
+});
+
+axiosClient.interceptors.request.use(
+  async (request) => {
+    reportLog('Http request', request);
+    return request;
+  },
+  (error) => {
+    reportLog('Http request rejection', error, Sentry.Severity.Error);
+    return Promise.reject(error);
+  },
+);
+
 function get<R>(url: string, config?: ExtendedConfigBase<mixed, R>): AxiosPromise<mixed, R> {
   const { retry = true, retryOptions, ...axiosConfig } = config ?? {};
 
   return retryOnNetworkError<AxiosXHR<mixed, R>>(
-    () => axios.get<R>(url, axiosConfig),
+    () => axiosClient.get<R>(url, axiosConfig),
     retry === false ? retryOptionsNone : retryOptions,
   );
 }
@@ -44,7 +69,7 @@ function post<T, R>(url: string, data?: T, config?: ExtendedConfigBase<T, R>): A
   const { retry = false, retryOptions, ...axiosConfig } = config ?? {};
 
   return retryOnNetworkError<AxiosXHR<T, R>>(
-    () => axios.post<T, R>(url, data, axiosConfig),
+    () => axiosClient.post<T, R>(url, data, axiosConfig),
     retry === false ? retryOptionsNone : retryOptions,
   );
 }

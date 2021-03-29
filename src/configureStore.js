@@ -22,7 +22,8 @@
 /**
  * Create the Redux store
  */
-import { createStore, applyMiddleware } from 'redux';
+import * as Sentry from '@sentry/react-native';
+import { createStore, applyMiddleware, compose } from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
@@ -78,11 +79,13 @@ const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));
 
+const sentryReduxEnhancer = Sentry.createReduxEnhancer();
+
 const configureStore = (initialState: ?Object): Object => {
   const store = createStore(
     pReducer,
     initialState,
-    enhancer,
+    compose(enhancer, sentryReduxEnhancer),
   );
 
   const persistor = persistStore(store);
