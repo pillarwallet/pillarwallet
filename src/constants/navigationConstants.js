@@ -103,8 +103,8 @@ export const SEND_COLLECTIBLE_CONFIRM = 'SEND_COLLECTIBLE_CONFIRM';
 export const CONTACT = 'CONTACT';
 
 // HOME FLOW
-export const HOME = 'HOME';
 export const HOME_FLOW = 'HOME_FLOW';
+export const HOME = 'HOME';
 
 // EXCHANGE FLOW
 export const EXCHANGE_FLOW = 'EXCHANGE_FLOW';
