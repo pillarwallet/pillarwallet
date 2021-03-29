@@ -51,16 +51,16 @@ function Home() {
         ]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
         navigation={navigation}
+        noPaddingTop
       />
       <Content>
         <MainContent>
           <Text>Hello Pillar!</Text>
         </MainContent>
-        <NavActions>
-          <Button title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-          <Button title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
-          <Button title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
-        </NavActions>
+
+        <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
+        <NavButton title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
+        <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
     </Container>
   );
@@ -74,7 +74,7 @@ const MainContent = styled.View`
   align-items: center;
 `;
 
-const NavActions = styled.View`
-  width: 100%;
-  padding: 0 20px;
+const NavButton = styled(Button)`
+  align-self: stretch;
+  margin: 10px 20px;
 `;
