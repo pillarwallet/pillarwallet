@@ -173,13 +173,13 @@ import {
   ASSETS,
   ASSET,
   ASSET_SEARCH,
-  SERVICES_TAB,
+  SERVICES_FLOW,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
   HOME,
-  HOME_TAB,
+  HOME_FLOW,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -237,7 +237,7 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
-  CONNECT_TAB,
+  CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
@@ -521,7 +521,7 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
-    [HOME_TAB]: {
+    [HOME_FLOW]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
@@ -544,7 +544,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: t('navigationTabs.assets'), theme: screenProps.theme }),
       }),
     },
-    [CONNECT_TAB]: {
+    [CONNECT_FLOW]: {
       screen: walletConnectFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
@@ -555,7 +555,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: t('navigationTabs.connect'), theme: screenProps.theme }),
       }),
     },
-    [SERVICES_TAB]: {
+    [SERVICES_FLOW]: {
       screen: servicesFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
@@ -814,10 +814,10 @@ liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
-    [HOME_TAB]: homeFlow,
+    [HOME_FLOW]: homeFlow,
     [ASSETS]: assetsFlow,
-    [CONNECT_TAB]: walletConnectFlow,
-    [SERVICES_TAB]: servicesFlow,
+    [CONNECT_FLOW]: walletConnectFlow,
+    [SERVICES_FLOW]: servicesFlow,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,

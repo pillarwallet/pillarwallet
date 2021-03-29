@@ -28,7 +28,7 @@ import styled from 'styled-components/native';
 import Button from 'components/Button';
 
 // Constants
-import { ASSETS, CONNECT_TAB, SERVICES_TAB } from 'constants/navigationConstants';
+import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
 
 function Home() {
   const navigation = useNavigation();
@@ -40,9 +40,10 @@ function Home() {
           <Text>Hello Pillar!</Text>
         </MainContent>
         <NavActions>
+          <Button block title="Menu" onPress={() => navigation.navigate(MENU)} secondary />
           <Button block title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-          <Button block title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_TAB)} secondary />
-          <Button block title="Sevices" onPress={() => navigation.navigate(SERVICES_TAB)} secondary />
+          <Button block title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
+          <Button block title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
         </NavActions>
       </Content>
     </Container>
