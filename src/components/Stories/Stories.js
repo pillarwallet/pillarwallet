@@ -32,7 +32,7 @@ const Stories = () => {
   const dispatch = useDispatch();
   const [storyGroupCount, setStoryGroupCount] = useState(0);
 
-  const setCountOnLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
+  const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
   const logStorylyError = ({ nativeEvent }) =>
     reportOrWarn('Storyly error', { message: nativeEvent.errorMessage }, 'error');
@@ -42,7 +42,7 @@ const Stories = () => {
   return (
     <StorylyWthSpacing
       storylyId={getEnv().STORYLY_TOKEN}
-      onLoad={setCountOnLoad}
+      onLoad={handleLoad}
       onFail={logStorylyError}
       onStoryOpen={logStoryOpen}
       $hide={storyGroupCount === 0}
@@ -51,7 +51,11 @@ const Stories = () => {
 };
 
 const StorylyWthSpacing = styled(Storyly)`
-  height: ${({ $hide }) => ($hide ? 0 : 140)}px;
+  height: 140px;
+  ${({ $hide }) =>
+    $hide &&
+    // eslint-disable-next-line i18next/no-literal-string
+    'display: none;'}
   overflow: hidden;
   margin-left: ${spacing.layoutSides}px;
 `;
