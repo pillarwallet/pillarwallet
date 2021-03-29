@@ -83,7 +83,7 @@ const KeyBasedAssetTransferConfirm = () => {
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
-      return <Table.Item title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
+      return <Table.Row title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
     }
 
     const valueInEth = tRoot('tokenValue', {
@@ -93,17 +93,17 @@ const KeyBasedAssetTransferConfirm = () => {
     const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
 
     return (
-      <Table.ItemRow key={assetData.id} separator={index !== 0}>
-        <Table.ItemTitle>{assetData.name}</Table.ItemTitle>
+      <Table.RowContainer key={assetData.id} separator={index !== 0}>
+        <Table.RowTitle>{assetData.name}</Table.RowTitle>
 
-        <Table.ItemValue fontVariant="tabular-nums">{valueInEth}</Table.ItemValue>
+        <Table.RowValue fontVariant="tabular-nums">{valueInEth}</Table.RowValue>
 
         {!!valueInFiat && (
-          <Table.ItemValue variant="secondary" fontVariant="tabular-nums">
+          <Table.RowValue variant="secondary" fontVariant="tabular-nums">
             {valueInFiat}
-          </Table.ItemValue>
+          </Table.RowValue>
         )}
-      </Table.ItemRow>
+      </Table.RowContainer>
     );
   };
 
@@ -137,13 +137,13 @@ const KeyBasedAssetTransferConfirm = () => {
         </Header>
 
         <Table.Header>{t('details.header')}</Table.Header>
-        <Table.Item
+        <Table.Row
           title={t('details.fromKeyWallet')}
           value={humanizeHexString(keyBasedWalletAddress)}
           fontVariant="tabular-nums"
           separator={false}
         />
-        <Table.Item
+        <Table.Row
           title={t('details.toSmartWallet')}
           value={humanizeHexString(activeAccountAddress)}
           fontVariant="tabular-nums"
@@ -206,7 +206,7 @@ const sortAssetTransfers = (
 };
 
 const Content = styled.View`
-  padding: 0 ${spacing.large}px;
+  padding: 0 ${spacing.large}px ${spacing.large}px;
 `;
 
 const SpinnerContent = styled.View`

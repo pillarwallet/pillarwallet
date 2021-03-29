@@ -53,7 +53,7 @@ function FeeTable({ fee, style }: Props) {
       <Table.Header>{t('fees')}</Table.Header>
 
       <FeeRow title={t('ethFee')} symbol={ETH} fee={fee} separator={false} />
-      <Table.Item title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
+      <Table.Row title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
       <FeeRow title={t('totalFee')} symbol={ETH} fee={fee} separator={false} />
     </View>
   );
@@ -85,14 +85,14 @@ export function FeeRow({
   const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, rates, symbol);
 
   return (
-    <Table.ItemRow separator={separator}>
-      <Table.ItemTitle>{title}</Table.ItemTitle>
+    <Table.RowContainer separator={separator}>
+      <Table.RowTitle>{title}</Table.RowTitle>
 
       <Tooltip body={formattedFee} isVisible={showTooltip} positionOnBottom={false}>
         <TouchableOpacity hitSlop={hitSlop20} activeOpacity={1} onPress={() => setShowTooltip(!showTooltip)}>
-          <Table.ItemValue fontVariant="tabular-nums">{formattedFeeInFiat}</Table.ItemValue>
+          <Table.RowValue fontVariant="tabular-nums">{formattedFeeInFiat}</Table.RowValue>
         </TouchableOpacity>
       </Tooltip>
-    </Table.ItemRow>
+    </Table.RowContainer>
   );
 }

@@ -36,37 +36,37 @@ export const Header: React.ComponentType<TextProps> = styled(Text)`
   margin: ${spacing.large}px 0 ${spacing.small}px;
 `;
 
-type ItemProps = {|
+type RowProps = {|
   title: ?string,
   value?: ?string,
-  variant?: ItemValueVariant,
+  variant?: RowValueVariant,
   fontVariant?: FontVariant,
   separator?: boolean,
 |};
 
-export function Item({
+export function Row({
   title,
   value,
   variant,
   fontVariant,
   separator,
-}: ItemProps) {
+}: RowProps) {
   return (
-    <ItemRow separator={separator}>
-      <ItemTitle>{title}</ItemTitle>
-      <ItemValue variant={variant} fontVariant={fontVariant}>
+    <RowContainer separator={separator}>
+      <RowTitle>{title}</RowTitle>
+      <RowValue variant={variant} fontVariant={fontVariant}>
         {value}
-      </ItemValue>
-    </ItemRow>
+      </RowValue>
+    </RowContainer>
   );
 }
 
-type ItemRowProps = {|
+type RowContainerProps = {|
   ...ViewProps,
   separator?: boolean,
 |};
 
-export const ItemRow: React.ComponentType<ItemRowProps> = styled.View`
+export const RowContainer: React.ComponentType<RowContainerProps> = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 10px 0;
@@ -74,20 +74,20 @@ export const ItemRow: React.ComponentType<ItemRowProps> = styled.View`
     separator ? `border-top-width: 1px; border-color: ${theme.colors.basic060};` : ''}
 `;
 
-export const ItemTitle: React.ComponentType<TextProps> = styled(Text)`
+export const RowTitle: React.ComponentType<TextProps> = styled(Text)`
   flex: 1;
   color: ${({ theme }) => theme.colors.basic030};
 `;
 
-type ItemValueVariant = 'primary' | 'secondary' | 'positive';
+type RowValueVariant = 'primary' | 'secondary' | 'positive';
 
-type ItemValueProps = {|
+type RowValueProps = {|
   ...TextProps,
-  variant?: ItemValueVariant,
+  variant?: RowValueVariant,
   fontVariant?: FontVariant,
 |};
 
-export const ItemValue: React.ComponentType<ItemValueProps> = styled(Text)`
+export const RowValue: React.ComponentType<RowValueProps> = styled(Text)`
   margin-left: ${spacing.extraSmall}px;
   ${({ fontVariant }) => (fontVariant ? `font-variant: ${fontVariant}` : '')};
   ${({ variant, theme }) => (variant === 'secondary' ? `color: ${theme.colors.secondaryText}` : '')};
