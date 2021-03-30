@@ -24,7 +24,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -35,6 +34,7 @@ import type { ViewProps, ViewStyleProp } from 'utils/types/react-native';
  */
 export const Container: React.ComponentType<ViewProps> = styled.View`
   flex: 1;
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 type ContentProps = {|
@@ -55,11 +55,9 @@ export function Content({
   paddingVertical = spacing.layoutSides,
   style,
 }: ContentProps) {
-  const colors = useThemeColors();
-
   const styles = [
     contentStyles.safeArea,
-    { backgroundColor: colors.basic070, paddingHorizontal, paddingVertical },
+    { paddingHorizontal, paddingVertical },
     style,
   ];
 

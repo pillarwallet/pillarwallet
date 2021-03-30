@@ -533,6 +533,11 @@
     "balance": {
       "addCash": "Add Cash",
       "lastWeek": "Last week"
+    },
+    "actions": {
+      "send": "Send",
+      "swap": "Swap",
+      "connect": "Connect",
     }
   },
 

@@ -21,10 +21,12 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import Button from 'components/Button';
+import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
@@ -37,9 +39,22 @@ import { useUser } from 'selectors/user';
 import BalanceSection from './BalanceSection';
 
 function Home() {
+  const { t } = useTranslationWithPrefix('home');
   const navigation = useNavigation();
 
   const user = useUser();
+
+  const floatingButtons = [
+    {
+      title: t('actions.send'),
+    },
+    {
+      title: t('actions.swap'),
+    },
+    {
+      title: t('actions.connect'),
+    },
+  ];
 
   return (
     <Container>
@@ -66,6 +81,8 @@ function Home() {
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
+
+      <FloatingButtons items={floatingButtons} />
     </Container>
   );
 }
