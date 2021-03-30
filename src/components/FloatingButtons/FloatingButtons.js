@@ -40,26 +40,31 @@ export type Item = {|
 
 type Props = {|
   items: (?Item | false)[],
+  applyBottomInset?: boolean,
 |};
 
-const FloatingButtons = ({ items: falsyItems }: Props) => {
+const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) => {
   const items: Item[] = (falsyItems.filter(Boolean): any);
 
   if (items.length === 0) {
     return null;
   }
 
+  const forceInset = applyBottomInset ? { bottom: 'always' } : undefined;
+
   return (
-    <Container>
-      {items.map((item) => (
-        <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
-          <ItemIconWrapper>
-            <ItemIcon name={item.iconName} />
-          </ItemIconWrapper>
-          <ItemTitle>{item.title}</ItemTitle>
-        </ItemView>
-      ))}
-    </Container>
+    <FloatingContainer forceInset={forceInset}>
+      <Container>
+        {items.map((item) => (
+          <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
+            <ItemIconWrapper>
+              <ItemIcon name={item.iconName} />
+            </ItemIconWrapper>
+            <ItemTitle>{item.title}</ItemTitle>
+          </ItemView>
+        ))}
+      </Container>
+    </FloatingContainer>
   );
 };
 
@@ -69,11 +74,14 @@ FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 120;
 
 export default FloatingButtons;
 
-const Container = styled(SafeAreaView)`
+const FloatingContainer = styled(SafeAreaView)`
   position: absolute;
   bottom: ${spacing.large}px;
-  flex-direction: row;
   align-self: center;
+`;
+
+const Container = styled.View`
+  flex-direction: row;
   align-items: center;
   padding-horizontal: ${spacing.large / 2}px;
   background-color: ${({ theme }) => theme.colors.basic050};
