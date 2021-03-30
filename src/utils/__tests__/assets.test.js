@@ -25,7 +25,7 @@ import {
   isSynthetixTx,
   convertUSDToFiat,
 } from 'utils/assets';
-import type { Rates, Balances, MixedBalances } from 'models/Asset';
+import type { Rates, Balances } from 'models/Asset';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 describe('Assets utils', () => {
@@ -75,7 +75,7 @@ describe('Assets utils', () => {
 
   describe('balanceInEth', () => {
     it('returns the total in ETH', () => {
-      const balances: MixedBalances = {
+      const balances: Balances = {
         ETH: { symbol: 'ETH', balance: '2.321000' },
         PLR: { symbol: 'PLR', balance: '1200' },
       };
@@ -86,7 +86,7 @@ describe('Assets utils', () => {
     });
 
     it('returns 0 when there are no rates for ETH', () => {
-      const balances: MixedBalances = {
+      const balances: Balances = {
         PLR: { symbol: 'PLR', balance: '1200' },
       };
 
@@ -116,7 +116,7 @@ describe('Assets utils', () => {
   describe('getTotalBalanceInFiat', () => {
     describe('for empty values', () => {
       it('returns 0', () => {
-        const balances: MixedBalances = {};
+        const balances: Balances = {};
 
         const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
 
@@ -127,7 +127,7 @@ describe('Assets utils', () => {
     describe('when there are ETH and PLR assets', () => {
       describe('when assets have no rate', () => {
         it('returns 0 balance', () => {
-          const balances: MixedBalances = {
+          const balances: Balances = {
             MANA: { symbol: 'MANA', balance: '1200.0' },
           };
 
@@ -141,7 +141,7 @@ describe('Assets utils', () => {
         const ethBalance = 1.2;
 
         it('returns the ETH balance', () => {
-          const balances: MixedBalances = {
+          const balances: Balances = {
             ETH: { symbol: 'ETH', balance: `${ethBalance}` },
           };
 
@@ -154,7 +154,7 @@ describe('Assets utils', () => {
           const plrBalance = 3.4;
 
           it('returns the totals balance', () => {
-            const balances: MixedBalances = {
+            const balances: Balances = {
               ETH: { symbol: 'ETH', balance: `${ethBalance}` },
               PLR: { symbol: 'PLR', balance: `${plrBalance}` },
             };

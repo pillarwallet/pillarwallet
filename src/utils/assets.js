@@ -218,8 +218,8 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: MixedBalances, rates: Rates): number => {
-  const balanceValues: MixedBalance[] = Object.keys(balances).map(key => balances[key]);
+export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): number => {
+  const balanceValues: MixedBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;
@@ -235,7 +235,7 @@ export const balanceInEth = (balances: MixedBalances, rates: Rates): number => {
   }, 0);
 };
 
-export const getTotalBalanceInFiat = (balances: MixedBalances, rates: Rates, currency: string) => {
+export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string) => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;

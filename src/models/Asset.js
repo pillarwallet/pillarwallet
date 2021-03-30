@@ -73,9 +73,12 @@ export type MixedBalance = {
   balance: number | string,
   symbol: string,
 };
+
+
 export type MixedBalances = {
   [symbol: string]: MixedBalance,
 };
+
 
 export type BalancesStore = {
   [accountId: string]: Balances,
