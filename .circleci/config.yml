@@ -759,14 +759,14 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - fix/cocoapods-upgrade
       - appcenter_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                - develop
+                - fix/cocoapods-upgrade
       - appcenter_android:
           context: docker-hub-creds
           requires:
