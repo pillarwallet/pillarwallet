@@ -47,6 +47,7 @@ function BalanceSection() {
   const totalBalance = useRootSelector(totalBalanceSelector);
   const fiatCurrency = useFiatCurrency();
 
+  // TODO: show propper value when service is available
   // eslint-disable-next-line i18next/no-literal-string
   const formattedPerformance = '+23.69% ($642.7)';
 
