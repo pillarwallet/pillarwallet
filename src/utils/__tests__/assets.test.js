@@ -18,14 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  calculateBalanceInFiat,
+  getTotalBalanceInFiat,
   getBalance,
   balanceInEth,
   getRate,
   isSynthetixTx,
   convertUSDToFiat,
 } from 'utils/assets';
-import type { Balances, Rates } from 'models/Asset';
+import type { Rates, Balances, MixedBalances } from 'models/Asset';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 describe('Assets utils', () => {
@@ -75,7 +75,7 @@ describe('Assets utils', () => {
 
   describe('balanceInEth', () => {
     it('returns the total in ETH', () => {
-      const balances: Balances = {
+      const balances: MixedBalances = {
         ETH: { symbol: 'ETH', balance: '2.321000' },
         PLR: { symbol: 'PLR', balance: '1200' },
       };
@@ -86,7 +86,7 @@ describe('Assets utils', () => {
     });
 
     it('returns 0 when there are no rates for ETH', () => {
-      const balances: Balances = {
+      const balances: MixedBalances = {
         PLR: { symbol: 'PLR', balance: '1200' },
       };
 
@@ -113,12 +113,12 @@ describe('Assets utils', () => {
     });
   });
 
-  describe('calculateBalanceInFiat', () => {
+  describe('getTotalBalanceInFiat', () => {
     describe('for empty values', () => {
       it('returns 0', () => {
-        const balances: Balances = {};
+        const balances: MixedBalances = {};
 
-        const balance = calculateBalanceInFiat({}, balances, 'GBP');
+        const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
 
         expect(balance).toEqual(0);
       });
@@ -127,11 +127,11 @@ describe('Assets utils', () => {
     describe('when there are ETH and PLR assets', () => {
       describe('when assets have no rate', () => {
         it('returns 0 balance', () => {
-          const balances: Balances = {
+          const balances: MixedBalances = {
             MANA: { symbol: 'MANA', balance: '1200.0' },
           };
 
-          const balance = calculateBalanceInFiat({}, balances, 'GBP');
+          const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
 
           expect(balance).toEqual(0);
         });
@@ -141,11 +141,11 @@ describe('Assets utils', () => {
         const ethBalance = 1.2;
 
         it('returns the ETH balance', () => {
-          const balances: Balances = {
+          const balances: MixedBalances = {
             ETH: { symbol: 'ETH', balance: `${ethBalance}` },
           };
 
-          const balance = calculateBalanceInFiat(rates, balances, 'GBP');
+          const balance = getTotalBalanceInFiat(balances, rates, 'GBP');
 
           expect(balance).toEqual(ethBalance * ETH_GBP);
         });
@@ -154,12 +154,12 @@ describe('Assets utils', () => {
           const plrBalance = 3.4;
 
           it('returns the totals balance', () => {
-            const balances: Balances = {
+            const balances: MixedBalances = {
               ETH: { symbol: 'ETH', balance: `${ethBalance}` },
               PLR: { symbol: 'PLR', balance: `${plrBalance}` },
             };
 
-            const balance = calculateBalanceInFiat(rates, balances, 'GBP');
+            const balance = getTotalBalanceInFiat(balances, rates, 'GBP');
 
             const plrEth = plrBalance * PLR_ETH;
 

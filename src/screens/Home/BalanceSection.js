@@ -19,25 +19,53 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import BalanceView from 'components/BalanceView';
-import Button from 'components/Button';
+import AddFundsModal from 'components/AddFundsModal';
+import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
+// Selectors
+import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { totalBalanceSelector } from 'selectors/balances';
+
+// Utils
+import { formatFiat } from 'utils/common';
+import { spacing } from 'utils/variables';
+
+// Local
+import SpecialButton from './components/SpecialButton';
+
+const addCashIcon = require('assets/icons/icon-24-add-cash.png');
+
 function BalanceSection() {
-  const navigation = useNavigation();
+  const { t } = useTranslationWithPrefix('home.balance');
+
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const totalBalance = useRootSelector(totalBalanceSelector);
+  const fiatCurrency = useFiatCurrency();
+
+  // eslint-disable-next-line i18next/no-literal-string
+  const formattedPerformance = '+23.69% ($642.7)';
+
+  const handleAddFunds = React.useCallback(() => {
+    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
+  }, [accountAddress]);
 
   return (
     <Container>
       <FirstColumn>
-        <BalanceView balance={123.45} />
-        <Text>Last week +23.69% ($642.7)</Text>
+        <BalanceText>{formatFiat(totalBalance, fiatCurrency)}</BalanceText>
+        <PerformanceContainer>
+          <PerformanceLabel color="secondaryText">{t('lastWeek')}</PerformanceLabel>
+          <Text color="positive">{formattedPerformance}</Text>
+        </PerformanceContainer>
       </FirstColumn>
+
       <SecondColumn>
-        <Button small block title="Add cash" />
+        <SpecialButton title={t('addCash')} iconSource={addCashIcon} onPress={handleAddFunds} />
       </SecondColumn>
     </Container>
   );
@@ -47,11 +75,28 @@ export default BalanceSection;
 
 const Container = styled.View`
   flex-direction: row;
+  justify-content: center;
+  padding: 30px ${spacing.large}px;
 `;
 
 const FirstColumn = styled.View`
   flex: 1;
+  justify-content: center;
 `;
 
 const SecondColumn = styled.View`
+  justify-content: center;
+`;
+
+const BalanceText = styled(Text)`
+  font-size: 36px;
+  font-variant: tabular-nums;
+`;
+
+const PerformanceContainer = styled.View`
+  flex-direction: row;
+  margin-top: ${spacing.small}px;
+`;
+const PerformanceLabel = styled(Text)`
+  margin-right: 6px;
 `;

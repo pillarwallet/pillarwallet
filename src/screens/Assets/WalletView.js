@@ -60,7 +60,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
-import { calculateBalanceInFiat } from 'utils/assets';
+import { getTotalBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 
@@ -209,7 +209,7 @@ class WalletView extends React.Component<Props, State> {
     // SEARCH
     const isInSearchMode = this.isInSearchMode();
 
-    const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
+    const balance = getTotalBalanceInFiat(balances, rates, baseFiatCurrency || defaultFiatCurrency);
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
