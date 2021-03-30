@@ -35,8 +35,11 @@ import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationC
 // Selectors
 import { useUser } from 'selectors/user';
 
+import BalanceSection from './BalanceSection';
+
 function Home() {
   const navigation = useNavigation();
+
   const user = useUser();
 
   return (
@@ -54,7 +57,9 @@ function Home() {
         noPaddingTop
       />
       <Content>
-        {/* Temporary content */}
+        <BalanceSection />
+
+
         <MainContent>
           {/* eslint-disable-next-line i18next/no-literal-string */}
           <Text>Hello Pillar!</Text>
