@@ -42,6 +42,7 @@ type ContentProps = {|
   paddingHorizontal?: number,
   paddingVertical?: number,
   style?: ViewStyleProp,
+  contentContainerStyle?: ViewStyleProp,
 |};
 
 /**
@@ -54,6 +55,7 @@ export function Content({
   paddingHorizontal = spacing.layoutSides,
   paddingVertical = spacing.layoutSides,
   style,
+  contentContainerStyle,
 }: ContentProps) {
   const styles = [
     contentStyles.safeArea,
@@ -62,14 +64,14 @@ export function Content({
   ];
 
   return (
-    <ScrollView contentContainerStyle={contentStyles.scrollView}>
+    <ScrollView contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}>
       <SafeAreaView style={styles}>{children}</SafeAreaView>
     </ScrollView>
   );
 }
 
 const contentStyles = {
-  scrollView: {
+  scrollViewContent: {
     flexGrow: 1,
   },
   safeArea: {

@@ -630,8 +630,6 @@ const MainStack = createStackNavigator(
   {
     [HOME_FLOW]: homeFlow,
     [ASSETS]: assetsFlow,
-    [CONNECT_FLOW]: walletConnectFlow,
-    [SERVICES_FLOW]: servicesFlow,
   },
   StackNavigatorConfig,
 );
@@ -640,6 +638,9 @@ const MainStack = createStackNavigator(
 const AppFlowNavigation = createStackNavigator(
   {
     [MAIN_FLOW]: MainStack,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
+    [CONNECT_FLOW]: walletConnectFlow,
+    [SERVICES_FLOW]: servicesFlow,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
@@ -664,7 +665,6 @@ const AppFlowNavigation = createStackNavigator(
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
-    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,

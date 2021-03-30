@@ -19,23 +19,27 @@
 */
 
 import * as React from 'react';
+import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
-import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Text from 'components/modern/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 // Types
+import type { ImageSource } from 'utils/types/react-native';
 import type { IconName } from 'components/Icon';
 
 export type Item = {|
   title: string,
-  iconName: IconName,
+  iconName?: IconName,
+  iconSource?: ImageSource,
   onPress?: () => mixed,
+  disabled?: boolean,
 |};
 
 type Props = {|
@@ -56,12 +60,13 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
     <FloatingContainer forceInset={forceInset}>
       <Container>
         {items.map((item) => (
-          <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
+          <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
-              <ItemIcon name={item.iconName} />
+              {!!item.iconName && <ItemIcon name={item.iconName} />}
+              {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
             </ItemIconWrapper>
             <ItemTitle>{item.title}</ItemTitle>
-          </ItemView>
+          </ItemTouchable>
         ))}
       </Container>
     </FloatingContainer>
@@ -93,11 +98,12 @@ const Container = styled.View`
   elevation: 6;
 `;
 
-const ItemView = styled.TouchableOpacity`
+const ItemTouchable = styled.TouchableOpacity`
   align-items: center;
   padding-horizontal: ${spacing.largePlus / 2}px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
+  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
 const ItemIconWrapper = styled.View`
@@ -112,7 +118,12 @@ const ItemIcon = styled(Icon)`
   color: ${({ theme }) => theme.colors.basic010};
 `;
 
-const ItemTitle = styled(BaseText).attrs({ regular: true })`
-  margin-top: ${spacing.extraSmall}px;
+const ItemIconImage = styled(Image)`
+  width: 24px;
+  height: 24px;
+`;
+
+const ItemTitle = styled(Text)`
+  margin-top: 6px;
   text-align: center;
 `;

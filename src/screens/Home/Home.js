@@ -31,28 +31,55 @@ import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
+import {
+  ASSETS,
+  CONNECT_FLOW,
+  EXCHANGE_FLOW,
+  MENU,
+  SEND_TOKEN_FROM_HOME_FLOW,
+  SERVICES_FLOW,
+} from 'constants/navigationConstants';
 
 // Selectors
+import { useRootSelector } from 'selectors';
+import { totalBalanceSelector } from 'selectors/balances';
 import { useUser } from 'selectors/user';
 
 import BalanceSection from './BalanceSection';
+
+const walletConnectIcon = require('assets/icons/icon-24-wallet-connect.png');
 
 function Home() {
   const { t } = useTranslationWithPrefix('home');
   const navigation = useNavigation();
 
   const user = useUser();
+  const totalBalance = useRootSelector(totalBalanceSelector);
+  
+  // TODO:
+  // 1. Extract FloatingButtons as ActionButtons
+  // 2. Update icons globally
+
+    // const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    // const isSendButtonActive =
+    //   getTotalBalanceInFiat(activeAccountBalances, rates, fiatCurrency) &&
+    //   isEmpty(smartWalletStatus?.sendingBlockedMessage);
 
   const floatingButtons = [
     {
       title: t('actions.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
     {
       title: t('actions.swap'),
+      iconName: 'exchange',
+      onPress: () => navigation.navigate(EXCHANGE_FLOW),
     },
     {
       title: t('actions.connect'),
+      iconSource: walletConnectIcon,
+      onPress: () => navigation.navigate(CONNECT_FLOW),
     },
   ];
 
@@ -70,14 +97,12 @@ function Home() {
         navigation={navigation}
         noPaddingTop
       />
-      <Content>
+      <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
 
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        <NavButton title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
