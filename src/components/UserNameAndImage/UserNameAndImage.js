@@ -24,13 +24,13 @@ import { useNavigation } from 'react-navigation-hooks';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
-import { MediumText } from 'components/Typography';
+import Text from 'components/modern/Text';
 
 // Contants
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 // Utils
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ProfileImageProps } from 'components/ProfileImage';
@@ -54,13 +54,12 @@ const UserNameAndImage = ({
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
   return (
     <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      {/* $FlowFixMe: flow update to 0.122 */}
       <ProfileImage
+        {...userProps}
         uri={userImageUri}
         userName={username}
         diameter={profileImageWidth}
         noShadow
-        {...userProps}
       />
       {!!username && <UserName>{username}</UserName>}
     </UserWrapper>
@@ -75,8 +74,9 @@ const UserWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const UserName = styled(MediumText)`
-  margin-left: 10px;
+const UserName = styled(Text)`
+  ${fontStyles.medium};
+  margin-left: ${spacing.small}px;
   flex-wrap: wrap;
   flex-shrink: 1;
 `;
