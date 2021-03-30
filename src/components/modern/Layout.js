@@ -23,6 +23,9 @@ import { ScrollView } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
+// Utils
+import { spacing } from 'utils/variables';
+
 // Types
 import type { ViewProps } from 'utils/types/react-native';
 
@@ -35,6 +38,7 @@ export const Container: React.ComponentType<ViewProps> = styled.View`
 
 type ContentProps = {|
   children: React.Node,
+  defaultPadding?: boolean,
 |};
 
 /**
@@ -42,13 +46,19 @@ type ContentProps = {|
  *
  * Correctly handles safe area.
  */
-export function Content({ children }: ContentProps) {
+export function Content({ children, defaultPadding = true }: ContentProps) {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <ContentSafeArea>{children}</ContentSafeArea>
+      <ContentSafeArea style={[defaultPadding && contentStyles.defaultPadding]}>{children}</ContentSafeArea>
     </ScrollView>
   );
 }
+
+const contentStyles = {
+  defaultPadding: {
+    padding: spacing.layoutSides,
+  },
+};
 
 const ContentSafeArea = styled(SafeAreaView)`
   flex: 1;

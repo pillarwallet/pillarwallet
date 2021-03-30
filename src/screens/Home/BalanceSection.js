@@ -76,7 +76,7 @@ export default BalanceSection;
 const Container = styled.View`
   flex-direction: row;
   justify-content: center;
-  padding: 30px ${spacing.large}px;
+  padding: 10px 0;
 `;
 
 const FirstColumn = styled.View`

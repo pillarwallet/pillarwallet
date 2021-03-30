@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { Text } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
@@ -59,12 +58,6 @@ function Home() {
       <Content>
         <BalanceSection />
 
-
-        <MainContent>
-          {/* eslint-disable-next-line i18next/no-literal-string */}
-          <Text>Hello Pillar!</Text>
-        </MainContent>
-
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
@@ -79,13 +72,8 @@ function Home() {
 
 export default Home;
 
-const MainContent = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
 const NavButton = styled(Button)`
-  align-self: stretch;
-  margin: 10px 20px;
+  width: 100%;
+  align-self: center;
+  margin: 20px 20px 0;
 `;
