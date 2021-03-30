@@ -36,6 +36,7 @@ import PillarSdk from 'services/api';
 import rootReducer from './reducers/rootReducer';
 
 import migrations from './redux-migrations/migrations';
+import { SET_WALLET } from 'constants/walletConstants';
 
 // migration example
 /*
@@ -79,7 +80,16 @@ const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));
 
-const sentryReduxEnhancer = Sentry.createReduxEnhancer();
+const sentryReduxEnhancer = Sentry.createReduxEnhancer({
+  actionTransformer: action => {
+    if (action.type === SET_WALLET) {
+      return null;
+    }
+    // TODO: define all actions with sensitive data
+
+    return action;
+  },
+});
 
 const configureStore = (initialState: ?Object): Object => {
   const store = createStore(

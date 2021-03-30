@@ -406,8 +406,6 @@ PODS:
     - React
   - react-native-contacts (5.0.7):
     - React
-  - react-native-cookies (3.2.0):
-    - React
   - react-native-date-picker (3.0.2):
     - React
   - react-native-intercom (13.2.0):
@@ -426,7 +424,6 @@ PODS:
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-udp (2.7.0):
-    - CocoaAsyncSocket
     - React
   - react-native-webview (10.2.3):
     - React
@@ -581,7 +578,6 @@ PODS:
   - Sentry/Core (5.2.2)
   - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
-    - CocoaAsyncSocket
     - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -636,7 +632,6 @@ DEPENDENCIES:
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
-  - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -788,8 +783,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
-  react-native-cookies:
-    :path: "../node_modules/react-native-cookies/ios"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-intercom:
@@ -929,7 +922,7 @@ SPEC CHECKSUMS:
   instabug-reactnative: acf00941006b656bb811d819f13c5dd6584f0203
   Intercom: 1151a15e5e7931d8e401671a4357239d44325159
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
-  lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
+  lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: a664f59f1f298c2696dd0ae07b15cbdfc433cb02
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
@@ -954,7 +947,6 @@ SPEC CHECKSUMS:
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-camera: 8ab02aac456a7db830980cef5f3772644fe96e1f
   react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
-  react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: aec68ba9b276beddd2cf941bd7cebf459ac9d301
   react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f
   react-native-netinfo: cb74e17062b2af5a16a4b137f32495f241df1a8e
@@ -963,7 +955,7 @@ SPEC CHECKSUMS:
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-udp: 96a517e5a121cfe69f4b05eeeafefe00c623debf
+  react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   react-native-webview: 0bacc79175bc44869e4c1a015b9bc21df8cf4feb
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -1008,10 +1000,10 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
-  TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: ddcffe1252be92816fa2afd9f9de1b2ad1e5d51b
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1
