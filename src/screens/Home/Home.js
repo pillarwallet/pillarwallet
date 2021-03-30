@@ -54,12 +54,18 @@ function Home() {
         noPaddingTop
       />
       <Content>
+        {/* Temporary content */}
         <MainContent>
+          {/* eslint-disable-next-line i18next/no-literal-string */}
           <Text>Hello Pillar!</Text>
         </MainContent>
 
+        {/* Temporary navigation section */}
+        {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
+        {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
+        {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
     </Container>

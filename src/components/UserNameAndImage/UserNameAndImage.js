@@ -22,14 +22,17 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
+// Components
 import ProfileImage from 'components/ProfileImage';
 import { MediumText } from 'components/Typography';
 
+// Contants
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
+// Utils
 import { spacing } from 'utils/variables';
 
-import type { NavigationScreenProp } from 'react-navigation';
+// Types
 import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
 

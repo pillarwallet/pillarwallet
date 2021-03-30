@@ -5,7 +5,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Types
-import { ViewProps } from 'utils/types/react-native';
+import type { ViewProps } from 'utils/types/react-native';
 
 /**
  * Root element for screens. Normally contains `HeaderBlock` & `Content`.
@@ -19,7 +19,7 @@ type ContentProps = {|
 |};
 
 /**
- * Content for regular screens, holds in children inside `ScrollView`. 
+ * Content for regular screens, holds in children inside `ScrollView`.
  *
  * Correctly handles safe area.
  */
