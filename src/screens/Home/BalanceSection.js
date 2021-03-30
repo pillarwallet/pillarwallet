@@ -49,7 +49,7 @@ function BalanceSection() {
 
   // TODO: show propper value when service is available
   // eslint-disable-next-line i18next/no-literal-string
-  const formattedPerformance = '+23.69% ($642.7)';
+  const formattedPerformance = '+0%';
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -96,7 +96,7 @@ const BalanceText = styled(Text)`
 
 const PerformanceContainer = styled.View`
   flex-direction: row;
-  margin-top: ${spacing.small}px;
+  margin-top: ${spacing.extraSmall}px;
 `;
 const PerformanceLabel = styled(Text)`
   margin-right: 6px;
