@@ -161,7 +161,7 @@ export const totalBalanceSelector = createSelector(
   ratesSelector,
   allBalancesSelector,
   servicesBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances) => {
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): number => {
     return (
       getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
       getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency)

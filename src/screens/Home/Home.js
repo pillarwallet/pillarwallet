@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -31,57 +30,19 @@ import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import {
-  ASSETS,
-  CONNECT_FLOW,
-  EXCHANGE_FLOW,
-  MENU,
-  SEND_TOKEN_FROM_HOME_FLOW,
-  SERVICES_FLOW,
-} from 'constants/navigationConstants';
+import { ASSETS, MENU, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
-import { totalBalanceSelector } from 'selectors/balances';
 import { useUser } from 'selectors/user';
 
+// Local
 import BalanceSection from './BalanceSection';
-
-const walletConnectIcon = require('assets/icons/icon-24-wallet-connect.png');
+import FloatingActions from './FloatingActions';
 
 function Home() {
-  const { t } = useTranslationWithPrefix('home');
   const navigation = useNavigation();
 
   const user = useUser();
-  const totalBalance = useRootSelector(totalBalanceSelector);
-  
-  // TODO:
-  // 1. Extract FloatingButtons as ActionButtons
-  // 2. Update icons globally
-
-    // const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    // const isSendButtonActive =
-    //   getTotalBalanceInFiat(activeAccountBalances, rates, fiatCurrency) &&
-    //   isEmpty(smartWalletStatus?.sendingBlockedMessage);
-
-  const floatingButtons = [
-    {
-      title: t('actions.send'),
-      iconName: 'send',
-      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-    },
-    {
-      title: t('actions.swap'),
-      iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE_FLOW),
-    },
-    {
-      title: t('actions.connect'),
-      iconSource: walletConnectIcon,
-      onPress: () => navigation.navigate(CONNECT_FLOW),
-    },
-  ];
 
   return (
     <Container>
@@ -89,8 +50,8 @@ function Home() {
         leftItems={[
           {
             icon: 'hamburger',
-            onPress: () => navigation.navigate(MENU),
             iconProps: { secondary: true, style: { marginLeft: -4 } },
+            onPress: () => navigation.navigate(MENU),
           },
         ]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
@@ -107,7 +68,7 @@ function Home() {
         <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
 
-      <FloatingButtons items={floatingButtons} />
+      <FloatingActions />
     </Container>
   );
 }

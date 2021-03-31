@@ -537,7 +537,7 @@
     "actions": {
       "send": "Send",
       "swap": "Swap",
-      "connect": "Connect",
+      "connect": "Connect"
     }
   },
 
