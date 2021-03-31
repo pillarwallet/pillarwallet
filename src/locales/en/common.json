@@ -1298,7 +1298,7 @@
       "collectibleTransactionSuccess": "Collectible is on its way",
       "poolTogetherTransactionSuccess": "You're in the pool!",
       "sablierTransactionSuccess": "Your stream has begun",
-      "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
+      "transferAssetsToSmartWalletScreen": "Migration to Smart Wallet",
       "amountEditScreen": "Edit amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
       "creatingTransactions": "Creating transactions",

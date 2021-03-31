@@ -30,7 +30,7 @@ import { BaseText } from 'components/Typography';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import CircleButton from 'components/CircleButton';
 import Image from 'components/Image';
-import BalanceView from 'components/PortfolioBalance/BalanceView';
+import BalanceView from 'components/BalanceView';
 import Tabs from 'components/Tabs';
 import Table, { TableRow, TableLabel } from 'components/Table';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';

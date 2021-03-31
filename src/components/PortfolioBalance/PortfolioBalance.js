@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Balances, Rates, MixedBalance } from 'models/Asset';
 
-import BalanceView from 'components/PortfolioBalance/BalanceView';
+import BalanceView from 'components/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { balanceInEth } from 'utils/assets';
