@@ -32,7 +32,7 @@ import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from '
 import { totalBalanceSelector } from 'selectors/balances';
 
 // Utils
-import { formatFiat } from 'utils/common';
+import { formatFiatValue } from 'utils/format';
 import { spacing } from 'utils/variables';
 
 // Local
@@ -58,7 +58,7 @@ function BalanceSection() {
   return (
     <Container>
       <FirstColumn>
-        <BalanceText>{formatFiat(totalBalance, fiatCurrency)}</BalanceText>
+        <BalanceText>{formatFiatValue(totalBalance, fiatCurrency)}</BalanceText>
         <PerformanceContainer>
           <PerformanceLabel color="secondaryText">{t('lastWeek')}</PerformanceLabel>
           <Text color="positive">{formattedPerformance}</Text>

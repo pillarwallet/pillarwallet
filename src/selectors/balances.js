@@ -27,7 +27,7 @@ import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 // utils
 import { getTotalBalanceInFiat } from 'utils/assets';
 import { getStreamBalance } from 'utils/sablier';
-import { formatUnits } from 'utils/common';
+import { BigNumber, formatUnits } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
@@ -156,15 +156,15 @@ export const servicesBalanceListSelector = createSelector(
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
 
-export const totalBalanceSelector = createSelector(
+export const totalBalanceSelector: (RootReducerState => BigNumber) = createSelector(
   fiatCurrencySelector,
   ratesSelector,
   allBalancesSelector,
   servicesBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): number => {
-    return (
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): BigNumber => {
+    return BigNumber(
       getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
-      getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency)
+      getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency),
     );
   },
 );

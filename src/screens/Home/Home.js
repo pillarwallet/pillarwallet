@@ -37,6 +37,7 @@ import { useUser } from 'selectors/user';
 
 // Local
 import BalanceSection from './BalanceSection';
+import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 
 function Home() {
@@ -60,6 +61,8 @@ function Home() {
       />
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
+
+        <AssetsSection showSideChains={false} />
 
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}
