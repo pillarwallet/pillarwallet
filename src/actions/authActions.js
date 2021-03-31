@@ -93,7 +93,7 @@ import {
 import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { loadRemoteConfigAction } from './remoteConfigActions';
+import { loadRemoteConfigAction, setUserPropertiesAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
@@ -269,6 +269,9 @@ export const loginAction = (
       }
 
       if (isOnline) {
+        // Send basic app/user info to Firebase Analytics
+        await dispatch(setUserPropertiesAction());
+
         // Dispatch action to try and get the latest remote config values...
         dispatch(loadRemoteConfigAction());
 
