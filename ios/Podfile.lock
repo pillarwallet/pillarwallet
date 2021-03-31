@@ -570,15 +570,20 @@ PODS:
   - RNVectorIcons (6.6.0):
     - React
   - RSKImageCropper (3.0.1)
-  - SDWebImage (5.10.2):
-    - SDWebImage/Core (= 5.10.2)
-  - SDWebImage/Core (5.10.2)
+  - SDWebImage (5.10.0):
+    - SDWebImage/Core (= 5.10.0)
+  - SDWebImage/Core (5.10.0)
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
   - Sentry (5.2.2):
     - Sentry/Core (= 5.2.2)
   - Sentry/Core (5.2.2)
+  - Storyly (1.9.2):
+    - SDWebImage (= 5.10.0)
+  - storyly-react-native (1.9.1):
+    - React
+    - Storyly (= 1.9.2)
   - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
@@ -685,6 +690,7 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - storyly-react-native (from `../node_modules/storyly-react-native`)
   - SwiftyGif
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -730,6 +736,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
+    - Storyly
     - SwiftyGif
     - YogaKit
 
@@ -886,6 +893,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  storyly-react-native:
+    :path: "../node_modules/storyly-react-native"
   TcpSockets:
     :path: "../node_modules/react-native-tcp"
   Yoga:
@@ -1004,14 +1013,16 @@ SPEC CHECKSUMS:
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RSKImageCropper: 617b4976e4a0ca18f3ce84f6cfa5945e574b51a3
-  SDWebImage: b969dcfc02c40a5da71eac0b03b8f1a0c794a86f
+  SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
+  Storyly: 0cbf26deba97194e297bed6aa32014165adb1825
+  storyly-react-native: cbd783cf66a9cccb444ca900980a549a0f5aac13
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ddcffe1252be92816fa2afd9f9de1b2ad1e5d51b
+PODFILE CHECKSUM: 73e6c0d2a13b00adc7f39bd0d4a98e6ce85c7610
 
 COCOAPODS: 1.10.1
