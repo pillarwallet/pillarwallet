@@ -21,54 +21,60 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 
-import { MediumText } from 'components/Typography';
+// Components
+import Text from 'components/modern/Text';
+
+// Selectors
+import { useFiatCurrency } from 'selectors';
+
+// Utils
 import { getCurrencySymbol, formatFiatValue } from 'utils/common';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { appFont, fontStyles } from 'utils/variables';
+
+// Types
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
+
 
 type Props = {
   balance: number,
-  fiatCurrency: ?string,
-  label?: string,
-  style?: Object,
-  currencyTextStyle?: Object,
-  balanceTextStyle?: Object,
+  style?: ViewStyleProp,
+  currencyTextStyle?: TextStyleProp,
+  balanceTextStyle?: TextStyleProp,
 };
 
-const BalanceText = styled(MediumText)`
-  font-size: 36px;
-  line-height: 36px;
-`;
+function BalanceView({
+  balance,
+  style,
+  currencyTextStyle,
+  balanceTextStyle,
+}: Props) {
+  const fiatCurrency = useFiatCurrency();
 
-const CurrencyText = styled(MediumText)`
-  font-size: 20px;
-  line-height: 20px;
-  margin-top: 2px;
-  margin-right: 6px;
-`;
+  return (
+    <Container style={style}>
+      <CurrencySymbol style={currencyTextStyle}>{getCurrencySymbol(fiatCurrency)}</CurrencySymbol>
+      <Balance style={balanceTextStyle}>{formatFiatValue(balance)}</Balance>
+    </Container>
+  );
+}
 
-const BalanceWrapper = styled.View`
+export default BalanceView;
+
+const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
 `;
 
-class BalanceView extends React.PureComponent<Props> {
-  render() {
-    const {
-      style, fiatCurrency, balance, currencyTextStyle, balanceTextStyle,
-    } = this.props;
+const CurrencySymbol = styled(Text)`
+  font-family: '${appFont.archiaMedium}';
+  ${fontStyles.big};
+  margin-top: 6px;
+  margin-right: 4px;
+`;
 
-    const portfolioBalance = formatFiatValue(balance);
-    const currency = fiatCurrency || defaultFiatCurrency;
-    const currencySymbol = getCurrencySymbol(currency);
-
-    return (
-      <BalanceWrapper style={style}>
-        <CurrencyText style={currencyTextStyle}>{currencySymbol}</CurrencyText>
-        <BalanceText style={balanceTextStyle}>{portfolioBalance}</BalanceText>
-      </BalanceWrapper>
-    );
-  }
-}
-
-export default BalanceView;
+const Balance = styled(Text)`
+  font-family: '${appFont.archiaMedium}';
+  font-size: 30px;
+  line-height: 46px;
+`;
