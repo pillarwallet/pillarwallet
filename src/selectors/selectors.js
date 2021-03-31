@@ -24,8 +24,6 @@ import get from 'lodash.get';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-
 import type { RootReducerState } from 'reducers/rootReducer';
 
 import { getAccountAddress } from 'utils/accounts';

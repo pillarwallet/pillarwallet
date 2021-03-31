@@ -83,7 +83,14 @@ const KeyBasedAssetTransferConfirm = () => {
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
-      return <Table.Row title={assetData.name} value={tRoot('label.collectible')} separator={index !== 0} />;
+      return (
+        <Table.Row
+          key={assetData.id}
+          title={assetData.name}
+          value={tRoot('label.collectible')}
+          separator={index !== 0}
+        />
+      );
     }
 
     const valueInEth = tRoot('tokenValue', {
@@ -93,7 +100,7 @@ const KeyBasedAssetTransferConfirm = () => {
     const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
 
     return (
-      <Table.RowContainer key={assetData.id} separator={index !== 0}>
+      <Table.RowContainer key={assetData.token} separator={index !== 0}>
         <Table.RowTitle>{assetData.name}</Table.RowTitle>
 
         <Table.RowValue fontVariant="tabular-nums">{valueInEth}</Table.RowValue>
