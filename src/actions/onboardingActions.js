@@ -70,7 +70,7 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { loadRemoteConfigAction, setUserPropertiesAction } from 'actions/remoteConfigActions';
+import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -269,8 +269,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // check if wallet backup warning toast needed, balance can only be retrieved online
     dispatch(checkForWalletBackupToastAction());
 
-    await dispatch(setUserPropertiesAction());
-    dispatch(loadRemoteConfigAction());
+    dispatch(loadRemoteConfigWithUserPropertiesAction());
   };
 };
 

@@ -67,3 +67,8 @@ export const setUserPropertiesAction = () => (
       reportLog('Firebase Analytics: Failed to set user properties', { error });
     });
 };
+
+export const loadRemoteConfigWithUserPropertiesAction = () => async (dispatch: Dispatch) => {
+  await dispatch(setUserPropertiesAction());
+  dispatch(loadRemoteConfigAction());
+};
