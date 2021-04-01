@@ -23,13 +23,17 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/modern/Text';
+import Icon from 'components/Icon';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 
+// Type
+import type { IconName } from 'components/Icon';
 
 export type Props = {|
   title: string,
+  iconName: IconName,
   value: ?string,
   secondaryValue?: ?string,
   secondaryValueColor?: string,
@@ -37,12 +41,15 @@ export type Props = {|
 
 function HomeListItem({
   title,
+  iconName,
   value,
   secondaryValue,
   secondaryValueColor,
 }: Props) {
   return (
     <Container>
+      <ItemIcon name={iconName} />
+
       <Title>{title}</Title>
 
       <ValueContainer>
@@ -58,6 +65,13 @@ export default HomeListItem;
 const Container = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
+  align-items: center;
+`;
+
+const ItemIcon = styled(Icon)`
+  font-size: 24px;
+  margin-right: ${spacing.medium}px;
+  ${({ theme }) => `color: ${theme.colors.basic010}`};
 `;
 
 const Title = styled(Text)`
