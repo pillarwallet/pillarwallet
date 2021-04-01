@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
@@ -35,15 +36,26 @@ import { ASSETS, MENU, SERVICES_FLOW } from 'constants/navigationConstants';
 // Selectors
 import { useUser } from 'selectors/user';
 
+// Utils
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
+
 // Local
 import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
+import Controls from './Controls';
 import FloatingActions from './FloatingActions';
 
 function Home() {
   const navigation = useNavigation();
 
+  const [showSideChains, setShowSideChains] = React.useState(false);
+
   const user = useUser();
+
+  const handleToggleSideChains = () => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    setShowSideChains(!showSideChains);
+  };
 
   return (
     <Container>
@@ -62,7 +74,9 @@ function Home() {
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
 
-        <AssetsSection showSideChains={false} />
+        <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
+
+        <AssetsSection showSideChains={showSideChains} />
 
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}

@@ -547,6 +547,9 @@
       "addCash": "Add Cash",
       "lastWeek": "Last week"
     },
+    "controls": {
+      "sideChains": "Layer 2",
+    },
     "assets": {
       "wallet": "Wallet",
       "deposits": "Deposits",
