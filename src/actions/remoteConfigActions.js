@@ -18,10 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { firebaseRemoteConfig } from 'services/firebase';
+import DeviceInfo from 'react-native-device-info';
+
+import { firebaseRemoteConfig, firebaseAnalytics } from 'services/firebase';
 import { reportLog } from 'utils/common';
 import { log } from 'utils/logger';
 import { isTest } from 'utils/environment';
+import { getEnsName } from 'utils/accounts';
+import { getEnv } from 'configs/envConfig';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const loadRemoteConfigAction = () => {
   return () => {
@@ -40,4 +46,29 @@ export const loadRemoteConfigAction = () => {
       })
       .catch(e => { reportLog('Failed to fetch feature flags or initialize with defaults', e); });
   };
+};
+
+export const setUserPropertiesAction = () => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const { accounts: { data: accounts } } = getState();
+
+  const properties = {
+    ens: getEnsName(accounts),
+    network: getEnv().NETWORK_PROVIDER,
+    buildNumber: DeviceInfo.getBuildNumber(),
+    appVersion: DeviceInfo.getVersion(),
+  };
+
+  return firebaseAnalytics
+    .setUserProperties(properties)
+    .catch((error) => {
+      reportLog('Firebase Analytics: Failed to set user properties', { error });
+    });
+};
+
+export const loadRemoteConfigWithUserPropertiesAction = () => async (dispatch: Dispatch) => {
+  await dispatch(setUserPropertiesAction());
+  dispatch(loadRemoteConfigAction());
 };
