@@ -29,7 +29,9 @@ export type ChainInfo = {|
   wallet?: BalanceInfo,
   deposits?: BalanceInfo,
   investments?: BalanceInfo,
-  pools?: BalanceInfo,
+  liquidityPools?: BalanceInfo,
+  rewards?: BalanceInfo,
+  datasets?: BalanceInfo,
   collectibles?: number,
   contacts?: number,
 |};

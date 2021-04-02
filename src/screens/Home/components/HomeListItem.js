@@ -34,7 +34,8 @@ import type { IconName } from 'components/Icon';
 export type Props = {|
   title: string,
   iconName: IconName,
-  value: ?string,
+  onPress: ?() => mixed,
+  value?: ?string,
   secondaryValue?: ?string,
   secondaryValueColor?: string,
 |};
@@ -42,18 +43,19 @@ export type Props = {|
 function HomeListItem({
   title,
   iconName,
+  onPress,
   value,
   secondaryValue,
   secondaryValueColor,
 }: Props) {
   return (
-    <Container>
+    <Container onPress={onPress}>
       <ItemIcon name={iconName} />
 
       <Title>{title}</Title>
 
       <ValueContainer>
-        <Value>{value}</Value>
+        {!!value && <Value>{value}</Value>}
         {!!secondaryValue && <SecondaryValue $color={secondaryValueColor}>{secondaryValue}</SecondaryValue>}
       </ValueContainer>
     </Container>

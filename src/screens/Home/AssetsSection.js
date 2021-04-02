@@ -19,28 +19,39 @@
 */
 
 import * as React from 'react';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+
+// Constants
+import { ASSET_CATEGORIES } from 'constants/assetsConstants';
+import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { BigNumber } from 'utils/common';
 import { formatFiatValue, formatFiatProfit } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { WalletInfo, ChainInfo, BalanceInfo } from 'models/Home';
+import type { ChainInfo, BalanceInfo } from 'models/Home';
+import type { AssetCategoryType } from 'models/Asset';
 import type { IconName } from 'components/Icon';
 
 // Local
 import HomeListHeader from './components/HomeListHeader';
 import HomeListItem from './components/HomeListItem';
+import { useWalletInfo } from './utils';
 
 const mainnetIcon = require('assets/icons/icon-24-network-mainnet.png');
 const binanceIcon = require('assets/icons/icon-24-network-binance.png');
 const xdaiIcon = require('assets/icons/icon-24-network-xdai.png');
+
+type CategoryInfo = {|
+  title: string,
+  iconName: IconName,
+|}
 
 type Props = {|
   showSideChains: boolean,
@@ -48,22 +59,56 @@ type Props = {|
 
 function AssetsSection({ showSideChains }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
-  const wallet = useWalletInfo();
+  const navigation = useNavigation();
 
+  const wallet = useWalletInfo();
   const fiatCurrency = useFiatCurrency();
 
   const colors = useThemeColors();
 
-  const renderBalanceItem = (title: string, iconName: IconName, balance: ?BalanceInfo) => {
-    if (!balance) return null;
+  const categories: { [AssetCategoryType]: CategoryInfo } = {
+    [ASSET_CATEGORIES.WALLET]: {
+      title: t('wallet'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.DEPOSITS]: {
+      title: t('depostis'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.INVESTMENTS]: {
+      title: t('investments'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.LIQUIDITY_POOLS]: {
+      title: t('liquidityPools'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.COLLECTIBLES]: {
+      title: t('collectibles'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.REWARDS]: {
+      title: t('rewards'),
+      iconName: 'wallet',
+    },
+    [ASSET_CATEGORIES.DATASETS]: {
+      title: t('datasets'),
+      iconName: 'wallet',
+    },
+  };
+
+  const renderBalanceItem = (category: AssetCategoryType, balance: ?BalanceInfo) => {
+    if (!balance || !categories[category]) return null;
 
     const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
     const formattedProfit = formatFiatProfit(balance.profitInFiat, balance.balanceInFiat, fiatCurrency);
+    const { title, iconName } = categories[category];
 
     return (
       <HomeListItem
         title={title}
         iconName={iconName}
+        onPress={() => navigation.navigate(ASSETS, { category })}
         value={formattedBalance}
         secondaryValue={formattedProfit}
         secondaryValueColor={balance.profitInFiat?.gte(0) ? colors.positive : colors.secondaryText}
@@ -79,21 +124,33 @@ function AssetsSection({ showSideChains }: Props) {
 
     return (
       <>
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        {renderBalanceItem(t('wallet'), 'wallet', chainInfo.wallet)}
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        {renderBalanceItem(t('deposits'), 'wallet', chainInfo.deposits)}
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        {renderBalanceItem(t('investments'), 'wallet', chainInfo.investments)}
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        {renderBalanceItem(t('pools'), 'wallet', chainInfo.pools)}
+        {renderBalanceItem(ASSET_CATEGORIES.WALLET, chainInfo.wallet)}
+        {renderBalanceItem(ASSET_CATEGORIES.DEPOSITS, chainInfo.deposits)}
+        {renderBalanceItem(ASSET_CATEGORIES.INVESTMENTS, chainInfo.investments)}
+        {renderBalanceItem(ASSET_CATEGORIES.LIQUIDITY_POOLS, chainInfo.liquidityPools)}
+        {renderBalanceItem(ASSET_CATEGORIES.REWARDS, chainInfo.rewards)}
+        {renderBalanceItem(ASSET_CATEGORIES.DATASETS, chainInfo.datasets)}
 
         {chainInfo.collectibles != null && (
-          <HomeListItem title={t('collectibles')} iconName="wallet" value={formattedCollectibles} />
+          <HomeListItem
+            title={t('collectibles')}
+            iconName="wallet"
+            onPress={() => navigation.navigate(ASSETS)}
+            value={formattedCollectibles}
+          />
         )}
+
         {chainInfo.contacts != null && (
-          <HomeListItem title={t('contacts')} iconName="wallet" value={formattedContacts} />
+          <HomeListItem
+            title={t('contacts')}
+            iconName="wallet"
+            onPress={() => navigation.navigate(CONTACTS_FLOW)}
+            value={formattedContacts}
+          />
         )}
+
+        {/* Temporary entry until other UI provided */}
+        <HomeListItem title={t('services')} iconName="wallet" onPress={() => navigation.navigate(SERVICES_FLOW)} />
       </>
     );
   };
@@ -115,44 +172,5 @@ function AssetsSection({ showSideChains }: Props) {
 }
 
 export default AssetsSection;
-
-const useWalletInfo = (): WalletInfo => {
-  // TODO: replace with proper implentation when available
-  return {
-    mainnet: {
-      wallet: {
-        balanceInFiat: BigNumber(306.4),
-        profitInFiat: BigNumber(7.2),
-      },
-      deposits: {
-        balanceInFiat: BigNumber(53120.92),
-        profitInFiat: BigNumber(5670.0),
-      },
-      investments: {
-        balanceInFiat: BigNumber(658.81),
-        profitInFiat: BigNumber(-23.45),
-      },
-      collectibles: 0,
-      contacts: 5,
-    },
-    binance: {
-      wallet: {
-        balanceInFiat: BigNumber(0.04),
-        profitInFiat: BigNumber(0.01),
-      },
-      pools: {
-        balanceInFiat: BigNumber(288.6),
-        profitInFiat: BigNumber(11.23),
-      },
-    },
-    xdai: {
-      wallet: {
-        balanceInFiat: BigNumber(0),
-        profitInFiat: BigNumber(0),
-      },
-    },
-  };
-};
-
 
 const Container = styled.View``;

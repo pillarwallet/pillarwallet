@@ -21,17 +21,15 @@
 import * as React from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import styled from 'styled-components/native';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
-import Button from 'components/Button';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import { ASSETS, MENU, SERVICES_FLOW } from 'constants/navigationConstants';
+import { MENU } from 'constants/navigationConstants';
 
 // Selectors
 import { useUser } from 'selectors/user';
@@ -77,12 +75,6 @@ function Home() {
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 
         <AssetsSection showSideChains={showSideChains} />
-
-        {/* Temporary navigation section */}
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
 
       <FloatingActions />
@@ -92,8 +84,3 @@ function Home() {
 
 export default Home;
 
-const NavButton = styled(Button)`
-  width: 100%;
-  align-self: center;
-  margin: 20px 20px 0;
-`;

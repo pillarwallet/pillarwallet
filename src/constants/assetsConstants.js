@@ -114,3 +114,13 @@ export const CURRENCY_SYMBOLS = {
   GBP: '£',
   EUR: '€',
 };
+
+export const ASSET_CATEGORIES = {
+  WALLET: ('wallet': 'wallet'),
+  DEPOSITS: ('deposits': 'deposits'),
+  INVESTMENTS: ('investments': 'investments'),
+  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
+  COLLECTIBLES: ('collectibles': 'collectibles'),
+  REWARDS: ('rewards': 'rewards'),
+  DATASETS: ('datasets': 'datasets'),
+};

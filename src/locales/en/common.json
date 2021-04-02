@@ -554,11 +554,12 @@
       "wallet": "Wallet",
       "deposits": "Deposits",
       "investments": "Investments",
-      "pools": "Pools",
-      "datasets": "Datasets",
+      "liquidityPools": "Pools",
       "rewards": "Rewards",
+      "datasets": "Datasets",
       "collectibles": "Collectibles",
-      "contacts": "Contects"
+      "contacts": "Contects",
+      "services": "Services"
     },
     "actions": {
       "send": "Send",
