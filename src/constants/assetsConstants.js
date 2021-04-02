@@ -17,6 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+export const CHAINS = {
+  ETHEREUM: ('ethereum': 'ethereum'),
+  BINANCE: ('binance': 'binance'),
+  XDAI: ('xdai': 'xdai'),
+};
+
+export const ASSET_CATEGORIES = {
+  WALLET: ('wallet': 'wallet'),
+  DEPOSITS: ('deposits': 'deposits'),
+  INVESTMENTS: ('investments': 'investments'),
+  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
+  COLLECTIBLES: ('collectibles': 'collectibles'),
+  REWARDS: ('rewards': 'rewards'),
+  DATASETS: ('datasets': 'datasets'),
+};
+
 export const FETCHED = 'FETCHED';
 export const FETCHING = 'FETCHING';
 export const FETCHING_INITIAL = 'FETCHING_INITIAL';
@@ -113,14 +130,4 @@ export const CURRENCY_SYMBOLS = {
   USD: '$',
   GBP: '£',
   EUR: '€',
-};
-
-export const ASSET_CATEGORIES = {
-  WALLET: ('wallet': 'wallet'),
-  DEPOSITS: ('deposits': 'deposits'),
-  INVESTMENTS: ('investments': 'investments'),
-  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
-  COLLECTIBLES: ('collectibles': 'collectibles'),
-  REWARDS: ('rewards': 'rewards'),
-  DATASETS: ('datasets': 'datasets'),
 };

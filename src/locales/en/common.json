@@ -62,9 +62,20 @@
     "1e12": "{{value}}T"
   },
 
-  "sideChains": {
+  "chains": {
+    "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network"
+  },
+
+  "assetCategories": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
+    "liquidityPools": "Pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles",
   },
 
   "navigationTabs": {
@@ -547,19 +558,12 @@
       "addCash": "Add Cash",
       "lastWeek": "Last week"
     },
-    "controls": {
-      "sideChains": "Layer 2",
-    },
     "assets": {
-      "wallet": "Wallet",
-      "deposits": "Deposits",
-      "investments": "Investments",
-      "liquidityPools": "Pools",
-      "rewards": "Rewards",
-      "datasets": "Datasets",
-      "collectibles": "Collectibles",
       "contacts": "Contects",
       "services": "Services"
+    },
+    "controls": {
+      "sideChains": "Layer 2"
     },
     "actions": {
       "send": "Send",

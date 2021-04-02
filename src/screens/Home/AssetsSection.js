@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { ASSET_CATEGORIES } from 'constants/assetsConstants';
+import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
 import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
@@ -32,26 +32,18 @@ import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatProfit } from 'utils/format';
+import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ChainInfo, BalanceInfo } from 'models/Home';
-import type { AssetCategoryType } from 'models/Asset';
-import type { IconName } from 'components/Icon';
+import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
+import { useWalletInfo } from './utils';
 import HomeListHeader from './components/HomeListHeader';
 import HomeListItem from './components/HomeListItem';
-import { useWalletInfo } from './utils';
 
-const mainnetIcon = require('assets/icons/icon-24-network-mainnet.png');
-const binanceIcon = require('assets/icons/icon-24-network-binance.png');
-const xdaiIcon = require('assets/icons/icon-24-network-xdai.png');
-
-type CategoryInfo = {|
-  title: string,
-  iconName: IconName,
-|}
 
 type Props = {|
   showSideChains: boolean,
@@ -64,40 +56,11 @@ function AssetsSection({ showSideChains }: Props) {
   const wallet = useWalletInfo();
   const fiatCurrency = useFiatCurrency();
 
+  const chains = useChainsConfig();
+  const categories = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
-  const categories: { [AssetCategoryType]: CategoryInfo } = {
-    [ASSET_CATEGORIES.WALLET]: {
-      title: t('wallet'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.DEPOSITS]: {
-      title: t('depostis'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.INVESTMENTS]: {
-      title: t('investments'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.LIQUIDITY_POOLS]: {
-      title: t('liquidityPools'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.COLLECTIBLES]: {
-      title: t('collectibles'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.REWARDS]: {
-      title: t('rewards'),
-      iconName: 'wallet',
-    },
-    [ASSET_CATEGORIES.DATASETS]: {
-      title: t('datasets'),
-      iconName: 'wallet',
-    },
-  };
-
-  const renderBalanceItem = (category: AssetCategoryType, balance: ?BalanceInfo) => {
+  const renderBalanceItem = (category: AssetCategory, balance: ?BalanceInfo) => {
     if (!balance || !categories[category]) return null;
 
     const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
@@ -116,7 +79,7 @@ function AssetsSection({ showSideChains }: Props) {
     );
   };
 
-  const renderChainInfo = (chainInfo: ?ChainInfo) => {
+  const renderChainItems = (chainInfo: ?ChainInfo) => {
     if (!chainInfo) return null;
 
     const formattedCollectibles = chainInfo.collectibles?.toFixed() ?? '0';
@@ -133,7 +96,7 @@ function AssetsSection({ showSideChains }: Props) {
 
         {chainInfo.collectibles != null && (
           <HomeListItem
-            title={t('collectibles')}
+            title={tRoot('assetCategories.collectibles')}
             iconName="wallet"
             onPress={() => navigation.navigate(ASSETS)}
             value={formattedCollectibles}
@@ -155,18 +118,27 @@ function AssetsSection({ showSideChains }: Props) {
     );
   };
 
+  const renderChain = (chain: Chain, chainInfo: ?ChainInfo) => {
+    if (!chainInfo) return null;
+
+    const { title, iconSource, color } = chains[chain];
+    return (
+      <>
+        <HomeListHeader title={title} iconSource={iconSource} color={color} />
+        {renderChainItems(chainInfo)}
+      </>
+    );
+  };
+
   if (!showSideChains) {
-    return <Container>{renderChainInfo(wallet.mainnet)}</Container>;
+    return <Container>{renderChainItems(wallet.mainnet)}</Container>;
   }
 
   return (
     <Container>
-      <HomeListHeader title={tRoot('ethereum')} color={colors.ethereum} iconSource={mainnetIcon} />
-      {renderChainInfo(wallet.mainnet)}
-      <HomeListHeader title={tRoot('sideChains.binance')} color={colors.binance} iconSource={binanceIcon} />
-      {renderChainInfo(wallet.binance)}
-      <HomeListHeader title={tRoot('sideChains.xdai')} color={colors.xdai} iconSource={xdaiIcon} />
-      {renderChainInfo(wallet.xdai)}
+      {renderChain(CHAINS.ETHEREUM, wallet.mainnet)}
+      {renderChain(CHAINS.BINANCE, wallet.binance)}
+      {renderChain(CHAINS.XDAI, wallet.xdai)}
     </Container>
   );
 }

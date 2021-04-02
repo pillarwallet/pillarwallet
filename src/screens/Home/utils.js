@@ -18,14 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// Selectors
+import { useRootSelector } from 'selectors';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { contactsCountSelector } from 'selectors/contacts';
+
 // Utils
 import { BigNumber } from 'utils/common';
 
 // Types
 import type { WalletInfo } from 'models/Home';
 
-
 export const useWalletInfo = (): WalletInfo => {
+  const collectiblesCount = useRootSelector(accountCollectiblesSelector).length;
+  const contactsCount = useRootSelector(contactsCountSelector);
+
   // TODO: replace with proper implentation when available
   return {
     mainnet: {
@@ -41,24 +48,8 @@ export const useWalletInfo = (): WalletInfo => {
         balanceInFiat: BigNumber(658.81),
         profitInFiat: BigNumber(-23.45),
       },
-      collectibles: 0,
-      contacts: 5,
-    },
-    binance: {
-      wallet: {
-        balanceInFiat: BigNumber(0.04),
-        profitInFiat: BigNumber(0.01),
-      },
-      liquidityPools: {
-        balanceInFiat: BigNumber(288.6),
-        profitInFiat: BigNumber(11.23),
-      },
-    },
-    xdai: {
-      wallet: {
-        balanceInFiat: BigNumber(0),
-        profitInFiat: BigNumber(0),
-      },
+      collectibles: collectiblesCount,
+      contacts: contactsCount,
     },
   };
 };
