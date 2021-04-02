@@ -20,6 +20,12 @@
 
 // Selectors
 import { useRootSelector } from 'selectors';
+import {
+  walletBalanceSelector,
+  depositsBalanceSelector,
+  investmentsBalanceSelector,
+  liquidityPoolsBalanceSelector,
+} from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { contactsCountSelector } from 'selectors/contacts';
 
@@ -27,29 +33,35 @@ import { contactsCountSelector } from 'selectors/contacts';
 import { BigNumber } from 'utils/common';
 
 // Types
-import type { WalletInfo } from 'models/Home';
+import type { WalletInfo, BalanceInfo } from 'models/Home';
 
 export const useWalletInfo = (): WalletInfo => {
+  const walletBalance = useRootSelector(walletBalanceSelector);
+  const depositsBalance = useRootSelector(depositsBalanceSelector);
+  const investmentsBalance = useRootSelector(investmentsBalanceSelector);
+  const liquidityPoolsBalance = useRootSelector(liquidityPoolsBalanceSelector);
+
   const collectiblesCount = useRootSelector(accountCollectiblesSelector).length;
   const contactsCount = useRootSelector(contactsCountSelector);
 
-  // TODO: replace with proper implentation when available
   return {
     mainnet: {
       wallet: {
-        balanceInFiat: BigNumber(306.4),
-        profitInFiat: BigNumber(7.2),
+        balanceInFiat: walletBalance,
       },
-      deposits: {
-        balanceInFiat: BigNumber(53120.92),
-        profitInFiat: BigNumber(5670.0),
-      },
-      investments: {
-        balanceInFiat: BigNumber(658.81),
-        profitInFiat: BigNumber(-23.45),
-      },
+      deposits: wrapBalance(depositsBalance),
+      investments: wrapBalance(investmentsBalance),
+      liquidityPools: wrapBalance(liquidityPoolsBalance),
       collectibles: collectiblesCount,
       contacts: contactsCount,
     },
+  };
+};
+
+const wrapBalance = (balance: BigNumber): BalanceInfo | void => {
+  if (balance.isZero()) return undefined;
+
+  return {
+    balanceInFiat: balance,
   };
 };

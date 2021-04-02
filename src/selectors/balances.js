@@ -156,7 +156,7 @@ export const servicesBalanceListSelector = createSelector(
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
 
-export const totalBalanceSelector: (RootReducerState => BigNumber) = createSelector(
+export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
   fiatCurrencySelector,
   ratesSelector,
   allBalancesSelector,
@@ -164,7 +164,49 @@ export const totalBalanceSelector: (RootReducerState => BigNumber) = createSelec
   (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): BigNumber => {
     return BigNumber(
       getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
-      getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency),
+        getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency),
     );
   },
 );
+
+export const walletBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  allBalancesSelector,
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances): BigNumber => {
+    return BigNumber(getTotalBalanceInFiat(assetBalances, rates, fiatCurrency));
+  },
+);
+
+export const depositsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  aaveBalanceListSelector,
+  rariBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, aaveBalances: Balances, rariBalances: Balances): BigNumber => {
+    return BigNumber(
+      getTotalBalanceInFiat(aaveBalances, rates, fiatCurrency) +
+        getTotalBalanceInFiat(rariBalances, rates, fiatCurrency),
+    );
+  },
+);
+
+export const investmentsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  poolTogetherBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, poolTogetherBalances: Balances): BigNumber => {
+    return BigNumber(getTotalBalanceInFiat(poolTogetherBalances, rates, fiatCurrency));
+  },
+);
+
+
+export const liquidityPoolsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  liquidityPoolsBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, liquidityPoolsBalances: Balances): BigNumber => {
+    return BigNumber(getTotalBalanceInFiat(liquidityPoolsBalances, rates, fiatCurrency));
+  },
+);
+
