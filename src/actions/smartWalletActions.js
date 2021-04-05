@@ -92,7 +92,11 @@ import aaveService from 'services/aave';
 
 // selectors
 import { accountAssetsSelector, archanovaAccountAssetsSelector } from 'selectors/assets';
-import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
+import {
+  accountsSelector,
+  activeAccountAddressSelector,
+  activeAccountIdSelector,
+} from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
@@ -152,7 +156,11 @@ import {
   setActiveAccountAction,
 } from './accountsActions';
 import { saveDbAction } from './dbActions';
-import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
+import {
+  fetchAssetsBalancesAction,
+  fetchInitialAssetsAction,
+  getAllOwnedAssets,
+} from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
   fetchSmartWalletTransactionsAction,
@@ -1322,7 +1330,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
 };
 
 export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     await dispatch(initArchanovaSdkAction(privateKey));
 
     if (!archanovaService || !archanovaService.sdkInitialized) return;
@@ -1332,59 +1340,71 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
       user: { data: user },
     } = getState();
 
-    if (!user.username) {
-      reportErrorLog('importArchanovaAccountsAction failed: no username', { user });
-      return;
-    }
-
-    // check if archanova accounts were ever created, otherwise there is no need to create new
-    const smartAccounts = await archanovaService.getAccounts();
-    if (isEmpty(smartAccounts)) {
-      return;
-    }
-
-    // check
-
-    dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
-    await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
-
     if (!user.walletId) {
       reportErrorLog('importArchanovaAccountsAction failed: no walletId', { user });
       return;
     }
 
+    const { walletId } = user;
+
+    // check if archanova accounts were ever created, otherwise there is no need to create new
+    const archanovaAccounts = await archanovaService.getAccounts();
+    if (isEmpty(archanovaAccounts)) return;
+
+
+    // check balances of existing archanova accounts
+    const supportedAssets = await api.fetchSupportedAssets(walletId);
+    const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(async ({ address }) => {
+      const ownedAssets = await getAllOwnedAssets(api, address, supportedAssets);
+
+      return api.fetchBalances({
+        address,
+        assets: getAssetsAsList(ownedAssets),
+      });
+    }));
+
+    // no need to import empty balance accounts
+    const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
+    if (!archanovaAccountsHasBalances) return;
+
+    dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: archanovaAccounts });
+    await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
+
     // register missed accounts on the backend
     await archanovaService.syncSmartAccountsWithBackend(
       api,
-      smartAccounts,
-      user.walletId,
+      archanovaAccounts,
+      walletId,
       privateKey,
       session.fcmToken,
     );
-    const backendAccounts = await api.listAccounts(user.walletId);
 
-    const newAccountsPromises = smartAccounts.map(async account => {
-      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+    const backendAccounts = await api.listAccounts(walletId);
+
+    await Promise.all(archanovaAccounts.map((account) => dispatch(addAccountAction(
+      account.address,
+      ACCOUNT_TYPES.SMART_WALLET,
+      account,
+      backendAccounts,
+    ))));
+
+    const accountId = normalizeWalletAddress(archanovaAccounts[0].address);
+    await dispatch(connectArchanovaAccountAction(accountId));
+
+    // set default assets for smart wallet
+    const initialAssets = await api.fetchInitialAssets(walletId);
+    await dispatch({
+      type: SET_INITIAL_ASSETS,
+      payload: {
+        accountId,
+        assets: initialAssets,
+      },
     });
-    await Promise.all(newAccountsPromises);
+    const assets = { [accountId]: initialAssets };
+    dispatch(saveDbAction('assets', { assets }, true));
 
-    if (!isEmpty(smartAccounts)) {
-      const accountId = normalizeWalletAddress(smartAccounts[0].address);
-      await dispatch(connectArchanovaAccountAction(accountId));
-      // set default assets for smart wallet
-      const initialAssets = await api.fetchInitialAssets(user.walletId);
-      await dispatch({
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId,
-          assets: initialAssets,
-        },
-      });
-      const assets = { [accountId]: initialAssets };
-      dispatch(saveDbAction('assets', { assets }, true));
-      dispatch(fetchAssetsBalancesAction());
-      dispatch(fetchCollectiblesAction());
-    }
+    dispatch(fetchAssetsBalancesAction());
+    dispatch(fetchCollectiblesAction());
   };
 };
 
@@ -1643,8 +1663,12 @@ export const estimateSmartWalletDeploymentAction = () => {
  * and 1 edge case:
  * 3) sdk initialization lost(?)
  */
-export const checkSmartWalletSessionAction = () => {
+export const checkSmartWalletSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    // skip check if no archanova account
+    const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
+    if (!archanovaAccountExists) return;
+
     const { isCheckingSmartWalletSession } = getState().smartWallet;
 
     if (isCheckingSmartWalletSession) return;

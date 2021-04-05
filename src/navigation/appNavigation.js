@@ -163,7 +163,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
-import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
+import { checkSmartWalletSessionIfNeededAction } from 'actions/smartWalletActions';
 
 // constants
 import {
@@ -1167,7 +1167,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
+  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionIfNeededAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

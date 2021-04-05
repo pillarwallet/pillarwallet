@@ -82,7 +82,7 @@ import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { fetchRariDataAction } from 'actions/rariActions';
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
-import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
+import { checkSmartWalletSessionIfNeededAction } from 'actions/smartWalletActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -782,7 +782,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchRariData: () => dispatch(fetchRariDataAction()),
   fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(liquidityPools)),
   toggleLiquidityPools: () => dispatch(toggleLiquidityPoolsAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
+  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionIfNeededAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

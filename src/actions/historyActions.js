@@ -131,51 +131,56 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     if (!isOnline) return;
 
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount || !connectedAccount) {
-      reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
-      return;
+    // fetch archanova history only if archanova account exists
+    const achanovaAccount = findFirstArchanovaAccount(accounts);
+    if (achanovaAccount) {
+      if (!connectedAccount) {
+        reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
+        return;
+      }
+
+      const devices = connectedAccount?.devices || [];
+
+      await dispatch(loadSupportedAssetsAction());
+      const supportedAssets = get(getState(), 'assets.supportedAssets', []);
+
+      await dispatch(syncVirtualAccountTransactionsAction());
+
+      const accountId = getAccountId(achanovaAccount);
+      const accountAddress = getAccountAddress(achanovaAccount);
+
+      const smartWalletTransactions = await archanovaService.getAccountTransactions(lastSyncedTransactionId);
+      const accountAssets = archanovaAccountAssetsSelector(getState());
+      const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
+      const assetsList = getAssetsAsList(accountAssets);
+      const smartWalletTransactionHistory = parseSmartWalletTransactions(
+        smartWalletTransactions,
+        supportedAssets,
+        assetsList,
+        relayerExtensionDevice?.address,
+      );
+      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+      const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+      const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
+      const history = await mapTransactionsHistoryWithLiquidityPools(accountAddress, rariHistory);
+
+      if (!history.length) return;
+      // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
+      if (smartWalletTransactions.length) {
+        const newLastSyncedId = smartWalletTransactions[0].id;
+        dispatch({
+          type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
+          payload: newLastSyncedId,
+        });
+        dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
+      }
+
+      syncAccountHistory(history, accountId, dispatch, getState);
+      dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
     }
 
-    const devices = connectedAccount?.devices || [];
-
-    await dispatch(loadSupportedAssetsAction());
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-
-    await dispatch(syncVirtualAccountTransactionsAction());
-
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-
-    const smartWalletTransactions = await archanovaService.getAccountTransactions(lastSyncedTransactionId);
-    const accountAssets = archanovaAccountAssetsSelector(getState());
-    const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
-    const assetsList = getAssetsAsList(accountAssets);
-    const smartWalletTransactionHistory = parseSmartWalletTransactions(
-      smartWalletTransactions,
-      supportedAssets,
-      assetsList,
-      relayerExtensionDevice?.address,
-    );
-    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
-    const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
-    const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
-    const history = await mapTransactionsHistoryWithLiquidityPools(accountAddress, rariHistory);
-
-    if (!history.length) return;
-    // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
-    if (smartWalletTransactions.length) {
-      const newLastSyncedId = smartWalletTransactions[0].id;
-      dispatch({
-        type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-        payload: newLastSyncedId,
-      });
-      dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
-    }
-
-    syncAccountHistory(history, accountId, dispatch, getState);
-    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
+    // TODO: fetch etherspot account history
   };
 };
 
