@@ -22,7 +22,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { HOME } from 'constants/navigationConstants';
 
 import type { TutorialDataObject } from 'models/CMSData';
@@ -61,13 +60,11 @@ const TutorialScreen = ({ navigation, hasSeenTutorial, tutorialData }: Props) =>
   };
 
   return (
-    <ContainerWithHeader style={{ flex: 1 }}>
-      <TutorialSwiper
-        data={tutorialData[activePath]}
-        onButtonPress={val => setActivePath(val)}
-        onFinish={handleFinish}
-      />
-    </ContainerWithHeader>
+    <TutorialSwiper
+      data={tutorialData[activePath]}
+      onButtonPress={val => setActivePath(val)}
+      onFinish={handleFinish}
+    />
   );
 };
 

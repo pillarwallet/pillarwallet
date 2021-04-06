@@ -19,10 +19,9 @@
 */
 
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import { hitSlop10 } from 'utils/common';
@@ -35,10 +34,14 @@ const Wrapper = styled.View`
   width: 100%;
   bottom: 0;
   border-top-width: 1px;
-  background-color: ${({ theme }) => theme.colors.basic050};
   border-color: ${({ theme }) => theme.colors.basic060};
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+`;
+
+const Button = styled.TouchableOpacity`
+  flex: 1;
   align-items: center;
 `;
 
@@ -53,20 +56,21 @@ type Props = {
   isLast: boolean,
   theme: Theme,
 }
-export default withTheme(({
+export default ({
   onBackPress, onNextPress, onSkipPress, isLast,
 }: Props) => {
+  const theme = useTheme();
   const renderButton = (title: string, handler: ?Function) => (
-    <TouchableOpacity disabled={!handler} onPress={handler} hitSlop={hitSlop10}>
+    <Button disabled={!handler} onPress={handler} hitSlop={hitSlop10}>
       <ButtonText>{handler ? title : ''}</ButtonText>
-    </TouchableOpacity>
+    </Button>
   );
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       {renderButton(t('button.back'), onBackPress)}
-      {renderButton(t('button.skip'), onSkipPress)}
+      {renderButton(isLast ? '' : t('button.skip'), onSkipPress)}
       {renderButton(t(`button.${isLast ? 'finish' : 'next'}`), onNextPress)}
     </Wrapper>
   );
-});
+};
