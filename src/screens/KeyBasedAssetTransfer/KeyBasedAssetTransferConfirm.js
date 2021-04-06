@@ -77,9 +77,7 @@ const KeyBasedAssetTransferConfirm = () => {
     );
   }
 
-  const handleSubmit = () => {
-    navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK);
-  };
+  const handleSubmit = () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK);
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
     if (assetData.tokenType === COLLECTIBLES) {
