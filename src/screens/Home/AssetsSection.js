@@ -131,12 +131,12 @@ function AssetsSection({ showSideChains }: Props) {
   };
 
   if (!showSideChains) {
-    return <Container>{renderChainItems(wallet.mainnet)}</Container>;
+    return <Container>{renderChainItems(wallet.ethereum)}</Container>;
   }
 
   return (
     <Container>
-      {renderChain(CHAINS.ETHEREUM, wallet.mainnet)}
+      {renderChain(CHAINS.ETHEREUM, wallet.ethereum)}
       {renderChain(CHAINS.BINANCE, wallet.binance)}
       {renderChain(CHAINS.XDAI, wallet.xdai)}
     </Container>

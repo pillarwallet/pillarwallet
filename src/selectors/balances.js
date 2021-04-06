@@ -173,8 +173,12 @@ export const walletBalanceSelector: (RootReducerState) => BigNumber = createSele
   fiatCurrencySelector,
   ratesSelector,
   allBalancesSelector,
-  (fiatCurrency: string, rates: Rates, assetBalances: Balances): BigNumber => {
-    return BigNumber(getTotalBalanceInFiat(assetBalances, rates, fiatCurrency));
+  sablierBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, sablierBalances: Balances): BigNumber => {
+    return BigNumber(
+      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
+        getTotalBalanceInFiat(sablierBalances, rates, fiatCurrency),
+    );
   },
 );
 

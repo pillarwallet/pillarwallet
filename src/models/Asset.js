@@ -19,7 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { CHAINS, ASSET_CATEGORIES, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';\
+import { CHAINS, ASSET_CATEGORIES, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 export type Chain = $Values<typeof CHAINS>;
 

@@ -35,6 +35,14 @@ import { BigNumber } from 'utils/common';
 // Types
 import type { WalletInfo, BalanceInfo } from 'models/Home';
 
+export const useTotalBalance = (): BalanceInfo => {
+  const walletBalance = useRootSelector(walletBalanceSelector);
+
+  return {
+    balanceInFiat: walletBalance,
+  };
+};
+
 export const useWalletInfo = (): WalletInfo => {
   const walletBalance = useRootSelector(walletBalanceSelector);
   const depositsBalance = useRootSelector(depositsBalanceSelector);
@@ -45,7 +53,7 @@ export const useWalletInfo = (): WalletInfo => {
   const contactsCount = useRootSelector(contactsCountSelector);
 
   return {
-    mainnet: {
+    ethereum: {
       wallet: {
         balanceInFiat: walletBalance,
       },

@@ -21,7 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 
 export type WalletInfo = {|
-  mainnet?: ChainInfo,
+  ethereum?: ChainInfo,
   binance?: ChainInfo,
   xdai?: ChainInfo,
 |};
