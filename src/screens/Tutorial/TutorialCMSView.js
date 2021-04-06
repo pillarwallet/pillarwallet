@@ -41,11 +41,6 @@ export const SubTitle = styled(MediumText)`
   text-align: center;
 `;
 
-const ContentWrapper = styled.View`
-  height: 100%;
-  justify-content: space-evenly;
-`;
-
 const Body = styled(BaseText)`
   ${fontStyles.regular};
 `;
@@ -71,23 +66,20 @@ export default ({ document }: Props) => {
   return (
     <ScrollView
       style={{ flex: 1, width: DEVICE_WIDTH }}
-      contentContainerStyle={{ padding: spacing.rhythm }}
+      contentContainerStyle={{ padding: spacing.rhythm, justifyContent: 'space-evenly', flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
       bounces={false}
     >
-      <View style={{ flex: 1 }}>
+      <View>
         <Title>{title}</Title>
         <SubTitle>{subtitle}</SubTitle>
-
-        <ContentWrapper>
-          <Image
-            source={{ uri: imageUrl }}
-            style={getImageStyle()}
-            resizeMode="contain"
-          />
-          <Body>{body}</Body>
-        </ContentWrapper>
       </View>
+      <Image
+        source={{ uri: imageUrl }}
+        style={getImageStyle()}
+        resizeMode="contain"
+      />
+      <Body>{body}</Body>
     </ScrollView>
   );
 };
