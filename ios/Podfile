@@ -33,12 +33,12 @@ target 'pillarwallet' do
   #   flipper_post_install(installer)
 
     # Fix xcodebuild "supported deployment target" warnings
-    installer.pods_project.targets.each do |target|
-        target.build_configurations.each do |config|
-          ## Keep in sync with pbxproj!
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0' 
-        end
-      end
+    # installer.pods_project.targets.each do |target|
+    #     target.build_configurations.each do |config|
+    #       ## Keep in sync with pbxproj!
+    #       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0' 
+    #     end
+    #   end
   # end
 
   ### Custom Pods
