@@ -47,4 +47,4 @@ export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar
 export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;
 
 // Events
-export type { SyntheticEvent, LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
+export type { SyntheticEvent, LayoutEvent, ScrollEvent } from 'react-native/Libraries/Types/CoreEventTypes';

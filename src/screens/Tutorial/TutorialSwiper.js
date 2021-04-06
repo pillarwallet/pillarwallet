@@ -21,10 +21,10 @@
 import React, { useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 import t from 'translations/translate';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
-import type { ParsedCMSDocument } from 'models/CMSData';
-import type { Theme } from 'models/Theme';
+import type { ParsedCmsDocument } from 'models/CMSData';
+import type { ScrollEvent } from 'utils/types/react-native';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
@@ -39,14 +39,16 @@ import TutorialCMSView, { Title, SubTitle } from './TutorialCMSView';
 import TutorialFooter from './TutorialFooter';
 
 type Props = {
-  data: ParsedCMSDocument[],
-  onButtonPress: (val: string) => void,
-  theme: Theme,
+  data: ParsedCmsDocument[],
+  onButtonPress: (val: (typeof NATIVES | typeof NEWBIES)) => void,
   onFinish: () => void,
 }
 
 const DEVICE_WIDTH = getDeviceWidth();
-const { ONBOARDING_SCREENS_FOR_NATIVES, ONBOARDING_SCREENS_FOR_NEWBIES } = CMS_DATA_TYPES;
+const {
+  ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
+  ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
+} = CMS_DATA_TYPES;
 
 const InitialScreenWrapper = styled.View`
   height: 100%;
@@ -67,33 +69,26 @@ const TutorialButton = styled(Button)`
 `;
 
 const Img = styled(Image)`
-  margin-top: 40px;
   width: ${DEVICE_WIDTH * 0.7}px;
   height: 100px;
 `;
 
-export default withTheme(({
-  onButtonPress, data, onFinish, theme,
-}: Props) => {
+export default ({ onButtonPress, data, onFinish }: Props) => {
   const scrollViewRef = useRef(null);
   const [scrollIndex, setScrollIndex] = useState<number>(0);
   const [userHasScrolled, setUserHasScrolled] = useState<boolean>(false);
+  const theme = useTheme();
 
-  const scrollToIdx = (idx: number) =>
-    scrollViewRef?.current && scrollViewRef.current.scrollTo({ x: idx * DEVICE_WIDTH });
+  const scrollToIdx = (idx: number) => scrollViewRef?.current?.scrollTo({ x: idx * DEVICE_WIDTH });
 
-  const handleButtonPress = (val: string) => {
+  const handleButtonPress = (val: (typeof NATIVES | typeof NEWBIES)) => {
     onButtonPress(val);
     scrollToIdx(1);
   };
 
-  const handleScroll = (e: Object) => {
+  const handleScroll = (e: ScrollEvent) => {
     const xPosition = e.nativeEvent.contentOffset.x;
-    if (xPosition === 0) {
-      setScrollIndex(0);
-    } else if (xPosition % DEVICE_WIDTH === 0) {
-      setScrollIndex(xPosition / DEVICE_WIDTH);
-    }
+    setScrollIndex(Math.floor((xPosition / DEVICE_WIDTH) + 0.5));
   };
 
   const isLast = () => scrollIndex >= data.length;
@@ -105,13 +100,13 @@ export default withTheme(({
       <ContentWrapper>
         <Title>{t('tutorialTitle')}</Title>
         <SubTitle>{t('tutorialSubtitle')}</SubTitle>
-        <Img resizeMode="contain" source={images(theme).pillarLogo} />
       </ContentWrapper>
+      <Img resizeMode="contain" source={images(theme).pillarLogo} />
       <ContentWrapper>
-        <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NEWBIES)} />
+        <TutorialButton title={t('button.new')} onPress={() => handleButtonPress(NEWBIES)} />
         <TutorialButton
           title={t('button.native')}
-          onPress={() => handleButtonPress(ONBOARDING_SCREENS_FOR_NATIVES)}
+          onPress={() => handleButtonPress(NATIVES)}
         />
       </ContentWrapper>
     </InitialScreenWrapper>
@@ -123,12 +118,13 @@ export default withTheme(({
         horizontal
         bounces={false}
         pagingEnabled
-        style={{ width: DEVICE_WIDTH, flex: 1 }}
+        style={{ width: '100%', flex: 1 }}
         ref={scrollViewRef}
         onScroll={handleScroll}
         showsHorizontalScrollIndicator={false}
         scrollEnabled={userHasScrolled}
         onMomentumScrollEnd={() => { !userHasScrolled && setUserHasScrolled(true); }}
+        scrollEventThrottle={16}
       >
         {renderInitialScreen()}
         {data.map(doc => <TutorialCMSView document={doc} key={doc.id} />)}
@@ -141,4 +137,4 @@ export default withTheme(({
       />
     </ContainerWithHeader>
   );
-});
+};

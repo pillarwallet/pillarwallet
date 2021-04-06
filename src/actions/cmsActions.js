@@ -24,7 +24,7 @@ import prismicClient from 'services/prismic';
 import { reportErrorLog } from 'utils/common';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
-import type { CMSData } from 'models/CMSData';
+import type { CmsData } from 'models/CMSData';
 import { getTutorialDataObject, isValidTutorialData } from 'utils/cms';
 
 const {
@@ -35,15 +35,17 @@ const {
 export const getTutorialDataAction = () => async (dispatch: Dispatch, getState: GetState) => {
   const { appSettings: { data: { hasSeenTutorial } } } = getState();
   // no need to do anything if user has already completed tutorial
-  if (hasSeenTutorial) return null;
-  return prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]))
-    .then((res: CMSData) => {
-      const tutorialData = getTutorialDataObject(res);
-      if (!isValidTutorialData(tutorialData)) return;
-      dispatch({
-        type: SET_TUTORIAL_DATA,
-        payload: tutorialData,
-      });
-    })
-    .catch(e => reportErrorLog(e));
+  if (hasSeenTutorial) return;
+
+  try {
+    const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
+    const tutorialData = getTutorialDataObject(response);
+    if (!isValidTutorialData(tutorialData)) return;
+    dispatch({
+      type: SET_TUTORIAL_DATA,
+      payload: tutorialData,
+    });
+  } catch (e) {
+    reportErrorLog(e);
+  }
 };

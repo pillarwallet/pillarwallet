@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 
 import { HOME } from 'constants/navigationConstants';
 
@@ -33,7 +33,6 @@ import { hasSeenTutorialAction } from 'actions/appSettingsActions';
 import TutorialSwiper from './TutorialSwiper';
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   hasSeenTutorial: () => void,
   tutorialData: ?TutorialDataObject,
 }
@@ -45,20 +44,20 @@ const {
 
 type TUTORIAL_PATH = typeof NATIVES | typeof NEWBIES;
 
-const TutorialScreen = ({ navigation, hasSeenTutorial, tutorialData }: Props) => {
+const TutorialScreen = ({ hasSeenTutorial, tutorialData }: Props) => {
   const [activePath, setActivePath] = useState<TUTORIAL_PATH>(NEWBIES);
+  const navigation = useNavigation();
   const routeName = navigation?.state?.params?.nextNavigationRouteName || HOME;
 
-  if (!tutorialData) {
-    navigation.navigate(routeName);
-    return null;
-  }
+  useEffect(() => {
+    !tutorialData && navigation.navigate(routeName);
+  }, []);
 
   const handleFinish = () => {
     hasSeenTutorial();
     navigation.navigate(routeName);
   };
-
+  if (!tutorialData) return null;
   return (
     <TutorialSwiper
       data={tutorialData[activePath]}

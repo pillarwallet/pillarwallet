@@ -19,14 +19,13 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import { ScrollView, View } from 'react-native';
+import styled from 'styled-components/native';
 
 import Image from 'components/Image';
 import { BaseText, MediumText } from 'components/Typography';
 
-import type { Theme } from 'models/Theme';
-import type { ParsedCMSDocument } from 'models/CMSData';
+import type { ParsedCmsDocument } from 'models/CMSData';
 
 import { fontStyles, spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
@@ -42,18 +41,22 @@ export const SubTitle = styled(MediumText)`
   text-align: center;
 `;
 
+const ContentWrapper = styled.View`
+  height: 100%;
+  justify-content: space-evenly;
+`;
+
 const Body = styled(BaseText)`
   ${fontStyles.regular};
 `;
 
 type Props = {
-  theme: Theme,
-  document: ParsedCMSDocument,
+  document: ParsedCmsDocument,
 };
 
 const DEVICE_WIDTH = getDeviceWidth();
 
-const CMSView = ({ document }: Props) => {
+export default ({ document }: Props) => {
   const {
     title, subtitle, body, imageUrl, imageWidth, imageHeight,
   } = document;
@@ -62,7 +65,7 @@ const CMSView = ({ document }: Props) => {
     const width = DEVICE_WIDTH - (2 * spacing.rhythm);
     const ratio = imageHeight / imageWidth;
     const height = width * ratio;
-    return { width, height };
+    return { width, height, marginVertical: 20 };
   };
 
   return (
@@ -72,16 +75,20 @@ const CMSView = ({ document }: Props) => {
       showsVerticalScrollIndicator={false}
       bounces={false}
     >
-      <Title>{title}</Title>
-      <SubTitle>{subtitle}</SubTitle>
-      <Image
-        source={{ uri: imageUrl }}
-        style={getImageStyle()}
-        resizeMode="contain"
-      />
-      <Body>{body}</Body>
+      <View style={{ flex: 1 }}>
+        <Title>{title}</Title>
+        <SubTitle>{subtitle}</SubTitle>
+
+        <ContentWrapper>
+          <Image
+            source={{ uri: imageUrl }}
+            style={getImageStyle()}
+            resizeMode="contain"
+          />
+          <Body>{body}</Body>
+        </ContentWrapper>
+      </View>
     </ScrollView>
   );
 };
 
-export default withTheme(CMSView);

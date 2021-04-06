@@ -26,8 +26,6 @@ import { BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import { hitSlop10 } from 'utils/common';
 
-import type { Theme } from 'models/Theme';
-
 const Wrapper = styled.View`
   height: 50px;
   padding: 0px 20px;
@@ -54,7 +52,6 @@ type Props = {
   onBackPress: ?() => void,
   onNextPress: ?(() => void),
   isLast: boolean,
-  theme: Theme,
 }
 export default ({
   onBackPress, onNextPress, onSkipPress, isLast,

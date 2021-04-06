@@ -19,9 +19,9 @@
 */
 
 export const CMS_DATA_TYPES = {
-  ONBOARDING_SCREENS_FOR_NATIVES: 'onboarding_screens_for_natives',
-  DEFI_SHOWCASE: 'defi_showcase',
-  ONBOARDING_SCREENS_FOR_NEWBIES: 'onboarding_screens_for_newbies',
+  ONBOARDING_SCREENS_FOR_NATIVES: ('onboarding_screens_for_natives': 'onboarding_screens_for_natives'),
+  DEFI_SHOWCASE: ('defi_showcase': 'defi_showcase'),
+  ONBOARDING_SCREENS_FOR_NEWBIES: ('onboarding_screens_for_newbies': 'onboarding_screens_for_newbies'),
 };
 
 export const DOCUMENT_TYPE = 'document.type';

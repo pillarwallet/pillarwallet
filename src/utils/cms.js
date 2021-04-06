@@ -19,7 +19,7 @@
 */
 
 import orderBy from 'lodash.orderby';
-import type { CMSDocument, ParsedCMSDocument, TutorialDataObject, CMSData } from 'models/CMSData';
+import type { CmsDocument, ParsedCmsDocument, TutorialDataObject, CmsData } from 'models/CMSData';
 import { CMS_DATA_TYPES } from 'constants/cmsConstants';
 
 const {
@@ -27,15 +27,16 @@ const {
   ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
 } = CMS_DATA_TYPES;
 
-const getSortedTutorialData = (docs: CMSDocument[], type: string): ParsedCMSDocument[] =>
+const getTutorialDataForType = (docs: CmsDocument[], type: string): ParsedCmsDocument[] =>
   orderBy(docs.map(d => parseCMSDocument(d)).filter(d => d.type === type), i => (i.order || 0), ['asc']);
 
-const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
+const parseCMSDocument = (doc: CmsDocument): ParsedCmsDocument => {
   const {
-    id, type, href, slugs, data: {
-      order = 0, title, subtitle, body, image,
-    } = {},
+    id, type, href, slugs, data = {},
   } = doc;
+  const {
+    order = 0, title, subtitle, body, image,
+  } = data;
   return {
     id,
     type,
@@ -51,11 +52,11 @@ const parseCMSDocument = (doc: CMSDocument): ParsedCMSDocument => {
   };
 };
 
-export const getTutorialDataObject = (res: CMSData): ?TutorialDataObject => {
+export const getTutorialDataObject = (res: CmsData): ?TutorialDataObject => {
   if (!res?.results?.length) return null;
   return {
-    [NATIVES]: getSortedTutorialData(res.results, NATIVES),
-    [NEWBIES]: getSortedTutorialData(res.results, NEWBIES),
+    [NATIVES]: getTutorialDataForType(res.results, NATIVES),
+    [NEWBIES]: getTutorialDataForType(res.results, NEWBIES),
   };
 };
 

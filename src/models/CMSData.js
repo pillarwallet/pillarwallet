@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type CMSDocument = {
+export type CmsDocument = {
   id: string,
   type: string,
   href: string,
@@ -38,7 +38,7 @@ export type CMSDocument = {
   },
 };
 
-export type ParsedCMSDocument = {
+export type ParsedCmsDocument = {
   id: string,
   type: string,
   href: string,
@@ -52,10 +52,10 @@ export type ParsedCMSDocument = {
   imageWidth: number,
 }
 
-export type CMSData = {
-  results: CMSDocument[],
+export type CmsData = {
+  results: CmsDocument[],
 };
 
 export type TutorialDataObject = {
-  [key: string]: ParsedCMSDocument[],
+  [key: string]: ParsedCmsDocument[],
 };
