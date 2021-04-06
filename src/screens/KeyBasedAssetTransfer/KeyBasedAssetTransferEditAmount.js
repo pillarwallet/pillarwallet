@@ -62,9 +62,7 @@ function KeyBasedAssetTransferEditAmount() {
   const rates = useRates();
 
   React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      inputRef.current?.focus();
-    });
+    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
   }, []);
 
   // Fail safe
