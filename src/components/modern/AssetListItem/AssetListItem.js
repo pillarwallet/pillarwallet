@@ -41,7 +41,8 @@ type Props = {|
 /**
  * Standard Asset list item displaying icon, name, and optionally balance and left add-on (e.g. checkbox).
  *
- * In case you needed more customized asset item layout, please use individual parts exported from `./components` file.
+ * In case you needed more customized asset item layout, instead of adding specific props, please use individual
+ * low-level building blocks exported from `./components` file in order to assemble the required item layout.
  */
 function AssetListItem({
   name,

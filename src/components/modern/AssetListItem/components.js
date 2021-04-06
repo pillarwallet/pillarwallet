@@ -38,6 +38,12 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
 
+/**
+ * This file contains low-level building blocks for constructing custom Asset List Item.
+ *
+ * The same components are used to build `AssetListItem` component.
+ */
+
 export const Container = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
