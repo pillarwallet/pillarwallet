@@ -23,15 +23,27 @@ import * as React from 'react';
 import { useThemeColors } from 'utils/themes';
 
 import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
-import IconDeposit from 'assets/icon/svg/icon-24-deposit.svg';
+import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
+import IconContacts from 'assets/icons/svg/icon-24-contacts.svg';
+import IconDeposit from 'assets/icons/svg/icon-24-deposit.svg';
 import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
+import IconInfo from 'assets/icons/svg/icon-24-info.svg';
+import IconInvestment from 'assets/icons/svg/icon-24-investment.svg';
+import IconLiquidityPool from 'assets/icons/svg/icon-24-liquidity-pool.svg';
+import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
 import IconSend from 'assets/icons/svg/icon-24-send.svg';
-import IconWallet from 'assets/icon/svg/icon-24-wallet.svg';
+import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 
 const components = {
   'add-contact': IconAddContact,
+  collectible: IconCollectible,
+  contacts: IconContacts,
   deposit: IconDeposit,
   exchange: IconExchange,
+  info: IconInfo,
+  investment: IconInvestment,
+  'liquidity-pool': IconLiquidityPool,
+  plus: IconPlus,
   send: IconSend,
   wallet: IconWallet,
 };

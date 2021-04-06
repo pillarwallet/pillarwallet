@@ -29,7 +29,7 @@ import { useThemeColors } from 'utils/themes';
 // Types
 import type { ImageSource } from 'utils/types/react-native';
 import type { Chain, AssetCategory } from 'models/Asset';
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/modern/Icon';
 
 const mainnetIcon = require('assets/icons/icon-24-network-mainnet.png');
 const binanceIcon = require('assets/icons/icon-24-network-binance.png');
@@ -90,19 +90,19 @@ export function useAssetCategoriesConfig(): AssetCategoriesConfig {
     },
     [ASSET_CATEGORIES.DEPOSITS]: {
       title: t('deposits'),
-      iconName: 'wallet',
+      iconName: 'deposit',
     },
     [ASSET_CATEGORIES.INVESTMENTS]: {
       title: t('investments'),
-      iconName: 'wallet',
+      iconName: 'investment',
     },
     [ASSET_CATEGORIES.LIQUIDITY_POOLS]: {
       title: t('liquidityPools'),
-      iconName: 'wallet',
+      iconName: 'liquidity-pool',
     },
     [ASSET_CATEGORIES.COLLECTIBLES]: {
       title: t('collectibles'),
-      iconName: 'wallet',
+      iconName: 'collectible',
     },
     [ASSET_CATEGORIES.REWARDS]: {
       title: t('rewards'),

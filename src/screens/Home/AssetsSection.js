@@ -99,7 +99,7 @@ function AssetsSection({ showSideChains }: Props) {
         {chainInfo.collectibles != null && (
           <HomeListItem
             title={tRoot('assetCategories.collectibles')}
-            iconName="wallet"
+            iconName="collectible"
             onPress={() => navigation.navigate(ASSETS)}
             value={formattedCollectibles}
           />
@@ -108,14 +108,14 @@ function AssetsSection({ showSideChains }: Props) {
         {chainInfo.contacts != null && (
           <HomeListItem
             title={t('contacts')}
-            iconName="wallet"
+            iconName="contacts"
             onPress={() => navigation.navigate(CONTACTS_FLOW)}
             value={formattedContacts}
           />
         )}
 
         {/* Temporary entry until other UI provided */}
-        <HomeListItem title={t('services')} iconName="wallet" onPress={() => navigation.navigate(SERVICES_FLOW)} />
+        <HomeListItem title={t('services')} iconName="info" onPress={() => navigation.navigate(SERVICES_FLOW)} />
       </>
     );
   };
