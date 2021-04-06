@@ -21,6 +21,7 @@
 import orderBy from 'lodash.orderby';
 import type { CmsDocument, ParsedCmsDocument, TutorialDataObject, CmsData } from 'models/CMSData';
 import { CMS_DATA_TYPES } from 'constants/cmsConstants';
+import { reportErrorLog } from 'utils/common';
 
 const {
   ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
@@ -28,28 +29,33 @@ const {
 } = CMS_DATA_TYPES;
 
 const getTutorialDataForType = (docs: CmsDocument[], type: string): ParsedCmsDocument[] =>
-  orderBy(docs.map(d => parseCMSDocument(d)).filter(d => d.type === type), i => (i.order || 0), ['asc']);
+  orderBy(docs.map(d => parseCMSDocument(d)).filter(d => !!d && d.type === type), i => (i.order || 0), ['asc']);
 
-const parseCMSDocument = (doc: CmsDocument): ParsedCmsDocument => {
+const parseCMSDocument = (doc: CmsDocument): ?ParsedCmsDocument => {
   const {
     id, type, href, slugs, data = {},
   } = doc;
   const {
     order = 0, title, subtitle, body, image,
   } = data;
-  return {
-    id,
-    type,
-    href,
-    slugs,
-    order,
-    title: title[0]?.text || '',
-    subtitle: subtitle[0]?.text || '',
-    body: body[0]?.text || '',
-    imageUrl: image?.url || '',
-    imageHeight: image?.dimensions?.height || 0,
-    imageWidth: image?.dimensions?.width || 0,
-  };
+  try {
+    return {
+      id,
+      type,
+      href,
+      slugs,
+      order,
+      title: title[0]?.text || '',
+      subtitle: subtitle[0]?.text || '',
+      body: body[0]?.text || '',
+      imageUrl: image?.url || '',
+      imageHeight: image?.dimensions?.height || 0,
+      imageWidth: image?.dimensions?.width || 0,
+    };
+  } catch (e) {
+    reportErrorLog(e);
+    return null;
+  }
 };
 
 export const getTutorialDataObject = (res: CmsData): ?TutorialDataObject => {
