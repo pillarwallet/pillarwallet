@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>7527A583-DB31-4E95-91CE-8B2907716D8C</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icons/3" transform="translate(-253.000000, -625.000000)">
+            <g id="Row" transform="translate(0.000000, 615.726562)">
+                <g id="Icons/24/x/x-circle/new" transform="translate(253.000000, 10.000000)">
+                    <circle id="Circle" fill="#818EB3" cx="12" cy="12" r="12"></circle>
+                    <g id="Icons/24/x/new" stroke="#FCFDFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                        <path d="M12,5 L12,19 M5,12 L19,12" id="Plus" transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
