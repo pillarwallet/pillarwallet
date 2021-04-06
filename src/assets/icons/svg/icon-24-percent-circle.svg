@@ -5,7 +5,7 @@
         <g id="Icons/2" transform="translate(-253.000000, -537.000000)">
             <g id="Row" transform="translate(0.000000, 527.726562)">
                 <g id="Icons/24/percentage/new" transform="translate(253.000000, 10.000000)">
-                    <circle id="Circle" fill="#818EB3" cx="12" cy="12" r="12"></circle>
+                    <circle id="Circle" fill="#000" cx="12" cy="12" r="12"></circle>
                     <g id="Icon" transform="translate(8.000000, 8.000000)" stroke="#FCFDFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2">
                         <circle id="Oval" cx="7.33333333" cy="7.33333333" r="1"></circle>
                         <circle id="Oval" cx="0.666666667" cy="0.666666667" r="1"></circle>

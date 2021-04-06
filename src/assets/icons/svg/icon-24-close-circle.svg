@@ -5,7 +5,7 @@
         <g id="Icons/3" transform="translate(-253.000000, -625.000000)">
             <g id="Row" transform="translate(0.000000, 615.726562)">
                 <g id="Icons/24/x/x-circle/new" transform="translate(253.000000, 10.000000)">
-                    <circle id="Circle" fill="#818EB3" cx="12" cy="12" r="12"></circle>
+                    <circle id="Circle" fill="#000" cx="12" cy="12" r="12"></circle>
                     <g id="Icons/24/x/new" stroke="#FCFDFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                         <path d="M12,5 L12,19 M5,12 L19,12" id="Plus" transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) "></path>
                     </g>

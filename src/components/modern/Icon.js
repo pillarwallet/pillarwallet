@@ -23,26 +23,33 @@ import * as React from 'react';
 import { useThemeColors } from 'utils/themes';
 
 import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
+import IconDeposit from 'assets/icon/svg/icon-24-deposit.svg';
 import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
 import IconSend from 'assets/icons/svg/icon-24-send.svg';
+import IconWallet from 'assets/icon/svg/icon-24-wallet.svg';
 
 const components = {
   'add-contact': IconAddContact,
+  deposit: IconDeposit,
   exchange: IconExchange,
   send: IconSend,
+  wallet: IconWallet,
 };
 
 export type IconName = $Keys<typeof components>;
 
 type Props = {|
     name: string;
+    color?: string;
+    width?: number;
+    height?: number;
 |};
 
-function Icon({ name, ...rest }: Props) {
+function Icon({ name, color, ...rest }: Props) {
   const colors = useThemeColors();
 
   const Component = components[name];
-  return Component ? <Component fill={'#ff0000'} {...rest} /> : null;
+  return Component ? <Component fill={color ?? colors.basic010} {...rest} /> : null;
 }
 
 export default Icon;

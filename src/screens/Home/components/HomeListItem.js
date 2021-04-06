@@ -23,13 +23,13 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/modern/Text';
-import Icon from 'components/Icon';
+import Icon from 'components/modern/Icon';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 
 // Type
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
@@ -71,9 +71,7 @@ const Container = styled.TouchableOpacity`
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: 24px;
   margin-right: ${spacing.medium}px;
-  ${({ theme }) => `color: ${theme.colors.basic010}`};
 `;
 
 const Title = styled(Text)`

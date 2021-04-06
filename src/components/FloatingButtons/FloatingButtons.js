@@ -62,7 +62,7 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
         {items.map((item) => (
           <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
-              {!!item.iconName && <ItemIcon name={item.iconName} />}
+              {!!item.iconName && <Icon name={item.iconName} />}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
             </ItemIconWrapper>
             <ItemTitle>{item.title}</ItemTitle>
@@ -111,10 +111,6 @@ const ItemIconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-horizontal: ${spacing.largePlus}px;
-`;
-
-const ItemIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ItemIconImage = styled(Image)`
