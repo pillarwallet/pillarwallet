@@ -20,32 +20,124 @@
 
 import * as React from 'react';
 
+// Utils
 import { useThemeColors } from 'utils/themes';
 
+// Assets
 import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
+import IconArrowRight from 'assets/icons/svg/icon-24-arrow-right.svg';
+import IconArrowDown from 'assets/icons/svg/icon-24-arrow-down.svg';
+import IconArrowLeft from 'assets/icons/svg/icon-24-arrow-left.svg';
+import IconArrowUp from 'assets/icons/svg/icon-24-arrow-up.svg';
+import IconBullet from 'assets/icons/svg/icon-24-bullet.svg';
+import IconCancel from 'assets/icons/svg/icon-24-cancel.svg';
+import IconCheckmark from 'assets/icons/svg/icon-24-checkmark.svg';
+import IconChevronDown from 'assets/icons/svg/icon-24-chevron-down.svg';
+import IconChevronRight from 'assets/icons/svg/icon-24-chevron-right.svg';
+import IconChevronUp from 'assets/icons/svg/icon-24-chevron-up.svg';
+import IconCloseCircle from 'assets/icons/svg/icon-24-close-circle.svg';
+import IconClose from 'assets/icons/svg/icon-24-close.svg';
 import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
 import IconContacts from 'assets/icons/svg/icon-24-contacts.svg';
+import IconCopy from 'assets/icons/svg/icon-24-copy.svg';
 import IconDeposit from 'assets/icons/svg/icon-24-deposit.svg';
+import IconDots from 'assets/icons/svg/icon-24-dots.svg';
+import IconEqual from 'assets/icons/svg/icon-24-equal.svg';
 import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
+import IconFailed from 'assets/icons/svg/icon-24-failed.svg';
+import IconGift from 'assets/icons/svg/icon-24-gift.svg';
+import IconHighFees from 'assets/icons/svg/icon-24-high-fees.svg';
+import IconImage from 'assets/icons/svg/icon-24-image.svg';
 import IconInfo from 'assets/icons/svg/icon-24-info.svg';
 import IconInvestment from 'assets/icons/svg/icon-24-investment.svg';
+import IconKey from 'assets/icons/svg/icon-24-key.svg';
+import IconLifebuoy from 'assets/icons/svg/icon-24-lifebuoy.svg';
 import IconLiquidityPool from 'assets/icons/svg/icon-24-liquidity-pool.svg';
+import IconLogout from 'assets/icons/svg/icon-24-logout.svg';
+import IconMail from 'assets/icons/svg/icon-24-mail.svg';
+import IconMenu from 'assets/icons/svg/icon-24-menu.svg';
+import IconMinus from 'assets/icons/svg/icon-24-minus.svg';
+import IconMute from 'assets/icons/svg/icon-24-mute.svg';
+import IconNote from 'assets/icons/svg/icon-24-note.svg';
+import IconPending from 'assets/icons/svg/icon-24-pending.svg';
+import IconPercentCircle from 'assets/icons/svg/icon-24-percent-circle.svg';
+import IconPhone from 'assets/icons/svg/icon-24-phone.svg';
 import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
+import IconPower from 'assets/icons/svg/icon-24-power.svg';
+import IconQrCode from 'assets/icons/svg/icon-24-qrcode.svg';
+import IconQuestion from 'assets/icons/svg/icon-24-question.svg';
+import IconRecovery from 'assets/icons/svg/icon-24-recovery.svg';
+import IconRefresh from 'assets/icons/svg/icon-24-refresh.svg';
+import IconSearch from 'assets/icons/svg/icon-24-search.svg';
+import IconSelect from 'assets/icons/svg/icon-24-select.svg';
+import IconSendDown from 'assets/icons/svg/icon-24-send-down.svg';
 import IconSend from 'assets/icons/svg/icon-24-send.svg';
+import IconSettings from 'assets/icons/svg/icon-24-settings.svg';
+import IconSetttlement from 'assets/icons/svg/icon-24-settlement.svg';
+import IconSort from 'assets/icons/svg/icon-24-sort-ascending.svg';
+import IconSynthetic from 'assets/icons/svg/icon-24-synthetic.svg';
+import IconThumbUp from 'assets/icons/svg/icon-24-thumb-up.svg';
+import IconUser from 'assets/icons/svg/icon-24-user.svg';
 import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
+import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 
 const components = {
   'add-contact': IconAddContact,
+  'arrow-right': IconArrowRight,
+  'arrow-down': IconArrowDown,
+  'arrow-left': IconArrowLeft,
+  'arrow-up': IconArrowUp,
+  bullet: IconBullet,
+  cancel: IconCancel,
+  checkmark: IconCheckmark,
+  'chevron-down': IconChevronDown,
+  'chevron-right': IconChevronRight,
+  'chevron-up': IconChevronUp,
+  'close-circle': IconCloseCircle,
+  close: IconClose,
   collectible: IconCollectible,
   contacts: IconContacts,
+  copy: IconCopy,
   deposit: IconDeposit,
+  dots: IconDots,
+  equal: IconEqual,
   exchange: IconExchange,
+  failed: IconFailed,
+  gift: IconGift,
+  'high-fees': IconHighFees,
+  image: IconImage,
   info: IconInfo,
   investment: IconInvestment,
+  key: IconKey,
+  lifebuoy: IconLifebuoy,
   'liquidity-pool': IconLiquidityPool,
+  logout: IconLogout,
+  mail: IconMail,
+  menu: IconMenu,
+  minus: IconMinus,
+  mute: IconMute,
+  note: IconNote,
+  pending: IconPending,
+  'percent-circle': IconPercentCircle,
+  phone: IconPhone,
   plus: IconPlus,
+  power: IconPower,
+  qrcode: IconQrCode,
+  question: IconQuestion,
+  recovery: IconRecovery,
+  refresh: IconRefresh,
+  search: IconSearch,
+  select: IconSelect,
+  'send-down': IconSendDown,
   send: IconSend,
+  settings: IconSettings,
+  settlement: IconSetttlement,
+  'sort': IconSort,
+  synthetic: IconSynthetic,
+  'thumb-up': IconThumbUp,
+  user: IconUser,
   wallet: IconWallet,
+  warning: IconWarning,
 };
 
 export type IconName = $Keys<typeof components>;
