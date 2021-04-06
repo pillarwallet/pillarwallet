@@ -20,10 +20,29 @@
 
 import * as React from 'react';
 
-type Props = {|
+import { useThemeColors } from 'utils/themes';
 
+import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
+import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
+import IconSend from 'assets/icons/svg/icon-24-send.svg';
+
+const components = {
+  'add-contact': IconAddContact,
+  exchange: IconExchange,
+  send: IconSend,
+};
+
+export type IconName = $Keys<typeof components>;
+
+type Props = {|
+    name: string;
 |};
 
-function Icon(props: Props) {}
+function Icon({ name, ...rest }: Props) {
+  const colors = useThemeColors();
+
+  const Component = components[name];
+  return Component ? <Component fill={'#ff0000'} {...rest} /> : null;
+}
 
 export default Icon;

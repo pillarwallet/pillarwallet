@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
-import Icon from 'components/Icon';
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -32,7 +32,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/modern/Icon';
 
 export type Item = {|
   title: string,
@@ -114,7 +114,6 @@ const ItemIconWrapper = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: 24px;
   color: ${({ theme }) => theme.colors.basic010};
 `;
 

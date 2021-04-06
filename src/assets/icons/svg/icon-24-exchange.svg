@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>4F4FAF58-65F7-4F6D-98DF-25C6D5755B0B</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <g id="Icons/Arrows" transform="translate(-253.000000, -273.000000)" stroke="#818EB3" stroke-width="1.5">
-            <g id="Row" transform="translate(0.500000, 263.726562)">
-                <g id="Icons/24/arrows/send-flow/down-up/new" transform="translate(253.000000, 10.000000)">
-                    <path d="M14,6 L17,3 L20,6 M17,3 L17,21" id="Combined-Shape" transform="translate(17.000000, 12.000000) scale(1, -1) translate(-17.000000, -12.000000) "></path>
-                    <path d="M4,6 L7,3 L10,6 M7,3 L7,21" id="Combined-Shape-Copy"></path>
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24">
+    <g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="#000" stroke-width="1.5">
+            <g>
+                <g>
+                    <g>
+                        <g>
+                            <path d="M16 3L20 7 16 11M8 13L4 17 8 21M4 17h9M10 7h10" transform="translate(-164 -1156) translate(65.5 1140) translate(74 8) translate(8) translate(17.082 8)"/>
+                        </g>
+                    </g>
                 </g>
             </g>
         </g>
