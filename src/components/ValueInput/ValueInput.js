@@ -342,5 +342,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-
 export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));

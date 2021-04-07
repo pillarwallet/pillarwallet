@@ -91,7 +91,7 @@ const ValueInputHeader = ({
   onAssetPress,
   disableAssetSelection,
 }: Props) => {
-  const { id, name, iconUrl } = asset;
+  const { name, iconUrl } = asset;
   const imageUrl = asset.imageUrl || (iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '');
   const optionImageSource = resolveAssetSource(imageUrl);
 
@@ -102,7 +102,6 @@ const ValueInputHeader = ({
     <Wrapper>
       <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress}>
         <StyledImage
-          key={id}
           source={optionImageSource}
           fallbackSource={optionImageSource.uri !== undefined && genericToken}
           resizeMode="contain"
