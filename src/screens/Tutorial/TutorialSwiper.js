@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import t from 'translations/translate';
 import styled, { useTheme } from 'styled-components/native';
@@ -79,6 +79,10 @@ export default ({ onButtonPress, data, onFinish }: Props) => {
   const [userHasScrolled, setUserHasScrolled] = useState<boolean>(false);
   const theme = useTheme();
 
+  useEffect(() => {
+    !userHasScrolled && scrollIndex && setUserHasScrolled(true);
+  }, [scrollIndex]);
+
   const scrollToIdx = (idx: number) => scrollViewRef?.current?.scrollTo({ x: idx * DEVICE_WIDTH });
 
   const handleButtonPress = (val: (typeof NATIVES | typeof NEWBIES)) => {
@@ -123,7 +127,6 @@ export default ({ onButtonPress, data, onFinish }: Props) => {
         onScroll={handleScroll}
         showsHorizontalScrollIndicator={false}
         scrollEnabled={userHasScrolled}
-        onMomentumScrollEnd={() => { !userHasScrolled && setUserHasScrolled(true); }}
         scrollEventThrottle={16}
       >
         {renderInitialScreen()}
