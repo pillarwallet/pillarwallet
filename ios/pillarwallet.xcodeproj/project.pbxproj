@@ -32,6 +32,9 @@
 		04981A9724C8648D00748082 /* LogoAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoAnimationView.swift; sourceTree = "<group>"; };
 		04981AAC24C97CEC00748082 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		0995923F3084D37535F951CE /* Instabug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Instabug.framework; path = "../node_modules/instabug-reactnative/ios/Instabug.framework"; sourceTree = "<group>"; };
+		0A715B91261E468600C78CBD /* libSDWebImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImageWebPCoder.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A715B95261E46DB00C78CBD /* Storyly.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Storyly.xcframework; path = Pods/Storyly/Storyly.xcframework; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -105,6 +108,9 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A715B95261E46DB00C78CBD /* Storyly.xcframework */,
+				0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */,
+				0A715B91261E468600C78CBD /* libSDWebImage.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */,
@@ -479,7 +485,7 @@
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
