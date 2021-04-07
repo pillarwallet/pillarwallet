@@ -632,6 +632,13 @@ export const hitSlop10 = {
   right: 10,
 };
 
+export const hitSlop20 = {
+  top: 20,
+  bottom: 20,
+  left: 20,
+  right: 20,
+};
+
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
 export const formatBigAmount = (value: Value) => {

@@ -35,7 +35,7 @@ import {
 } from 'actions/keyBasedAssetTransferActions';
 
 // Components
-import { Footer, Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
@@ -204,15 +204,15 @@ const KeyBasedAssetTransferChoose = ({
       }}
       footer={
         !isEmpty(keyBasedAssetsToTransfer) && (
-        <Footer>
-          <Button
-            title={t('button.next')}
-            onPress={() => {
-              calculateTransactionsGas(); // start calculating
-              navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
-            }}
-          />
-        </Footer>
+          <FooterContent>
+            <Button
+              title={t('button.next')}
+              onPress={() => {
+                calculateTransactionsGas(); // start calculating
+                navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
+              }}
+            />
+          </FooterContent>
         )
       }
     >
@@ -311,6 +311,11 @@ const WalletInfo = styled(Text)`
 
 const WalletInfoAddress = styled(TextWithCopy)`
   ${fontStyles.small};
+`;
+
+const FooterContent = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.mediumLarge}px;
 `;
 
 const SectionTitle = styled(Text)`
