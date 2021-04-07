@@ -19,30 +19,30 @@
 */
 
 import * as React from 'react';
-import { Image } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
+import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
-  iconSource: ImageSource,
+  iconName: IconName,
   onPress?: () => mixed,
 |};
 
-function SpecialButton({ title, iconSource, onPress }: Props) {
+function SpecialButton({ title, iconName, onPress }: Props) {
   return (
     <ButtonContainer onPress={onPress}>
       <ItemView>
         <ItemIconWrapper>
-          <ItemIcon source={iconSource} />
+          <Icon name={iconName} />
         </ItemIconWrapper>
         <ItemTitle>{title}</ItemTitle>
       </ItemView>
@@ -74,11 +74,6 @@ const ItemIconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-horizontal: ${spacing.largePlus}px;
-`;
-
-const ItemIcon = styled(Image)`
-  width: 24px;
-  height: 24px;
 `;
 
 const ItemTitle = styled(Text)`

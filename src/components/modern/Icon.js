@@ -24,6 +24,7 @@ import * as React from 'react';
 import { useThemeColors } from 'utils/themes';
 
 // Assets
+import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
 import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
 import IconArrowRight from 'assets/icons/svg/icon-24-arrow-right.svg';
 import IconArrowDown from 'assets/icons/svg/icon-24-arrow-down.svg';
@@ -82,6 +83,7 @@ import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 
 const components = {
+  'add-cash': IconAddCash,
   'add-contact': IconAddContact,
   'arrow-right': IconArrowRight,
   'arrow-down': IconArrowDown,
@@ -149,6 +151,17 @@ type Props = {|
     height?: number;
 |};
 
+/**
+ * Modern component to display SVG icons.
+ *
+ * In order to add new icon:
+ * 1. Add icon file to assets/icons/svg/
+ * 2. Make sure that the color that is to be tinted is #000 in the icon SVG file
+ * 3. Add import and `components` entry above
+ *
+ * @note Use it only for small icon-like images.
+ * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
+ */
 function Icon({ name, color, ...rest }: Props) {
   const colors = useThemeColors();
 
