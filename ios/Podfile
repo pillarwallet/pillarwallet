@@ -2,6 +2,7 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '10.0'
+use_frameworks!
 
 target 'pillarwallet' do
   config = use_native_modules!
@@ -10,19 +11,19 @@ target 'pillarwallet' do
 
   # Storyly
   # from https://integration.storyly.io/react-native/quick-start.html#ios-installation
-  dynamic_frameworks = ['Storyly', 'SDWebImage']
-  pre_install do |installer|
-    installer.pod_targets.each do |pod|
-      if dynamic_frameworks.include?(pod.name)
-        def pod.dynamic_framework?;
-          true
-        end
-        def pod.build_type;
-          Pod::BuildType.dynamic_framework
-        end
-      end
-    end
-  end
+  # dynamic_frameworks = ['Storyly', 'SDWebImage']
+  # pre_install do |installer|
+  #   installer.pod_targets.each do |pod|
+  #     if dynamic_frameworks.include?(pod.name)
+  #       def pod.dynamic_framework?;
+  #         true
+  #       end
+  #       def pod.build_type;
+  #         Pod::BuildType.dynamic_framework
+  #       end
+  #     end
+  #   end
+  # end
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
