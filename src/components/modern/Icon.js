@@ -23,7 +23,7 @@ import * as React from 'react';
 // Utils
 import { useThemeColors } from 'utils/themes';
 
-// Assets
+// Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
 import IconAddContact from 'assets/icons/svg/icon-24-add-contact.svg';
 import IconArrowRight from 'assets/icons/svg/icon-24-arrow-right.svg';
@@ -82,7 +82,15 @@ import IconUser from 'assets/icons/svg/icon-24-user.svg';
 import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 
+// Assets: services icons
+import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
+import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
+import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
+import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
+import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
+
 const components = {
+  // Generic icons
   'add-cash': IconAddCash,
   'add-contact': IconAddContact,
   'arrow-right': IconArrowRight,
@@ -134,12 +142,19 @@ const components = {
   send: IconSend,
   settings: IconSettings,
   settlement: IconSetttlement,
-  'sort': IconSort,
+  sort: IconSort,
   synthetic: IconSynthetic,
   'thumb-up': IconThumbUp,
   user: IconUser,
   wallet: IconWallet,
   warning: IconWarning,
+
+  // Service icons
+  binance: IconBinance,
+  ethereum: IconEthereum,
+  polygon: IconPolygon,
+  xdai: IconXdai,
+  'wallet-connect': IconWalletConnect,
 };
 
 export type IconName = $Keys<typeof components>;

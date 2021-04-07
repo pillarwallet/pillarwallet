@@ -19,28 +19,28 @@
 */
 
 import * as React from 'react';
-import { Image } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
+import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
-  iconSource?: ImageSource,
+  iconName?: IconName,
   color?: string,
 |};
 
-function HomeListHeader({ title, iconSource, color }: Props) {
+function HomeListHeader({ title, iconName, color }: Props) {
   return (
     <Container>
-      <Icon source={iconSource} />
+      <ItemIcon name={iconName} />
       <Title $color={color} numberOfLines={1}>
         {title}
       </Title>
@@ -57,7 +57,7 @@ const Container = styled.View`
   padding: ${spacing.mediumLarge}px 0;
 `;
 
-const Icon = styled(Image)`
+const ItemIcon = styled(Icon)`
   margin-right: ${spacing.medium}px;
 `;
 

@@ -123,10 +123,10 @@ function AssetsSection({ showSideChains }: Props) {
   const renderChain = (chain: Chain, chainInfo: ?ChainInfo) => {
     if (!chainInfo) return null;
 
-    const { title, iconSource, color } = chains[chain];
+    const { title, iconName, color } = chains[chain];
     return (
       <>
-        <HomeListHeader title={title} iconSource={iconSource} color={color} />
+        <HomeListHeader title={title} iconName={iconName} color={color} />
         {renderChainItems(chainInfo)}
       </>
     );
@@ -141,6 +141,7 @@ function AssetsSection({ showSideChains }: Props) {
       {renderChain(CHAINS.ETHEREUM, wallet.ethereum)}
       {renderChain(CHAINS.BINANCE, wallet.binance)}
       {renderChain(CHAINS.XDAI, wallet.xdai)}
+      {renderChain(CHAINS.POLYGON, wallet.xdai)}
     </Container>
   );
 }

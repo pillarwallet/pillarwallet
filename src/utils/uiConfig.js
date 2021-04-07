@@ -27,19 +27,13 @@ import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
 import type { Chain, AssetCategory } from 'models/Asset';
 import type { IconName } from 'components/modern/Icon';
-
-const mainnetIcon = require('assets/icons/icon-24-network-mainnet.png');
-const binanceIcon = require('assets/icons/icon-24-network-binance.png');
-const xdaiIcon = require('assets/icons/icon-24-network-xdai.png');
-
 
 type ChainsConfig = {
   [key: Chain]: {|
     title: string,
-    iconSource: ImageSource,
+    iconName: IconName,
     color: string,
   |},
 };
@@ -54,18 +48,23 @@ export function useChainsConfig(): ChainsConfig {
   return {
     [CHAINS.ETHEREUM]: {
       title: t('ethereum'),
-      iconSource: mainnetIcon,
+      iconName: 'ethereum',
       color: colors.ethereum,
     },
     [CHAINS.BINANCE]: {
       title: t('binance'),
-      iconSource: binanceIcon,
+      iconName: 'binance',
       color: colors.binance,
     },
     [CHAINS.XDAI]: {
       title: t('xdai'),
-      iconSource: xdaiIcon,
+      iconName: 'xdai',
       color: colors.xdai,
+    },
+    [CHAINS.POLYGON]: {
+      title: t('polygon'),
+      iconName: 'polygon',
+      color: colors.polygon,
     },
   };
 }

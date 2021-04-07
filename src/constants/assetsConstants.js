@@ -22,6 +22,7 @@ export const CHAINS = {
   ETHEREUM: ('ethereum': 'ethereum'),
   BINANCE: ('binance': 'binance'),
   XDAI: ('xdai': 'xdai'),
+  POLYGON: ('polygon': 'polygon'),
 };
 
 export const ASSET_CATEGORIES = {

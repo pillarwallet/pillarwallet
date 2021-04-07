@@ -24,6 +24,7 @@ export type WalletInfo = {|
   ethereum?: ChainInfo,
   binance?: ChainInfo,
   xdai?: ChainInfo,
+  polygon?: ChainInfo,
 |};
 
 export type ChainInfo = {|
