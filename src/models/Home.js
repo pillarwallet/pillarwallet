@@ -28,6 +28,7 @@ export type WalletInfo = {|
 |};
 
 export type ChainInfo = {|
+  walletAddress?: string,
   wallet?: BalanceInfo,
   deposits?: BalanceInfo,
   investments?: BalanceInfo,

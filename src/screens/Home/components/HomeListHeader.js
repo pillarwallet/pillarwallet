@@ -24,8 +24,10 @@ import styled from 'styled-components/native';
 // Components
 import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
+import TextWithCopy from 'components/modern/TextWithCopy';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
@@ -35,15 +37,24 @@ export type Props = {|
   title: string,
   iconName?: IconName,
   color?: string,
+  walletAddress?: string,
 |};
 
-function HomeListHeader({ title, iconName, color }: Props) {
+function HomeListHeader({
+  title,
+  iconName,
+  color,
+  walletAddress,
+}: Props) {
+  const colors = useThemeColors();
+
   return (
     <Container>
       <ItemIcon name={iconName} />
       <Title $color={color} numberOfLines={1}>
         {title}
       </Title>
+      <TextWithCopy textToCopy={walletAddress} iconColor={colors.secondaryText} />
     </Container>
   );
 }
@@ -62,7 +73,6 @@ const ItemIcon = styled(Icon)`
 `;
 
 const Title = styled(Text)`
-  flex: 1;
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   ${({ $color }) => `color: ${$color}`};

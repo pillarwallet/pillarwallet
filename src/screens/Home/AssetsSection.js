@@ -126,7 +126,7 @@ function AssetsSection({ showSideChains }: Props) {
     const { title, iconName, color } = chains[chain];
     return (
       <>
-        <HomeListHeader title={title} iconName={iconName} color={color} />
+        <HomeListHeader title={title} iconName={iconName} color={color} walletAddress={chainInfo.walletAddress} />
         {renderChainItems(chainInfo)}
       </>
     );
