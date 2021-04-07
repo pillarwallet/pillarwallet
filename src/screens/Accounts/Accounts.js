@@ -43,7 +43,7 @@ import { images } from 'utils/images';
 import { responsiveSize } from 'utils/ui';
 
 // constants
-import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
+import { ASSETS, KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
@@ -202,7 +202,7 @@ const AccountsScreen = ({
       id: 'KEY_BASED',
       type: ITEM_TYPE.BUTTON,
       title: t('button.migrateAssetsToSmartWallet'),
-      mainAction: () => { navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE); },
+      mainAction: () => { navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO); },
     });
   }
 

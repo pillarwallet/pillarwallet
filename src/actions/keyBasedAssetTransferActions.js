@@ -20,7 +20,6 @@
 import { Wallet } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
-import { BigNumber } from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
 
 // components
@@ -50,7 +49,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
-import { formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
+import { BigNumber, formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -157,7 +156,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
   };
 };
 
-export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: number) => {
+export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: BigNumber) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
     const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, draftAmount: amount });
@@ -264,7 +263,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
         const { assetData, draftAmount } = keyBasedAssetToTransfer;
         const estimateTransaction = buildAssetTransferTransaction(assetData, {
-          amount: draftAmount,
+          amount: draftAmount?.toFixed(),
           from: keyBasedWalletAddress,
           to: getAccountAddress(firstSmartAccount),
         });
@@ -291,8 +290,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     // check if ETH is being transferred and adjust transfer amount if needed
     const ethTransfer = keyBasedAssetsToTransferUpdated.find(({ assetData }) => assetData?.token === ETH);
     if (ethTransfer) {
-      // $FlowFixMe: bignumber.js typing
-      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
+      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount?.toFixed() ?? 0);
       const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransferUpdated.reduce(
         (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
         new BigNumber(0),

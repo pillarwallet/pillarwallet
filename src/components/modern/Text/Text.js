@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -18,18 +19,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/**
- * Performs map operation and filters out `null` and `undefined` results.
- */
-export function mapNotNil<Item, Result>(items: Item[], selector: (Item, number, Item[]) => ?Result): Result[] {
-  // $FlowFixMe: does not infer that `filter` removes nil values
-  return items.map((item, index, array) => selector(item, index, array)).filter((item) => item != null);
-}
+import * as React from 'react';
+import styled from 'styled-components/native';
 
-/**
- * Type-safe version of `filter(Boolean)`
- */
-export function compactFalsy<Item>(items: (?Item | false)[]): Item[] {
-  // $FlowFixMe: flow cannot infer filtering behavior.
-  return items.filter(Boolean);
-}
+// Utils
+import { appFont, fontStyles } from 'utils/variables';
+
+// Types
+import type { TextProps } from 'utils/types/react-native';
+
+type TextVariant = $Keys<typeof fontStyles>;
+
+type Props = {|
+  ...TextProps,
+  variant?: TextVariant,
+|};
+
+const Text: React.ComponentType<Props> = styled.Text`
+  text-align-vertical: center;
+  font-family: "${appFont.regular}";
+  color: ${({ theme }) => theme.colors.basic010};
+  ${({ variant = 'regular' }) => fontStyles[variant]};
+`;
+
+export default Text;

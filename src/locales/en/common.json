@@ -122,6 +122,7 @@
     "needToActivate": "Need to activate",
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
+    "notEnoughGas": "Insufficient gas",
     "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",
@@ -631,6 +632,44 @@
     "title": {
       "smartWalletIsActivated": "Your Smart Wallet is now activated",
       "walletActivatedScreen": "What's next"
+    },
+    "banner": {
+      "title": "Migrate to Smart Wallet",
+      "body": "Transfer all your assets to an advanced platform."
+    },
+    "intro": {
+      "title": "Time to enhance your crypto experience",
+      "header": "Your account is being upgraded to a Pillar Smart Wallet.",
+      "upgrade": {
+        "subtitle": "What is this upgrade?",
+        "body": "In a few words: Pillar is making Ethereum more accessible and laying a foundation for further improvements of Pillar platform."
+      },
+      "benefits": {
+        "secure": "Keep your funds secure in the event of losing your phone or key.",
+        "ensName": "Get your very own pillar.eth ENS address to use it across different platforms.",
+        "betterApp": "Enjoy a refreshed user interface and improved app performance."
+      },
+      "footer": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new Pillar Smart Wallet. The fee will be extremely small thanks to Pillar Etherspot technology.",
+      "migrate": "Migrate"
+    },
+    "confirm": {
+      "title": "Review",
+      "header": "You are migrating",
+      "details": {
+        "header": "Migration details",
+        "fromKeyWallet": "From existing key wallet",
+        "toSmartWallet": "To Smart Wallet"
+      },
+      "assets": {
+        "header": "Selected assets"
+      },
+      "fees": {
+        "header": "Fees",
+        "ethereum": "Max. Ethereum fee",
+        "pillar": "Pillar fee",
+        "total": "Total Fee"
+      },
+      "submit": "Submit"
     }
   },
 
@@ -739,9 +778,6 @@
       },
       "appSettings": {
         "title": "App settings"
-      },
-      "assetsMigration": {
-        "title": "Migrate assets to Smart Wallet"
       },
       "backup": {
         "title": "Backup not finished",
@@ -1282,8 +1318,8 @@
       "collectibleTransactionSuccess": "Collectible is on its way",
       "poolTogetherTransactionSuccess": "You're in the pool!",
       "sablierTransactionSuccess": "Your stream has begun",
-      "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
-      "amountEditScreen": "Edit amount",
+      "transferAssetsToSmartWalletScreen": "Migration to Smart Wallet",
+      "amountEditScreen": "Set amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
       "creatingTransactions": "Creating transactions",
       "keyBasedAssetsMigrationComplete": "Key based assets migration complete"
@@ -1314,7 +1350,7 @@
       "data": "Data",
       "message": "Message",
       "address": "Address",
-      "ethFee": "Ethereum fee",
+      "ethFee": "Max. Ethereum fee",
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",

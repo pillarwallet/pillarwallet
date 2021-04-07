@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,192 +17,225 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import React from 'react';
-import { ScrollView } from 'react-native';
-import { connect } from 'react-redux';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { formatEther } from 'ethers/lib/utils';
-import { BigNumber } from 'bignumber.js';
-import isEmpty from 'lodash.isempty';
-import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
-import t from 'translations/translate';
+import { orderBy } from 'lodash';
+import { useTranslationWithPrefix } from 'translations/translate';
 
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Footer, Wrapper } from 'components/Layout';
+// Components
+import * as Table from 'components/modern/Table';
+import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import FeeTable from 'components/modern/FeeTable';
+import Image from 'components/Image';
 import Spinner from 'components/Spinner';
-import { BaseText, MediumText } from 'components/Typography';
-import FeeLabelToggle from 'components/FeeLabelToggle';
+import Text from 'components/modern/Text';
 
-// utils
-import { fontStyles, spacing } from 'utils/variables';
-import { formatFullAmount, humanizeHexString } from 'utils/common';
-import { getBalance } from 'utils/assets';
-
-// constants
+// Constants
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 
-// selectors
-import { activeAccountAddressSelector } from 'selectors';
+// Selectors
+import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 
-// types
-import type { Balances, KeyBasedAssetTransfer } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+// Utils
+import { getBalanceBN, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
+import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
+import { useThemedImages } from 'utils/images';
+import { spacing } from 'utils/variables';
 
+// Types
+import type { Balances, Rates, KeyBasedAssetTransfer } from 'models/Asset';
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
-  isCalculatingGas: boolean,
-  availableBalances: Balances,
-  activeAccountAddress: string,
-  keyBasedWalletAddress: ?string,
-};
+const KeyBasedAssetTransferConfirm = () => {
+  const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
+  const navigation = useNavigation();
 
-const DetailsTitle = styled(BaseText)`
-  ${fontStyles.regular};
-  color: #999999;
-`;
+  const rates = useRates();
+  const fiatCurrency = useFiatCurrency();
 
-const DetailsValue = styled(MediumText)`
-  ${fontStyles.big};
-`;
+  const assetTransfers = useRootSelector((root) => root.keyBasedAssetTransfer.data);
+  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+  const isCalculatingGas = useRootSelector(root => root.keyBasedAssetTransfer.isCalculatingGas);
 
-const DetailsLine = styled.View`
-  padding-bottom: ${spacing.rhythm}px;
-`;
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+  const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
 
-const DetailsWrapper = styled.View`
-  padding: 30px ${spacing.large}px 0px ${spacing.large}px;
-`;
+  const images = useThemedImages();
 
-const FooterInner = styled.View`
-  align-items: center;
-  width: 100%;
-`;
-
-const NotEnoughFee = styled(BaseText)`
-  margin-top: ${spacing.large}px;
-`;
-
-const KeyBasedAssetTransferConfirm = ({
-  keyBasedAssetsToTransfer,
-  isCalculatingGas,
-  availableBalances,
-  activeAccountAddress,
-  keyBasedWalletAddress,
-  navigation,
-}: Props) => {
-  const isLoading = isCalculatingGas;
-
-  const tokensTransfer = keyBasedAssetsToTransfer.filter(
-    ({ assetData }) => assetData?.tokenType !== COLLECTIBLES,
-  );
-  const collectiblesTransfer = keyBasedAssetsToTransfer.filter(
-    ({ assetData }) => assetData?.tokenType === COLLECTIBLES,
-  );
-
-  const renderFooter = () => {
-    let ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
-    const ethTransfer = keyBasedAssetsToTransfer.find(({ assetData }) => assetData?.token === ETH);
-    // $FlowFixMe: bignumber.js typing
-    if (ethTransfer) ethBalanceBN = ethBalanceBN.minus(new BigNumber(ethTransfer.amount));
-    const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransfer.reduce(
-      (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
-      new BigNumber(0),
+  if (isCalculatingGas) {
+    return (
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title') }] }}>
+        <SpinnerContent>
+          <Spinner />
+        </SpinnerContent>
+      </ContainerWithHeader>
     );
-    const totalTransferFeeBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
-    const notEnoughFee = !isCalculatingGas && totalTransferFeeBN.isGreaterThan(ethBalanceBN);
+  }
+
+  const handleSubmit = () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK);
+
+  const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
+    if (assetData.tokenType === COLLECTIBLES) {
+      return (
+        <Table.Row
+          key={assetData.id}
+          title={assetData.name}
+          value={tRoot('label.collectible')}
+          separator={index !== 0}
+        />
+      );
+    }
+
+    const valueInEth = tRoot('tokenValue', {
+      value: formatTokenAmount(amount ?? 0, assetData.token),
+      token: assetData.token,
+    });
+    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
 
     return (
-      <Footer>
-        <FooterInner>
-          <FeeLabelToggle
-            labelText={t('label.fee')}
-            txFeeInWei={totalTransferFeeWeiBN}
-            showFiatDefault={!notEnoughFee}
-            hasError={!!notEnoughFee}
-          />
-          {!!notEnoughFee && <NotEnoughFee negative>{t('error.notEnoughTokenForFee', { token: ETH })}</NotEnoughFee>}
-          <Button
-            style={{ marginTop: spacing.large }}
-            disabled={!!notEnoughFee}
-            title={t('button.confirm')}
-            onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK)}
-          />
-        </FooterInner>
-      </Footer>
+      <Table.RowContainer key={assetData.token} separator={index !== 0}>
+        <Table.RowTitle>{assetData.name}</Table.RowTitle>
+
+        <Table.RowValue fontVariant="tabular-nums">{valueInEth}</Table.RowValue>
+
+        {!!valueInFiat && (
+          <Table.RowValue variant="secondary" fontVariant="tabular-nums">
+            {valueInFiat}
+          </Table.RowValue>
+        )}
+      </Table.RowContainer>
     );
   };
 
-  const renderDetails = () => (
-    <ScrollView>
-      <DetailsWrapper>
-        <DetailsLine>
-          <DetailsTitle>{t('transactions.label.fromKeyWallet')}</DetailsTitle>
-          <DetailsValue>{humanizeHexString(keyBasedWalletAddress)}</DetailsValue>
-        </DetailsLine>
-        <DetailsLine>
-          <DetailsTitle>{t('transactions.label.toSmartWallet')}</DetailsTitle>
-          <DetailsValue>{humanizeHexString(activeAccountAddress)}</DetailsValue>
-        </DetailsLine>
-        {!isEmpty(tokensTransfer) && (
-          <DetailsLine>
-            <DetailsTitle>{t('transactions.label.tokensToTransfer')}</DetailsTitle>
-            {tokensTransfer.map(({ assetData: { token: symbol }, amount }) => (
-              <DetailsValue key={symbol}>
-                {t('tokenValue', { value: formatFullAmount(amount || ''), token: symbol })}
-              </DetailsValue>
-            ))}
-          </DetailsLine>
-        )}
-        {!isEmpty(collectiblesTransfer) && (
-          <DetailsLine>
-            <DetailsTitle>{t('transactions.label.collectiblesToTransfer')}</DetailsTitle>
-            {collectiblesTransfer.map(({ assetData: { name } }) => (
-              <DetailsValue key={name}>{name}</DetailsValue>
-            ))}
-          </DetailsLine>
-        )}
-      </DetailsWrapper>
-    </ScrollView>
-  );
+  const sortedAssetTransfers = sortAssetTransfers(assetTransfers, rates, fiatCurrency);
+
+  const totalValue = getTotalValue(assetTransfers, rates, fiatCurrency);
+  const totalFee = getTotalFee(assetTransfers);
+
+  const remainingEthBalance = getRemainingBalance(keyWalletBalances, assetTransfers, ETH);
+  const hasEnoughGas = remainingEthBalance.gte(totalFee);
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('title.confirm') }] }}
-      footer={!isLoading && renderFooter()}
+      headerProps={{ centerItems: [{ title: t('title') }] }}
+      footer={
+        <FooterContent>
+          <Button
+            title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
+            onPress={handleSubmit}
+            disabled={!hasEnoughGas}
+          />
+        </FooterContent>
+      }
+      putContentInScrollView
     >
-      {isLoading && <Wrapper flex={1} center><Spinner /></Wrapper>}
-      {!isLoading && renderDetails()}
+      <Content>
+        <Header>
+          <SmartWalletLogo source={images.smartWalletIcon} />
+          <BalanceLabel>{t('header')}</BalanceLabel>
+          <BalanceView fiatCurrency={fiatCurrency} balance={totalValue} />
+        </Header>
+
+        <Table.Header>{t('details.header')}</Table.Header>
+        <Table.Row
+          title={t('details.fromKeyWallet')}
+          value={humanizeHexString(keyBasedWalletAddress)}
+          fontVariant="tabular-nums"
+          separator={false}
+        />
+        <Table.Row
+          title={t('details.toSmartWallet')}
+          value={humanizeHexString(activeAccountAddress)}
+          fontVariant="tabular-nums"
+        />
+
+        <Table.Header>{t('assets.header')}</Table.Header>
+        {sortedAssetTransfers.map(renderItem)}
+
+        <FeeTable fee={totalFee} />
+      </Content>
     </ContainerWithHeader>
   );
 };
 
-const mapStateToProps = ({
-  keyBasedAssetTransfer: {
-    data: keyBasedAssetsToTransfer,
-    isCalculatingGas,
-    availableBalances,
-  },
-  wallet: { data: walletData },
-}: RootReducerState): $Shape<Props> => ({
-  keyBasedAssetsToTransfer,
-  isCalculatingGas,
-  availableBalances,
-  keyBasedWalletAddress: walletData?.address,
-});
+export default KeyBasedAssetTransferConfirm;
 
-const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
-});
+const getRemainingBalance = (balances: Balances, assetTransfers: KeyBasedAssetTransfer[], token: string) => {
+  const balance = getBalanceBN(balances, token);
+  const transfer = assetTransfers.find(({ assetData }) => assetData?.token === ETH);
 
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
+  return transfer ? balance.minus(transfer.amount ?? 0) : balance;
+};
 
-export default connect(combinedMapStateToProps)(KeyBasedAssetTransferConfirm);
+const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: Rates, fiatCurrency: string) => {
+  let result = 0;
+
+  assetTransfers.forEach(({ assetData, amount }) => {
+    result += getBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
+  });
+
+  return result;
+};
+
+const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
+  let result = BigNumber(0);
+
+  assetTransfers.forEach(({ calculatedGasLimit, gasPrice }) => {
+    const txFee = BigNumber(calculatedGasLimit ?? 0).multipliedBy(formatEther(gasPrice ?? 0));
+    result = result.plus(txFee);
+  });
+
+  return result;
+};
+
+const sortAssetTransfers = (
+  assetTransfers: KeyBasedAssetTransfer[],
+  rates: Rates,
+  fiatCurrency: string,
+): KeyBasedAssetTransfer[] => {
+  return orderBy(
+    assetTransfers,
+    [
+      (transfer: KeyBasedAssetTransfer) => (transfer.assetData.tokenType !== COLLECTIBLES ? 1 : 0),
+      (transfer: KeyBasedAssetTransfer) =>
+        getBalanceInFiat(fiatCurrency, transfer.amount ?? 0, rates, transfer.assetData.token) ?? 0,
+      (transfer: KeyBasedAssetTransfer) => transfer.assetData.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
+
+const Content = styled.View`
+  padding: 0 ${spacing.large}px ${spacing.large}px;
+`;
+
+const SpinnerContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Header = styled.View`
+  align-items: center;
+  padding-vertical: ${spacing.mediumLarge}px;
+`;
+
+const SmartWalletLogo = styled(Image)`
+  height: 64px;
+  width: 64px;
+  margin-vertical: ${spacing.mediumLarge}px;
+`;
+
+const BalanceLabel = styled(Text)`
+  margin-vertical: ${spacing.mediumLarge}px;
+`;
+
+const FooterContent = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.mediumLarge}px;
+`;
