@@ -39,6 +39,7 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 
 // Local
 import BalanceSection from './BalanceSection';
+import AssetsPieChart from './AssetsPieChart';
 import AssetsSection from './AssetsSection';
 import Controls from './Controls';
 import FloatingActions from './FloatingActions';
@@ -71,6 +72,8 @@ function Home() {
       />
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
+
+        <AssetsPieChart />
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 
