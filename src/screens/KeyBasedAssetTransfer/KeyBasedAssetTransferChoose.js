@@ -37,11 +37,11 @@ import {
 // Components
 import { Footer, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
 
@@ -51,11 +51,12 @@ import {
   addressesEqual,
   getAssetData,
   getBalance,
+  getBalanceBN,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
-  getFormattedBalanceInFiat,
 } from 'utils/assets';
+import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Constants
@@ -74,7 +75,7 @@ type Props = {
   isFetchingAvailableCollectibles: boolean,
   availableBalances: Balances,
   availableCollectibles: Collectibles,
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => void,
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   supportedAssets: Asset[],
   walletAddress: ?string,
@@ -119,7 +120,7 @@ const KeyBasedAssetTransferChoose = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onAssetSelect = (assetData: AssetData, amount?: number) => {
+  const onAssetSelect = (assetData: AssetData, amount?: BigNumber) => {
     const assetExist = keyBasedAssetsToTransfer.some((assetToTransfer) =>
       isMatchingAssetToTransfer(assetToTransfer, assetData),
     );
@@ -157,12 +158,11 @@ const KeyBasedAssetTransferChoose = ({
       const onCheck = () => onAssetSelect(item);
 
       return (
-        <ListItemWithImage
-          label={item.name}
-          itemImageUrl={item.icon}
+        <AssetListItem
+          name={item.name}
+          iconUrl={item.icon}
           onPress={onCheck}
-          leftAddon={<CheckBox value={isChecked} onValueChange={onCheck} />}
-          fallbackToGenericToken
+          leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}
         />
       );
     }
@@ -171,34 +171,26 @@ const KeyBasedAssetTransferChoose = ({
       isMatchingAssetToTransfer(assetToTransfer, item),
     );
 
-    const assetAmount = checkedAsset?.draftAmount || getBalance(availableBalances, item.token);
-    const assetValue = getFormattedBalanceInFiat(baseFiatCurrency, assetAmount, rates || {}, item.token);
-    const onCheck = () => onAssetSelect(item, assetAmount);
+    const assetAmountBN = checkedAsset?.draftAmount || getBalanceBN(availableBalances, item.token);
+    const onCheck = () => onAssetSelect(item, assetAmountBN);
 
     return (
-      <ListItemWithImage
-        label={item.name}
-        itemImageUrl={item.icon}
+      <AssetListItem
+        name={item.name}
+        symbol={item.token}
+        iconUrl={item.icon}
+        balance={assetAmountBN}
         onPress={onCheck}
-        leftAddon={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
-        fallbackToGenericToken
-        balance={{
-          token: item.token,
-          balance: assetAmount,
-          value: assetValue,
-        }}
+        onPressBalance={() =>
+          navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT, {
+            assetData: item,
+            value: assetAmountBN,
+          })
+        }
+        leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
       />
     );
   };
-
-  const editAmountSetting = {
-    link: t('button.edit'),
-    onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT),
-  };
-
-  const hasTokensSelected = !isEmpty(
-    keyBasedAssetsToTransfer.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
-  );
 
   let totalValue = 0;
   keyBasedAssetsToTransfer.forEach((asset) => {
@@ -209,7 +201,6 @@ const KeyBasedAssetTransferChoose = ({
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('transactions.title.transferAssetsToSmartWalletScreen') }],
-        rightItems: [hasTokensSelected ? editAmountSetting : {}],
       }}
       footer={
         !isEmpty(keyBasedAssetsToTransfer) && (
@@ -273,7 +264,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => dispatch(
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => dispatch(
     addKeyBasedAssetToTransferAction(assetData, amount),
   ),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
