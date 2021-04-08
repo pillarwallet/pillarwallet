@@ -73,6 +73,7 @@ type AssetCategoriesConfig = {
   [key: AssetCategory]: {|
     title: string,
     iconName: IconName,
+    chartColor: string,
   |},
 };
 
@@ -86,30 +87,37 @@ export function useAssetCategoriesConfig(): AssetCategoriesConfig {
     [ASSET_CATEGORIES.WALLET]: {
       title: t('wallet'),
       iconName: 'wallet',
+      chartColor: '#e91e63',
     },
     [ASSET_CATEGORIES.DEPOSITS]: {
       title: t('deposits'),
       iconName: 'deposit',
+      chartColor: '#9c27b0',
     },
     [ASSET_CATEGORIES.INVESTMENTS]: {
       title: t('investments'),
       iconName: 'investment',
+      chartColor: '#5727b0',
     },
     [ASSET_CATEGORIES.LIQUIDITY_POOLS]: {
       title: t('liquidityPools'),
       iconName: 'liquidity-pool',
+      chartColor: '#276bb0',
     },
     [ASSET_CATEGORIES.COLLECTIBLES]: {
       title: t('collectibles'),
       iconName: 'collectible',
+      chartColor: '#e91e63',
     },
     [ASSET_CATEGORIES.REWARDS]: {
       title: t('rewards'),
       iconName: 'wallet',
+      chartColor: '#57acdc',
     },
     [ASSET_CATEGORIES.DATASETS]: {
       title: t('datasets'),
       iconName: 'wallet',
+      chartColor: '#57dcbe',
     },
   };
 }

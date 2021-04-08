@@ -32,7 +32,8 @@ import { getCurrencySymbol } from 'utils/common';
  */
 
 type FormatValueOptions = {|
-  decimalPlaces?: number; // default: undefined -> truncate factional zeros
+  decimalPlaces?: number; // default: undefined -> full precision
+  stripTrailingZeros?: number; // default: true
 |};
 
 /**
@@ -41,24 +42,18 @@ type FormatValueOptions = {|
 export function formatValue(value: ?BigNumber, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;
 
-  const format = {
-    decimalSeparator: '.',
-    groupSeparator: ',',
-    groupSize: 3,
-  };
-
   // $FlowFixMe: incorrect flow-typed `decimalPlaces` nullability
-  return value.toFormat(options?.decimalPlaces, BigNumber.ROUND_DOWN, format);
+  return value.toFormat(options?.decimalPlaces, BigNumber.ROUND_DOWN);
 }
 
 /**
  * 0.5 => '50%'
- * -0.01234 => '-1,23%'
+ * -0.01234 => '-1,2%'
  */
 export function formatPercentValue(value: ?BigNumber) {
   if (!value || !value.isFinite()) return null;
 
-  return t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2 }) });
+  return t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 1 }) });
 }
 
 /**

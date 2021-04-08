@@ -73,7 +73,7 @@ function Home() {
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
 
-        <AssetsPieChart />
+        <AssetsPieChart includeSideChains={showSideChains} />
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 

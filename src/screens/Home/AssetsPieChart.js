@@ -19,56 +19,74 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
-
-// Components
-import Text from 'components/modern/Text';
+import { VictoryPie, VictoryLabel } from 'victory-native';
 
 // Constants
-import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
-import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
-
-// Selectors
-import { useFiatCurrency } from 'selectors';
+import { ASSET_CATEGORIES } from 'constants/assetsConstants';
 
 // Utils
-import { formatFiatValue, formatFiatProfit } from 'utils/format';
-import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
-import { useThemeColors } from 'utils/themes';
-
-// Types
-import type { ChainInfo, BalanceInfo } from 'models/Home';
-import type { Chain, AssetCategory } from 'models/Asset';
+import { BigNumber } from 'utils/common';
+import { formatPercentValue } from 'utils/format';
+import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Local
 import { useWalletInfo } from './utils';
 
 type Props = {|
+  includeSideChains: boolean;
 |};
 
-function AssetsPieChart(props: Props) {
-  const { t, tRoot } = useTranslationWithPrefix('home.assets');
-  const navigation = useNavigation();
-
-  const wallet = useWalletInfo();
-  const fiatCurrency = useFiatCurrency();
-
-  const chains = useChainsConfig();
-  const categories = useAssetCategoriesConfig();
-  const colors = useThemeColors();
+function AssetsPieChart({ includeSideChains }: Props) {
+  const { data, colorScale } = useChartProps(includeSideChains);
 
   return (
     <Container>
-      <Text>Pie Chart</Text>
+      <VictoryPie
+        animate
+        radius={100}
+        innerRadius={63}
+        data={data}
+        colorScale={colorScale}
+        labelComponent={
+          <VictoryLabel
+            text={({ datum }) =>
+              datum?.value > 0.05 ? [`${datum.title}`, formatPercentValue(BigNumber(datum.value))] : ['', '']
+            }
+          />
+        }
+      />
     </Container>
   );
 }
 
 export default AssetsPieChart;
 
+const useChartProps = (includeSideChains: boolean) => {
+  const { total, ethereum } = useWalletInfo();
+  const config = useAssetCategoriesConfig();
+
+  const balances = includeSideChains ? total : ethereum;
+
+  const data = [];
+  const colorScale = [];
+
+  Object.keys(ASSET_CATEGORIES).map(key => ASSET_CATEGORIES[key]).forEach(category => {
+    const { title, chartColor } = config[category];
+    if (category === 'collectibles') return;
+
+    const categoryBalance = balances[category]?.balanceInFiat;
+    const totalBalance = balances.total.balanceInFiat;
+    if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
+    const value = categoryBalance.dividedBy(totalBalance).toNumber();
+    data.push({ title, y: value, value });
+    colorScale.push(chartColor);
+  });
+
+  return { data, colorScale };
+};
+
 const Container = styled.View`
   align-items: center;
-  background-color: red;
+  //  background-color: red;
 `;
