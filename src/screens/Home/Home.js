@@ -43,18 +43,22 @@ import AssetsPieChart from './AssetsPieChart';
 import AssetsSection from './AssetsSection';
 import Controls from './Controls';
 import FloatingActions from './FloatingActions';
+import { useChainBalances, getChainBalancesTotal } from './utils';
 
 function Home() {
   const navigation = useNavigation();
 
   const [showSideChains, setShowSideChains] = React.useState(false);
 
+  const chainsBalances = useChainBalances();
   const user = useUser();
 
   const handleToggleSideChains = () => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
     setShowSideChains(!showSideChains);
   };
+
+  const categoryBalances = showSideChains ? getChainBalancesTotal(chainsBalances) : chainsBalances.ethereum;
 
   return (
     <Container>
@@ -73,7 +77,7 @@ function Home() {
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
 
-        <AssetsPieChart includeSideChains={showSideChains} />
+        <AssetsPieChart balances={categoryBalances} />
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 

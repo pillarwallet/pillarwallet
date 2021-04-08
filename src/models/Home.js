@@ -45,3 +45,23 @@ export type BalanceInfo = {|
   balanceInFiat: BigNumber,
   changeInFiat?: BigNumber,
 |};
+
+export type ChainBalances = {|
+  ethereum: CategoryBalances,
+  binance?: CategoryBalances,
+  xdai?: CategoryBalances,
+  polygon?: CategoryBalances,
+|};
+export type CategoryBalances = {|
+  wallet?: Balance,
+  deposits?: Balance,
+  investments?: Balance,
+  liquidityPools?: Balance,
+  rewards?: Balance,
+  datasets?: Balance,
+|};
+
+export type Balance = {|
+  balanceInFiat: BigNumber,
+  profitInFiat?: ?BigNumber,
+|};

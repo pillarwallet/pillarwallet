@@ -35,7 +35,7 @@ import { BigNumber } from 'utils/common';
 import { sum, sumOrNull } from 'utils/bigNumber';
 
 // Types
-import type { WalletInfo, ChainInfo, BalanceInfo } from 'models/Home';
+import type { WalletInfo, ChainInfo, BalanceInfo, ChainBalances, CategoryBalances, Balance } from 'models/Home';
 
 export const useTotalBalance = (): BalanceInfo => {
   const totalBalance = useRootSelector(totalBalanceSelector);
@@ -90,3 +90,47 @@ const getTotalChainInfo = (chains: ChainInfo[]): ChainInfo => {
     total: getTotalBalanceInfo(chains.map((c) => c.total)),
   };
 };
+
+export function useChainBalances(): ChainBalances {
+  const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
+  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
+  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
+  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
+  const rewards = { balanceInFiat: BigNumber(0) };
+  const datasets = { balanceInFiat: BigNumber(0) };
+
+  const ethereum = {
+    wallet,
+    deposits,
+    investments,
+    liquidityPools,
+    rewards,
+    datasets,
+  };
+
+  return { ethereum, binance: { liquidityPools: { balanceInFiat: BigNumber(1000) } } };
+}
+
+export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
+  const balances = Object.keys(chains).map((key) => chains[key]);
+  return {
+    wallet: getTotalBalances(balances.map((chain) => chain?.wallet)),
+    deposits: getTotalBalances(balances.map((chain) => chain?.deposits)),
+    investments: getTotalBalances(balances.map((chain) => chain?.investments)),
+    liquidityPools: getTotalBalances(balances.map((chain) => chain?.liquidityPools)),
+    rewards: getTotalBalances(balances.map((chain) => chain?.rewards)),
+    datasets: getTotalBalances(balances.map((chain) => chain?.datasets)),
+  };
+}
+
+export function getCategoryBalancesTotal(categories: CategoryBalances): Balance {
+  const balances = Object.keys(categories).map((key) => categories[key]);
+  return getTotalBalances(balances);
+}
+
+export function getTotalBalances(balances: (?Balance)[]): Balance {
+  return {
+    balanceInFiat: sum(balances.map((b) => b?.balanceInFiat)),
+    profitInFiat: sumOrNull(balances.map((b) => b?.profitInFiat)),
+  };
+}

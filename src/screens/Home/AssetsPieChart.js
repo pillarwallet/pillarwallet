@@ -24,9 +24,6 @@ import styled from 'styled-components/native';
 import Svg, { Circle } from 'react-native-svg';
 import { VictoryPie, VictoryLabel } from 'victory-native';
 
-// Constants
-import { ASSET_CATEGORIES } from 'constants/assetsConstants';
-
 // Utils
 import { BigNumber } from 'utils/common';
 import { formatPercentValue } from 'utils/format';
@@ -34,15 +31,18 @@ import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
+// Types
+import type { CategoryBalances } from 'models/Home';
+
 // Local
-import { useWalletInfo } from './utils';
+import { getCategoryBalancesTotal } from './utils';
 
 type Props = {|
-  includeSideChains: boolean;
+  balances: CategoryBalances,
 |};
 
-function AssetsPieChart({ includeSideChains }: Props) {
-  const { data, colorScale } = useChartProps(includeSideChains);
+function AssetsPieChart({ balances }: Props) {
+  const { data, colorScale } = useChartProps(balances);
   const colors = useThemeColors();
 
   const window = useWindowDimensions();
@@ -85,38 +85,35 @@ type ChartDatum = {|
   y: number,
   title: string,
   value: number,
-  hidden?: boolean,
 |};
 
-const useChartProps = (includeSideChains: boolean) => {
-  const { total, ethereum } = useWalletInfo();
+const useChartProps = (balances: CategoryBalances) => {
   const config = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
-  const balances = includeSideChains ? total : ethereum;
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  if (balances.total.balanceInFiat.isZero()) {
-    Object.keys(ASSET_CATEGORIES).map(key => ASSET_CATEGORIES[key]).forEach(category => {
+  const total = getCategoryBalancesTotal(balances);
+
+  // Zero balance case
+  if (total.balanceInFiat.isZero()) {
+    Object.keys(balances).forEach((category, index, array) => {
       const { title } = config[category];
-      if (category === 'collectibles') return;
-      data.push({ y: 1 / 6, title, value: 0 });
+      data.push({ y: 1 / array.length, title, value: 0 });
       colorScale.push(colors.pieChartEmpty);
     });
 
     return { data, colorScale };
   }
 
-  Object.keys(ASSET_CATEGORIES).map(key => ASSET_CATEGORIES[key]).forEach(category => {
-    const { title, chartColor } = config[category];
-    if (category === 'collectibles') return;
-
-    const categoryBalance: ?BigNumber = balances[category]?.balanceInFiat;
-    const totalBalance = balances.total.balanceInFiat;
+  Object.keys(balances).forEach(category => {
+    const categoryBalance = balances[category]?.balanceInFiat;
+    const totalBalance = total.balanceInFiat;
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
 
     const value = categoryBalance.dividedBy(totalBalance).toNumber();
+    const { title, chartColor } = config[category];
     data.push({ y: value, title, value });
     colorScale.push(chartColor);
   });
