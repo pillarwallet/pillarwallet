@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04981A9824C8648D00748082 /* LogoAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04981A9724C8648D00748082 /* LogoAnimationView.swift */; };
 		04981AAD24C97CEC00748082 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04981AAC24C97CEC00748082 /* Launch.storyboard */; };
+		0AF1C017261F485200504BB5 /* Pods_pillarwallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AF1C016261F485200504BB5 /* Pods_pillarwallet.framework */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -34,6 +35,7 @@
 		0A715B91261E468600C78CBD /* libSDWebImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImageWebPCoder.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A715B95261E46DB00C78CBD /* Storyly.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Storyly.xcframework; path = Pods/Storyly/Storyly.xcframework; sourceTree = "<group>"; };
+		0AF1C016261F485200504BB5 /* Pods_pillarwallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_pillarwallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */,
+				0AF1C017261F485200504BB5 /* Pods_pillarwallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +109,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0AF1C016261F485200504BB5 /* Pods_pillarwallet.framework */,
 				0A715B95261E46DB00C78CBD /* Storyly.xcframework */,
 				0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */,
 				0A715B91261E468600C78CBD /* libSDWebImage.a */,
@@ -606,6 +610,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -718,6 +723,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -882,6 +888,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
