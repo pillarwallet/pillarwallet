@@ -28,6 +28,8 @@ import { ASSET_CATEGORIES } from 'constants/assetsConstants';
 // Utils
 import { BigNumber } from 'utils/common';
 import { formatPercentValue } from 'utils/format';
+import { useThemeColors } from 'utils/themes';
+import { fontSizes } from 'utils/variables';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Local
@@ -39,28 +41,40 @@ type Props = {|
 
 function AssetsPieChart({ includeSideChains }: Props) {
   const { data, colorScale } = useChartProps(includeSideChains);
+  const colors = useThemeColors();
+
+  const getLabelTexts = ({ datum }: { datum: ChartDatum }) => {
+    // Display label only when there is roughly enough place for it not to colide with neighbouring labels
+    // (0.075 value chosen experimentally).
+    return datum?.value > 0.075 ? [`${datum.title}`, formatPercentValue(BigNumber(datum.value))] : null;
+  };
+
+  const lableSvgStyle = {
+    fontSize: fontSizes.small,
+    fill: colors.basic010,
+  };
 
   return (
     <Container>
       <VictoryPie
-        animate
-        radius={100}
-        innerRadius={63}
         data={data}
         colorScale={colorScale}
-        labelComponent={
-          <VictoryLabel
-            text={({ datum }) =>
-              datum?.value > 0.05 ? [`${datum.title}`, formatPercentValue(BigNumber(datum.value))] : ['', '']
-            }
-          />
-        }
+        animate
+        height={300}
+        radius={92}
+        innerRadius={55}
+        labelComponent={<VictoryLabel text={getLabelTexts} style={lableSvgStyle} lineHeight={1.5} />}
       />
     </Container>
   );
 }
 
 export default AssetsPieChart;
+type ChartDatum = {|
+  title: string,
+  value: number,
+  y: number,
+|};
 
 const useChartProps = (includeSideChains: boolean) => {
   const { total, ethereum } = useWalletInfo();
@@ -68,14 +82,14 @@ const useChartProps = (includeSideChains: boolean) => {
 
   const balances = includeSideChains ? total : ethereum;
 
-  const data = [];
-  const colorScale = [];
+  const data: ChartDatum[] = [];
+  const colorScale: string[] = [];
 
   Object.keys(ASSET_CATEGORIES).map(key => ASSET_CATEGORIES[key]).forEach(category => {
     const { title, chartColor } = config[category];
     if (category === 'collectibles') return;
 
-    const categoryBalance = balances[category]?.balanceInFiat;
+    const categoryBalance: ?BigNumber = balances[category]?.balanceInFiat;
     const totalBalance = balances.total.balanceInFiat;
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
     const value = categoryBalance.dividedBy(totalBalance).toNumber();
@@ -88,5 +102,4 @@ const useChartProps = (includeSideChains: boolean) => {
 
 const Container = styled.View`
   align-items: center;
-  //  background-color: red;
 `;
