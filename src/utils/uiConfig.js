@@ -111,12 +111,12 @@ export function useAssetCategoriesConfig(): AssetCategoriesConfig {
     },
     [ASSET_CATEGORIES.REWARDS]: {
       title: t('rewards'),
-      iconName: 'wallet',
+      iconName: 'reward',
       chartColor: '#57acdc',
     },
     [ASSET_CATEGORIES.DATASETS]: {
       title: t('datasets'),
-      iconName: 'wallet',
+      iconName: 'dataset',
       chartColor: '#57dcbe',
     },
   };

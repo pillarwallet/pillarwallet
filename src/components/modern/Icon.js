@@ -42,6 +42,7 @@ import IconClose from 'assets/icons/svg/icon-24-close.svg';
 import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
 import IconContacts from 'assets/icons/svg/icon-24-contacts.svg';
 import IconCopy from 'assets/icons/svg/icon-24-copy.svg';
+import IconDataset from 'assets/icons/svg/icon-24-dataset.svg';
 import IconDeposit from 'assets/icons/svg/icon-24-deposit.svg';
 import IconDots from 'assets/icons/svg/icon-24-dots.svg';
 import IconEqual from 'assets/icons/svg/icon-24-equal.svg';
@@ -67,6 +68,7 @@ import IconPhone from 'assets/icons/svg/icon-24-phone.svg';
 import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
 import IconPower from 'assets/icons/svg/icon-24-power.svg';
 import IconQrCode from 'assets/icons/svg/icon-24-qrcode.svg';
+import IconReward from 'assets/icons/svg/icon-24-reward.svg';
 import IconQuestion from 'assets/icons/svg/icon-24-question.svg';
 import IconRecovery from 'assets/icons/svg/icon-24-recovery.svg';
 import IconRefresh from 'assets/icons/svg/icon-24-refresh.svg';
@@ -109,6 +111,7 @@ const components = {
   collectible: IconCollectible,
   contacts: IconContacts,
   copy: IconCopy,
+  dataset: IconDataset,
   deposit: IconDeposit,
   dots: IconDots,
   equal: IconEqual,
@@ -134,6 +137,7 @@ const components = {
   plus: IconPlus,
   power: IconPower,
   qrcode: IconQrCode,
+  reward: IconReward,
   question: IconQuestion,
   recovery: IconRecovery,
   refresh: IconRefresh,
