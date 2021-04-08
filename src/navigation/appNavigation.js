@@ -106,6 +106,7 @@ import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
 import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
 import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
 import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
+import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
 import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
@@ -272,6 +273,7 @@ import {
   POOLTOGETHER_PURCHASE_CONFIRM,
   POOLTOGETHER_WITHDRAW,
   POOLTOGETHER_WITHDRAW_CONFIRM,
+  KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT,
   KEY_BASED_ASSET_TRANSFER_CONFIRM,
@@ -752,6 +754,7 @@ const lendingWithdrawDepositsFlow = createStackNavigator({
 lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const keyBasedAssetTransferFlow = createStackNavigator({
+  [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
   [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
   [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
   [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,

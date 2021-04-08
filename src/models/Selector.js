@@ -45,15 +45,3 @@ export type Option = {
     syntheticBalance?: string,
   },
 };
-
-export type HorizontalOption = {
-  title?: string,
-  data: Option[],
-};
-
-export type OptionTabs = {
-  name: string,
-  id: string,
-  options?: Option[],
-  collectibles?: boolean,
-}

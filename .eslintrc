@@ -3,6 +3,7 @@
     "airbnb",
     "plugin:flowtype/recommended",
     "plugin:promise/recommended",
+    "plugin:react-hooks/recommended",
     "./.eslintTranslations"
   ],
   "parser": "@babel/eslint-parser",

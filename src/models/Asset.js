@@ -17,10 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { BigNumber } from 'bignumber.js';
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
+export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetData = {|
   token: string,
   contractAddress?: string,
-  tokenType?: string,
+  tokenType?: TokenType,
   name?: string,
   decimals: number,
   icon?: string,
@@ -100,10 +105,42 @@ export type DepositedAsset = Asset & {
 export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
   assetData: AssetData,
-  draftAmount?: number,
+  draftAmount?: BigNumber,
   amount?: number,
   calculatedGasLimit?: number,
   gasPrice?: number,
   signedTransaction?: Object,
   status?: string,
+|};
+export type AssetOption = {
+  // Core props
+  address?: string,
+  balance?: ?AssetBalance,
+  decimals?: number,
+  imageUrl: string,
+  name: string,
+  symbol: string,
+  tokenType?: TokenType,
+
+  // Additional props
+  assetBalance?: string,
+  contractAddress?: string,
+  ethAddress?: string,
+  formattedBalanceInFiat?: string,
+  icon?: string,
+  iconUrl?: string,
+  id?: string,
+  imageSource?: string,
+  imageUrl?: string,
+  lastUpdateTime?: string,
+  token?: string,
+  tokenId?: string,
+};
+
+export type AssetBalance = {|
+  balance?: number,
+  balanceInFiat?: number,
+  token?: string,
+  value?: string,
+  syntheticBalance?: string,
 |};

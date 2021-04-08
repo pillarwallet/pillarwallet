@@ -15,6 +15,7 @@
 		13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */; };
 		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
+		52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
 		696ACF5624049EBC009B0BEC /* EuclidCircularB-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */; };
@@ -39,6 +40,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pillarwallet/main.m; sourceTree = "<group>"; };
 		2862B28966EF4024B1921B80 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.debug.xcconfig"; sourceTree = "<group>"; };
+		52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SpaceGrotesk-Medium.ttf"; path = "../src/assets/fonts/SpaceGrotesk-Medium.ttf"; sourceTree = "<group>"; };
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -126,6 +128,7 @@
 				696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */,
 				696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */,
 				696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */,
+				52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */,
 				696ACF5124049C74009B0BEC /* PillarIcons.ttf */,
 				2862B28966EF4024B1921B80 /* Roboto_medium.ttf */,
 				7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */,
@@ -246,6 +249,7 @@
 				696ACF5624049EBC009B0BEC /* EuclidCircularB-Light.otf in Resources */,
 				696ACF5724049EBC009B0BEC /* EuclidCircularB-Medium.otf in Resources */,
 				696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */,
+				52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */,
 				696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */,
@@ -291,11 +295,15 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-pillarwallet/Pods-pillarwallet-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios/Instabug.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly/Storyly.framework/Storyly",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Storyly.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

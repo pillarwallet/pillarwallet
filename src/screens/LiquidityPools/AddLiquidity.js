@@ -121,6 +121,7 @@ const AddLiquidityScreen = ({
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [assetsValues, setAssetsValues] = useState(['', '']);
@@ -139,6 +140,7 @@ const AddLiquidityScreen = ({
     if (!assetsValues.every((f) => !!parseFloat(f))) return;
     if (!fieldsValid.every((f) => f)) return;
     calculateAddLiquidityTransactionEstimate(pool, assetsValues, poolTokenAmount, tokensData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAssetsValues, fieldsValid]);
 
   const onAssetValueChange = (newValue: string, tokenIndex: number) => {

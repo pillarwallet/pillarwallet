@@ -38,3 +38,6 @@ export const getFormattedValue = (tokenValue: string, token: string, options: ?F
   if (isPositive) return t('positiveTokenValue', { value, token });
   return t('negativeTokenValue', { value, token });
 };
+
+export const caseInsensitiveIncludes = (baseString: ?string, stringToFind: ?string) =>
+  !!baseString && baseString.toUpperCase().includes(stringToFind?.toUpperCase() ?? '');

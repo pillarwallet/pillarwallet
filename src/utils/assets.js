@@ -34,13 +34,14 @@ import type {
   Asset,
   AssetData,
   Assets,
+  AssetOption,
+  AssetBalance,
   Balance,
   Balances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Option } from 'models/Selector';
 import type { Value } from 'utils/common';
 
 
@@ -76,7 +77,17 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
-export const getBalance = (balances: Balances = {}, asset: string): number => {
+export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => {
+  if (!balances || !asset) return BigNumber('0');
+  return BigNumber(balances[asset]?.balance ?? '0');
+};
+
+/**
+ * @deprecated: do not use because of rounding issues
+ */
+export const getBalance = (balances: ?Balances, asset: string): number => {
+  if (!balances) return 0;
+
   const assetBalance = get(balances, asset);
   if (!assetBalance) {
     return 0;
@@ -337,19 +348,19 @@ export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
 
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
+  assetBalance: ?Value,
   rates: Rates,
   symbol: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
+    parseFloat(assetBalance.toString()) * getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceInFiat;
 };
 
 export const getFormattedBalanceInFiat = (
   baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
+  assetBalance: ?Value,
   rates: Rates,
   symbol: string,
 ): string => {
@@ -359,30 +370,57 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
-export const generateAssetSelectorOption = (
-  asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
-): Option => {
-  const { symbol, iconUrl, ...rest } = asset;
-  const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
-  const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
-  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
-  const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fiatCurrency: ?string): ?AssetBalance => {
+  if (!balances) return null;
 
-  // $FlowFixMe: flow update to 0.122
-  return ({
-    key: symbol,
-    value: symbol,
-    imageUrl,
-    icon: iconUrl,
-    iconUrl,
-    symbol,
-    ...rest,
-    assetBalance,
+  const balance = getBalance(balances, symbol);
+  const balanceInFiat = rates ? getBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
+  const value = rates ? getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
+
+  return {
+    token: symbol,
+    balance,
+    balanceInFiat,
+    value,
+  };
+};
+
+export const getAssetOption = (
+  asset: Asset,
+  balances: ?Balances,
+  rates: ?Rates,
+  baseFiatCurrency: ?string,
+): AssetOption => {
+  const { symbol, iconUrl } = asset;
+
+  const assetBalance = getBalance(balances, symbol);
+  const formattedAssetBalance = assetBalance ? formatAmount(assetBalance) : '';
+  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
+
+  return {
+    ...asset,
+    imageUrl: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
     formattedBalanceInFiat,
-    customProps: {
-      rightColumnInnerStyle: { alignItems: 'flex-end' },
-    },
-  });
+    icon: iconUrl,
+    assetBalance: formattedAssetBalance,
+    balance: getAssetBalance(symbol, balances, rates, baseFiatCurrency),
+  };
+};
+
+export const mapAssetDataToAssetOption = (
+  assetData: AssetData,
+  balances?: ?Balances,
+  rates?: ?Rates,
+  fiatCurrency?: ?string,
+): AssetOption => {
+  return {
+    symbol: assetData.token,
+    address: assetData.contractAddress,
+    name: assetData.name ?? '',
+    imageUrl: assetData.icon,
+    tokenType: assetData.tokenType ?? TOKENS,
+    balance: getAssetBalance(assetData.token, balances, rates, fiatCurrency),
+  };
 };
 
 export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {

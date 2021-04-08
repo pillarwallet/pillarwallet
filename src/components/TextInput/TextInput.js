@@ -126,8 +126,8 @@ const InputBorder = styled.View`
 `;
 
 const ItemHolder = styled.View`
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   position: relative;
+  background-color: ${({ theme }) => theme.colors.inputField};
   border-radius: 4px;
 `;
 
@@ -311,10 +311,8 @@ class TextInput extends React.Component<Props, State> {
 
     const {
       options = [],
-      optionTabs,
       selectorModalTitle,
       optionsSearchPlaceholder,
-      horizontalOptions,
     } = selectorOptions;
 
     Keyboard.dismiss();
@@ -323,12 +321,10 @@ class TextInput extends React.Component<Props, State> {
         onHide={this.props.inputProps.onSelectorClose}
         title={selectorModalTitle}
         options={options}
-        optionTabs={optionTabs}
         searchPlaceholder={optionsSearchPlaceholder}
         optionKeyExtractor={this.optionKeyExtractor}
         onOptionSelect={this.selectValue}
         renderOption={renderOption}
-        horizontalOptionsData={horizontalOptions}
         onOpen={this.props.inputProps.onSelectorOpen}
       />
     ));
@@ -442,24 +438,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   getSelectorOptionsCount = (selectorOptions?: SelectorOptionsType): number => {
-    if (!selectorOptions) return 0;
-    const {
-      options = [],
-      optionTabs,
-      horizontalOptions,
-    } = selectorOptions;
-
-    const horizontalOptionsLength = !horizontalOptions ? 0 : horizontalOptions.reduce((sum, item) => {
-      if (item.data?.length) sum += item.data?.length;
-      return sum;
-    }, 0);
-    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
-      if (tab.options?.length) sum += tab.options?.length;
-      return sum;
-    }, 0);
-
-    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
-    return selectorOptionsCount;
+    return selectorOptions?.options?.length ?? 0;
   }
 
   render() {

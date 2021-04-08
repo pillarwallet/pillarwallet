@@ -71,7 +71,7 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { loadRemoteConfigAction } from 'actions/remoteConfigActions';
+import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -243,8 +243,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // all the calls below require user to be online
     if (!isOnline) return;
 
-    dispatch(loadRemoteConfigAction());
-
     // user might not be registered at this point
     if (walletId) {
       const rates = await getExchangeRates(defaultInitialAssets);
@@ -272,6 +270,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // check if wallet backup warning toast needed, balance can only be retrieved online
     dispatch(checkForWalletBackupToastAction());
+
+    dispatch(loadRemoteConfigWithUserPropertiesAction());
   };
 };
 

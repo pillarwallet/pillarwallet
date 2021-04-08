@@ -94,7 +94,7 @@ import {
 import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { loadRemoteConfigAction } from './remoteConfigActions';
+import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
@@ -276,7 +276,7 @@ export const loginAction = (
 
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
-        dispatch(loadRemoteConfigAction());
+        dispatch(loadRemoteConfigWithUserPropertiesAction());
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only

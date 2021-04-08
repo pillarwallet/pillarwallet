@@ -88,6 +88,7 @@ const UsernameFailed = ({
   useEffect(() => {
     // prepare for username check if no user set
     if (!user) resetUsernameCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [usernameValue, setUsernameValue] = useState(savedUsername); // prefill with previously saved
@@ -98,6 +99,7 @@ const UsernameFailed = ({
 
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(
     debounce(() => { if (usernameValue) checkUsernameAvailability(usernameValue); }, 200),
     [usernameValue],
@@ -113,16 +115,19 @@ const UsernameFailed = ({
       // reset if error occurred during update
       setIsCheckingUsername(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usernameValue, errorMessage]);
 
   useEffect(() => {
     // user updated, reset
     if (isCheckingUsername) setIsCheckingUsername(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (!usernameValidationErrorMessage) onValidUsername();
     return onValidUsername.cancel;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onValidUsername, usernameValue]);
 
   const colors = getThemeColors(theme);
