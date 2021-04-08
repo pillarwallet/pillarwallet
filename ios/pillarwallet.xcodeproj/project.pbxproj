@@ -9,12 +9,13 @@
 /* Begin PBXBuildFile section */
 		04981A9824C8648D00748082 /* LogoAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04981A9724C8648D00748082 /* LogoAnimationView.swift */; };
 		04981AAD24C97CEC00748082 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04981AAC24C97CEC00748082 /* Launch.storyboard */; };
+		0AF1C013261F36FE00504BB5 /* Pods_pillarwallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F993B77F1AB5174028700A1D /* Pods_pillarwallet.framework */; };
+		0AF1C014261F36FE00504BB5 /* Pods_pillarwallet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F993B77F1AB5174028700A1D /* Pods_pillarwallet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
-		527DE96E375843F986B90D1D /* Pods_pillarwallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F993B77F1AB5174028700A1D /* Pods_pillarwallet.framework */; };
 		52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
@@ -26,6 +27,20 @@
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
 		DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 834179E4DB574F6C94CF4839 /* libz.tbd */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0AF1C015261F36FE00504BB5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0AF1C014261F36FE00504BB5 /* Pods_pillarwallet.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -69,7 +84,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */,
-				527DE96E375843F986B90D1D /* Pods_pillarwallet.framework in Frameworks */,
+				0AF1C013261F36FE00504BB5 /* Pods_pillarwallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +208,7 @@
 				C2A20220DADB4443B9646675 /* Upload Debug Symbols to Sentry */,
 				F87216EB6B56AD528BCB7A6E /* Upload Sourcemap */,
 				34D45A37D9B230BAF33DAB81 /* [CP] Embed Pods Frameworks */,
+				0AF1C015261F36FE00504BB5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
