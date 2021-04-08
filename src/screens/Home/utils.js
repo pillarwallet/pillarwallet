@@ -47,11 +47,11 @@ export const useTotalBalance = (): BalanceInfo => {
 
 export const useWalletInfo = (): WalletInfo => {
   const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
-  const deposits = { balanceInFiat: BigNumber(3100) }; // useRootSelector(depositsBalanceSelector);
-  const investments = { balanceInFiat: BigNumber(5100) }; // useRootSelector(investmentsBalanceSelector);
-  const liquidityPools = { balanceInFiat: BigNumber(2100) }; // useRootSelector(liquidityPoolsBalanceSelector);
-  const rewards = { balanceInFiat: BigNumber(500) };
-  const datasets = { balanceInFiat: BigNumber(450) };
+  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
+  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
+  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
+  const rewards = { balanceInFiat: BigNumber(0) };
+  const datasets = { balanceInFiat: BigNumber(0) };
 
   const ethereum = {
     wallet,
@@ -66,15 +66,9 @@ export const useWalletInfo = (): WalletInfo => {
     walletAddress: useRootSelector(activeAccountAddressSelector),
   };
 
-  const binance = {
-    total: { balanceInFiat: BigNumber(5000) },
-    wallet: { balanceInFiat: BigNumber(5000) },
-  };
-
   return {
-    total: getTotalChainInfo([ethereum, binance]),
+    total: getTotalChainInfo([ethereum]),
     ethereum,
-    binance,
   };
 };
 
