@@ -50,7 +50,9 @@ const TutorialScreen = ({ hasSeenTutorial, tutorialData }: Props) => {
   const routeName = navigation?.state?.params?.nextNavigationRouteName || HOME;
 
   useEffect(() => {
-    !tutorialData && navigation.navigate(routeName);
+    if (!tutorialData) {
+      navigation.navigate(routeName);
+    }
   }, []);
 
   const handleFinish = () => {

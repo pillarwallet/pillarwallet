@@ -40,7 +40,7 @@ const Wrapper = styled.View`
 
 const Button = styled.TouchableOpacity`
   flex: 1;
-  align-items: center;
+  align-items: ${({ alignItems }) => alignItems};
 `;
 
 const ButtonText = styled(BaseText)`
@@ -57,17 +57,17 @@ export default ({
   onBackPress, onNextPress, onSkipPress, isLast,
 }: Props) => {
   const theme = useTheme();
-  const renderButton = (title: string, handler: ?Function) => (
-    <Button disabled={!handler} onPress={handler} hitSlop={hitSlop10}>
+  const renderButton = (title: string, handler: ?Function, alignItems: string) => (
+    <Button disabled={!handler} onPress={handler} hitSlop={hitSlop10} alignItems={alignItems}>
       <ButtonText>{handler ? title : ''}</ButtonText>
     </Button>
   );
 
   return (
     <Wrapper theme={theme}>
-      {renderButton(t('button.back'), onBackPress)}
-      {renderButton(isLast ? '' : t('button.skip'), onSkipPress)}
-      {renderButton(t(`button.${isLast ? 'finish' : 'next'}`), onNextPress)}
+      {renderButton(t('button.back'), onBackPress, 'flex-start')}
+      {renderButton(isLast ? '' : t('button.skip'), onSkipPress, 'center')}
+      {renderButton(t(`button.${isLast ? 'finish' : 'next'}`), onNextPress, 'flex-end')}
     </Wrapper>
   );
 };
