@@ -38,11 +38,11 @@ import type { CategoryBalances } from 'models/Home';
 import { getCategoryBalancesTotal } from './utils';
 
 type Props = {|
-  balances: CategoryBalances,
+  categoryBalances: CategoryBalances,
 |};
 
-function AssetsPieChart({ balances }: Props) {
-  const { data, colorScale } = useChartProps(balances);
+function AssetsPieChart({ categoryBalances }: Props) {
+  const { data, colorScale } = useChartProps(categoryBalances);
   const colors = useThemeColors();
 
   const window = useWindowDimensions();
@@ -107,7 +107,7 @@ const useChartProps = (balances: CategoryBalances) => {
     return { data, colorScale };
   }
 
-  Object.keys(balances).forEach(category => {
+  Object.keys(balances).forEach((category) => {
     const categoryBalance = balances[category]?.balanceInFiat;
     const totalBalance = total.balanceInFiat;
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;

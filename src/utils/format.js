@@ -23,12 +23,18 @@ import t from 'translations/translate';
 
 import { getCurrencySymbol } from 'utils/common';
 
+function wrapBigNumber(value: ?BigNumber | number): ?BigNumber {
+  if (value == null) return null;
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+}
+
 /**
  * Modern formatting functions.
  *
  * Common assumptions:
  * - output user-facing strings
- * - numeric input as BigNumber
+ * - numeric input as BigNumber or number
  * - accepts null and undefined values but returns null instead of formatted value as well as NaNs and ininity
  */
 
@@ -42,7 +48,8 @@ type FormatValueOptions = {|
  *
  * Does not make assumption about formatted output.
  */
-export function formatValue(value: ?BigNumber, options?: FormatValueOptions) {
+export function formatValue(value: ?BigNumber | number, options?: FormatValueOptions) {
+  value = wrapBigNumber(value);
   if (!value || !value.isFinite()) return null;
 
   const stripTrailingZeros = options?.stripTrailingZeros ?? false;

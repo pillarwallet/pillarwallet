@@ -20,38 +20,15 @@
 
 import { BigNumber } from 'bignumber.js';
 
-export type WalletInfo = {|
-  total: ChainInfo;
-  ethereum: ChainInfo,
-  binance?: ChainInfo,
-  xdai?: ChainInfo,
-  polygon?: ChainInfo,
-|};
+type ChainRecord<T> = {|
+  ethereum: T,
+  binance?: T,
+  xdai?: T,
+  polygon?: T,
+|}
 
-export type ChainInfo = {|
-  walletAddress?: string,
-  total: BalanceInfo,
-  wallet?: BalanceInfo,
-  deposits?: BalanceInfo,
-  investments?: BalanceInfo,
-  liquidityPools?: BalanceInfo,
-  rewards?: BalanceInfo,
-  datasets?: BalanceInfo,
-  collectibles?: number,
-  contacts?: number,
-|};
+export type ChainBalances = ChainRecord<CategoryBalances>;
 
-export type BalanceInfo = {|
-  balanceInFiat: BigNumber,
-  changeInFiat?: BigNumber,
-|};
-
-export type ChainBalances = {|
-  ethereum: CategoryBalances,
-  binance?: CategoryBalances,
-  xdai?: CategoryBalances,
-  polygon?: CategoryBalances,
-|};
 export type CategoryBalances = {|
   wallet?: Balance,
   deposits?: Balance,
@@ -64,4 +41,12 @@ export type CategoryBalances = {|
 export type Balance = {|
   balanceInFiat: BigNumber,
   profitInFiat?: ?BigNumber,
+|};
+
+export type ChainSummaries = ChainRecord<AccountSummary>;
+
+export type AccountSummary = {|
+  walletAddress?: string,
+  collectibleCount?: number,
+  contactCount?: number,
 |};

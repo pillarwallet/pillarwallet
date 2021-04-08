@@ -35,61 +35,23 @@ import { BigNumber } from 'utils/common';
 import { sum, sumOrNull } from 'utils/bigNumber';
 
 // Types
-import type { WalletInfo, ChainInfo, BalanceInfo, ChainBalances, CategoryBalances, Balance } from 'models/Home';
+import type {
+  ChainSummaries,
+  ChainBalances,
+  CategoryBalances,
+  Balance,
+} from 'models/Home';
 
-export const useTotalBalance = (): BalanceInfo => {
-  const totalBalance = useRootSelector(totalBalanceSelector);
 
-  return {
-    balanceInFiat: totalBalance,
-  };
-};
-
-export const useWalletInfo = (): WalletInfo => {
-  const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
-  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
-  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
-  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
-  const rewards = { balanceInFiat: BigNumber(0) };
-  const datasets = { balanceInFiat: BigNumber(0) };
-
+export function useChainSummaries(): ChainSummaries {
   const ethereum = {
-    wallet,
-    deposits,
-    investments,
-    liquidityPools,
-    rewards,
-    datasets,
-    total: getTotalBalanceInfo([wallet, deposits, investments, liquidityPools, rewards, datasets]),
-    collectibles: useRootSelector(accountCollectiblesSelector).length,
-    contacts: useRootSelector(contactsCountSelector),
     walletAddress: useRootSelector(activeAccountAddressSelector),
+    collectibleCount: useRootSelector(accountCollectiblesSelector).length,
+    contactCount: useRootSelector(contactsCountSelector),
   };
 
-  return {
-    total: getTotalChainInfo([ethereum]),
-    ethereum,
-  };
-};
-
-const getTotalBalanceInfo = (balances: (?BalanceInfo)[]): BalanceInfo => {
-  return {
-    balanceInFiat: sum(balances.map(b => b?.balanceInFiat)),
-    profitInFiat: sumOrNull(balances.map(b => b?.profitInFiat)),
-  };
-};
-
-const getTotalChainInfo = (chains: ChainInfo[]): ChainInfo => {
-  return {
-    wallet: getTotalBalanceInfo(chains.map((c) => c.wallet)),
-    deposits: getTotalBalanceInfo(chains.map((c) => c.deposits)),
-    investments: getTotalBalanceInfo(chains.map((c) => c.investments)),
-    liquidityPools: getTotalBalanceInfo(chains.map((c) => c.liquidityPools)),
-    rewards: getTotalBalanceInfo(chains.map((c) => c.rewards)),
-    datasets: getTotalBalanceInfo(chains.map((c) => c.datasets)),
-    total: getTotalBalanceInfo(chains.map((c) => c.total)),
-  };
-};
+  return { ethereum };
+}
 
 export function useChainBalances(): ChainBalances {
   const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
@@ -108,7 +70,7 @@ export function useChainBalances(): ChainBalances {
     datasets,
   };
 
-  return { ethereum, binance: { liquidityPools: { balanceInFiat: BigNumber(1000) } } };
+  return { ethereum };
 }
 
 export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
