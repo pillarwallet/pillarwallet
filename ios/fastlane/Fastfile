@@ -7,6 +7,8 @@ platform :ios do
     setup_circle_ci
   end
 
+  xcversion(version: "12.3.0")
+
   desc "Release to production TestFlight"
   lane :deploy_prod do |options|
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
