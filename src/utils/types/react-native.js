@@ -38,6 +38,8 @@ export type { Props as TextInputProps } from 'react-native/Libraries/Components/
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
+export type FontVariant = 'small-caps' | 'oldstyle-nums' | 'lining-nums' | 'tabular-nums' | 'proportional-nums';
+
 export type { ImageSource } from 'react-native/Libraries/Image/ImageSource';
 
 export type { RenderItemProps } from 'react-native/Libraries/Lists/VirtualizedList';
@@ -47,4 +49,4 @@ export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar
 export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;
 
 // Events
-export type { SyntheticEvent, LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
+export type { SyntheticEvent, LayoutEvent, ScrollEvent } from 'react-native/Libraries/Types/CoreEventTypes';

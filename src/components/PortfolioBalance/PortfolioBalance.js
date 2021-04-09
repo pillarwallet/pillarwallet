@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Balances, Rates, MixedBalance } from 'models/Asset';
 
-import BalanceView from 'components/PortfolioBalance/BalanceView';
+import BalanceView from 'components/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { balanceInEth } from 'utils/assets';
@@ -54,12 +54,12 @@ const BalanceWrapper = styled.View`
 `;
 
 const BalanceButton = styled.TouchableOpacity`
-  padding: 8px ${spacing.large}px;
+  padding: 0 ${spacing.large}px;
 `;
 
 const ContentWrapper = styled.View`
   flex-direction: row;
-  height: 36px;
+  height: 48px;
   align-items: center;
   justify-content: center;
 `;
@@ -68,12 +68,10 @@ const ToggleIcon = styled(Icon)`
   font-size: ${fontSizes.medium}px;
   color: ${({ theme }) => theme.colors.basic020};
   margin-left: 6px;
-  margin-bottom: 5px;
 `;
 
 const BalanceText = styled(MediumText)`
   ${fontStyles.big};
-  margin-bottom: 8px;
 `;
 
 const LabelText = styled(BaseText)`
@@ -109,7 +107,6 @@ class PortfolioBalance extends React.PureComponent<Props> {
   render() {
     const {
       style,
-      fiatCurrency,
       showBalance,
       toggleBalanceVisibility,
     } = this.props;
@@ -126,7 +123,6 @@ class PortfolioBalance extends React.PureComponent<Props> {
               : (
                 <BalanceView
                   style={style}
-                  fiatCurrency={fiatCurrency}
                   balance={combinedBalance}
                 />)
             }
