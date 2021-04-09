@@ -21,8 +21,8 @@
 import { BigNumber } from 'bignumber.js';
 
 /**
- * Returns sum of nullable BigNumbers. 
- * 
+ * Returns sum of nullable BigNumbers.
+ *
  * It returns 0 when input is empty or contain only nulls.
  */
 export function sum(values: (?BigNumber)[]): BigNumber {

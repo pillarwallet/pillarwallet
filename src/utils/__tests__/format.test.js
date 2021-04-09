@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { formatValue, formatPercentValue } from 'utils/format';
+import { formatValue } from 'utils/format';
 
 describe('formatValue', () => {
   it('handles default case', () => {
