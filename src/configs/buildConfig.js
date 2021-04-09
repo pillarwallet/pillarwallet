@@ -32,7 +32,6 @@ export const buildEnvironment = {
   ETHPLORER_API_KEY: '_ethplorer_api_key_',
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
   INSTABUG_TOKEN: '_instabug_token_',
-  STORYLY_TOKEN: '_storyly_token_',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default
