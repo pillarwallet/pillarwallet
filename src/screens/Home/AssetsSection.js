@@ -60,25 +60,25 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
   const categoriesConfig = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
-  const renderChain = (chain: Chain) => {
-    const summary = chainSummaries[chain];
-    const { title, iconName, color } = chainsConfig[chain];
-    return (
-      <>
-        <HomeListHeader title={title} iconName={iconName} color={color} walletAddress={summary?.walletAddress} />
-        {renderChainItems(chain)}
-      </>
-    );
-  };
-
-  const renderChainItems = (chain: Chain) => {
+  const renderChain = (chain: Chain, showHeader: boolean) => {
     const summary = chainSummaries[chain];
     const categoryBalances = chainBalances[chain];
+    const { title, iconName, color } = chainsConfig[chain];
 
     if (!summary && !categoryBalances) return null;
 
     return (
-      <>
+      <React.Fragment key={chain}>
+        {showHeader && (
+          <HomeListHeader
+            key={`${chain}-header`}
+            title={title}
+            iconName={iconName}
+            color={color}
+            walletAddress={summary?.walletAddress}
+          />
+        )}
+
         {!!categoryBalances &&
           Object.keys(categoryBalances).map((category) =>
             renderBalanceItem(chain, category, categoryBalances[category]),
@@ -86,6 +86,7 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
 
         {summary?.collectibleCount != null && (
           <HomeListItem
+            key={`${chain}-collectibles`}
             title={tRoot('assetCategories.collectibles')}
             iconName="collectible"
             onPress={() => navigation.navigate(ASSETS)}
@@ -95,6 +96,7 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
 
         {summary?.contactCount != null && (
           <HomeListItem
+            key={`${chain}-contacts`}
             title={t('contacts')}
             iconName="contacts"
             onPress={() => navigation.navigate(CONTACTS_FLOW)}
@@ -104,9 +106,14 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
 
         {/* Temporary entry until other UI provided */}
         {chain === CHAINS.ETHEREUM && (
-          <HomeListItem title={t('services')} iconName="info" onPress={() => navigation.navigate(SERVICES_FLOW)} />
+          <HomeListItem
+            key={`${chain}-services`}
+            title={t('services')}
+            iconName="info"
+            onPress={() => navigation.navigate(SERVICES_FLOW)}
+          />
         )}
-      </>
+      </React.Fragment>
     );
   };
 
@@ -131,10 +138,10 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
   };
 
   if (!showSideChains) {
-    return <Container>{renderChainItems(CHAINS.ETHEREUM)}</Container>;
+    return <Container>{renderChain(CHAINS.ETHEREUM, false)}</Container>;
   }
 
-  return <Container>{Object.keys(chainBalances).map((key) => renderChain(key))}</Container>;
+  return <Container>{Object.keys(chainBalances).map((key) => renderChain(key, true))}</Container>;
 }
 
 export default AssetsSection;
