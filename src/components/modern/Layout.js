@@ -23,8 +23,11 @@ import { ScrollView } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
+// Utils
+import { spacing } from 'utils/variables';
+
 // Types
-import type { ViewProps } from 'utils/types/react-native';
+import type { ViewProps, ViewStyleProp } from 'utils/types/react-native';
 
 /**
  * Root element for screens. Normally contains `HeaderBlock` & `Content`.
@@ -35,6 +38,9 @@ export const Container: React.ComponentType<ViewProps> = styled.View`
 
 type ContentProps = {|
   children: React.Node,
+  paddingHorizontal?: number,
+  paddingVertical?: number,
+  style?: ViewStyleProp,
 |};
 
 /**
@@ -42,10 +48,15 @@ type ContentProps = {|
  *
  * Correctly handles safe area.
  */
-export function Content({ children }: ContentProps) {
+export function Content({
+  children,
+  paddingHorizontal = spacing.layoutSides,
+  paddingVertical = spacing.layoutSides,
+  style,
+}: ContentProps) {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <ContentSafeArea>{children}</ContentSafeArea>
+      <ContentSafeArea style={[{ paddingHorizontal, paddingVertical }, style]}>{children}</ContentSafeArea>
     </ScrollView>
   );
 }

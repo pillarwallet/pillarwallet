@@ -25,13 +25,14 @@ import { PLR, USD } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
+import { getTotalBalanceInFiat } from 'utils/assets';
 import { getStreamBalance } from 'utils/sablier';
 import { formatUnits } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { MixedBalance } from 'models/Asset';
+import type { Rates, Balances, MixedBalance, MixedBalances } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { SablierReducerState } from 'reducers/sablierReducer';
@@ -41,6 +42,8 @@ import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer'
 // selectors
 import {
   balancesSelector,
+  fiatCurrencySelector,
+  ratesSelector,
   activeAccountIdSelector,
   lendingSelector,
   poolTogetherStatsSelector,
@@ -76,7 +79,7 @@ export const allBalancesSelector = createSelector(
 
     return balancesWithPPN.reduce((memo, { balance, symbol }) => {
       if (!balance || !symbol) return memo;
-      const assetInfo = memo[symbol] || { symbol, balance: 0 };
+      const assetInfo = memo[symbol] || { symbol, balance: '0' };
       const newBalance = parseFloat(assetInfo.balance) + parseFloat(balance);
       assetInfo.balance = newBalance.toString();
       memo[symbol] = assetInfo;
@@ -151,4 +154,17 @@ export const servicesBalanceListSelector = createSelector(
   rariBalanceListSelector,
   liquidityPoolsBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
+);
+
+export const totalBalanceSelector = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  allBalancesSelector,
+  servicesBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances) => {
+    return (
+      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
+      getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency)
+    );
+  },
 );

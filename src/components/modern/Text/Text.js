@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -20,26 +19,48 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import { Text as RNText, StyleSheet } from 'react-native';
 
 // Utils
-import { appFont, fontStyles } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
+import { appFont, objectFontStyles } from 'utils/variables';
 
 // Types
-import type { TextProps } from 'utils/types/react-native';
+import type { TextProps, TextStyleProp } from 'utils/types/react-native';
+import type { ThemeColors } from 'models/Theme';
 
-type TextVariant = $Keys<typeof fontStyles>;
 
 type Props = {|
   ...TextProps,
-  variant?: TextVariant,
+  variant?: $Keys<typeof objectFontStyles>,
+  color?: $Keys<ThemeColors>,
 |};
 
-const Text: React.ComponentType<Props> = styled.Text`
-  text-align-vertical: center;
-  font-family: "${appFont.regular}";
-  color: ${({ theme }) => theme.colors.basic010};
-  ${({ variant = 'regular' }) => fontStyles[variant]};
-`;
+function Text({
+  variant,
+  color,
+  style,
+  ...rest
+}: Props) {
+  const colors = useThemeColors();
+  const propStyle = StyleSheet.flatten(style);
+
+  const resultStyle = [
+    baseStyle,
+    { color: colors[color ?? 'basic010'] },
+    // Apply `regular` font style only if there is no `font-size` style in order to
+    // avoid automatically setting regular 'line-height'.
+    !propStyle?.fontSize && objectFontStyles.regular,
+    !!variant && objectFontStyles[variant],
+    style,
+  ];
+
+  return <RNText {...rest} style={resultStyle} />;
+}
+
+const baseStyle: TextStyleProp = {
+  textAlignVertical: 'center',
+  fontFamily: appFont.regular,
+};
 
 export default Text;
