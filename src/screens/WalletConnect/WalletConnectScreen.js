@@ -37,7 +37,7 @@ type Props = {
 
 const WalletConnectScreen = ({ sessionLanguageCode }: Props) => (
   <ContainerWithHeader
-    headerProps={{ noBack: true, leftItems: [{ title: t('walletConnectContent.title.connect') }] }}
+    headerProps={{ centerItems: [{ title: t('walletConnectContent.title.connect') }] }}
     inset={{ bottom: 0 }}
     tab
   >
