@@ -144,7 +144,6 @@ const SablierCancellationModal = ({
             isLoading={isEstimating}
             gasToken={feeInfo?.gasToken}
             hasError={!!errorMessage}
-            showFiatDefault
           />
         )}
         {!!errorMessage && (
