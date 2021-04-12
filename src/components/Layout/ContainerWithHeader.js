@@ -81,8 +81,6 @@ const Footer = styled.KeyboardAvoidingView`
 
 const { height: screenHeight } = Dimensions.get('window');
 
-const animatedValueOne = new Animated.Value(1);
-
 class ContainerWithHeader extends React.Component<Props, State> {
   focusSubscription: NavigationEventSubscription;
 
@@ -198,7 +196,6 @@ class ContainerWithHeader extends React.Component<Props, State> {
       theme,
       putContentInScrollView,
       shouldFooterAvoidKeyboard = true,
-      tab,
       footerContainerStyle,
       footerContainerInset,
     } = this.props;
@@ -211,19 +208,6 @@ class ContainerWithHeader extends React.Component<Props, State> {
     const isScreenBigEnoughToAvoidKeyboard = screenHeight > minAvoidHeight;
     const shouldRenderKbAvoidingFooter = isScreenBigEnoughToAvoidKeyboard && shouldFooterAvoidKeyboard;
 
-    let bottomBorderAnimationValue;
-
-    if (!tab) {
-      // if this is no tab, we don't animate anything and the border is all the time
-      bottomBorderAnimationValue = animatedValueOne;
-    } else {
-      bottomBorderAnimationValue = this.state.scrollY.interpolate({
-        inputRange: [0, 20],
-        outputRange: ([0, 1]: number[]),
-        extrapolate: 'clamp',
-      });
-    }
-
     return (
       <View style={{ flex: 1 }}>
         {!isEmpty(headerProps) &&
@@ -231,7 +215,6 @@ class ContainerWithHeader extends React.Component<Props, State> {
           <HeaderBlock
             {...headerProps}
             navigation={navigation}
-            bottomBorderAnimationValue={bottomBorderAnimationValue}
             noPaddingTop
           />}
         <StyledSafeAreaView
