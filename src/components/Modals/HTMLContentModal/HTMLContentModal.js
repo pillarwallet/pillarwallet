@@ -206,7 +206,6 @@ class HTMLContentModal extends React.Component<Props, State> {
             rightItems: [{ close: true }],
             noBack: true,
             noPaddingTop: true,
-            noBottomBorder: true,
             floating: true,
             onClose: this.handleModalClose,
           }}

@@ -40190,9 +40190,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
       <View
         style={
           Object {
-            "backgroundColor": "rgba(250, 250, 250, 1)",
-            "borderBottomWidth": 1,
-            "borderColor": "rgba(237, 237, 237, 0)",
+            "backgroundColor": "#FAFAFA",
             "width": "100%",
           }
         }
@@ -40493,9 +40491,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
         floating={true}
         style={
           Object {
-            "backgroundColor": "transparent",
-            "borderBottomWidth": 1,
-            "borderColor": "transparent",
+            "backgroundColor": "#FAFAFA",
             "left": 0,
             "position": "absolute",
             "top": 0,
@@ -40757,9 +40753,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
       <View
         style={
           Object {
-            "backgroundColor": "rgba(250, 250, 250, 1)",
-            "borderBottomWidth": 1,
-            "borderColor": "rgba(237, 237, 237, 0)",
+            "backgroundColor": "#FAFAFA",
             "width": "100%",
           }
         }
@@ -40971,9 +40965,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
       <View
         style={
           Object {
-            "backgroundColor": "rgba(250, 250, 250, 1)",
-            "borderBottomWidth": 1,
-            "borderColor": "rgba(237, 237, 237, 0)",
+            "backgroundColor": "#FAFAFA",
             "width": "100%",
           }
         }
@@ -41185,9 +41177,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
       <View
         style={
           Object {
-            "backgroundColor": "rgba(250, 250, 250, 1)",
-            "borderBottomWidth": 1,
-            "borderColor": "rgba(237, 237, 237, 0)",
+            "backgroundColor": "#FAFAFA",
             "width": "100%",
           }
         }
@@ -41398,9 +41388,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
       <View
         style={
           Object {
-            "backgroundColor": "rgba(250, 250, 250, 1)",
-            "borderBottomWidth": 1,
-            "borderColor": "rgba(237, 237, 237, 0)",
+            "backgroundColor": "#FAFAFA",
             "width": "100%",
           }
         }
@@ -46870,8 +46858,6 @@ exports[`Storyshots SlideModal default 1`] = `
               style={
                 Object {
                   "backgroundColor": "transparent",
-                  "borderBottomWidth": 1,
-                  "borderColor": "transparent",
                   "width": "100%",
                 }
               }

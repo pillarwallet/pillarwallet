@@ -24,6 +24,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -54,13 +55,26 @@ export function Content({
   paddingVertical = spacing.layoutSides,
   style,
 }: ContentProps) {
+  const colors = useThemeColors();
+
+  const styles = [
+    contentStyles.safeArea,
+    { backgroundColor: colors.basic070, paddingHorizontal, paddingVertical },
+    style,
+  ];
+
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <ContentSafeArea style={[{ paddingHorizontal, paddingVertical }, style]}>{children}</ContentSafeArea>
+    <ScrollView contentContainerStyle={contentStyles.scrollView}>
+      <SafeAreaView style={styles}>{children}</SafeAreaView>
     </ScrollView>
   );
 }
 
-const ContentSafeArea = styled(SafeAreaView)`
-  flex: 1;
-`;
+const contentStyles = {
+  scrollView: {
+    flexGrow: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+};
