@@ -263,7 +263,6 @@ const AddLiquidityScreen = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
-                showFiatDefault
               />
             )}
             {!!errorMessage && (
