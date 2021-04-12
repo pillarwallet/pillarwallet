@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { Text } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
@@ -35,8 +34,11 @@ import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationC
 // Selectors
 import { useUser } from 'selectors/user';
 
+import BalanceSection from './BalanceSection';
+
 function Home() {
   const navigation = useNavigation();
+
   const user = useUser();
 
   return (
@@ -54,11 +56,7 @@ function Home() {
         noPaddingTop
       />
       <Content>
-        {/* Temporary content */}
-        <MainContent>
-          {/* eslint-disable-next-line i18next/no-literal-string */}
-          <Text>Hello Pillar!</Text>
-        </MainContent>
+        <BalanceSection />
 
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}
@@ -74,13 +72,8 @@ function Home() {
 
 export default Home;
 
-const MainContent = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
 const NavButton = styled(Button)`
-  align-self: stretch;
-  margin: 10px 20px;
+  width: 100%;
+  align-self: center;
+  margin: 20px 20px 0;
 `;

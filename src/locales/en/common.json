@@ -529,6 +529,13 @@
     }
   },
 
+  "home": {
+    "balance": {
+      "addCash": "Add Cash",
+      "lastWeek": "Last week"
+    }
+  },
+
   "badgeText": {
     "new": "NEW"
   },

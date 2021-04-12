@@ -18,14 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  calculateBalanceInFiat,
+  getTotalBalanceInFiat,
   getBalance,
   balanceInEth,
   getRate,
   isSynthetixTx,
   convertUSDToFiat,
 } from 'utils/assets';
-import type { Balances, Rates } from 'models/Asset';
+import type { Rates, Balances } from 'models/Asset';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 describe('Assets utils', () => {
@@ -113,12 +113,12 @@ describe('Assets utils', () => {
     });
   });
 
-  describe('calculateBalanceInFiat', () => {
+  describe('getTotalBalanceInFiat', () => {
     describe('for empty values', () => {
       it('returns 0', () => {
         const balances: Balances = {};
 
-        const balance = calculateBalanceInFiat({}, balances, 'GBP');
+        const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
 
         expect(balance).toEqual(0);
       });
@@ -131,7 +131,7 @@ describe('Assets utils', () => {
             MANA: { symbol: 'MANA', balance: '1200.0' },
           };
 
-          const balance = calculateBalanceInFiat({}, balances, 'GBP');
+          const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
 
           expect(balance).toEqual(0);
         });
@@ -145,7 +145,7 @@ describe('Assets utils', () => {
             ETH: { symbol: 'ETH', balance: `${ethBalance}` },
           };
 
-          const balance = calculateBalanceInFiat(rates, balances, 'GBP');
+          const balance = getTotalBalanceInFiat(balances, rates, 'GBP');
 
           expect(balance).toEqual(ethBalance * ETH_GBP);
         });
@@ -159,7 +159,7 @@ describe('Assets utils', () => {
               PLR: { symbol: 'PLR', balance: `${plrBalance}` },
             };
 
-            const balance = calculateBalanceInFiat(rates, balances, 'GBP');
+            const balance = getTotalBalanceInFiat(balances, rates, 'GBP');
 
             const plrEth = plrBalance * PLR_ETH;
 
