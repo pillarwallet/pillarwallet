@@ -20,48 +20,36 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { withNavigation } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 
+// Components
 import ProfileImage from 'components/ProfileImage';
 import { MediumText } from 'components/Typography';
 
+// Contants
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
+// Utils
 import { spacing } from 'utils/variables';
 
-import type { NavigationScreenProp } from 'react-navigation';
+// Types
 import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
 
 
 type Props = {
   user: User,
-  navigation: NavigationScreenProp<*>,
-  userProps: ProfileImageProps,
+  userProps?: ProfileImageProps,
   profileImageWidth?: number,
 };
 
+const UserNameAndImage = ({
+  user = {},
+  userProps = {},
+  profileImageWidth = 24,
+}: Props) => {
+  const navigation = useNavigation();
 
-const UserWrapper = styled.TouchableOpacity`
-  padding: 0 ${spacing.medium}px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const UserName = styled(MediumText)`
-  margin-left: 10px;
-  flex-wrap: wrap;
-  flex-shrink: 1;
-`;
-
-
-const UserNameAndImage = (props: Props) => {
-  const {
-    user = {},
-    navigation,
-    userProps = {},
-    profileImageWidth = 24,
-  } = props;
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
   return (
@@ -79,4 +67,16 @@ const UserNameAndImage = (props: Props) => {
   );
 };
 
-export default withNavigation(UserNameAndImage);
+export default UserNameAndImage;
+
+const UserWrapper = styled.TouchableOpacity`
+  padding: 0 ${spacing.medium}px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const UserName = styled(MediumText)`
+  margin-left: 10px;
+  flex-wrap: wrap;
+  flex-shrink: 1;
+`;
