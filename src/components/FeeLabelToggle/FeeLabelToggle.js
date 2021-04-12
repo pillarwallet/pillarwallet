@@ -64,7 +64,6 @@ type Props = {
   gasToken: ?GasToken,
   isLoading?: boolean,
   labelText?: string,
-  showFiatDefault?: boolean,
   isGasTokenSupported: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
@@ -93,14 +92,13 @@ const FeeLabelToggle = ({
   rates,
   isLoading,
   labelText,
-  showFiatDefault,
   showRelayerMigration = true,
   accountAssets,
   accountHistory,
   isGasTokenSupported,
   hasError,
 }: Props) => {
-  const [isFiatValueVisible, setIsFiatValueVisible] = useState(!showFiatDefault);
+  const [isFiatValueVisible, setIsFiatValueVisible] = useState(true);
 
   if (isLoading) {
     return <Spinner size={20} trackWidth={2} />;
