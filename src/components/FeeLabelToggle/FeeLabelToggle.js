@@ -100,7 +100,7 @@ const FeeLabelToggle = ({
   isGasTokenSupported,
   hasError,
 }: Props) => {
-  const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
+  const [isFiatValueVisible, setIsFiatValueVisible] = useState(!showFiatDefault);
 
   if (isLoading) {
     return <Spinner size={20} trackWidth={2} />;
