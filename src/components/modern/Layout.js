@@ -41,7 +41,6 @@ type ContentProps = {|
   children: React.Node,
   paddingHorizontal?: number,
   paddingVertical?: number,
-  style?: ViewStyleProp,
   contentContainerStyle?: ViewStyleProp,
 |};
 
@@ -54,13 +53,11 @@ export function Content({
   children,
   paddingHorizontal = spacing.layoutSides,
   paddingVertical = spacing.layoutSides,
-  style,
   contentContainerStyle,
 }: ContentProps) {
   const styles = [
     contentStyles.safeArea,
     { paddingHorizontal, paddingVertical },
-    style,
   ];
 
   return (
