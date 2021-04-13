@@ -249,4 +249,7 @@ export const appFont = {
   medium: 'EuclidCircularB-Medium',
   bold: 'EuclidCircularB-Bold',
   light: 'EuclidCircularB-Light',
+
+  // When designs specify Archia-Medium use this replacement font
+  archiaMedium: 'SpaceGrotesk-Medium',
 };

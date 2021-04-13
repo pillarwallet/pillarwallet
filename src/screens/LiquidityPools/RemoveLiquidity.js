@@ -98,7 +98,7 @@ const FooterInner = styled.View`
   padding: 24px 20px;
 `;
 
-const AddLiquidityScreen = ({
+const RemoveLiquidityScreen = ({
   navigation,
   supportedAssets,
   feeInfo,
@@ -207,14 +207,10 @@ const AddLiquidityScreen = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = tokensData.some((token, i) => {
-      return !isEnoughBalanceForTransactionFee(balances, {
-        txFeeInWei: feeInfo.fee,
-        amount: obtainedAssetsValues[i],
-        decimals: token?.decimals,
-        symbol: token?.symbol,
-        gasToken: feeInfo.gasToken,
-      });
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      amount: 0,
+      gasToken: feeInfo.gasToken,
     });
   }
 
@@ -334,4 +330,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     )), 500),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveLiquidityScreen);

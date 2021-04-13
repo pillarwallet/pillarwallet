@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,236 +17,112 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState } from 'react';
-import { FlatList, ScrollView, RefreshControl } from 'react-native';
+import * as React from 'react';
+import { InteractionManager } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import isEmpty from 'lodash.isempty';
-import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import {
   addKeyBasedAssetToTransferAction,
-  fetchAvailableBalancesToTransferAction,
   removeKeyBasedAssetToTransferAction,
 } from 'actions/keyBasedAssetTransferActions';
 
-// constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
-
-// components
+// Components
+import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Wrapper } from 'components/Layout';
-import SearchBlock from 'components/SearchBlock';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { BaseText } from 'components/Typography';
-import TextInput from 'components/Input';
+import ValueInput from 'components/ValueInput';
 
-// utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { parseNumber, isValidNumber, formatFullAmount, isValidNumberDecimals } from 'utils/common';
-import { getBalance } from 'utils/assets';
-import { themedColors } from 'utils/themes';
+// Selectors
+import { useRootSelector, useFiatCurrency, useRates } from 'selectors';
+
+// Utils
+import { mapAssetDataToAssetOption } from 'utils/assets';
+import { BigNumber, formatAmount } from 'utils/common';
+import { spacing } from 'utils/variables';
 
 // types
-import type { Balances, KeyBasedAssetTransfer, AssetData } from 'models/Asset';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { AssetData } from 'models/Asset';
 
+function KeyBasedAssetTransferEditAmount() {
+  const navigation = useNavigation();
+  const assetData: ?AssetData = navigation.getParam('assetData');
+  const initialValue: ?number = navigation.getParam('value');
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  fetchAvailableBalancesToTransfer: () => void,
-  removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: number) => void,
-  keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
-  availableBalances: Balances,
-  isFetchingAvailableBalances: boolean,
-};
+  const inputRef = React.useRef();
 
-const ErrorHolder = styled.View`
-  width: 100%;
-  padding: 0 ${spacing.mediumLarge}px;
-`;
+  const [value, setValue] = React.useState(initialValue != null ? formatAmount(initialValue, assetData?.decimals) : '');
+  const [isValid, setIsValid] = React.useState(true);
 
-const ErrorText = styled(BaseText)`
-  color: ${themedColors.negative};
-  ${fontStyles.small};
-  width: 100%;
-  text-align: right;
-`;
+  const dispatch = useDispatch();
+  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+  const fiatCurrency = useFiatCurrency();
+  const rates = useRates();
 
-const AmountInputWrapper = styled.View`
-  height: 70px;
-  justify-content: center;
-  min-width: 180px;
-`;
+  React.useEffect(() => {
+    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+  }, []);
 
-const AmountInput = styled(TextInput)`
-  ${fontSizes.small};
-  text-align: right;
-  max-width: 200px;
-`;
-
-const KeyBasedAssetTransferEditAmount = ({
-  keyBasedAssetsToTransfer,
-  navigation,
-  isFetchingAvailableBalances,
-  availableBalances,
-  fetchAvailableBalancesToTransfer,
-  removeKeyBasedAssetToTransfer,
-  addKeyBasedAssetToTransfer,
-}: Props) => {
-  const [inSearchMode, setInSearchMode] = useState(false);
-  const [updatedValues, setUpdatedValues] = useState({});
-  const [errorMessages, setErrorMessages] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const onAvailableBalancesRefresh = () => {
-    if (isFetchingAvailableBalances) return;
-    fetchAvailableBalancesToTransfer();
-  };
-
-  const handleAmountChange = (text: string, assetData: AssetData) => {
-    const { token: symbol, decimals } = assetData;
-    const balance = getBalance(availableBalances, symbol);
-    const amountFormatted = text.toString().replace(/,/g, '.');
-    const amount = parseNumber(text);
-
-    let errorMessage;
-    if (!isValidNumber(text.toString())) {
-      errorMessage = t('error.amount.invalidNumber');
-    } else if (amount > balance) {
-      errorMessage = t('error.amount.exceedBalance');
-    } else if (!isValidNumberDecimals(amount, decimals)) {
-      errorMessage = t('error.amount.shouldNotHaveDecimals');
-    }
-
-    // resets or sets new
-    setErrorMessages({ ...errorMessages, [symbol]: errorMessage });
-
-    const updated = { assetData, amount: amountFormatted || 0 };
-    setUpdatedValues({ ...updatedValues, [symbol]: updated });
-  };
-
-  const renderAsset = ({ item }) => {
-    const { assetData: { token: symbol, name, icon }, draftAmount: amount } = item;
-    const assetBalance = getBalance(availableBalances, symbol);
-    const formattedAssetBalance = formatFullAmount(assetBalance);
-    const displayAmount = updatedValues[symbol]?.amount || '';
-    const errorMessage = errorMessages[symbol];
-    const value = isEmpty(updatedValues[symbol]) ? amount?.toString() : displayAmount;
+  // Fail safe
+  if (!assetData) {
     return (
-      <ListItemWithImage
-        label={name}
-        itemImageUrl={icon}
-        fallbackToGenericToken
-        rightColumnInnerStyle={{ flex: 1, justifyContent: 'center' }}
-        customAddon={(
-          <AmountInputWrapper>
-            <AmountInput
-              onChangeText={(text) => handleAmountChange(text, item.assetData)}
-              value={value}
-              placeholder={formattedAssetBalance}
-              keyboardType="decimal-pad"
-            />
-          </AmountInputWrapper>
-        )}
-        customAddonFullWidth={errorMessage && <ErrorHolder><ErrorText>{errorMessage}</ErrorText></ErrorHolder>}
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: t('transactions.title.amountEditScreen') }],
+        }}
       />
     );
+  }
+
+  const handleSubmit = () => {
+    if (!assetData) return;
+
+    dispatch(removeKeyBasedAssetToTransferAction(assetData));
+    dispatch(addKeyBasedAssetToTransferAction(assetData, BigNumber(value)));
+    navigation.goBack(null);
   };
 
-  const onNextPress = () => {
-    Object.values(updatedValues).forEach((updatedValue: any) => {
-      // toggle with new amount
-      removeKeyBasedAssetToTransfer(updatedValue.assetData);
-      if (!!updatedValue?.amount && updatedValue.amount > 0) {
-        addKeyBasedAssetToTransfer(updatedValue.assetData, updatedValue.amount);
-      }
-    });
-    navigation.goBack();
-  };
-
-  const assetTransfers = keyBasedAssetsToTransfer.filter(
-    (assetTransfer) => assetTransfer?.assetData?.tokenType !== COLLECTIBLES,
-  );
-
-  const filteredAssetTransfers = !searchQuery || searchQuery.trim().length < 2
-    ? assetTransfers
-    : assetTransfers.filter(
-      ({ assetData }) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
-    );
+  const assetOption = assetData ? mapAssetDataToAssetOption(assetData, keyWalletBalances, rates, fiatCurrency) : null;
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('transactions.title.amountEditScreen') }],
-        rightItems: [!isEmpty(updatedValues) ? { link: t('button.save'), onPress: onNextPress } : {}],
       }}
+      footer={
+        <FooterContent>
+          <Button title={t('button.confirm')} onPress={handleSubmit} disabled={!isValid} />
+        </FooterContent>
+      }
+      shouldFooterAvoidKeyboard
     >
-      <ScrollView scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
-        <SearchBlock
-          searchInputPlaceholder={t('label.searchAsset')}
-          onSearchChange={(query) => setSearchQuery(query)}
-          itemSearchState={searchQuery.length >= 2}
-          navigation={navigation}
-          onSearchFocus={() => setInSearchMode(true)}
-          onSearchBlur={() => setInSearchMode(false)}
+      <Content>
+        <ValueInput
+          value={value}
+          onValueChange={setValue}
+          assetData={assetOption}
+          customAssets={[]}
+          customBalances={keyWalletBalances}
+          onFormValid={setIsValid}
+          getInputRef={(ref) => {
+            inputRef.current = ref;
+          }}
         />
-        <FlatList
-          data={filteredAssetTransfers}
-          scrollEnabled={!inSearchMode}
-          keyExtractor={item => item.assetData.token}
-          renderItem={renderAsset}
-          initialNumToRender={9}
-          contentContainerStyle={{ flexGrow: 1 }}
-          ListEmptyComponent={(
-            <Wrapper
-              flex={1}
-              style={{
-                paddingTop: 90,
-                paddingBottom: 90,
-                alignItems: 'center',
-              }}
-            >
-              <EmptyStateParagraph
-                title={t('transactions.emptyState.assetsList.title')}
-                bodyText={t('transactions.emptyState.assetsList.paragraph')}
-              />
-            </Wrapper>
-          )}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetchingAvailableBalances}
-              onRefresh={onAvailableBalancesRefresh}
-            />
-          }
-        />
-      </ScrollView>
+      </Content>
     </ContainerWithHeader>
   );
-};
+}
 
-const mapStateToProps = ({
-  keyBasedAssetTransfer: {
-    data: keyBasedAssetsToTransfer,
-    availableBalances,
-    isFetchingAvailableBalances,
-  },
-}: RootReducerState): $Shape<Props> => ({
-  keyBasedAssetsToTransfer,
-  availableBalances,
-  isFetchingAvailableBalances,
-});
+export default KeyBasedAssetTransferEditAmount;
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
-  removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: number) => dispatch(
-    addKeyBasedAssetToTransferAction(assetData, amount),
-  ),
-});
+const Content = styled.View`
+  flex: 1;
+  padding: ${spacing.largePlus}px 40px ${spacing.large}px;
+`;
 
-export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferEditAmount);
+const FooterContent = styled.View`
+  width: 100%;
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.mediumLarge}px;
+`;
