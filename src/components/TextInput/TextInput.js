@@ -573,6 +573,7 @@ class TextInput extends React.Component<Props, State> {
                         placeholderTextColor={colors.basic030}
                         alignTextOnRight={!!numeric}
                         smallPadding={!!onRightAddonPress}
+                        autoFocus={true}
                       />
                     </Tooltip>
                   </View>
