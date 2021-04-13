@@ -29,7 +29,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import { MENU } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
 import { useUser } from 'selectors/user';
@@ -78,6 +78,7 @@ function Home() {
           },
         ]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
+        rightItems={[{ icon: 'info-circle-inverse', onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop
       />
@@ -88,11 +89,7 @@ function Home() {
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 
-        <AssetsSection
-          chainSummaries={chainSummaries}
-          chainBalances={chainsBalances}
-          showSideChains={showSideChains}
-        />
+        <AssetsSection chainSummaries={chainSummaries} chainBalances={chainsBalances} showSideChains={showSideChains} />
       </Content>
 
       <FloatingActions />

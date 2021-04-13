@@ -45,6 +45,7 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
+import HistoryScreen from 'screens/History';
 import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -178,6 +179,7 @@ import {
   EXCHANGE_RECEIVE_EXPLAINED,
   HOME,
   HOME_FLOW,
+  HOME_HISTORY,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -414,6 +416,7 @@ const walletConnectFlow = createStackNavigator(
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
+  [HOME_HISTORY]: HistoryScreen,
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [COLLECTIBLE]: CollectibleScreen,

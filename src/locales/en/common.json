@@ -573,6 +573,10 @@
     }
   },
 
+  "history": {
+    "title": "Transactions history"
+  },
+
   "badgeText": {
     "new": "NEW"
   },
