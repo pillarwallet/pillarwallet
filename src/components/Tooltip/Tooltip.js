@@ -159,8 +159,8 @@ const Tooltip = (props: Props) => {
 
   if (wrapperLayout.width) {
     wrapperPosition = {
-      left: (wrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
-      right: (wrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
+      left: (wrapperLayout.width ) - (TOOLTIP_WIDTH ),
+      right: (wrapperLayout.width ) - (TOOLTIP_WIDTH ),
       top: positionOnBottom ? wrapperLayout.height : -tooltipLayout.height,
     };
     arrowHolderPosition = {

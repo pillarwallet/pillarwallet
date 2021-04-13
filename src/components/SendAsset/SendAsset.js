@@ -269,7 +269,7 @@ const SendAsset = ({
 
   const showNextButton = hasAllData;
 
-  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
+  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid || !isValidAmount;
 
   return (
     <SendContainer
