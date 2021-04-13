@@ -19,31 +19,55 @@
 */
 
 import * as React from 'react';
+import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
+import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
+
+// Utils
+import { appFont, spacing } from 'utils/variables';
+
+// Local
+import { useHistoryItems, mapHistoryItemsToSections } from './utils';
+import type { HistoryItem, HistorySection } from './utils';
 
 function History() {
   const { t } = useTranslationWithPrefix('history');
   const navigation = useNavigation();
 
+  const items = useHistoryItems();
+  const sections = mapHistoryItemsToSections(items);
+
+  const renderSectionHeader = (section: HistorySection) => {
+    return <SectionHeader>{section.title}</SectionHeader>;
+  };
+
+  const renderItem = (item: HistoryItem) => {
+    return <Text>{item.title}</Text>;
+  };
+
   return (
     <Container>
-      <HeaderBlock
-        centerItems={[{ title: t('title') }]}
-        navigation={navigation}
-        noPaddingTop
+      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.title}
+        renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderItem={({ item }) => renderItem(item)}
       />
-      <Content>
-        <Text>History</Text>
-      </Content>
-
     </Container>
   );
 }
 
 export default History;
+
+const SectionHeader = styled(Text)`
+  padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;
+  font-family: "${appFont.medium}";
+  color: ${({ theme }) => theme.colors.basic020};
+`;

@@ -19,15 +19,15 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
+import { ScrollView, SectionList } from 'react-native';
+import SafeAreaView, { useSafeAreaInsets } from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 // Types
-import type { ViewProps, ViewStyleProp } from 'utils/types/react-native';
+import type { ViewProps, ViewStyleProp, SectionListProps } from 'utils/types/react-native';
 
 /**
  * Root element for screens. Normally contains `HeaderBlock` & `Content`.

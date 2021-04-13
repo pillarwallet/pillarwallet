@@ -36,36 +36,34 @@ export * from 'date-fns';
 const USER_FULL_DATE_FORMAT = 'MMM D YYYY';
 const USER_MONTH_DAY_FORMAT = 'MMM D';
 
-export const isSameDay = (first: Date | number, second: Date | number): boolean => {
+export type DateLike = Date | string | number;
+
+export const isSameDay = (first: DateLike, second: DateLike): boolean => {
   const dateFormat = 'YYYY-MM-DD';
   return DateFns.format(first, dateFormat) === DateFns.format(second, dateFormat);
 };
 
-export const isToday = (date: Date | number): boolean => {
+export const isToday = (date: DateLike): boolean => {
   return isSameDay(date, new Date());
 };
 
-export const isYesterday = (date: Date | number): boolean => {
+export const isYesterday = (date: DateLike): boolean => {
   return isSameDay(date, DateFns.subDays(new Date(), 1));
 };
 
-export const formatDate = (
-  date: ?(Date | string | number),
-  format?: string,
-): string => {
+export const formatDate = (date: ?DateLike, format?: string): string => {
   if (!date) return '';
 
   return DateFns.format(date, format);
 };
 
-export const humanizeDateString = (date: Date): string => {
+export const humanizeDateString = (date: DateLike): string => {
   if (!date) return '';
 
-  // by default don't show the year if the event happened this year
   if (isToday(date)) return t('label.today');
   if (isYesterday(date)) return t('label.yesterday');
 
-  // TODO: localize dates
+  // Don't show the year if the date is current year
   const dateFormat = DateFns.isThisYear(date) ? USER_MONTH_DAY_FORMAT : USER_FULL_DATE_FORMAT;
   return DateFns.format(date, dateFormat);
 };
