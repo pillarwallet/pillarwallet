@@ -36,6 +36,7 @@ import { useUser } from 'selectors/user';
 
 // Utils
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
+import { useThemeColors } from 'utils/themes';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -59,6 +60,8 @@ function Home() {
   const chainsBalances = useChainBalances();
   const user = useUser();
 
+  const colors = useThemeColors();
+
   const handleToggleSideChains = () => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
     setShowSideChains(!showSideChains);
@@ -70,15 +73,9 @@ function Home() {
   return (
     <Container>
       <HeaderBlock
-        leftItems={[
-          {
-            icon: 'hamburger',
-            iconProps: { secondary: true, style: { marginLeft: -4 } },
-            onPress: () => navigation.navigate(MENU),
-          },
-        ]}
+        leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
-        rightItems={[{ icon: 'info-circle-inverse', onPress: () => navigation.navigate(HOME_HISTORY) }]}
+        rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop
       />

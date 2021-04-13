@@ -243,6 +243,7 @@
         "statusIcon",
         "statusIconColor",
         "style",
+        "svgIcon",
         "top",
         "translationKey",
         "type",

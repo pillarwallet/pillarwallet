@@ -26,6 +26,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import SvgIcon from 'components/modern/Icon';
 import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
@@ -33,6 +34,7 @@ import { noop } from 'utils/common';
 // types
 import type { Theme } from 'models/Theme';
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { IconName as SvgIconName } from 'components/modern/Icon';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';
@@ -41,6 +43,7 @@ import HeaderActionButton from './HeaderActionButton';
 type NavItem = {|
   title?: string,
   icon?: string,
+  svgIcon?: SvgIconName,
   link?: string,
   close?: boolean,
   onPress?: () => void,
@@ -143,6 +146,14 @@ const BackIcon = styled(IconButton)`
 `;
 
 const ActionIcon = styled(IconButton)`
+  position: relative;
+  align-self: center;
+  height: 36px;
+  width: 44px;
+  padding: 5px 10px;
+`;
+
+const ActionSvgIcon = styled(SvgIcon)`
   position: relative;
   align-self: center;
   height: 36px;
@@ -276,6 +287,27 @@ class HeaderBlock extends React.Component<Props> {
             horizontalAlign="flex-start"
             {...additionalIconProps}
           />
+          {!!item.indicator && <Indicator />}
+        </View>
+      );
+    }
+    if (item.svgIcon) {
+      const additionalIconStyle = {};
+      const additionalIconProps = item.iconProps || {};
+      if (type === LEFT) additionalIconStyle.marginLeft = -10;
+      if (type === RIGHT) additionalIconStyle.marginRight = -10;
+      return (
+        <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.icon}>
+          <TouchableOpacity onPress={item.onPress}>
+            <ActionSvgIcon
+              name={item.svgIcon}
+              color={
+                item.color || getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })
+              }
+              horizontalAlign="flex-start"
+              {...additionalIconProps}
+            />
+          </TouchableOpacity>
           {!!item.indicator && <Indicator />}
         </View>
       );

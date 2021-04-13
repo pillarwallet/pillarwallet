@@ -20,9 +20,13 @@
 /* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
+import { View } from 'react-native';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 // Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
@@ -50,6 +54,7 @@ import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
 import IconFailed from 'assets/icons/svg/icon-24-failed.svg';
 import IconGift from 'assets/icons/svg/icon-24-gift.svg';
 import IconHighFees from 'assets/icons/svg/icon-24-high-fees.svg';
+import IconHistory from 'assets/icons/svg/icon-24-history.svg';
 import IconImage from 'assets/icons/svg/icon-24-image.svg';
 import IconInfo from 'assets/icons/svg/icon-24-info.svg';
 import IconInvestment from 'assets/icons/svg/icon-24-investment.svg';
@@ -119,6 +124,7 @@ const components = {
   failed: IconFailed,
   gift: IconGift,
   'high-fees': IconHighFees,
+  history: IconHistory,
   image: IconImage,
   info: IconInfo,
   investment: IconInvestment,
@@ -169,6 +175,7 @@ type Props = {|
   color?: string,
   width?: number,
   height?: number,
+  style?: ViewStyleProp,
 |};
 
 /**
@@ -182,11 +189,20 @@ type Props = {|
  * @note Use it only for small icon-like images.
  * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
  */
-function Icon({ name, color, ...rest }: Props) {
+function Icon({
+  name,
+  color,
+  style,
+  ...rest
+}: Props) {
   const colors = useThemeColors();
 
   const Component = components[name];
-  return Component ? <Component fill={color ?? colors.basic010} {...rest} /> : null;
+  return Component ? (
+    <View style={style}>
+      <Component fill={color ?? colors.basic010} {...rest} />
+    </View>
+  ) : null;
 }
 
 export default Icon;
