@@ -21,7 +21,8 @@
 import * as React from 'react';
 import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import styled from 'styled-components/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import styled, { useTheme } from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -33,32 +34,32 @@ import Text from 'components/modern/Text';
 import { appFont, spacing } from 'utils/variables';
 
 // Local
-import { useHistoryItems, mapHistoryItemsToSections } from './utils';
-import type { HistoryItem, HistorySection } from './utils';
+import { useHistoryItems, mapHistoryItemsToSections, renderHistoryItem } from './utils';
+import type { HistorySection } from './utils';
 
 function History() {
   const { t } = useTranslationWithPrefix('history');
   const navigation = useNavigation();
+  const safeArea = useSafeAreaInsets();
 
   const items = useHistoryItems();
   const sections = mapHistoryItemsToSections(items);
 
+  const theme = useTheme();
+
   const renderSectionHeader = (section: HistorySection) => {
     return <SectionHeader>{section.title}</SectionHeader>;
-  };
-
-  const renderItem = (item: HistoryItem) => {
-    return <Text>{item.title}</Text>;
   };
 
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
       <SectionList
+        contentContainerStyle={{ paddingBottom: safeArea.bottom }}
         sections={sections}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item._id}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
-        renderItem={({ item }) => renderItem(item)}
+        renderItem={({ item }) => renderHistoryItem(item, theme)}
       />
     </Container>
   );
@@ -68,6 +69,7 @@ export default History;
 
 const SectionHeader = styled(Text)`
   padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;
-  font-family: "${appFont.medium}";
+  font-family: '${appFont.medium}';
   color: ${({ theme }) => theme.colors.basic020};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;

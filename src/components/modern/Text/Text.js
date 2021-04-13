@@ -26,7 +26,7 @@ import { useThemeColors } from 'utils/themes';
 import { appFont, objectFontStyles } from 'utils/variables';
 
 // Types
-import type { TextProps, TextStyleProp } from 'utils/types/react-native';
+import type { TextProps, TextStyleProp, FontVariant } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
 
