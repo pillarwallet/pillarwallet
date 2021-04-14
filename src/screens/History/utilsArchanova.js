@@ -309,7 +309,7 @@ function mapTokenTransactionToHistoryItem(item: Item, context: Context): ?Histor
   if (item.tag === SET_SMART_WALLET_ACCOUNT_ENS) {
     return {
       type: 'ensName',
-      id: `ensName-${item.createdAt}`,
+      id: item._id,
       date: new Date(item.createdAt * 1000),
       ensName: item.extra?.ensName ?? '',
     };
@@ -373,7 +373,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
         case 'Wallet created':
           return {
             type: 'walletEvent',
-            id: `${item._id}-${item.createdAt}`,
+            id: `wallet-create-${item.createdAt}-${item._id}`,
             date: new Date(item.createdAt * 1000),
             title: t('keyWallet'),
             event: t('label.created'),
@@ -381,7 +381,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
         case 'Smart Wallet created':
           return {
             type: 'walletEvent',
-            id: `${item._id}-${item.createdAt}`,
+            id: `wallet-create-${item.createdAt}-${item._id}`,
             date: new Date(item.createdAt * 1000),
             title: t('smartWallet'),
             subtitle: isSmartWalletActivated ? undefined : t('label.needToActivate'),
@@ -390,7 +390,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
         case 'Wallet imported':
           return {
             type: 'walletEvent',
-            id: `${item._id}-${item.createdAt}`,
+            id: `wallet-create-${item.createdAt}-${item._id}`,
             date: new Date(item.createdAt * 1000),
             title: t('keyWallet'),
             event: t('label.imported'),
@@ -402,7 +402,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
     case PPN_INIT_EVENT:
       return {
         type: 'walletEvent',
-        id: `${item._id}-${item.createdAt}`,
+        id: `ppn-init-${item.createdAt}-${item._id}`,
         date: new Date(item.createdAt * 1000),
         title: t('pillarNetwork'),
         subtitle: isSmartWalletActivated ? undefined : t('label.needToActivate'),
@@ -412,7 +412,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
     case WALLET_BACKUP_EVENT:
       return {
         type: 'walletEvent',
-        id: `${item._id}-${item.createdAt}`,
+        id: `wallet-backup-${item.createdAt}-${item._id}`,
         date: new Date(item.createdAt * 1000),
         title: t('keyWallet'),
         event: t('label.backedUp'),
@@ -425,7 +425,7 @@ function mapUserEventsToHistoryItem(item: Item, { isSmartWalletActivated }: Cont
 function mapBadgeRewardToHistoryItem(item: Item): HistoryItem {
   return {
     type: 'badgeEvent',
-    id: `${item._id}-${item.createdAt}`,
+    id: item._id,
     date: new Date(item.createdAt * 1000),
     title: item.name,
     subtitle: t('label.badge'),

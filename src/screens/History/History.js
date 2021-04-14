@@ -32,6 +32,7 @@ import Text from 'components/modern/Text';
 
 // Utils
 import { appFont, spacing } from 'utils/variables';
+import { humanizeDateString } from 'utils/date';
 
 // Local
 import { mapHistoryItemsToSections, renderHistoryItem } from './utils';
@@ -43,13 +44,20 @@ function History() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
+  let ts = new Date().getTime();
   const items = useHistoryItems();
+  console.log("USE HI", new Date().getTime() - ts);
+
+  let ts2 = new Date().getTime();
   const sections = mapHistoryItemsToSections(items);
+  console.log('USE HI', new Date().getTime() - ts2);
 
   const theme = useTheme();
 
+  items.forEach((item) => console.log("ITEM", item.id));
+
   const renderSectionHeader = (section: HistorySection) => {
-    return <SectionHeader>{section.title}</SectionHeader>;
+    return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
   };
 
   return (
@@ -58,7 +66,7 @@ function History() {
       <SectionList
         contentContainerStyle={{ paddingBottom: safeArea.bottom }}
         sections={sections}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.id}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderHistoryItem(item, theme)}
       />

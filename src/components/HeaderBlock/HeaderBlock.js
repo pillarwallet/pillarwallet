@@ -297,7 +297,7 @@ class HeaderBlock extends React.Component<Props> {
       if (type === LEFT) additionalIconStyle.marginLeft = -10;
       if (type === RIGHT) additionalIconStyle.marginRight = -10;
       return (
-        <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.icon}>
+        <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.svgIcon}>
           <TouchableOpacity onPress={item.onPress}>
             <ActionSvgIcon
               name={item.svgIcon}

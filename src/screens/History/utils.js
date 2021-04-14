@@ -41,17 +41,27 @@ import HistoryListItem, { TextValue, TokenValue } from './HistoryListItem';
 
 export type HistorySection = {
   ...SectionBase<HistoryItem>,
-  title: string,
+  date: Date,
 };
 
 export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[] {
+  const ts1 = new Date().getTime();
   const sortedItems = orderBy(items, ['date'], ['desc']);
-  const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'YYYY-MM-DD'));
+  console.log('MAP SORT', new Date().getTime() - ts1);
 
-  return Object.keys(groups).map((key: string) => ({
-    title: humanizeDateString(key),
+  const ts2 = new Date().getTime();
+  const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'YYYY-MM-DD'));
+  console.log('MAP GROUP', new Date().getTime() - ts2);
+
+  const ts3 = new Date().getTime();
+  const result = Object.keys(groups).map((key: string) => ({
+    key,
+    date: new Date(key),
     data: groups[key],
   }));
+  console.log('MAP FORMAT', new Date().getTime() - ts3, Object.keys(groups).length);
+
+  return result;
 }
 
 export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Element<any> {
