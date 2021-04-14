@@ -154,7 +154,7 @@ export function TokenValue({ symbol, value }: TokenValueProps) {
 
   return (
     <Text variant="medium" color={value.gte(0) ? 'positive' : 'secondaryText'} style={styles.tokenValue}>
-      {formatTokenValueChange(value, symbol)}
+      {formatTokenValueChange(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );
 }
