@@ -76,10 +76,6 @@ import { getWalletFromStorage } from 'utils/wallet';
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
 import { setWbtcPendingTxsAction } from './exchangeActions';
-import { REMOTE_CONFIG } from '../constants/remoteConfigConstants';
-
-//firebase
-import { firebaseRemoteConfig } from 'services/firebase';
 
 
 const storage = Storage.getInstance('db');
@@ -90,8 +86,6 @@ export const initAppAndRedirectAction = () => {
 
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
-
-    let feautureOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
 
     storageData = await migrate('app_settings', storageData, dispatch, getState);
     const { appSettings = {} } = get(storageData, 'app_settings', {});
@@ -242,7 +236,7 @@ export const initAppAndRedirectAction = () => {
           },
         }),
       };
-    } else if(feautureOnboarding) {
+    } else {
       navAction = { routeName: ONBOARDING_FLOW };
     }
 
