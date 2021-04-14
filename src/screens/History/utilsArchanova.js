@@ -122,7 +122,7 @@ function useFeeData(): any[] {
   const history = useRootSelector(combinedHistorySelector);
   const openSeaTxHistory = useRootSelector(combinedCollectiblesHistorySelector);
   const userEvents = useRootSelector((root) => root.userEvents.data);
-  const badgesEvents = useRootSelector(root => root.badges.data);
+  const badgesEvents = useRootSelector((root) => root.badges.badgesEvents);
   const sablierEvents = useRootSelector(sablierEventsSelector);
 
   const tokenTxHistory = history
@@ -285,11 +285,12 @@ function mapTransactionToHistoryItem(item: Transaction, context: Context): ?Hist
     //   return this.getTransactionEventData(item);
     // case COLLECTIBLE_TRANSACTION:
     //   return this.getCollectibleTransactionEventData(item);
-    // case BADGE_REWARD_EVENT:
-    //   return this.getBadgeRewardEventData(item);
+    case BADGE_REWARD_EVENT:
+      return mapBadgeRewardToHistoryItem(item);
     // case SABLIER_EVENT:
     //   return this.getSablierEventData(item);
     default:
+    console.log("UNKNOW ITEM", item.type, item);
       return null;
   }
 }
@@ -348,4 +349,16 @@ function mapUserEventsToHistoryItem(event: Object, { isSmartWalletActivated }: C
     default:
       return null;
   }
+}
+
+function mapBadgeRewardToHistoryItem(event: Object): HistoryItem {
+  return {
+    type: 'badgeEvent',
+    id: `${event.id}-${event.createdAt}`,
+    date: new Date(event.createdAt * 1000),
+    title: event.name,
+    subtitle: t('label.badge'),
+    event: STATUSES.RECEIVED,
+    iconUrl: event.imageUrl,
+  };
 }

@@ -64,6 +64,17 @@ export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Elemen
     );
   }
 
+  if (item.type === 'badgeEvent') {
+    return (
+      <HistoryListItem
+        title={item.title}
+        subtitle={item.subtitle}
+        iconUrl={item.iconUrl}
+        rightComponent={<TextValue>{item.event}</TextValue>}
+      />
+    );
+  }
+
   if (item.type === 'sent') {
     return (
       <HistoryListItem

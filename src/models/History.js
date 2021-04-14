@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import type { ImageSource } from 'utils/types/react-native';
 
 type HistoryItemCommon = {|
   id: string,
@@ -30,7 +31,13 @@ type TokenValue = {|
   value: BigNumber,
 |};
 
-export type HistoryItem = HistoryItemReceived | HistoryItemSent | HistoryItemExchange | HistoryItemWalletEvent | HistoryItemUnknown;
+export type HistoryItem =
+  | HistoryItemReceived
+  | HistoryItemSent
+  | HistoryItemExchange
+  | HistoryItemWalletEvent
+  | HistoryItemBadgeEvent
+  | HistoryItemUnknown;
 
 export type HistoryItemReceived = {|
   ...HistoryItemCommon,
@@ -61,6 +68,15 @@ export type HistoryItemWalletEvent = {|
   title: string,
   subtitle?: string,
   event: string,
+|};
+
+export type HistoryItemBadgeEvent = {|
+  ...HistoryItemCommon,
+  type: 'badgeEvent',
+  title: string,
+  subtitle?: string,
+  event: string,
+  iconUrl: ?string,
 |};
 
 export type HistoryItemUnknown = {|

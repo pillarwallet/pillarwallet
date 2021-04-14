@@ -25,6 +25,7 @@ import { useTranslation, useTranslationWithPrefix } from 'translations/translate
 
 // Components
 import Icon, { type IconName } from 'components/modern/Icon';
+import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -35,6 +36,7 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 type Props = {|
   title: string,
   subtitle?: string,
+  iconUrl?: string,
   iconName?: IconName,
   iconColor?: string,
   iconBorderColor?: string,
@@ -44,6 +46,7 @@ type Props = {|
 function HistoryListItem({
   title,
   subtitle,
+  iconUrl,
   iconName,
   iconColor,
   iconBorderColor,
@@ -52,10 +55,17 @@ function HistoryListItem({
   const { t } = useTranslationWithPrefix('history.item');
   const colors = useThemeColors();
 
+  console.log("ICON", iconUrl);
+
   return (
     <Container>
       <LeftColumn>
-        {iconName && (
+        {!!iconUrl && (
+          <IconImageWrapper>
+            <IconImage source={{ uri: iconUrl }} />
+          </IconImageWrapper>
+        )}
+        {!!iconName && (
           <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
             <Icon name={iconName} color={iconColor ?? colors.neutral} />
           </IconCircle>
@@ -97,6 +107,22 @@ const RightColumn = styled.View`
   justify-content: center;
   align-items: flex-end;
   margin-left: ${spacing.medium}px;
+`;
+
+const IconImageWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.neutralWeak};
+  border-radius: 24px;
+  background-color: ${({ theme }) => theme.colors.neutralWeak};
+`;
+
+const IconImage = styled(Image)`
+  width: 48px;
+  height: 48px;
 `;
 
 const IconCircle = styled.View`
