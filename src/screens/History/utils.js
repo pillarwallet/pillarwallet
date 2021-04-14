@@ -22,6 +22,9 @@ import * as React from 'react';
 import { orderBy, groupBy } from 'lodash';
 import t from 'translations/translate';
 
+// Components
+import Icon from 'components/modern/Icon';
+
 // Models
 import type { Theme } from 'models/Theme';
 
@@ -43,7 +46,7 @@ export type HistorySection = {
 
 export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[] {
   const sortedItems = orderBy(items, ['date'], ['desc']);
-  const groups = groupBy(sortedItems, (item) => formatDate(item.date));
+  const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'YYYY-MM-DD'));
 
   return Object.keys(groups).map((key: string) => ({
     title: humanizeDateString(key),
@@ -52,6 +55,30 @@ export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[
 }
 
 export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Element<any> {
+  if (item.type === 'tokenReceived') {
+    return (
+      <HistoryListItem
+        title={formatHexAddress(item.fromAddress)}
+        iconName="send-down"
+        iconColor={theme.colors.positive}
+        iconBorderColor={theme.colors.positiveWeak}
+        rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
+      />
+    );
+  }
+
+  if (item.type === 'tokenSent') {
+    return (
+      <HistoryListItem
+        title={formatHexAddress(item.toAddress)}
+        iconName="send"
+        iconColor={theme.colors.negative}
+        iconBorderColor={theme.colors.negativeWeak}
+        rightComponent={<TokenValue symbol={item.symbol} value={item.value.negated()} />}
+      />
+    );
+  }
+
   if (item.type === 'collectibleReceived') {
     return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.received')}</TextValue>} />;
   }
@@ -73,6 +100,17 @@ export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Elemen
     );
   }
 
+  if (item.type === 'ensName') {
+    return (
+      <HistoryListItem
+        title={t('ensName')}
+        subtitle={item.ensName}
+        iconComponent={<Icon name="profile" color={theme.colors.homeEnsNameIcon} />}
+        rightComponent={<TextValue>{t('label.registered')}</TextValue>}
+      />
+    );
+  }
+
   if (item.type === 'badgeEvent') {
     return (
       <HistoryListItem
@@ -83,30 +121,6 @@ export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Elemen
       />
     );
   }
-
-  // if (item.type === 'sent') {
-  //   return (
-  //     <HistoryListItem
-  //       title={formatHexAddress(item.to)}
-  //       iconName="send"
-  //       iconColor={theme.colors.negative}
-  //       iconBorderColor={theme.colors.negativeWeak}
-  //       rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value.negated()} />}
-  //     />
-  //   );
-  // }
-
-  // if (item.type === 'received') {
-  //   return (
-  //     <HistoryListItem
-  //       title={formatHexAddress(item.from)}
-  //       iconName="send-down"
-  //       iconColor={theme.colors.positive}
-  //       iconBorderColor={theme.colors.positiveWeak}
-  //       rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value} />}
-  //     />
-  //   );
-  // }
 
   return <HistoryListItem title="Not supported tx" iconName="question" />;
 }

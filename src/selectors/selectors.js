@@ -25,6 +25,7 @@ import get from 'lodash.get';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Asset, Assets, AssetsByAccount } from 'models/asset';
 
 import { getAccountAddress } from 'utils/accounts';
 
@@ -73,14 +74,14 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
+export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
-export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
+export const supportedAssetsSelector = ({ assets }: RootReducerState): Asset[] =>
   get(assets, 'supportedAssets', []);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>

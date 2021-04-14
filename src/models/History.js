@@ -19,56 +19,73 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import type { ImageSource } from 'utils/types/react-native';
 
 type HistoryItemCommon = {|
   id: string,
   date: Date,
 |};
-
-type TokenValue = {|
-  symbol: string,
-  value: BigNumber,
-|};
-
 export type HistoryItem =
-  // | HistoryItemReceived
-  // | HistoryItemSent
-  // | HistoryItemExchange
+  | HistoryItemTokenReceived
+  | HistoryItemTokenSent
   | HistoryItemCollectibleReceived
   | HistoryItemCollectibleSent
   | HistoryItemWalletEvent
+  | HistoryItemEnsName
   | HistoryItemBadgeEvent
   | HistoryItemUnknown;
+
+export type HistoryItemTokenReceived = {|
+  ...HistoryItemCommon,
+  type: 'tokenReceived',
+  fromAddress: string,
+  toAddress: string,
+  symbol: string,
+  value: ?BigNumber,
+|};
+
+export type HistoryItemTokenSent = {|
+  ...HistoryItemCommon,
+  type: 'tokenSent',
+  fromAddress: string,
+  toAddress: string,
+  symbol: string,
+  value: ?BigNumber,
+|};
 
 export type HistoryItemCollectibleReceived = {|
   ...HistoryItemCommon,
   type: 'collectibleReceived',
-  asset: string,
   fromAddress: string,
   toAddress: string,
+  asset: string,
 |};
 
 export type HistoryItemCollectibleSent = {|
   ...HistoryItemCommon,
   type: 'collectibleSent',
-  asset: string,
   fromAddress: string,
   toAddress: string,
+  asset: string,
 |};
 
 export type HistoryItemWalletEvent = {|
   ...HistoryItemCommon,
   type: 'walletEvent',
-  title: string,
+  title?: string,
   subtitle?: string,
   event: string,
+|};
+
+export type HistoryItemEnsName = {|
+  ...HistoryItemCommon,
+  type: 'ensName',
+  ensName: string,
 |};
 
 export type HistoryItemBadgeEvent = {|
   ...HistoryItemCommon,
   type: 'badgeEvent',
-  title: string,
+  title?: string,
   subtitle?: string,
   event: string,
   iconUrl: ?string,

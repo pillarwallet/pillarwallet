@@ -71,6 +71,7 @@ import IconPending from 'assets/icons/svg/icon-24-pending.svg';
 import IconPercentCircle from 'assets/icons/svg/icon-24-percent-circle.svg';
 import IconPhone from 'assets/icons/svg/icon-24-phone.svg';
 import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
+import IconProfile from 'assets/icons/svg/icon-48-profile.svg';
 import IconPower from 'assets/icons/svg/icon-24-power.svg';
 import IconQrCode from 'assets/icons/svg/icon-24-qrcode.svg';
 import IconReward from 'assets/icons/svg/icon-24-reward.svg';
@@ -141,6 +142,7 @@ const components = {
   'percent-circle': IconPercentCircle,
   phone: IconPhone,
   plus: IconPlus,
+  profile: IconProfile,
   power: IconPower,
   qrcode: IconQrCode,
   reward: IconReward,

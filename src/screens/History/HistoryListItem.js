@@ -21,7 +21,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
-import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Icon, { type IconName } from 'components/modern/Icon';
@@ -34,12 +33,13 @@ import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 type Props = {|
-  title: string,
-  subtitle?: string,
-  iconUrl?: string,
+  title: ?string,
+  subtitle?: ?string,
+  iconUrl?: ?string,
   iconName?: IconName,
   iconColor?: string,
   iconBorderColor?: string,
+  iconComponent?: React.Node,
   rightComponent?: React.Node,
 |};
 
@@ -50,12 +50,10 @@ function HistoryListItem({
   iconName,
   iconColor,
   iconBorderColor,
+  iconComponent,
   rightComponent,
 }: Props) {
-  const { t } = useTranslationWithPrefix('history.item');
   const colors = useThemeColors();
-
-  console.log("ICON", iconUrl);
 
   return (
     <Container>
@@ -70,6 +68,7 @@ function HistoryListItem({
             <Icon name={iconName} color={iconColor ?? colors.neutral} />
           </IconCircle>
         )}
+        {iconComponent}
       </LeftColumn>
 
       <MiddleColumn>
@@ -147,10 +146,12 @@ export function TextValue({ children }: TextValueProps) {
 
 export type TokenValueProps = {|
   symbol: string,
-  value: BigNumber,
+  value: ?BigNumber,
 |};
 
 export function TokenValue({ symbol, value }: TokenValueProps) {
+  if (!value) return null;
+
   return (
     <Text variant="medium" color={value.gte(0) ? 'positive' : 'secondaryText'} style={styles.tokenValue}>
       {formatTokenValueChange(value, symbol)}
