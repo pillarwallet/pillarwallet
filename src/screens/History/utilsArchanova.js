@@ -23,34 +23,27 @@ import { orderBy } from 'lodash';
 import t from 'translations/translate';
 
 // Constants
-import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS, TRANSACTION_EVENT } from 'constants/historyConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { DAI } from 'constants/assetsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { WBTC_SETTLED_TRANSACTION, WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
+import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS, TRANSACTION_EVENT } from 'constants/historyConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-} from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
-import {
-  SABLIER_CREATE_STREAM,
-  SABLIER_WITHDRAW,
-  SABLIER_CANCEL_STREAM,
-  SABLIER_STREAM_ENDED,
-  SABLIER_EVENT,
-} from 'constants/sablierConstants';
-import { DAI } from 'constants/assetsConstants';
-import { WBTC_SETTLED_TRANSACTION, WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 import {
   RARI_DEPOSIT_TRANSACTION,
   RARI_WITHDRAW_TRANSACTION,
@@ -60,20 +53,23 @@ import {
   RARI_GOVERNANCE_TOKEN_DATA,
 } from 'constants/rariConstants';
 import {
-  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
-  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
-  LIQUIDITY_POOLS_STAKE_TRANSACTION,
-  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
-  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
-} from 'constants/liquidityPoolsConstants';
+  SABLIER_CREATE_STREAM,
+  SABLIER_WITHDRAW,
+  SABLIER_CANCEL_STREAM,
+  SABLIER_STREAM_ENDED,
+  SABLIER_EVENT,
+} from 'constants/sablierConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/smartWalletConstants';
+import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
-import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
-import { combinedHistorySelector } from 'selectors/history';
-import { sablierEventsSelector } from 'selectors/sablier';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 import {
+  useRootSelector,
   assetsSelector,
   activeAccountIdSelector,
   hiddenAssetsSelector,
@@ -83,6 +79,11 @@ import {
   balancesSelector,
   baseFiatCurrencySelector,
 } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
+import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
+import { combinedHistorySelector } from 'selectors/history';
+import { sablierEventsSelector } from 'selectors/sablier';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
 import {
@@ -93,12 +94,9 @@ import {
   getAccountAddress,
   getAccountTypeByAddress,
 } from 'utils/accounts';
-import { addressesEqual } from 'utils/assets';
-import { uniqBy } from 'utils/common';
 import { mapNotNil } from 'utils/array';
-import { images, getImageUrl, isSvgImage } from 'utils/images';
-import { getAssetData } from 'utils/assets';
-import { useTheme } from 'utils/themes';
+import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
+import { uniqBy } from 'utils/common';
 import {
   elipsizeAddress,
   isPendingTransaction,
@@ -109,38 +107,43 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
+import { images, getImageUrl, isSvgImage } from 'utils/images';
+import { useTheme } from 'utils/themes';
 
 // Types
-import type { SectionBase } from 'utils/types/react-native';
 import type { HistoryItem } from 'models/History';
+import type { Accounts } from 'models/Account';
+import type { Asset } from 'models/Asset';
+import type { CollectibleTrx } from 'models/Collectible';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
-import type { Accounts } from 'models/Account';
-import type { Asset } from 'models/Assets';
 
-
-
-import type { CollectibleTrx } from 'models/Collectible';
 
 type Context = {|
   theme: Theme,
   accounts: Accounts,
-  isSmartWalletActivated: boolean,
   userAssets: Asset[],
   supportedAssets: Asset[],
+  isSmartWalletActivated: boolean,
 |};
 
 export function useHistoryItems(): HistoryItem[] {
-  const isSmartWalletActivated = useRootSelector(isSmartWalletActivatedSelector);
   const accounts = useRootSelector((root) => root.accounts.data);
-  const userAssets = useRootSelector(assetsSelector);
+  const userAssets = getAssetsAsList(useRootSelector(accountAssetsSelector));
   const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const isSmartWalletActivated = useRootSelector(isSmartWalletActivatedSelector);
 
   const theme = useTheme();
 
   const feedData = useFeeData();
 
-  const context = { theme, accounts, isSmartWalletActivated, userAssets, supportedAssets };
+  const context = {
+    theme,
+    accounts,
+    userAssets,
+    supportedAssets,
+    isSmartWalletActivated,
+  };
 
   return mapNotNil(feedData, item => mapTransactionToHistoryItem(item, context));
 }
@@ -314,8 +317,8 @@ function mapTokenTransactionToHistoryItem(item: Item, context: Context): ?Histor
 
   const isReceived = getIsReceived(item, context);
   const { decimals = 18 } = getAssetData([], context.supportedAssets, item.asset);
-  console.log('Tx', item);
 
+  // All other TX are either basic token received or token sent events
   if (isReceived) {
     return {
       type: 'tokenReceived',

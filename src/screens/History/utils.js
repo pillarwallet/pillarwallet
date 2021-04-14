@@ -74,7 +74,7 @@ export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Elemen
         iconName="send"
         iconColor={theme.colors.negative}
         iconBorderColor={theme.colors.negativeWeak}
-        rightComponent={<TokenValue symbol={item.symbol} value={item.value.negated()} />}
+        rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
       />
     );
   }
