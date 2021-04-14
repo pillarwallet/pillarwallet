@@ -555,7 +555,7 @@ export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigN
 };
 
 export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
-  if (!feeInWei) return '';
+  if (!feeInWei) return 0;
 
   const token = gasToken?.symbol || ETH;
   const value = getFormattedTransactionFeeValue(feeInWei, gasToken);
