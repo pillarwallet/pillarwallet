@@ -80,6 +80,10 @@ import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalA
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
+import { REMOTE_CONFIG } from '../constants/remoteConfigConstants';
+
+//firebase
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -311,8 +315,10 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
     await dispatch(getTutorialDataAction());
 
+    let feautureOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
+
     const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
-    const BASIC_FLOW = tutorialData ? TUTORIAL_FLOW : HOME;
+    const BASIC_FLOW = tutorialData && feautureOnboarding ? TUTORIAL_FLOW : HOME;
 
     if (tutorialData && referralToken) {
       // show Tutorial first, then navigate to Referral flow when it's finished/skipped
