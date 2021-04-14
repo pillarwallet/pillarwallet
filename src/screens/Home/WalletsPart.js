@@ -25,17 +25,12 @@ import styled from 'styled-components/native';
 
 // components
 import PortfolioBalance from 'components/PortfolioBalance';
-import Stories from 'components/Stories';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { toggleBalanceAction } from 'actions/appSettingsActions';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // models, types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -65,22 +60,17 @@ const WalletsPart = ({
   hideBalance,
   rewardActive,
   sessionLanguageCode,
-}: Props) => {
-  const areStoriesEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_STORIES);
-
-  return (
-    <Wrapper>
-      {areStoriesEnabled && <Stories />}
-      <PortfolioBalance
-        fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
-        showBalance={!hideBalance}
-        toggleBalanceVisibility={toggleBalance}
-        sessionLanguageCode={sessionLanguageCode}
-      />
-      <ActionButtons rewardActive={rewardActive} sessionLanguageCode={sessionLanguageCode} />
-    </Wrapper>
-  );
-};
+}: Props) => (
+  <Wrapper>
+    <PortfolioBalance
+      fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
+      showBalance={!hideBalance}
+      toggleBalanceVisibility={toggleBalance}
+      sessionLanguageCode={sessionLanguageCode}
+    />
+    <ActionButtons rewardActive={rewardActive} sessionLanguageCode={sessionLanguageCode} />
+  </Wrapper>
+);
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, hideBalance } },

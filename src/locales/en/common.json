@@ -51,6 +51,8 @@
   "hour_plural": "{{count}} hours",
   "minute": "{{count}} minute",
   "minute_plural": "{{count}} minutes",
+  "tutorialTitle": "Welcome to Pillar!",
+  "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 
   "navigationTabs": {
     "home": "Home",
@@ -87,7 +89,8 @@
     "confirm": "Confirm",
     "privateKey": "Private key",
     "exchange": "Exchange",
-    "unlockWithBiometrics": "Unlock with biometric sensor"
+    "unlockWithBiometrics": "Unlock with biometric sensor",
+    "welcome": "Welcome to Pillar Wallet!"
   },
 
   "label": {
@@ -309,7 +312,10 @@
     "removeMoreLiquidity": "Remove more liquidity",
     "stakeMoreLiquidity": "Stake more",
     "unstakeMoreLiquidity": "Unstake more",
-    "claimMoreRewards": "Claim more"
+    "claimMoreRewards": "Claim more",
+    "back": "Back",
+    "native": "I know Crypto",
+    "new": "I'm new to Crypto"
   },
 
   "paragraph": {

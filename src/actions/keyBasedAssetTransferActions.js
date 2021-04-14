@@ -49,7 +49,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
-import { BigNumber, formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
+import { BigNumber, truncateAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -262,8 +262,9 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     let keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
         const { assetData, draftAmount } = keyBasedAssetToTransfer;
+        const amount = draftAmount ? truncateAmount(draftAmount, assetData.decimals) : undefined;
         const estimateTransaction = buildAssetTransferTransaction(assetData, {
-          amount: draftAmount?.toFixed(),
+          amount,
           from: keyBasedWalletAddress,
           to: getAccountAddress(firstSmartAccount),
         });
@@ -271,7 +272,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
         return {
           ...keyBasedAssetToTransfer,
           calculatedGasLimit: gasLimit,
-          amount: draftAmount,
+          amount,
           gasPrice,
         };
       }),
@@ -304,7 +305,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
 
       // check if adjusted amount is enough to cover fees, otherwise it's not enough ETH in general
       if (adjustedEthTransferAmountBN.isPositive()) {
-        const adjustedEthTransferAmount = formatFullAmount(adjustedEthTransferAmountBN.toString());
+        const adjustedEthTransferAmount = truncateAmount(adjustedEthTransferAmountBN, 18);
         const estimateTransaction = buildAssetTransferTransaction(ethTransfer.assetData, {
           amount: adjustedEthTransferAmount,
           from: keyBasedWalletAddress,
