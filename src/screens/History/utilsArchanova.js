@@ -87,31 +87,43 @@ import { uniqBy } from 'utils/common';
 import { mapNotNil } from 'utils/array';
 import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { useTheme } from 'utils/themes';
+import {
+  elipsizeAddress,
+  isPendingTransaction,
+  isSWAddress,
+  isKWAddress,
+  groupPPNTransactions,
+  getElipsizeAddress,
+  isFailedTransaction,
+  isTimedOutTransaction,
+} from 'utils/feedData';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { HistoryItem } from 'models/History';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
+import type { Accounts } from 'models/Account';
 
 import get from 'lodash.get';
 import t from 'translations/translate';
 
-import type { Accounts } from 'models/Account';
 import type { CollectibleTrx } from 'models/Collectible';
 
 type Context = {|
   theme: Theme,
-  isSmartWalletActivated: boolean;
-|}
+  accounts: Accounts,
+  isSmartWalletActivated: boolean,
+|};
 
 export function useHistoryItems(): HistoryItem[] {
   const isSmartWalletActivated = useRootSelector(isSmartWalletActivatedSelector);
+  const accounts = useRootSelector((root) => root.accounts.data);
   const theme = useTheme();
 
   const feedData = useFeeData();
 
-  const context = { theme, isSmartWalletActivated };
+  const context = { theme, accounts, isSmartWalletActivated };
 
   return mapNotNil(feedData, item => mapTransactionToHistoryItem(item, context));
 }
@@ -125,22 +137,34 @@ function useFeeData(): any[] {
   const badgesEvents = useRootSelector((root) => root.badges.badgesEvents);
   const sablierEvents = useRootSelector(sablierEventsSelector);
 
-  const tokenTxHistory = history
+  const tokenHistory = history
     .filter(({ tranType }) => tranType !== 'collectible')
     .filter((historyItem) => historyItem.asset !== 'BTC');
-  const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-  const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, accounts, TRANSACTION_EVENT, true, true);
+  const bcxCollectibleHistory = history.filter(({ tranType }) => tranType === 'collectible');
+  const collectibleHistory = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectibleHistory);
 
-  const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(
-    openSeaTxHistory,
-    bcxCollectiblesTxHistory,
-    true,
-  );
+  const mockTx = [
+    {
+      type: COLLECTIBLE_TRANSACTION,
+      date: new Date('2020-01-01'),
+      asset: 'Cybercat',
+    },
+    {
+      type: COLLECTIBLE_TRANSACTION,
+      date: new Date('2020-01-01'),
+      asset: 'Cybercat',
+    },
+  ];
 
-  const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, accounts, COLLECTIBLE_TRANSACTION, true);
-
-  return [...transactionsOnMainnet, ...mappedCTransactions, ...userEvents, ...badgesEvents, ...sablierEvents];
+  return [
+    ...mapTransactionsHistory(tokenHistory, accounts, TRANSACTION_EVENT, true, true),
+    ...mapTransactionsHistory(collectibleHistory, accounts, COLLECTIBLE_TRANSACTION, true),
+    ...userEvents,
+    ...badgesEvents,
+    ...sablierEvents,
+    ...mockTx,
+  ];
 }
 
 // Logic for transforming raw history items into `Transaction` items, extracted from `utils/feedData`
@@ -229,7 +253,6 @@ export function mapTransactionsHistory(
 export function mapOpenSeaAndBCXTransactionsHistory(
   openSeaHistory: CollectibleTrx[],
   BCXHistory: Object[],
-  keepDuplicates?: boolean,
 ): CollectibleTrx[] {
   const concatedCollectiblesHistory = openSeaHistory
     .map(({ hash, ...rest }) => {
@@ -245,54 +268,77 @@ export function mapOpenSeaAndBCXTransactionsHistory(
     })
     .sort((a, b) => b.createdAt - a.createdAt);
 
-  if (keepDuplicates) return concatedCollectiblesHistory;
-  return uniqBy(concatedCollectiblesHistory, 'hash');
+  return concatedCollectiblesHistory;
 }
 
 // Logic for transforming `Transaction` items to `HistoryItems`, build on code extracted from `ActivityFeedItem.js`.
-const NAMES = {
-  SMART_WALLET: t('smartWallet'),
-  KEY_WALLET: t('keyWallet'),
-  PPN_NETWORK: t('pillarNetwork'),
-  AAVE_DEPOSIT: t('aaveDeposit'),
-  POOL_TOGETHER: t('poolTogether'),
-};
+// const NAMES = {
+//   SMART_WALLET: t('smartWallet'),
+//   KEY_WALLET: t('keyWallet'),
+//   PPN_NETWORK: t('pillarNetwork'),
+//   AAVE_DEPOSIT: t('aaveDeposit'),
+//   POOL_TOGETHER: t('poolTogether'),
+// };
 
-const STATUSES = {
-  CREATED: t('label.created'),
-  IMPORTED: t('label.imported'),
-  RECEIVED: t('label.received'),
-  SENT: t('label.sent'),
-  BACKUP: t('label.backedUp'),
-  ACTIVATED: t('label.activated'),
-  ADDED: t('label.added'),
-  REMOVED: t('label.removed'),
-};
+// const STATUSES = {
+//   CREATED: t('label.created'),
+//   IMPORTED: t('label.imported'),
+//   RECEIVED: t('label.received'),
+//   SENT: t('label.sent'),
+//   BACKUP: t('label.backedUp'),
+//   ACTIVATED: t('label.activated'),
+//   ADDED: t('label.added'),
+//   REMOVED: t('label.removed'),
+// };
 
-const FROM = {
-  PPN_NETWORK: t('label.fromPPN'),
-};
+// const FROM = {
+//   PPN_NETWORK: t('label.fromPPN'),
+// };
 
-const TO = {
-  PPN_NETWORK: t('label.toPPN'),
-};
+// const TO = {
+//   PPN_NETWORK: t('label.toPPN'),
+// };
 
 function mapTransactionToHistoryItem(item: Transaction, context: Context): ?HistoryItem {
   switch (item.type) {
-    case USER_EVENT:
-      return mapUserEventsToHistoryItem(item, context);
     // case TRANSACTION_EVENT:
     //   return this.getTransactionEventData(item);
-    // case COLLECTIBLE_TRANSACTION:
-    //   return this.getCollectibleTransactionEventData(item);
+    case COLLECTIBLE_TRANSACTION:
+      return mapCollectibleTransactionToHistoryItem(item, context);
+    case USER_EVENT:
+      return mapUserEventsToHistoryItem(item, context);
     case BADGE_REWARD_EVENT:
       return mapBadgeRewardToHistoryItem(item);
     // case SABLIER_EVENT:
     //   return this.getSablierEventData(item);
     default:
-    console.log("UNKNOW ITEM", item.type, item);
+      console.log('UNKNOW ITEM', item.type, item);
       return null;
   }
+}
+
+function mapCollectibleTransactionToHistoryItem(event: Object, context: Context): ?HistoryItem {
+  const isReceived = getIsReceived(event, context);
+
+  if (isReceived) {
+    return {
+      type: 'collectibleReceived',
+      id: `${event.id}-${event.createdAt}`,
+      date: new Date(event.createdAt * 1000),
+      asset: event.asset,
+      fromAddress: event.from,
+      toAddress: event.to,
+    };
+  }
+
+  return {
+    type: 'collectibleSent',
+    id: `${event.id}-${event.createdAt}`,
+    date: new Date(event.createdAt * 1000),
+    asset: event.asset,
+    fromAddress: event.from,
+    toAddress: event.to,
+  };
 }
 
 function mapUserEventsToHistoryItem(event: Object, { isSmartWalletActivated }: Context): ?HistoryItem {
@@ -304,25 +350,25 @@ function mapUserEventsToHistoryItem(event: Object, { isSmartWalletActivated }: C
             type: 'walletEvent',
             id: `${event.id}-${event.createdAt}`,
             date: new Date(event.createdAt * 1000),
-            title: NAMES.KEY_WALLET,
-            event: STATUSES.CREATED,
+            title: t('keyWallet'),
+            event: t('label.created'),
           };
         case 'Smart Wallet created':
           return {
             type: 'walletEvent',
             id: `${event.id}-${event.createdAt}`,
             date: new Date(event.createdAt * 1000),
-            title: NAMES.SMART_WALLET,
+            title: t('smartWallet'),
             subtitle: isSmartWalletActivated ? undefined : t('label.needToActivate'),
-            event: STATUSES.CREATED,
+            event: t('label.created'),
           };
         case 'Wallet imported':
           return {
             type: 'walletEvent',
             id: `${event.id}-${event.createdAt}`,
             date: new Date(event.createdAt * 1000),
-            title: NAMES.KEY_WALLET,
-            event: STATUSES.IMPORTED,
+            title: t('keyWallet'),
+            event: t('label.imported'),
           };
         default:
           return null;
@@ -333,9 +379,9 @@ function mapUserEventsToHistoryItem(event: Object, { isSmartWalletActivated }: C
         type: 'walletEvent',
         id: `${event.id}-${event.createdAt}`,
         date: new Date(event.createdAt * 1000),
-        title: NAMES.PPN_NETWORK,
+        title: t('pillarNetwork'),
         subtitle: isSmartWalletActivated ? undefined : t('label.needToActivate'),
-        event: STATUSES.CREATED,
+        event: t('label.created'),
       };
 
     case WALLET_BACKUP_EVENT:
@@ -343,8 +389,8 @@ function mapUserEventsToHistoryItem(event: Object, { isSmartWalletActivated }: C
         type: 'walletEvent',
         id: `${event.id}-${event.createdAt}`,
         date: new Date(event.createdAt * 1000),
-        title: NAMES.KEY_WALLET,
-        event: STATUSES.BACKUP,
+        title: t('keyWallet'),
+        event: t('label.backedUp'),
       };
     default:
       return null;
@@ -358,7 +404,19 @@ function mapBadgeRewardToHistoryItem(event: Object): HistoryItem {
     date: new Date(event.createdAt * 1000),
     title: event.name,
     subtitle: t('label.badge'),
-    event: STATUSES.RECEIVED,
+    event: t('label.received'),
     iconUrl: event.imageUrl,
   };
+}
+
+function getIsReceived(event: Object, { accounts }: Context): boolean {
+  const isBetweenAccounts =
+    (isSWAddress(event.to, accounts) && isKWAddress(event.from, accounts)) ||
+    (isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts));
+
+  return (
+    (isBetweenAccounts && event.isReceived) ||
+    (!isBetweenAccounts && isKWAddress(event.to, accounts)) ||
+    (!isBetweenAccounts && isSWAddress(event.to, accounts))
+  );
 }

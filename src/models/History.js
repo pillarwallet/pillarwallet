@@ -32,34 +32,29 @@ type TokenValue = {|
 |};
 
 export type HistoryItem =
-  | HistoryItemReceived
-  | HistoryItemSent
-  | HistoryItemExchange
+  // | HistoryItemReceived
+  // | HistoryItemSent
+  // | HistoryItemExchange
+  | HistoryItemCollectibleReceived
+  | HistoryItemCollectibleSent
   | HistoryItemWalletEvent
   | HistoryItemBadgeEvent
   | HistoryItemUnknown;
 
-export type HistoryItemReceived = {|
+export type HistoryItemCollectibleReceived = {|
   ...HistoryItemCommon,
-  type: 'received',
-  from: string, // ENS or hex
-  to: string, // ENS or hex
-  value: TokenValue,
+  type: 'collectibleReceived',
+  asset: string,
+  fromAddress: string,
+  toAddress: string,
 |};
 
-export type HistoryItemSent = {|
+export type HistoryItemCollectibleSent = {|
   ...HistoryItemCommon,
-  type: 'sent',
-  from: string, // ENS or hex
-  to: string, // ENS or hex
-  value: TokenValue,
-|};
-
-export type HistoryItemExchange = {|
-  ...HistoryItemCommon,
-  type: 'exchange',
-  fromValue: TokenValue,
-  toValue: TokenValue,
+  type: 'collectibleSent',
+  asset: string,
+  fromAddress: string,
+  toAddress: string,
 |};
 
 export type HistoryItemWalletEvent = {|

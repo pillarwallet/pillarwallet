@@ -91,11 +91,13 @@ const Container = styled.View`
   flex-direction: row;
   padding: ${spacing.small}px ${spacing.large}px;
   background-color: ${({ theme }) => theme.colors.basic070};
+  min-height: 64px;
 `;
 
 const LeftColumn = styled.View`
   justify-content: center;
   margin-right: ${spacing.medium}px;
+  width: 48px;
 `;
 
 const MiddleColumn = styled.View`

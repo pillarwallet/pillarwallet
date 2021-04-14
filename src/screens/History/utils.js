@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { orderBy, groupBy } from 'lodash';
+import t from 'translations/translate';
 
 // Models
 import type { Theme } from 'models/Theme';
@@ -51,6 +52,14 @@ export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[
 }
 
 export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Element<any> {
+  if (item.type === 'collectibleReceived') {
+    return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.received')}</TextValue>} />;
+  }
+
+  if (item.type === 'collectibleSent') {
+    return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.sent')}</TextValue>} />;
+  }
+
   if (item.type === 'walletEvent') {
     return (
       <HistoryListItem
@@ -75,29 +84,29 @@ export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Elemen
     );
   }
 
-  if (item.type === 'sent') {
-    return (
-      <HistoryListItem
-        title={formatHexAddress(item.to)}
-        iconName="send"
-        iconColor={theme.colors.negative}
-        iconBorderColor={theme.colors.negativeWeak}
-        rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value.negated()} />}
-      />
-    );
-  }
+  // if (item.type === 'sent') {
+  //   return (
+  //     <HistoryListItem
+  //       title={formatHexAddress(item.to)}
+  //       iconName="send"
+  //       iconColor={theme.colors.negative}
+  //       iconBorderColor={theme.colors.negativeWeak}
+  //       rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value.negated()} />}
+  //     />
+  //   );
+  // }
 
-  if (item.type === 'received') {
-    return (
-      <HistoryListItem
-        title={formatHexAddress(item.from)}
-        iconName="send-down"
-        iconColor={theme.colors.positive}
-        iconBorderColor={theme.colors.positiveWeak}
-        rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value} />}
-      />
-    );
-  }
+  // if (item.type === 'received') {
+  //   return (
+  //     <HistoryListItem
+  //       title={formatHexAddress(item.from)}
+  //       iconName="send-down"
+  //       iconColor={theme.colors.positive}
+  //       iconBorderColor={theme.colors.positiveWeak}
+  //       rightComponent={<TokenValue symbol={item.value.symbol} value={item.value.value} />}
+  //     />
+  //   );
+  // }
 
   return <HistoryListItem title="Not supported tx" iconName="question" />;
 }
