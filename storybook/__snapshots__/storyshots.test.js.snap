@@ -38949,7 +38949,7 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
               ]
             }
           >
-            tokenValue
+            £NaN
           </Text>
         </View>
         <View
@@ -39077,7 +39077,7 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
               ]
             }
           >
-            tokenValue
+            £NaN
           </Text>
         </View>
         <View
