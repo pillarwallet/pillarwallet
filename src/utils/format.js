@@ -178,3 +178,7 @@ export function formatTokenValueChange(value: ?BigNumber, symbol?: string, optio
     ? t('positiveTokenValue', { value: formattedValue, token: symbol })
     : t('negativeTokenValue', { value: formattedValue, token: symbol });
 }
+
+export function formatHexAddress(address: string) {
+  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
+}

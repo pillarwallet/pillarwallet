@@ -50,13 +50,14 @@ function HistoryListItem({
   rightComponent,
 }: Props) {
   const { t } = useTranslationWithPrefix('history.item');
+  const colors = useThemeColors();
 
   return (
     <Container>
       <LeftColumn>
         {iconName && (
-          <IconCircle $color={iconBorderColor}>
-            <Icon name={iconName} color={iconColor} />
+          <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
+            <Icon name={iconName} color={iconColor ?? colors.neutral} />
           </IconCircle>
         )}
       </LeftColumn>

@@ -34,7 +34,8 @@ import Text from 'components/modern/Text';
 import { appFont, spacing } from 'utils/variables';
 
 // Local
-import { useHistoryItems, mapHistoryItemsToSections, renderHistoryItem } from './utils';
+import { mapHistoryItemsToSections, renderHistoryItem } from './utils';
+import { useHistoryItems } from './utilsArchanova';
 import type { HistorySection } from './utils';
 
 function History() {
