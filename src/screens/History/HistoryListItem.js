@@ -67,7 +67,7 @@ function HistoryListItem({
           {title}
         </Text>
 
-        {subtitle && <Text>{subtitle}</Text>}
+        {!!subtitle && <Text color="basic030">{subtitle}</Text>}
       </MiddleColumn>
 
       {rightComponent && <RightColumn>{rightComponent}</RightColumn>}
@@ -108,6 +108,14 @@ const IconCircle = styled.View`
   border-color: ${({ $color }) => $color};
   border-radius: 24px;
 `;
+
+export type TextValueProps = {|
+  children: string,
+|};
+
+export function TextValue({ children }: TextValueProps) {
+  return <Text color="basic030">{children}</Text>;
+}
 
 export type TokenValueProps = {|
   symbol: string,

@@ -30,7 +30,7 @@ type TokenValue = {|
   value: BigNumber,
 |};
 
-export type HistoryItem = HistoryItemReceived | HistoryItemSent | HistoryItemExchange | HistoryItemUnknown;
+export type HistoryItem = HistoryItemReceived | HistoryItemSent | HistoryItemExchange | HistoryItemWalletEvent | HistoryItemUnknown;
 
 export type HistoryItemReceived = {|
   ...HistoryItemCommon,
@@ -53,6 +53,14 @@ export type HistoryItemExchange = {|
   type: 'exchange',
   fromValue: TokenValue,
   toValue: TokenValue,
+|};
+
+export type HistoryItemWalletEvent = {|
+  ...HistoryItemCommon,
+  type: 'walletEvent',
+  title: string,
+  subtitle?: string,
+  event: string,
 |};
 
 export type HistoryItemUnknown = {|

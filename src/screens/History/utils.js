@@ -33,7 +33,7 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { HistoryItem } from 'models/History';
 
 // Local
-import HistoryListItem, { TokenValue } from './HistoryListItem';
+import HistoryListItem, { TextValue, TokenValue } from './HistoryListItem';
 
 export type HistorySection = {
   ...SectionBase<HistoryItem>,
@@ -51,6 +51,19 @@ export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[
 }
 
 export function renderHistoryItem(item: HistoryItem, theme: Theme): React.Element<any> {
+  if (item.type === 'walletEvent') {
+    return (
+      <HistoryListItem
+        title={item.title}
+        subtitle={item.subtitle}
+        iconName="wallet"
+        iconColor={theme.colors.neutral}
+        iconBorderColor={theme.colors.neutralWeak}
+        rightComponent={<TextValue>{item.event}</TextValue>}
+      />
+    );
+  }
+
   if (item.type === 'sent') {
     return (
       <HistoryListItem

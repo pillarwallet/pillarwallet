@@ -19,7 +19,7 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
-import { useTheme } from 'styled-components/native';
+import { useTheme as useThemeSC } from 'styled-components/native';
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme, ColorsByThemeProps } from 'models/Theme';
@@ -303,6 +303,10 @@ export function getThemeByType(themeType?: string) {
     default:
       return defaultTheme;
   }
+}
+
+export function useTheme(): Theme {
+  return useThemeSC();
 }
 
 export function getThemeColors(currentTheme: Theme = defaultTheme) {
