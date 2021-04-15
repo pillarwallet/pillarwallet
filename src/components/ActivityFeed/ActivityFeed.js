@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 
 // types
+import type { ViewStyleProp } from 'utils/types/react-native';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
@@ -132,6 +133,7 @@ type Props = {
   isAssetView?: boolean,
   card?: boolean,
   cardHeaderTitle?: string,
+  contantContainerStyle?: ViewStyleProp,
 };
 
 const ITEM_TYPE = {

@@ -19,66 +19,36 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled, { useTheme } from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
 
-// Utils
-import { appFont, spacing } from 'utils/variables';
-import { humanizeDateString } from 'utils/date';
+// Selectors
+import { useSmartWalletType, SMART_WALLET_TYPES } from 'selectors/smartWallet';
 
 // Local
-import { mapHistoryItemsToSections, renderHistoryItem } from './utils';
-import { useHistoryItems } from './utilsArchanova';
-import type { HistorySection } from './utils';
+import HistoryListEtherspot from './HistoryListEtherspot';
+import HistoryListArchanova from './HistoryListArchanova';
 
-function History() {
+
+function HistoryScreen() {
   const { t } = useTranslationWithPrefix('history');
   const navigation = useNavigation();
-  const safeArea = useSafeAreaInsets();
 
-  let ts = new Date().getTime();
-  const items = useHistoryItems();
-  console.log("USE HI", new Date().getTime() - ts);
-
-  let ts2 = new Date().getTime();
-  const sections = mapHistoryItemsToSections(items);
-  console.log('USE HI', new Date().getTime() - ts2);
-
-  const theme = useTheme();
-
-  items.forEach((item) => console.log("ITEM", item.id));
-
-  const renderSectionHeader = (section: HistorySection) => {
-    return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
-  };
+  const walletType = useSmartWalletType();
 
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
-      <SectionList
-        contentContainerStyle={{ paddingBottom: safeArea.bottom }}
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        renderSectionHeader={({ section }) => renderSectionHeader(section)}
-        renderItem={({ item }) => renderHistoryItem(item, theme)}
-      />
+
+      {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
+      {walletType === SMART_WALLET_TYPES.ETHERSPOT && <HistoryListEtherspot />}
+      {walletType === SMART_WALLET_TYPES.ARCHANOVA && <HistoryListArchanova />}
     </Container>
   );
 }
 
-export default History;
-
-const SectionHeader = styled(Text)`
-  padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;
-  font-family: '${appFont.medium}';
-  color: ${({ theme }) => theme.colors.basic020};
-  background-color: ${({ theme }) => theme.colors.basic070};
-`;
+export default HistoryScreen;
