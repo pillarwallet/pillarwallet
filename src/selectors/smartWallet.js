@@ -88,5 +88,5 @@ export const SMART_WALLET_TYPES = {
 };
 
 export const useSmartWalletType = (): SmartWalletType => {
-  return SMART_WALLET_TYPES.ARCHANOVA;
+  return SMART_WALLET_TYPES.ETHERSPOT;
 };
