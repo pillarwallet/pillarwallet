@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "12.3.0"
+      xcode: "12.4.0"
     resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -63,19 +63,6 @@ aliases:
       name: Restore pods cache
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
-  - &fetch_pods
-    run:
-      name: Fetch CocoaPods
-      command: |
-        Y | sudo gem uninstall cocoapods
-        sudo gem install cocoapods -v 1.9.1
-        curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-  - &install_pods
-    run:
-      name: Install CocoaPods
-      command: |
-        cd ios
-        pod install --verbose
   - &save_pod_cache
     save_cache:
       name: Save pods cache
@@ -755,6 +742,7 @@ workflows:
               ignore:
                 - develop
                 - master
+                - fix/storyly-cocoapod-deps
                 
   build_and_deploy_appcenter:
     jobs:
@@ -764,6 +752,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/storyly-cocoapod-deps
       - appcenter_ios:
           requires:
             - build-and-test
@@ -771,6 +760,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/storyly-cocoapod-deps
       - appcenter_android:
           context: docker-hub-creds
           requires:
@@ -779,6 +769,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/storyly-cocoapod-deps
 
   build_and_deploy_production:
     jobs:
