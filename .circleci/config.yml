@@ -769,6 +769,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/storyly-cocoapod-deps
 
   build_and_deploy_production:
     jobs:
