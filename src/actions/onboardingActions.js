@@ -78,6 +78,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import { loadSupportedAssetsAction } from 'actions/assetsActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -245,6 +246,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // user might not be registered at this point
     if (walletId) {
+      await dispatch(loadSupportedAssetsAction());
+
       const rates = await getExchangeRates(defaultInitialAssets);
       dispatch(setRatesAction(rates));
       dispatch(fetchBadgesAction(false));

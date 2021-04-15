@@ -51,8 +51,8 @@ import etherspotService from 'services/etherspot';
 import {
   mockEtherspotAccount,
   mockEtherspotApiAccount,
-  mockSmartWalletAccount,
-  mockSmartWalletConnectedAccount,
+  mockArchanovaAccount,
+  mockArchanovaConnectedAccount,
 } from 'testUtils/jestSetup';
 
 
@@ -86,7 +86,7 @@ const mockRegisteredUser: Object = {
 };
 
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
-const mockActiveSmartWalletAccount = { ...mockSmartWalletAccount, isActive: true };
+const mockActiveSmartWalletAccount = { ...mockArchanovaAccount, isActive: true };
 
 pillarSdk.userInfo.mockResolvedValue(mockUpdatedUser);
 
@@ -137,7 +137,7 @@ describe('Auth actions', () => {
       },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
@@ -167,7 +167,7 @@ describe('Auth actions', () => {
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
 

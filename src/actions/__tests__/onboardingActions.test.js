@@ -53,6 +53,7 @@ import { transformAssetsToObject } from 'utils/assets';
 // services
 import PillarSdk from 'services/api';
 import etherspotService from 'services/etherspot';
+import archanovaService from 'services/archanova';
 
 // other
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
@@ -62,9 +63,9 @@ import {
   mockEtherspotAccount,
   mockEtherspotApiAccount,
   mockExchangeRates,
-  mockSmartWalletAccount,
-  mockSmartWalletAccountApiData,
-  mockSmartWalletConnectedAccount,
+  mockArchanovaAccount,
+  mockArchanovaAccountApiData,
+  mockArchanovaConnectedAccount,
   mockSupportedAssets,
   mockUserBadges,
 } from 'testUtils/jestSetup';
@@ -98,6 +99,22 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
   fetchSupportedAssets: jest.fn(() => mockSupportedAssets),
   fetchBadges: jest.fn(() => mockUserBadges),
+  getAddressErc20TokensInfo: jest.fn((address: string) => {
+    // mock owned assets for mocked archanova account
+    if (address === mockArchanovaAccount.extra.address) {
+      return [{ tokenInfo: { symbol: 'PLR' } }];
+    }
+
+    return [];
+  }),
+  fetchBalances: jest.fn(({ address, assets }) => {
+    // mock positive balances for mocked archanova account
+    if (address === mockArchanovaAccount.extra.address) {
+      return assets.map(({ symbol }) => ({ symbol, balance: 1 }));
+    }
+
+    return [];
+  }),
 })));
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
@@ -139,7 +156,7 @@ const mockFcmToken = '12x2342x212';
 const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
 
-const mockNewSmartWalletAccount = { ...mockSmartWalletAccount, extra: mockSmartWalletAccountApiData };
+const mockNewArchanovaAccount = { ...mockArchanovaAccount, extra: mockArchanovaAccountApiData };
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
 
 describe('Onboarding actions', () => {
@@ -244,7 +261,10 @@ describe('Onboarding actions', () => {
   });
 
   it(`should expect series of actions with payload to be
-  dispatched on setupAppServicesAction execution when network is online`, () => {
+  dispatched on setupAppServicesAction execution when network is online
+  and Archanova account does not exist`, () => {
+    jest.spyOn(archanovaService, 'getAccounts').mockReturnValueOnce([]);
+
     store = mockStore({
       session: { data: { isOnline: true } },
       wallet: {
@@ -252,11 +272,11 @@ describe('Onboarding actions', () => {
         data: mockImportedWallet,
       },
       user: { data: mockUser },
-      accounts: { data: [mockSmartWalletAccount] },
-      smartWallet: { connectedAccount: mockSmartWalletConnectedAccount },
+      accounts: { data: [] },
+      smartWallet: {},
       assets: {
         supportedAssets: [],
-        data: { [mockSmartWalletAccount.id]: transformAssetsToObject(mockInitialAssets) },
+        data: {},
       },
       history: { data: {} },
       balances: { data: {} },
@@ -269,23 +289,14 @@ describe('Onboarding actions', () => {
         type: UPDATE_ASSETS,
         payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
       },
+      { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
 
-      // archanova
-      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount] },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockSmartWalletAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
+      { type: SET_SMART_WALLET_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
-      { type: UPDATE_ACCOUNTS, payload: [mockNewSmartWalletAccount, mockNewEtherspotAccount] },
+      { type: UPDATE_ACCOUNTS, payload: [mockNewEtherspotAccount] },
       {
         type: SET_INITIAL_ASSETS,
         payload: {
@@ -294,8 +305,73 @@ describe('Onboarding actions', () => {
         },
       },
 
+      // TODO: etherspot history update tba with separate PR
+    ];
+
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be
+  dispatched on setupAppServicesAction execution when network is online
+  and Archanova account exists`, () => {
+    store = mockStore({
+      session: { data: { isOnline: true } },
+      wallet: {
+        backupStatus: mockBackupStatus,
+        data: mockImportedWallet,
+      },
+      user: { data: mockUser },
+      accounts: { data: [mockArchanovaAccount] },
+      smartWallet: { connectedAccount: mockArchanovaConnectedAccount },
+      assets: {
+        supportedAssets: [],
+        data: {},
+      },
+      history: { data: {} },
+      balances: { data: {} },
+      rates: { data: {} },
+      badges: { data: [] },
+    });
+
+    const expectedActions = [
+      {
+        type: UPDATE_ASSETS,
+        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
+      },
       { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
-      { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
+      { type: UPDATE_RATES, payload: mockExchangeRates },
+      { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
+
+      { type: SET_SMART_WALLET_SDK_INIT, payload: true }, // archanova init for account check
+
+      // archanova
+      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockArchanovaAccountApiData] },
+      { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount] },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockArchanovaAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
+
+      // etherspot
+      { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount, mockNewEtherspotAccount] },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockEtherspotAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
+
+      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: [] } },
+
+      // TODO: etherspot history update tba with separate PR
     ];
 
     return store.dispatch(setupAppServicesAction(randomPrivateKey))

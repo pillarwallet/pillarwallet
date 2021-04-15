@@ -71,7 +71,7 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
-import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
+import { fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
@@ -113,7 +113,6 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount },
       session: { data: { isOnline } },
     } = getState();
 
@@ -134,15 +133,20 @@ export const fetchSmartWalletTransactionsAction = () => {
     // fetch archanova history only if archanova account exists
     const achanovaAccount = findFirstArchanovaAccount(accounts);
     if (achanovaAccount) {
+      const {
+        smartWallet: {
+          lastSyncedTransactionId,
+          connectedAccount,
+        },
+        assets: { supportedAssets },
+      } = getState();
+
       if (!connectedAccount) {
         reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
         return;
       }
 
       const devices = connectedAccount?.devices || [];
-
-      await dispatch(loadSupportedAssetsAction());
-      const supportedAssets = get(getState(), 'assets.supportedAssets', []);
 
       await dispatch(syncVirtualAccountTransactionsAction());
 
