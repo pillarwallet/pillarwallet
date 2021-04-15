@@ -48,6 +48,7 @@ import {
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -61,7 +62,7 @@ import { transformAssetsToObject } from 'utils/assets';
 // services
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import { firebaseMessaging } from 'services/firebase';
+import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 
 // actions
 import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -80,10 +81,6 @@ import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalA
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
-import { REMOTE_CONFIG } from '../constants/remoteConfigConstants';
-
-//firebase
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -315,7 +312,7 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
     await dispatch(getTutorialDataAction());
 
-    let feautureOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
+    const feautureOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
 
     const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
     const BASIC_FLOW = tutorialData && feautureOnboarding ? TUTORIAL_FLOW : HOME;
