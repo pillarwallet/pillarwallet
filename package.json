@@ -6,6 +6,7 @@
     "start": "react-native start",
     "start-fresh": "react-native start --reset-cache",
     "clean": "rimraf android/build node_modules ios/build ios/Pods ios/Podfile.lock",
+    "rebuild": "yarn clean && yarn && cd ios && pod install && cd ..",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
