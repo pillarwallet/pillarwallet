@@ -20,7 +20,11 @@
 
 import * as React from 'react';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // Utils
+import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
@@ -37,13 +41,17 @@ type Props = {|
 function TokenTransactionItem({ item }: Props) {
   const colors = useThemeColors();
 
+  const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
+
   if (item.type === 'tokenReceived') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+
     return (
       <HistoryListItem
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        title={formatHexAddress(item.fromAddress)}
+        title={ensName ?? formatHexAddress(item.fromAddress)}
         rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
         status={item.status}
       />
@@ -51,12 +59,14 @@ function TokenTransactionItem({ item }: Props) {
   }
 
   if (item.type === 'tokenSent') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+
     return (
       <HistoryListItem
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        title={formatHexAddress(item.toAddress)}
+        title={ensName ?? formatHexAddress(item.toAddress)}
         rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
         status={item.status}
       />

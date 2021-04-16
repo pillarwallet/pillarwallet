@@ -22,7 +22,11 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // Utils
+import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
@@ -40,13 +44,17 @@ function PaymentChannelTransactionItem({ item }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
+  const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
+
   if (item.type === 'paymentChannelReceived') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+
     return (
       <HistoryListItem
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        title={formatHexAddress(item.fromAddress)}
+        title={ensName ?? formatHexAddress(item.fromAddress)}
         rightComponent={<PaymentChannelValue symbol={item.value.symbol} value={item.value.value} />}
         status={item.status}
       />
@@ -54,12 +62,14 @@ function PaymentChannelTransactionItem({ item }: Props) {
   }
 
   if (item.type === 'paymentChannelSent') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+
     return (
       <HistoryListItem
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        title={formatHexAddress(item.toAddress)}
+        title={ensName ?? formatHexAddress(item.toAddress)}
         rightComponent={<PaymentChannelValue symbol={item.value.symbol} value={item.value.value?.negated()} />}
         status={item.status}
       />
