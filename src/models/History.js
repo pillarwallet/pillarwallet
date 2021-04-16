@@ -21,20 +21,19 @@
 import { BigNumber } from 'bignumber.js';
 
 type HistoryItemCommon = {|
-  id: string,
   date: Date,
+  id: string,
 |};
 export type HistoryItem =
-  | HistoryItemTokenReceived
-  | HistoryItemTokenSent
-  | HistoryItemCollectibleReceived
-  | HistoryItemCollectibleSent
-  | HistoryItemWalletEvent
-  | HistoryItemEnsName
-  | HistoryItemBadgeEvent
-  | HistoryItemUnknown;
+  | TokenReceivedHistoryItem
+  | TokenSentHistoryItem
+  | CollectibleReceivedHistoryItem
+  | CollectibleSentHistoryItem
+  | WalletEventHistoryItem
+  | EnsNameHistoryItem
+  | BadgeReceivedHistoryItem
 
-export type HistoryItemTokenReceived = {|
+export type TokenReceivedHistoryItem = {|
   ...HistoryItemCommon,
   type: 'tokenReceived',
   fromAddress: string,
@@ -43,7 +42,7 @@ export type HistoryItemTokenReceived = {|
   value: ?BigNumber,
 |};
 
-export type HistoryItemTokenSent = {|
+export type TokenSentHistoryItem = {|
   ...HistoryItemCommon,
   type: 'tokenSent',
   fromAddress: string,
@@ -52,23 +51,25 @@ export type HistoryItemTokenSent = {|
   value: ?BigNumber,
 |};
 
-export type HistoryItemCollectibleReceived = {|
+export type CollectibleReceivedHistoryItem = {|
   ...HistoryItemCommon,
   type: 'collectibleReceived',
   fromAddress: string,
   toAddress: string,
-  asset: string,
+  title: string,
+  imageUrl: string,
 |};
 
-export type HistoryItemCollectibleSent = {|
+export type CollectibleSentHistoryItem = {|
   ...HistoryItemCommon,
   type: 'collectibleSent',
   fromAddress: string,
   toAddress: string,
-  asset: string,
+  title: string,
+  imageUrl: string,
 |};
 
-export type HistoryItemWalletEvent = {|
+export type WalletEventHistoryItem = {|
   ...HistoryItemCommon,
   type: 'walletEvent',
   title?: string,
@@ -76,22 +77,15 @@ export type HistoryItemWalletEvent = {|
   event: string,
 |};
 
-export type HistoryItemEnsName = {|
+export type EnsNameHistoryItem = {|
   ...HistoryItemCommon,
   type: 'ensName',
   ensName: string,
 |};
 
-export type HistoryItemBadgeEvent = {|
+export type BadgeReceivedHistoryItem = {|
   ...HistoryItemCommon,
-  type: 'badgeEvent',
+  type: 'badgeReceived',
   title?: string,
-  subtitle?: string,
-  event: string,
   iconUrl: ?string,
-|};
-
-export type HistoryItemUnknown = {|
-  ...HistoryItemCommon,
-  type: 'unknown',
 |};

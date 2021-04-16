@@ -119,6 +119,7 @@ const IconImageWrapper = styled.View`
   border-color: ${({ theme }) => theme.colors.neutralWeak};
   border-radius: 24px;
   background-color: ${({ theme }) => theme.colors.neutralWeak};
+  overflow: hidden;
 `;
 
 const IconImage = styled(Image)`

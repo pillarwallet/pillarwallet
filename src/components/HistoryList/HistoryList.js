@@ -38,11 +38,10 @@ import HistoryListItem from './items/HistoryListItem';
 import { mapHistoryItemsToSections, type HistorySection } from './utils';
 import TokenReceivedItem from './items/TokenReceivedItem';
 import TokenSentItem from './items/TokenSentItem';
-import CollectibleReceivedItem from './items/CollectibleReceivedItem';
-import CollectibleSentItem from './items/CollectibleSentItem';
+import CollectibleTransactionItem from './items/CollectibleTransactionItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
-import BadgeEventItem from './items/BadgeEventItem';
+import BadgeReceivedItem from './items/BadgeReceivedItem';
 
 type Props = {|
   items: ?HistoryItem[];
@@ -64,16 +63,16 @@ function HistoryList({ items }: Props) {
       case 'tokenSent':
         return <TokenSentItem item={item} />;
       case 'collectibleReceived':
-        return <CollectibleReceivedItem item={item} />;
       case 'collectibleSent':
-        return <CollectibleSentItem item={item} />;
+        return <CollectibleTransactionItem item={item} />;
       case 'walletEvent':
         return <WalletEventItem item={item} />;
       case 'ensName':
         return <EnsNameItem item={item} />;
-      case 'badgeEvent':
-        return <BadgeEventItem item={item} />;
+      case 'badgeReceived':
+        return <BadgeReceivedItem item={item} />;
       default:
+        // Temporary debug item
         return <HistoryListItem title="Not supported tx" iconName="question" />;
     }
   };

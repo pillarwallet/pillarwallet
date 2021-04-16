@@ -28,7 +28,7 @@ import Icon from 'components/modern/Icon';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import { EnsNameHistoryItem } from 'models/History';
+import type { EnsNameHistoryItem } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';

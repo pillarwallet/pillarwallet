@@ -25,13 +25,13 @@ import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import { HistoryItemTokenSent } from 'models/History';
+import type { TokenSentHistoryItem } from 'models/History';
 
 // Local
 import HistoryListItem, { TokenValue } from './HistoryListItem';
 
 type Props = {|
-  item: HistoryItemTokenSent,
+  item: TokenSentHistoryItem,
 |};
 
 function TokenSentItem({ item }: Props) {

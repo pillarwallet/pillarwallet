@@ -24,13 +24,13 @@ import * as React from 'react';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import { HistoryItemWalletEvent } from 'models/History';
+import type { WalletEventHistoryItem } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: HistoryItemWalletEvent,
+  item: WalletEventHistoryItem,
 |};
 
 function WalletEventItem({ item }: Props) {

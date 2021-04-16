@@ -57,12 +57,30 @@ function useHistoryItems(): HistoryItem[] {
       symbol: 'PLR',
     },
     {
-      type: 'badgeEvent',
+      type: 'collectibleReceived',
+      date: new Date('2021-04-12'),
+      id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123',
+      fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
+      toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
+      title: 'Old Asynchronous Helmet',
+      imageUrl:
+        'https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq',
+    },
+    {
+      type: 'collectibleSent',
+      id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456',
+      date: new Date('2021-04-12'),
+      fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
+      toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
+      title: 'Old Asynchronous Helmet',
+      imageUrl:
+        'https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq',
+    },
+    {
+      type: 'badgeReceived',
       id: '5ca21c49754407000644f73b',
       date: new Date('2021-04-13'),
       title: 'Coin Collector',
-      subtitle: 'Badge',
-      event: 'Received',
       iconUrl:
         'https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png',
     },

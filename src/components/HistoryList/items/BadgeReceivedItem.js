@@ -22,18 +22,25 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Types
-import { HistoryItemCollectibleReceived } from 'models/History';
+import type { BadgeReceivedHistoryItem } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: HistoryItemCollectibleReceived,
+  item: BadgeReceivedHistoryItem,
 |};
 
-function CollectibleReceivedItem({ item }: Props) {
+function BadgeReceivedItem({ item }: Props) {
   const { t } = useTranslation();
-  return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.received')}</TextValue>} />;
+  return (
+    <HistoryListItem
+      iconUrl={item.iconUrl}
+      title={item.title}
+      subtitle={t('label.badge')}
+      rightComponent={<TextValue>{t('label.received')}</TextValue>}
+    />
+  );
 }
 
-export default CollectibleReceivedItem;
+export default BadgeReceivedItem;
