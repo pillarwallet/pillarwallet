@@ -27,11 +27,21 @@ import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 const reduxData = {
   rates: {
-    BTC: { ETH: 27.228736, EUR: 53175, GBP: 46132, USD: 63591 },
-    ETH: { ETH: 1, EUR: 2017.2, GBP: 1756.24, USD: 2407.1 },
-    PLR: { ETH: 0.00002224, EUR: 0.04489, GBP: 0.03906, USD: 0.05355 },
-    WBTC: { ETH: 27.233989, EUR: 53190, GBP: 46151, USD: 63604 },
-    GBP: { ETH: 27.233989, EUR: 53190, GBP: 46151, USD: 63604 },
+    BTC: {
+      ETH: 27.228736, EUR: 53175, GBP: 46132, USD: 63591,
+    },
+    ETH: {
+      ETH: 1, EUR: 2017.2, GBP: 1756.24, USD: 2407.1,
+    },
+    PLR: {
+      ETH: 0.00002224, EUR: 0.04489, GBP: 0.03906, USD: 0.05355,
+    },
+    WBTC: {
+      ETH: 27.233989, EUR: 53190, GBP: 46151, USD: 63604,
+    },
+    GBP: {
+      ETH: 27.233989, EUR: 53190, GBP: 46151, USD: 63604,
+    },
   },
 };
 
