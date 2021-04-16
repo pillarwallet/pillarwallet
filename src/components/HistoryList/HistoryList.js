@@ -21,110 +21,61 @@
 import * as React from 'react';
 import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled, { useTheme } from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
+import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
 import { humanizeDateString } from 'utils/date';
-import { formatHexAddress } from 'utils/format';
 import { appFont, spacing } from 'utils/variables';
 
 // Types
 import type { HistoryItem } from 'models/History';
 
 // Local
-import HistoryListItem, { TextValue, TokenValue } from './HistoryListItem';
+import HistoryListItem from './items/HistoryListItem';
 import { mapHistoryItemsToSections, type HistorySection } from './utils';
+import TokenReceivedItem from './items/TokenReceivedItem';
+import TokenSentItem from './items/TokenSentItem';
+import CollectibleReceivedItem from './items/CollectibleReceivedItem';
+import CollectibleSentItem from './items/CollectibleSentItem';
+import WalletEventItem from './items/WalletEventItem';
+import EnsNameItem from './items/EnsNameItem';
+import BadgeEventItem from './items/BadgeEventItem';
 
 type Props = {|
   items: ?HistoryItem[];
 |};
 
 function HistoryList({ items }: Props) {
-  const { t } = useTranslation();
+  const safeArea = useSafeAreaInsets();
 
   const sections = mapHistoryItemsToSections(items ?? []);
-
-  const safeArea = useSafeAreaInsets();
-  const theme = useTheme();
 
   const renderSectionHeader = (section: HistorySection) => {
     return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
   };
 
   const renderHistoryItem = (item: HistoryItem) => {
-    if (item.type === 'tokenReceived') {
-      return (
-        <HistoryListItem
-          title={formatHexAddress(item.fromAddress)}
-          iconName="send-down"
-          iconColor={theme.colors.positive}
-          iconBorderColor={theme.colors.positiveWeak}
-          rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
-        />
-      );
+    switch (item.type) {
+      case 'tokenReceived':
+        return <TokenReceivedItem item={item} />;
+      case 'tokenSent':
+        return <TokenSentItem item={item} />;
+      case 'collectibleReceived':
+        return <CollectibleReceivedItem item={item} />;
+      case 'collectibleSent':
+        return <CollectibleSentItem item={item} />;
+      case 'walletEvent':
+        return <WalletEventItem item={item} />;
+      case 'ensName':
+        return <EnsNameItem item={item} />;
+      case 'badgeEvent':
+        return <BadgeEventItem item={item} />;
+      default:
+        return <HistoryListItem title="Not supported tx" iconName="question" />;
     }
-
-    if (item.type === 'tokenSent') {
-      return (
-        <HistoryListItem
-          title={formatHexAddress(item.toAddress)}
-          iconName="send"
-          iconColor={theme.colors.negative}
-          iconBorderColor={theme.colors.negativeWeak}
-          rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
-        />
-      );
-    }
-
-    if (item.type === 'collectibleReceived') {
-      return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.received')}</TextValue>} />;
-    }
-
-    if (item.type === 'collectibleSent') {
-      return <HistoryListItem title={item.asset} rightComponent={<TextValue>{t('label.sent')}</TextValue>} />;
-    }
-
-    if (item.type === 'walletEvent') {
-      return (
-        <HistoryListItem
-          title={item.title}
-          subtitle={item.subtitle}
-          iconName="wallet"
-          iconColor={theme.colors.neutral}
-          iconBorderColor={theme.colors.neutralWeak}
-          rightComponent={<TextValue>{item.event}</TextValue>}
-        />
-      );
-    }
-
-    if (item.type === 'ensName') {
-      return (
-        <HistoryListItem
-          title={t('ensName')}
-          subtitle={item.ensName}
-          iconComponent={<Icon name="profile" color={theme.colors.homeEnsNameIcon} />}
-          rightComponent={<TextValue>{t('label.registered')}</TextValue>}
-        />
-      );
-    }
-
-    if (item.type === 'badgeEvent') {
-      return (
-        <HistoryListItem
-          title={item.title}
-          subtitle={item.subtitle}
-          iconUrl={item.iconUrl}
-          rightComponent={<TextValue>{item.event}</TextValue>}
-        />
-      );
-    }
-
-    return <HistoryListItem title="Not supported tx" iconName="question" />;
   };
 
   return (
