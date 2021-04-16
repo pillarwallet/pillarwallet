@@ -25,6 +25,11 @@ type HistoryItemCommon = {|
   id: string,
 |};
 
+export type TokenValue = {|
+  value: BigNumber,
+  symbol: string,
+|};
+
 export type TransactionStatus = 'confirmed' | 'failed' | 'pending' | 'timedout';
 
 export const TRANSACTION_STATUS = {
@@ -35,13 +40,15 @@ export const TRANSACTION_STATUS = {
 };
 
 export type HistoryItem =
-  | TokenReceivedHistoryItem
-  | TokenSentHistoryItem
-  | CollectibleReceivedHistoryItem
-  | CollectibleSentHistoryItem
+  | TokenTransactionHistoryItem
+  | CollectibleTransactionHistoryItem
+  | PaymentChannelHistoryItem
   | WalletEventHistoryItem
   | EnsNameHistoryItem
-  | BadgeReceivedHistoryItem
+  | BadgeReceivedHistoryItem;
+
+
+export type TokenTransactionHistoryItem = TokenReceivedHistoryItem | TokenSentHistoryItem;
 
 export type TokenReceivedHistoryItem = {|
   ...HistoryItemCommon,
@@ -63,6 +70,9 @@ export type TokenSentHistoryItem = {|
   status: TransactionStatus,
 |};
 
+
+export type CollectibleTransactionHistoryItem = CollectibleReceivedHistoryItem | CollectibleSentHistoryItem;
+
 export type CollectibleReceivedHistoryItem = {|
   ...HistoryItemCommon,
   type: 'collectibleReceived',
@@ -82,6 +92,60 @@ export type CollectibleSentHistoryItem = {|
   imageUrl: string,
   status: TransactionStatus,
 |};
+
+
+export type PaymentChannelHistoryItem =
+  | PaymentChannelReceivedHistoryItem
+  | PaymentChannelSentHistoryItem
+  | PaymentChannelTopUpHistoryItem
+  | PaymentChannelWithdrawalHistoryItem
+  | PaymentChannelSettlementHistoryItem;
+
+export type PaymentChannelReceivedHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'paymentChannelReceived',
+  fromAddress: string,
+  toAddress: string,
+  value: TokenValue,
+  status: TransactionStatus,
+|};
+
+export type PaymentChannelSentHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'paymentChannelSent',
+  fromAddress: string,
+  toAddress: string,
+  value: TokenValue,
+  status: TransactionStatus,
+|};
+
+export type PaymentChannelTopUpHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'paymentChannelTopUp',
+  fromAddress: string,
+  toAddress: string,
+  value: TokenValue,
+  status: TransactionStatus,
+|};
+export type PaymentChannelWithdrawalHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'paymentChannelWithdrawal',
+  fromAddress: string,
+  toAddress: string,
+  value: TokenValue,
+  status: TransactionStatus,
+|};
+
+export type PaymentChannelSettlementHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'paymentChannelSettlement',
+  fromAddress: string,
+  toAddress: string,
+  inputValues: TokenValue[],
+  outputValue: TokenValue,
+  status: TransactionStatus,
+|};
+
 
 export type WalletEventHistoryItem = {|
   ...HistoryItemCommon,

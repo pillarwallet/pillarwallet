@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import Icon, { type IconName } from 'components/modern/Icon';
@@ -81,7 +82,7 @@ function HistoryListItem({
           {title}
         </Text>
 
-        {!!subtitle && <Text color="basic030">{subtitle}</Text>}
+        {!!subtitle && <Text color={colors.basic030}>{subtitle}</Text>}
       </MiddleColumn>
 
       {rightComponent && <RightColumn>{rightComponent}</RightColumn>}
@@ -162,26 +163,79 @@ export type TextValueProps = {|
 |};
 
 export function TextValue({ children }: TextValueProps) {
-  return <Text color="basic030">{children}</Text>;
+  const colors = useThemeColors();
+
+  return <Text color={colors.basic030}>{children}</Text>;
 }
 
 export type TokenValueProps = {|
   symbol: string,
   value: ?BigNumber,
+  color?: string,
 |};
 
-export function TokenValue({ symbol, value }: TokenValueProps) {
+export function TokenValue({ symbol, value, color }: TokenValueProps) {
+  const colors = useThemeColors();
+
   if (!value) return null;
 
+  const resultColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
+
   return (
-    <Text variant="medium" color={value.gte(0) ? 'positive' : 'secondaryText'} style={styles.tokenValue}>
+    <Text variant="medium" color={resultColor} style={styles.tokenValue}>
       {formatTokenValueChange(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );
 }
+
+export type PaymentChannelValueProps = {|
+  symbol: string,
+  value: ?BigNumber,
+|};
+
+export function PaymentChannelValue({ symbol, value }: PaymentChannelValueProps) {
+  const colors = useThemeColors();
+
+  if (!value) return null;
+
+  return (
+    <PaymentChannelWrapper>
+      <PaymentChannelIcon name="synthetic" color={colors.synthetic140} width={14} height={14} />
+      <Text variant="medium" color={colors.synthetic140} style={styles.tokenValue}>
+        {formatTokenValueChange(value, symbol, { stripTrailingZeros: true })}
+      </Text>
+    </PaymentChannelWrapper>
+  );
+}
+
+export type MultipleValueProps = {|
+  color?: string,
+|};
+
+
+export function MultipleValue({ color }: MultipleValueProps) {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+
+  return (
+    <Text variant="medium" color={color ?? colors.neutral} style={styles.tokenValue}>
+      {t('label.multiple')}
+    </Text>
+  );
+}
+
+const PaymentChannelWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const PaymentChannelIcon = styled(Icon)`
+  margin-right: 6px;
+`;
 
 const styles = {
   tokenValue: {
     fontVariant: ['tabular-nums'],
   },
 };
+

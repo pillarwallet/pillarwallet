@@ -167,6 +167,7 @@
     "sending": "Sending",
     "sent": "Sent",
     "settle": "Settle",
+    "settlement": "Settlement",
     "smartWalletAccountDevice": "Smart Wallet account device",
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
@@ -238,7 +239,9 @@
     "fromWalletToRari": "Wallet → Rari Capital",
     "rewardsClaimed": "Rewards claimed",
     "keyFacts": "Key facts",
-    "multiple": "Multiple"
+    "multiple": "Multiple",
+    "walletToPillarPay": "Wallet → Pillar Pay",
+    "pillarPayToWallet": "Pillar Pay → Wallet"
   },
 
   "button": {

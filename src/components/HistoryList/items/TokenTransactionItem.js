@@ -40,7 +40,7 @@ function TokenTransactionItem({ item }: Props) {
   if (item.type === 'tokenReceived') {
     return (
       <HistoryListItem
-        iconName="send-down"
+        iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
         title={formatHexAddress(item.fromAddress)}
@@ -53,7 +53,7 @@ function TokenTransactionItem({ item }: Props) {
   if (item.type === 'tokenSent') {
     return (
       <HistoryListItem
-        iconName="send"
+        iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
         title={formatHexAddress(item.toAddress)}

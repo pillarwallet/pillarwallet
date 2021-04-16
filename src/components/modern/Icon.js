@@ -90,6 +90,7 @@ import IconThumbUp from 'assets/icons/svg/icon-24-thumb-up.svg';
 import IconUser from 'assets/icons/svg/icon-24-user.svg';
 import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
+import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -161,6 +162,7 @@ const components = {
   user: IconUser,
   wallet: IconWallet,
   warning: IconWarning,
+  withdraw: IconWithdraw,
 
   // Service icons
   binance: IconBinance,

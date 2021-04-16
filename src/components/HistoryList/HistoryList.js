@@ -37,6 +37,7 @@ import type { HistoryItem } from 'models/History';
 import { mapHistoryItemsToSections, type HistorySection } from './utils';
 import TokenTransactionItem from './items/TokenTransactionItem';
 import CollectibleTransactionItem from './items/CollectibleTransactionItem';
+import PaymentChannelTransactionItem from './items/PaymentChannelTransactionItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
 import BadgeReceivedItem from './items/BadgeReceivedItem';
@@ -63,6 +64,12 @@ function HistoryList({ items }: Props) {
       case 'collectibleReceived':
       case 'collectibleSent':
         return <CollectibleTransactionItem item={item} />;
+      case 'paymentChannelReceived':
+      case 'paymentChannelSent':
+      case 'paymentChannelTopUp':
+      case 'paymentChannelWithdrawal':
+      case 'paymentChannelSettlement':
+        return <PaymentChannelTransactionItem item={item} />;
       case 'walletEvent':
         return <WalletEventItem item={item} />;
       case 'ensName':

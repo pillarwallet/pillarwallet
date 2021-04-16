@@ -32,6 +32,7 @@ import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from '
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
+import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -51,6 +52,8 @@ function BalanceSection({ balance }: Props) {
   const fiatCurrency = useFiatCurrency();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
+  const colors = useThemeColors();
+
   const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
 
@@ -66,8 +69,8 @@ function BalanceSection({ balance }: Props) {
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>
-            <ProfitLabel color="secondaryText">{t('lastWeek')}</ProfitLabel>
-            <ProfitValue color="positive">{formattedChange}</ProfitValue>
+            <ProfitLabel color={colors.secondaryText}>{t('lastWeek')}</ProfitLabel>
+            <ProfitValue color={colors.positive}>{formattedChange}</ProfitValue>
           </ProfitContainer>
         )}
       </FirstColumn>
