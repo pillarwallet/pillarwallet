@@ -25,26 +25,43 @@ import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { TokenReceivedHistoryItem } from 'models/History';
+import type { TokenReceivedHistoryItem, TokenSentHistoryItem } from 'models/History';
 
 // Local
 import HistoryListItem, { TokenValue } from './HistoryListItem';
 
 type Props = {|
-  item: TokenReceivedHistoryItem,
+  item: TokenReceivedHistoryItem | TokenSentHistoryItem,
 |};
 
-function TokenReceivedItem({ item }: Props) {
+function TokenTransactionItem({ item }: Props) {
   const colors = useThemeColors();
-  return (
-    <HistoryListItem
-      title={formatHexAddress(item.fromAddress)}
-      iconName="send-down"
-      iconColor={colors.positive}
-      iconBorderColor={colors.positiveWeak}
-      rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
-    />
-  );
+
+  if (item.type === 'tokenReceived') {
+    return (
+      <HistoryListItem
+        title={formatHexAddress(item.fromAddress)}
+        iconName="send-down"
+        iconColor={colors.positive}
+        iconBorderColor={colors.positiveWeak}
+        rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
+      />
+    );
+  }
+
+  if (item.type === 'tokenSent') {
+    return (
+      <HistoryListItem
+        title={formatHexAddress(item.toAddress)}
+        iconName="send"
+        iconColor={colors.negative}
+        iconBorderColor={colors.negativeWeak}
+        rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
+      />
+    );
+  }
+
+  return null;
 }
 
-export default TokenReceivedItem;
+export default TokenTransactionItem;

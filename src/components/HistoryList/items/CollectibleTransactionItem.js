@@ -33,9 +33,28 @@ type Props = {|
 
 function CollectibleTransactionItem({ item }: Props) {
   const { t } = useTranslation();
-  const event = item.type === 'collectibleReceived' ? t('label.received') : t('label.sent');
 
-  return <HistoryListItem iconUrl={item.imageUrl} title={item.title} rightComponent={<TextValue>{event}</TextValue>} />;
+  if (item.type === 'collectibleReceived') {
+    return (
+      <HistoryListItem
+        iconUrl={item.imageUrl}
+        title={item.title}
+        rightComponent={<TextValue>{t('label.received')}</TextValue>}
+      />
+    );
+  }
+
+  if (item.type === 'collectibleSent') {
+    return (
+      <HistoryListItem
+        iconUrl={item.imageUrl}
+        title={item.title}
+        rightComponent={<TextValue>{t('label.sent')}</TextValue>}
+      />
+    );
+  }
+
+  return null;
 }
 
 export default CollectibleTransactionItem;

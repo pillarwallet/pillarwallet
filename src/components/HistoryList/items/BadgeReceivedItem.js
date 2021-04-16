@@ -33,6 +33,7 @@ type Props = {|
 
 function BadgeReceivedItem({ item }: Props) {
   const { t } = useTranslation();
+
   return (
     <HistoryListItem
       iconUrl={item.iconUrl}

@@ -35,6 +35,7 @@ type Props = {|
 
 function WalletEventItem({ item }: Props) {
   const colors = useThemeColors();
+
   return (
     <HistoryListItem
       title={item.title}

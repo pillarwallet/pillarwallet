@@ -34,14 +34,13 @@ import { appFont, spacing } from 'utils/variables';
 import type { HistoryItem } from 'models/History';
 
 // Local
-import HistoryListItem from './items/HistoryListItem';
 import { mapHistoryItemsToSections, type HistorySection } from './utils';
-import TokenReceivedItem from './items/TokenReceivedItem';
-import TokenSentItem from './items/TokenSentItem';
+import TokenTransactionItem from './items/TokenTransactionItem';
 import CollectibleTransactionItem from './items/CollectibleTransactionItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
 import BadgeReceivedItem from './items/BadgeReceivedItem';
+import HistoryListItem from './items/HistoryListItem';
 
 type Props = {|
   items: ?HistoryItem[];
@@ -59,9 +58,8 @@ function HistoryList({ items }: Props) {
   const renderHistoryItem = (item: HistoryItem) => {
     switch (item.type) {
       case 'tokenReceived':
-        return <TokenReceivedItem item={item} />;
       case 'tokenSent':
-        return <TokenSentItem item={item} />;
+        return <TokenTransactionItem item={item} />;
       case 'collectibleReceived':
       case 'collectibleSent':
         return <CollectibleTransactionItem item={item} />;
