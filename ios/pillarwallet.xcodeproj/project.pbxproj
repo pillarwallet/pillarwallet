@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		04981A9824C8648D00748082 /* LogoAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04981A9724C8648D00748082 /* LogoAnimationView.swift */; };
 		04981AAD24C97CEC00748082 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04981AAC24C97CEC00748082 /* Launch.storyboard */; };
+		0AF1C25B261F9F0000504BB5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */; };
 		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
 		52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */; };
@@ -23,6 +23,7 @@
 		696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */; };
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
+		9EDC068AC6A101001B411D9A /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BF3F365B7D7FE2BC3402AB8 /* libPods-pillarwallet.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
 		DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 834179E4DB574F6C94CF4839 /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -32,6 +33,10 @@
 		04981A9724C8648D00748082 /* LogoAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoAnimationView.swift; sourceTree = "<group>"; };
 		04981AAC24C97CEC00748082 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		0995923F3084D37535F951CE /* Instabug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Instabug.framework; path = "../node_modules/instabug-reactnative/ios/Instabug.framework"; sourceTree = "<group>"; };
+		0A715B91261E468600C78CBD /* libSDWebImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImageWebPCoder.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A715B95261E46DB00C78CBD /* Storyly.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Storyly.xcframework; path = Pods/Storyly/Storyly.xcframework; sourceTree = "<group>"; };
+		0BF3F365B7D7FE2BC3402AB8 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -55,7 +60,6 @@
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		834179E4DB574F6C94CF4839 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -65,8 +69,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */,
+				0AF1C25B261F9F0000504BB5 /* JavaScriptCore.framework in Frameworks */,
 				DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */,
+				9EDC068AC6A101001B411D9A /* libPods-pillarwallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,11 +110,14 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A715B95261E46DB00C78CBD /* Storyly.xcframework */,
+				0A715B93261E46C400C78CBD /* libSDWebImageWebPCoder.a */,
+				0A715B91261E468600C78CBD /* libSDWebImage.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */,
 				834179E4DB574F6C94CF4839 /* libz.tbd */,
 				0995923F3084D37535F951CE /* Instabug.framework */,
+				0BF3F365B7D7FE2BC3402AB8 /* libPods-pillarwallet.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -295,11 +303,15 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-pillarwallet/Pods-pillarwallet-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios/Instabug.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly/Storyly.framework/Storyly",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Storyly.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -475,9 +487,120 @@
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/BVLinearGradient\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DoubleConversion\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FBReactNativeSpec\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseABTesting\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreDiagnostics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstanceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Folly\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransportCCTSupport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-Camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-FaceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-PhotoLibrary\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RCTTypeSafety\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCClipboard\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCMaskedView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNColorMatrixImageFilters\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBAnalytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBApp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBIid\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBPerf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFastImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNGestureHandler\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNInAppBrowser\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNKeychain\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNLocalize\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNOS\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNPermissions\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNReanimated\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScreens\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScrypt\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNShare\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNVectorIcons\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RSKImageCropper\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-Core\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-CoreModules\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTAnimation\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTBlob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTLinking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTNetwork\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTSettings\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTText\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTVibration\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsi\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsiexecutor\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsinspector\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageWebPCoder\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Sentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyGif\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TcpSockets\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Yoga\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/glog\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/instabug-reactnative\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libwebp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-appearance\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-background-timer\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-contacts\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-cookies\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-date-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-intercom\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-netinfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-notifications\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-randombytes\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-restart\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-splash-screen\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/rn-fetch-blob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/storyly-react-native\"",
+					"\"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios\"",
+					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
+					"\"${PODS_ROOT}/FirebasePerformance/Frameworks\"",
+					"\"${PODS_ROOT}/GoogleAppMeasurement/Frameworks\"",
+					"\"${PODS_ROOT}/Intercom/Intercom\"",
+					"\"${PODS_ROOT}/Storyly\"",
+					"\"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly\"",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -590,6 +713,117 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/BVLinearGradient\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DoubleConversion\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FBReactNativeSpec\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseABTesting\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreDiagnostics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstanceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Folly\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransportCCTSupport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-Camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-FaceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-PhotoLibrary\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RCTTypeSafety\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCClipboard\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCMaskedView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNColorMatrixImageFilters\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBAnalytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBApp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBIid\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBPerf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFastImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNGestureHandler\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNInAppBrowser\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNKeychain\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNLocalize\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNOS\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNPermissions\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNReanimated\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScreens\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScrypt\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNShare\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNVectorIcons\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RSKImageCropper\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-Core\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-CoreModules\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTAnimation\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTBlob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTLinking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTNetwork\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTSettings\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTText\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTVibration\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsi\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsiexecutor\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsinspector\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageWebPCoder\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Sentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyGif\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TcpSockets\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Yoga\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/glog\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/instabug-reactnative\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libwebp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-appearance\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-background-timer\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-contacts\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-cookies\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-date-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-intercom\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-netinfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-notifications\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-randombytes\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-restart\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-splash-screen\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/rn-fetch-blob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/storyly-react-native\"",
+					"\"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios\"",
+					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
+					"\"${PODS_ROOT}/FirebasePerformance/Frameworks\"",
+					"\"${PODS_ROOT}/GoogleAppMeasurement/Frameworks\"",
+					"\"${PODS_ROOT}/Intercom/Intercom\"",
+					"\"${PODS_ROOT}/Storyly\"",
+					"\"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly\"",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -719,6 +953,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -750,10 +985,120 @@
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/BVLinearGradient\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/DoubleConversion\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FBReactNativeSpec\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseABTesting\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreDiagnostics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstanceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Folly\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransportCCTSupport\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-Camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-FaceID\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Permission-PhotoLibrary\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RCTTypeSafety\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCClipboard\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNCMaskedView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNColorMatrixImageFilters\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBAnalytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBApp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBCrashlytics\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBIid\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBMessaging\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBPerf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFBRemoteConfig\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNFastImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNGestureHandler\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNInAppBrowser\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNKeychain\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNLocalize\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNOS\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNPermissions\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNReanimated\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScreens\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNScrypt\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNSentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNShare\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNVectorIcons\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RSKImageCropper\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-Core\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-CoreModules\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTAnimation\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTBlob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTLinking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTNetwork\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTSettings\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTText\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-RCTVibration\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsi\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsiexecutor\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React-jsinspector\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageWebPCoder\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Sentry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyGif\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TcpSockets\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Yoga\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/glog\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/instabug-reactnative\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libwebp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-appearance\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-background-timer\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-branch\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-camera\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-contacts\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-cookies\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-date-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-intercom\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-netinfo\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-notifications\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-randombytes\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-restart\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-splash-screen\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/rn-fetch-blob\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/storyly-react-native\"",
+					"\"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios\"",
+					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
+					"\"${PODS_ROOT}/FirebasePerformance/Frameworks\"",
+					"\"${PODS_ROOT}/GoogleAppMeasurement/Frameworks\"",
+					"\"${PODS_ROOT}/Intercom/Intercom\"",
+					"\"${PODS_ROOT}/Storyly\"",
+					"\"${PODS_XCFRAMEWORKS_BUILD_DIR}/Storyly\"",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -837,6 +1182,7 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}\"/**",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -883,6 +1229,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -942,6 +1289,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

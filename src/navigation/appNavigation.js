@@ -144,6 +144,7 @@ import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/Re
 import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
 import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
+import TutorialScreen from 'screens/Tutorial';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -317,6 +318,8 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
   LIQUIDITY_POOLS_INFO,
+  TUTORIAL,
+  TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -613,6 +616,11 @@ const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
 }, StackNavigatorModalConfig);
 
+// TUTORIAL FLOW
+const tutorialFlow = createStackNavigator({
+  [TUTORIAL]: TutorialScreen,
+}, StackNavigatorConfig);
+
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
   {
@@ -858,6 +866,7 @@ const AppFlowNavigation = createStackNavigator(
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
+    [TUTORIAL_FLOW]: tutorialFlow,
   },
   modalTransition,
 );

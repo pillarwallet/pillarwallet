@@ -44,6 +44,10 @@ export const CONNECT_TAB = 'CONNECT_TAB';
 export const PIN_CODE = 'PIN_CODE';
 export const SPLASH_SCREEN = 'SPLASH_SCREEN';
 
+// TUTORIAL FLOW
+export const TUTORIAL_FLOW = 'TUTORIAL_FLOW';
+export const TUTORIAL = 'TUTORIAL';
+
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
 export const UNSETTLED_ASSETS = 'UNSETTLED_ASSETS';
