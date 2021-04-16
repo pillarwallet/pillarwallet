@@ -32,6 +32,9 @@ import { formatTokenValueChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
+// Types
+import { TRANSACTION_STATUS, type TransactionStatus } from 'models/History';
+
 type Props = {|
   title: ?string,
   subtitle?: ?string,
@@ -41,6 +44,7 @@ type Props = {|
   iconBorderColor?: string,
   iconComponent?: React.Node,
   rightComponent?: React.Node,
+  status?: TransactionStatus,
 |};
 
 function HistoryListItem({
@@ -52,6 +56,7 @@ function HistoryListItem({
   iconBorderColor,
   iconComponent,
   rightComponent,
+  status,
 }: Props) {
   const colors = useThemeColors();
 
@@ -80,6 +85,16 @@ function HistoryListItem({
       </MiddleColumn>
 
       {rightComponent && <RightColumn>{rightComponent}</RightColumn>}
+
+      {status === TRANSACTION_STATUS.PENDING && (
+        <StatusIcon name="pending" color={colors.neutral} width={16} height={16} />
+      )}
+      {status === TRANSACTION_STATUS.FAILED && (
+        <StatusIcon name="failed" color={colors.negative} width={16} height={16} />
+      )}
+      {status === TRANSACTION_STATUS.TIMEDOUT && (
+        <StatusIcon name="failed" color={colors.neutral} width={16} height={16} />
+      )}
     </Container>
   );
 }
@@ -135,6 +150,11 @@ const IconCircle = styled.View`
   border-width: 1px;
   border-color: ${({ $color }) => $color};
   border-radius: 24px;
+`;
+
+const StatusIcon = styled(Icon)`
+  align-self: center;
+  margin-left: 6px;
 `;
 
 export type TextValueProps = {|

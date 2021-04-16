@@ -38,11 +38,11 @@ function WalletEventItem({ item }: Props) {
 
   return (
     <HistoryListItem
-      title={item.title}
-      subtitle={item.subtitle}
       iconName="wallet"
       iconColor={colors.neutral}
       iconBorderColor={colors.neutralWeak}
+      title={item.title}
+      subtitle={item.subtitle}
       rightComponent={<TextValue>{item.event}</TextValue>}
     />
   );

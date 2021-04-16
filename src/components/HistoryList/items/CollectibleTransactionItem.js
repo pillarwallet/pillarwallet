@@ -40,6 +40,7 @@ function CollectibleTransactionItem({ item }: Props) {
         iconUrl={item.imageUrl}
         title={item.title}
         rightComponent={<TextValue>{t('label.received')}</TextValue>}
+        status={item.status}
       />
     );
   }
@@ -50,6 +51,7 @@ function CollectibleTransactionItem({ item }: Props) {
         iconUrl={item.imageUrl}
         title={item.title}
         rightComponent={<TextValue>{t('label.sent')}</TextValue>}
+        status={item.status}
       />
     );
   }

@@ -40,11 +40,12 @@ type Props = {|
 function EnsNameItem({ item }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+
   return (
     <HistoryListItem
+      iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} />}
       title={t('ensName')}
       subtitle={item.ensName}
-      iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} />}
       rightComponent={<TextValue>{t('label.registered')}</TextValue>}
     />
   );

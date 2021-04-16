@@ -40,11 +40,12 @@ function TokenTransactionItem({ item }: Props) {
   if (item.type === 'tokenReceived') {
     return (
       <HistoryListItem
-        title={formatHexAddress(item.fromAddress)}
         iconName="send-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
+        title={formatHexAddress(item.fromAddress)}
         rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
+        status={item.status}
       />
     );
   }
@@ -52,11 +53,12 @@ function TokenTransactionItem({ item }: Props) {
   if (item.type === 'tokenSent') {
     return (
       <HistoryListItem
-        title={formatHexAddress(item.toAddress)}
         iconName="send"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
+        title={formatHexAddress(item.toAddress)}
         rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
+        status={item.status}
       />
     );
   }

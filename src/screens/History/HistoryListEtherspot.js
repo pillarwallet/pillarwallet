@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
@@ -25,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import HistoryList from 'components/HistoryList';
 
 // Types
-import type { HistoryItem } from 'models/History';
+import { type HistoryItem, TRANSACTION_STATUS } from 'models/History';
 
 function HistoryListEtherspot() {
   const items = useHistoryItems();
@@ -46,6 +47,7 @@ function useHistoryItems(): HistoryItem[] {
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
       value: BigNumber(4.2),
       symbol: 'ETH',
+      status: TRANSACTION_STATUS.CONFIRMED,
     },
     {
       type: 'tokenSent',
@@ -55,6 +57,7 @@ function useHistoryItems(): HistoryItem[] {
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
       value: BigNumber(100),
       symbol: 'PLR',
+      status: TRANSACTION_STATUS.FAILED,
     },
     {
       type: 'collectibleReceived',
@@ -65,6 +68,7 @@ function useHistoryItems(): HistoryItem[] {
       title: 'Old Asynchronous Helmet',
       imageUrl:
         'https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq',
+      status: TRANSACTION_STATUS.PENDING,
     },
     {
       type: 'collectibleSent',
@@ -75,6 +79,7 @@ function useHistoryItems(): HistoryItem[] {
       title: 'Old Asynchronous Helmet',
       imageUrl:
         'https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq',
+      status: TRANSACTION_STATUS.TIMEDOUT,
     },
     {
       type: 'badgeReceived',

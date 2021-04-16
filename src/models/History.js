@@ -24,6 +24,16 @@ type HistoryItemCommon = {|
   date: Date,
   id: string,
 |};
+
+export type TransactionStatus = 'confirmed' | 'failed' | 'pending' | 'timedout';
+
+export const TRANSACTION_STATUS = {
+  CONFIRMED: ('confirmed': 'confirmed'),
+  FAILED: ('failed': 'failed'),
+  PENDING: ('pending': 'pending'),
+  TIMEDOUT: ('timedout': 'timedout'),
+};
+
 export type HistoryItem =
   | TokenReceivedHistoryItem
   | TokenSentHistoryItem
@@ -40,6 +50,7 @@ export type TokenReceivedHistoryItem = {|
   toAddress: string,
   symbol: string,
   value: ?BigNumber,
+  status: TransactionStatus,
 |};
 
 export type TokenSentHistoryItem = {|
@@ -49,6 +60,7 @@ export type TokenSentHistoryItem = {|
   toAddress: string,
   symbol: string,
   value: ?BigNumber,
+  status: TransactionStatus,
 |};
 
 export type CollectibleReceivedHistoryItem = {|
@@ -58,6 +70,7 @@ export type CollectibleReceivedHistoryItem = {|
   toAddress: string,
   title: string,
   imageUrl: string,
+  status: TransactionStatus,
 |};
 
 export type CollectibleSentHistoryItem = {|
@@ -67,6 +80,7 @@ export type CollectibleSentHistoryItem = {|
   toAddress: string,
   title: string,
   imageUrl: string,
+  status: TransactionStatus,
 |};
 
 export type WalletEventHistoryItem = {|
