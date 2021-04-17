@@ -40,7 +40,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { formatTransactionFee, getCurrencySymbol } from 'utils/common';
+import { getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
 
 // selectors
@@ -105,7 +105,7 @@ const FeeLabelToggle = ({
   }
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+  const feeDisplayValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
   const gasTokenSymbol = get(gasToken, 'symbol', ETH);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
