@@ -34,7 +34,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   findAccountByAddress,
   isSmartWalletAccount,
-  checkIfKeyBasedAccount,
+  isKeyBasedAccount,
   getInactiveUserAccounts,
   getAccountAddress,
   getAccountTypeByAddress,
@@ -194,7 +194,7 @@ export const isSWAddress = (address: string, accounts: Accounts) => {
 
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && checkIfKeyBasedAccount(account));
+  return (!!account && isKeyBasedAccount(account));
 };
 
 export const getElipsizeAddress = (address: string) => {

@@ -42,7 +42,7 @@ import {
   getAccountAddress,
   getAccountId,
   findFirstArchanovaAccount,
-  checkIfArchanovaAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -210,14 +210,14 @@ export const updateTransactionStatusAction = (hash: string) => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
 
-    const isArchanovaAccount = checkIfArchanovaAccount(activeAccountSelector(getState()));
+    const isArchanovaAccountActive = isArchanovaAccount(activeAccountSelector(getState()));
     dispatch(transactionUpdate(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
     let sdkTransactionInfo;
     let sdkToAppStatus;
-    if (isArchanovaAccount) {
+    if (isArchanovaAccountActive) {
       sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
         dispatch(transactionUpdate(''));
@@ -227,7 +227,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isArchanovaAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+    if (isArchanovaAccountActive && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
       reportLog('Wrong transaction status', {
         hash,
         sdkToAppStatus,
@@ -239,7 +239,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = isArchanovaAccount
+    const stillPending = isArchanovaAccountActive
       ? sdkToAppStatus === TX_PENDING_STATUS
       : !trxInfo;
 
@@ -253,7 +253,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     let status;
     let feeWithGasToken;
 
-    if (isArchanovaAccount && sdkTransactionInfo) {
+    if (isArchanovaAccountActive && sdkTransactionInfo) {
       gasPrice = sdkTransactionInfo.gas.price;
       gasUsed = sdkTransactionInfo.gas.used;
       status = sdkToAppStatus;

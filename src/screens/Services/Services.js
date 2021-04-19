@@ -55,7 +55,7 @@ import {
   getActiveAccount,
   getAccountAddress,
   isSmartWalletAccount,
-  checkIfArchanovaAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
@@ -134,7 +134,7 @@ class ServicesScreen extends React.Component<Props> {
       accounts,
     } = this.props;
 
-    const isArchanovaAccountActive = checkIfArchanovaAccount(getActiveAccount(accounts));
+    const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
     const SWServiceDisabled = isArchanovaAccountActive && (!isActiveAccountSmartWallet || !isSmartWalletActivated);
 
     let SWServiceLabel;
