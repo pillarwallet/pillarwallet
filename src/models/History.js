@@ -30,6 +30,11 @@ export type TokenValue = {|
   symbol: string,
 |};
 
+export type FiatValue = {|
+  value: BigNumber,
+  currency: string,
+|};
+
 export type TransactionStatus = 'confirmed' | 'failed' | 'pending' | 'timedout';
 
 export const TRANSACTION_STATUS = {
@@ -43,6 +48,8 @@ export type HistoryItem =
   | TokenTransactionHistoryItem
   | CollectibleTransactionHistoryItem
   | PaymentChannelHistoryItem
+  | ExchangeHistoryItem
+  | FiatTopUpHistoryItem
   | WalletEventHistoryItem
   | EnsNameHistoryItem
   | BadgeReceivedHistoryItem;
@@ -143,6 +150,26 @@ export type PaymentChannelSettlementHistoryItem = {|
   toAddress: string,
   inputValues: TokenValue[],
   outputValue: TokenValue,
+  status: TransactionStatus,
+|};
+
+export type ExchangeHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'exchangeTransaction',
+  fromAddress: string,
+  toAddress: string,
+  fromValue: TokenValue,
+  toValue: TokenValue,
+  status: TransactionStatus,
+|};
+
+export type FiatTopUpHistoryItem = {|
+  ...HistoryItemCommon,
+  type: 'exchangeTransaction',
+  fromAddress: string,
+  toAddress: string,
+  fiatValue: FiatValue,
+  value: TokenValue,
   status: TransactionStatus,
 |};
 
