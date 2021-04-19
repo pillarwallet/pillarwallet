@@ -26,10 +26,10 @@ import { BigNumber } from 'bignumber.js';
 import HistoryList from 'components/HistoryList';
 
 // Types
-import { type HistoryItem, TRANSACTION_STATUS } from 'models/History';
+import { type Event, TRANSACTION_STATUS } from 'models/History';
 
 function HistoryListEtherspot() {
-  const items = useHistoryItems();
+  const items = useHistoryEvents();
 
   return <HistoryList items={items} />;
 }
@@ -37,7 +37,7 @@ function HistoryListEtherspot() {
 export default HistoryListEtherspot;
 
 // Return mock data for available cell types
-function useHistoryItems(): HistoryItem[] {
+function useHistoryEvents(): Event[] {
   return [
     {
       type: 'tokenReceived',

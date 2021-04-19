@@ -28,16 +28,16 @@ import Icon from 'components/modern/Icon';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { EnsNameHistoryItem } from 'models/History';
+import type { EnsNameEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: EnsNameHistoryItem,
+  event: EnsNameEvent,
 |};
 
-function EnsNameItem({ item }: Props) {
+function EnsNameItem({ event }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -45,7 +45,7 @@ function EnsNameItem({ item }: Props) {
     <HistoryListItem
       iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} />}
       title={t('ensName')}
-      subtitle={item.ensName}
+      subtitle={event.ensName}
       rightComponent={<TextValue>{t('label.registered')}</TextValue>}
     />
   );

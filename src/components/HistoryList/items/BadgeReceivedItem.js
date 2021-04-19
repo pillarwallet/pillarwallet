@@ -22,22 +22,22 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Types
-import type { BadgeReceivedHistoryItem } from 'models/History';
+import type { BadgeReceivedEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: BadgeReceivedHistoryItem,
+  event: BadgeReceivedEvent,
 |};
 
-function BadgeReceivedItem({ item }: Props) {
+function BadgeReceivedItem({ event }: Props) {
   const { t } = useTranslation();
 
   return (
     <HistoryListItem
-      iconUrl={item.iconUrl}
-      title={item.title}
+      iconUrl={event.iconUrl}
+      title={event.title}
       subtitle={t('label.badge')}
       rightComponent={<TextValue>{t('label.received')}</TextValue>}
     />

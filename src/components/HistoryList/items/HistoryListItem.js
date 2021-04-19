@@ -245,7 +245,7 @@ export type FiatValueProps = {|
   color?: string,
 |};
 
-export function FiatValue({ currency, value, color }: TokenValueProps) {
+export function FiatValue({ currency, value, color }: FiatValueProps) {
   const colors = useThemeColors();
 
   if (!value) return null;
@@ -254,7 +254,7 @@ export function FiatValue({ currency, value, color }: TokenValueProps) {
 
   return (
     <Text variant="medium" color={resultColor} style={styles.tokenValue}>
-      {formatFiatChange(value, currency, { stripTrailingZeros: true })}
+      {formatFiatChange(value, currency)}
     </Text>
   );
 }

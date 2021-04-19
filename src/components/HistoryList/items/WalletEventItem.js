@@ -24,16 +24,16 @@ import * as React from 'react';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { WalletEventHistoryItem } from 'models/History';
+import type { WalletEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: WalletEventHistoryItem,
+  event: WalletEvent,
 |};
 
-function WalletEventItem({ item }: Props) {
+function WalletEventItem({ event }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -41,9 +41,9 @@ function WalletEventItem({ item }: Props) {
       iconName="wallet"
       iconColor={colors.neutral}
       iconBorderColor={colors.neutralWeak}
-      title={item.title}
-      subtitle={item.subtitle}
-      rightComponent={<TextValue>{item.event}</TextValue>}
+      title={event.title}
+      subtitle={event.subtitle}
+      rightComponent={<TextValue>{event.event}</TextValue>}
     />
   );
 }

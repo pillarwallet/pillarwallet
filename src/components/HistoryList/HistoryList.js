@@ -31,10 +31,10 @@ import { humanizeDateString } from 'utils/date';
 import { appFont, spacing } from 'utils/variables';
 
 // Types
-import type { HistoryItem } from 'models/History';
+import type { Event } from 'models/History';
 
 // Local
-import { mapHistoryItemsToSections, type HistorySection } from './utils';
+import { mapEventsToSections, type HistorySection } from './utils';
 import TokenTransactionItem from './items/TokenTransactionItem';
 import CollectibleTransactionItem from './items/CollectibleTransactionItem';
 import PaymentChannelTransactionItem from './items/PaymentChannelTransactionItem';
@@ -46,42 +46,42 @@ import BadgeReceivedItem from './items/BadgeReceivedItem';
 import HistoryListItem from './items/HistoryListItem';
 
 type Props = {|
-  items: ?HistoryItem[];
+  items: ?Event[];
 |};
 
 function HistoryList({ items }: Props) {
   const safeArea = useSafeAreaInsets();
 
-  const sections = mapHistoryItemsToSections(items ?? []);
+  const sections = mapEventsToSections(items ?? []);
 
   const renderSectionHeader = (section: HistorySection) => {
     return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
   };
 
-  const renderHistoryItem = (item: HistoryItem) => {
-    switch (item.type) {
+  const renderEvent = (event: Event) => {
+    switch (event.type) {
       case 'tokenReceived':
       case 'tokenSent':
-        return <TokenTransactionItem item={item} />;
+        return <TokenTransactionItem event={event} />;
       case 'collectibleReceived':
       case 'collectibleSent':
-        return <CollectibleTransactionItem item={item} />;
+        return <CollectibleTransactionItem event={event} />;
       case 'paymentChannelReceived':
       case 'paymentChannelSent':
       case 'paymentChannelTopUp':
       case 'paymentChannelWithdrawal':
       case 'paymentChannelSettlement':
-        return <PaymentChannelTransactionItem item={item} />;
+        return <PaymentChannelTransactionItem event={event} />;
       case 'tokenExchange':
-        return <TokenExchangeItem item={item} />;
+        return <TokenExchangeItem event={event} />;
       case 'exchangeFromFiat':
-        return <ExchangeFromFiatItem item={item} />;
+        return <ExchangeFromFiatItem event={event} />;
       case 'walletEvent':
-        return <WalletEventItem item={item} />;
+        return <WalletEventItem event={event} />;
       case 'ensName':
-        return <EnsNameItem item={item} />;
+        return <EnsNameItem event={event} />;
       case 'badgeReceived':
-        return <BadgeReceivedItem item={item} />;
+        return <BadgeReceivedItem event={event} />;
       default:
         // Temporary debug item
         return <HistoryListItem title="Not supported tx" iconName="question" />;
@@ -94,7 +94,7 @@ function HistoryList({ items }: Props) {
       sections={sections}
       keyExtractor={(item) => item.id}
       renderSectionHeader={({ section }) => renderSectionHeader(section)}
-      renderItem={({ item }) => renderHistoryItem(item)}
+      renderItem={({ item }) => renderEvent(item)}
     />
   );
 }

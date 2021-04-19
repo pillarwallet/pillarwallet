@@ -22,36 +22,36 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Types
-import type { CollectibleReceivedHistoryItem, CollectibleSentHistoryItem } from 'models/History';
+import type { CollectibleReceivedEvent, CollectibleSentEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TextValue } from './HistoryListItem';
 
 type Props = {|
-  item: CollectibleReceivedHistoryItem | CollectibleSentHistoryItem,
+  event: CollectibleReceivedEvent | CollectibleSentEvent,
 |};
 
-function CollectibleTransactionItem({ item }: Props) {
+function CollectibleTransactionItem({ event }: Props) {
   const { t } = useTranslation();
 
-  if (item.type === 'collectibleReceived') {
+  if (event.type === 'collectibleReceived') {
     return (
       <HistoryListItem
-        iconUrl={item.imageUrl}
-        title={item.title}
+        iconUrl={event.imageUrl}
+        title={event.title}
         rightComponent={<TextValue>{t('label.received')}</TextValue>}
-        status={item.status}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'collectibleSent') {
+  if (event.type === 'collectibleSent') {
     return (
       <HistoryListItem
-        iconUrl={item.imageUrl}
-        title={item.title}
+        iconUrl={event.imageUrl}
+        title={event.title}
         rightComponent={<TextValue>{t('label.sent')}</TextValue>}
-        status={item.status}
+        status={event.status}
       />
     );
   }

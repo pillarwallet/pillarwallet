@@ -29,46 +29,46 @@ import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { TokenReceivedHistoryItem, TokenSentHistoryItem } from 'models/History';
+import type { TokenReceivedEvent, TokenSentEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TokenValue } from './HistoryListItem';
 
 type Props = {|
-  item: TokenReceivedHistoryItem | TokenSentHistoryItem,
+  event: TokenReceivedEvent | TokenSentEvent,
 |};
 
-function TokenTransactionItem({ item }: Props) {
+function TokenTransactionItem({ event }: Props) {
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
 
-  if (item.type === 'tokenReceived') {
-    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+  if (event.type === 'tokenReceived') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
 
     return (
       <HistoryListItem
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        title={ensName ?? formatHexAddress(item.fromAddress)}
-        rightComponent={<TokenValue symbol={item.symbol} value={item.value} />}
-        status={item.status}
+        title={ensName ?? formatHexAddress(event.fromAddress)}
+        rightComponent={<TokenValue symbol={event.symbol} value={event.value} />}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'tokenSent') {
-    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+  if (event.type === 'tokenSent') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
 
     return (
       <HistoryListItem
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        title={ensName ?? formatHexAddress(item.toAddress)}
-        rightComponent={<TokenValue symbol={item.symbol} value={item.value?.negated()} />}
-        status={item.status}
+        title={ensName ?? formatHexAddress(event.toAddress)}
+        rightComponent={<TokenValue symbol={event.symbol} value={event.value?.negated()} />}
+        status={event.status}
       />
     );
   }

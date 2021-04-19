@@ -31,52 +31,52 @@ import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { PaymentChannelHistoryItem } from 'models/History';
+import type { PaymentChannelEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TokenValue, PaymentChannelValue, MultipleValue } from './HistoryListItem';
 
 type Props = {|
-  item: PaymentChannelHistoryItem,
+  event: PaymentChannelEvent,
 |};
 
-function PaymentChannelTransactionItem({ item }: Props) {
+function PaymentChannelTransactionItem({ event }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
 
-  if (item.type === 'paymentChannelReceived') {
-    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+  if (event.type === 'paymentChannelReceived') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
 
     return (
       <HistoryListItem
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        title={ensName ?? formatHexAddress(item.fromAddress)}
-        rightComponent={<PaymentChannelValue symbol={item.value.symbol} value={item.value.value} />}
-        status={item.status}
+        title={ensName ?? formatHexAddress(event.fromAddress)}
+        rightComponent={<PaymentChannelValue symbol={event.value.symbol} value={event.value.value} />}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'paymentChannelSent') {
-    const ensName = findEnsNameCaseInsensitive(ensRegistry, item.fromAddress);
+  if (event.type === 'paymentChannelSent') {
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
 
     return (
       <HistoryListItem
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        title={ensName ?? formatHexAddress(item.toAddress)}
-        rightComponent={<PaymentChannelValue symbol={item.value.symbol} value={item.value.value?.negated()} />}
-        status={item.status}
+        title={ensName ?? formatHexAddress(event.toAddress)}
+        rightComponent={<PaymentChannelValue symbol={event.value.symbol} value={event.value.value?.negated()} />}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'paymentChannelTopUp') {
+  if (event.type === 'paymentChannelTopUp') {
     return (
       <HistoryListItem
         iconName="plus"
@@ -86,16 +86,16 @@ function PaymentChannelTransactionItem({ item }: Props) {
         subtitle={t('label.walletToPillarPay')}
         rightComponent={
           <RightColumn>
-            <TokenValue symbol={item.value.symbol} value={item.value.value?.negated()} />
-            <TokenValue symbol={item.value.symbol} value={item.value.value} />
+            <TokenValue symbol={event.value.symbol} value={event.value.value?.negated()} />
+            <TokenValue symbol={event.value.symbol} value={event.value.value} />
           </RightColumn>
         }
-        status={item.status}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'paymentChannelWithdrawal') {
+  if (event.type === 'paymentChannelWithdrawal') {
     return (
       <HistoryListItem
         iconName="withdraw"
@@ -105,16 +105,16 @@ function PaymentChannelTransactionItem({ item }: Props) {
         subtitle={t('label.pillarPayToWallet')}
         rightComponent={
           <RightColumn>
-            <TokenValue symbol={item.value.symbol} value={item.value.value?.negated()} color={colors.neutral} />
-            <TokenValue symbol={item.value.symbol} value={item.value.value} color={colors.neutral} />
+            <TokenValue symbol={event.value.symbol} value={event.value.value?.negated()} color={colors.neutral} />
+            <TokenValue symbol={event.value.symbol} value={event.value.value} color={colors.neutral} />
           </RightColumn>
         }
-        status={item.status}
+        status={event.status}
       />
     );
   }
 
-  if (item.type === 'paymentChannelSettlement') {
+  if (event.type === 'paymentChannelSettlement') {
     return (
       <HistoryListItem
         iconName="settlement"
@@ -124,19 +124,19 @@ function PaymentChannelTransactionItem({ item }: Props) {
         subtitle={t('label.pillarPayToWallet')}
         rightComponent={
           <RightColumn>
-            {item.inputValues.length === 1 ? (
+            {event.inputValues.length === 1 ? (
               <TokenValue
-                symbol={item.inputValues[0].symbol}
-                value={item.inputValues[0].value?.negated()}
+                symbol={event.inputValues[0].symbol}
+                value={event.inputValues[0].value?.negated()}
                 color={colors.synthetic140}
               />
             ) : (
               <MultipleValue color={colors.synthetic140} />
             )}
-            <TokenValue symbol={item.outputValue.symbol} value={item.outputValue.value} />
+            <TokenValue symbol={event.outputValue.symbol} value={event.outputValue.value} />
           </RightColumn>
         }
-        status={item.status}
+        status={event.status}
       />
     );
   }

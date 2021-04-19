@@ -20,7 +20,7 @@
 
 import { BigNumber } from 'bignumber.js';
 
-type HistoryItemCommon = {|
+type EventCommon = {|
   date: Date,
   id: string,
 |};
@@ -44,21 +44,21 @@ export const TRANSACTION_STATUS = {
   TIMEDOUT: ('timedout': 'timedout'),
 };
 
-export type HistoryItem =
-  | TokenTransactionHistoryItem
-  | CollectibleTransactionHistoryItem
-  | PaymentChannelHistoryItem
-  | TokenExchangeHistoryItem
-  | ExchangeFromFiatHistoryItem
-  | WalletEventHistoryItem
-  | EnsNameHistoryItem
-  | BadgeReceivedHistoryItem;
+export type Event =
+  | TokenTransactionEvent
+  | CollectibleTransactionEvent
+  | PaymentChannelEvent
+  | TokenExchangeEvent
+  | ExchangeFromFiatEvent
+  | WalletEvent
+  | EnsNameEvent
+  | BadgeReceivedEvent;
 
 
-export type TokenTransactionHistoryItem = TokenReceivedHistoryItem | TokenSentHistoryItem;
+export type TokenTransactionEvent = TokenReceivedEvent | TokenSentEvent;
 
-export type TokenReceivedHistoryItem = {|
-  ...HistoryItemCommon,
+export type TokenReceivedEvent = {|
+  ...EventCommon,
   type: 'tokenReceived',
   fromAddress: string,
   toAddress: string,
@@ -67,8 +67,8 @@ export type TokenReceivedHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type TokenSentHistoryItem = {|
-  ...HistoryItemCommon,
+export type TokenSentEvent = {|
+  ...EventCommon,
   type: 'tokenSent',
   fromAddress: string,
   toAddress: string,
@@ -78,10 +78,10 @@ export type TokenSentHistoryItem = {|
 |};
 
 
-export type CollectibleTransactionHistoryItem = CollectibleReceivedHistoryItem | CollectibleSentHistoryItem;
+export type CollectibleTransactionEvent = CollectibleReceivedEvent | CollectibleSentEvent;
 
-export type CollectibleReceivedHistoryItem = {|
-  ...HistoryItemCommon,
+export type CollectibleReceivedEvent = {|
+  ...EventCommon,
   type: 'collectibleReceived',
   fromAddress: string,
   toAddress: string,
@@ -90,8 +90,8 @@ export type CollectibleReceivedHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type CollectibleSentHistoryItem = {|
-  ...HistoryItemCommon,
+export type CollectibleSentEvent = {|
+  ...EventCommon,
   type: 'collectibleSent',
   fromAddress: string,
   toAddress: string,
@@ -101,15 +101,15 @@ export type CollectibleSentHistoryItem = {|
 |};
 
 
-export type PaymentChannelHistoryItem =
-  | PaymentChannelReceivedHistoryItem
-  | PaymentChannelSentHistoryItem
-  | PaymentChannelTopUpHistoryItem
-  | PaymentChannelWithdrawalHistoryItem
-  | PaymentChannelSettlementHistoryItem;
+export type PaymentChannelEvent =
+  | PaymentChannelReceivedEvent
+  | PaymentChannelSentEvent
+  | PaymentChannelTopUpEvent
+  | PaymentChannelWithdrawalEvent
+  | PaymentChannelSettlementEvent;
 
-export type PaymentChannelReceivedHistoryItem = {|
-  ...HistoryItemCommon,
+export type PaymentChannelReceivedEvent = {|
+  ...EventCommon,
   type: 'paymentChannelReceived',
   fromAddress: string,
   toAddress: string,
@@ -117,8 +117,8 @@ export type PaymentChannelReceivedHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type PaymentChannelSentHistoryItem = {|
-  ...HistoryItemCommon,
+export type PaymentChannelSentEvent = {|
+  ...EventCommon,
   type: 'paymentChannelSent',
   fromAddress: string,
   toAddress: string,
@@ -126,16 +126,16 @@ export type PaymentChannelSentHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type PaymentChannelTopUpHistoryItem = {|
-  ...HistoryItemCommon,
+export type PaymentChannelTopUpEvent = {|
+  ...EventCommon,
   type: 'paymentChannelTopUp',
   fromAddress: string,
   toAddress: string,
   value: TokenValue,
   status: TransactionStatus,
 |};
-export type PaymentChannelWithdrawalHistoryItem = {|
-  ...HistoryItemCommon,
+export type PaymentChannelWithdrawalEvent = {|
+  ...EventCommon,
   type: 'paymentChannelWithdrawal',
   fromAddress: string,
   toAddress: string,
@@ -143,8 +143,8 @@ export type PaymentChannelWithdrawalHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type PaymentChannelSettlementHistoryItem = {|
-  ...HistoryItemCommon,
+export type PaymentChannelSettlementEvent = {|
+  ...EventCommon,
   type: 'paymentChannelSettlement',
   fromAddress: string,
   toAddress: string,
@@ -153,8 +153,8 @@ export type PaymentChannelSettlementHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type TokenExchangeHistoryItem = {|
-  ...HistoryItemCommon,
+export type TokenExchangeEvent = {|
+  ...EventCommon,
   type: 'tokenExchange',
   fromAddress: string,
   toAddress: string,
@@ -163,8 +163,8 @@ export type TokenExchangeHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type ExchangeFromFiatHistoryItem = {|
-  ...HistoryItemCommon,
+export type ExchangeFromFiatEvent = {|
+  ...EventCommon,
   type: 'exchangeFromFiat',
   fromAddress: string,
   toAddress: string,
@@ -172,22 +172,22 @@ export type ExchangeFromFiatHistoryItem = {|
   toValue: TokenValue,
   status: TransactionStatus,
 |};
-export type WalletEventHistoryItem = {|
-  ...HistoryItemCommon,
+export type WalletEvent = {|
+  ...EventCommon,
   type: 'walletEvent',
   title?: string,
   subtitle?: string,
   event: string,
 |};
 
-export type EnsNameHistoryItem = {|
-  ...HistoryItemCommon,
+export type EnsNameEvent = {|
+  ...EventCommon,
   type: 'ensName',
   ensName: string,
 |};
 
-export type BadgeReceivedHistoryItem = {|
-  ...HistoryItemCommon,
+export type BadgeReceivedEvent = {|
+  ...EventCommon,
   type: 'badgeReceived',
   title?: string,
   iconUrl: ?string,

@@ -23,29 +23,29 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Types
-import type { ExchangeFromFiatHistoryItem } from 'models/History';
+import type { ExchangeFromFiatEvent } from 'models/History';
 
 // Local
 import HistoryListItem, { TokenValue, FiatValue } from './HistoryListItem';
 
 type Props = {|
-  item: ExchangeFromFiatHistoryItem,
+  event: ExchangeFromFiatEvent,
 |};
 
-function ExchangeFromFiat({ item }: Props) {
+function ExchangeFromFiat({ event }: Props) {
   const { t } = useTranslation();
 
   return (
     <HistoryListItem
       iconName="exchange"
-      title={t('label.fromToFormat', { from: item.fromValue.currency, to: item.toValue.symbol })}
+      title={t('label.fromToFormat', { from: event.fromValue.currency, to: event.toValue.symbol })}
       rightComponent={
         <RightColumn>
-          <FiatValue currency={item.fromValue.currency} value={item.fromValue.value?.negated()} />
-          <TokenValue symbol={item.toValue.symbol} value={item.toValue.value} />
+          <FiatValue currency={event.fromValue.currency} value={event.fromValue.value?.negated()} />
+          <TokenValue symbol={event.toValue.symbol} value={event.toValue.value} />
         </RightColumn>
       }
-      status={item.status}
+      status={event.status}
     />
   );
 }

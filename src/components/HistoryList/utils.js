@@ -25,14 +25,14 @@ import { formatDate } from 'utils/date';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import type { HistoryItem } from 'models/History';
+import type { Event } from 'models/History';
 
 export type HistorySection = {
-  ...SectionBase<HistoryItem>,
+  ...SectionBase<Event>,
   date: Date,
 };
 
-export function mapHistoryItemsToSections(items: HistoryItem[]): HistorySection[] {
+export function mapEventsToSections(items: Event[]): HistorySection[] {
   const sortedItems = orderBy(items, ['date'], ['desc']);
   const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'YYYY-MM-DD'));
 
