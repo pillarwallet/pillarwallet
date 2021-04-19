@@ -101,23 +101,28 @@ export function formatFiatValue(value: ?BigNumber, currency?: string, options?: 
 }
 
 /**
- * Formats profit as `+10.00% ($100.00)`.
+ * Formats fiat change as `+10.00% ($100.00)`.
  *
- * Handles edge cases of missing profit and/or balance values.
+ * Handles edge cases of missing change and/or balance values.
  */
-export function formatFiatProfit(profit: ?BigNumber, balance: ?BigNumber, currency: string) {
-  if (!profit || !profit.isFinite()) return null;
+export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?BigNumber, currency: string) {
+  if (!change || !change.isFinite()) return null;
 
-  if (profit.isZero()) return formatPercentChange(BigNumber(0));
+  // Special case zero change.
+  if (change.isZero()) return formatPercentChange(BigNumber(0));
 
-  const formattedProfitInFiat = formatFiatValue(profit, currency);
-  const formattedProfitInPercent = balance != null ? formatPercentChange(profit.dividedBy(balance)) : null;
+  const formattedChangeInFiat = formatFiatValue(change, currency);
 
-  if (formattedProfitInFiat && formattedProfitInPercent) {
-    return `${formattedProfitInPercent} (${formattedProfitInFiat})`;
+  // Special case missing/incorrect/negative balance.
+  if (!initialBalance || !initialBalance.isFinite() || !initialBalance.gte(0)) return formattedChangeInFiat;
+
+  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance));
+
+  if (formattedChangeInFiat && formattedChangeInPercent) {
+    return `${formattedChangeInPercent} (${formattedChangeInFiat})`;
   }
 
-  if (formattedProfitInFiat) return formattedProfitInFiat;
+  if (formattedChangeInFiat) return formattedChangeInFiat;
 
   return null;
 }

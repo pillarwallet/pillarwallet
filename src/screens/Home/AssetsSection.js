@@ -31,7 +31,7 @@ import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConsta
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { formatFiatValue, formatFiatProfit } from 'utils/format';
+import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { useThemeColors } from 'utils/themes';
 
@@ -64,7 +64,9 @@ function AssetsSection({ showSideChains }: Props) {
     if (!balance || !categories[category]) return null;
 
     const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
-    const formattedProfit = formatFiatProfit(balance.profitInFiat, balance.balanceInFiat, fiatCurrency);
+
+    const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
+    const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
     const { title, iconName } = categories[category];
 
     return (
@@ -73,8 +75,8 @@ function AssetsSection({ showSideChains }: Props) {
         iconName={iconName}
         onPress={() => navigation.navigate(ASSETS, { category })}
         value={formattedBalance}
-        secondaryValue={formattedProfit}
-        secondaryValueColor={balance.profitInFiat?.gte(0) ? colors.positive : colors.secondaryText}
+        secondaryValue={formattedChange}
+        secondaryValueColor={balance.changeInFiat?.gte(0) ? colors.positive : colors.secondaryText}
       />
     );
   };

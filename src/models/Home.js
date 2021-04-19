@@ -37,5 +37,5 @@ export type ChainInfo = {|
 |};
 export type BalanceInfo = {|
   balanceInFiat: BigNumber,
-  profitInFiat?: BigNumber,
+  changeInFiat?: BigNumber,
 |};

@@ -21,6 +21,7 @@
 // Selectors
 import { useRootSelector } from 'selectors';
 import {
+  totalBalanceSelector,
   walletBalanceSelector,
   depositsBalanceSelector,
   investmentsBalanceSelector,
@@ -36,10 +37,10 @@ import { BigNumber } from 'utils/common';
 import type { WalletInfo, BalanceInfo } from 'models/Home';
 
 export const useTotalBalance = (): BalanceInfo => {
-  const walletBalance = useRootSelector(walletBalanceSelector);
+  const totalBalance = useRootSelector(totalBalanceSelector);
 
   return {
-    balanceInFiat: walletBalance,
+    balanceInFiat: totalBalance,
   };
 };
 

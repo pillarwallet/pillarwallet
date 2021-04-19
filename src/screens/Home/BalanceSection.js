@@ -31,7 +31,7 @@ import Text from 'components/modern/Text';
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { formatFiatValue, formatFiatProfit } from 'utils/format';
+import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { spacing } from 'utils/variables';
 
 // Local
@@ -47,7 +47,8 @@ function BalanceSection() {
   const fiatCurrency = useFiatCurrency();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const formattedPerformance = formatFiatProfit(total.profitInFiat, total.balanceInFiat, fiatCurrency);
+  const initialBalance = total.changeInFiat ? total.balanceInFiat.minus(total.changeInFiat) : null;
+  const formattedChange = formatFiatChangeExtended(total.changeInFiat, initialBalance, fiatCurrency);
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -59,10 +60,10 @@ function BalanceSection() {
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
           {formatFiatValue(total.balanceInFiat, fiatCurrency, { exact: true })}
         </BalanceText>
-        {!!formattedPerformance && (
+        {!!formattedChange && (
           <ProfitContainer>
             <ProfitLabel color="secondaryText">{t('lastWeek')}</ProfitLabel>
-            <ProfitValue color="positive">{formattedPerformance}</ProfitValue>
+            <ProfitValue color="positive">{formattedChange}</ProfitValue>
           </ProfitContainer>
         )}
       </FirstColumn>
