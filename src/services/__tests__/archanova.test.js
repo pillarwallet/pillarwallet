@@ -23,7 +23,7 @@ import type { AccountTransaction } from 'services/archanova';
 import type { AssetData } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
-describe('Smart Wallet service', () => {
+describe('Archanova service', () => {
   const assetData: AssetData = {
     token: ETH,
     decimals: 18,
