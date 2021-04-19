@@ -67,7 +67,6 @@ export const lightThemeColorsOld = {
   notice: '#ea480e',
   activeTabBarIcon: '#007AFF',
   inactiveTabBarIcon: '#D4D9DB',
-  buttonSecondaryBackground: '#e6f1f9',
   synthetic: '#2329d6',
   transactionReceivedIcon: '#497391',
   iconBackground: '#ebf0f5',
@@ -85,6 +84,11 @@ export const lightThemeColorsOld = {
   pieChartCenter: lightThemeColors.basic070,
   pieChartEmpty: '#f2f2f2',
   homeEnsNameIcon: lightThemeColors.basic000,
+  buttonPrimaryBackground: lightThemeColors.basic000,
+  buttonPrimaryTitle: lightThemeColors.basic050,
+  buttonSecondaryBackground: lightThemeColors.basic060,
+  buttonSecondarTitle: lightThemeColors.basic000,
+  buttonTextTitle: lightThemeColors.basic000,
 };
 
 // will be removed after transition
@@ -121,7 +125,6 @@ export const darkThemeColorsOld = {
   notice: '#ea480e',
   activeTabBarIcon: '#FFFFFF',
   inactiveTabBarIcon: '#818eb3',
-  buttonSecondaryBackground: '#102132',
   synthetic: '#9396ff',
   transactionReceivedIcon: '#00E097',
   iconBackground: '#222c46',
@@ -139,6 +142,11 @@ export const darkThemeColorsOld = {
   pieChartCenter: darkThemeColors.basic050,
   pieChartEmpty: darkThemeColors.basic060,
   homeEnsNameIcon: darkThemeColors.basic010,
+  buttonPrimaryBackground: darkThemeColors.primaryAccent130,
+  buttonPrimaryTitle: darkThemeColors.basic090,
+  buttonSecondaryBackground: darkThemeColors.basic020,
+  buttonSecondarTitle: darkThemeColors.basic090,
+  buttonTextTitle: darkThemeColors.basic000,
 };
 
 export const themedColors = {

@@ -19,11 +19,13 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { SectionList, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 // Components
+import HistoryEventDetails from 'components/HistoryEventDetails';
+import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -43,16 +45,19 @@ import ExchangeFromFiatItem from './items/ExchangeFromFiatItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
 import BadgeReceivedItem from './items/BadgeReceivedItem';
-import HistoryListItem from './items/HistoryListItem';
 
 type Props = {|
-  items: ?Event[];
+  items: ?(Event[]),
 |};
 
 function HistoryList({ items }: Props) {
   const safeArea = useSafeAreaInsets();
 
   const sections = mapEventsToSections(items ?? []);
+
+  const showEventDetails = (event: Event) => {
+    Modal.open(() => <HistoryEventDetails event={event} />);
+  };
 
   const renderSectionHeader = (section: HistorySection) => {
     return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
@@ -62,29 +67,60 @@ function HistoryList({ items }: Props) {
     switch (event.type) {
       case 'tokenReceived':
       case 'tokenSent':
-        return <TokenTransactionItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <TokenTransactionItem event={event} />
+          </TouchableOpacity>
+        );
       case 'collectibleReceived':
       case 'collectibleSent':
-        return <CollectibleTransactionItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <CollectibleTransactionItem event={event} />
+          </TouchableOpacity>
+        );
       case 'paymentChannelReceived':
       case 'paymentChannelSent':
       case 'paymentChannelTopUp':
       case 'paymentChannelWithdrawal':
       case 'paymentChannelSettlement':
-        return <PaymentChannelTransactionItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <PaymentChannelTransactionItem event={event} />
+          </TouchableOpacity>
+        );
       case 'tokenExchange':
-        return <TokenExchangeItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <TokenExchangeItem event={event} />
+          </TouchableOpacity>
+        );
       case 'exchangeFromFiat':
-        return <ExchangeFromFiatItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <ExchangeFromFiatItem event={event} />
+          </TouchableOpacity>
+        );
       case 'walletEvent':
-        return <WalletEventItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <WalletEventItem event={event} />
+          </TouchableOpacity>
+        );
       case 'ensName':
-        return <EnsNameItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <EnsNameItem event={event} />
+          </TouchableOpacity>
+        );
       case 'badgeReceived':
-        return <BadgeReceivedItem event={event} />;
+        return (
+          <TouchableOpacity onPress={() => showEventDetails(event)}>
+            <BadgeReceivedItem event={event} />
+          </TouchableOpacity>
+        );
       default:
-        // Temporary debug item
-        return <HistoryListItem title="Not supported tx" iconName="question" />;
+        return null;
     }
   };
 

@@ -187,6 +187,7 @@ export type EnsNameEvent = {|
 export type BadgeReceivedEvent = {|
   ...EventCommon,
   type: 'badgeReceived',
+  badgeId: string,
   title?: string,
   iconUrl: ?string,
 |};

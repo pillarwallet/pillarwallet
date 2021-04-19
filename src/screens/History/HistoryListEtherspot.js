@@ -108,6 +108,7 @@ function useHistoryEvents(): Event[] {
     {
       type: 'badgeReceived',
       id: '5ca21c49754407000644f73b',
+      badgeId: '5ca21c49754407000644f73b',
       date: new Date('2021-04-13'),
       title: 'Coin Collector',
       iconUrl:
