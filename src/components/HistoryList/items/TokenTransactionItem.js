@@ -52,7 +52,7 @@ function TokenTransactionItem({ event }: Props) {
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
         title={ensName ?? formatHexAddress(event.fromAddress)}
-        rightComponent={<TokenValue symbol={event.symbol} value={event.value} />}
+        rightComponent={<TokenValue symbol={event.value.symbol} value={event.value.value} />}
         status={event.status}
       />
     );
@@ -67,7 +67,7 @@ function TokenTransactionItem({ event }: Props) {
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
         title={ensName ?? formatHexAddress(event.toAddress)}
-        rightComponent={<TokenValue symbol={event.symbol} value={event.value?.negated()} />}
+        rightComponent={<TokenValue symbol={event.value.symbol} value={event.value.value?.negated()} />}
         status={event.status}
       />
     );

@@ -45,8 +45,10 @@ function useHistoryEvents(): Event[] {
       date: new Date('2021-04-14'),
       fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-      value: BigNumber(4.2),
-      symbol: 'ETH',
+      value: {
+        value: BigNumber(4.2),
+        symbol: 'ETH',
+      },
       status: TRANSACTION_STATUS.CONFIRMED,
     },
     {
@@ -55,8 +57,10 @@ function useHistoryEvents(): Event[] {
       date: new Date('2021-04-14'),
       fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-      value: BigNumber(100),
-      symbol: 'PLR',
+      value: {
+        value: BigNumber(100),
+        symbol: 'PLR',
+      },
       status: TRANSACTION_STATUS.FAILED,
     },
     {

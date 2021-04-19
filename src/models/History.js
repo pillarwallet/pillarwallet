@@ -62,8 +62,7 @@ export type TokenReceivedEvent = {|
   type: 'tokenReceived',
   fromAddress: string,
   toAddress: string,
-  symbol: string,
-  value: ?BigNumber,
+  value: TokenValue,
   status: TransactionStatus,
 |};
 
@@ -72,8 +71,7 @@ export type TokenSentEvent = {|
   type: 'tokenSent',
   fromAddress: string,
   toAddress: string,
-  symbol: string,
-  value: ?BigNumber,
+  value: TokenValue,
   status: TransactionStatus,
 |};
 
