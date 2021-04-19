@@ -50,7 +50,11 @@ function BadgeReceivedEventDetails({ event }: Props) {
       iconUrl={event.iconUrl}
       event={t('label.received')}
     >
-      <Button variant="secondary" title={t('button.viewBadge')} onPress={() => navigation.navigate(BADGE, { badgeId: event.badgeId })} />
+      <Button
+        variant="secondary"
+        title={t('button.viewBadge')}
+        onPress={() => navigation.navigate(BADGE, { badgeId: event.badgeId })}
+      />
     </BaseLayout>
   );
 }

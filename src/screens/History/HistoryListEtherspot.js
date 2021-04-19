@@ -42,6 +42,7 @@ function useHistoryEvents(): Event[] {
     {
       type: 'tokenReceived',
       id: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c',
+      hash: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c',
       date: new Date('2021-04-14'),
       fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
@@ -54,9 +55,10 @@ function useHistoryEvents(): Event[] {
     {
       type: 'tokenSent',
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       date: new Date('2021-04-14'),
-      fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
-      toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
+      fromAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
+      toAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
       value: {
         value: BigNumber(100),
         symbol: 'PLR',

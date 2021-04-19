@@ -19,24 +19,33 @@
 */
 
 import * as React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 // Components
+import Icon, { type IconName } from 'components/modern/Icon';
 import Image from 'components/Image';
+import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
 import Text from 'components/modern/Text';
 
 // utils
 import { formatDate } from 'utils/date';
+import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
+
+// Types
+import type { TextStyleProp } from 'utils/types/react-native';
 
 type Props = {|
   date?: Date,
   title: ?string,
   subtitle?: ?string,
+  iconName?: IconName,
+  iconColor?: string,
+  iconBorderColor?: string,
   iconUrl?: ?string,
   event?: ?string,
+  eventStyle?: TextStyleProp,
   children?: React.Node,
 |};
 
@@ -44,13 +53,19 @@ const BaseLayout = ({
   date,
   title,
   subtitle,
+  iconName,
+  iconColor,
+  iconBorderColor,
   iconUrl,
   event,
+  eventStyle,
   children,
 }: Props) => {
+  const colors = useThemeColors();
+
   return (
     <SlideModal hideHeader>
-      <SafeAreaContent forceInset={{ bottom: 'always' }}>
+      <SafeAreaContent>
         <Timestamp>{formatDate(date, DATE_FORMAT)}</Timestamp>
 
         <Title>{title}</Title>
@@ -62,7 +77,13 @@ const BaseLayout = ({
           </IconImageWrapper>
         )}
 
-        <Event>{event}</Event>
+        {!!iconName && (
+          <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
+            <Icon name={iconName} color={iconColor ?? colors.neutral} width={40} height={40} />
+          </IconCircle>
+        )}
+
+        <Event style={eventStyle}>{event}</Event>
 
         <ChildrenWrapper>{children}</ChildrenWrapper>
       </SafeAreaContent>
@@ -108,6 +129,17 @@ const IconImageWrapper = styled.View`
 const IconImage = styled(Image)`
   width: 64px;
   height: 64px;
+`;
+
+const IconCircle = styled.View`
+  margin: ${spacing.large}px;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  border-width: 1px;
+  border-color: ${({ $color }) => $color};
+  border-radius: 32px;
 `;
 
 const Event = styled(Text)`

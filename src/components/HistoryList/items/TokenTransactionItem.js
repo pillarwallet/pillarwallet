@@ -59,7 +59,7 @@ function TokenTransactionItem({ event }: Props) {
   }
 
   if (event.type === 'tokenSent') {
-    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
+    const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
 
     return (
       <HistoryListItem

@@ -24,6 +24,7 @@ import * as React from 'react';
 import type { Event } from 'models/History';
 
 // Local
+import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
 import BadgeReceivedEventDetails from './layouts/BadgeReceivedEventDetails';
 
 type Props = {|
@@ -32,9 +33,9 @@ type Props = {|
 
 function HistoryEventDetails({ event }: Props) {
   switch (event.type) {
-    // case 'tokenReceived':
-    // case 'tokenSent':
-    //   return <TokenTransactionItem event={event} />;
+    case 'tokenReceived':
+    case 'tokenSent':
+      return <TokenTransactionEventDetails event={event} />;
     // case 'collectibleReceived':
     // case 'collectibleSent':
     //   return <CollectibleTransactionItem event={event} />;

@@ -60,6 +60,7 @@ export type TokenTransactionEvent = TokenReceivedEvent | TokenSentEvent;
 export type TokenReceivedEvent = {|
   ...EventCommon,
   type: 'tokenReceived',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   value: TokenValue,
@@ -69,6 +70,7 @@ export type TokenReceivedEvent = {|
 export type TokenSentEvent = {|
   ...EventCommon,
   type: 'tokenSent',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   value: TokenValue,
