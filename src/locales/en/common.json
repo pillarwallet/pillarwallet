@@ -241,7 +241,8 @@
     "keyFacts": "Key facts",
     "multiple": "Multiple",
     "walletToPillarPay": "Wallet → Pillar Pay",
-    "pillarPayToWallet": "Pillar Pay → Wallet"
+    "pillarPayToWallet": "Pillar Pay → Wallet",
+    "fromToFormat": "{{from}} → {{to}}"
   },
 
   "button": {

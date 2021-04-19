@@ -48,8 +48,8 @@ export type HistoryItem =
   | TokenTransactionHistoryItem
   | CollectibleTransactionHistoryItem
   | PaymentChannelHistoryItem
-  | ExchangeHistoryItem
-  | FiatTopUpHistoryItem
+  | TokenExchangeHistoryItem
+  | ExchangeFromFiatHistoryItem
   | WalletEventHistoryItem
   | EnsNameHistoryItem
   | BadgeReceivedHistoryItem;
@@ -153,9 +153,9 @@ export type PaymentChannelSettlementHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type ExchangeHistoryItem = {|
+export type TokenExchangeHistoryItem = {|
   ...HistoryItemCommon,
-  type: 'exchangeTransaction',
+  type: 'tokenExchange',
   fromAddress: string,
   toAddress: string,
   fromValue: TokenValue,
@@ -163,17 +163,15 @@ export type ExchangeHistoryItem = {|
   status: TransactionStatus,
 |};
 
-export type FiatTopUpHistoryItem = {|
+export type ExchangeFromFiatHistoryItem = {|
   ...HistoryItemCommon,
-  type: 'exchangeTransaction',
+  type: 'exchangeFromFiat',
   fromAddress: string,
   toAddress: string,
-  fiatValue: FiatValue,
-  value: TokenValue,
+  fromValue: FiatValue,
+  toValue: TokenValue,
   status: TransactionStatus,
 |};
-
-
 export type WalletEventHistoryItem = {|
   ...HistoryItemCommon,
   type: 'walletEvent',

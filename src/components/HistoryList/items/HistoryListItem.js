@@ -29,7 +29,7 @@ import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Utils
-import { formatTokenValueChange } from 'utils/format';
+import { formatTokenValueChange, formatFiatChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -239,3 +239,22 @@ const styles = {
   },
 };
 
+export type FiatValueProps = {|
+  currency: string,
+  value: ?BigNumber,
+  color?: string,
+|};
+
+export function FiatValue({ currency, value, color }: TokenValueProps) {
+  const colors = useThemeColors();
+
+  if (!value) return null;
+
+  const resultColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
+
+  return (
+    <Text variant="medium" color={resultColor} style={styles.tokenValue}>
+      {formatFiatChange(value, currency, { stripTrailingZeros: true })}
+    </Text>
+  );
+}

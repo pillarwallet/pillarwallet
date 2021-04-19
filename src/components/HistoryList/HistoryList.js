@@ -38,6 +38,8 @@ import { mapHistoryItemsToSections, type HistorySection } from './utils';
 import TokenTransactionItem from './items/TokenTransactionItem';
 import CollectibleTransactionItem from './items/CollectibleTransactionItem';
 import PaymentChannelTransactionItem from './items/PaymentChannelTransactionItem';
+import TokenExchangeItem from './items/TokenExchangeItem';
+import ExchangeFromFiatItem from './items/ExchangeFromFiatItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
 import BadgeReceivedItem from './items/BadgeReceivedItem';
@@ -70,6 +72,10 @@ function HistoryList({ items }: Props) {
       case 'paymentChannelWithdrawal':
       case 'paymentChannelSettlement':
         return <PaymentChannelTransactionItem item={item} />;
+      case 'tokenExchange':
+        return <TokenExchangeItem item={item} />;
+      case 'exchangeFromFiat':
+        return <ExchangeFromFiatItem item={item} />;
       case 'walletEvent':
         return <WalletEventItem item={item} />;
       case 'ensName':
