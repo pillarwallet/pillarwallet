@@ -5,7 +5,8 @@
   "scripts": {
     "start": "react-native start",
     "start-fresh": "react-native start --reset-cache",
-    "clean": "rimraf node_modules ios/build ios/Pods ios/Podfile.lock",
+    "clean": "rimraf android/build node_modules ios/build ios/Pods ios/Podfile.lock",
+    "rebuild": "yarn clean && yarn && cd ios && pod install && cd ..",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
@@ -180,6 +181,7 @@
     "rn-fetch-blob": "^0.12.0",
     "rn-nodeify": "^10.0.1",
     "shuffle-array": "^1.0.1",
+    "storyly-react-native": "^1.10.0",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
     "styled-components": "^5.2.1",
@@ -273,7 +275,7 @@
       "./node_modules/react-native-gesture-handler/jestSetup.js"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet|@react-native-community/datetimepicker|@codler/react-native-keyboard-aware-scroll-view|@react-native-picker|@hookform|@rari-capital/rari-sdk|instabug-reactnative)/)"
+      "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet|@react-native-community/datetimepicker|@codler/react-native-keyboard-aware-scroll-view|@react-native-picker|@hookform|@rari-capital/rari-sdk|instabug-reactnative|storyly-react-native)/)"
     ],
     "moduleNameMapper": {
       "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
