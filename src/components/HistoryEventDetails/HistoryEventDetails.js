@@ -25,6 +25,7 @@ import type { Event } from 'models/History';
 
 // Local
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
+import CollectibleTransactionEventDetails from './layouts/CollectibleTransactionEventDetails';
 import WalletEventDetails from './layouts/WalletEventDetails';
 import EnsNameEventDetails from './layouts/EnsNameEventDetails';
 import BadgeReceivedEventDetails from './layouts/BadgeReceivedEventDetails';
@@ -38,15 +39,9 @@ function HistoryEventDetails({ event }: Props) {
     case 'tokenReceived':
     case 'tokenSent':
       return <TokenTransactionEventDetails event={event} />;
-    // case 'collectibleReceived':
-    // case 'collectibleSent':
-    //   return <CollectibleTransactionItem event={event} />;
-    // case 'paymentChannelReceived':
-    // case 'paymentChannelSent':
-    // case 'paymentChannelTopUp':
-    // case 'paymentChannelWithdrawal':
-    // case 'paymentChannelSettlement':
-    //   return <PaymentChannelTransactionItem event={event} />;
+    case 'collectibleReceived':
+    case 'collectibleSent':
+      return <CollectibleTransactionEventDetails event={event} />;
     // case 'tokenExchange':
     //   return <TokenExchangeItem event={event} />;
     // case 'exchangeFromFiat':

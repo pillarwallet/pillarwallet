@@ -28,13 +28,13 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { CollectibleReceivedEvent, CollectibleSentEvent } from 'models/History';
+import { TRANSACTION_STATUS, type CollectibleTransactionEvent } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
 
 type Props = {|
-  event: CollectibleReceivedEvent | CollectibleSentEvent,
+  event: CollectibleTransactionEvent,
   onPress?: () => mixed,
 |};
 
@@ -42,12 +42,15 @@ function CollectibleTransactionItem({ event, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
+  const isPending = event.status === TRANSACTION_STATUS.PENDING;
+
   if (event.type === 'collectibleReceived') {
+    const statusText = isPending ? t('label.receiving') : t('label.received');
     return (
       <HistoryListItem
         iconUrl={event.imageUrl}
         title={event.title}
-        valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
+        valueComponent={<Text color={colors.basic030}>{statusText}</Text>}
         status={event.status}
         onPress={onPress}
       />
@@ -55,11 +58,12 @@ function CollectibleTransactionItem({ event, onPress }: Props) {
   }
 
   if (event.type === 'collectibleSent') {
+    const statusText = isPending ? t('label.sending') : t('label.sent');
     return (
       <HistoryListItem
         iconUrl={event.imageUrl}
         title={event.title}
-        valueComponent={<Text color={colors.basic030}>{t('label.sent')}</Text>}
+        valueComponent={<Text color={colors.basic030}>{statusText}</Text>}
         status={event.status}
         onPress={onPress}
       />

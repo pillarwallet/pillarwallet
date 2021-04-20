@@ -25,6 +25,7 @@ import styled from 'styled-components/native';
 import Icon, { type IconName } from 'components/modern/Icon';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
+import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -86,15 +87,7 @@ function HistoryListItem({
 
       {valueComponent && <RightColumn>{valueComponent}</RightColumn>}
 
-      {status === TRANSACTION_STATUS.PENDING && (
-        <StatusIcon name="pending" color={colors.neutral} width={16} height={16} />
-      )}
-      {status === TRANSACTION_STATUS.FAILED && (
-        <StatusIcon name="failed" color={colors.negative} width={16} height={16} />
-      )}
-      {status === TRANSACTION_STATUS.TIMEDOUT && (
-        <StatusIcon name="failed" color={colors.neutral} width={16} height={16} />
-      )}
+      <StatusIcon status={status} size={16} />
     </TouchableContainer>
   );
 }
@@ -152,7 +145,7 @@ const IconCircle = styled.View`
   border-radius: 24px;
 `;
 
-const StatusIcon = styled(Icon)`
+const StatusIcon = styled(TransactionStatusIcon)`
   align-self: center;
   margin-left: 6px;
 `;

@@ -31,6 +31,9 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import Text from 'components/modern/Text';
+import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
+import TransactionStatusText from 'components/modern/TransactionStatusText';
+import { Row } from 'components/modern/Layout';
 
 // Actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
@@ -42,6 +45,7 @@ import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 // Utils
 import { getSmartWalletAddress } from 'utils/accounts';
 import { viewOnBlockchain } from 'utils/linking';
+import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -61,6 +65,8 @@ function WalletEventDetails({ event }: Props) {
   const accounts = useRootSelector((root) => root.accounts.data);
   const isActivated = useRootSelector(isSmartWalletActivatedSelector);
   const dispatch = useDispatch();
+
+  const colors = useThemeColors();
 
   const openActivate = () => {
     Modal.open(() => <SWActivationModal navigation={navigation} />);
@@ -95,7 +101,11 @@ function WalletEventDetails({ event }: Props) {
   if (event.type === 'walletActivated') {
     return (
       <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
-        <Text variant="large">{t('label.activated')}</Text>
+        <Row>
+          <Text variant="large">{t('label.activated')}</Text>
+          <TransactionStatusIcon status={event.status} size={24} />
+        </Row>
+        <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
         <Spacing h={spacing.extraLarge} />
 
         <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />

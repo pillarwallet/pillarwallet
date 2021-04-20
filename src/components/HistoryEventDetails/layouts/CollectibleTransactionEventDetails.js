@@ -19,20 +19,16 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
-import TokenValueView from 'components/modern/TokenValueView';
+import Text from 'components/modern/Text';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 import { Spacing } from 'components/Layout';
 import { Row } from 'components/modern/Layout';
-
-// Constants
-import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -45,85 +41,60 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { TokenTransactionEvent } from 'models/History';
+import { TRANSACTION_STATUS, type CollectibleTransactionEvent } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
-  event: TokenTransactionEvent,
+  event: CollectibleTransactionEvent,
 |};
 
-function TokenTransactionEventDetails({ event }: Props) {
+function CollectibleTransactionEventDetails({ event }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
+  const isPending = event.status === TRANSACTION_STATUS.PENDING;
 
-  const sendTokensToAddress = (address: string) => {
-    navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW, {
-      contact: {
-        ethAddress: address,
-        name: ensRegistry[address] ?? address,
-        ensName: ensRegistry[address],
-      },
-    });
-  };
-
-  if (event.type === 'tokenReceived') {
+  if (event.type === 'collectibleReceived') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
+    const username = ensName ?? formatHexAddress(event.fromAddress);
+    const statusText = isPending ? t('label.receiving') : t('label.received');
 
     return (
       <BaseEventDetails
         date={event.date}
-        title={ensName ?? formatHexAddress(event.fromAddress)}
-        iconName="arrow-down"
-        iconColor={colors.positive}
-        iconBorderColor={colors.positiveWeak}
+        title={event.title}
+        subtitle={t('label.collectibleFromUser', { username })}
+        iconUrl={event.imageUrl}
       >
         <Row>
-          <TokenValueView
-            value={event.value.value}
-            symbol={event.value.symbol}
-            variant="large"
-            mode="change"
-          />
+          <Text variant="large">{statusText}</Text>
           <TransactionStatusIcon status={event.status} size={24} />
         </Row>
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
         <Spacing h={spacing.extraLarge} />
 
-        <Button
-          variant="secondary"
-          title={t('button.sendBack')}
-          onPress={() => sendTokensToAddress(event.fromAddress)}
-        />
-        <Spacing h={spacing.small} />
-        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
       </BaseEventDetails>
     );
   }
 
-  if (event.type === 'tokenSent') {
+  if (event.type === 'collectibleSent') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
+    const username = ensName ?? formatHexAddress(event.toAddress);
+    const statusText = isPending ? t('label.sending') : t('label.sent');
 
     return (
       <BaseEventDetails
         date={event.date}
-        title={ensName ?? formatHexAddress(event.toAddress)}
-        iconName="arrow-up"
-        iconColor={colors.negative}
-        iconBorderColor={colors.negativeWeak}
+        title={event.title}
+        subtitle={t('label.collectibleToUser', { username })}
+        iconUrl={event.imageUrl}
       >
         <Row>
-          <TokenValueView
-            value={event.value.value.negated()}
-            symbol={event.value.symbol}
-            variant="large"
-            mode="change"
-          />
+          <Text variant="large">{statusText}</Text>
           <TransactionStatusIcon status={event.status} size={24} />
         </Row>
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
@@ -140,4 +111,4 @@ function TokenTransactionEventDetails({ event }: Props) {
   return null;
 }
 
-export default TokenTransactionEventDetails;
+export default CollectibleTransactionEventDetails;

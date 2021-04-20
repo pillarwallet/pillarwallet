@@ -72,6 +72,7 @@ export type CollectibleTransactionEvent = CollectibleReceivedEvent | Collectible
 export type CollectibleReceivedEvent = {|
   ...EventCommon,
   type: 'collectibleReceived',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   title: string,
@@ -82,10 +83,12 @@ export type CollectibleReceivedEvent = {|
 export type CollectibleSentEvent = {|
   ...EventCommon,
   type: 'collectibleSent',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   title: string,
   imageUrl: string,
+  fee: TokenValue,
   status: TransactionStatus,
 |};
 
@@ -121,6 +124,7 @@ export type WalletActivated = {|
   type: 'walletActivated',
   hash: string,
   fee: TokenValue,
+  status: TransactionStatus,
 |};
 
 export type EnsNameEvent = {|

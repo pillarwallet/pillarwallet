@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
-import t from 'translations/translate';
+import { useTranslation } from 'translations/translate';
 
 // components
 import Text from 'components/modern/Text';
@@ -46,7 +46,14 @@ type Props = {
   isLoading?: boolean,
 };
 
-function FeeLabel({ value, symbol, mode, isLoading }: Props) {
+function FeeLabel({
+  value,
+  symbol,
+  mode,
+  isLoading,
+}: Props) {
+  const { t } = useTranslation();
+
   const [showFiatValue, setShowFiatValue] = React.useState(true);
 
   const rates = useRates();

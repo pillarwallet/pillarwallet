@@ -75,3 +75,11 @@ const contentStyles = {
     flex: 1,
   },
 };
+
+/**
+ * Display items as a row, centered vertically.
+ */
+export const Row: React.ComponentType<ViewProps> = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;

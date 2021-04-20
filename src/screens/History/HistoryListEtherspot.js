@@ -50,7 +50,7 @@ function useHistoryEvents(): Event[] {
         value: BigNumber(4.2),
         symbol: 'ETH',
       },
-      status: TRANSACTION_STATUS.CONFIRMED,
+      status: TRANSACTION_STATUS.TIMEDOUT,
     },
     {
       type: 'tokenSent',
@@ -73,6 +73,7 @@ function useHistoryEvents(): Event[] {
       type: 'collectibleReceived',
       date: new Date('2021-04-12'),
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123',
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
       title: 'Old Asynchronous Helmet',
@@ -83,12 +84,17 @@ function useHistoryEvents(): Event[] {
     {
       type: 'collectibleSent',
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456',
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       date: new Date('2021-04-12'),
       fromAddress: '0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
       title: 'Old Asynchronous Helmet',
       imageUrl:
         'https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq',
+      fee: {
+        value: BigNumber(0.012345678),
+        symbol: 'ETH',
+      },
       status: TRANSACTION_STATUS.TIMEDOUT,
     },
     {
@@ -134,6 +140,7 @@ function useHistoryEvents(): Event[] {
       date: new Date('2021-04-10'),
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       fee: { value: BigNumber(0.0222311), symbol: 'ETH' },
+      status: TRANSACTION_STATUS.PENDING,
     },
     {
       type: 'walletCreated',
