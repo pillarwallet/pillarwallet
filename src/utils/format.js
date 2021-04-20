@@ -189,7 +189,7 @@ export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?Bi
  * Format token value change with +/- sign.
  * By defaults outputs 2 decimal places, without stripping zeros.
  */
-export function formatTokenValueChange(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
+export function formatTokenChange(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;
 
   const decimalPlaces = getDecimalPlaces(symbol);

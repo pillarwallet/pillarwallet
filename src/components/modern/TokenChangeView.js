@@ -19,48 +19,45 @@
 */
 
 import * as React from 'react';
-import { Text as RNText, StyleSheet } from 'react-native';
+import { BigNumber } from 'bignumber.js';
+
+// Components
+import Text, { type TextVariant } from 'components/modern/Text';
 
 // Utils
+import { formatTokenChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
-import { appFont, objectFontStyles } from 'utils/variables';
-
-// Types
-import type { TextProps, TextStyleProp } from 'utils/types/react-native';
-
-export type TextVariant = $Keys<typeof objectFontStyles>
 
 type Props = {|
-  ...TextProps,
+  change: ?BigNumber,
+  symbol: string,
   variant?: TextVariant,
   color?: string,
 |};
 
-function Text({
+function TokenChangeValue({
+  change,
+  symbol,
   variant,
   color,
-  style,
-  ...rest
 }: Props) {
   const colors = useThemeColors();
-  const propStyle = StyleSheet.flatten(style);
 
-  const resultStyle = [
-    baseStyle,
-    { color: color ?? colors.basic010 },
-    // Apply `regular` font style only if there is no `font-size` style in order to
-    // avoid automatically setting regular 'line-height'.
-    !propStyle?.fontSize && objectFontStyles.regular,
-    !!variant && objectFontStyles[variant],
-    style,
-  ];
+  if (!change) return null;
 
-  return <RNText {...rest} style={resultStyle} />;
+  const resultColor = color ?? (change.gte(0) ? colors?.positive : colors?.secondaryText);
+
+  return (
+    <Text variant={variant} color={resultColor} style={styles.textStyle}>
+      {formatTokenChange(change, symbol, { stripTrailingZeros: true })}
+    </Text>
+  );
 }
 
-const baseStyle: TextStyleProp = {
-  textAlignVertical: 'center',
-  fontFamily: appFont.regular,
-};
+export default TokenChangeValue;
 
-export default Text;
+const styles = {
+  textStyle: {
+    fontVariant: ['tabular-nums'],
+  },
+};

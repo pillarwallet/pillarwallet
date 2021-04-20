@@ -34,7 +34,7 @@ import { useRootSelector } from 'selectors';
 
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
-import { formatTokenValueChange, formatHexAddress } from 'utils/format';
+import { formatTokenChange, formatHexAddress } from 'utils/format';
 import { viewOnTheBlockchain } from 'utils/linking';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
@@ -77,7 +77,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        event={formatTokenValueChange(event.value.value, event.value.symbol)}
+        event={formatTokenChange(event.value.value, event.value.symbol)}
         eventStyle={{ color: colors.positive }}
       >
         <Button
@@ -101,7 +101,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        event={formatTokenValueChange(event.value.value.negated(), event.value.symbol)}
+        event={formatTokenChange(event.value.value.negated(), event.value.symbol)}
         eventStyle={{ color: colors.neutral }}
       >
         <Button

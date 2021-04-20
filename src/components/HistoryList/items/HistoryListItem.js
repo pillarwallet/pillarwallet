@@ -29,7 +29,7 @@ import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Utils
-import { formatTokenValueChange, formatFiatChange } from 'utils/format';
+import { formatTokenChange, formatFiatChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -183,7 +183,7 @@ export function TokenValue({ symbol, value, color }: TokenValueProps) {
 
   return (
     <Text variant="medium" color={resultColor} style={styles.tokenValue}>
-      {formatTokenValueChange(value, symbol, { stripTrailingZeros: true })}
+      {formatTokenChange(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );
 }
@@ -202,7 +202,7 @@ export function PaymentChannelValue({ symbol, value }: PaymentChannelValueProps)
     <PaymentChannelWrapper>
       <PaymentChannelIcon name="synthetic" color={colors.synthetic140} width={14} height={14} />
       <Text variant="medium" color={colors.synthetic140} style={styles.tokenValue}>
-        {formatTokenValueChange(value, symbol, { stripTrailingZeros: true })}
+        {formatTokenChange(value, symbol, { stripTrailingZeros: true })}
       </Text>
     </PaymentChannelWrapper>
   );
