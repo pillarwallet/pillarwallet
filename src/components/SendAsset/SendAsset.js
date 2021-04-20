@@ -30,10 +30,10 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 
 // components
-import { BaseText } from 'components/Typography';
+import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
@@ -87,7 +87,7 @@ const renderFeeToggle = (
   return (
     <>
       <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
-      {!!feeError && <BaseText style={{ marginTop: 15 }} center secondary>{feeError}</BaseText>}
+      {!!feeError && <Button disabled title={feeError} style={{ marginTop: 15 }} />}
     </>
   );
 };
@@ -264,7 +264,7 @@ const SendAsset = ({
   }
 
   const errorMessage = !enoughBalanceForTransaction
-    ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
+    ? t('label.notEnoughGas')
     : estimateErrorMessage;
 
   const showNextButton = hasAllData;
