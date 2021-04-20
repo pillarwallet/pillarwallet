@@ -62,7 +62,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AccountTransaction } from 'services/smartWallet';
+import type { AccountTransaction } from 'services/archanova';
 import { ETH } from 'constants/assetsConstants';
 
 

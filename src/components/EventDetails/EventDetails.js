@@ -71,7 +71,7 @@ import { getFormattedValue } from 'utils/strings';
 import { getActiveAccountAddress } from 'utils/accounts';
 
 // services
-import smartWalletInstance from 'services/smartWallet';
+import archanovaInstance from 'services/archanova';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
@@ -499,7 +499,7 @@ export class EventDetail extends React.Component<Props> {
       return;
     }
 
-    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const explorerLink = archanovaInstance.getConnectedAccountTransactionExplorerLink(hash);
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),

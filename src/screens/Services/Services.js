@@ -31,7 +31,7 @@ import { loadAltalixAvailability } from 'actions/fiatToCryptoActions';
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
+import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 
@@ -55,8 +55,8 @@ import {
   getActiveAccount,
   getAccountAddress,
   isSmartWalletAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
@@ -69,7 +69,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
@@ -92,7 +91,6 @@ type Props = {
   isSmartWalletActivated: boolean,
   user: User,
   accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
   getApi: () => SDKWrapper,
   isAltalixAvailable: null | boolean,
   loadAltalixInfo: () => void,
@@ -133,9 +131,12 @@ class ServicesScreen extends React.Component<Props> {
       navigation,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
+      accounts,
     } = this.props;
 
-    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
+    const SWServiceDisabled = isArchanovaAccountActive && (!isActiveAccountSmartWallet || !isSmartWalletActivated);
+
     let SWServiceLabel;
     if (SWServiceDisabled) {
       SWServiceLabel = !isSmartWalletActivated
@@ -296,22 +297,12 @@ class ServicesScreen extends React.Component<Props> {
   }
 
   getCryptoPurchaseAddress = (): string | null => {
-    const { accounts, smartWalletState } = this.props;
+    const { accounts } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
-    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    if (!smartWalletStatus.hasAccount) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.NO_SW_ACCOUNT} />
-      ));
-      return null;
-    }
 
     if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE} />
-      ));
+      Modal.open(() => <BuyCryptoAccountNotActiveModal />);
       return null;
     }
 
@@ -392,12 +383,10 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
   fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
-  smartWalletState,
   isAltalixAvailable,
 });
 

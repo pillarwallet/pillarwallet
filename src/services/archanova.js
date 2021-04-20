@@ -142,7 +142,7 @@ export const formatEstimated = (estimated: ?ParsedEstimate) => {
   };
 };
 
-class SmartWallet {
+class Archanova {
   sdk: Sdk = null;
   sdkInitialized: boolean;
 
@@ -647,7 +647,7 @@ class SmartWallet {
   }
 
   handleError(error: any) {
-    reportOrWarn('SmartWallet handleError: ', error, 'critical');
+    reportOrWarn('Archanova handleError: ', error, 'critical');
   }
 
   async reset() {
@@ -663,5 +663,5 @@ class SmartWallet {
   }
 }
 
-const smartWalletInstance = new SmartWallet();
-export default smartWalletInstance;
+const archanovaInstance = new Archanova();
+export default archanovaInstance;

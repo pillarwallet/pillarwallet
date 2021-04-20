@@ -22,6 +22,7 @@ import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 
+// constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -46,19 +47,13 @@ import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 
+// components
 import Toast from 'components/Toast';
 
+// services
 import CryptoWallet from 'services/cryptoWallet';
 
-import type {
-  TokenTransactionPayload,
-  CollectibleTransactionPayload,
-  TransactionPayload,
-  SyntheticTransaction,
-} from 'models/Transaction';
-import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
-import type { Account } from 'models/Account';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import { noop, parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
@@ -72,18 +67,34 @@ import {
   isSmartWalletAccount,
   isNotKeyBasedType,
 } from 'utils/accounts';
+
+// selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { balancesSelector } from 'selectors';
-import { logEventAction } from 'actions/analyticsActions';
-import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
+
+// types
+import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+import type {
+  TokenTransactionPayload,
+  CollectibleTransactionPayload,
+  TransactionPayload,
+  SyntheticTransaction,
+} from 'models/Transaction';
+
+// actions
+import { logEventAction } from './analyticsActions';
+import { commitSyntheticsTransaction } from './syntheticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
+import { ensureArchanovaAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -118,7 +129,7 @@ export const sendAssetAction = (
     if (!activeAccount) return;
 
     if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-      await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
+      await dispatch(ensureArchanovaAccountConnectedAction(wallet.privateKey));
     }
 
     let tokenTx = {};

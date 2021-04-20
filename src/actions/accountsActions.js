@@ -33,8 +33,8 @@ import { saveDbAction } from 'actions/dbActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import {
   checkIfSmartWalletWasRegisteredAction,
-  connectSmartWalletAccountAction,
-  initSmartWalletSdkAction,
+  connectArchanovaAccountAction,
+  initArchanovaSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
@@ -196,7 +196,7 @@ export const switchAccountAction = (accountId: string) => {
         return;
       }
 
-      await dispatch(connectSmartWalletAccountAction(accountId));
+      await dispatch(connectArchanovaAccountAction(accountId));
     } else if (activeAccount?.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
       dispatch(connectEtherspotAccountAction(accountId));
     }
@@ -211,7 +211,7 @@ export const switchAccountAction = (accountId: string) => {
   };
 };
 
-export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
+export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
@@ -223,11 +223,11 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
-    await dispatch(initSmartWalletSdkAction(privateKey, true));
+    await dispatch(initArchanovaSdkAction(privateKey, true));
 
     const activeAccountType = getActiveAccountType(accounts);
     const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
-    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId));
+    await dispatch(connectArchanovaAccountAction(smartWalletAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 
     if (setAccountActive && blockchainNetwork) {

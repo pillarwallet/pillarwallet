@@ -48,16 +48,13 @@ import { fetchInitialAssetsAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
-import {
-  FETCH_INITIAL_FAILED,
-  FETCHED,
-} from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // utils
-import { getAccountName } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
@@ -71,6 +68,7 @@ import { activeAccountSelector } from 'selectors';
 import PPNView from 'screens/Assets/PPNView';
 import WalletView from 'screens/Assets/WalletView';
 import WalletActivation from 'screens/Assets/WalletActivation';
+
 
 type Props = {
   fetchInitialAssets: () => void,
@@ -204,47 +202,6 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   };
 
-  getInsightsList = () => {
-    const {
-      backupStatus,
-      navigation,
-      useBiometrics,
-    } = this.props;
-    const { supportsBiometrics } = this.state;
-
-    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
-    const keyWalletInsights = [
-      {
-        key: 'backup',
-        title: t('insight.keyWalletIntro.description.backupWallet'),
-        status: isBackedUp,
-        onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
-      },
-      {
-        key: 'pinCode',
-        title: t('insight.keyWalletIntro.description.setPinCode'),
-        status: true,
-      },
-    ];
-
-    if (supportsBiometrics) {
-      const biometricsInsight = {
-        key: 'biometric',
-        title: t('insight.keyWalletIntro.description.enableBiometrics'),
-        status: useBiometrics,
-        onPress: !useBiometrics
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
-      };
-      return [...keyWalletInsights, biometricsInsight];
-    }
-
-    return keyWalletInsights;
-  };
-
   renderView = (viewType: string, onScroll: Object => void) => {
     const {
       assets,
@@ -300,7 +257,7 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { activeAccount } = this.props;
+    const { activeAccount, accounts } = this.props;
 
     const screenInfo = this.getScreenInfo();
     const {
@@ -310,10 +267,12 @@ class AssetsScreen extends React.Component<Props, State> {
       customHeaderButtonProps,
     } = screenInfo;
 
+    const showAccountsSelection = !!(findFirstArchanovaAccount(accounts) && activeAccount);
+
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: !!activeAccount && [{
+          rightItems: showAccountsSelection && [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,

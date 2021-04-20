@@ -42,7 +42,7 @@ import {
   getAccountAddress,
   getAccountId,
   findFirstArchanovaAccount,
-  checkIfArchanovaAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -59,7 +59,7 @@ import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // selectors
 import { archanovaAccountAssetsSelector } from 'selectors/assets';
@@ -71,7 +71,7 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
-import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
+import { fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
@@ -113,7 +113,6 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount },
       session: { data: { isOnline } },
     } = getState();
 
@@ -131,51 +130,61 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     if (!isOnline) return;
 
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount || !connectedAccount) {
-      reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
-      return;
+    // fetch archanova history only if archanova account exists
+    const achanovaAccount = findFirstArchanovaAccount(accounts);
+    if (achanovaAccount) {
+      const {
+        smartWallet: {
+          lastSyncedTransactionId,
+          connectedAccount,
+        },
+        assets: { supportedAssets },
+      } = getState();
+
+      if (!connectedAccount) {
+        reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
+        return;
+      }
+
+      const devices = connectedAccount?.devices || [];
+
+      await dispatch(syncVirtualAccountTransactionsAction());
+
+      const accountId = getAccountId(achanovaAccount);
+      const accountAddress = getAccountAddress(achanovaAccount);
+
+      const smartWalletTransactions = await archanovaService.getAccountTransactions(lastSyncedTransactionId);
+      const accountAssets = archanovaAccountAssetsSelector(getState());
+      const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
+      const assetsList = getAssetsAsList(accountAssets);
+      const smartWalletTransactionHistory = parseSmartWalletTransactions(
+        smartWalletTransactions,
+        supportedAssets,
+        assetsList,
+        relayerExtensionDevice?.address,
+      );
+      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+      const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+      const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
+      const history = await mapTransactionsHistoryWithLiquidityPools(accountAddress, rariHistory);
+
+      if (!history.length) return;
+      // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
+      if (smartWalletTransactions.length) {
+        const newLastSyncedId = smartWalletTransactions[0].id;
+        dispatch({
+          type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
+          payload: newLastSyncedId,
+        });
+        dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
+      }
+
+      syncAccountHistory(history, accountId, dispatch, getState);
+      dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
     }
 
-    const devices = connectedAccount?.devices || [];
-
-    await dispatch(loadSupportedAssetsAction());
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-
-    await dispatch(syncVirtualAccountTransactionsAction());
-
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-
-    const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-    const accountAssets = archanovaAccountAssetsSelector(getState());
-    const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
-    const assetsList = getAssetsAsList(accountAssets);
-    const smartWalletTransactionHistory = parseSmartWalletTransactions(
-      smartWalletTransactions,
-      supportedAssets,
-      assetsList,
-      relayerExtensionDevice?.address,
-    );
-    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
-    const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
-    const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
-    const history = await mapTransactionsHistoryWithLiquidityPools(accountAddress, rariHistory);
-
-    if (!history.length) return;
-    // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
-    if (smartWalletTransactions.length) {
-      const newLastSyncedId = smartWalletTransactions[0].id;
-      dispatch({
-        type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-        payload: newLastSyncedId,
-      });
-      dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
-    }
-
-    syncAccountHistory(history, accountId, dispatch, getState);
-    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
+    // TODO: fetch etherspot account history
   };
 };
 
@@ -201,15 +210,15 @@ export const updateTransactionStatusAction = (hash: string) => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
 
-    const isArchanovaAccount = checkIfArchanovaAccount(activeAccountSelector(getState()));
+    const isArchanovaAccountActive = isArchanovaAccount(activeAccountSelector(getState()));
     dispatch(transactionUpdate(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
     let sdkTransactionInfo;
     let sdkToAppStatus;
-    if (isArchanovaAccount) {
-      sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
+    if (isArchanovaAccountActive) {
+      sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
         dispatch(transactionUpdate(''));
         return;
@@ -218,7 +227,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isArchanovaAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+    if (isArchanovaAccountActive && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
       reportLog('Wrong transaction status', {
         hash,
         sdkToAppStatus,
@@ -230,7 +239,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = isArchanovaAccount
+    const stillPending = isArchanovaAccountActive
       ? sdkToAppStatus === TX_PENDING_STATUS
       : !trxInfo;
 
@@ -244,7 +253,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     let status;
     let feeWithGasToken;
 
-    if (isArchanovaAccount && sdkTransactionInfo) {
+    if (isArchanovaAccountActive && sdkTransactionInfo) {
       gasPrice = sdkTransactionInfo.gas.price;
       gasUsed = sdkTransactionInfo.gas.used;
       status = sdkToAppStatus;

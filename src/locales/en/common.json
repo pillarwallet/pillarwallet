@@ -1464,13 +1464,6 @@
 
   "exchangeContent": {
     "modal": {
-      "smartWalletMissing": {
-        "title": "Enable Smart Wallet",
-        "paragraph": "You need a Smart Wallet to receive assets.",
-        "button": {
-          "enable": "Enable"
-        }
-      },
       "smartWalletIsNotActive": {
         "title": "Use Smart Wallet account",
         "paragraph": "Please select your Smart Wallet account to buy cryptocurrency.",

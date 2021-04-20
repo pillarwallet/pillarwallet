@@ -8,7 +8,7 @@ import { getEnv } from 'configs/envConfig';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // constants
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
@@ -39,9 +39,9 @@ export default class SmartWalletProvider {
   sdkInitPromise: Promise<any>;
 
   constructor(privateKey: string, account: Account) {
-    this.sdkInitPromise = smartWalletService
+    this.sdkInitPromise = archanovaService
       .init(privateKey)
-      .then(() => smartWalletService.connectAccount(account.id))
+      .then(() => archanovaService.connectAccount(account.id))
       .then((connectedAccount) => {
         if (!isEmpty(connectedAccount)) this.sdkInitialized = true;
       })
@@ -75,7 +75,7 @@ export default class SmartWalletProvider {
       data: sequential.data || '',
     }));
 
-    return smartWalletService
+    return archanovaService
       .transferAsset({
         recipient: to,
         value,
@@ -125,7 +125,7 @@ export default class SmartWalletProvider {
       }
 
       const sendValue = utils.parseUnits(amount.toString(), decimals);
-      return smartWalletService
+      return archanovaService
         .createAccountPayment(recipient, contractAddress, sendValue, paymentType, reference)
         .then(({ hash }) => ({
           from,
@@ -151,7 +151,7 @@ export default class SmartWalletProvider {
 
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    return smartWalletService
+    return archanovaService
       .transferAsset({
         // $FlowFixMe
         recipient,
@@ -193,7 +193,7 @@ export default class SmartWalletProvider {
     const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData({ ...transaction, from }, provider);
 
-    return smartWalletService
+    return archanovaService
       .transferAsset({
         // $FlowFixMe
         recipient: contractAddress,

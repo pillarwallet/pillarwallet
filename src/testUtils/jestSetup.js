@@ -266,7 +266,7 @@ jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);
 
-export const mockSmartWalletAccountApiData = {
+export const mockArchanovaAccountApiData = {
   id: 123,
   address: '0x0',
   ensName: null,
@@ -275,16 +275,16 @@ export const mockSmartWalletAccountApiData = {
   updatedAt: '2019-05-10T07:15:09.000Z',
 };
 
-export const mockSmartWalletAccount = {
+export const mockArchanovaAccount = {
   id: '0x0',
   isActive: false,
   walletId: '',
   type: ACCOUNT_TYPES.SMART_WALLET,
-  extra: mockSmartWalletAccountApiData,
+  extra: mockArchanovaAccountApiData,
 };
 
-export const mockSmartWalletConnectedAccount = {
-  ...mockSmartWalletAccountApiData,
+export const mockArchanovaConnectedAccount = {
+  ...mockArchanovaAccountApiData,
   activeDeviceAddress: '0x0',
   devices: [],
 };
@@ -324,9 +324,9 @@ jest.setMock('@smartwallet/sdk', {
   getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({
     initialize: () => Promise.resolve(),
-    getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccountApiData] }),
-    createAccount: () => Promise.resolve(mockSmartWalletAccountApiData),
-    connectAccount: () => Promise.resolve(mockSmartWalletAccountApiData),
+    getConnectedAccounts: () => Promise.resolve({ items: [mockArchanovaAccountApiData] }),
+    createAccount: () => Promise.resolve(mockArchanovaAccountApiData),
+    connectAccount: () => Promise.resolve(mockArchanovaAccountApiData),
     event$: {
       subscribe: jest.fn(),
       next: jest.fn(),
@@ -338,7 +338,7 @@ jest.setMock('@smartwallet/sdk', {
     reset: () => Promise.resolve(),
     getConnectedAccountDevices: () => Promise.resolve([]),
     state: {
-      account: mockSmartWalletAccountApiData,
+      account: mockArchanovaAccountApiData,
       accountDevice: { device: { address: '0x0' } },
     },
     getConnectedAccountPayments: () => Promise.resolve([]),

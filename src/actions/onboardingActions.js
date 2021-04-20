@@ -63,7 +63,7 @@ import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
 
 // actions
-import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
+import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -78,6 +78,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import { loadSupportedAssetsAction } from 'actions/assetsActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -245,22 +246,25 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // user might not be registered at this point
     if (walletId) {
+      await dispatch(loadSupportedAssetsAction());
+
       const rates = await getExchangeRates(defaultInitialAssets);
       dispatch(setRatesAction(rates));
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());
 
       // create smart wallet account only for new wallets
-      await dispatch(importSmartWalletAccountsAction(privateKey));
+      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
+
+      // Etherspot smart wallet silent account creation
+      await dispatch(initEtherspotServiceAction(privateKey));
+      await dispatch(importEtherspotAccountsAction());
+
       await dispatch(fetchSmartWalletTransactionsAction());
       dispatch(managePPNInitFlagAction());
 
       // add wallet created / imported events
       dispatch(getWalletsCreationEventsAction());
-
-      // Etherspot smart wallet silent account creation
-      await dispatch(initEtherspotServiceAction(privateKey));
-      dispatch(importEtherspotAccountsAction());
     }
 
     // if wallet was imported let's check its balance for key based assets migration

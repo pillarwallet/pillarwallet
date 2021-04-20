@@ -56,7 +56,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // selectors
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
@@ -66,7 +66,6 @@ type Props = {
   navigation: NavigationScreenProp<any>,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
-  isOnline: boolean,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
   syntheticAssets: AssetOption[],
@@ -134,7 +133,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { ethAddress } = value ?? {};
 
-    const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
+    const userInfo = !!ethAddress && await archanovaService.searchAccount(ethAddress).catch(null);
 
     if (userInfo) {
       this.setReceiver(value);

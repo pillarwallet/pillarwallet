@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { fetchConnectedAccountAction } from 'actions/smartWalletActions';
+import { fetchConnectedArchanovaAccountAction } from 'actions/smartWalletActions';
 import { confirmConnectedDeviceRemoveAction } from 'actions/connectedDevicesActions';
 
 // components
@@ -163,7 +163,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchConnectedAccount: () => dispatch(fetchConnectedAccountAction()),
+  fetchConnectedAccount: () => dispatch(fetchConnectedArchanovaAccountAction()),
   confirmConnectedDeviceRemove: (device: ConnectedDevice) => dispatch(confirmConnectedDeviceRemoveAction(device)),
 });
 
