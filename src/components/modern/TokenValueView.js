@@ -28,6 +28,9 @@ import Text, { type TextVariant } from 'components/modern/Text';
 import { formatTokenValue, formatTokenChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
+// Types
+import type { TextStyleProp } from 'utils/types/react-native';
+
 type Mode = 'balance' | 'change';
 
 type Props = {|
@@ -36,6 +39,7 @@ type Props = {|
   variant?: TextVariant,
   mode?: Mode,
   color?: string,
+  style?: TextStyleProp,
 |};
 
 function TokenValueView({
@@ -44,6 +48,7 @@ function TokenValueView({
   variant,
   mode = 'balance',
   color,
+  style,
 }: Props) {
   const colors = useThemeColors();
 
@@ -53,14 +58,14 @@ function TokenValueView({
     const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
 
     return (
-      <Text variant={variant} color={changeColor} style={styles.textStyle}>
+      <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
         {formatTokenChange(value, symbol, { stripTrailingZeros: true })}
       </Text>
     );
   }
 
   return (
-    <Text variant={variant} color={color} style={styles.textStyle}>
+    <Text variant={variant} color={color} style={[styles.textStyle, style]}>
       {formatTokenValue(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );

@@ -19,11 +19,11 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
 import TokenValueView from 'components/modern/TokenValueView';
+import { ColumnRight } from 'components/modern/Layout';
 
 // Types
 import type { TokenExchangeEvent } from 'models/History';
@@ -44,7 +44,7 @@ function TokenExchangeItem({ event, onPress }: Props) {
       iconName="exchange"
       title={t('label.fromToFormat', { from: event.fromValue.symbol, to: event.toValue.symbol })}
       valueComponent={
-        <RightColumn>
+        <ColumnRight>
           <TokenValueView
             value={event.fromValue.value?.negated()}
             symbol={event.fromValue.symbol}
@@ -52,7 +52,7 @@ function TokenExchangeItem({ event, onPress }: Props) {
             mode="change"
           />
           <TokenValueView value={event.toValue.value} symbol={event.toValue.symbol} variant="medium" mode="change" />
-        </RightColumn>
+        </ColumnRight>
       }
       status={event.status}
       onPress={onPress}
@@ -61,7 +61,3 @@ function TokenExchangeItem({ event, onPress }: Props) {
 }
 
 export default TokenExchangeItem;
-
-const RightColumn = styled.View`
-  align-items: flex-end;
-`;

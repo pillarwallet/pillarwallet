@@ -95,10 +95,12 @@ export type CollectibleSentEvent = {|
 export type TokenExchangeEvent = {|
   ...EventCommon,
   type: 'tokenExchange',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   fromValue: TokenValue,
   toValue: TokenValue,
+  fee: TokenValue,
   status: TransactionStatus,
 |};
 

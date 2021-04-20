@@ -83,3 +83,10 @@ export const Row: React.ComponentType<ViewProps> = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
+/**
+ * Display items as a row, centered vertically.
+ */
+export const ColumnRight: React.ComponentType<ViewProps> = styled.View`
+  align-items: flex-end;
+`;
