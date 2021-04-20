@@ -37,10 +37,11 @@ type Props = {|
   date?: Date,
   title: ?string,
   subtitle?: ?string,
+  iconUrl?: ?string,
   iconName?: IconName,
   iconColor?: string,
   iconBorderColor?: string,
-  iconUrl?: ?string,
+  iconComponent?: React.Node,
   children?: React.Node,
 |};
 
@@ -48,10 +49,11 @@ const BaseEventDetails = ({
   date,
   title,
   subtitle,
+  iconUrl,
   iconName,
   iconColor,
   iconBorderColor,
-  iconUrl,
+  iconComponent,
   children,
 }: Props) => {
   const colors = useThemeColors();
@@ -64,17 +66,21 @@ const BaseEventDetails = ({
         <Title>{title}</Title>
         {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
 
-        {!!iconUrl && (
-          <IconImageWrapper>
-            <IconImage source={{ uri: iconUrl }} />
-          </IconImageWrapper>
-        )}
+        <IconWrapper>
+          {!!iconUrl && (
+            <IconImageWrapper>
+              <IconImage source={{ uri: iconUrl }} />
+            </IconImageWrapper>
+          )}
 
-        {!!iconName && (
-          <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
-            <Icon name={iconName} color={iconColor ?? colors.neutral} width={40} height={40} />
-          </IconCircle>
-        )}
+          {!!iconName && (
+            <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
+              <Icon name={iconName} color={iconColor ?? colors.neutral} width={40} height={40} />
+            </IconCircle>
+          )}
+
+          {iconComponent}
+        </IconWrapper>
 
         <ChildrenWrapper>{children}</ChildrenWrapper>
       </SafeAreaContent>
@@ -94,7 +100,7 @@ const SafeAreaContent = styled(SafeAreaView)`
 const Timestamp = styled(Text)`
   ${fontStyles.tiny};
   margin-bottom: ${spacing.small}px;
-  color: ${({ theme }) => theme.colors.basic030};
+  color: ${({ theme }) => theme.colors.neutral};
 `;
 
 const Title = styled(Text)`
@@ -105,8 +111,11 @@ const Subtitle = styled(Text)`
   color: ${({ theme }) => theme.colors.basic030};
 `;
 
-const IconImageWrapper = styled.View`
+const IconWrapper = styled.View`
   margin-top: ${spacing.large}px;
+`;
+
+const IconImageWrapper = styled.View`
   justify-content: center;
   align-items: center;
   width: 64px;
@@ -124,7 +133,6 @@ const IconImage = styled(Image)`
 `;
 
 const IconCircle = styled.View`
-  margin-top: ${spacing.large}px;
   justify-content: center;
   align-items: center;
   width: 64px;

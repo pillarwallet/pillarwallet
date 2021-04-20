@@ -125,13 +125,15 @@ function useHistoryEvents(): Event[] {
       id: 'ensName-1',
       date: new Date('2021-04-10'),
       ensName: 'maciej.pillar.eth',
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
+      fee: { value: BigNumber(0.0022311), symbol: 'ETH' },
     },
     {
       type: 'walletActivated',
       id: '5ca21c49754407000644f73b-x',
       date: new Date('2021-04-10'),
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
-      fee: { value: BigNumber(0.222311), symbol: 'ETH' },
+      fee: { value: BigNumber(0.0222311), symbol: 'ETH' },
     },
     {
       type: 'walletCreated',

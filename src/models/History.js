@@ -127,6 +127,8 @@ export type EnsNameEvent = {|
   ...EventCommon,
   type: 'ensName',
   ensName: string,
+  hash: string,
+  fee: TokenValue,
 |};
 
 export type BadgeReceivedEvent = {|
