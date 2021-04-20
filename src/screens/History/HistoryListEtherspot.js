@@ -117,13 +117,6 @@ function useHistoryEvents(): Event[] {
         'https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png',
     },
     {
-      type: 'walletEvent',
-      id: '5ca21c49754407000644f73b',
-      date: new Date('2021-04-11'),
-      title: 'Pillar Pay',
-      event: 'Activate',
-    },
-    {
       type: 'ensName',
       id: 'ensName-1',
       date: new Date('2021-04-10'),

@@ -81,6 +81,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
       >
         <TokenValueView value={event.value.value} symbol={event.value.symbol} variant="large" mode="change" />
         <Spacing h={spacing.extraLarge} />
+
         <Button
           variant="secondary"
           title={t('button.sendBack')}
@@ -105,6 +106,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
       >
         <TokenValueView value={event.value.value.negated()} symbol={event.value.symbol} variant="large" mode="change" />
         <Spacing h={spacing.extraLarge} />
+
         <Button
           variant="secondary"
           title={t('button.viewOnBlockchain')}

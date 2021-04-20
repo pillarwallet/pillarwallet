@@ -25,6 +25,7 @@ import type { Event } from 'models/History';
 
 // Local
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
+import WalletEventDetails from './layouts/WalletEventDetails';
 import BadgeReceivedEventDetails from './layouts/BadgeReceivedEventDetails';
 
 type Props = {|
@@ -49,8 +50,8 @@ function HistoryEventDetails({ event }: Props) {
     //   return <TokenExchangeItem event={event} />;
     // case 'exchangeFromFiat':
     //   return <ExchangeFromFiatItem event={event} />;
-    // case 'walletEvent':
-    //   return <WalletEventItem event={event} />;
+    case 'walletEvent':
+      return <WalletEventDetails event={event} />;
     // case 'ensName':
     //   return <EnsNameItem event={event} />;
     case 'badgeReceived':

@@ -87,7 +87,7 @@ export default BaseEventDetails;
 const DATE_FORMAT = 'MMMM D, YYYY HH:mm';
 
 const SafeAreaContent = styled(SafeAreaView)`
-  padding: ${spacing.large}px;
+  padding: ${spacing.large}px 0;
   align-items: center;
 `;
 
