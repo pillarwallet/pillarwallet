@@ -24,15 +24,20 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
+import Text from 'components/modern/Text';
+import { Spacing } from 'components/Layout';
 
 // Constants
 import { BADGE } from 'constants/navigationConstants';
+
+// Utils
+import { spacing } from 'utils/variables';
 
 // Types
 import type { BadgeReceivedEvent } from 'models/History';
 
 // Local
-import BaseLayout from './BaseLayout';
+import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: BadgeReceivedEvent,
@@ -43,19 +48,20 @@ function BadgeReceivedEventDetails({ event }: Props) {
   const navigation = useNavigation();
 
   return (
-    <BaseLayout
+    <BaseEventDetails
       date={event.date}
       title={event.title}
       subtitle={t('label.badge')}
       iconUrl={event.iconUrl}
-      event={t('label.received')}
     >
+      <Text variant="large">{t('label.received')}</Text>
+      <Spacing h={spacing.extraLarge} />
       <Button
         variant="secondary"
         title={t('button.viewBadge')}
         onPress={() => navigation.navigate(BADGE, { badgeId: event.badgeId })}
       />
-    </BaseLayout>
+    </BaseEventDetails>
   );
 }
 

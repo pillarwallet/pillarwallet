@@ -33,9 +33,6 @@ import { formatDate } from 'utils/date';
 import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
 
-// Types
-import type { TextStyleProp } from 'utils/types/react-native';
-
 type Props = {|
   date?: Date,
   title: ?string,
@@ -44,12 +41,10 @@ type Props = {|
   iconColor?: string,
   iconBorderColor?: string,
   iconUrl?: ?string,
-  event?: ?string,
-  eventStyle?: TextStyleProp,
   children?: React.Node,
 |};
 
-const BaseLayout = ({
+const BaseEventDetails = ({
   date,
   title,
   subtitle,
@@ -57,8 +52,6 @@ const BaseLayout = ({
   iconColor,
   iconBorderColor,
   iconUrl,
-  event,
-  eventStyle,
   children,
 }: Props) => {
   const colors = useThemeColors();
@@ -83,15 +76,13 @@ const BaseLayout = ({
           </IconCircle>
         )}
 
-        <Event style={eventStyle}>{event}</Event>
-
         <ChildrenWrapper>{children}</ChildrenWrapper>
       </SafeAreaContent>
     </SlideModal>
   );
 };
 
-export default BaseLayout;
+export default BaseEventDetails;
 
 const DATE_FORMAT = 'MMMM D, YYYY HH:mm';
 
@@ -114,7 +105,7 @@ const Subtitle = styled(Text)`
 `;
 
 const IconImageWrapper = styled.View`
-  margin: ${spacing.large}px;
+  margin-top: ${spacing.large}px;
   justify-content: center;
   align-items: center;
   width: 64px;
@@ -132,7 +123,7 @@ const IconImage = styled(Image)`
 `;
 
 const IconCircle = styled.View`
-  margin: ${spacing.large}px;
+  margin-top: ${spacing.large}px;
   justify-content: center;
   align-items: center;
   width: 64px;
@@ -142,12 +133,8 @@ const IconCircle = styled.View`
   border-radius: 32px;
 `;
 
-const Event = styled(Text)`
-  ${fontStyles.large};
-`;
-
 const ChildrenWrapper = styled.View`
   align-self: stretch;
-  align-items: stretch;
-  margin-top: ${spacing.extraLarge}px;
+  align-items: center;
+  margin-top: ${spacing.medium}px;
 `;

@@ -24,6 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
+import TokenValueView from 'components/modern/TokenValueView';
 import { Spacing } from 'components/Layout';
 
 // Constants
@@ -34,7 +35,7 @@ import { useRootSelector } from 'selectors';
 
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
-import { formatTokenChange, formatHexAddress } from 'utils/format';
+import { formatHexAddress } from 'utils/format';
 import { viewOnTheBlockchain } from 'utils/linking';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
@@ -43,7 +44,7 @@ import { spacing } from 'utils/variables';
 import type { TokenTransactionEvent } from 'models/History';
 
 // Local
-import BaseLayout from './BaseLayout';
+import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: TokenTransactionEvent,
@@ -71,15 +72,15 @@ function BadgeReceivedEventDetails({ event }: Props) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
 
     return (
-      <BaseLayout
+      <BaseEventDetails
         date={event.date}
         title={ensName ?? formatHexAddress(event.fromAddress)}
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
-        event={formatTokenChange(event.value.value, event.value.symbol)}
-        eventStyle={{ color: colors.positive }}
       >
+        <TokenValueView value={event.value.value} symbol={event.value.symbol} variant="large" mode="change" />
+        <Spacing h={spacing.extraLarge} />
         <Button
           variant="secondary"
           title={t('button.sendBack')}
@@ -87,7 +88,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
         />
         <Spacing h={spacing.small} />
         <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnTheBlockchain(event.hash)} />
-      </BaseLayout>
+      </BaseEventDetails>
     );
   }
 
@@ -95,21 +96,21 @@ function BadgeReceivedEventDetails({ event }: Props) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
 
     return (
-      <BaseLayout
+      <BaseEventDetails
         date={event.date}
         title={ensName ?? formatHexAddress(event.toAddress)}
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
-        event={formatTokenChange(event.value.value.negated(), event.value.symbol)}
-        eventStyle={{ color: colors.neutral }}
       >
+        <TokenValueView value={event.value.value.negated()} symbol={event.value.symbol} variant="large" mode="change" />
+        <Spacing h={spacing.extraLarge} />
         <Button
           variant="secondary"
           title={t('button.viewOnBlockchain')}
           onPress={() => viewOnTheBlockchain(event.hash)}
         />
-      </BaseLayout>
+      </BaseEventDetails>
     );
   }
 
