@@ -61,7 +61,6 @@ import { noop } from 'utils/common';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
@@ -108,7 +107,6 @@ type Props = {
   hasSeenExchangeIntro: boolean,
   updateHasSeenExchangeIntro: () => void,
   theme: Theme,
-  isActiveAccountSmartWallet: boolean,
   offers: Offer[],
   wbtcFees: ?WBTCFeesRaw,
   getWbtcFees: () => void,
@@ -340,8 +338,8 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   checkIfAssetsExchangeIsAllowed = () => {
-    const { accounts, smartWalletState, isActiveAccountSmartWallet } = this.props;
-    if (!isActiveAccountSmartWallet) return true;
+    const { accounts, smartWalletState } = this.props;
+
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
   };
@@ -494,7 +492,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
-  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

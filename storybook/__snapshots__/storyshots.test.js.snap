@@ -1971,7 +1971,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                   ]
                 }
               >
-                label.collectibleToUser
+                label.collectibleFromUser
               </Text>
             </View>
             <View
@@ -2033,7 +2033,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                       ]
                     }
                   >
-                    label.sent
+                    label.received
                   </Text>
                 </View>
               </View>

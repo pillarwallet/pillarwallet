@@ -35,9 +35,8 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountName, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
-import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { images } from 'utils/images';
@@ -217,11 +216,13 @@ const AccountsScreen = ({
   if (ppnNetwork) {
     const { isActive } = ppnNetwork;
     const availableStakeFormattedAmount = formatMoney(availableStake);
+    const userHasArchanovaAccount = findFirstArchanovaAccount(accounts);
+
     networksToShow.push({
       id: `NETWORK_${ppnNetwork.id}`,
       type: ITEM_TYPE.NETWORK,
       title: t('pillarNetwork'),
-      balance: userHasSmartWallet(accounts)
+      balance: userHasArchanovaAccount
         ? `${availableStakeFormattedAmount} ${PPN_TOKEN}`
         : t('label.notApplicable'),
       mainAction: setPPNAsActiveBlockchainNetwork,

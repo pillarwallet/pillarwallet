@@ -27,20 +27,16 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
-import { isSmartWalletAccount } from 'utils/accounts';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
-
-// selectors
-import { activeAccountSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 
-export const isSmartWalletActivatedSelector = ({
+export const isArchanovaWalletActivatedSelector = ({
   accounts: { data: accounts },
   smartWallet,
 }: RootReducerState,
@@ -63,12 +59,5 @@ export const useGasTokenSelector = createSelector(
   preferredGasTokenSelector,
   (isGasTokenSupported, preferredGasToken) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
-  },
-);
-
-export const isActiveAccountSmartWalletSelector = createSelector(
-  activeAccountSelector,
-  (activeAccount) => {
-    return activeAccount && isSmartWalletAccount(activeAccount);
   },
 );

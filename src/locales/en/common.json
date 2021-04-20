@@ -1459,7 +1459,8 @@
     "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsStake": "{{value}} {{token}} staked.",
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
-    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed."
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
+    "noActiveAccountFound": "No active account found. Please"
   },
 
   "exchangeContent": {

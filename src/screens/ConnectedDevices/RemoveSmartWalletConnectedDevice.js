@@ -52,7 +52,7 @@ import archanovaService from 'services/archanova';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
 import type { Balances } from 'models/Asset';

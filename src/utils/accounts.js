@@ -111,9 +111,19 @@ export const isSmartWalletAccount = (account: ?Account): boolean => [
   ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 ].includes(account?.type);
 
-export const isKeyBasedAccount = (account: Account): boolean => account.type === ACCOUNT_TYPES.KEY_BASED;
+export const isAccountType = (account: ?Account, type: string): boolean => account?.type === type;
 
-export const isArchanovaAccount = (account: ?Account): boolean => account?.type === ACCOUNT_TYPES.SMART_WALLET;
+export const isKeyBasedAccount = (
+  account: ?Account,
+): boolean => isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
+
+export const isArchanovaAccount = (
+  account: ?Account,
+): boolean => isAccountType(account, ACCOUNT_TYPES.SMART_WALLET);
+
+export const isEtherspotAccount = (
+  account: ?Account,
+): boolean => isAccountType(account, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {

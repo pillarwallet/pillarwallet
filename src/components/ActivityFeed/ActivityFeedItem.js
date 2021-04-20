@@ -35,14 +35,13 @@ import { fontSizes, spacing } from 'utils/variables';
 import {
   elipsizeAddress,
   isPendingTransaction,
-  isSWAddress,
-  isKWAddress,
+  isSmartWalletAccountAddress,
   groupPPNTransactions,
   getElipsizeAddress,
   isFailedTransaction,
   isTimedOutTransaction,
+  isArchanovaAccountAddress,
 } from 'utils/feedData';
-import { findAccountByAddress } from 'utils/accounts';
 import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
@@ -80,7 +79,6 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
@@ -114,7 +112,7 @@ import {
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // types
 import type { ColorKey, Theme } from 'models/Theme';
@@ -137,7 +135,7 @@ type Props = {
   feedType?: string,
   activeAccountAddress: string,
   accounts: Accounts,
-  isSmartWalletActivated: boolean,
+  isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
@@ -170,7 +168,6 @@ export type EventData = {
   secondaryButton?: boolean,
   buttonActionLabel?: string,
   isReceived?: boolean,
-  isBetweenAccounts?: boolean,
   collectibleUrl?: string,
   statusIconColor?: ?string,
   isFailed?: boolean,
@@ -241,11 +238,10 @@ export class ActivityFeedItem extends React.Component<Props> {
     } = this.props;
 
     if (isForAllAccounts) {
-      const isBetweenAccounts = (isSWAddress(to, accounts) && isKWAddress(from, accounts))
-        || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
-      return (isBetweenAccounts && isReceived)
-        || (!isBetweenAccounts && isKWAddress(to, accounts))
-        || (!isBetweenAccounts && isSWAddress(to, accounts));
+      const isBetweenAccounts = isSmartWalletAccountAddress(to, accounts)
+        && isSmartWalletAccountAddress(from, accounts);
+
+      return (isBetweenAccounts && isReceived) || (!isBetweenAccounts && isSmartWalletAccountAddress(to, accounts));
     }
 
     return addressesEqual(to, activeAccountAddress);
@@ -340,7 +336,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { isArchanovaWalletActivated, theme } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
     switch (event.eventTitle) {
       case 'Wallet created':
@@ -354,7 +350,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
+          badge: isArchanovaWalletActivated ? null : t('label.needToActivate'),
         };
       case 'Wallet imported':
         return {
@@ -368,7 +364,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getUserEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { isArchanovaWalletActivated, theme } = this.props;
     const { keyWalletIcon, PPNIcon } = images(theme);
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -378,7 +374,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
+          badge: isArchanovaWalletActivated ? null : t('label.needToActivate'),
         };
       case WALLET_BACKUP_EVENT:
         return {
@@ -398,7 +394,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       accounts,
       theme,
       isPPNView,
-      isForAllAccounts,
       isAssetView,
       referralRewardIssuersAddresses,
       supportedAssets,
@@ -430,7 +425,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       smartWalletIcon,
       PPNIcon,
       roundedPhoneIcon,
-      keyWalletIcon,
     } = images(theme);
 
     const fullItemValuePPN = getFormattedValue(formattedFullValue, event.asset, {
@@ -825,11 +819,12 @@ export class ActivityFeedItem extends React.Component<Props> {
           || ensRegistry[relevantAddress]
           || elipsizeAddress(relevantAddress);
 
-        const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+        const isBetweenSmartWalletAccounts = isSmartWalletAccountAddress(event.from, accounts)
+          && isSmartWalletAccountAddress(event.to, accounts);
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
-          if (isTrxBetweenSWAccount) {
+          if (isArchanovaAccountAddress(event.from, accounts) && isArchanovaAccountAddress(event.to, accounts)) {
             data = {
               label: isAssetView ? this.NAMES().PPN_NETWORK : this.NAMES().SMART_WALLET,
               subtext: isAssetView ? '' : this.FROM().PPN_NETWORK,
@@ -880,27 +875,10 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else {
           const additionalInfo = {};
-          const isTrxBetweenAccounts = (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) ||
-            (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts));
 
-          const sendingAccountType = isReceived
-            ? (findAccountByAddress(event.to, accounts) || {}).type
-            : (findAccountByAddress(event.from, accounts) || {}).type;
-
-          if (isTrxBetweenAccounts) {
-            if (isForAllAccounts) {
-              additionalInfo.itemImageSource = sendingAccountType === ACCOUNT_TYPES.KEY_BASED
-                ? keyWalletIcon
-                : smartWalletIcon;
-            } else {
-              additionalInfo.itemImageSource = event.accountType === ACCOUNT_TYPES.KEY_BASED
-                ? keyWalletIcon
-                : smartWalletIcon;
-            }
-            additionalInfo.isBetweenAccounts = true;
-          }
-
-          if (!isTrxBetweenAccounts) {
+          if (isBetweenSmartWalletAccounts) {
+            additionalInfo.itemImageSource = smartWalletIcon;
+          } else {
             additionalInfo.iconName = directionIcon;
             // eslint-disable-next-line i18next/no-literal-string
             additionalInfo.iconColor = isReceived ? 'secondaryAccent140' : 'secondaryAccent240';
@@ -946,21 +924,15 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getCollectibleTransactionEventData = (event: Object) => {
-    const { accounts } = this.props;
     const isReceived = this.isReceived(event);
     const {
       asset,
-      to,
-      from,
       assetData: { image },
       icon,
     } = event;
 
     const relevantAddress = this.getRelevantAddress(event);
-
     const usernameOrAddress = getElipsizeAddress(relevantAddress);
-    const isBetweenAccounts = (isSWAddress(to, accounts) && isKWAddress(from, accounts))
-      || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
 
     const subtext = isReceived
       ? t('label.collectibleFromUser', { username: usernameOrAddress })
@@ -975,7 +947,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       iconBorder: true,
       fallbackToGenericToken: true,
       isReceived,
-      isBetweenAccounts,
     };
   };
 
@@ -1061,7 +1032,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });
 

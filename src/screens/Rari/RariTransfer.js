@@ -41,7 +41,7 @@ import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConst
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';

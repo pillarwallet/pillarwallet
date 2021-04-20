@@ -57,7 +57,7 @@ const reduxData = {
   },
   activeAccountAddress: '',
   activeBlockchainNetwork: '',
-  isSmartWalletActivated: true,
+  isArchanovaWalletActivated: true,
   accounts: [
     {
       id: '0xKeyWallet',
@@ -102,7 +102,6 @@ const reduxData = {
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: true,
   collectiblesHistory: [],
-  isSmartAccount: true,
 };
 
 const actions = {
@@ -139,7 +138,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      isSmartWalletActivated={false}
+      isArchanovaWalletActivated={false}
       event={{
         type: USER_EVENT,
         subType: WALLET_CREATE_EVENT,
@@ -196,7 +195,6 @@ storiesOf('EventDetail', module)
         fullItemValue: '- 10 PLR',
         itemImageSource: keyWalletIcon,
         subtext: 'to Smart Wallet',
-        isBetweenAccounts: true,
         valueColor: 'basic010',
       }}
     />
@@ -217,7 +215,6 @@ storiesOf('EventDetail', module)
         fullItemValue: '+ 10 PLR',
         itemImageSource: smartWalletIcon,
         subtext: 'from Key wallet',
-        isBetweenAccounts: true,
         valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
@@ -537,7 +534,6 @@ storiesOf('EventDetail', module)
         fullItemValue: '- 10 PLR',
         itemImageSource: smartWalletIcon,
         subtext: 'to Key wallet',
-        isBetweenAccounts: true,
         valueColor: 'basic010',
       }}
     />
@@ -558,7 +554,6 @@ storiesOf('EventDetail', module)
         fullItemValue: '+ 10 PLR',
         itemImageSource: keyWalletIcon,
         subtext: 'from Smart wallet',
-        isBetweenAccounts: true,
         isReceived: true,
         valueColor: 'secondaryAccent140',
       }}
@@ -584,7 +579,6 @@ storiesOf('EventDetail', module)
         iconBorder: true,
         fallbackToGenericToken: true,
         isReceived: true,
-        isBetweenAccounts: true,
       }}
     />
   ))

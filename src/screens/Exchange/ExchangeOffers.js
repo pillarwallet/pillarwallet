@@ -58,7 +58,7 @@ import type { SessionData } from 'models/Session';
 //  selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 // utils
 import {

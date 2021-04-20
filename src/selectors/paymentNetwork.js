@@ -48,7 +48,7 @@ import {
   paymentNetworkBalancesSelector,
   supportedAssetsSelector,
 } from './selectors';
-import { accountHistorySelector, smartAccountHistorySelector } from './history';
+import { accountHistorySelector, archanovaAccountHistorySelector } from './history';
 import { accountAssetsSelector } from './assets';
 
 const ppnTrxTags = [
@@ -85,7 +85,7 @@ export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[
 );
 
 export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
-  smartAccountHistorySelector,
+  archanovaAccountHistorySelector,
   (history: Transaction[]) => {
     return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
   },

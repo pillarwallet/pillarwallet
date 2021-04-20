@@ -34,10 +34,10 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   findAccountByAddress,
   isSmartWalletAccount,
-  isKeyBasedAccount,
   getInactiveUserAccounts,
   getAccountAddress,
   getAccountTypeByAddress,
+  isArchanovaAccount,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
 import { uniqBy } from './common';
@@ -187,14 +187,14 @@ export const isTimedOutTransaction = ({ status }: Object) => {
   return status === TX_TIMEDOUT_STATUS;
 };
 
-export const isSWAddress = (address: string, accounts: Accounts) => {
+export const isArchanovaAccountAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && isSmartWalletAccount(account));
+  return (!!account && isArchanovaAccount(account));
 };
 
-export const isKWAddress = (address: string, accounts: Accounts) => {
+export const isSmartWalletAccountAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && isKeyBasedAccount(account));
+  return (!!account && isSmartWalletAccount(account));
 };
 
 export const getElipsizeAddress = (address: string) => {

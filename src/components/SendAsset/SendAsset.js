@@ -43,7 +43,7 @@ import { wrapBigNumber, truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 

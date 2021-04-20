@@ -58,7 +58,7 @@ import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { isSWAddress } from 'utils/feedData';
+import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
 import { getTokenTransactionsFromHistory } from 'utils/history';
 
@@ -275,9 +275,12 @@ class AssetScreen extends React.Component<Props> {
         to,
         tag,
       }) => {
+        const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
+          && isArchanovaAccountAddress(to, accounts);
+
         return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-        && (!isPPNTransaction || (isPPNTransaction && (isSWAddress(from, accounts) && isSWAddress(to, accounts))))
-        && !isAaveTransactionTag(tag);
+          && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
+          && !isAaveTransactionTag(tag);
       });
 
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {

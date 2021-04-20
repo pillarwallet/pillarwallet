@@ -70,7 +70,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // local components
 import withWCRequests from './withWCRequests';
@@ -94,7 +94,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  isSmartWalletActivated: boolean,
+  isArchanovaWalletActivated: boolean,
 };
 
 const FooterWrapper = styled.View`
@@ -148,10 +148,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
-    const { isSmartWalletActivated, resetEstimateTransaction } = this.props;
+    const { isArchanovaWalletActivated, resetEstimateTransaction } = this.props;
 
     // cannot estimate if smart wallet account not deployed
-    if (!isSmartWalletActivated) return;
+    if (!isArchanovaWalletActivated) return;
 
     resetEstimateTransaction();
     if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
@@ -209,7 +209,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
       feeInfo,
       isEstimating,
       estimateErrorMessage,
-      isSmartWalletActivated,
+      isArchanovaWalletActivated,
     } = this.props;
 
     const colors = getThemeColors(theme);
@@ -226,7 +226,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
     let body = null;
     let address = '';
     let message = '';
-    let errorMessage = isSmartWalletActivated
+    let errorMessage = isArchanovaWalletActivated
       ? estimateErrorMessage
       : t('walletConnectContent.error.smartWalletNeedToBeActivated');
     let transactionPayload;
@@ -438,7 +438,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   accountAssets: accountAssetsSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

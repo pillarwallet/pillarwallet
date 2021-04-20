@@ -61,9 +61,8 @@ import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
 import {
   getAccountAddress,
-  findFirstArchanovaAccount,
   getActiveAccount,
-  isSmartWalletAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
@@ -80,6 +79,9 @@ import { logEventAction } from 'actions/analyticsActions';
 
 // components
 import Toast from 'components/Toast';
+
+// selectors
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // models, types
 import type { Connector, Session, CallRequest, JsonRpcRequest } from 'models/WalletConnect';
@@ -439,11 +441,20 @@ export const approveSessionAction = (peerId: string) => {
       accounts: { data: accounts },
     } = getState();
     try {
-      let account = getActiveAccount(accounts);
-      if (!account || !isSmartWalletAccount(account)) {
-        account = findFirstArchanovaAccount(accounts);
+      let activeAccount = getActiveAccount(accounts);
+
+      if (!activeAccount) {
+        Toast.show({
+          message: t('toast.noActiveAccountFound'),
+          emoji: 'hushed',
+          supportLink: true,
+          autoClose: false,
+        });
+        return;
       }
-      if (!account) {
+
+      if (isArchanovaAccount(activeAccount)
+        && !isArchanovaWalletActivatedSelector(getState())) {
         Toast.show({
           message: t('toast.walletConnectSmartWalletNotActive'),
           emoji: 'point_up',
@@ -453,9 +464,10 @@ export const approveSessionAction = (peerId: string) => {
         });
         return;
       }
-      const smartAccAddress = getAccountAddress(account);
+
+      const accountAddress = getAccountAddress(activeAccount);
       await connector.approveSession({
-        accounts: [smartAccAddress],
+        accounts: [accountAddress],
         chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
       });
     } catch (e) {

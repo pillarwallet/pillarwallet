@@ -52,6 +52,7 @@ import Toast from 'components/Toast';
 
 // services
 import CryptoWallet from 'services/cryptoWallet';
+import etherspotService from 'services/etherspot';
 
 // utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
@@ -64,8 +65,9 @@ import {
   getActiveAccountType,
   getAccountAddress,
   getAccountId,
-  isSmartWalletAccount,
   isNotKeyBasedType,
+  isArchanovaAccount,
+  isEtherspotAccount,
 } from 'utils/accounts';
 
 // selectors
@@ -245,7 +247,7 @@ export const sendAssetAction = (
       }
     }
 
-    if (isSmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
+    if (isArchanovaAccount(activeAccount) && !usePPN && tokenTx.hash) {
       dispatch({
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: tokenTx.hash,
@@ -348,8 +350,10 @@ export const updateAccountBalancesAction = (accountId: string, balances: Balance
 export const fetchAccountAssetsBalancesAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletAddress = getAccountAddress(account);
+
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
+
     const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
 
     dispatch({
@@ -357,10 +361,12 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({
-      address: walletAddress,
-      assets: getAssetsAsList(accountAssets),
-    });
+    const newBalances = isEtherspotAccount(account)
+      ? await etherspotService.getBalances(walletAddress, getAssetsAsList(accountAssets))
+      : await api.fetchBalances({
+        address: walletAddress,
+        assets: getAssetsAsList(accountAssets),
+      });
 
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
@@ -378,7 +384,7 @@ export const fetchAssetsBalancesAction = () => {
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
     dispatch(fetchAccountAssetsRatesAction());
 
-    if (isSmartWalletAccount(activeAccount)) {
+    if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -425,7 +431,7 @@ export const fetchAllAccountsBalancesAction = () => {
 
     dispatch(fetchAllAccountsAssetsRatesAction());
 
-    if (isSmartWalletAccount(activeAccount)) {
+    if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };

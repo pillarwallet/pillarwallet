@@ -34,7 +34,7 @@ import { getEthereumProvider, truncateAmount } from 'utils/common';
 import { getEnv } from 'configs/envConfig';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 import { activeAccountAddressSelector } from 'selectors';
 
 // constants
