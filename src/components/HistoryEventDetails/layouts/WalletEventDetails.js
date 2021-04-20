@@ -20,23 +20,29 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 
 // Components
 import { Spacing } from 'components/Layout';
 import Button from 'components/modern/Button';
+import FeeLabel from 'components/modern/FeeLabel';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import Text from 'components/modern/Text';
+
+// Actions
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
-import { spacing } from 'utils/variables';
 import { getSmartWalletAddress } from 'utils/accounts';
+import { viewOnBlockchain } from 'utils/linking';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { WalletEvent } from 'models/History';
@@ -52,32 +58,57 @@ function WalletEventDetails({ event }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const accounts = useRootSelector(root => root.accounts.data);
+  const accounts = useRootSelector((root) => root.accounts.data);
   const isActivated = useRootSelector(isSmartWalletActivatedSelector);
+  const dispatch = useDispatch();
 
-  const handleActivate = () => {
+  const openActivate = () => {
     Modal.open(() => <SWActivationModal navigation={navigation} />);
   };
 
-  const handleTopUp = () => {
+  const openTopUp = () => {
     const smartWalletAddress = getSmartWalletAddress(accounts);
     if (!smartWalletAddress) return;
 
     Modal.open(() => <ReceiveModal address={smartWalletAddress} />);
   };
 
-  return (
-    <BaseEventDetails date={event.date} title={event.title} iconName="wallet">
-      <Text variant="large">{event.event}</Text>
-      <Spacing h={spacing.extraLarge} />
+  const navigateToInviteFriends = () => dispatch(goToInvitationFlowAction());
 
-      {isActivated ? (
-        <Button variant="secondary" title={t('button.topUp')} onPress={handleTopUp} />
-      ) : (
-        <Button variant="secondary" title={t('button.activate')} onPress={handleActivate} />
-      )}
-    </BaseEventDetails>
-  );
+  if (event.type === 'walletCreated') {
+    return (
+      <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
+        <Text variant="large">{t('label.created')}</Text>
+        <Spacing h={spacing.extraLarge} />
+
+        {isActivated ? (
+          <Button variant="secondary" title={t('button.topUp')} onPress={openTopUp} />
+        ) : (
+          <Button variant="secondary" title={t('button.activate')} onPress={openActivate} />
+        )}
+        <Spacing h={spacing.small} />
+        <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
+      </BaseEventDetails>
+    );
+  }
+
+  if (event.type === 'walletActivated') {
+    return (
+      <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
+        <Text variant="large">{t('label.activated')}</Text>
+        <Spacing h={spacing.extraLarge} />
+
+        <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
+        <Spacing h={spacing.mediumLarge} />
+
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Spacing h={spacing.small} />
+        <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
+      </BaseEventDetails>
+    );
+  }
+
+  return null;
 }
 
 export default WalletEventDetails;

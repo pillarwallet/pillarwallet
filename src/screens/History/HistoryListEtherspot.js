@@ -130,6 +130,7 @@ function useHistoryEvents(): Event[] {
       type: 'walletActivated',
       id: '5ca21c49754407000644f73b-x',
       date: new Date('2021-04-10'),
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       fee: { value: BigNumber(0.222311), symbol: 'ETH' },
     },
     {

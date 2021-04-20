@@ -119,6 +119,7 @@ export type WalletCreated = {|
 export type WalletActivated = {|
   ...EventCommon,
   type: 'walletActivated',
+  hash: string,
   fee: TokenValue,
 |};
 

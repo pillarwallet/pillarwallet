@@ -37,7 +37,7 @@ import { useRootSelector } from 'selectors';
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
-import { viewOnTheBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/linking';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -89,7 +89,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
           onPress={() => sendTokensToAddress(event.fromAddress)}
         />
         <Spacing h={spacing.small} />
-        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnTheBlockchain(event.hash)} />
+        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
       </BaseEventDetails>
     );
   }
@@ -114,7 +114,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
         <Button
           variant="secondary"
           title={t('button.viewOnBlockchain')}
-          onPress={() => viewOnTheBlockchain(event.hash)}
+          onPress={() => viewOnBlockchain(event.hash)}
         />
       </BaseEventDetails>
     );

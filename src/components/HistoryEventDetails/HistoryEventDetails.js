@@ -50,7 +50,8 @@ function HistoryEventDetails({ event }: Props) {
     //   return <TokenExchangeItem event={event} />;
     // case 'exchangeFromFiat':
     //   return <ExchangeFromFiatItem event={event} />;
-    case 'walletEvent':
+    case 'walletCreated':
+    case 'walletActivated':
       return <WalletEventDetails event={event} />;
     // case 'ensName':
     //   return <EnsNameItem event={event} />;

@@ -27,7 +27,7 @@ import Toast from 'components/Toast';
 // Services
 import smartWalletService from 'services/smartWallet';
 
-export function viewOnTheBlockchain(hash: ?string) {
+export function viewOnBlockchain(hash: ?string) {
   if (!hash) {
     Toast.show({
       message: t('toast.cannotFindTransactionHash'),

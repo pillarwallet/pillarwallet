@@ -37,6 +37,7 @@ import type { TokenReceivedEvent, TokenSentEvent } from 'models/History';
 // Local
 import HistoryListItem from './HistoryListItem';
 
+
 type Props = {|
   event: TokenReceivedEvent | TokenSentEvent,
   onPress?: () => mixed,
@@ -56,7 +57,9 @@ function TokenTransactionItem({ event, onPress }: Props) {
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
         title={ensName ?? formatHexAddress(event.fromAddress)}
-        valueComponent={<TokenValueView value={event.value.value} symbol={event.value.symbol} variant="medium" mode="change" />}
+        valueComponent={
+          <TokenValueView value={event.value.value} symbol={event.value.symbol} variant="medium" mode="change" />
+        }
         status={event.status}
         onPress={onPress}
       />
