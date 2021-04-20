@@ -114,12 +114,17 @@ function useHistoryEvents(): Event[] {
     },
     {
       type: 'exchangeFromFiat',
+      hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       id: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d',
       date: new Date('2021-04-19'),
       fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
       toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
       fromValue: { currency: 'USD', value: BigNumber(154.5) },
       toValue: { symbol: 'ETH', value: BigNumber(0.65) },
+      fee: {
+        value: BigNumber(0.012345678),
+        symbol: 'ETH',
+      },
       status: TRANSACTION_STATUS.CONFIRMED,
     },
     {

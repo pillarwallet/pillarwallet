@@ -107,10 +107,12 @@ export type TokenExchangeEvent = {|
 export type ExchangeFromFiatEvent = {|
   ...EventCommon,
   type: 'exchangeFromFiat',
+  hash: string,
   fromAddress: string,
   toAddress: string,
   fromValue: FiatValue,
   toValue: TokenValue,
+  fee: TokenValue,
   status: TransactionStatus,
 |};
 

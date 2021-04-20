@@ -22,11 +22,13 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import { Spacing } from 'components/modern/Layout';
+import { Row, ColumnRight, Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import FiatValueView from 'components/modern/FiatValueView';
+import TokenValueView from 'components/modern/TokenValueView';
+import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
+import TransactionStatusText from 'components/modern/TransactionStatusText';
 
 // Utils
 import { viewOnBlockchain } from 'utils/linking';
@@ -34,27 +36,46 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { EnsNameEvent } from 'models/History';
+import type { ExchangeFromFiatEvent } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
-  event: EnsNameEvent,
+  event: ExchangeFromFiatEvent,
 |};
 
-function EnsNameEventDetails({ event }: Props) {
+function ExchangeFromFiatEventDetails({ event }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
     <BaseEventDetails
       date={event.date}
-      title={t('ensName')}
-      subtitle={event.ensName}
-      iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} width={64} height={64} />}
+      title={t('label.fromToFormat', { from: event.fromValue.currency, to: event.toValue.symbol })}
+      iconName="exchange"
     >
-      <Text variant="large">{t('label.registered')}</Text>
+      <Row>
+        <ColumnRight>
+          <FiatValueView
+            value={event.fromValue.value.negated()}
+            currency={event.fromValue.currency}
+            variant="large"
+            mode="change"
+            style={styles.tokenValue}
+          />
+          <TokenValueView
+            value={event.toValue.value}
+            symbol={event.toValue.symbol}
+            variant="large"
+            mode="change"
+            style={styles.tokenValue}
+          />
+        </ColumnRight>
+        <TransactionStatusIcon status={event.status} size={24} />
+      </Row>
+
+      <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
       <Spacing h={spacing.extraLarge} />
 
       <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
@@ -65,4 +86,10 @@ function EnsNameEventDetails({ event }: Props) {
   );
 }
 
-export default EnsNameEventDetails;
+export default ExchangeFromFiatEventDetails;
+
+const styles = {
+  tokenValue: {
+    lineHeight: undefined, // Reset line height.
+  },
+};

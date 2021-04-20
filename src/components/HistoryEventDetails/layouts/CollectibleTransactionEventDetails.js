@@ -22,13 +22,12 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Components
+import { Row, Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Text from 'components/modern/Text';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
-import { Spacing } from 'components/Layout';
-import { Row } from 'components/modern/Layout';
 
 // Selectors
 import { useRootSelector } from 'selectors';

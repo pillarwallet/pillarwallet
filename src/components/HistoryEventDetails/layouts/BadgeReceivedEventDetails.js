@@ -23,9 +23,9 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
+import { Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import Text from 'components/modern/Text';
-import { Spacing } from 'components/Layout';
 
 // Constants
 import { BADGE } from 'constants/navigationConstants';
@@ -56,6 +56,7 @@ function BadgeReceivedEventDetails({ event }: Props) {
     >
       <Text variant="large">{t('label.received')}</Text>
       <Spacing h={spacing.extraLarge} />
+
       <Button
         variant="secondary"
         title={t('button.viewBadge')}

@@ -27,6 +27,7 @@ import type { Event } from 'models/History';
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
 import CollectibleTransactionEventDetails from './layouts/CollectibleTransactionEventDetails';
 import TokenExchangeEventDetails from './layouts/TokenExchangeEventDetails';
+import ExchangeFromFiatEventDetails from './layouts/ExchangeFromFiatEventDetails';
 import WalletEventDetails from './layouts/WalletEventDetails';
 import EnsNameEventDetails from './layouts/EnsNameEventDetails';
 import BadgeReceivedEventDetails from './layouts/BadgeReceivedEventDetails';
@@ -45,8 +46,8 @@ function HistoryEventDetails({ event }: Props) {
       return <CollectibleTransactionEventDetails event={event} />;
     case 'tokenExchange':
       return <TokenExchangeEventDetails event={event} />;
-    // case 'exchangeFromFiat':
-    //   return <ExchangeFromFiatItem event={event} />;
+    case 'exchangeFromFiat':
+      return <ExchangeFromFiatEventDetails event={event} />;
     case 'walletCreated':
     case 'walletActivated':
       return <WalletEventDetails event={event} />;

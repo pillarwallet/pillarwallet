@@ -23,13 +23,12 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
+import { Row, ColumnRight, Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import TokenValueView from 'components/modern/TokenValueView';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
-import { Spacing } from 'components/Layout';
-import { Row, ColumnRight } from 'components/modern/Layout';
 
 // Constants
 import { EXCHANGE } from 'constants/navigationConstants';

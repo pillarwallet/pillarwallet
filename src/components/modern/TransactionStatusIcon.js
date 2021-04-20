@@ -38,7 +38,7 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
-function TransactionStatusIcon({ status, size = 16, style }: Props) {
+function TransactionStatusIcon({ status, size, style }: Props) {
   const colors = useThemeColors();
 
   switch (status) {
