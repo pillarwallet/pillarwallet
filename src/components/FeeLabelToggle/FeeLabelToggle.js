@@ -40,7 +40,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
+import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
 
 // selectors
@@ -85,7 +85,7 @@ const FeePill = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-const FeeLabelToggle = ({
+export const FeeLabelToggleComponent = ({
   txFeeInWei,
   gasToken,
   baseFiatCurrency,
@@ -105,11 +105,12 @@ const FeeLabelToggle = ({
   }
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const feeDisplayValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+  const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+  const feeValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
   const gasTokenSymbol = get(gasToken, 'symbol', ETH);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
-  const feeInFiat = parseFloat(feeDisplayValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
+  const feeInFiat = parseFloat(feeValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
@@ -163,4 +164,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(FeeLabelToggle);
+export default connect(combinedMapStateToProps)(FeeLabelToggleComponent);

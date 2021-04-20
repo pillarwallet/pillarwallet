@@ -124,7 +124,7 @@ describe('Auth actions', () => {
     });
   });
 
-  it.skip('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
+  it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
       { type: SET_WALLET_IS_DECRYPTING },
@@ -158,7 +158,7 @@ describe('Auth actions', () => {
       });
   });
 
-  it.skip('Should expect a different set of actions for registered users.', async () => {
+  it('Should expect a different set of actions for registered users.', async () => {
     const storage = Storage.getInstance('db');
     storage.save('user', { user: mockRegisteredUser });
     const expectedActions = [
