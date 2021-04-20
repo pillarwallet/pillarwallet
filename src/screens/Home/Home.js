@@ -98,6 +98,7 @@ import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { formatAmountDisplay, formatFiat } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
 import { convertUSDToFiat } from 'utils/assets';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -211,6 +212,7 @@ class HomeScreen extends React.Component<Props> {
       fetchUserStreams,
       fetchRariData,
       fetchLiquidityPoolsData,
+      activeAccount,
     } = this.props;
 
     resetAppNotificationsBadgeNumber();
@@ -218,17 +220,22 @@ class HomeScreen extends React.Component<Props> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.hideHomeUpdateIndicator();
     });
-    fetchPoolStats();
+
+    // services are left for archanova only and will be decomissioned later
+    if (isArchanovaAccount(activeAccount)) {
+      fetchPoolStats();
+      fetchDepositedAssets();
+      fetchUserStreams();
+      if (!isStaging) {
+        fetchRariData();
+      }
+      fetchLiquidityPoolsData(LIQUIDITY_POOLS());
+    }
+
+    fetchReferralRewardsIssuerAddresses();
     fetchSmartWalletTransactions();
     fetchBadges();
     fetchBadgeAwardHistory();
-    fetchReferralRewardsIssuerAddresses();
-    fetchDepositedAssets();
-    fetchUserStreams();
-    if (!isStaging) {
-      fetchRariData();
-    }
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }
 
   componentWillUnmount() {
@@ -269,6 +276,7 @@ class HomeScreen extends React.Component<Props> {
       fetchRariData,
       fetchLiquidityPoolsData,
       checkSmartWalletSession,
+      activeAccount,
     } = this.props;
 
     checkSmartWalletSession();
@@ -280,13 +288,17 @@ class HomeScreen extends React.Component<Props> {
     fetchAllAccountsBalances();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
-    fetchDepositedAssets();
-    fetchPoolStats();
-    fetchUserStreams();
-    if (!isStaging) {
-      fetchRariData();
+
+    // services are left for archanova only and will be decomissioned later
+    if (isArchanovaAccount(activeAccount)) {
+      fetchDepositedAssets();
+      fetchPoolStats();
+      fetchUserStreams();
+      if (!isStaging) {
+        fetchRariData();
+      }
+      fetchLiquidityPoolsData(LIQUIDITY_POOLS());
     }
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   };
 
   renderBadge = ({ item }) => {
@@ -380,6 +392,148 @@ class HomeScreen extends React.Component<Props> {
     );
   }
 
+  renderServiceWidgets = () => {
+    const {
+      activeAccount,
+      depositedAssets,
+      hideLendingDeposits,
+      toggleLendingDeposits,
+      isFetchingDepositedAssets,
+      poolTogetherUserStats = [],
+      isFetchingPoolStats,
+      hidePoolTogether,
+      togglePoolTogether,
+      incomingStreams,
+      outgoingStreams,
+      isFetchingStreams,
+      toggleSablier,
+      hideSablier,
+      rariUserDepositInUSD,
+      toggleRari,
+      hideRari,
+      isFetchingRariData,
+      hideLiquidityPools,
+      isFetchingLiquidityPoolsData,
+      toggleLiquidityPools,
+      liquidityPoolsReducer,
+      navigation,
+    } = this.props;
+
+    // do not render service widgets for Etherspot account
+    if (!isArchanovaAccount(activeAccount)) return null;
+
+    // pooltogether
+    const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
+
+    // sablier
+    const latestIncomingStream = incomingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
+    const hasStreams = !!streams.length;
+
+    // rari
+    const rariDeposits = Object.keys(rariUserDepositInUSD)
+      .map(rariPool => ({
+        pool: rariPool,
+        balanceInUSD: rariUserDepositInUSD[rariPool],
+      }))
+      .filter(pool => !!pool.balanceInUSD);
+    const hasRariDeposits = !!rariDeposits.length;
+
+    // liquidity pools
+    const purchasedLiquidityPools = LIQUIDITY_POOLS()
+      .map((pool) => ({
+        pool,
+        poolStats: getPoolStats(pool, liquidityPoolsReducer),
+      }))
+      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
+
+    return (
+      <>
+        <DepositedAssets
+          depositedAssets={depositedAssets}
+          isFetchingDepositedAssets={isFetchingDepositedAssets}
+          navigation={navigation}
+          hideLendingDeposits={hideLendingDeposits}
+          toggleLendingDeposits={toggleLendingDeposits}
+        />
+        {!!hasPoolTickets && (
+          <CollapsibleSection
+            label={t('poolTogetherContent.ticketsList.title')}
+            showLoadingSpinner={isFetchingPoolStats}
+            collapseContent={
+              <FlatList
+                data={poolTogetherUserStats}
+                keyExtractor={(item) => item.symbol}
+                renderItem={this.renderPoolTogetherItem}
+                listKey="pool_together"
+              />
+            }
+            onPress={togglePoolTogether}
+            open={!hidePoolTogether}
+          />
+        )}
+        {!!hasStreams && (
+          <CollapsibleSection
+            label={t('sablierContent.moneyStreamingList.title')}
+            showLoadingSpinner={isFetchingStreams}
+            labelRight={isFetchingStreams ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(SABLIER_STREAMS); }}
+            collapseContent={
+              <FlatList
+                data={streams}
+                keyExtractor={(item) => item.id}
+                renderItem={this.renderSablierStream}
+                initialNumToRender={2}
+                listKey="sablier"
+              />
+            }
+            onPress={toggleSablier}
+            open={!hideSablier}
+          />
+        )}
+        {!!hasRariDeposits && (
+          <CollapsibleSection
+            label={t('rariContent.depositsList.title')}
+            showLoadingSpinner={isFetchingRariData}
+            labelRight={isFetchingRariData ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(RARI_DEPOSIT); }}
+            collapseContent={
+              <FlatList
+                data={rariDeposits}
+                keyExtractor={(item) => item.pool}
+                renderItem={this.renderRariPool}
+                initialNumToRender={2}
+                listKey="rari"
+              />
+            }
+            onPress={toggleRari}
+            open={!hideRari}
+          />
+        )}
+        {!!purchasedLiquidityPools.length && (
+          <CollapsibleSection
+            label={t('liquidityPoolsContent.depositsList.title')}
+            showLoadingSpinner={isFetchingLiquidityPoolsData}
+            labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(LIQUIDITY_POOLS_SCREEN); }}
+            collapseContent={
+              <FlatList
+                data={purchasedLiquidityPools}
+                keyExtractor={(item) => item.pool.name}
+                renderItem={this.renderLiquidityPool}
+                initialNumToRender={2}
+                listKey="liquidityPools"
+              />
+            }
+            onPress={toggleLiquidityPools}
+            open={!hideLiquidityPools}
+          />
+        )}
+      </>
+    );
+  }
+
   render() {
     const {
       intercomNotificationsCount,
@@ -392,35 +546,14 @@ class HomeScreen extends React.Component<Props> {
       badgesEvents,
       theme,
       hideBadges,
-      hidePoolTogether,
       toggleBadges,
-      togglePoolTogether,
       walletConnectRequests,
       user,
       goToInvitationFlow,
       isPillarRewardCampaignActive,
       dismissReferFriends,
       referFriendsOnHomeScreenDismissed,
-      hideLendingDeposits,
-      depositedAssets,
-      toggleLendingDeposits,
-      isFetchingDepositedAssets,
-      poolTogetherUserStats = [],
-      isFetchingPoolStats,
-      incomingStreams,
-      outgoingStreams,
-      isFetchingStreams,
-      toggleSablier,
-      hideSablier,
       sablierEvents,
-      toggleRari,
-      hideRari,
-      isFetchingRariData,
-      rariUserDepositInUSD,
-      hideLiquidityPools,
-      isFetchingLiquidityPoolsData,
-      toggleLiquidityPools,
-      liquidityPoolsReducer,
     } = this.props;
 
     const tokenTxHistory = history
@@ -461,28 +594,6 @@ class HomeScreen extends React.Component<Props> {
     const referralBannerText = isPillarRewardCampaignActive
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
-
-    const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
-
-    const latestIncomingStream = incomingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
-    const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
-    const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
-    const hasStreams = !!streams.length;
-
-    const rariDeposits = Object.keys(rariUserDepositInUSD)
-      .map(rariPool => ({
-        pool: rariPool,
-        balanceInUSD: rariUserDepositInUSD[rariPool],
-      }))
-      .filter(pool => !!pool.balanceInUSD);
-    const hasRariDeposits = !!rariDeposits.length;
-
-    const purchasedLiquidityPools = LIQUIDITY_POOLS()
-      .map((pool) => ({
-        pool,
-        poolStats: getPoolStats(pool, liquidityPoolsReducer),
-      }))
-      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
 
     return (
       <React.Fragment>
@@ -582,86 +693,7 @@ class HomeScreen extends React.Component<Props> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
-                  <DepositedAssets
-                    depositedAssets={depositedAssets}
-                    isFetchingDepositedAssets={isFetchingDepositedAssets}
-                    navigation={navigation}
-                    hideLendingDeposits={hideLendingDeposits}
-                    toggleLendingDeposits={toggleLendingDeposits}
-                  />
-                  {!!hasPoolTickets && (
-                    <CollapsibleSection
-                      label={t('poolTogetherContent.ticketsList.title')}
-                      showLoadingSpinner={isFetchingPoolStats}
-                      collapseContent={
-                        <FlatList
-                          data={poolTogetherUserStats}
-                          keyExtractor={(item) => item.symbol}
-                          renderItem={this.renderPoolTogetherItem}
-                          listKey="pool_together"
-                        />
-                      }
-                      onPress={togglePoolTogether}
-                      open={!hidePoolTogether}
-                    />
-                  )}
-                  {!!hasStreams && (
-                    <CollapsibleSection
-                      label={t('sablierContent.moneyStreamingList.title')}
-                      showLoadingSpinner={isFetchingStreams}
-                      labelRight={isFetchingStreams ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(SABLIER_STREAMS); }}
-                      collapseContent={
-                        <FlatList
-                          data={streams}
-                          keyExtractor={(item) => item.id}
-                          renderItem={this.renderSablierStream}
-                          initialNumToRender={2}
-                          listKey="sablier"
-                        />
-                      }
-                      onPress={toggleSablier}
-                      open={!hideSablier}
-                    />
-                  )}
-                  {!!hasRariDeposits && (
-                    <CollapsibleSection
-                      label={t('rariContent.depositsList.title')}
-                      showLoadingSpinner={isFetchingRariData}
-                      labelRight={isFetchingRariData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(RARI_DEPOSIT); }}
-                      collapseContent={
-                        <FlatList
-                          data={rariDeposits}
-                          keyExtractor={(item) => item.pool}
-                          renderItem={this.renderRariPool}
-                          initialNumToRender={2}
-                          listKey="rari"
-                        />
-                      }
-                      onPress={toggleRari}
-                      open={!hideRari}
-                    />
-                  )}
-                  {!!purchasedLiquidityPools.length && (
-                    <CollapsibleSection
-                      label={t('liquidityPoolsContent.depositsList.title')}
-                      showLoadingSpinner={isFetchingLiquidityPoolsData}
-                      labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(LIQUIDITY_POOLS_SCREEN); }}
-                      collapseContent={
-                        <FlatList
-                          data={purchasedLiquidityPools}
-                          keyExtractor={(item) => item.pool.name}
-                          renderItem={this.renderLiquidityPool}
-                          initialNumToRender={2}
-                          listKey="liquidityPools"
-                        />
-                      }
-                      onPress={toggleLiquidityPools}
-                      open={!hideLiquidityPools}
-                    />
-                )}
+                  {this.renderServiceWidgets()}
                 </React.Fragment>
               )}
               flatListProps={{
