@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import Text from 'components/modern/Text';
@@ -38,19 +39,32 @@ type Props = {|
 |};
 
 function WalletEventItem({ event, onPress }: Props) {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
-  return (
-    <HistoryListItem
-      iconName="wallet"
-      iconColor={colors.neutral}
-      iconBorderColor={colors.neutralWeak}
-      title={event.title}
-      subtitle={event.subtitle}
-      valueComponent={<Text color={colors.basic030}>{event.event}</Text>}
-      onPress={onPress}
-    />
-  );
+  if (event.type === 'walletCreated') {
+    return (
+      <HistoryListItem
+        iconName="wallet"
+        title={t('label.wallet')}
+        valueComponent={<Text color={colors.basic030}>{t('label.created')}</Text>}
+        onPress={onPress}
+      />
+    );
+  }
+
+  if (event.type === 'walletActivated') {
+    return (
+      <HistoryListItem
+        iconName="wallet"
+        title={t('label.wallet')}
+        valueComponent={<Text color={colors.basic030}>{t('label.activated')}</Text>}
+        onPress={onPress}
+      />
+    );
+  }
+
+  return null;
 }
 
 export default WalletEventItem;

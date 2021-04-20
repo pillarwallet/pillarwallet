@@ -74,7 +74,8 @@ function HistoryList({ items }: Props) {
         return <TokenExchangeItem event={event} onPress={() => showEventDetails(event)} />;
       case 'exchangeFromFiat':
         return <ExchangeFromFiatItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'walletEvent':
+      case 'walletCreated':
+      case 'walletActivated':
         return <WalletEventItem event={event} onPress={() => showEventDetails(event)} />;
       case 'ensName':
         return <EnsNameItem event={event} onPress={() => showEventDetails(event)} />;

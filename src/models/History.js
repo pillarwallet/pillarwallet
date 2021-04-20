@@ -108,12 +108,18 @@ export type ExchangeFromFiatEvent = {|
   toValue: TokenValue,
   status: TransactionStatus,
 |};
-export type WalletEvent = {|
+
+export type WalletEvent = WalletCreated | WalletActivated;
+
+export type WalletCreated = {|
   ...EventCommon,
-  type: 'walletEvent',
-  title?: string,
-  subtitle?: string,
-  event: string,
+  type: 'walletCreated',
+|};
+
+export type WalletActivated = {|
+  ...EventCommon,
+  type: 'walletActivated',
+  fee: TokenValue,
 |};
 
 export type EnsNameEvent = {|
