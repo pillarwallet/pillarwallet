@@ -217,9 +217,12 @@ class ServicesScreen extends React.Component<Props> {
   };
 
   getServices = (): Service[] => {
-    const { navigation } = this.props;
+    const { navigation, accounts } = this.props;
 
-    const services = this.getArchanovaSupportedServices();
+    // services are left for archanova only and will be decommissioned later
+    const services = isArchanovaAccount(getActiveAccount(accounts))
+      ? this.getArchanovaSupportedServices()
+      : [];
 
     if (isOffersEngineEnabled) {
       services.push({

@@ -419,7 +419,7 @@ class HomeScreen extends React.Component<Props> {
       navigation,
     } = this.props;
 
-    // do not render service widgets for Etherspot account
+    // services are left for archanova only and will be decomissioned later
     if (!isArchanovaAccount(activeAccount)) return null;
 
     // pooltogether
