@@ -113,10 +113,6 @@ export const isSmartWalletAccount = (account: ?Account): boolean => [
 
 export const isAccountType = (account: ?Account, type: string): boolean => account?.type === type;
 
-export const isKeyBasedAccount = (
-  account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
-
 export const isArchanovaAccount = (
   account: ?Account,
 ): boolean => isAccountType(account, ACCOUNT_TYPES.SMART_WALLET);

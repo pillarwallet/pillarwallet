@@ -441,7 +441,7 @@ export const approveSessionAction = (peerId: string) => {
       accounts: { data: accounts },
     } = getState();
     try {
-      let activeAccount = getActiveAccount(accounts);
+      const activeAccount = getActiveAccount(accounts);
 
       if (!activeAccount) {
         Toast.show({
