@@ -27,5 +27,5 @@ export type TokenValue = {|
 
 export type FiatValue = {|
   value: BigNumber,
-  currency: 'USD' | 'EUR' | 'GBP',
+  currency: string,
 |};

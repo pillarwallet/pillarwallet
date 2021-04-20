@@ -18,22 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
-
-type EventCommon = {|
-  date: Date,
-  id: string,
-|};
-
-export type TokenValue = {|
-  value: BigNumber,
-  symbol: string,
-|};
-
-export type FiatValue = {|
-  value: BigNumber,
-  currency: string,
-|};
+import type { TokenValue, FiatValue } from 'models/Value';
 
 export type TransactionStatus = 'confirmed' | 'failed' | 'pending' | 'timedout';
 
@@ -54,6 +39,10 @@ export type Event =
   | EnsNameEvent
   | BadgeReceivedEvent;
 
+type EventCommon = {|
+  date: Date,
+  id: string,
+|};
 
 export type TokenTransactionEvent = TokenReceivedEvent | TokenSentEvent;
 
