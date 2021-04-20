@@ -54,7 +54,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: Function,
   addNetwork: Function,
-  ensureSmartAccountConnected: Function,
+  ensureArchanovaAccountConnected: Function,
   switchAccount: Function,
   accounts: Accounts,
   smartWalletState: Object,
@@ -134,7 +134,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
   goToPLRTank = async () => {
     const {
-      ensureSmartAccountConnected,
+      ensureArchanovaAccountConnected,
       navigation,
       accounts,
       switchAccount,
@@ -150,7 +150,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     await switchAccount(smartAccount.id);
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     await delay(500);
-    ensureSmartAccountConnected()
+    ensureArchanovaAccountConnected()
       .then(() => {
         this.setState({ processingCreate: false },
           () => {
@@ -263,7 +263,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  ensureSmartAccountConnected: () => dispatch(ensureArchanovaAccountConnectedAction()),
+  ensureArchanovaAccountConnected: () => dispatch(ensureArchanovaAccountConnectedAction()),
   setPLRTankAsInit: () => dispatch(setPLRTankAsInitAction()),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });

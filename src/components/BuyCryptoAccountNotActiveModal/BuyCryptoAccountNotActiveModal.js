@@ -19,9 +19,10 @@
 */
 
 import React, { useRef } from 'react';
-import { SafeAreaView, withNavigation } from 'react-navigation';
+import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -32,20 +33,14 @@ import { Spacing } from 'components/Layout';
 // constants
 import { ACCOUNTS } from 'constants/navigationConstants';
 
-// types
-import type { NavigationScreenProp } from 'react-navigation';
-
-
-type Props = {|
-  navigation: NavigationScreenProp<*>,
-|};
 
 const ModalContainer = styled.View`
   padding: 20px 0 40px;
 `;
 
-const BuyCryptoAccountNotActiveModal = ({ navigation }: Props) => {
+const BuyCryptoAccountNotActiveModal = () => {
   const modalRef = useRef();
+  const navigation = useNavigation();
 
   const buttonAction = () => {
     if (modalRef.current) modalRef.current.close();
@@ -76,4 +71,4 @@ const BuyCryptoAccountNotActiveModal = ({ navigation }: Props) => {
   );
 };
 
-export default withNavigation(BuyCryptoAccountNotActiveModal);
+export default BuyCryptoAccountNotActiveModal;
