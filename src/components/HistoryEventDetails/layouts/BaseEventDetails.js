@@ -62,7 +62,7 @@ const BaseEventDetails = ({
         <Timestamp>{formatDate(date, DATE_FORMAT)}</Timestamp>
 
         <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
 
         {!!iconUrl && (
           <IconImageWrapper>
@@ -94,6 +94,7 @@ const SafeAreaContent = styled(SafeAreaView)`
 const Timestamp = styled(Text)`
   ${fontStyles.tiny};
   margin-bottom: ${spacing.small}px;
+  color: ${({ theme }) => theme.colors.basic030};
 `;
 
 const Title = styled(Text)`

@@ -62,6 +62,7 @@ export type TokenSentEvent = {|
   fromAddress: string,
   toAddress: string,
   value: TokenValue,
+  fee: TokenValue,
   status: TransactionStatus,
 |};
 

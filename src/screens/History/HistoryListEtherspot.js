@@ -63,6 +63,10 @@ function useHistoryEvents(): Event[] {
         value: BigNumber(100),
         symbol: 'PLR',
       },
+      fee: {
+        value: BigNumber(0.012345678),
+        symbol: 'ETH',
+      },
       status: TRANSACTION_STATUS.FAILED,
     },
     {

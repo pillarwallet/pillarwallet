@@ -24,6 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
+import FeeLabel from 'components/modern/FeeLabel';
 import TokenValueView from 'components/modern/TokenValueView';
 import { Spacing } from 'components/Layout';
 
@@ -106,6 +107,9 @@ function BadgeReceivedEventDetails({ event }: Props) {
       >
         <TokenValueView value={event.value.value.negated()} symbol={event.value.symbol} variant="large" mode="change" />
         <Spacing h={spacing.extraLarge} />
+
+        <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
+        <Spacing h={spacing.mediumLarge} />
 
         <Button
           variant="secondary"
