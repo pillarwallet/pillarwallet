@@ -186,8 +186,23 @@ export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?Bi
 }
 
 /**
+ * Format token value change without + sign.
+ * Default number of decimal places depends on token symbol and trailing zeroes are stripped.
+ */
+export function formatTokenValue(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
+  if (!value || !value.isFinite()) return null;
+
+  const decimalPlaces = getDecimalPlaces(symbol);
+  const formattedValue = formatValue(value.abs(), { decimalPlaces, ...options });
+
+  return value.gte(0)
+    ? t('tokenValue', { value: formattedValue, token: symbol })
+    : t('negativeTokenValue', { value: formattedValue, token: symbol });
+}
+
+/**
  * Format token value change with +/- sign.
- * By defaults outputs 2 decimal places, without stripping zeros.
+ * Default number of decimal places depends on token symbol and trailing zeroes are stripped.
  */
 export function formatTokenChange(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;

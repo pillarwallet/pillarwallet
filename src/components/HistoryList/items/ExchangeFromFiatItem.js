@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import FiatChangeView from 'components/modern/FiatChangeView';
-import TokenChangeView from 'components/modern/TokenChangeView';
+import FiatValueView from 'components/modern/FiatValueView';
+import TokenValueView from 'components/modern/TokenValueView';
 
 // Types
 import type { ExchangeFromFiatEvent } from 'models/History';
@@ -43,14 +43,15 @@ function ExchangeFromFiat({ event }: Props) {
     <HistoryListItem
       iconName="exchange"
       title={t('label.fromToFormat', { from: event.fromValue.currency, to: event.toValue.symbol })}
-      rightComponent={
+      valueComponent={
         <RightColumn>
-          <FiatChangeView
-            change={event.fromValue.value?.negated()}
+          <FiatValueView
+            value={event.fromValue.value?.negated()}
             currency={event.fromValue.currency}
             variant="medium"
+            mode="change"
           />
-          <TokenChangeView change={event.toValue.value} symbol={event.toValue.symbol} variant="medium" />
+          <TokenValueView value={event.toValue.value} symbol={event.toValue.symbol} variant="medium" mode="change" />
         </RightColumn>
       }
       status={event.status}

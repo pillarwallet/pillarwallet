@@ -21,11 +21,17 @@
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
+// Components
+import Text from 'components/modern/Text';
+
+// Utils
+import { useThemeColors } from 'utils/themes';
+
 // Types
 import type { CollectibleReceivedEvent, CollectibleSentEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TextValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: CollectibleReceivedEvent | CollectibleSentEvent,
@@ -33,13 +39,14 @@ type Props = {|
 
 function CollectibleTransactionItem({ event }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   if (event.type === 'collectibleReceived') {
     return (
       <HistoryListItem
         iconUrl={event.imageUrl}
         title={event.title}
-        rightComponent={<TextValue>{t('label.received')}</TextValue>}
+        valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
         status={event.status}
       />
     );
@@ -50,7 +57,7 @@ function CollectibleTransactionItem({ event }: Props) {
       <HistoryListItem
         iconUrl={event.imageUrl}
         title={event.title}
-        rightComponent={<TextValue>{t('label.sent')}</TextValue>}
+        valueComponent={<Text color={colors.basic030}>{t('label.sent')}</Text>}
         status={event.status}
       />
     );

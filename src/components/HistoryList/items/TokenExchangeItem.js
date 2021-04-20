@@ -22,11 +22,14 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
+// Components
+import TokenValueView from 'components/modern/TokenValueView';
+
 // Types
 import type { TokenExchangeEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TokenValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: TokenExchangeEvent,
@@ -39,10 +42,15 @@ function TokenExchangeItem({ event }: Props) {
     <HistoryListItem
       iconName="exchange"
       title={t('label.fromToFormat', { from: event.fromValue.symbol, to: event.toValue.symbol })}
-      rightComponent={
+      valueComponent={
         <RightColumn>
-          <TokenValue symbol={event.fromValue.symbol} value={event.fromValue.value?.negated()} />
-          <TokenValue symbol={event.toValue.symbol} value={event.toValue.value} />
+          <TokenValueView
+            value={event.fromValue.value?.negated()}
+            symbol={event.fromValue.symbol}
+            variant="medium"
+            mode="change"
+          />
+          <TokenValueView value={event.toValue.value} symbol={event.toValue.symbol} variant="medium" mode="change" />
         </RightColumn>
       }
       status={event.status}

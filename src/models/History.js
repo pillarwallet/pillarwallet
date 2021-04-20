@@ -32,7 +32,6 @@ export const TRANSACTION_STATUS = {
 export type Event =
   | TokenTransactionEvent
   | CollectibleTransactionEvent
-  | PaymentChannelEvent
   | TokenExchangeEvent
   | ExchangeFromFiatEvent
   | WalletEvent
@@ -86,59 +85,6 @@ export type CollectibleSentEvent = {|
   toAddress: string,
   title: string,
   imageUrl: string,
-  status: TransactionStatus,
-|};
-
-
-export type PaymentChannelEvent =
-  | PaymentChannelReceivedEvent
-  | PaymentChannelSentEvent
-  | PaymentChannelTopUpEvent
-  | PaymentChannelWithdrawalEvent
-  | PaymentChannelSettlementEvent;
-
-export type PaymentChannelReceivedEvent = {|
-  ...EventCommon,
-  type: 'paymentChannelReceived',
-  fromAddress: string,
-  toAddress: string,
-  value: TokenValue,
-  status: TransactionStatus,
-|};
-
-export type PaymentChannelSentEvent = {|
-  ...EventCommon,
-  type: 'paymentChannelSent',
-  fromAddress: string,
-  toAddress: string,
-  value: TokenValue,
-  status: TransactionStatus,
-|};
-
-export type PaymentChannelTopUpEvent = {|
-  ...EventCommon,
-  type: 'paymentChannelTopUp',
-  fromAddress: string,
-  toAddress: string,
-  value: TokenValue,
-  status: TransactionStatus,
-|};
-export type PaymentChannelWithdrawalEvent = {|
-  ...EventCommon,
-  type: 'paymentChannelWithdrawal',
-  fromAddress: string,
-  toAddress: string,
-  value: TokenValue,
-  status: TransactionStatus,
-|};
-
-export type PaymentChannelSettlementEvent = {|
-  ...EventCommon,
-  type: 'paymentChannelSettlement',
-  fromAddress: string,
-  toAddress: string,
-  inputValues: TokenValue[],
-  outputValue: TokenValue,
   status: TransactionStatus,
 |};
 

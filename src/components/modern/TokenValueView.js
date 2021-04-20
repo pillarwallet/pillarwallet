@@ -25,36 +25,48 @@ import { BigNumber } from 'bignumber.js';
 import Text, { type TextVariant } from 'components/modern/Text';
 
 // Utils
-import { formatTokenChange } from 'utils/format';
+import { formatTokenValue, formatTokenChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
+type Mode = 'balance' | 'change';
+
 type Props = {|
-  change: ?BigNumber,
+  value: ?BigNumber,
   symbol: string,
   variant?: TextVariant,
+  mode?: Mode,
   color?: string,
 |};
 
-function TokenChangeValue({
-  change,
+function TokenValueView({
+  value,
   symbol,
   variant,
+  mode = 'balance',
   color,
 }: Props) {
   const colors = useThemeColors();
 
-  if (!change) return null;
+  if (!value) return null;
 
-  const resultColor = color ?? (change.gte(0) ? colors?.positive : colors?.secondaryText);
+  if (mode === 'change') {
+    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
+
+    return (
+      <Text variant={variant} color={changeColor} style={styles.textStyle}>
+        {formatTokenChange(value, symbol, { stripTrailingZeros: true })}
+      </Text>
+    );
+  }
 
   return (
-    <Text variant={variant} color={resultColor} style={styles.textStyle}>
-      {formatTokenChange(change, symbol, { stripTrailingZeros: true })}
+    <Text variant={variant} color={color} style={styles.textStyle}>
+      {formatTokenValue(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );
 }
 
-export default TokenChangeValue;
+export default TokenValueView;
 
 const styles = {
   textStyle: {

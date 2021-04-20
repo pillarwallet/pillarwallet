@@ -20,6 +20,9 @@
 
 import * as React from 'react';
 
+// Components
+import TokenValueView from 'components/modern/TokenValueView';
+
 // Selectors
 import { useRootSelector } from 'selectors';
 
@@ -32,7 +35,7 @@ import { useThemeColors } from 'utils/themes';
 import type { TokenReceivedEvent, TokenSentEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TokenValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: TokenReceivedEvent | TokenSentEvent,
@@ -52,7 +55,7 @@ function TokenTransactionItem({ event }: Props) {
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
         title={ensName ?? formatHexAddress(event.fromAddress)}
-        rightComponent={<TokenValue symbol={event.value.symbol} value={event.value.value} />}
+        valueComponent={<TokenValueView value={event.value.value} symbol={event.value.symbol} variant="medium" mode="change" />}
         status={event.status}
       />
     );
@@ -67,7 +70,14 @@ function TokenTransactionItem({ event }: Props) {
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
         title={ensName ?? formatHexAddress(event.toAddress)}
-        rightComponent={<TokenValue symbol={event.value.symbol} value={event.value.value?.negated()} />}
+        valueComponent={
+          <TokenValueView
+            value={event.value.value?.negated()}
+            symbol={event.value.symbol}
+            variant="medium"
+            mode="change"
+          />
+        }
         status={event.status}
       />
     );

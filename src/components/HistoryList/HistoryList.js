@@ -39,7 +39,6 @@ import type { Event } from 'models/History';
 import { mapEventsToSections, type HistorySection } from './utils';
 import TokenTransactionItem from './items/TokenTransactionItem';
 import CollectibleTransactionItem from './items/CollectibleTransactionItem';
-import PaymentChannelTransactionItem from './items/PaymentChannelTransactionItem';
 import TokenExchangeItem from './items/TokenExchangeItem';
 import ExchangeFromFiatItem from './items/ExchangeFromFiatItem';
 import WalletEventItem from './items/WalletEventItem';
@@ -77,16 +76,6 @@ function HistoryList({ items }: Props) {
         return (
           <TouchableOpacity onPress={() => showEventDetails(event)}>
             <CollectibleTransactionItem event={event} />
-          </TouchableOpacity>
-        );
-      case 'paymentChannelReceived':
-      case 'paymentChannelSent':
-      case 'paymentChannelTopUp':
-      case 'paymentChannelWithdrawal':
-      case 'paymentChannelSettlement':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <PaymentChannelTransactionItem event={event} />
           </TouchableOpacity>
         );
       case 'tokenExchange':

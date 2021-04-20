@@ -21,11 +21,17 @@
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
+// Components
+import Text from 'components/modern/Text';
+
+// Utils
+import { useThemeColors } from 'utils/themes';
+
 // Types
 import type { BadgeReceivedEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TextValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: BadgeReceivedEvent,
@@ -33,13 +39,14 @@ type Props = {|
 
 function BadgeReceivedItem({ event }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <HistoryListItem
       iconUrl={event.iconUrl}
       title={event.title}
       subtitle={t('label.badge')}
-      rightComponent={<TextValue>{t('label.received')}</TextValue>}
+      valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
     />
   );
 }

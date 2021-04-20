@@ -25,36 +25,48 @@ import { BigNumber } from 'bignumber.js';
 import Text, { type TextVariant } from 'components/modern/Text';
 
 // Utils
-import { formatFiatChange } from 'utils/format';
+import { formatFiatValue, formatFiatChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
+type Mode = 'balance' | 'change';
+
 type Props = {|
-  change: ?BigNumber,
+  value: ?BigNumber,
   currency: string,
   variant?: TextVariant,
+  mode?: Mode,
   color?: string,
 |};
 
-function FiatChangeView({
-  change,
+function FiatValueView({
+  value,
   currency,
-  variant,
+  variant = 'regular',
+  mode = 'balance',
   color,
 }: Props) {
   const colors = useThemeColors();
 
-  if (!change) return null;
+  if (!value) return null;
 
-  const resultColor = color ?? (change.gte(0) ? colors?.positive : colors?.secondaryText);
+  if (mode === 'change') {
+    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
+
+    return (
+      <Text variant={variant} color={changeColor} style={styles.textStyle}>
+        {formatFiatChange(value, currency)}
+      </Text>
+    );
+  }
 
   return (
-    <Text variant={variant} color={resultColor} style={styles.textStyle}>
-      {formatFiatChange(change, currency)}
+    <Text variant={variant} color={color} style={styles.textStyle}>
+      {formatFiatValue(value, currency)}
     </Text>
   );
 }
 
-export default FiatChangeView;
+export default FiatValueView;
 
 const styles = {
   textStyle: {

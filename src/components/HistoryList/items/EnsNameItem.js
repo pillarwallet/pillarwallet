@@ -23,6 +23,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -31,7 +32,7 @@ import { useThemeColors } from 'utils/themes';
 import type { EnsNameEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TextValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: EnsNameEvent,
@@ -46,7 +47,7 @@ function EnsNameItem({ event }: Props) {
       iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} />}
       title={t('ensName')}
       subtitle={event.ensName}
-      rightComponent={<TextValue>{t('label.registered')}</TextValue>}
+      valueComponent={<Text color={colors.basic030}>{t('label.registered')}</Text>}
     />
   );
 }

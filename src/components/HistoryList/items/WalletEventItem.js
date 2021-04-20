@@ -20,6 +20,9 @@
 
 import * as React from 'react';
 
+// Components
+import Text from 'components/modern/Text';
+
 // Utils
 import { useThemeColors } from 'utils/themes';
 
@@ -27,7 +30,7 @@ import { useThemeColors } from 'utils/themes';
 import type { WalletEvent } from 'models/History';
 
 // Local
-import HistoryListItem, { TextValue } from './HistoryListItem';
+import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: WalletEvent,
@@ -43,7 +46,7 @@ function WalletEventItem({ event }: Props) {
       iconBorderColor={colors.neutralWeak}
       title={event.title}
       subtitle={event.subtitle}
-      rightComponent={<TextValue>{event.event}</TextValue>}
+      valueComponent={<Text color={colors.basic030}>{event.event}</Text>}
     />
   );
 }
