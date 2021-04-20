@@ -312,10 +312,10 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
     await dispatch(getTutorialDataAction());
 
-    const feautureOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
+    const enableOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
 
     const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
-    const BASIC_FLOW = tutorialData && feautureOnboarding ? TUTORIAL_FLOW : HOME;
+    const BASIC_FLOW = tutorialData && enableOnboarding ? TUTORIAL_FLOW : HOME;
 
     if (tutorialData && referralToken) {
       // show Tutorial first, then navigate to Referral flow when it's finished/skipped
