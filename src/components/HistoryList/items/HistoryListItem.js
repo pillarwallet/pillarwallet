@@ -32,7 +32,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import { TRANSACTION_STATUS, type TransactionStatus } from 'models/History';
+import type { TransactionStatus } from 'models/History';
 
 type Props = {|
   title: ?string,

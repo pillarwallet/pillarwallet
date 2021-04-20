@@ -38,7 +38,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 type Mode = "actual" | "estimate";
- 
+
 type Props = {
   value: ?BigNumber,
   symbol: string,

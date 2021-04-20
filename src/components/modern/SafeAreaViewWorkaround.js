@@ -37,9 +37,10 @@ function SafeAreaViewWorkaround({ style, children }: Props) {
   const safeArea = useSafeAreaInsets();
 
   const resultStyle = StyleSheet.flatten(style);
-  const paddingBottom = (resultStyle?.paddingBottom ?? 0) + safeArea.bottom;
+  const paddingBottom =
+    (resultStyle?.paddingBottom ?? resultStyle?.paddingVertical ?? resultStyle?.padding ?? 0) + safeArea.bottom;
 
-  return <View style={[resultStyle, { paddingBottom }]}>{children}</View>;
+  return <View style={[style, { paddingBottom }]}>{children}</View>;
 }
 
 export default SafeAreaViewWorkaround;

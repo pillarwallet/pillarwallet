@@ -62,6 +62,7 @@
         "solid",
         "space-between",
         "stretch",
+        "tabular-nums",
         "tel:",
         "text-align:",
         "text-align-vertical:",
