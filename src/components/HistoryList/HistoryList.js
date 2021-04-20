@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, TouchableOpacity } from 'react-native';
+import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
@@ -66,48 +66,20 @@ function HistoryList({ items }: Props) {
     switch (event.type) {
       case 'tokenReceived':
       case 'tokenSent':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <TokenTransactionItem event={event} />
-          </TouchableOpacity>
-        );
+        return <TokenTransactionItem event={event} onPress={() => showEventDetails(event)} />;
       case 'collectibleReceived':
       case 'collectibleSent':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <CollectibleTransactionItem event={event} />
-          </TouchableOpacity>
-        );
+        return <CollectibleTransactionItem event={event} onPress={() => showEventDetails(event)} />;
       case 'tokenExchange':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <TokenExchangeItem event={event} />
-          </TouchableOpacity>
-        );
+        return <TokenExchangeItem event={event} onPress={() => showEventDetails(event)} />;
       case 'exchangeFromFiat':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <ExchangeFromFiatItem event={event} />
-          </TouchableOpacity>
-        );
+        return <ExchangeFromFiatItem event={event} onPress={() => showEventDetails(event)} />;
       case 'walletEvent':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <WalletEventItem event={event} />
-          </TouchableOpacity>
-        );
+        return <WalletEventItem event={event} onPress={() => showEventDetails(event)} />;
       case 'ensName':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <EnsNameItem event={event} />
-          </TouchableOpacity>
-        );
+        return <EnsNameItem event={event} onPress={() => showEventDetails(event)} />;
       case 'badgeReceived':
-        return (
-          <TouchableOpacity onPress={() => showEventDetails(event)}>
-            <BadgeReceivedItem event={event} />
-          </TouchableOpacity>
-        );
+        return <BadgeReceivedItem event={event} onPress={() => showEventDetails(event)} />;
       default:
         return null;
     }

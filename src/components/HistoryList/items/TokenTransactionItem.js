@@ -39,9 +39,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: TokenReceivedEvent | TokenSentEvent,
+  onPress?: () => mixed,
 |};
 
-function TokenTransactionItem({ event }: Props) {
+function TokenTransactionItem({ event, onPress }: Props) {
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
@@ -57,6 +58,7 @@ function TokenTransactionItem({ event }: Props) {
         title={ensName ?? formatHexAddress(event.fromAddress)}
         valueComponent={<TokenValueView value={event.value.value} symbol={event.value.symbol} variant="medium" mode="change" />}
         status={event.status}
+        onPress={onPress}
       />
     );
   }
@@ -79,6 +81,7 @@ function TokenTransactionItem({ event }: Props) {
           />
         }
         status={event.status}
+        onPress={onPress}
       />
     );
   }

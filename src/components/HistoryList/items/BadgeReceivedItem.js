@@ -35,9 +35,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: BadgeReceivedEvent,
+  onPress?: () => mixed,
 |};
 
-function BadgeReceivedItem({ event }: Props) {
+function BadgeReceivedItem({ event, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -47,6 +48,7 @@ function BadgeReceivedItem({ event }: Props) {
       title={event.title}
       subtitle={t('label.badge')}
       valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
+      onPress={onPress}
     />
   );
 }

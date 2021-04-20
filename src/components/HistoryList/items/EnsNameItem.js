@@ -36,9 +36,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: EnsNameEvent,
+  onPress?: () => mixed,
 |};
 
-function EnsNameItem({ event }: Props) {
+function EnsNameItem({ event, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -48,6 +49,7 @@ function EnsNameItem({ event }: Props) {
       title={t('ensName')}
       subtitle={event.ensName}
       valueComponent={<Text color={colors.basic030}>{t('label.registered')}</Text>}
+      onPress={onPress}
     />
   );
 }

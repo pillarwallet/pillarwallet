@@ -35,9 +35,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: CollectibleReceivedEvent | CollectibleSentEvent,
+  onPress?: () => mixed,
 |};
 
-function CollectibleTransactionItem({ event }: Props) {
+function CollectibleTransactionItem({ event, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -48,6 +49,7 @@ function CollectibleTransactionItem({ event }: Props) {
         title={event.title}
         valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
         status={event.status}
+        onPress={onPress}
       />
     );
   }
@@ -59,6 +61,7 @@ function CollectibleTransactionItem({ event }: Props) {
         title={event.title}
         valueComponent={<Text color={colors.basic030}>{t('label.sent')}</Text>}
         status={event.status}
+        onPress={onPress}
       />
     );
   }

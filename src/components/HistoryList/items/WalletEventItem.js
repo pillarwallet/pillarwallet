@@ -34,9 +34,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: WalletEvent,
+  onPress?: () => mixed,
 |};
 
-function WalletEventItem({ event }: Props) {
+function WalletEventItem({ event, onPress }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -47,6 +48,7 @@ function WalletEventItem({ event }: Props) {
       title={event.title}
       subtitle={event.subtitle}
       valueComponent={<Text color={colors.basic030}>{event.event}</Text>}
+      onPress={onPress}
     />
   );
 }

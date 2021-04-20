@@ -43,6 +43,7 @@ type Props = {|
   iconComponent?: React.Node,
   valueComponent?: React.Node,
   status?: TransactionStatus,
+  onPress?: () => mixed,
 |};
 
 function HistoryListItem({
@@ -55,11 +56,12 @@ function HistoryListItem({
   iconComponent,
   valueComponent,
   status,
+  onPress,
 }: Props) {
   const colors = useThemeColors();
 
   return (
-    <Container>
+    <TouchableContainer onPress={onPress} disabled={!onPress}>
       <LeftColumn>
         {!!iconUrl && (
           <IconImageWrapper>
@@ -93,13 +95,13 @@ function HistoryListItem({
       {status === TRANSACTION_STATUS.TIMEDOUT && (
         <StatusIcon name="failed" color={colors.neutral} width={16} height={16} />
       )}
-    </Container>
+    </TouchableContainer>
   );
 }
 
 export default HistoryListItem;
 
-const Container = styled.View`
+const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   padding: ${spacing.small}px ${spacing.large}px;
   background-color: ${({ theme }) => theme.colors.basic070};

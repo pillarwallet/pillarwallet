@@ -33,9 +33,10 @@ import HistoryListItem from './HistoryListItem';
 
 type Props = {|
   event: TokenExchangeEvent,
+  onPress?: () => mixed,
 |};
 
-function TokenExchangeItem({ event }: Props) {
+function TokenExchangeItem({ event, onPress }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -54,6 +55,7 @@ function TokenExchangeItem({ event }: Props) {
         </RightColumn>
       }
       status={event.status}
+      onPress={onPress}
     />
   );
 }
