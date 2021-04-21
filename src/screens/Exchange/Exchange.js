@@ -385,6 +385,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       isFetchingUniswapTokens,
       uniswapTokensGraphQueryFailed,
       getExchangeSupportedAssets,
+      activeAccount,
     } = this.props;
 
     const {
@@ -395,7 +396,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset,
       toAsset,
       wbtcData,
-      activeAccount,
     } = this.state;
 
     const displayWbtcCafe = isWbtcCafe(fromAsset?.symbol);

@@ -1337,9 +1337,13 @@ export class EventDetail extends React.Component<Props> {
           }
         }
     }
+
+    if (!eventData) return null;
+
     if (isPending) {
       eventData.actionIcon = 'pending'; // eslint-disable-line i18next/no-literal-string
     }
+
     if (isFailed || isTimedOut) {
       eventData.isFailed = true;
       eventData.errorMessage = isFailed
