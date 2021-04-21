@@ -25,6 +25,7 @@ export type WalletInfo = {|
   binance?: ChainInfo,
   xdai?: ChainInfo,
 |};
+
 export type ChainInfo = {|
   wallet?: BalanceInfo,
   deposits?: BalanceInfo,
