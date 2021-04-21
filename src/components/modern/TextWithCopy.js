@@ -29,6 +29,7 @@ import Text from 'components/modern/Text';
 import Toast from 'components/Toast';
 
 // utils
+import { hitSlop20 } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -49,7 +50,7 @@ const TextWithCopy = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const handleCopyToClipboard = () => {
+  const copyToClipboard = () => {
     if (!textToCopy) return;
 
     Clipboard.setString(textToCopy);
@@ -57,21 +58,14 @@ const TextWithCopy = ({
   };
 
   return (
-    <Container hitSlop={hitSlop} onPress={handleCopyToClipboard} style={style}>
+    <TouchableContainer onPress={copyToClipboard} disabled={!textToCopy} hitSlop={hitSlop20} style={style}>
       {typeof children === 'string' ? <Text>{children}</Text> : children}
-      {textToCopy != null && <CopyIcon name="copy" color={iconColor} width={18} height={18} />}
-    </Container>
+      {!!textToCopy && <CopyIcon name="copy" color={iconColor} width={18} height={18} />}
+    </TouchableContainer>
   );
 };
 
-const hitSlop = {
-  top: 15,
-  bottom: 15,
-  left: 15,
-  right: 15,
-};
-
-const Container = styled.TouchableOpacity`
+const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
