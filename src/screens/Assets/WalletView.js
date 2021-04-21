@@ -19,19 +19,18 @@
 */
 
 import * as React from 'react';
+import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { Platform, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
-import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // Components
+import { Wrapper, ScrollWrapper } from 'components/Layout';
 import Tabs from 'components/Tabs';
 import Insight from 'components/Insight';
 import InsightWithButton from 'components/InsightWithButton';
-import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
@@ -56,40 +55,37 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 // Utils
 import { getTotalBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { getColorByTheme, getThemeColors } from 'utils/themes';
+import { useThemeColors, getColorByTheme } from 'utils/themes';
 
 // Types
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Theme } from 'models/Theme';
 
 // Local
 import AssetsList from './AssetsList';
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   activeTab: string,
   showInsight: boolean,
   hideInsight: () => void,
   insightList: Object[],
   insightsTitle: string,
   showDeploySmartWallet?: boolean,
-  theme: Theme,
   onScroll: (event: Object) => void,
 };
 
 const MIN_QUERY_LENGTH = 2;
 
 function WalletView({
-  navigation,
   showInsight,
   hideInsight,
   insightList = [],
   insightsTitle,
   showDeploySmartWallet,
-  theme,
   onScroll,
 }: Props) {
+  const navigation = useNavigation();
+
   const [query, setQuery] = React.useState('');
   const [activeTab, setActiveTab] = React.useState(TOKENS);
   const [hideInsightForSearch, setHideInsightForSearch] = React.useState(false);
@@ -104,6 +100,8 @@ function WalletView({
   const balances = useRootSelector(accountBalancesSelector);
 
   const dispatch = useDispatch();
+
+  const colors = useThemeColors();
 
   const handleSearchChange = (value: string) => {
     setQuery(!value ? '' : value.trim());
@@ -155,8 +153,6 @@ function WalletView({
   const handleCollectiblePress = (collectible: Collectible) => {
     navigation.navigate(COLLECTIBLE, { assetData: collectible });
   };
-
-  const colors = getThemeColors(theme);
 
   // SEARCH
   const isInSearchMode = isInSearchModeFn();
@@ -270,7 +266,7 @@ function WalletView({
   );
 }
 
-export default withTheme(withNavigation(WalletView));
+export default WalletView;
 
 const ListWrapper = styled.View`
   flex-grow: 1;
