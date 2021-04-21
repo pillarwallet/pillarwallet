@@ -29,13 +29,13 @@ import Text from 'components/modern/Text';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
-import { totalBalanceSelector } from 'selectors/balances';
 
 // Utils
-import { formatFiat } from 'utils/common';
+import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { spacing } from 'utils/variables';
 
 // Local
+import { useTotalBalance } from './utils';
 import SpecialButton from './components/SpecialButton';
 
 const addCashIcon = require('assets/icons/icon-24-add-cash.png');
@@ -43,13 +43,12 @@ const addCashIcon = require('assets/icons/icon-24-add-cash.png');
 function BalanceSection() {
   const { t } = useTranslationWithPrefix('home.balance');
 
-  const accountAddress = useRootSelector(activeAccountAddressSelector);
-  const totalBalance = useRootSelector(totalBalanceSelector);
+  const total = useTotalBalance();
   const fiatCurrency = useFiatCurrency();
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  // TODO: show propper value when service is available
-  // eslint-disable-next-line i18next/no-literal-string
-  const formattedPerformance = '+0%';
+  const initialBalance = total.changeInFiat ? total.balanceInFiat.minus(total.changeInFiat) : null;
+  const formattedChange = formatFiatChangeExtended(total.changeInFiat, initialBalance, fiatCurrency);
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -58,11 +57,15 @@ function BalanceSection() {
   return (
     <Container>
       <FirstColumn>
-        <BalanceText>{formatFiat(totalBalance, fiatCurrency)}</BalanceText>
-        <PerformanceContainer>
-          <PerformanceLabel color="secondaryText">{t('lastWeek')}</PerformanceLabel>
-          <Text color="positive">{formattedPerformance}</Text>
-        </PerformanceContainer>
+        <BalanceText numberOfLines={1} adjustsFontSizeToFit>
+          {formatFiatValue(total.balanceInFiat, fiatCurrency, { exact: true })}
+        </BalanceText>
+        {!!formattedChange && (
+          <ProfitContainer>
+            <ProfitLabel color="secondaryText">{t('lastWeek')}</ProfitLabel>
+            <ProfitValue color="positive">{formattedChange}</ProfitValue>
+          </ProfitContainer>
+        )}
       </FirstColumn>
 
       <SecondColumn>
@@ -83,6 +86,7 @@ const Container = styled.View`
 const FirstColumn = styled.View`
   flex: 1;
   justify-content: center;
+  margin-right: ${spacing.large}px;
 `;
 
 const SecondColumn = styled.View`
@@ -94,10 +98,14 @@ const BalanceText = styled(Text)`
   font-variant: tabular-nums;
 `;
 
-const PerformanceContainer = styled.View`
+const ProfitContainer = styled.View`
   flex-direction: row;
   margin-top: ${spacing.extraSmall}px;
 `;
-const PerformanceLabel = styled(Text)`
+const ProfitLabel = styled(Text)`
   margin-right: 6px;
+`;
+
+const ProfitValue = styled(Text)`
+  font-variant: tabular-nums;
 `;

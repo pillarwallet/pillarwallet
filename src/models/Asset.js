@@ -19,9 +19,14 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { CHAINS, ASSET_CATEGORIES, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
+export type Chain = $Values<typeof CHAINS>;
+
+export type AssetCategory = $Values<typeof ASSET_CATEGORIES>;
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
+
 export type AssetData = {|
   token: string,
   contractAddress?: string,

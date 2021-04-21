@@ -18,37 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { LayoutAnimation } from 'react-native';
+import { BigNumber } from 'bignumber.js';
 
-export const LIST_ITEMS_APPEARANCE = {
-  duration: 150,
-  create: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-  },
-  update: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-  },
-  delete: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-  },
-};
+export type WalletInfo = {|
+  ethereum?: ChainInfo,
+  binance?: ChainInfo,
+  xdai?: ChainInfo,
+|};
 
-export const SIDE_BUTTON_APPEARANCE = {
-  duration: 150,
-  create: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-    delay: 50,
-  },
-  update: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-  },
-  delete: {
-    property: LayoutAnimation.Properties.opacity,
-    type: LayoutAnimation.Types.linear,
-  },
-};
+export type ChainInfo = {|
+  wallet?: BalanceInfo,
+  deposits?: BalanceInfo,
+  investments?: BalanceInfo,
+  liquidityPools?: BalanceInfo,
+  rewards?: BalanceInfo,
+  datasets?: BalanceInfo,
+  collectibles?: number,
+  contacts?: number,
+|};
+
+export type BalanceInfo = {|
+  balanceInFiat: BigNumber,
+  changeInFiat?: BigNumber,
+|};
