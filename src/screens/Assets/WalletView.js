@@ -19,15 +19,15 @@
 */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Platform, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
+// Components
 import Tabs from 'components/Tabs';
 import Insight from 'components/Insight';
 import InsightWithButton from 'components/InsightWithButton';
@@ -38,85 +38,72 @@ import { LabelBadge } from 'components/LabelBadge';
 import SWActivationCard from 'components/SWActivationCard';
 import CollectiblesList from 'components/CollectiblesList';
 
+// Constants
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
-import { activeAccountAddressSelector } from 'selectors';
+// Selectors
+import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
-import type { Balances, Rates } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { Theme } from 'models/Theme';
-
-// actions
+// Actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
-// utils
+// Utils
 import { getTotalBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 
-// partials
+// Types
+import type { Collectible } from 'models/Collectible';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Theme } from 'models/Theme';
+
+// Local
 import AssetsList from './AssetsList';
 
 type Props = {
-  baseFiatCurrency: ?string,
-  collectibles: Collectible[],
   navigation: NavigationScreenProp<*>,
-  tabs: Object[],
   activeTab: string,
   showInsight: boolean,
   hideInsight: () => void,
   insightList: Object[],
   insightsTitle: string,
-  balances: Balances,
-  rates: Rates,
-  accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
-  fetchAssetsBalances: () => void,
-  fetchAllCollectiblesData: () => void,
   showDeploySmartWallet?: boolean,
   theme: Theme,
-  dismissSmartWalletInsight: () => void,
-  SWInsightDismissed: boolean,
   onScroll: (event: Object) => void,
-  activeAccountAddress: string,
 };
 
 const MIN_QUERY_LENGTH = 2;
 
 function WalletView({
-  accounts,
-  smartWalletState,
-  collectibles,
-  fetchAssetsBalances,
-  fetchAllCollectiblesData,
   navigation,
   showInsight,
   hideInsight,
   insightList = [],
   insightsTitle,
-  rates,
-  balances,
-  baseFiatCurrency,
   showDeploySmartWallet,
   theme,
-  dismissSmartWalletInsight,
-  SWInsightDismissed,
   onScroll,
-  activeAccountAddress,
 }: Props) {
   const [query, setQuery] = React.useState('');
   const [activeTab, setActiveTab] = React.useState(TOKENS);
   const [hideInsightForSearch, setHideInsightForSearch] = React.useState(false);
+
+  const baseFiatCurrency = useFiatCurrency();
+  const rates = useRates();
+  const accounts = useRootSelector(root => root.accounts.data);
+  const smartWalletState = useRootSelector(root => root.smartWallet);
+  const SWInsightDismissed = useRootSelector(root => root.insights.SWInsightDismissed);
+  const collectibles = useRootSelector(accountCollectiblesSelector);
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+  const balances = useRootSelector(accountBalancesSelector);
+
+  const dispatch = useDispatch();
 
   const handleSearchChange = (value: string) => {
     setQuery(!value ? '' : value.trim());
@@ -159,8 +146,8 @@ function WalletView({
     <RefreshControl
       refreshing={false}
       onRefresh={() => {
-        fetchAssetsBalances();
-        fetchAllCollectiblesData();
+        dispatch(fetchAssetsBalancesAction());
+        dispatch(fetchAllCollectiblesDataAction());
       }}
     />
   );
@@ -224,7 +211,7 @@ function WalletView({
                 t('insight.smartWalletIntro.description.multipleKeys'),
               ]}
               buttonTitle={t('insight.smartWalletIntro.button.ok')}
-              onButtonPress={dismissSmartWalletInsight}
+              onButtonPress={() => dispatch(dismissSmartWalletInsightAction())}
             />
           ))}
       </>
@@ -283,40 +270,7 @@ function WalletView({
   );
 }
 
-const mapStateToProps = ({
-  appSettings: {
-    data: { baseFiatCurrency },
-  },
-  rates: { data: rates },
-  accounts: { data: accounts },
-  smartWallet: smartWalletState,
-  insights: { SWInsightDismissed },
-}: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
-  rates,
-  accounts,
-  smartWalletState,
-  SWInsightDismissed,
-});
-
-const structuredSelector = createStructuredSelector({
-  collectibles: accountCollectiblesSelector,
-  activeAccountAddress: activeAccountAddressSelector,
-  balances: accountBalancesSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),
-});
-
-export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));
+export default withTheme(withNavigation(WalletView));
 
 const ListWrapper = styled.View`
   flex-grow: 1;
