@@ -45,9 +45,8 @@ function TransactionStatusIcon({ status, size, style }: Props) {
     case TRANSACTION_STATUS.PENDING:
       return <Icon name="pending" color={colors.neutral} width={size} height={size} style={[styles.icon, style]} />;
     case TRANSACTION_STATUS.FAILED:
-      return <Icon name="failed" color={colors.negative} width={size} height={size} style={[styles.icon, style]} />;
     case TRANSACTION_STATUS.TIMEDOUT:
-      return <Icon name="failed" color={colors.neutral} width={size} height={size} style={[styles.icon, style]} />;
+      return <Icon name="failed" color={colors.negative} width={size} height={size} style={[styles.icon, style]} />;
     default:
       return null;
   }
