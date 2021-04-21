@@ -196,7 +196,7 @@ const ContactsList = () => {
           <Button title={t('button.addToAddressBook')} onPress={() => openContactDetails(customAddressContact)} />
         </ActionButtonsContainer>
       ) : (
-        <FloatingButtons items={buttons} />
+        <FloatingButtons items={buttons} applyBottomInset={false} />
       )}
     </ContainerWithHeader>
   );

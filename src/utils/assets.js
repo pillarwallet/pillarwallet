@@ -235,7 +235,7 @@ export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): 
   }, 0);
 };
 
-export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string) => {
+export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
