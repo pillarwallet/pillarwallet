@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { BigNumber } from 'bignumber.js';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
-
+export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetData = {|
   token: string,
   contractAddress?: string,
-  tokenType?: string,
+  tokenType?: TokenType,
   name?: string,
   decimals: number,
   icon?: string,
@@ -104,34 +105,36 @@ export type DepositedAsset = Asset & {
 export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
   assetData: AssetData,
-  draftAmount?: number,
-  amount?: number,
+  draftAmount?: BigNumber,
+  amount?: string,
   calculatedGasLimit?: number,
   gasPrice?: number,
   signedTransaction?: Object,
   status?: string,
 |};
-
-export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 export type AssetOption = {
+  // Core props
   address?: string,
-  assetBalance?: string,
-  balance?: AssetBalance,
-  contractAddress?: string,
+  balance?: ?AssetBalance,
   decimals?: number,
+  imageUrl: string,
+  name: string,
+  symbol: string,
+  tokenType?: TokenType,
+
+  // Additional props
+  assetBalance?: string,
+  contractAddress?: string,
   ethAddress?: string,
   formattedBalanceInFiat?: string,
-  name: string,
   icon?: string,
   iconUrl?: string,
   id?: string,
   imageSource?: string,
   imageUrl?: string,
   lastUpdateTime?: string,
-  symbol: string,
   token?: string,
   tokenId?: string,
-  tokenType?: TokenType,
 };
 
 export type AssetBalance = {|

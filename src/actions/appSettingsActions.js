@@ -171,6 +171,11 @@ export const hasSeenExchangeIntroAction = () => {
   };
 };
 
+export const hasSeenTutorialAction = () => (dispatch: Dispatch) => {
+  dispatch(saveDbAction('app_settings', { appSettings: { hasSeenTutorial: true } }));
+  dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenTutorial: true } });
+};
+
 export const hasSeenWbtcCafeIntroAction = () => (dispatch: Dispatch) => {
   dispatch(saveDbAction('app_settings', { appSettings: { hasSeenWbtcCafeIntro: true } }));
   dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenWbtcCafeIntro: true } });

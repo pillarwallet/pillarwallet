@@ -25,3 +25,11 @@ export function mapNotNil<Item, Result>(items: Item[], selector: (Item, number, 
   // $FlowFixMe: does not infer that `filter` removes nil values
   return items.map((item, index, array) => selector(item, index, array)).filter((item) => item != null);
 }
+
+/**
+ * Type-safe version of `filter(Boolean)`
+ */
+export function compactFalsy<Item>(items: (?Item | false)[]): Item[] {
+  // $FlowFixMe: flow cannot infer filtering behavior.
+  return items.filter(Boolean);
+}
