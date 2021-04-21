@@ -92,9 +92,9 @@ function WalletView({
 
   const baseFiatCurrency = useFiatCurrency();
   const rates = useRates();
-  const accounts = useRootSelector(root => root.accounts.data);
-  const smartWalletState = useRootSelector(root => root.smartWallet);
-  const SWInsightDismissed = useRootSelector(root => root.insights.SWInsightDismissed);
+  const accounts = useRootSelector((root) => root.accounts.data);
+  const smartWalletState = useRootSelector((root) => root.smartWallet);
+  const SWInsightDismissed = useRootSelector((root) => root.insights.SWInsightDismissed);
   const collectibles = useRootSelector(accountCollectiblesSelector);
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const balances = useRootSelector(accountBalancesSelector);
@@ -133,9 +133,7 @@ function WalletView({
 
   const getAssetTabs = () => [
     getAssetTab(TOKENS, t('smartWalletContent.tabs.tokens.title'), () => setActiveTab(TOKENS)),
-    getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'), () =>
-      setActiveTab(COLLECTIBLES),
-    ),
+    getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'), () => setActiveTab(COLLECTIBLES)),
   ];
 
   const isAllInsightListDone = () => !insightList.some(({ status, key }) => !status && key !== 'biometric');
@@ -173,50 +171,11 @@ function WalletView({
 
   const ScrollComponent = Platform.OS === 'ios' ? ScrollWrapper : ScrollView;
 
-  return (
-    <ScrollComponent
-      stickyHeaderIndices={[1]}
-      refreshControl={renderRefreshControl()}
-      onScroll={onScroll}
-      keyboardShouldPersistTaps="always"
-    >
+  const renderMainContent = () => {
+    return (
       <>
-        <Insight
-          isVisible={isInsightVisible}
-          title={insightsTitle}
-          insightChecklist={insightList}
-          onClose={() => {
-            hideInsight();
-          }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-        />
-        {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
-        {!deploymentData.error &&
-          !blockAssetsView &&
-          !isInSearchAndFocus &&
-          showDeploySmartWallet &&
-          (SWInsightDismissed ? (
-            <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
-          ) : (
-            <InsightWithButton
-              title={t('insight.smartWalletIntro.title')}
-              description={t('insight.smartWalletIntro.description.intro')}
-              itemsList={[
-                t('insight.smartWalletIntro.description.recovery'),
-                t('insight.smartWalletIntro.description.accessToPPN'),
-                t('insight.smartWalletIntro.description.multipleKeys'),
-              ]}
-              buttonTitle={t('insight.smartWalletIntro.button.ok')}
-              onButtonPress={() => dispatch(dismissSmartWalletInsightAction())}
-            />
-          ))}
-      </>
-      {!blockAssetsView && (
         <TopWrapper>
-          <TouchableOpacity
-            onPress={() => navigation.navigate(ASSET_SEARCH)}
-            disabled={activeTab === COLLECTIBLES}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate(ASSET_SEARCH)} disabled={activeTab === COLLECTIBLES}>
             <SearchBlock
               hideSearch={blockAssetsView}
               searchInputPlaceholder={activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')}
@@ -235,8 +194,7 @@ function WalletView({
             <Tabs tabs={getAssetTabs()} wrapperStyle={{ paddingTop: 22 }} activeTab={activeTab} />
           )}
         </TopWrapper>
-      )}
-      {!blockAssetsView && (
+
         <ListWrapper>
           {activeTab === TOKENS && <AssetsList balance={balance} />}
           {activeTab === COLLECTIBLES && (
@@ -261,7 +219,52 @@ function WalletView({
             </ActionsWrapper>
           )}
         </ListWrapper>
-      )}
+      </>
+    );
+  };
+
+  return (
+    <ScrollComponent
+      stickyHeaderIndices={[1]}
+      refreshControl={renderRefreshControl()}
+      onScroll={onScroll}
+      keyboardShouldPersistTaps="always"
+    >
+      <>
+        <Insight
+          isVisible={isInsightVisible}
+          title={insightsTitle}
+          insightChecklist={insightList}
+          onClose={() => {
+            hideInsight();
+          }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+        />
+
+        {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
+
+        {!deploymentData.error &&
+          !blockAssetsView &&
+          !isInSearchAndFocus &&
+          showDeploySmartWallet &&
+          (SWInsightDismissed ? (
+            <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
+          ) : (
+            <InsightWithButton
+              title={t('insight.smartWalletIntro.title')}
+              description={t('insight.smartWalletIntro.description.intro')}
+              itemsList={[
+                t('insight.smartWalletIntro.description.recovery'),
+                t('insight.smartWalletIntro.description.accessToPPN'),
+                t('insight.smartWalletIntro.description.multipleKeys'),
+              ]}
+              buttonTitle={t('insight.smartWalletIntro.button.ok')}
+              onButtonPress={() => dispatch(dismissSmartWalletInsightAction())}
+            />
+          ))}
+
+        {!blockAssetsView && renderMainContent()}
+      </>
     </ScrollComponent>
   );
 }
