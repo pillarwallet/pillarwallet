@@ -21,11 +21,11 @@
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import { storiesOf } from '@storybook/react-native';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 // Types
 import { type Event, TRANSACTION_STATUS } from 'models/History';
 
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import HistoryList from './HistoryList';
 
 const stories = storiesOf('HistoryList', module).addDecorator(WithThemeDecorator);
