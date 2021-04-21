@@ -93,6 +93,6 @@ export function getCategoryBalancesTotal(categories: CategoryBalances): Balance 
 export function getTotalBalances(balances: (?Balance)[]): Balance {
   return {
     balanceInFiat: sum(balances.map((b) => b?.balanceInFiat)),
-    profitInFiat: sumOrNull(balances.map((b) => b?.profitInFiat)),
+    changeInFiat: sumOrNull(balances.map((b) => b?.changeInFiat)),
   };
 }

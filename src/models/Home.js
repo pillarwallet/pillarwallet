@@ -40,7 +40,7 @@ export type CategoryBalances = {|
 
 export type Balance = {|
   balanceInFiat: BigNumber,
-  profitInFiat?: ?BigNumber,
+  changeInFiat?: ?BigNumber,
 |};
 
 export type ChainSummaries = ChainRecord<AccountSummary>;
