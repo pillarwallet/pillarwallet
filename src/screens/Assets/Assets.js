@@ -18,12 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import isEqual from 'lodash.isequal';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
-import { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
@@ -32,6 +29,9 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import { Container } from 'components/Layout';
+
+// Selectors
+import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
 
 // types
 import type { Assets } from 'models/Asset';
@@ -59,7 +59,7 @@ import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
 // utils
 import { getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
-import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
+import { useTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // selectors
@@ -77,7 +77,6 @@ type Props = {
   assets: Assets,
   collectibles: Collectible[],
   assetsState: ?string,
-  navigation: NavigationScreenProp<*>,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -88,13 +87,6 @@ type Props = {
   backupStatus: Object,
   availableStake: number,
   PPNTransactions: Transaction[],
-  theme: Theme,
-};
-
-type State = {
-  showKeyWalletInsight: boolean,
-  showSmartWalletInsight: boolean,
-  supportsBiometrics: boolean,
 };
 
 const VIEWS = {
@@ -102,65 +94,67 @@ const VIEWS = {
   PPN_VIEW: 'PPN_VIEW',
 };
 
-class AssetsScreen extends React.Component<Props, State> {
-  forceRender = false;
-  state = {
-    showKeyWalletInsight: true,
-    showSmartWalletInsight: false,
-    supportsBiometrics: false,
-  };
+function AssetsScreen({
+  fetchInitialAssets,
+  fetchAllCollectiblesData,
+  assets,
+  blockchainNetworks,
+  activeAccount,
+  availableStake,
+  PPNTransactions,
+  backupStatus,
+  useBiometrics,
+  assetsState,
+  accounts,
+  smartWalletState,
+}: Props) {
+  const navigation = useNavigation();
 
-  componentDidMount() {
-    const {
-      fetchInitialAssets,
-      fetchAllCollectiblesData,
-      assets,
-    } = this.props;
+  const [showKeyWalletInsight, setShowKeyWalletInsight] = React.useState(true);
+  const [showSmartWalletInsight, setShowSmartWalletInsight] = React.useState(false);
+  const [supportsBiometrics, setSupportsBiometrics] = React.useState(false);
 
+  const theme = useTheme();
+
+  React.useEffect(() => {
     if (!Object.keys(assets).length) {
       fetchInitialAssets();
     }
 
     fetchAllCollectiblesData();
+  }, []);
 
-    getSupportedBiometryType(biometryType => this.setState({ supportsBiometrics: !!biometryType }));
-  }
+  React.useEffect(() => {
+    getSupportedBiometryType((biometryType) => setSupportsBiometrics(!!biometryType));
+  }, []);
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { navigation } = this.props;
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-    const isFocused = navigation.isFocused();
+  // shouldComponentUpdate(nextProps: Props, nextState: State) {
+  //   const { navigation } = this.props;
+  //   const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+  //   const isFocused = navigation.isFocused();
 
-    if (!isFocused) {
-      if (!isEq) this.forceRender = true;
-      return false;
-    }
+  //   if (!isFocused) {
+  //     if (!isEq) this.forceRender = true;
+  //     return false;
+  //   }
 
-    if (this.forceRender) {
-      this.forceRender = false;
-      return true;
-    }
+  //   if (this.forceRender) {
+  //     this.forceRender = false;
+  //     return true;
+  //   }
 
-    return !isEq;
-  }
+  //   return !isEq;
+  // }
 
-  hideWalletInsight = (type: string) => {
+  const hideWalletInsight = (type: string) => {
     if (type === 'KEY') {
-      this.setState({ showKeyWalletInsight: false });
+      setShowKeyWalletInsight(false);
     } else {
-      this.setState({ showSmartWalletInsight: false });
+      setShowSmartWalletInsight(false);
     }
   };
 
-  getScreenInfo = () => {
-    const {
-      navigation,
-      blockchainNetworks,
-      activeAccount,
-      availableStake,
-      PPNTransactions,
-      theme,
-    } = this.props;
+  const getScreenInfo = () => {
     const colors = getThemeColors(theme);
 
     const { type: walletType } = activeAccount || {};
@@ -188,15 +182,18 @@ class AssetsScreen extends React.Component<Props, State> {
           customHeaderButtonProps: {
             isActive: availableStake > 0 || hasUnsettledTx,
             backgroundColor: getColorByThemeOutsideStyled(theme.current, {
-              lightCustom: 'transparent', darkKey: 'synthetic140',
+              lightCustom: 'transparent',
+              darkKey: 'synthetic140',
             }),
             color: getColorByThemeOutsideStyled(theme.current, {
-              lightKey: 'basic010', darkKey: 'basic090',
+              lightKey: 'basic010',
+              darkKey: 'basic090',
             }),
             style: {
               borderWidth: 1,
               borderColor: getColorByThemeOutsideStyled(theme.current, {
-                lightKey: 'basic005', darkKey: 'synthetic140',
+                lightKey: 'basic005',
+                darkKey: 'synthetic140',
               }),
             },
           },
@@ -204,14 +201,7 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   };
 
-  getInsightsList = () => {
-    const {
-      backupStatus,
-      navigation,
-      useBiometrics,
-    } = this.props;
-    const { supportsBiometrics } = this.state;
-
+  const getInsightsList = () => {
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
 
     const keyWalletInsights = [
@@ -219,9 +209,7 @@ class AssetsScreen extends React.Component<Props, State> {
         key: 'backup',
         title: t('insight.keyWalletIntro.description.backupWallet'),
         status: isBackedUp,
-        onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
+        onPress: !isBackedUp ? () => navigation.navigate(WALLET_SETTINGS) : null,
       },
       {
         key: 'pinCode',
@@ -235,9 +223,7 @@ class AssetsScreen extends React.Component<Props, State> {
         key: 'biometric',
         title: t('insight.keyWalletIntro.description.enableBiometrics'),
         status: useBiometrics,
-        onPress: !useBiometrics
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
+        onPress: !useBiometrics ? () => navigation.navigate(WALLET_SETTINGS) : null,
       };
       return [...keyWalletInsights, biometricsInsight];
     }
@@ -245,16 +231,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return keyWalletInsights;
   };
 
-  renderView = (viewType: string, onScroll: Object => void) => {
-    const {
-      assets,
-      assetsState,
-      fetchInitialAssets,
-      accounts,
-      smartWalletState,
-    } = this.props;
-    const { showSmartWalletInsight } = this.state;
-
+  const renderView = (viewType: string, onScroll: (Object) => void) => {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
     const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
@@ -263,9 +240,7 @@ class AssetsScreen extends React.Component<Props, State> {
       return (
         <Container center inset={{ bottom: 0 }}>
           <BaseText style={{ marginBottom: 20 }}>{t('label.loadingDefaultAssets')}</BaseText>
-          {assetsState !== FETCH_INITIAL_FAILED && (
-            <Spinner />
-          )}
+          {assetsState !== FETCH_INITIAL_FAILED && <Spinner />}
           {assetsState === FETCH_INITIAL_FAILED && (
             <Button title={t('button.tryAgain')} onPress={() => fetchInitialAssets()} />
           )}
@@ -277,9 +252,7 @@ class AssetsScreen extends React.Component<Props, State> {
       const deploymentHash = getDeploymentHash(smartWalletState);
 
       if (deploymentHash) {
-        return (
-          <WalletActivation deploymentHash={deploymentHash} />
-        );
+        return <WalletActivation deploymentHash={deploymentHash} />;
       }
     }
 
@@ -290,30 +263,24 @@ class AssetsScreen extends React.Component<Props, State> {
         return (
           <WalletView
             showInsight={showSmartWalletInsight}
-            hideInsight={() => this.hideWalletInsight('SMART')}
+            hideInsight={() => hideWalletInsight('SMART')}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
-          />);
+          />
+        );
       default:
         return null;
     }
   };
 
-  render() {
-    const { activeAccount } = this.props;
+  const screenInfo = getScreenInfo();
+  const { label: headerButtonLabel, action: headerButtonAction, screenView, customHeaderButtonProps } = screenInfo;
 
-    const screenInfo = this.getScreenInfo();
-    const {
-      label: headerButtonLabel,
-      action: headerButtonAction,
-      screenView,
-      customHeaderButtonProps,
-    } = screenInfo;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          rightItems: activeAccount ? [{
+  return (
+    <ContainerWithHeader
+      headerProps={{
+        rightItems: !!activeAccount ? [
+          {
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,
@@ -321,19 +288,21 @@ class AssetsScreen extends React.Component<Props, State> {
               onPress: headerButtonAction,
               ...customHeaderButtonProps,
             },
-          }] : null,
-          centerItems: [{
+          }
+        ] : null,
+        centerItems: [
+          {
             title: t('title.assets'),
-          }],
-          sideFlex: 5,
-        }}
-        inset={{ bottom: 0 }}
-        tab
-      >
-        {onScroll => this.renderView(screenView, onScroll)}
-      </ContainerWithHeader>
-    );
-  }
+          },
+        ],
+        sideFlex: 5,
+      }}
+      inset={{ bottom: 0 }}
+      tab
+    >
+      {(onScroll) => renderView(screenView, onScroll)}
+    </ContainerWithHeader>
+  );
 }
 
 const mapStateToProps = ({
@@ -372,4 +341,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen);
