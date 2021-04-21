@@ -69,7 +69,7 @@ const useEnabledActions = () => {
   const totalBalance = useRootSelector(totalBalanceSelector);
   const smartWalletState = useSmartWalletStatus();
 
-  const isEnabled = totalBalance > 0 && isEmpty(smartWalletState.sendingBlockedMessage);
+  const isEnabled = totalBalance.gt(0) && isEmpty(smartWalletState.sendingBlockedMessage);
 
   return {
     isSendEnabled: isEnabled,

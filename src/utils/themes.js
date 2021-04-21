@@ -70,6 +70,10 @@ export const lightThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: lightThemeColors.primaryAccent130,
   checkBoxField: '#e0eeff',
+
+  ethereum: '#497391',
+  binance: '#f7931a',
+  xdai: '#62a7a5',
 };
 
 // will be removed after transition
@@ -116,6 +120,10 @@ export const darkThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: darkThemeColors.primaryAccent140,
   checkBoxField: darkThemeColors.basic090,
+
+  ethereum: '#497391',
+  binance: '#f7931a',
+  xdai: '#62a7a5',
 };
 
 export const themedColors = {
