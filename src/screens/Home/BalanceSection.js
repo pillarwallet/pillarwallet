@@ -38,7 +38,6 @@ import { spacing } from 'utils/variables';
 import { useTotalBalance } from './utils';
 import SpecialButton from './components/SpecialButton';
 
-const addCashIcon = require('assets/icons/icon-24-add-cash.png');
 
 function BalanceSection() {
   const { t } = useTranslationWithPrefix('home.balance');
@@ -69,7 +68,7 @@ function BalanceSection() {
       </FirstColumn>
 
       <SecondColumn>
-        <SpecialButton title={t('addCash')} iconSource={addCashIcon} onPress={handleAddFunds} />
+        <SpecialButton title={t('addCash')} iconName="add-cash" onPress={handleAddFunds} />
       </SecondColumn>
     </Container>
   );

@@ -19,31 +19,42 @@
 */
 
 import * as React from 'react';
-import { Image } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
+import TextWithCopy from 'components/modern/TextWithCopy';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
+import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
-  iconSource?: ImageSource,
+  iconName?: IconName,
   color?: string,
+  walletAddress?: string,
 |};
 
-function HomeListHeader({ title, iconSource, color }: Props) {
+function HomeListHeader({
+  title,
+  iconName,
+  color,
+  walletAddress,
+}: Props) {
+  const colors = useThemeColors();
+
   return (
     <Container>
-      <Icon source={iconSource} />
+      <ItemIcon name={iconName} />
       <Title $color={color} numberOfLines={1}>
         {title}
       </Title>
+      <TextWithCopy textToCopy={walletAddress} iconColor={colors.secondaryText} />
     </Container>
   );
 }
@@ -57,12 +68,11 @@ const Container = styled.View`
   padding: ${spacing.mediumLarge}px 0;
 `;
 
-const Icon = styled(Image)`
+const ItemIcon = styled(Icon)`
   margin-right: ${spacing.medium}px;
 `;
 
 const Title = styled(Text)`
-  flex: 1;
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   ${({ $color }) => `color: ${$color}`};

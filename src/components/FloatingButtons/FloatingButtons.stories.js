@@ -45,7 +45,7 @@ stories.add('3 items', () => (
     items={[
       { title: 'Add contact', iconName: 'add-contact' },
       { title: 'Invite friend', iconName: 'plus' },
-      { title: 'Send', iconName: 'paperPlane' },
+      { title: 'Send', iconName: 'send' },
     ]}
   />
 ));
@@ -62,7 +62,7 @@ stories.add('With flat list', () => (
       items={[
         { title: 'Add contact', iconName: 'add-contact' },
         { title: 'Invite friend', iconName: 'plus' },
-        { title: 'Send', iconName: 'paperPlane' },
+        { title: 'Send', iconName: 'send' },
       ]}
     />
   </View>

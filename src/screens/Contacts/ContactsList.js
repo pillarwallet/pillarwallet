@@ -138,7 +138,7 @@ const ContactsList = () => {
     },
     !!contacts.length && {
       title: t('button.send'),
-      iconName: 'paperPlane',
+      iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW),
     },
   ];

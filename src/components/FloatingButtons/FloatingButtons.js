@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
-import Icon from 'components/Icon';
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -32,7 +32,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/modern/Icon';
 
 export type Item = {|
   title: string,
@@ -62,7 +62,7 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
         {items.map((item) => (
           <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
-              {!!item.iconName && <ItemIcon name={item.iconName} />}
+              {!!item.iconName && <Icon name={item.iconName} />}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
             </ItemIconWrapper>
             <ItemTitle>{item.title}</ItemTitle>
@@ -111,11 +111,6 @@ const ItemIconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-horizontal: ${spacing.largePlus}px;
-`;
-
-const ItemIcon = styled(Icon)`
-  font-size: 24px;
-  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ItemIconImage = styled(Image)`

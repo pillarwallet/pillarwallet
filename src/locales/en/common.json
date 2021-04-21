@@ -65,7 +65,8 @@
   "chains": {
     "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
-    "xdai": "xDai Network"
+    "xdai": "xDai Network",
+    "polygon": "Polygon"
   },
 
   "assetCategories": {
