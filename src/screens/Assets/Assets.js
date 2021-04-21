@@ -40,7 +40,6 @@ import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
-import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // actions
@@ -54,13 +53,12 @@ import {
 } from 'constants/assetsConstants';
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
-import { useTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
-import { getSupportedBiometryType } from 'utils/keychain';
+import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -83,8 +81,6 @@ type Props = {
   blockchainNetworks: Object[],
   activeAccount: ?Account,
   fetchAllCollectiblesData: () => void,
-  useBiometrics: boolean,
-  backupStatus: Object,
   availableStake: number,
   PPNTransactions: Transaction[],
 };
@@ -102,19 +98,16 @@ function AssetsScreen({
   activeAccount,
   availableStake,
   PPNTransactions,
-  backupStatus,
-  useBiometrics,
   assetsState,
   accounts,
   smartWalletState,
 }: Props) {
   const navigation = useNavigation();
 
-  const [showKeyWalletInsight, setShowKeyWalletInsight] = React.useState(true);
   const [showSmartWalletInsight, setShowSmartWalletInsight] = React.useState(false);
-  const [supportsBiometrics, setSupportsBiometrics] = React.useState(false);
 
   const theme = useTheme();
+  const colors = useThemeColors();
 
   React.useEffect(() => {
     if (!Object.keys(assets).length) {
@@ -122,10 +115,6 @@ function AssetsScreen({
     }
 
     fetchAllCollectiblesData();
-  }, []);
-
-  React.useEffect(() => {
-    getSupportedBiometryType((biometryType) => setSupportsBiometrics(!!biometryType));
   }, []);
 
   // shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -146,17 +135,7 @@ function AssetsScreen({
   //   return !isEq;
   // }
 
-  const hideWalletInsight = (type: string) => {
-    if (type === 'KEY') {
-      setShowKeyWalletInsight(false);
-    } else {
-      setShowSmartWalletInsight(false);
-    }
-  };
-
   const getScreenInfo = () => {
-    const colors = getThemeColors(theme);
-
     const { type: walletType } = activeAccount || {};
     const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', translationKey: '' };
     const { id: activeBNetworkId, translationKey } = activeBNetwork;
@@ -201,36 +180,6 @@ function AssetsScreen({
     }
   };
 
-  const getInsightsList = () => {
-    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
-    const keyWalletInsights = [
-      {
-        key: 'backup',
-        title: t('insight.keyWalletIntro.description.backupWallet'),
-        status: isBackedUp,
-        onPress: !isBackedUp ? () => navigation.navigate(WALLET_SETTINGS) : null,
-      },
-      {
-        key: 'pinCode',
-        title: t('insight.keyWalletIntro.description.setPinCode'),
-        status: true,
-      },
-    ];
-
-    if (supportsBiometrics) {
-      const biometricsInsight = {
-        key: 'biometric',
-        title: t('insight.keyWalletIntro.description.enableBiometrics'),
-        status: useBiometrics,
-        onPress: !useBiometrics ? () => navigation.navigate(WALLET_SETTINGS) : null,
-      };
-      return [...keyWalletInsights, biometricsInsight];
-    }
-
-    return keyWalletInsights;
-  };
-
   const renderView = (viewType: string, onScroll: (Object) => void) => {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -263,7 +212,7 @@ function AssetsScreen({
         return (
           <WalletView
             showInsight={showSmartWalletInsight}
-            hideInsight={() => hideWalletInsight('SMART')}
+            hideInsight={() => setShowSmartWalletInsight(false)}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />
@@ -273,8 +222,12 @@ function AssetsScreen({
     }
   };
 
-  const screenInfo = getScreenInfo();
-  const { label: headerButtonLabel, action: headerButtonAction, screenView, customHeaderButtonProps } = screenInfo;
+  const {
+    label: headerButtonLabel,
+    action: headerButtonAction,
+    screenView,
+    customHeaderButtonProps,
+  } = getScreenInfo();
 
   return (
     <ContainerWithHeader
@@ -307,17 +260,13 @@ function AssetsScreen({
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  wallet: { backupStatus },
   assets: { assetsState },
-  appSettings: { data: { useBiometrics } },
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
 }: RootReducerState): $Shape<Props> => ({
-  backupStatus,
   accounts,
   assetsState,
-  useBiometrics,
   badges,
   smartWalletState,
   blockchainNetworks,
