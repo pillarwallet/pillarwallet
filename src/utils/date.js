@@ -36,28 +36,26 @@ export * from 'date-fns';
 const USER_FULL_DATE_FORMAT = 'MMM D YYYY';
 const USER_MONTH_DAY_FORMAT = 'MMM D';
 
-export type DateLike = Date | string | number;
-
-export const isSameDay = (first: DateLike, second: DateLike): boolean => {
+export const isSameDay = (first: Date, second: Date): boolean => {
   const dateFormat = 'YYYY-MM-DD';
   return DateFns.format(first, dateFormat) === DateFns.format(second, dateFormat);
 };
 
-export const isToday = (date: DateLike): boolean => {
+export const isToday = (date: Date): boolean => {
   return isSameDay(date, new Date());
 };
 
-export const isYesterday = (date: DateLike): boolean => {
+export const isYesterday = (date: Date): boolean => {
   return isSameDay(date, DateFns.subDays(new Date(), 1));
 };
 
-export const formatDate = (date: ?DateLike, format?: string): string => {
+export const formatDate = (date: ?Date, format?: string): string => {
   if (!date) return '';
 
   return DateFns.format(date, format);
 };
 
-export const humanizeDateString = (date: DateLike): string => {
+export const humanizeDateString = (date: Date): string => {
   if (!date) return '';
 
   if (isToday(date)) return t('label.today');
