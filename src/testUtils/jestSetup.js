@@ -111,6 +111,7 @@ jest.mock('@react-native-firebase/app', () => ({
     analytics: () => ({
       logEvent: () => {},
       setCurrentScreen: () => {},
+      setUserProperties: () => Promise.resolve(),
     }),
     crashlytics: () => ({
       setUserId: () => {
@@ -198,6 +199,8 @@ jest.setMock('react-native-background-timer', {
 
 jest.setMock('react-native-device-info', {
   getUniqueId: () => '1x1x1x1x1x1x1',
+  getBuildNumber: () => '',
+  getVersion: () => '',
 });
 
 jest.setMock('react-native-intercom', {

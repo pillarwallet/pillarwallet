@@ -28,6 +28,7 @@ import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } f
 import {
   APP_FLOW,
   NEW_WALLET,
+  TUTORIAL_FLOW,
   HOME,
   REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
@@ -70,7 +71,7 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { loadRemoteConfigAction } from 'actions/remoteConfigActions';
+import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -79,6 +80,7 @@ import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalA
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
+import { getTutorialDataAction } from 'actions/cmsActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -242,8 +244,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // all the calls below require user to be online
     if (!isOnline) return;
 
-    dispatch(loadRemoteConfigAction());
-
     // user might not be registered at this point
     if (walletId) {
       await dispatch(loadSupportedAssetsAction());
@@ -274,6 +274,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // check if wallet backup warning toast needed, balance can only be retrieved online
     dispatch(checkForWalletBackupToastAction());
+
+    dispatch(loadRemoteConfigWithUserPropertiesAction());
   };
 };
 
@@ -311,13 +313,28 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
       dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     }
 
-    // check if user was referred to install the app and navigate accordingly
-    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
-    navigate(NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName }),
-    }));
+    await dispatch(getTutorialDataAction());
+
+    const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
+    const BASIC_FLOW = tutorialData ? TUTORIAL_FLOW : HOME;
+
+    if (tutorialData && referralToken) {
+      // show Tutorial first, then navigate to Referral flow when it's finished/skipped
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: { nextNavigationRouteName: REFERRAL_INCOMING_REWARD },
+        action: NavigationActions.navigate({ routeName: TUTORIAL_FLOW }),
+      }));
+    } else {
+      // check if user was referred to install the app and navigate accordingly
+      const routeName = referralToken ? REFERRAL_INCOMING_REWARD : BASIC_FLOW;
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName }),
+      }));
+    }
+
 
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };

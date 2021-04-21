@@ -31,11 +31,13 @@ import {
   SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
+  SET_TUTORIAL_DATA,
 } from 'constants/onboardingConstants';
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
 import type { User } from 'models/User';
+import type { TutorialDataObject } from 'models/CMSData';
 
 
 export type OnboardingReducerState = {
@@ -49,6 +51,7 @@ export type OnboardingReducerState = {
   isPortalRecovery: boolean,
   usernameRegistrationFailed: boolean,
   isFinishingOnboarding: boolean,
+  tutorialData: ?TutorialDataObject,
 };
 
 export type OnboardingReducerAction = {
@@ -67,6 +70,7 @@ export const initialState = {
   isPortalRecovery: false,
   usernameRegistrationFailed: false,
   isFinishingOnboarding: false,
+  tutorialData: null,
 };
 
 export default function onboardingReducer(
@@ -132,6 +136,11 @@ export default function onboardingReducer(
       return {
         ...state,
         isFinishingOnboarding: action.payload,
+      };
+    case SET_TUTORIAL_DATA:
+      return {
+        ...state,
+        tutorialData: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

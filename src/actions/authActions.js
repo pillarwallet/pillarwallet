@@ -42,6 +42,7 @@ import {
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
 import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
@@ -91,7 +92,7 @@ import {
 import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { loadRemoteConfigAction } from './remoteConfigActions';
+import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
@@ -109,6 +110,7 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
+import { getTutorialDataAction } from './cmsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -147,7 +149,11 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
+      appSettings: {
+        data: {
+          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted, hasSeenTutorial,
+        },
+      },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -264,7 +270,7 @@ export const loginAction = (
 
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
-        dispatch(loadRemoteConfigAction());
+        dispatch(loadRemoteConfigWithUserPropertiesAction());
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
@@ -330,11 +336,13 @@ export const loginAction = (
         routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
+      if (!hasSeenTutorial) await dispatch(getTutorialDataAction());
+      const { onboarding: { tutorialData } } = getState();
 
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: navigateToLastActiveScreen,
+        action: tutorialData ? NavigationActions.navigate({ routeName: TUTORIAL_FLOW }) : navigateToLastActiveScreen,
       });
 
       if (!initialDeeplinkExecuted) {
