@@ -25,16 +25,19 @@ import styled from 'styled-components/native';
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import Button from 'components/Button';
+import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import { MENU, ASSETS, CONNECT_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
+import { ASSETS, MENU, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useUser } from 'selectors/user';
 
+// Local
 import BalanceSection from './BalanceSection';
+import FloatingActions from './FloatingActions';
 
 function Home() {
   const navigation = useNavigation();
@@ -47,25 +50,25 @@ function Home() {
         leftItems={[
           {
             icon: 'hamburger',
-            onPress: () => navigation.navigate(MENU),
             iconProps: { secondary: true, style: { marginLeft: -4 } },
+            onPress: () => navigation.navigate(MENU),
           },
         ]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
         navigation={navigation}
         noPaddingTop
       />
-      <Content>
+      <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
         <BalanceSection />
 
         {/* Temporary navigation section */}
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Assets" onPress={() => navigation.navigate(ASSETS)} secondary />
         {/* eslint-disable-next-line i18next/no-literal-string */}
-        <NavButton title="Wallet Connect" onPress={() => navigation.navigate(CONNECT_FLOW)} secondary />
-        {/* eslint-disable-next-line i18next/no-literal-string */}
         <NavButton title="Sevices" onPress={() => navigation.navigate(SERVICES_FLOW)} secondary />
       </Content>
+
+      <FloatingActions />
     </Container>
   );
 }

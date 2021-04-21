@@ -33,7 +33,7 @@ import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { useRootSelector, activeAccountSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -72,3 +72,9 @@ export const isActiveAccountSmartWalletSelector = createSelector(
     return activeAccount && checkIfSmartWalletAccount(activeAccount);
   },
 );
+
+export const useSmartWalletStatus = (): SmartWalletStatus => {
+  const accounts = useRootSelector(root => root.accounts.data);
+  const smartWalletState = useRootSelector((root) => root.smartWallet);
+  return getSmartWalletStatus(accounts, smartWalletState);
+};

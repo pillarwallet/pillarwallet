@@ -39305,70 +39305,100 @@ exports[`Storyshots FloatingButtons 1 item 1`] = `
     }
   >
     <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
       style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "elevation": 6,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
       }
-      testID="FloatingButtonItem"
     >
       <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
         }
+        testID="FloatingButtonItem"
       >
         <View
-          name="add-contact"
           style={
             Array [
               Object {
-                "color": "#0A1427",
-                "fontSize": 24,
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
               },
             ]
           }
-        />
+        >
+          <View
+            name="add-contact"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Object {
+                "color": "#0A1427",
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
+            ]
+          }
+        >
+          Add contact
+        </Text>
       </View>
-      <Text
-        regular={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
-        }
-      >
-        Add contact
-      </Text>
     </View>
   </View>
 </View>
@@ -39394,136 +39424,174 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
     }
   >
     <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
       style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "elevation": 6,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
       }
-      testID="FloatingButtonItem"
     >
       <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
         }
+        testID="FloatingButtonItem"
       >
         <View
-          name="add-contact"
           style={
             Array [
               Object {
-                "color": "#0A1427",
-                "fontSize": 24,
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
               },
             ]
           }
-        />
-      </View>
-      <Text
-        regular={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
-        }
-      >
-        Add contact
-      </Text>
-    </View>
-    <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
-      }
-      testID="FloatingButtonItem"
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
-        }
-      >
-        <View
-          name="plus"
+        >
+          <View
+            name="add-contact"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
           style={
             Array [
               Object {
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Object {
                 "color": "#0A1427",
-                "fontSize": 24,
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
+            ]
+          }
+        >
+          Add contact
+        </Text>
+      </View>
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
+        }
+        testID="FloatingButtonItem"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
               },
             ]
           }
-        />
+        >
+          <View
+            name="plus"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Object {
+                "color": "#0A1427",
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
+            ]
+          }
+        >
+          Invite friend
+        </Text>
       </View>
-      <Text
-        regular={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
-        }
-      >
-        Invite friend
-      </Text>
     </View>
   </View>
 </View>
@@ -39549,202 +39617,248 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
     }
   >
     <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
       style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "elevation": 6,
+            "flexDirection": "row",
+            "paddingHorizontal": 10,
+            "shadowColor": "#000",
+            "shadowOffset": Object {
+              "height": 8,
+              "width": 0,
+            },
+            "shadowOpacity": 0.05,
+            "shadowRadius": 16,
+          },
+        ]
       }
-      testID="FloatingButtonItem"
     >
       <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
         }
+        testID="FloatingButtonItem"
       >
         <View
-          name="add-contact"
           style={
             Array [
               Object {
-                "color": "#0A1427",
-                "fontSize": 24,
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
               },
             ]
           }
-        />
-      </View>
-      <Text
-        regular={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
-        }
-      >
-        Add contact
-      </Text>
-    </View>
-    <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
-      }
-      testID="FloatingButtonItem"
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
-        }
-      >
-        <View
-          name="plus"
+        >
+          <View
+            name="add-contact"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
           style={
             Array [
               Object {
-                "color": "#0A1427",
-                "fontSize": 24,
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
               },
+              Object {
+                "color": "#0A1427",
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
             ]
           }
-        />
+        >
+          Add contact
+        </Text>
       </View>
-      <Text
-        regular={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
-        }
-      >
-        Invite friend
-      </Text>
-    </View>
-    <View
-      accessible={true}
-      focusable={false}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "opacity": 1,
-          "paddingBottom": 12,
-          "paddingHorizontal": 12,
-          "paddingTop": 16,
-        }
-      }
-      testID="FloatingButtonItem"
-    >
       <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexBasis": 0,
-              "flexGrow": 1,
-              "flexShrink": 1,
-              "justifyContent": "center",
-              "marginHorizontal": 24,
-            },
-          ]
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
         }
+        testID="FloatingButtonItem"
       >
         <View
-          name="paperPlane"
           style={
             Array [
               Object {
-                "color": "#0A1427",
-                "fontSize": 24,
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
               },
             ]
           }
-        />
+        >
+          <View
+            name="plus"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Object {
+                "color": "#0A1427",
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
+            ]
+          }
+        >
+          Invite friend
+        </Text>
       </View>
-      <Text
-        regular={true}
+      <View
+        accessible={true}
+        focusable={false}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "marginTop": 4,
-              "textAlign": "center",
-              "textAlignVertical": "center",
-            },
-          ]
+          Object {
+            "alignItems": "center",
+            "opacity": 1,
+            "paddingBottom": 12,
+            "paddingHorizontal": 12,
+            "paddingTop": 16,
+          }
         }
+        testID="FloatingButtonItem"
       >
-        Send
-      </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginHorizontal": 24,
+              },
+            ]
+          }
+        >
+          <View
+            name="paperPlane"
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 24,
+                },
+              ]
+            }
+          />
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Object {
+                "color": "#0A1427",
+              },
+              Object {
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              false,
+              Array [
+                Object {
+                  "marginTop": 6,
+                  "textAlign": "center",
+                },
+              ],
+            ]
+          }
+        >
+          Send
+        </Text>
+      </View>
     </View>
   </View>
 </View>
@@ -39954,202 +40068,248 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
         </View>
       </RCTScrollView>
       <View
-        accessible={true}
-        focusable={false}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
-          Object {
-            "alignItems": "center",
-            "opacity": 1,
-            "paddingBottom": 12,
-            "paddingHorizontal": 12,
-            "paddingTop": 16,
-          }
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 20,
+              "elevation": 6,
+              "flexDirection": "row",
+              "paddingHorizontal": 10,
+              "shadowColor": "#000",
+              "shadowOffset": Object {
+                "height": 8,
+                "width": 0,
+              },
+              "shadowOpacity": 0.05,
+              "shadowRadius": 16,
+            },
+          ]
         }
-        testID="FloatingButtonItem"
       >
         <View
+          accessible={true}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "flexBasis": 0,
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginHorizontal": 24,
-              },
-            ]
+            Object {
+              "alignItems": "center",
+              "opacity": 1,
+              "paddingBottom": 12,
+              "paddingHorizontal": 12,
+              "paddingTop": 16,
+            }
           }
+          testID="FloatingButtonItem"
         >
           <View
-            name="add-contact"
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
+                  "alignItems": "center",
+                  "flexBasis": 0,
+                  "flexGrow": 1,
+                  "flexShrink": 1,
+                  "justifyContent": "center",
+                  "marginHorizontal": 24,
                 },
               ]
             }
-          />
-        </View>
-        <Text
-          regular={true}
-          style={
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Regular",
-                "fontSize": 14,
-                "lineHeight": 22,
-                "marginTop": 4,
-                "textAlign": "center",
-                "textAlignVertical": "center",
-              },
-            ]
-          }
-        >
-          Add contact
-        </Text>
-      </View>
-      <View
-        accessible={true}
-        focusable={false}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "opacity": 1,
-            "paddingBottom": 12,
-            "paddingHorizontal": 12,
-            "paddingTop": 16,
-          }
-        }
-        testID="FloatingButtonItem"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "flexBasis": 0,
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginHorizontal": 24,
-              },
-            ]
-          }
-        >
-          <View
-            name="plus"
+          >
+            <View
+              name="add-contact"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                  },
+                ]
+              }
+            />
+          </View>
+          <Text
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
                 },
+                Object {
+                  "color": "#0A1427",
+                },
+                Object {
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                false,
+                Array [
+                  Object {
+                    "marginTop": 6,
+                    "textAlign": "center",
+                  },
+                ],
               ]
             }
-          />
+          >
+            Add contact
+          </Text>
         </View>
-        <Text
-          regular={true}
-          style={
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Regular",
-                "fontSize": 14,
-                "lineHeight": 22,
-                "marginTop": 4,
-                "textAlign": "center",
-                "textAlignVertical": "center",
-              },
-            ]
-          }
-        >
-          Invite friend
-        </Text>
-      </View>
-      <View
-        accessible={true}
-        focusable={false}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "opacity": 1,
-            "paddingBottom": 12,
-            "paddingHorizontal": 12,
-            "paddingTop": 16,
-          }
-        }
-        testID="FloatingButtonItem"
-      >
         <View
+          accessible={true}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "flexBasis": 0,
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginHorizontal": 24,
-              },
-            ]
+            Object {
+              "alignItems": "center",
+              "opacity": 1,
+              "paddingBottom": 12,
+              "paddingHorizontal": 12,
+              "paddingTop": 16,
+            }
           }
+          testID="FloatingButtonItem"
         >
           <View
-            name="paperPlane"
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
+                  "alignItems": "center",
+                  "flexBasis": 0,
+                  "flexGrow": 1,
+                  "flexShrink": 1,
+                  "justifyContent": "center",
+                  "marginHorizontal": 24,
                 },
               ]
             }
-          />
+          >
+            <View
+              name="plus"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                  },
+                ]
+              }
+            />
+          </View>
+          <Text
+            style={
+              Array [
+                Object {
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Object {
+                  "color": "#0A1427",
+                },
+                Object {
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                false,
+                Array [
+                  Object {
+                    "marginTop": 6,
+                    "textAlign": "center",
+                  },
+                ],
+              ]
+            }
+          >
+            Invite friend
+          </Text>
         </View>
-        <Text
-          regular={true}
+        <View
+          accessible={true}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
           style={
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Regular",
-                "fontSize": 14,
-                "lineHeight": 22,
-                "marginTop": 4,
-                "textAlign": "center",
-                "textAlignVertical": "center",
-              },
-            ]
+            Object {
+              "alignItems": "center",
+              "opacity": 1,
+              "paddingBottom": 12,
+              "paddingHorizontal": 12,
+              "paddingTop": 16,
+            }
           }
+          testID="FloatingButtonItem"
         >
-          Send
-        </Text>
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexBasis": 0,
+                  "flexGrow": 1,
+                  "flexShrink": 1,
+                  "justifyContent": "center",
+                  "marginHorizontal": 24,
+                },
+              ]
+            }
+          >
+            <View
+              name="paperPlane"
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                  },
+                ]
+              }
+            />
+          </View>
+          <Text
+            style={
+              Array [
+                Object {
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Object {
+                  "color": "#0A1427",
+                },
+                Object {
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                false,
+                Array [
+                  Object {
+                    "marginTop": 6,
+                    "textAlign": "center",
+                  },
+                ],
+              ]
+            }
+          >
+            Send
+          </Text>
+        </View>
       </View>
     </View>
   </View>
