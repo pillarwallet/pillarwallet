@@ -67,7 +67,6 @@ import { getColorByTheme, getThemeColors } from 'utils/themes';
 // partials
 import AssetsList from './AssetsList';
 
-
 type Props = {
   baseFiatCurrency: ?string,
   collectibles: Collectible[],
@@ -92,236 +91,202 @@ type Props = {
   activeAccountAddress: string,
 };
 
-type State = {
-  query: string,
-  activeTab: string,
-  hideInsightForSearch: boolean,
-};
-
 const MIN_QUERY_LENGTH = 2;
 
-const ListWrapper = styled.View`
-  flexGrow: 1;
-`;
+function WalletView({
+  accounts,
+  smartWalletState,
+  collectibles,
+  fetchAssetsBalances,
+  fetchAllCollectiblesData,
+  navigation,
+  showInsight,
+  hideInsight,
+  insightList = [],
+  insightsTitle,
+  rates,
+  balances,
+  baseFiatCurrency,
+  showDeploySmartWallet,
+  theme,
+  dismissSmartWalletInsight,
+  SWInsightDismissed,
+  onScroll,
+  activeAccountAddress,
+}: Props) {
+  const [query, setQuery] = React.useState('');
+  const [activeTab, setActiveTab] = React.useState(TOKENS);
+  const [hideInsightForSearch, setHideInsightForSearch] = React.useState(false);
 
-const TopWrapper = styled.View`
-  background-color: ${({ theme }) => theme.colors.basic070};
-  margin-bottom: 8px;
-`;
-
-const ActionsWrapper = styled(Wrapper)`
-  margin: 30px 0;
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
-`;
-
-
-class WalletView extends React.Component<Props, State> {
-  state = {
-    query: '',
-    activeTab: TOKENS,
-    hideInsightForSearch: false,
+  const handleSearchChange = (value: string) => {
+    setQuery(!value ? '' : value.trim());
   };
 
-  handleSearchChange = (query: string) => {
-    const formattedQuery = !query ? '' : query.trim();
-
-    this.setState({
-      query: formattedQuery,
-    });
-  };
-
-  setActiveTab = (activeTab) => {
-    this.setState({ activeTab });
-  };
-
-  shouldBlockAssetsView = () => {
-    const { accounts, smartWalletState } = this.props;
+  const shouldBlockAssetsView = () => {
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const deploymentData = getDeploymentData(smartWalletState);
-    return !isEmpty(sendingBlockedMessage)
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
-      && !deploymentData.error;
+    return (
+      !isEmpty(sendingBlockedMessage) &&
+      smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED &&
+      !deploymentData.error
+    );
   };
 
-  isInSearchAndFocus = () => {
-    const { hideInsightForSearch } = this.state;
-    return hideInsightForSearch || this.isInSearchMode();
+  const isInSearchAndFocusFn = () => {
+    return hideInsightForSearch || isInSearchModeFn();
   };
 
-  isInSearchMode = () => this.state.query && this.state.query.length >= MIN_QUERY_LENGTH;
+  const isInSearchModeFn = () => query && query.length >= MIN_QUERY_LENGTH;
 
-  getFilteredCollectibles = () => {
-    const { collectibles } = this.props;
-    if (!this.isInSearchMode()) return collectibles;
-    return collectibles.filter(({ name }) => name.toUpperCase().includes(this.state.query.toUpperCase()));
+  const getFilteredCollectibles = () => {
+    if (!isInSearchModeFn()) return collectibles;
+    return collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()));
   };
 
-  getAssetTab = (id: string, name: string, onPress: () => void) => ({ id, name, onPress });
+  const getAssetTab = (id: string, name: string, onPress: () => void) => ({ id, name, onPress });
 
-  getAssetTabs = () => [
-    this.getAssetTab(TOKENS, t('smartWalletContent.tabs.tokens.title'), () => this.setActiveTab(TOKENS)),
-    this.getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'),
-      () => this.setActiveTab(COLLECTIBLES)),
+  const getAssetTabs = () => [
+    getAssetTab(TOKENS, t('smartWalletContent.tabs.tokens.title'), () => setActiveTab(TOKENS)),
+    getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'), () =>
+      setActiveTab(COLLECTIBLES),
+    ),
   ];
 
-  isAllInsightListDone = () => !this.props.insightList.some(({ status, key }) => !status && key !== 'biometric');
+  const isAllInsightListDone = () => !insightList.some(({ status, key }) => !status && key !== 'biometric');
 
-  renderRefreshControl = () => (
+  const renderRefreshControl = () => (
     <RefreshControl
       refreshing={false}
       onRefresh={() => {
-        this.props.fetchAssetsBalances();
-        this.props.fetchAllCollectiblesData();
+        fetchAssetsBalances();
+        fetchAllCollectiblesData();
       }}
     />
   );
 
-  handleCollectiblePress = (collectible: Collectible) => {
-    const { navigation } = this.props;
+  const handleCollectiblePress = (collectible: Collectible) => {
     navigation.navigate(COLLECTIBLE, { assetData: collectible });
   };
 
-  render() {
-    const { query, activeTab } = this.state;
-    const {
-      navigation,
-      showInsight,
-      hideInsight,
-      insightList = [],
-      insightsTitle,
-      rates,
-      balances,
-      baseFiatCurrency,
-      accounts,
-      smartWalletState,
-      showDeploySmartWallet,
-      theme,
-      dismissSmartWalletInsight,
-      SWInsightDismissed,
-      onScroll,
-      activeAccountAddress,
-    } = this.props;
-    const colors = getThemeColors(theme);
+  const colors = getThemeColors(theme);
 
-    // SEARCH
-    const isInSearchMode = this.isInSearchMode();
+  // SEARCH
+  const isInSearchMode = isInSearchModeFn();
 
-    const balance = getTotalBalanceInFiat(balances, rates, baseFiatCurrency || defaultFiatCurrency);
+  const balance = getTotalBalanceInFiat(balances, rates, baseFiatCurrency || defaultFiatCurrency);
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
-    const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
-    const deploymentData = getDeploymentData(smartWalletState);
+  const hasSmartWallet = smartWalletStatus.hasAccount;
+  const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
+  const deploymentData = getDeploymentData(smartWalletState);
 
-    const blockAssetsView = this.shouldBlockAssetsView();
+  const blockAssetsView = shouldBlockAssetsView();
 
-    const isInSearchAndFocus = this.isInSearchAndFocus();
-    const isInsightVisible = showInsight && !this.isAllInsightListDone() && !isInSearchAndFocus;
-    const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
+  const isInSearchAndFocus = isInSearchAndFocusFn();
+  const isInsightVisible = showInsight && !isAllInsightListDone() && !isInSearchAndFocus;
+  const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
 
-    const ScrollComponent = Platform.OS === 'ios' ? ScrollWrapper : ScrollView;
+  const ScrollComponent = Platform.OS === 'ios' ? ScrollWrapper : ScrollView;
 
-    return (
-      <ScrollComponent
-        stickyHeaderIndices={[1]}
-        refreshControl={this.renderRefreshControl()}
-        onScroll={onScroll}
-        keyboardShouldPersistTaps="always"
-      >
-        <>
-          <Insight
-            isVisible={isInsightVisible}
-            title={insightsTitle}
-            insightChecklist={insightList}
-            onClose={() => { hideInsight(); }}
-            wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-          />
-          {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
-          {!deploymentData.error && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
-            SWInsightDismissed ?
-              <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
-              : (
-                <InsightWithButton
-                  title={t('insight.smartWalletIntro.title')}
-                  description={t('insight.smartWalletIntro.description.intro')}
-                  itemsList={[
-                    t('insight.smartWalletIntro.description.recovery'),
-                    t('insight.smartWalletIntro.description.accessToPPN'),
-                    t('insight.smartWalletIntro.description.multipleKeys'),
-                  ]}
-                  buttonTitle={t('insight.smartWalletIntro.button.ok')}
-                  onButtonPress={dismissSmartWalletInsight}
-                />
-              )
-            )
-          }
-        </>
-        {!blockAssetsView &&
+  return (
+    <ScrollComponent
+      stickyHeaderIndices={[1]}
+      refreshControl={renderRefreshControl()}
+      onScroll={onScroll}
+      keyboardShouldPersistTaps="always"
+    >
+      <>
+        <Insight
+          isVisible={isInsightVisible}
+          title={insightsTitle}
+          insightChecklist={insightList}
+          onClose={() => {
+            hideInsight();
+          }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+        />
+        {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
+        {!deploymentData.error &&
+          !blockAssetsView &&
+          !isInSearchAndFocus &&
+          showDeploySmartWallet &&
+          (SWInsightDismissed ? (
+            <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
+          ) : (
+            <InsightWithButton
+              title={t('insight.smartWalletIntro.title')}
+              description={t('insight.smartWalletIntro.description.intro')}
+              itemsList={[
+                t('insight.smartWalletIntro.description.recovery'),
+                t('insight.smartWalletIntro.description.accessToPPN'),
+                t('insight.smartWalletIntro.description.multipleKeys'),
+              ]}
+              buttonTitle={t('insight.smartWalletIntro.button.ok')}
+              onButtonPress={dismissSmartWalletInsight}
+            />
+          ))}
+      </>
+      {!blockAssetsView && (
         <TopWrapper>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
+            onPress={() => navigation.navigate(ASSET_SEARCH)}
             disabled={activeTab === COLLECTIBLES}
           >
             <SearchBlock
               hideSearch={blockAssetsView}
-              searchInputPlaceholder={
-                activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
-              }
-              onSearchChange={this.handleSearchChange}
+              searchInputPlaceholder={activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')}
+              onSearchChange={handleSearchChange}
               wrapperStyle={{
                 marginBottom: searchMarginBottom,
               }}
-              onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
-              onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
+              onSearchFocus={() => setHideInsightForSearch(true)}
+              onSearchBlur={() => setHideInsightForSearch(false)}
               itemSearchState={!!isInSearchMode}
               navigation={navigation}
               disabled={activeTab === TOKENS}
             />
           </TouchableOpacity>
-          {!isInSearchAndFocus &&
-            <Tabs
-              tabs={this.getAssetTabs()}
-              wrapperStyle={{ paddingTop: 22 }}
-              activeTab={activeTab}
-            />
-          }
-        </TopWrapper>
-        }
-        {!blockAssetsView &&
-        <ListWrapper>
-          {activeTab === TOKENS && (
-            <AssetsList balance={balance} />
+          {!isInSearchAndFocus && (
+            <Tabs tabs={getAssetTabs()} wrapperStyle={{ paddingTop: 22 }} activeTab={activeTab} />
           )}
+        </TopWrapper>
+      )}
+      {!blockAssetsView && (
+        <ListWrapper>
+          {activeTab === TOKENS && <AssetsList balance={balance} />}
           {activeTab === COLLECTIBLES && (
             <CollectiblesList
-              collectibles={this.getFilteredCollectibles()}
-              onCollectiblePress={this.handleCollectiblePress}
+              collectibles={getFilteredCollectibles()}
+              onCollectiblePress={handleCollectiblePress}
               isSearching={query.length >= MIN_QUERY_LENGTH}
             />
           )}
-          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
-          <ActionsWrapper>
-            {!balance && !!activeAccountAddress && (
-              <ListItemChevron
-                label={t('button.buyTokensWithCreditCard')}
-                onPress={() => { navigation.navigate(SERVICES); }}
-                bordered
-                addon={(<LabelBadge label={t('badgeText.new')} />)}
-              />
-            )}
-          </ActionsWrapper>}
-        </ListWrapper>}
-      </ScrollComponent>
-    );
-  }
+          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) && (
+            <ActionsWrapper>
+              {!balance && !!activeAccountAddress && (
+                <ListItemChevron
+                  label={t('button.buyTokensWithCreditCard')}
+                  onPress={() => {
+                    navigation.navigate(SERVICES);
+                  }}
+                  bordered
+                  addon={<LabelBadge label={t('badgeText.new')} />}
+                />
+              )}
+            </ActionsWrapper>
+          )}
+        </ListWrapper>
+      )}
+    </ScrollComponent>
+  );
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
   rates: { data: rates },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
@@ -352,3 +317,19 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));
+
+const ListWrapper = styled.View`
+  flex-grow: 1;
+`;
+
+const TopWrapper = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+  margin-bottom: 8px;
+`;
+
+const ActionsWrapper = styled(Wrapper)`
+  margin: 30px 0;
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-top-width: ${StyleSheet.hairlineWidth}px;
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
+`;
