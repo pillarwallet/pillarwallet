@@ -63,8 +63,6 @@ const VIEWS = {
 function AssetsScreen() {
   const navigation = useNavigation();
 
-  const [showSmartWalletInsight, setShowSmartWalletInsight] = React.useState(false);
-
   const accounts = useRootSelector((root) => root.accounts.data);
   const assets = useRootSelector(accountAssetsSelector);
   const assetsState = useRootSelector((root) => root.assets.assetsState);
@@ -179,8 +177,6 @@ function AssetsScreen() {
       case VIEWS.SMART_WALLET_VIEW:
         return (
           <WalletView
-            showInsight={showSmartWalletInsight}
-            hideInsight={() => setShowSmartWalletInsight(false)}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />

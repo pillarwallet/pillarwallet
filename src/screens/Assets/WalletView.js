@@ -29,7 +29,6 @@ import t from 'translations/translate';
 // Components
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import Tabs from 'components/Tabs';
-import Insight from 'components/Insight';
 import InsightWithButton from 'components/InsightWithButton';
 import SearchBlock from 'components/SearchBlock';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
@@ -55,7 +54,7 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 // Utils
 import { getTotalBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { useThemeColors, getColorByTheme } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 
 // Types
 import type { Collectible } from 'models/Collectible';
@@ -65,11 +64,6 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import AssetsList from './AssetsList';
 
 type Props = {
-  activeTab: string,
-  showInsight: boolean,
-  hideInsight: () => void,
-  insightList: Object[],
-  insightsTitle: string,
   showDeploySmartWallet?: boolean,
   onScroll: (event: Object) => void,
 };
@@ -77,10 +71,6 @@ type Props = {
 const MIN_QUERY_LENGTH = 2;
 
 function WalletView({
-  showInsight,
-  hideInsight,
-  insightList = [],
-  insightsTitle,
   showDeploySmartWallet,
   onScroll,
 }: Props) {
@@ -100,8 +90,6 @@ function WalletView({
   const balances = useRootSelector(accountBalancesSelector);
 
   const dispatch = useDispatch();
-
-  const colors = useThemeColors();
 
   const handleSearchChange = (value: string) => {
     setQuery(!value ? '' : value.trim());
@@ -136,8 +124,6 @@ function WalletView({
     getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'), () => setActiveTab(COLLECTIBLES)),
   ];
 
-  const isAllInsightListDone = () => !insightList.some(({ status, key }) => !status && key !== 'biometric');
-
   const renderRefreshControl = () => (
     <RefreshControl
       refreshing={false}
@@ -166,7 +152,6 @@ function WalletView({
   const blockAssetsView = shouldBlockAssetsView();
 
   const isInSearchAndFocus = isInSearchAndFocusFn();
-  const isInsightVisible = showInsight && !isAllInsightListDone() && !isInSearchAndFocus;
   const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
 
   const ScrollComponent = Platform.OS === 'ios' ? ScrollWrapper : ScrollView;
@@ -190,6 +175,7 @@ function WalletView({
               disabled={activeTab === TOKENS}
             />
           </TouchableOpacity>
+
           {!isInSearchAndFocus && (
             <Tabs tabs={getAssetTabs()} wrapperStyle={{ paddingTop: 22 }} activeTab={activeTab} />
           )}
@@ -231,16 +217,6 @@ function WalletView({
       keyboardShouldPersistTaps="always"
     >
       <>
-        <Insight
-          isVisible={isInsightVisible}
-          title={insightsTitle}
-          insightChecklist={insightList}
-          onClose={() => {
-            hideInsight();
-          }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-        />
-
         {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
 
         {!deploymentData.error &&
