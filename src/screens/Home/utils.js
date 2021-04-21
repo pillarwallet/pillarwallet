@@ -21,7 +21,6 @@
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import {
-  totalBalanceSelector,
   walletBalanceSelector,
   depositsBalanceSelector,
   investmentsBalanceSelector,
