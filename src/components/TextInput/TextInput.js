@@ -136,7 +136,7 @@ const ButtonWrapper = styled.View`
 `;
 
 const LeftSideWrapper = styled.View`
-  padding-left: 14px;
+  padding-left: 16px;
   flex-direction: row;
   align-items: center;
 `;
@@ -163,7 +163,6 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -479,7 +478,7 @@ class TextInput extends React.Component<Props, State> {
     const { genericToken } = images(theme);
     if (fallbackToGenericToken) fallbackSource = genericToken;
 
-    let inputHeight = 54;
+    let inputHeight = 62;
     if (customInputHeight) {
       inputHeight = customInputHeight;
     } else if (multiline) {

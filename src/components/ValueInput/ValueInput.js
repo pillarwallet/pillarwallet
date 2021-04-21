@@ -188,6 +188,7 @@ export const ValueInputComponent = ({
   };
 
   const handleUsePercent = async (percent: number) => {
+    Keyboard.dismiss();
     let newTxFeeInfo = txFeeInfo;
     if (updateTxFee) {
       newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
@@ -219,7 +220,7 @@ export const ValueInputComponent = ({
 
   const openAssetSelector = () => {
     Keyboard.dismiss();
-
+    onValueChange('0');
     Modal.open(() => (
       <AssetSelectorOptions
         options={assetsOptions}
