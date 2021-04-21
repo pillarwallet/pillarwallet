@@ -34,8 +34,6 @@ import { useRootSelector } from 'selectors';
 import { totalBalanceSelector } from 'selectors/balances';
 import { useSmartWalletStatus } from 'selectors/smartWallet';
 
-const walletConnectIcon = require('assets/icons/icon-24-wallet-connect.png');
-
 function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
   const navigation = useNavigation();
@@ -57,7 +55,7 @@ function FloatingActions() {
     },
     {
       title: t('connect'),
-      iconSource: walletConnectIcon,
+      iconName: 'wallet-connect',
       onPress: () => navigation.navigate(CONNECT_FLOW),
     },
   ];

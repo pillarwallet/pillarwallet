@@ -23,6 +23,7 @@ node_modules/warning/.*
 .*/node_modules/@react-native-community/cli/.*/.*
 
 ; ;;; custom untyped start ;;;
+<PROJECT_ROOT>/metro.config.js
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 <PROJECT_ROOT>/node_modules/react-native-camera/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*

@@ -39359,19 +39359,7 @@ exports[`Storyshots FloatingButtons 1 item 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="add-contact"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -39478,19 +39466,7 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="add-contact"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -39552,19 +39528,7 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="plus"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -39671,19 +39635,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="add-contact"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -39745,19 +39697,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="plus"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -39819,19 +39759,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
               },
             ]
           }
-        >
-          <View
-            name="paperPlane"
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontSize": 24,
-                },
-              ]
-            }
-          />
-        </View>
+        />
         <Text
           style={
             Array [
@@ -40122,19 +40050,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
                 },
               ]
             }
-          >
-            <View
-              name="add-contact"
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 24,
-                  },
-                ]
-              }
-            />
-          </View>
+          />
           <Text
             style={
               Array [
@@ -40196,19 +40112,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
                 },
               ]
             }
-          >
-            <View
-              name="plus"
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 24,
-                  },
-                ]
-              }
-            />
-          </View>
+          />
           <Text
             style={
               Array [
@@ -40270,19 +40174,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
                 },
               ]
             }
-          >
-            <View
-              name="paperPlane"
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 24,
-                  },
-                ]
-              }
-            />
-          </View>
+          />
           <Text
             style={
               Array [

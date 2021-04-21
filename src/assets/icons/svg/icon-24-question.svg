@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>76E5E636-2D0C-4439-B0BC-D89CCE47EFDC</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icons/2" transform="translate(-253.000000, -141.000000)">
+            <g id="Row" transform="translate(0.000000, 131.726562)">
+                <g id="Icons/24/help-circle/filled/new" transform="translate(253.000000, 10.000000)">
+                    <path d="M12,24 C5.372583,24 0,18.627417 0,12 C0,5.372583 5.372583,0 12,0 C18.627417,0 24,5.372583 24,12 C24,18.627417 18.627417,24 12,24 Z" id="Path" fill="#000" fill-rule="nonzero"></path>
+                    <line x1="12" y1="17.495" x2="12" y2="17.505" id="Path" stroke="#FCFDFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <path d="M12.1407219,13 C12.1002376,12.2849715 12.5366168,11.6292792 13.2110828,11.3917025 C14.3143021,10.9690923 15.0310343,9.89492421 14.9989664,8.71219747 C14.9668985,7.52947072 14.1930169,6.49585732 13.068524,6.13385581 C11.9440311,5.7718543 10.7139119,6.1603313 10,7.10290907" id="Path" stroke="#FCFDFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

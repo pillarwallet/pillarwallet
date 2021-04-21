@@ -99,7 +99,7 @@ function AssetsSection({ showSideChains }: Props) {
         {chainInfo.collectibles != null && (
           <HomeListItem
             title={tRoot('assetCategories.collectibles')}
-            iconName="wallet"
+            iconName="collectible"
             onPress={() => navigation.navigate(ASSETS)}
             value={formattedCollectibles}
           />
@@ -108,14 +108,14 @@ function AssetsSection({ showSideChains }: Props) {
         {chainInfo.contacts != null && (
           <HomeListItem
             title={t('contacts')}
-            iconName="wallet"
+            iconName="contacts"
             onPress={() => navigation.navigate(CONTACTS_FLOW)}
             value={formattedContacts}
           />
         )}
 
         {/* Temporary entry until other UI provided */}
-        <HomeListItem title={t('services')} iconName="wallet" onPress={() => navigation.navigate(SERVICES_FLOW)} />
+        <HomeListItem title={t('services')} iconName="info" onPress={() => navigation.navigate(SERVICES_FLOW)} />
       </>
     );
   };
@@ -123,10 +123,10 @@ function AssetsSection({ showSideChains }: Props) {
   const renderChain = (chain: Chain, chainInfo: ?ChainInfo) => {
     if (!chainInfo) return null;
 
-    const { title, iconSource, color } = chains[chain];
+    const { title, iconName, color } = chains[chain];
     return (
       <>
-        <HomeListHeader title={title} iconSource={iconSource} color={color} />
+        <HomeListHeader title={title} iconName={iconName} color={color} walletAddress={chainInfo.walletAddress} />
         {renderChainItems(chainInfo)}
       </>
     );
@@ -141,6 +141,7 @@ function AssetsSection({ showSideChains }: Props) {
       {renderChain(CHAINS.ETHEREUM, wallet.ethereum)}
       {renderChain(CHAINS.BINANCE, wallet.binance)}
       {renderChain(CHAINS.XDAI, wallet.xdai)}
+      {renderChain(CHAINS.POLYGON, wallet.xdai)}
     </Container>
   );
 }
