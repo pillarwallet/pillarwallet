@@ -41664,6 +41664,20 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
 </View>
 `;
 
+exports[`Storyshots HistoryList basic transactions 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+/>
+`;
+
 exports[`Storyshots InsightWithButton with list 1`] = `
 <View
   style={

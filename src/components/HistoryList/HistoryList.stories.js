@@ -21,19 +21,21 @@
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import { storiesOf } from '@storybook/react-native';
-import { useTheme, ThemeProvider } from 'styled-components/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Types
 import { type Event, TRANSACTION_STATUS } from 'models/History';
 
 import HistoryList from './HistoryList';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const stories = storiesOf('HistoryList', module);
 
-
 stories.add('basic transactions', () => {
-  return <HistoryList items={basicItems} />;
+  return (
+    <SafeAreaProvider>
+      <HistoryList items={basicItems} />
+    </SafeAreaProvider>
+  );
 });
 
 const basicItems: Event[] = [
