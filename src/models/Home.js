@@ -36,6 +36,7 @@ export type ChainInfo = {|
   collectibles?: number,
   contacts?: number,
 |};
+
 export type BalanceInfo = {|
   balanceInFiat: BigNumber,
   changeInFiat?: BigNumber,
