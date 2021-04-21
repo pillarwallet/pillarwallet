@@ -161,10 +161,10 @@ const components = {
 export type IconName = $Keys<typeof components>;
 
 type Props = {|
-    name: string;
-    color?: string;
-    width?: number;
-    height?: number;
+  name: string,
+  color?: string,
+  width?: number,
+  height?: number,
 |};
 
 /**
