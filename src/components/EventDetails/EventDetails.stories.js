@@ -63,13 +63,13 @@ const reduxData = {
       id: '0xKeyWallet',
       type: 'KEY_BASED',
       walletId: '350145cb-b266-488e-8dda-c89d77034226',
-      isActive: true,
+      isActive: false,
     },
     {
       id: '0xSmartWallet',
       type: 'SMART_WALLET',
       walletId: 'f13c646b-435c-4bbc-ab08-4121b7319333',
-      isActive: false,
+      isActive: true,
       extra:
         {
           ensName: null,
