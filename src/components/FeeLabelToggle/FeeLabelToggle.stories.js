@@ -22,7 +22,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import { FeeLabelToggleComponent as FeeLabelToggleStoryItem } from './FeeLabelToggle';
+import { FeeLabelToggleComponent } from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
@@ -45,7 +45,7 @@ storiesOf('FeeLabelToggle', module)
   .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <FeeLabelToggleStoryItem
+    <FeeLabelToggleComponent
       {...reduxData}
       txFeeInWei="10000000000000000000"
       gasToken={{
@@ -56,7 +56,7 @@ storiesOf('FeeLabelToggle', module)
     />
   ))
   .add('not enough token', () => (
-    <FeeLabelToggleStoryItem
+    <FeeLabelToggleComponent
       {...reduxData}
       txFeeInWei="10000000000000000000"
       gasToken={{
