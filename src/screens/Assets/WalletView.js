@@ -19,29 +19,35 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
 
 // Components
 import TabView from 'components/modern/TabView';
 
-const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />;
+// Contants
+import { ASSET_CATEGORIES as CATEGORY } from 'constants/assetsConstants';
 
-const SecondRoute = () => <View style={{ flex: 1, backgroundColor: '#673ab7' }} />;
+// Utils
+import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
+// Local
+import WalletTab from './tabs/WalletTab';
+import BaseTab from './tabs/BaseTab';
 
-type Props = { };
+type Props = {};
 
 function WalletView(props: Props) {
   const [tabIndex, setTabIndex] = React.useState(0);
 
+  const config = useAssetCategoriesConfig();
+
   const items = [
-    { key: 'wallet', title: 'Wallet', component: FirstRoute },
-    { key: 'deposits', title: 'Deposits', component: SecondRoute },
-    { key: 'investments', title: 'Investments', component: FirstRoute },
-    { key: 'liquidityPools', title: 'Liquidity Pools', component: SecondRoute },
-    { key: 'collectibles', title: 'Collectibles', component: FirstRoute },
-    { key: 'rewards', title: 'Rewards', component: SecondRoute },
-    { key: 'datasets', title: 'Datasets', component: FirstRoute },
+    { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
+    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: BaseTab },
+    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: BaseTab },
+    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: BaseTab },
+    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: BaseTab },
+    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: BaseTab },
+    { key: CATEGORY.DATASETS, title: config[CATEGORY.DATASETS].title, component: BaseTab },
   ];
 
   return <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />;

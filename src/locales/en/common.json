@@ -589,6 +589,13 @@
   "history": {
     "title": "Transactions history"
   },
+  
+  "assets": {
+    "wallet": {
+      "tokens": "Tokens",
+      "addFunds": "Add funds"
+    }
+  },
 
   "badgeText": {
     "new": "NEW"
