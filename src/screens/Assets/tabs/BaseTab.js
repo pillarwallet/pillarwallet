@@ -80,7 +80,6 @@ function BaseTab() {
     <>
       <SectionList
         sections={sections}
-        keyExtractor={(item) => item.id}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom }}
@@ -100,8 +99,9 @@ type Section = {
 };
 
 type Item = {|
+  key: string,
   title: string,
-  iconUrl: string,
+  iconUrl: ?string,
   symbol: string,
   value: BigNumber,
 |};
@@ -109,10 +109,10 @@ type Item = {|
 const useChainItems = (): ChainRecord<Item[]> => {
   return {
     ethereum: [
-      { title: 'Pillar', iconUrl: '', symbol: 'PLR', value: BigNumber(14.245) },
-      { title: 'Ethereum', iconUrl: '', symbol: 'ETH', value: BigNumber(0.87) },
+      { key: '1', title: 'Pillar', iconUrl: '', symbol: 'PLR', value: BigNumber(14.245) },
+      { key: '2', title: 'Ethereum', iconUrl: '', symbol: 'ETH', value: BigNumber(0.87) },
     ],
-    xdai: [{ title: 'xDai', iconUrl: '', symbol: 'DAI', value: BigNumber(1000) }],
+    xdai: [{ key: '3', title: 'xDai', iconUrl: '', symbol: 'DAI', value: BigNumber(1000) }],
   };
 };
 

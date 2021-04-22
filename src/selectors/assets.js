@@ -27,7 +27,9 @@ import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormatt
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 
-import type { Assets, Balance, Rates, AssetOption } from 'models/Asset';
+import type { Asset, Assets, Balance, Rates, AssetOption } from 'models/Asset';
+
+import type { RootReducerState } from 'reducers/rootReducer';
 
 import {
   assetsSelector,
@@ -95,6 +97,17 @@ export const allAccountsAssetsSelector = createSelector(
       const newAssets = Object.keys(enabledAssets).filter((asset) => !memo.includes(asset));
       return [...memo, ...newAssets];
     }, []);
+  },
+);
+
+/**
+ * Returns array of assets to be used for asset data lookup.
+ */
+export const assetRegistrySelector: (RootReducerState) => Asset[] = createSelector(
+  allAccountsAssetsSelector,
+  supportedAssetsSelector,
+  (assets, supportedAssets) => {
+    return [...getAssetsAsList(assets), ...supportedAssets];
   },
 );
 

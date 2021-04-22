@@ -21,6 +21,7 @@
 /* eslint-disable object-curly-newline */
 
 import * as React from 'react';
+import { useNavigation } from 'react-navigation-hooks';
 import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -34,10 +35,18 @@ import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
+// Contants
+import { ASSET } from 'constants/navigationConstants';
+
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import {
+  useRootSelector,
+  activeAccountAddressSelector,
+} from 'selectors';
+import { visibleActiveAccountAssetsWithBalanceSelector, assetRegistrySelector } from 'selectors/assets';
 
 // Utils
+import { defaultSortAssetOptions, getAssetFromRegistry } from 'utils/assets';
 import { appFont, fontSizes, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
@@ -45,20 +54,33 @@ import { useChainsConfig } from 'utils/uiConfig';
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain, ChainRecord } from 'models/Asset';
 
+// Local
+import { buildAssetDataNavigationParam } from '../utils';
+
 function WalletTab() {
   const { t } = useTranslationWithPrefix('assets.wallet');
+  const navigation = useNavigation();
 
+  const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const items = useChainItems();
 
   const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
 
-  const showAddFunds = () => {
+  const navigateAddFunds = () => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
   };
 
-  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: showAddFunds }];
+  const navigateToAssetDetails = (item: Item) => {
+    const asset = getAssetFromRegistry(assetRegistry, item.symbol);
+    if (!asset) return;
+
+    const assetData = buildAssetDataNavigationParam(asset, { accountAddress });
+    navigation.navigate(ASSET, { assetData });
+  };
+
+  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds }];
 
   const renderSectionHeader = ({ title, chain }: Section) => {
     const chainTitle = config[chain].title;
@@ -70,7 +92,15 @@ function WalletTab() {
   };
 
   const renderItem = (item: Item) => {
-    return <AssetListItem name={item.title} iconUrl={item.iconUrl} balance={item.value} symbol={item.symbol} />;
+    return (
+      <AssetListItem
+        name={item.title}
+        iconUrl={item.iconUrl}
+        balance={item.value}
+        symbol={item.symbol}
+        onPress={() => navigateToAssetDetails(item)}
+      />
+    );
   };
 
   const sections = Object.keys(items).map((chain) => ({
@@ -84,7 +114,6 @@ function WalletTab() {
     <>
       <SectionList
         sections={sections}
-        keyExtractor={(item) => item.id}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom }}
@@ -104,20 +133,25 @@ type Section = {
 };
 
 type Item = {|
+  key: string,
   title: string,
-  iconUrl: string,
+  iconUrl: ?string,
   symbol: string,
   value: BigNumber,
 |};
 
 const useChainItems = (): ChainRecord<Item[]> => {
-  return {
-    ethereum: [
-      { title: 'Pillar', iconUrl: '', symbol: 'PLR', value: BigNumber(14.245) },
-      { title: 'Ethereum', iconUrl: '', symbol: 'ETH', value: BigNumber(0.87) },
-    ],
-    xdai: [{ title: 'xDai', iconUrl: '', symbol: 'DAI', value: BigNumber(1000) }],
-  };
+  const assets = useRootSelector(visibleActiveAccountAssetsWithBalanceSelector);
+
+  const ethereum = defaultSortAssetOptions(assets).map((asset) => ({
+    key: `ethereum-${asset.symbol}`,
+    title: asset.name,
+    iconUrl: asset.imageUrl,
+    symbol: asset.symbol,
+    value: BigNumber(asset.balance?.balance ?? 0),
+  }));
+
+  return { ethereum };
 };
 
 const SectionHeader = styled(Text)`
