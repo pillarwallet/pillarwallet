@@ -19,11 +19,16 @@
 */
 
 import * as React from 'react';
-import { Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { TabView as RNTabView, TabBar } from 'react-native-tab-view';
+import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/modern/Text';
+
+// Utils
+import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 export type TabViewItem = {|
   key: string,
@@ -42,6 +47,8 @@ type Props = {|
 function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnabled }: Props) {
   const [internalIndex, setInternalIndex] = React.useState(0);
 
+  const colors = useThemeColors();
+
   const renderScene = ({ route }: { route: TabViewItem }) => {
     return <route.component />;
   };
@@ -51,18 +58,26 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
 
   const { width } = Dimensions.get('window');
 
-  const renderTabBar = (props: mixed) => (
-    <TabBar
-      {...props}
-      scrollEnabled={scrollEnabled}
-      tabStyle={[scrollEnabled && styles.tabStyleScrollEnabled]}
-      renderLabel={({ route, focused }) => (
-        <Text numberOfLines={1} adjustsFontSizeToFit>
-          {route.title}
-        </Text>
-      )}
-    />
-  );
+  const renderTabBar = (props: mixed) => {
+    const tabBarStyle = { backgroundColor: colors.background };
+    const tabStyle = [scrollEnabled && styles.tabStyleScrollEnabled];
+
+    return (
+      <TabBar
+        {...props}
+        scrollEnabled={scrollEnabled}
+        style={tabBarStyle}
+        tabStyle={tabStyle}
+        renderLabel={({ route, focused }) => (
+          <TabLabelWrapper>
+            <Text color={focused ? colors.text : colors.secondaryText}>{route.title}</Text>
+            {focused && <TabIndicator />}
+          </TabLabelWrapper>
+        )}
+        renderIndicator={() => null}
+      />
+    );
+  };
 
   return (
     <RNTabView
@@ -85,3 +100,15 @@ const styles = {
     width: 'auto',
   },
 };
+
+const TabLabelWrapper = styled.View`
+  padding: 0 ${spacing.medium / 2}px;
+`;
+
+const TabIndicator = styled.View`
+  margin-top: 3px;
+  border-top-width: 6px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-color: ${({ theme }) => theme.colors.primaryAccent130};
+`;
