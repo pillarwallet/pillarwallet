@@ -52,6 +52,7 @@ import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/th
 
 // Local
 import PPNView from './PPNView';
+import WalletView from './WalletView';
 import LegacyWalletView from './LegacyWalletView';
 import WalletActivation from './WalletActivation';
 
@@ -176,10 +177,11 @@ function AssetsScreen() {
     switch (viewType) {
       case VIEWS.SMART_WALLET_VIEW:
         return (
-          <LegacyWalletView
-            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
-            onScroll={onScroll}
-          />
+          <WalletView />
+          // <LegacyWalletView
+          //   showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+          //   onScroll={onScroll}
+          // />
         );
       case VIEWS.PPN_VIEW:
         return <PPNView onScroll={onScroll} />;
@@ -198,7 +200,7 @@ function AssetsScreen() {
   return (
     <ContainerWithHeader
       headerProps={{
-        rightItems: !!activeAccount ? [
+        rightItems: activeAccount ? [
           {
             actionButton: {
               key: 'manageAccounts',
@@ -207,7 +209,7 @@ function AssetsScreen() {
               onPress: headerButtonAction,
               ...customHeaderButtonProps,
             },
-          }
+          },
         ] : null,
         centerItems: [
           {

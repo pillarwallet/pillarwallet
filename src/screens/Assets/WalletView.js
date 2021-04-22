@@ -22,12 +22,29 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 // Components
-import Text from 'components/modern/Text';
+import TabView from 'components/modern/TabView';
+
+const FirstRoute = () => <View style={{ flex: 1, backgroundColor: '#ff4081' }} />;
+
+const SecondRoute = () => <View style={{ flex: 1, backgroundColor: '#673ab7' }} />;
+
 
 type Props = { };
 
 function WalletView(props: Props) {
-  return <View><Text>Hello</Text></View>;
+  const [tabIndex, setTabIndex] = React.useState(0);
+
+  const items = [
+    { key: 'wallet', title: 'Wallet', component: FirstRoute },
+    { key: 'deposits', title: 'Deposits', component: SecondRoute },
+    { key: 'investments', title: 'Investments', component: FirstRoute },
+    { key: 'liquidityPools', title: 'Liquidity Pools', component: SecondRoute },
+    { key: 'collectibles', title: 'Collectibles', component: FirstRoute },
+    { key: 'rewards', title: 'Rewards', component: SecondRoute },
+    { key: 'datasets', title: 'Datasets', component: FirstRoute },
+  ];
+
+  return <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />;
 }
 
 export default WalletView;
