@@ -51,9 +51,9 @@ import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 
 import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 
 // Local
-import PPNView from 'screens/Assets/PPNView';
-import WalletView from 'screens/Assets/WalletView';
-import WalletActivation from 'screens/Assets/WalletActivation';
+import PPNView from './PPNView';
+import LegacyWalletView from './LegacyWalletView';
+import WalletActivation from './WalletActivation';
 
 const VIEWS = {
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
@@ -176,7 +176,7 @@ function AssetsScreen() {
     switch (viewType) {
       case VIEWS.SMART_WALLET_VIEW:
         return (
-          <WalletView
+          <LegacyWalletView
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />
