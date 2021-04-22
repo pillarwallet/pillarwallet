@@ -47,7 +47,7 @@ function Text({
 
   const resultStyle = [
     baseStyle,
-    { color: color ?? colors.basic010 },
+    { color: color ?? colors.text },
     // Apply `regular` font style only if there is no `font-size` style in order to
     // avoid automatically setting regular 'line-height'.
     !propStyle?.fontSize && objectFontStyles.regular,

@@ -55,7 +55,7 @@ function FiatValueView({
   if (!value) return null;
 
   if (mode === 'change') {
-    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.secondaryText);
+    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.text);
 
     return (
       <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>

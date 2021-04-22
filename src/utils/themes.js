@@ -94,7 +94,7 @@ export const lightThemeColorsOld = {
 // will be removed after transition
 export const darkThemeColorsOld = {
   ...commonColors,
-  text: '#B1BBD9',
+  text: darkThemeColors.basic010,
   accent: '#818EB3',
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
