@@ -18,14 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/* eslint-disable object-curly-newline */
-
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
+import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -39,10 +37,7 @@ import Text from 'components/modern/Text';
 import { ASSET } from 'constants/navigationConstants';
 
 // Selectors
-import {
-  useRootSelector,
-  activeAccountAddressSelector,
-} from 'selectors';
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector, assetRegistrySelector } from 'selectors/assets';
 
 // Utils
@@ -111,16 +106,16 @@ function WalletTab() {
   }));
 
   return (
-    <>
+    <Container>
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom }}
+        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
 
       <FloatingButtons items={buttons} />
-    </>
+    </Container>
   );
 }
 
@@ -153,6 +148,10 @@ const useChainItems = (): ChainRecord<Item[]> => {
 
   return { ethereum };
 };
+
+const Container = styled.View`
+  flex: 1;
+`;
 
 const SectionHeader = styled(Text)`
   padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;

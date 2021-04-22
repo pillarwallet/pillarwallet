@@ -42,6 +42,7 @@
     "max-len": ["error", 120, {"ignoreUrls": true}],
     "no-use-before-define": "off",
     "no-unused-expressions": "off",
+    "object-curly-newline": ["off"],
     "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
     "import/no-unresolved": ["off"],
     "import/extensions": ["off"],
