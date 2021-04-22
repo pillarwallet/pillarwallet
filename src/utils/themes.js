@@ -87,7 +87,7 @@ export const lightThemeColorsOld = {
   buttonPrimaryBackground: lightThemeColors.basic000,
   buttonPrimaryTitle: lightThemeColors.basic050,
   buttonSecondaryBackground: lightThemeColors.basic060,
-  buttonSecondarTitle: lightThemeColors.basic000,
+  buttonSecondaryTitle: lightThemeColors.basic000,
   buttonTextTitle: lightThemeColors.basic000,
 };
 
@@ -145,7 +145,7 @@ export const darkThemeColorsOld = {
   buttonPrimaryBackground: darkThemeColors.primaryAccent130,
   buttonPrimaryTitle: darkThemeColors.basic090,
   buttonSecondaryBackground: darkThemeColors.basic020,
-  buttonSecondarTitle: darkThemeColors.basic090,
+  buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
 };
 
