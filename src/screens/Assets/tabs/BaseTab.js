@@ -26,14 +26,16 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import AddFundsModal from 'components/AddFundsModal';
 import AssetListItem from 'components/modern/AssetListItem';
+import BalanceView from 'components/BalanceView';
+import FiatValueView from 'components/modern/FiatValueView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useFiatCurrency } from 'selectors';
+import { walletBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { appFont, fontSizes, spacing } from 'utils/variables';
@@ -44,23 +46,37 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain, ChainRecord } from 'models/Asset';
 
 function BaseTab() {
-  const { t } = useTranslationWithPrefix('assets.wallet');
+  const { t } = useTranslationWithPrefix('assets.deposits');
 
-  const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const balance = useRootSelector(walletBalanceSelector);
+  const balanceChange = BigNumber(10);
   const items = useChainItems();
+  const currency = useFiatCurrency();
 
   const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
 
-  const showAddFunds = () => {
-    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
+  const navigateToDeposit = () => {};
+
+  const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToDeposit }];
+
+  const renderListHeader = () => {
+    return (
+      <ListHeader>
+        <BalanceView balance={balance} />
+        <FiatValueView value={balanceChange} currency={currency} mode="change" />
+      </ListHeader>
+    );
   };
 
-  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: showAddFunds }];
-
   const renderSectionHeader = ({ title, chain }: Section) => {
-    const chainTitle = config[chain].title;
-    return <SectionHeader>{title} - {chainTitle}</SectionHeader>;
+    const chainConfig = config[chain];
+    return (
+      <SectionHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <SectionChain color={chainConfig.color}>{chainConfig.title}</SectionChain>
+      </SectionHeader>
+    );
   };
 
   const renderItem = (item: Item) => {
@@ -80,7 +96,8 @@ function BaseTab() {
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom }}
+        ListHeaderComponent={renderListHeader()}
+        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
 
       <FloatingButtons items={buttons} />
@@ -114,9 +131,30 @@ const useChainItems = (): ChainRecord<Item[]> => {
   };
 };
 
-const SectionHeader = styled(Text)`
-  padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;
+const Container = styled.View`
+  flex: 1;
+`;
+
+const ListHeader = styled.View`
+  align-items: center;
+  margin: ${spacing.largePlus}px 0;
+`;
+
+const BalanceChange = styled(Text)``;
+
+const SectionHeader = styled.View`
+  flex-direction: row;
+  align-items: baseline;
+  padding: ${spacing.medium}px ${spacing.large}px ${spacing.medium}px;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const SectionTitle = styled(Text)`
   font-family: '${appFont.medium}';
   font-size: ${fontSizes.big}px;
-  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const SectionChain = styled(Text)`
+  margin-left: ${spacing.medium}px;
+  font-size: ${fontSizes.small}px;
 `;

@@ -139,9 +139,8 @@ function WalletTab() {
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         ListHeaderComponent={renderListHeader()}
-        scrollIndicatorInsets={{ top: 0 }}
+        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
 
       <FloatingButtons items={buttons} />
