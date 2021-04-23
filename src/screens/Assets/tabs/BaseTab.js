@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
-import { SectionList, Image } from 'react-native';
+import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
@@ -29,6 +29,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
+import BottomModal from 'components/modern/BottomModal';
 import FiatValueView from 'components/modern/FiatValueView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
@@ -45,11 +46,10 @@ import { appFont, fontSizes, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { SectionBase, ImageSource } from 'utils/types/react-native';
+import type { SectionBase } from 'utils/types/react-native';
 import type { Chain, ChainRecord } from 'models/Asset';
 
 // Local
-import ServicesModal from '../components/ServicesModal';
 import ServiceListItem from '../components/ServiceListItem';
 
 const aaveIcon = require('assets/images/apps/aave.png');
@@ -70,7 +70,7 @@ function BaseTab() {
 
   const navigateToServices = () => {
     Modal.open(() => (
-      <ServicesModal title="Deposit">
+      <BottomModal title="Deposit">
         <ServiceListItem
           title="Pool Together"
           iconSource={poolTogetherIcon}
@@ -86,7 +86,7 @@ function BaseTab() {
           iconSource={rariIcon}
           onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
         />
-      </ServicesModal>
+      </BottomModal>
     ));
   };
 
@@ -123,7 +123,7 @@ function BaseTab() {
   }));
 
   return (
-    <>
+    <Container>
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -133,7 +133,7 @@ function BaseTab() {
       />
 
       <FloatingButtons items={buttons} />
-    </>
+    </Container>
   );
 }
 
@@ -163,16 +163,6 @@ const useChainItems = (): ChainRecord<Item[]> => {
   };
 };
 
-type ServiceItem = {|
-  title: string,
-  imageSource: ImageSource,
-  onPress: () => mixed,
-|};
-
-const useServiceItems = (): ServiceItem[] => {
-  return [];
-};
-
 const Container = styled.View`
   flex: 1;
 `;
@@ -181,8 +171,6 @@ const ListHeader = styled.View`
   align-items: center;
   margin: ${spacing.largePlus}px 0;
 `;
-
-const BalanceChange = styled(Text)``;
 
 const SectionHeader = styled.View`
   flex-direction: row;

@@ -29,13 +29,12 @@ import Text from 'components/modern/Text';
 // utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
-
 type Props = {|
   title: string,
   children: React.Node,
 |};
 
-function ServicesModal({ title, children }: Props) {
+function BottomModal({ title, children }: Props) {
   return (
     <SlideModal hideHeader>
       <SafeAreaContent>
@@ -46,7 +45,7 @@ function ServicesModal({ title, children }: Props) {
   );
 }
 
-export default ServicesModal;
+export default BottomModal;
 
 const SafeAreaContent = styled(SafeAreaView)`
   padding: ${spacing.large}px 0;
