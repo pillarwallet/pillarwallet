@@ -29,3 +29,8 @@ export type FiatValue = {|
   value: BigNumber,
   currency: string,
 |};
+
+export type FiatBalance = {|
+  value: BigNumber,
+  change?: ?BigNumber,
+|};

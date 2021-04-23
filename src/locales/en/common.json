@@ -86,6 +86,12 @@
     "collectibles": "Collectibles"
   },
 
+  "services": {
+    "aave": "Aave",
+    "rari": "Rari Capital",
+    "poolTogether": "Pool Together"
+  },
+
   "navigationTabs": {
     "home": "Home",
     "assets": "Assets",
@@ -596,7 +602,10 @@
       "addFunds": "Add funds"
     },
     "deposits": {
-      "deposit": "Deposit",
+      "deposit": "Deposit"
+    },
+    "investments": {
+      "invest": "Invest"
     }
   },
 

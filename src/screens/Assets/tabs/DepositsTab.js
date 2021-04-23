@@ -22,69 +22,66 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
+import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import BottomModal from 'components/modern/BottomModal';
 import FiatValueView from 'components/modern/FiatValueView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import Text from 'components/modern/Text';
 
-import { POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import { CHAINS } from 'constants/assetsConstants';
+import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
-import { walletBalanceSelector } from 'selectors/balances';
+import { depositsBalanceSelector } from 'selectors/balances';
 
 // Utils
-import { appFont, fontSizes, spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
+import { spacing } from 'utils/variables';
+import { useServicesConfig } from 'utils/uiConfig';
 
 // Types
-import type { SectionBase } from 'utils/types/react-native';
-import type { Chain, ChainRecord } from 'models/Asset';
+import type { SectionBase, ImageSource } from 'utils/types/react-native';
+import type { Chain } from 'models/Asset';
+import { type Service, SERVICE } from 'models/Services';
+import type { FiatBalance } from 'models/Value';
 
 // Local
-import ServiceListItem from '../components/ServiceListItem';
+import SectionHeader from '../components/SectionHeader';
+import ServiceListItem from '../items/ServiceListItem';
+import AssetListItem from '../items/AssetListItem';
 
 const aaveIcon = require('assets/images/apps/aave.png');
 const rariIcon = require('assets/images/rari_logo.png');
-const poolTogetherIcon = require('assets/images/pool_together.png');
 
-function BaseTab() {
-  const { t } = useTranslationWithPrefix('assets.deposits');
+function DepositsTab() {
+  const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
   const navigation = useNavigation();
 
-  const balance = useRootSelector(walletBalanceSelector);
-  const balanceChange = BigNumber(10);
-  const items = useChainItems();
+  const balance = useBalance();
+  const sections = useAssetSections();
   const currency = useFiatCurrency();
 
-  const config = useChainsConfig();
+  const servicesConfig = useServicesConfig();
+
   const safeArea = useSafeAreaInsets();
 
   const navigateToServices = () => {
     Modal.open(() => (
-      <BottomModal title="Deposit">
+      <BottomModal title={t('deposit')}>
         <ServiceListItem
-          title="Pool Together"
-          iconSource={poolTogetherIcon}
-          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
-        />
-        <ServiceListItem
-          title="Aave"
+          title={tRoot('services.aave')}
           iconSource={aaveIcon}
-          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
+          onPress={() => navigation.navigate(LENDING_ADD_DEPOSIT_FLOW)}
         />
         <ServiceListItem
-          title="Rari"
+          title={tRoot('services.rari')}
           iconSource={rariIcon}
-          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
+          onPress={() => navigation.navigate(RARI_DEPOSIT)}
         />
       </BottomModal>
     ));
@@ -95,32 +92,20 @@ function BaseTab() {
   const renderListHeader = () => {
     return (
       <ListHeader>
-        <BalanceView balance={balance} />
-        <FiatValueView value={balanceChange} currency={currency} mode="change" />
+        <BalanceView balance={balance.value} />
+        {!!balance.change && <FiatValueView value={balance.change} currency={currency} mode="change" />}
       </ListHeader>
     );
   };
 
-  const renderSectionHeader = ({ title, chain }: Section) => {
-    const chainConfig = config[chain];
-    return (
-      <SectionHeader>
-        <SectionTitle>{title}</SectionTitle>
-        <SectionChain color={chainConfig.color}>{chainConfig.title}</SectionChain>
-      </SectionHeader>
-    );
+  const renderSectionHeader = ({ service, chain }: Section) => {
+    const { title } = servicesConfig[service];
+    return <SectionHeader title={title} chain={chain} />;
   };
 
-  const renderItem = (item: Item) => {
-    return <AssetListItem name={item.title} iconUrl={item.iconUrl} balance={item.value} symbol={item.symbol} />;
+  const renderItem = ({ title, iconSource, value, change }: Item) => {
+    return <AssetListItem title={title} iconSource={iconSource} value={value} change={change} />;
   };
-
-  const sections = Object.keys(items).map((chain) => ({
-    key: chain,
-    chain,
-    title: t('tokens'),
-    data: items[chain] ?? [],
-  }));
 
   return (
     <Container>
@@ -137,30 +122,43 @@ function BaseTab() {
   );
 }
 
-export default BaseTab;
+export default DepositsTab;
 
 type Section = {
   ...SectionBase<Item>,
-  title: string,
   chain: Chain,
+  service: Service,
 };
 
 type Item = {|
   key: string,
   title: string,
-  iconUrl: ?string,
-  symbol: string,
+  iconSource: ImageSource,
   value: BigNumber,
+  change?: BigNumber,
 |};
 
-const useChainItems = (): ChainRecord<Item[]> => {
-  return {
-    ethereum: [
-      { key: '1', title: 'Pillar', iconUrl: '', symbol: 'PLR', value: BigNumber(14.245) },
-      { key: '2', title: 'Ethereum', iconUrl: '', symbol: 'ETH', value: BigNumber(0.87) },
-    ],
-    xdai: [{ key: '3', title: 'xDai', iconUrl: '', symbol: 'DAI', value: BigNumber(1000) }],
+const useBalance = (): FiatBalance => {
+  const value = useRootSelector(depositsBalanceSelector);
+  return { value };
+};
+
+const useAssetSections = (): Section[] => {
+  const rari = {
+    key: `${SERVICE.RARI}-${CHAINS.ETHEREUM}`,
+    chain: CHAINS.ETHEREUM,
+    service: SERVICE.RARI,
+    data: [{ key: 'rari-1', title: 'Stable pool', iconSource: rariIcon, value: BigNumber(10), change: BigNumber(1.2) }],
   };
+
+  const aave = {
+    key: `${SERVICE.AAVE}-${CHAINS.ETHEREUM}`,
+    chain: CHAINS.ETHEREUM,
+    service: SERVICE.AAVE,
+    data: [{ key: 'aave-1', title: 'AAVE Pool 1', iconSource: aaveIcon, value: BigNumber(10), change: BigNumber(1.2) }],
+  };
+
+  return [rari, aave].filter((item) => !!item.data.length);
 };
 
 const Container = styled.View`
@@ -170,21 +168,4 @@ const Container = styled.View`
 const ListHeader = styled.View`
   align-items: center;
   margin: ${spacing.largePlus}px 0;
-`;
-
-const SectionHeader = styled.View`
-  flex-direction: row;
-  align-items: baseline;
-  padding: ${spacing.medium}px ${spacing.large}px ${spacing.medium}px;
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-const SectionTitle = styled(Text)`
-  font-family: '${appFont.medium}';
-  font-size: ${fontSizes.big}px;
-`;
-
-const SectionChain = styled(Text)`
-  margin-left: ${spacing.medium}px;
-  font-size: ${fontSizes.small}px;
 `;

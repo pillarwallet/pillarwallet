@@ -18,18 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const CHAIN = {
-  ETHEREUM: ('ethereum': 'ethereum'),
-  POLYGON: ('polygon': 'polygon'),
-  BINANCE: ('binance': 'binance'),
-  XDAI: ('xdai': 'xdai'),
+export const SERVICE = {
+  AAVE: ('aave': 'aave'),
+  RARI: ('rari': 'rari'),
+  POOL_TOGETHER: ('poolTogether': 'poolTogether'),
 };
 
-export type Chain = $Values<typeof CHAIN>;
-
-export type ChainRecord<T> = {|
-  polygon?: T,
-  binance?: T,
-  xdai?: T,
-  ethereum?: T,
-|};
+export type Service = $Values<typeof SERVICE>;

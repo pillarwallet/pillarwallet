@@ -31,23 +31,22 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Local
 import WalletTab from './tabs/WalletTab';
-import BaseTab from './tabs/BaseTab';
+import DepositsTab from './tabs/DepositsTab';
+import InvestmentsTab from './tabs/InvestmentsTab';
 
-type Props = {};
-
-function WalletView(props: Props) {
+function WalletView() {
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const config = useAssetCategoriesConfig();
 
   const items = [
     { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
-    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: BaseTab },
-    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: BaseTab },
-    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: BaseTab },
-    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: BaseTab },
-    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: BaseTab },
-    { key: CATEGORY.DATASETS, title: config[CATEGORY.DATASETS].title, component: BaseTab },
+    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
+    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
+    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: DepositsTab },
+    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
+    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: DepositsTab },
+    { key: CATEGORY.DATASETS, title: config[CATEGORY.DATASETS].title, component: DepositsTab },
   ];
 
   return <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />;

@@ -32,7 +32,6 @@ import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import Text from 'components/modern/Text';
 import WalletAddress from 'components/WalletAddress';
 
 // Contants
@@ -45,14 +44,14 @@ import { walletBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { defaultSortAssetOptions, getAssetFromRegistry } from 'utils/assets';
-import { appFont, fontSizes, spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import type { Chain, ChainRecord } from 'models/Asset';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 // Local
+import SectionHeader from '../components/SectionHeader';
 import { buildAssetDataNavigationParam } from '../utils';
 
 function WalletTab() {
@@ -64,10 +63,9 @@ function WalletTab() {
   const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
 
-  const hasBalance = balance.gt(0);
+  const hasPositiveBalance = balance.gt(0);
 
   const navigateAddFunds = () => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -91,13 +89,7 @@ function WalletTab() {
   };
 
   const renderSectionHeader = ({ title, chain }: Section) => {
-    const chainConfig = config[chain];
-    return (
-      <SectionHeader>
-        <SectionTitle>{title}</SectionTitle>
-        <SectionChain color={chainConfig.color}>{chainConfig.title}</SectionChain>
-      </SectionHeader>
-    );
+    return <SectionHeader title={title} chain={chain} />;
   };
 
   const renderItem = (item: Item) => {
@@ -112,26 +104,26 @@ function WalletTab() {
     );
   };
 
-  const buttons = [
-    { title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds },
-    hasBalance && {
-      title: tRoot('button.exchange'),
-      iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE_FLOW),
-    },
-    hasBalance && {
-      title: tRoot('button.send'),
-      iconName: 'send',
-      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-    },
-  ];
-
   const sections = Object.keys(items).map((chain) => ({
     key: chain,
     chain,
     title: t('tokens'),
     data: items[chain] ?? [],
   }));
+
+  const buttons = [
+    { title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds },
+    hasPositiveBalance && {
+      title: tRoot('button.exchange'),
+      iconName: 'exchange',
+      onPress: () => navigation.navigate(EXCHANGE_FLOW),
+    },
+    hasPositiveBalance && {
+      title: tRoot('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+    },
+  ];
 
   return (
     <Container>
@@ -160,8 +152,8 @@ type Item = {|
   key: string,
   title: string,
   iconUrl: ?string,
-  symbol: string,
   value: BigNumber,
+  symbol: string,
 |};
 
 const useChainItems = (): ChainRecord<Item[]> => {
@@ -185,21 +177,4 @@ const Container = styled.View`
 const ListHeader = styled.View`
   align-items: center;
   margin: ${spacing.largePlus}px 0;
-`;
-
-const SectionHeader = styled.View`
-  flex-direction: row;
-  align-items: baseline;
-  padding: ${spacing.medium}px ${spacing.large}px ${spacing.medium}px;
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-const SectionTitle = styled(Text)`
-  font-family: '${appFont.medium}';
-  font-size: ${fontSizes.big}px;
-`;
-
-const SectionChain = styled(Text)`
-  margin-left: ${spacing.medium}px;
-  font-size: ${fontSizes.small}px;
 `;
