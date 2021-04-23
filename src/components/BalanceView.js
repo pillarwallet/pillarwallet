@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
@@ -36,7 +37,7 @@ import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 
 type Props = {
-  balance: number,
+  balance: BigNumber | number,
   style?: ViewStyleProp,
   currencyTextStyle?: TextStyleProp,
   balanceTextStyle?: TextStyleProp,

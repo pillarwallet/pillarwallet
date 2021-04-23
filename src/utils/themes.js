@@ -101,7 +101,7 @@ export const darkThemeColorsOld = {
   accent: '#818EB3',
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
-  secondaryText: '#8B939E',
+  secondaryText: darkThemeColors.basic030,
   background: darkThemeColors.basic070,
   border: '#181F30',
   positive: '#00E097',

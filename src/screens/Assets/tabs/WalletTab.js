@@ -29,9 +29,11 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import AddFundsModal from 'components/AddFundsModal';
 import AssetListItem from 'components/modern/AssetListItem';
+import BalanceView from 'components/BalanceView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
+import WalletAddress from 'components/WalletAddress';
 
 // Contants
 import { ASSET } from 'constants/navigationConstants';
@@ -39,6 +41,7 @@ import { ASSET } from 'constants/navigationConstants';
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector, assetRegistrySelector } from 'selectors/assets';
+import { walletBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { defaultSortAssetOptions, getAssetFromRegistry } from 'utils/assets';
@@ -56,9 +59,10 @@ function WalletTab() {
   const { t } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
 
+  const balance = useRootSelector(walletBalanceSelector);
+  const items = useChainItems();
   const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
-  const items = useChainItems();
 
   const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
@@ -75,7 +79,14 @@ function WalletTab() {
     navigation.navigate(ASSET, { assetData });
   };
 
-  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds }];
+  const renderListHeader = () => {
+    return (
+      <ListHeader>
+        <BalanceView balance={balance} />
+        <WalletAddress />
+      </ListHeader>
+    );
+  };
 
   const renderSectionHeader = ({ title, chain }: Section) => {
     const chainTitle = config[chain].title;
@@ -98,6 +109,8 @@ function WalletTab() {
     );
   };
 
+  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds }];
+
   const sections = Object.keys(items).map((chain) => ({
     key: chain,
     chain,
@@ -112,6 +125,8 @@ function WalletTab() {
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        ListHeaderComponent={renderListHeader()}
+        scrollIndicatorInsets={{ top: 0 }}
       />
 
       <FloatingButtons items={buttons} />
@@ -153,8 +168,13 @@ const Container = styled.View`
   flex: 1;
 `;
 
+const ListHeader = styled.View`
+  align-items: center;
+  margin: 24px 0;
+`;
+
 const SectionHeader = styled(Text)`
-  padding: ${spacing.large}px ${spacing.large}px ${spacing.small}px;
+  padding: ${spacing.medium}px ${spacing.large}px ${spacing.medium}px;
   font-family: '${appFont.medium}';
   font-size: ${fontSizes.big}px;
   background-color: ${({ theme }) => theme.colors.background};
