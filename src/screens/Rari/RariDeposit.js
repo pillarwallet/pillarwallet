@@ -195,8 +195,7 @@ const RariDepositScreen = ({
         <Spacing h={4} />
         <BalanceView
           balance={convertUSDToFiat(userDepositInUSD[activeTab], rates, fiatCurrency)}
-          currencyTextStyle={{ marginTop: 0, fontSize: 16, lineHeight: 16 }}
-          balanceTextStyle={{ fontSize: 24, lineHeight: 24 }}
+          style={{ fontSize: 24, lineHeight: 24 }}
         />
         <Spacing h={60} />
         <ButtonsContainer>

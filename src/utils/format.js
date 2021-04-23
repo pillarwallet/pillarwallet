@@ -102,7 +102,9 @@ export function formatPercentChange(value: ?BigNumber, options?: FormatValueOpti
  *   1234000 => '1.23M'
  *
  */
-export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOptions) {
+export function formatValueWithUnit(value: ?BigNumber | number, options?: FormatValueOptions) {
+  value = wrapBigNumber(value);
+
   if (!value || !value.isFinite()) return null;
 
   const threshold = 0.85;
@@ -137,7 +139,7 @@ export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOpti
 /**
  * Format fiat value, for use cases such as balance.
  */
-export function formatFiatValue(value: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
+export function formatFiatValue(value: ?BigNumber | number, currency?: string, options?: FormatFiatOptions) {
   const formattedValue = options?.exact ? formatValue(value, { decimalPlaces: 2 }) : formatValueWithUnit(value);
   if (!formattedValue) return null;
 

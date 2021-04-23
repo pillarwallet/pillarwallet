@@ -36,7 +36,7 @@ import Text from 'components/modern/Text';
 import WalletAddress from 'components/WalletAddress';
 
 // Contants
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
@@ -56,7 +56,7 @@ import type { Chain, ChainRecord } from 'models/Asset';
 import { buildAssetDataNavigationParam } from '../utils';
 
 function WalletTab() {
-  const { t } = useTranslationWithPrefix('assets.wallet');
+  const { t, tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
 
   const balance = useRootSelector(walletBalanceSelector);
@@ -66,6 +66,8 @@ function WalletTab() {
 
   const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
+
+  const hasBalance = balance.gt(0);
 
   const navigateAddFunds = () => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -109,7 +111,19 @@ function WalletTab() {
     );
   };
 
-  const buttons = [{ title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds }];
+  const buttons = [
+    { title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds },
+    hasBalance && {
+      title: tRoot('button.exchange'),
+      iconName: 'exchange',
+      onPress: () => navigation.navigate(EXCHANGE_FLOW),
+    },
+    hasBalance && {
+      title: tRoot('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+    },
+  ];
 
   const sections = Object.keys(items).map((chain) => ({
     key: chain,
