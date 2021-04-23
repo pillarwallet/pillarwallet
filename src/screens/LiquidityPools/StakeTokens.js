@@ -162,7 +162,6 @@ const StakeTokensScreen = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!estimateErrorMessage}
-                showFiatDefault
               />
             )}
             {!!estimateErrorMessage && (

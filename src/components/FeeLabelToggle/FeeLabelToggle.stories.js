@@ -20,16 +20,33 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import FeeLabelToggle from './FeeLabelToggle';
+import { FeeLabelToggleComponent } from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+
+const reduxData = {
+  accountAssets: {},
+  accountHistory: [],
+  baseFiatCurrency: defaultFiatCurrency,
+  isGasTokenSupported: true,
+  rates: {
+    ETH: {
+      ETH: 1,
+      EUR: 2017.2,
+      GBP: 1756.24,
+      USD: 2407.1,
+    },
+  },
+};
 
 storiesOf('FeeLabelToggle', module)
   .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <FeeLabelToggle
+    <FeeLabelToggleComponent
+      {...reduxData}
       txFeeInWei="10000000000000000000"
       gasToken={{
         address: '0x0',
@@ -39,7 +56,8 @@ storiesOf('FeeLabelToggle', module)
     />
   ))
   .add('not enough token', () => (
-    <FeeLabelToggle
+    <FeeLabelToggleComponent
+      {...reduxData}
       txFeeInWei="10000000000000000000"
       gasToken={{
         address: '0x0',
