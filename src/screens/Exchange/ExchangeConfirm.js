@@ -57,7 +57,7 @@ import { isWethConvertedTx } from 'utils/uniswap';
 // types
 import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
@@ -97,7 +97,7 @@ const MainWrapper = styled.View`
 `;
 
 // already passed as mixed from other screen, TODO: fix the whole flow?
-type MixedOfferOrder = $Shape<OfferOrder & TokenTransactionPayload>;
+type MixedOfferOrder = $Shape<OfferOrder & TransactionPayload>;
 
 const ExchangeConfirmScreen = ({
   executingExchangeTransaction,

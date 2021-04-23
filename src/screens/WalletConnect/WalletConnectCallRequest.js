@@ -63,7 +63,7 @@ import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -83,10 +83,10 @@ type Props = {
   balances: Balances,
   theme: Theme,
   getTransactionDetails: (request: ?CallRequest) => Object,
-  getTransactionPayload: (estimate: Object, request: ?CallRequest) => TokenTransactionPayload,
+  getTransactionPayload: (estimate: Object, request: ?CallRequest) => TransactionPayload,
   isUnsupportedTransaction: (transaction: Object) => boolean,
   rejectWCRequest: (request: CallRequest) => void,
-  acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
+  acceptWCRequest: (request: CallRequest, transactionPayload: ?TransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
   estimateTransaction: (recipient: string, value: number, data: ?string, assetData: AssetData) => void,

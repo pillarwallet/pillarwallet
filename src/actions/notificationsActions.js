@@ -31,6 +31,10 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import {
+  subscribeToEtherspotNotificationsAction,
+  unsubscribeToEtherspotNotificationsAction,
+} from 'actions/etherspotActions';
 
 // constants
 import {
@@ -225,14 +229,15 @@ export const subscribeToPushNotificationsAction = () => {
 };
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(subscribeToSocketEventsAction());
     dispatch(subscribeToPushNotificationsAction());
+    dispatch(subscribeToEtherspotNotificationsAction());
   };
 };
 
 export const stopListeningNotificationsAction = () => {
-  return async () => {
+  return (dispatch: Dispatch) => {
     if (disabledPushNotificationsListener !== null) {
       clearInterval(disabledPushNotificationsListener);
       disabledPushNotificationsListener = null;
@@ -242,6 +247,8 @@ export const stopListeningNotificationsAction = () => {
       notificationsListener();
       notificationsListener = null;
     }
+
+    dispatch(unsubscribeToEtherspotNotificationsAction());
   };
 };
 

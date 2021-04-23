@@ -109,7 +109,7 @@ const RemoveLiquidityReviewScreen = ({
     if (removeLiquidityTransactions.length > 1) {
       transactionPayload = {
         ...transactionPayload,
-        sequentialSmartWalletTransactions: removeLiquidityTransactions.slice(1),
+        sequentialTransactions: removeLiquidityTransactions.slice(1),
       };
     }
 

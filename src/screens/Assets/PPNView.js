@@ -66,7 +66,7 @@ import {
 
 // types
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -76,7 +76,7 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, isDeployingArchanovaWallet, isHiddenUnsettledTransaction } from 'utils/archanova';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
@@ -177,7 +177,7 @@ class PPNView extends React.Component<Props, State> {
     } = this.props;
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
     if (isDeploying) {
       return (
         <InsightWithButton
@@ -195,9 +195,9 @@ class PPNView extends React.Component<Props, State> {
       );
     }
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-    if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+    if (smartWalletAccount && archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       const smartWalletAccountId = getAccountId(smartWalletAccount);
       const accountBalances: Balances = balances[smartWalletAccountId];
       const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
@@ -228,7 +228,7 @@ class PPNView extends React.Component<Props, State> {
       }
 
       return null;
-    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
+    } else if (archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
       return (
         <InsightWithButton
           title={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.title')}
@@ -281,14 +281,14 @@ class PPNView extends React.Component<Props, State> {
     }
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
     const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: t('insight.smartWalletActivate.default.title'),
         message: t('insight.smartWalletActivate.default.description'),
       }
-      : smartWalletStatus.sendingBlockedMessage || {};
+      : archanovaWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = !!Object.keys(sendingBlockedMessage).length;
 
     const PPNTransactionsMapped = mapTransactionsHistory(

@@ -50,7 +50,7 @@ import { getAssetDataByAddress, getAssetData } from 'utils/assets';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
-import type { TokenTransactionPayload } from 'models/Transaction';
+import type { TransactionPayload } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { CallRequest } from 'models/WalletConnect';
 
@@ -124,18 +124,18 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       };
     };
 
-    isUnsupportedTransaction = (transaction: TokenTransactionPayload): boolean => {
+    isUnsupportedTransaction = (transaction: TransactionPayload): boolean => {
       const { contractAddress, data } = transaction;
       // unsupported action is if it's our wallet's unsupported token transfer
       return isTokenTransfer(data) && contractAddress === '';
     };
 
-    getTransactionPayload = (estimatePart: Object, request: CallRequest): TokenTransactionPayload => {
+    getTransactionPayload = (estimatePart: Object, request: CallRequest): TransactionPayload => {
       const transaction = this.getTransactionDetails(request);
       return { ...estimatePart, ...transaction };
     };
 
-    acceptWCRequest = (request: CallRequest, transactionPayload?: TokenTransactionPayload) => {
+    acceptWCRequest = (request: CallRequest, transactionPayload?: TransactionPayload) => {
       const { navigation } = this.props;
 
       switch (request.method) {

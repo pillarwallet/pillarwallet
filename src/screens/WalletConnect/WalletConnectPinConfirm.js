@@ -52,7 +52,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   approveCallRequest: (callId: number, result: any) => Function,
   rejectCallRequest: (callId: number, errorMsg?: string) => Function,
-  sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
+  sendAsset: (payload: TransactionPayload, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
   useBiometrics: boolean,
 };
@@ -103,7 +103,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
     switch (request.method) {
       case ETH_SEND_TX:
-        callback = () => this.handleSendTransaction(request, wallet);
+        callback = () => this.handleSendTransaction(request);
         break;
       case ETH_SIGN_TX:
         callback = () => this.handleSignTransaction(request, wallet);
@@ -122,12 +122,17 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     this.setState({ isChecking: true }, callback);
   };
 
-  handleSendTransaction = (request: CallRequest, wallet: Object) => {
+  handleSendTransaction = (request: CallRequest) => {
     const {
-      sendAsset, approveCallRequest, rejectCallRequest, navigation,
+      sendAsset,
+      approveCallRequest,
+      rejectCallRequest,
+      navigation,
     } = this.props;
+
     const transactionPayload = navigation.getParam('transactionPayload', {});
-    sendAsset(transactionPayload, wallet, async (txStatus: Object) => {
+
+    sendAsset(transactionPayload, async (txStatus: Object) => {
       if (txStatus.isSuccess) {
         await approveCallRequest(request.callId, txStatus.txHash);
       } else {
@@ -225,13 +230,10 @@ const mapDispatchToProps = dispatch => ({
   rejectCallRequest: (callId: number, errorMsg?: string) => {
     dispatch(rejectCallRequestAction(callId, errorMsg));
   },
-  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
-    dispatch(sendAssetAction(transaction, wallet, navigate));
+  sendAsset: (transaction: TransactionPayload, navigate) => {
+    dispatch(sendAssetAction(transaction, navigate));
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(WalletConnectPinConfirmScreeen);
+export default connect(mapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreeen);

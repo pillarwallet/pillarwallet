@@ -49,9 +49,9 @@ import { reportLog, uniqBy } from 'utils/common';
 import {
   deviceHasGasTokenSupport,
   getGasTokenDetails,
-  mapSdkToAppTxStatus,
-  parseSmartWalletTransactions,
-} from 'utils/smartWallet';
+  parseArchanovaTransactionStatus,
+  parseArchanovaTransactions,
+} from 'utils/archanova';
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
@@ -157,7 +157,7 @@ export const fetchSmartWalletTransactionsAction = () => {
       const accountAssets = archanovaAccountAssetsSelector(getState());
       const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
       const assetsList = getAssetsAsList(accountAssets);
-      const smartWalletTransactionHistory = parseSmartWalletTransactions(
+      const smartWalletTransactionHistory = parseArchanovaTransactions(
         smartWalletTransactions,
         supportedAssets,
         assetsList,
@@ -198,20 +198,23 @@ export const fetchGasInfoAction = () => {
   };
 };
 
-const transactionUpdate = (hash: string) => {
-  return {
-    type: UPDATING_TRANSACTION,
-    payload: hash,
-  };
-};
+const setUpdatingTransaction = (hash: ?string) => ({
+  type: UPDATING_TRANSACTION,
+  payload: hash,
+});
 
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { session: { data: { isOnline } } } = getState();
+
     if (!isOnline) return;
 
-    const isArchanovaAccountActive = isArchanovaAccount(activeAccountSelector(getState()));
-    dispatch(transactionUpdate(hash));
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) return;
+
+    const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
+
+    dispatch(setUpdatingTransaction(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
@@ -220,22 +223,23 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (isArchanovaAccountActive) {
       sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
-        dispatch(transactionUpdate(''));
+        dispatch(setUpdatingTransaction(null));
         return;
       }
-      sdkToAppStatus = mapSdkToAppTxStatus(sdkTransactionInfo.state);
-    }
 
-    // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isArchanovaAccountActive && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
-      reportLog('Wrong transaction status', {
-        hash,
-        sdkToAppStatus,
-        sdkStatus: sdkTransactionInfo?.state,
-        blockchainStatus: trxInfo.status,
-      });
-      dispatch(transactionUpdate(''));
-      return;
+      sdkToAppStatus = parseArchanovaTransactionStatus(sdkTransactionInfo.state);
+
+      // NOTE: if trxInfo is not null, that means transaction was mined or failed
+      if (sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+        reportLog('Wrong transaction status', {
+          hash,
+          sdkToAppStatus,
+          sdkStatus: sdkTransactionInfo?.state,
+          blockchainStatus: trxInfo.status,
+        });
+        dispatch(setUpdatingTransaction(null));
+        return;
+      }
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
@@ -244,7 +248,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       : !trxInfo;
 
     if (stillPending) {
-      dispatch(transactionUpdate(''));
+      dispatch(setUpdatingTransaction(null));
       return;
     }
 
@@ -313,5 +317,23 @@ export const insertTransactionAction = (historyTx: Transaction, accountId: strin
     // get the updated state and save it into the storage
     const { history: { data: currentHistory } } = getState();
     await dispatch(saveDbAction('history', { history: currentHistory }, true));
+  };
+};
+
+export const setHistoryTransactionStatusByHashAction = (transactionHash: string, status: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const transactionsHistory = historySelector(getState());
+
+    const { txUpdated, updatedHistory } = updateHistoryRecord(
+      transactionsHistory,
+      transactionHash,
+      (transaction) => ({ ...transaction, status }),
+    );
+
+    // check if updated
+    if (!txUpdated) return;
+
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
   };
 };

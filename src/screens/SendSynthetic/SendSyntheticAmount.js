@@ -51,7 +51,7 @@ import {
 // models, types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { AssetOption } from 'models/Asset';
-import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+import type { SyntheticTransaction, TransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
 
@@ -204,7 +204,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       Keyboard.dismiss();
       if (assetCode === PLR) {
         // go through regular confirm as PLR is staked by the user already so he owns it
-        const transactionPayload: TokenTransactionPayload = {
+        const transactionPayload: TransactionPayload = {
           to: receiver,
           receiverEnsName,
           amount,

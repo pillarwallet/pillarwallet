@@ -123,15 +123,15 @@ class NewStreamReview extends React.Component<Props> {
       getTimestamp(endDate),
     );
 
-    const { to, data: transactionData, sequentialSmartWalletTransactions } = this.transactionPayload;
-    const sequentialTransactions = sequentialSmartWalletTransactions
+    const { to, data: transactionData, sequentialTransactions } = this.transactionPayload;
+    const sequentialTransactionsMapped = sequentialTransactions
       .map(({
         to: recipient,
         amount: value,
         data,
       }) => ({ recipient, value, data }));
 
-    estimateTransaction(to, transactionData, sequentialTransactions);
+    estimateTransaction(to, transactionData, sequentialTransactionsMapped);
   }
 
   getAsset = () => {

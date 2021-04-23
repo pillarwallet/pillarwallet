@@ -55,7 +55,7 @@ import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
 // services
 import { calculateGasEstimate, fetchTransactionInfo, transferSigned } from 'services/assets';
-import CryptoWallet from 'services/cryptoWallet';
+import KeyBasedWallet from 'services/keyBasedWallet';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -417,11 +417,10 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
       walletId: '',
     };
 
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, keyBasedAccount);
-    const walletProvider = await cryptoWallet.getProvider();
+    const keyBasedWallet = new KeyBasedWallet(wallet.privateKey);
 
     // sync local nonce
-    const transactionCount = await walletProvider.getTransactionCount(keyBasedWalletAddress);
+    const transactionCount = await keyBasedWallet.getTransactionCount(keyBasedWalletAddress);
     dispatch({
       type: UPDATE_TX_COUNT,
       payload: {
@@ -440,7 +439,7 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
         keyBasedWalletAddress,
         getAccountAddress(firstSmartAccount),
         keyBasedAssetTransfer,
-        walletProvider,
+        keyBasedWallet,
         keyBasedAccount,
         dispatch,
         getState,

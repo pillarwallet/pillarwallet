@@ -28,13 +28,13 @@ import { RECOVERY_PORTAL_SETUP_CONNECT_DEVICE } from 'constants/navigationConsta
 
 // types
 import type { Accounts } from 'models/Account';
-import type { ConnectedSmartWalletAccount } from 'models/SmartWalletAccount';
+import type { ConnectedArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<mixed>,
-  connectedSmartWallet: ConnectedSmartWalletAccount,
+  connectedSmartWallet: ConnectedArchanovaWalletAccount,
   executeDeepLink: (deepLink: string) => void,
   accounts: Accounts,
   smartWalletState: Object,

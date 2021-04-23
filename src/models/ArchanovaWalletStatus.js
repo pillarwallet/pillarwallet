@@ -17,23 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { sdkInterfaces } from '@smartwallet/sdk';
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
-
-export type SmartWalletAccount = sdkInterfaces.IAccount;
-
-export type SmartWalletAccountDevice = sdkInterfaces.IAccountDevice;
-
-export type ConnectedSmartWalletAccount = {
-  ...SmartWalletAccount,
-  activeDeviceAddress: ?string,
-  devices: ?SmartWalletAccountDevice[],
+export type ArchanovaWalletStatus = {
+  status: ?string,
+  hasAccount: boolean,
+  sendingBlockedMessage?: {
+    title?: string,
+    message?: string,
+  }
 };
-
-
-export type SmartWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;
-
-export type InitSmartWalletProps = {
-  privateKey?: string,
-  pin?: string,
-}

@@ -26,22 +26,31 @@ import {
   Accounts as EtherspotAccounts,
   EnvNames,
   ENSNode,
+  GatewayEstimatedBatch,
+  GatewaySubmittedBatch,
+  Notification as EtherspotNotification,
+  IncreaseP2PPaymentChannelAmountDto,
 } from 'etherspot';
+import { map } from 'rxjs/operators';
 
 // utils
-import { getEnsName, reportErrorLog } from 'utils/common';
+import { getEnsName, parseTokenAmount, reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { addressesEqual } from 'utils/assets';
+import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 
 // types
 import type { Asset, Balance } from 'models/Asset';
+import type { EthereumTransaction, TransactionPayload } from 'models/Transaction';
+import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 
 
 class EtherspotService {
   sdk: EtherspotSdk;
+  subscription: any;
 
   async init(privateKey: string): Promise<void> {
     const isMainnet = isProdEnv();
@@ -59,6 +68,19 @@ class EtherspotService {
     await this.sdk.computeContractAccount({ sync: true }).catch((error) => {
       reportErrorLog('EtherspotService init computeContractAccount failed', { error });
     });
+  }
+
+  subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
+    if (!this.sdk) return;
+
+    this.subscription = this.sdk.notifications$
+      .pipe(map(callback))
+      .subscribe();
+  }
+
+  unsubscribe() {
+    if (!this.subscription) return;
+    this.subscription.unsubscribe();
   }
 
   getAccount(accountAddress: string): Promise<?EtherspotAccount> {
@@ -140,6 +162,74 @@ class EtherspotService {
   getEnsNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
+      return null;
+    });
+  }
+
+  clearTransactionsBatch() {
+    return this.sdk.clearGatewayBatch();
+  }
+
+  setTransactionsBatch(transactions: EthereumTransaction[]): Promise<?GatewayEstimatedBatch> {
+    return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
+  }
+
+  estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    return this.sdk
+      .estimateGatewayBatch({ refundToken: useGasTokenAddress })
+      .then((result) => result?.estimation);
+  }
+
+  async setTransactionsBatchAndSend(
+    transactions: EthereumTransaction[],
+    useGasTokenAddress?: string,
+  ) {
+    // clear batch
+    this.clearTransactionsBatch();
+
+    // set batch
+    await this.setTransactionsBatch(transactions).catch((error) => {
+      reportErrorLog('setTransactionsBatchAndSend -> setTransactionsBatch failed', { error, transactions });
+      throw error;
+    });
+
+    // estimate current batch
+    await this.estimateTransactionsBatch(useGasTokenAddress);
+
+    // submit current batch
+    return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));
+  }
+
+  async sendP2PTransaction(transaction: TransactionPayload) {
+    const { to: recipient, amount, decimals } = transaction;
+
+    const increaseRequest: IncreaseP2PPaymentChannelAmountDto = {
+      token: transaction.symbol === ETH ? null : transaction.contractAddress,
+      value: parseTokenAmount(amount.toString(), decimals).toString(),
+      recipient,
+    };
+
+    return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
+  }
+
+  async sendTransaction(
+    transaction: TransactionPayload,
+    fromAccountAddress: string,
+    isP2P?: boolean,
+  ) {
+    if (isP2P) {
+      // TODO: uncomment P2P partial implementation once it's available for Etherspot
+      // return this.sendP2PTransaction(transaction);
+    }
+
+    const etherspotTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
+
+    return this.setTransactionsBatchAndSend(etherspotTransactions);
+  }
+
+  getSubmittedBatchByHash(hash: string): Promise<?GatewaySubmittedBatch> {
+    return this.sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
+      reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
       return null;
     });
   }

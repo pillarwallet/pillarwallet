@@ -53,7 +53,7 @@ import { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
   TransactionFeeInfo,
   EstimatedTransactionFee,
@@ -67,7 +67,7 @@ import type { EstimatePayload } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
 
 // utils
-import { getActiveAccount, isSmartWalletAccount } from './accounts';
+import { getActiveAccount, isArchanovaAccount } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
@@ -79,17 +79,17 @@ const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 
 const getMessage = (
   status: ?string,
-  isSmartWalletActive: boolean,
+  isArchanovaWalletActive: boolean,
 ): { title?: TranslatedString, message?: TranslatedString } => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
-      if (!isSmartWalletActive) return {};
+      if (!isArchanovaWalletActive) return {};
       return {
         title: t('insight.smartWalletActivate.default.title'),
         message: t('insight.smartWalletActivate.default.description'),
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
-      if (!isSmartWalletActive) return {};
+      if (!isArchanovaWalletActive) return {};
       // TODO: get average time
       return {
         title: t('insight.smartWalletActivate.isBeingDeployed.title'),
@@ -100,18 +100,18 @@ const getMessage = (
   }
 };
 
-export const userHasSmartWallet = (accounts: Accounts = []): boolean => accounts.some(isSmartWalletAccount);
-
-export const getSmartWalletStatus = (
+export const getArchanovaWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
-): SmartWalletStatus => {
-  const hasAccount = userHasSmartWallet(accounts);
+): ArchanovaWalletStatus => {
   const activeAccount = getActiveAccount(accounts);
-  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
+  const hasAccount = !isArchanovaAccount(activeAccount);
 
-  const { upgrade: { status } } = smartWalletState;
+  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
+
+  const status = smartWalletState?.upgrade?.status;
   const sendingBlockedMessage = getMessage(status, isSmartWalletActive);
+
   return {
     hasAccount,
     status,
@@ -119,7 +119,7 @@ export const getSmartWalletStatus = (
   };
 };
 
-export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
+export const isConnectedToArchanovaSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
   title: t('insight.smartWalletActivate.activationFailed.title'),
@@ -128,7 +128,7 @@ export const getDeployErrorMessage = (errorType: string) => ({
     : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
 
-export const isSmartWalletDeviceDeployed = (
+export const isArchanovaDeviceDeployed = (
   device: ?$Shape<{ state: ?string, nextState: ?string }>,
 ): boolean => [get(device, 'state'), get(device, 'nextState')]
   .includes(sdkConstants.AccountDeviceStates.Deployed);
@@ -139,7 +139,7 @@ export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
 
 export const accountHasGasTokenSupport = (account: Object): boolean => {
   if (isEmpty(get(account, 'devices', []))) return false;
-  return account.devices.some(device => deviceHasGasTokenSupport(device) && isSmartWalletDeviceDeployed(device));
+  return account.devices.some(device => deviceHasGasTokenSupport(device) && isArchanovaDeviceDeployed(device));
 };
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
@@ -152,7 +152,7 @@ export const getGasTokenDetails = (assets: Asset[], supportedAssets: Asset[], ga
   return { decimals, symbol, address };
 };
 
-export const mapSdkToAppTxStatus = (sdkStatus: sdkConstants.AccountTransactionStates): string => {
+export const parseArchanovaTransactionStatus = (sdkStatus: sdkConstants.AccountTransactionStates): string => {
   switch (sdkStatus) {
     case sdkConstants.AccountTransactionStates.Completed:
       return TX_CONFIRMED_STATUS;
@@ -165,12 +165,12 @@ export const mapSdkToAppTxStatus = (sdkStatus: sdkConstants.AccountTransactionSt
   }
 };
 
-export const parseSmartWalletTransactions = (
-  smartWalletTransactions: IAccountTransaction[],
+export const parseArchanovaTransactions = (
+  archanovaTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
   relayerExtensionAddress: ?string,
-): Transaction[] => smartWalletTransactions
+): Transaction[] => archanovaTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
       hash,
@@ -195,7 +195,7 @@ export const parseSmartWalletTransactions = (
 
     // NOTE: same transaction could have multiple records, those are different by index
     // we always leave only one record with the biggest index number
-    const sameHashTransactions = smartWalletTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
+    const sameHashTransactions = archanovaTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
     if (sameHashTransactions.length > 1) { // don't count current transaction
       const maxIndex = Math.max(...sameHashTransactions.map(tx => tx.index));
       if (index < maxIndex) {
@@ -214,7 +214,7 @@ export const parseSmartWalletTransactions = (
     // ignore some transaction types
     if (transactionType === AccountTransactionTypes.TopUpErc20Approve) return mapped;
 
-    const status = mapSdkToAppTxStatus(state);
+    const status = parseArchanovaTransactionStatus(state);
     let value = tokenAddress ? tokenValue : rawValue;
     value = new BigNumber(value.toString());
 
@@ -341,10 +341,10 @@ export const isHiddenUnsettledTransaction = (
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
 
-export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
+export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  return !error && (deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+  return !error && (deploymentStarted || archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
@@ -355,7 +355,7 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
   return get(smartWalletState, 'upgrade.deploymentData.hash', '');
 };
 
-export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload) => {
+export const buildArchanovaTransactionEstimate = (apiEstimate: EstimatePayload) => {
   const {
     gasAmount,
     gasPrice,
@@ -387,7 +387,10 @@ export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload
   return estimate;
 };
 
-export const buildTxFeeInfo = (estimated: ?EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+export const buildArchanovaTxFeeInfo = (
+  estimated: ?EstimatedTransactionFee,
+  useGasToken: boolean,
+): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
 
   const { gasTokenCost, gasToken, ethCost } = estimated;

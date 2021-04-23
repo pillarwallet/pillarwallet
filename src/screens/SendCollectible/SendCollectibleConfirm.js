@@ -105,7 +105,7 @@ const SendCollectibleConfirm = ({
     contractAddress,
   } = assetData;
 
-  const transactionPayload: $Shape<CollectibleTransactionPayload> = {
+  const transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
     receiverEnsName,
     name,

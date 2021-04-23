@@ -36,17 +36,17 @@ import {
 
 // types
 import type {
-  SmartWalletAccount,
-  ConnectedSmartWalletAccount,
-  SmartWalletDeploymentError,
-} from 'models/SmartWalletAccount';
+  ArchanovaWalletAccount,
+  ConnectedArchanovaWalletAccount,
+  ArchanovaWalletDeploymentError,
+} from 'models/ArchanovaWalletAccount';
 import type { EstimatedTransactionFee } from 'models/Transaction';
 
 
 export type SmartWalletReducerState = {
   sdkInitialized: boolean,
-  connectedAccount: $Shape<ConnectedSmartWalletAccount>,
-  accounts: SmartWalletAccount[],
+  connectedAccount: $Shape<ConnectedArchanovaWalletAccount>,
+  accounts: ArchanovaWalletAccount[],
   upgrade: {
     status: ?string,
     deploymentEstimate: ?{
@@ -57,7 +57,7 @@ export type SmartWalletReducerState = {
     deploymentStarted: boolean,
     deploymentData: {
       hash: ?string,
-      error: ?SmartWalletDeploymentError,
+      error: ?ArchanovaWalletDeploymentError,
     },
   },
   lastSyncedTransactionId: ?number,

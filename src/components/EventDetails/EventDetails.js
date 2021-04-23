@@ -157,9 +157,9 @@ import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -187,8 +187,8 @@ type StateProps = {|
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
-  updatingTransaction: string,
-  updatingCollectibleTransaction: string,
+  updatingTransaction: ?string,
+  updatingCollectibleTransaction: ?string,
   isPillarRewardCampaignActive: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,

@@ -57,7 +57,7 @@ import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
 import { getTokenTransactionsFromHistory } from 'utils/history';
@@ -74,7 +74,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -262,8 +262,8 @@ class AssetScreen extends React.Component<Props> {
       disclaimer,
     } = assetsConfig[token] || {};
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
     const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
     const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);

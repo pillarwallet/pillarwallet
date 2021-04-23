@@ -165,7 +165,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
-import { checkSmartWalletSessionIfNeededAction } from 'actions/smartWalletActions';
+import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
 
 // constants
 import {
@@ -897,7 +897,7 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
-  checkSmartWalletSession: () => void,
+  checkArchanovaSession: () => void,
 };
 
 type State = {
@@ -922,7 +922,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
-      checkSmartWalletSession,
+      checkArchanovaSession,
     } = this.props;
 
     /**
@@ -939,7 +939,7 @@ class AppFlow extends React.Component<Props, State> {
     addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
-      checkSmartWalletSession,
+      checkArchanovaSession,
       SMART_WALLET_SESSION_CHECK_INTERVAL,
     );
 
@@ -1033,7 +1033,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
-      checkSmartWalletSession,
+      checkArchanovaSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -1050,7 +1050,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkSmartWalletSession();
+      checkArchanovaSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -1179,7 +1179,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionIfNeededAction()),
+  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

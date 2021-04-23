@@ -65,7 +65,7 @@ class WalletActivated extends React.PureComponent<Props> {
   handleNavigate = async () => {
     const { navigation, accounts, switchAccount } = this.props;
     const activeAccountType = getActiveAccountType(accounts);
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
+    if (activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
       const smartWallet = findFirstArchanovaAccount(accounts);
       if (smartWallet) {
         await switchAccount(smartWallet.id);

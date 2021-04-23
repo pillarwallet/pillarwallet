@@ -33,14 +33,14 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils
 import {
-  getSmartWalletStatus,
+  getArchanovaWalletStatus,
   getDeployErrorMessage,
-  isDeployingSmartWallet,
+  isDeployingArchanovaWallet,
   getDeploymentData,
-} from 'utils/smartWallet';
+} from 'utils/archanova';
 
 // types
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
@@ -66,17 +66,17 @@ const SWActivationCard = ({
 }: Props) => {
   const openActivationModal = () => Modal.open(() => <SWActivationModal navigation={navigation} />);
 
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-  if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
+  if (archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
 
   const { upgrade: { deploymentStarted } } = smartWalletState;
 
-  const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+  const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
 
   const deploymentData = getDeploymentData(smartWalletState);
 
-  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+  const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
   const deploymentErrorMessage = deploymentData.error ?
     getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
 

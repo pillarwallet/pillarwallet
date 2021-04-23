@@ -162,7 +162,7 @@ const RariTransferScreen = ({
     const amountBN = parseTokenBigNumberAmount(amount, rariTokenData.decimals);
 
     // $FlowFixMe
-    const transactionPayload: TokenTransactionPayload = {
+    const transactionPayload: TransactionPayload = {
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
       amount: amount || 0,

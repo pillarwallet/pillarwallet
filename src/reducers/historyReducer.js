@@ -27,7 +27,7 @@ export type HistoryReducerState = {
   data: TransactionsStore,
   gasInfo: GasInfo,
   isFetched: boolean,
-  updatingTransaction: string,
+  updatingTransaction: ?string,
 }
 
 export type HistoryAction = {
@@ -42,7 +42,7 @@ export const initialState = {
     isFetched: false,
   },
   isFetched: false,
-  updatingTransaction: '',
+  updatingTransaction: null,
 };
 
 export default function historyReducer(
@@ -71,7 +71,7 @@ export default function historyReducer(
       return Object.assign(
         {},
         state,
-        { isFetched: true, data: action.payload, updatingTransaction: '' },
+        { isFetched: true, data: action.payload, updatingTransaction: null },
       );
     case SET_GAS_INFO: {
       const gasPriceInfo = action.payload;

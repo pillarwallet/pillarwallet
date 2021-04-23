@@ -17,12 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
 
-export const UPDATE_ACCOUNTS = 'UPDATE_ACCOUNTS';
-export const ADD_ACCOUNT = 'ADD_ACCOUNT';
-export const ACCOUNT_TYPES = {
-  KEY_BASED: 'KEY_BASED',
-  ARCHANOVA_SMART_WALLET: 'SMART_WALLET', // actual value is different for safe deprecate reason
-  ETHERSPOT_SMART_WALLET: 'ETHERSPOT_SMART_WALLET',
+export type EtherspotTransactionEstimate = {
+  refundAmount: BigNumber;
+  estimatedGas: number;
+  estimatedGasPrice: BigNumber;
 };
-export const CHANGING_ACCOUNT = 'CHANGING_ACCOUNT';

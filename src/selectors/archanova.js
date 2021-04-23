@@ -26,14 +26,14 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
+import { accountHasGasTokenSupport, getArchanovaWalletStatus } from 'utils/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 
 
 export const isArchanovaWalletActivatedSelector = ({
@@ -41,8 +41,8 @@ export const isArchanovaWalletActivatedSelector = ({
   smartWallet,
 }: RootReducerState,
 ) => {
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWallet);
-  return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
+  return archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
 export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } }: RootReducerState) => {

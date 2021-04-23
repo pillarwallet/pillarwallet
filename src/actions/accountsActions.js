@@ -32,7 +32,7 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import {
-  checkIfSmartWalletWasRegisteredAction,
+  checkIfArchanovaWalletWasRegisteredAction,
   connectArchanovaAccountAction,
   initArchanovaSdkAction,
   setSmartWalletUpgradeStatusAction,
@@ -162,7 +162,7 @@ export const setActiveAccountAction = (accountId: string) => {
     });
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
 
-    if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
+    if (account.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET || !account.extra) return;
 
     const { state = '' } = connectedAccount;
     if (state === sdkConstants.AccountStates.Deployed) {
@@ -190,7 +190,7 @@ export const switchAccountAction = (accountId: string) => {
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (activeAccount?.type === ACCOUNT_TYPES.SMART_WALLET) {
+    if (activeAccount?.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
       if (!sdkInitialized) {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
@@ -226,7 +226,7 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
     await dispatch(initArchanovaSdkAction(privateKey, true));
 
     const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
+    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET; // set to active routine
     await dispatch(connectArchanovaAccountAction(smartWalletAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 
@@ -241,7 +241,7 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
     // following code should not be done if user is not registered on back-end
     if (!user?.walletId) return;
 
-    dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
+    dispatch(checkIfArchanovaWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };
 
@@ -250,7 +250,7 @@ export const fallbackToSmartAccountAction = () => {
     const activeAccount = activeAccountSelector(getState());
     const { accounts: { data: accounts } } = getState();
     if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
-      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
+      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET)
      || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
       if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
     }

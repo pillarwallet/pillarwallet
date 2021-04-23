@@ -77,7 +77,7 @@ const storeState = {
     data: [{
       id: 'id',
       walletId: 'walletId',
-      type: ACCOUNT_TYPES.SMART_WALLET,
+      type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
       isActive: true,
     }],
   },

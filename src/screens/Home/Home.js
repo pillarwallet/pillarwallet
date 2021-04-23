@@ -82,7 +82,7 @@ import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { fetchRariDataAction } from 'actions/rariActions';
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
-import { checkSmartWalletSessionIfNeededAction } from 'actions/smartWalletActions';
+import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -178,7 +178,7 @@ type Props = {
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   rates: Rates,
   hideLiquidityPools: boolean,
-  checkSmartWalletSession: () => void,
+  checkArchanovaSession: () => void,
 };
 
 const RequestsWrapper = styled.View`
@@ -275,11 +275,11 @@ class HomeScreen extends React.Component<Props> {
       fetchUserStreams,
       fetchRariData,
       fetchLiquidityPoolsData,
-      checkSmartWalletSession,
+      checkArchanovaSession,
       activeAccount,
     } = this.props;
 
-    checkSmartWalletSession();
+    checkArchanovaSession();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     fetchBadges();
@@ -804,7 +804,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchRariData: () => dispatch(fetchRariDataAction()),
   fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(liquidityPools)),
   toggleLiquidityPools: () => dispatch(toggleLiquidityPoolsAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionIfNeededAction()),
+  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

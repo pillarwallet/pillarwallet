@@ -51,7 +51,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, AssetData, Balances, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
@@ -119,7 +119,7 @@ type Props = {
 type State = {
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
-  enablePayload: ?$Shape<TokenTransactionPayload>,
+  enablePayload: ?$Shape<TransactionPayload>,
 };
 
 

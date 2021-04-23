@@ -32,7 +32,7 @@ import {
 
 // utils
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
-import { isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types

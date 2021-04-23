@@ -27,8 +27,8 @@ import archanovaService from 'services/archanova';
 import { buildERC721TransactionData } from 'services/assets';
 
 // utils
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getEthereumProvider, truncateAmount } from 'utils/common';
+import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 
 // config
 import { getEnv } from 'configs/envConfig';
@@ -127,7 +127,7 @@ export const estimateTransactionAction = (
 
     if (!errorMessage) {
       const useGasToken = useGasTokenSelector(getState());
-      feeInfo = buildTxFeeInfo(estimated, useGasToken);
+      feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
     }
 
     if (!errorMessage && feeInfo && !feeInfo.fee?.gt(0)) {

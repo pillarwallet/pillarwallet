@@ -45,7 +45,7 @@ import { themedColors } from 'utils/themes';
 import { ETH } from 'constants/assetsConstants';
 import { formatTransactionFee } from 'utils/common';
 import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
+import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 
 // services
 import archanovaService from 'services/archanova';
@@ -131,7 +131,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     this.setState({ gettingFee: true }, async () => {
       const estimated = await archanovaService
         .estimateAccountDeviceUnDeployment(this.device.address)
-        .then(data => buildTxFeeInfo(data, this.props.useGasToken))
+        .then(data => buildArchanovaTxFeeInfo(data, this.props.useGasToken))
         .catch(() => null);
 
       if (estimated) txFeeInfo = estimated;

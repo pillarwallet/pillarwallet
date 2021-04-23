@@ -37,7 +37,7 @@ import { Container } from 'components/Layout';
 import type { Assets } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
@@ -55,7 +55,7 @@ import { ACCOUNTS } from 'constants/navigationConstants';
 
 // utils
 import { findFirstArchanovaAccount, getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, isDeployingArchanovaWallet, getDeploymentHash } from 'utils/archanova';
 import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -212,9 +212,9 @@ class AssetsScreen extends React.Component<Props, State> {
     } = this.props;
     const { showSmartWalletInsight } = this.state;
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -248,7 +248,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
-            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+            showDeploySmartWallet={archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />);
       default:

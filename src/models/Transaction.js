@@ -21,6 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
+import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -106,6 +107,10 @@ export type LiquidityPoolsExtra = {|
   tokenAmounts?: string[],
 |};
 
+export type EtherspotTransactionExtra = {|
+  batchHash: string,
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -114,7 +119,8 @@ export type TransactionExtra = TxSettlementItem[]
   | TxPoolTogetherExtra
   | TxSablierExtra
   | RariExtra
-  | LiquidityPoolsExtra;
+  | LiquidityPoolsExtra
+  | EtherspotTransactionExtra;
 
 export type GasToken = {
   address: string,
@@ -154,48 +160,32 @@ export type TransactionsStore = {
   [accountId: string]: Transaction[],
 };
 
-export type TokenTransactionPayload = {
+export type TransactionPayload = {
   gasLimit?: number,
-  amount: number | string,
   to: string,
   receiverEnsName?: string,
+  name?: string,
+  contractAddress: string,
+  tokenId?: string,
+  tokenType?: string,
+  txSpeed?: string,
   gasPrice?: number,
   txFeeInWei: number,
-  txSpeed?: string,
-  symbol: string,
-  contractAddress: string,
-  decimals: number,
-  note?: ?string,
-  name?: string,
-  tokenId?: string,
   signOnly?: ?boolean,
   signedHash?: ?string,
+  note?: ?string,
+  gasToken?: ?GasToken,
+  amount: number | string,
+  symbol: string,
+  decimals: number,
   data?: string,
   tag?: string,
   extra?: Object,
   usePPN?: boolean,
-  gasToken?: ?GasToken,
-  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
-}
+  sequentialTransactions?: TransactionPayload[],
+};
 
-export type CollectibleTransactionPayload = {
-  to: string,
-  receiverEnsName?: string,
-  name: string,
-  contractAddress: ?string,
-  tokenType: string,
-  tokenId: string,
-  note?: ?string,
-  signOnly?: ?boolean,
-  signedHash?: ?string,
-  gasPrice?: ?number,
-  gasLimit?: ?number,
-  txSpeed?: string,
-  gasToken?: ?GasToken,
-  txFeeInWei: number,
-}
-
-export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
+export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
 
 export type TransactionEthers = {
   from: string,
@@ -232,4 +222,10 @@ export type AllowanceTransaction = {
   to: string,
   chainId: string,
   data: string,
+};
+
+export type EthereumTransaction = {
+  to: string,
+  value: EthersBigNumber,
+  data: ?string,
 };

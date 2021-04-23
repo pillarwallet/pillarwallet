@@ -42,15 +42,16 @@ import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common';
+import { mapToEthereumTransactions } from 'utils/transactions';
 
 // services
 import { encodeContractMethod } from 'services/assets';
 
 // types
-import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
+import type { ConnectedArchanovaWalletAccount, ArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
-import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';
+import type { EstimatedTransactionFee, GasToken, TransactionPayload } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -198,7 +199,7 @@ class Archanova {
     subscribedToEvents = true;
   }
 
-  async getAccounts(): Promise<SmartWalletAccount[]> {
+  async getAccounts(): Promise<ArchanovaWalletAccount[]> {
     const accounts = await this.getSdk().getConnectedAccounts()
       .then(({ items = [] }) => items)
       .catch(() => []);
@@ -245,7 +246,7 @@ class Archanova {
 
   async syncSmartAccountsWithBackend(
     api: SDKWrapper,
-    smartAccounts: SmartWalletAccount[],
+    smartAccounts: ArchanovaWalletAccount[],
     walletId: string,
     privateKey: string,
     fcmToken: ?string,
@@ -329,7 +330,7 @@ class Archanova {
       });
   }
 
-  async fetchConnectedAccount(): Promise<ConnectedSmartWalletAccount> {
+  async fetchConnectedAccount(): Promise<ConnectedArchanovaWalletAccount> {
     try {
       const { state: { account: accountData } } = this.getSdk();
       const devices = await this.getConnectedAccountDevices();
@@ -392,6 +393,40 @@ class Archanova {
   ) {
     token = toChecksumAddress(token);
     return this.getSdk().createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
+  }
+
+  async sendTransaction(
+    transaction: TransactionPayload,
+    fromAccountAddress: string,
+    usePPN?: boolean,
+  ) {
+    if (usePPN) {
+      const {
+        amount,
+        decimals,
+        to,
+        contractAddress,
+      } = transaction;
+      const value = utils.parseUnits(amount.toString(), decimals);
+
+      return this.createAccountPayment(to, contractAddress, value);
+    }
+
+    const { gasToken } = transaction;
+    const payForGasWithToken = !isEmpty(gasToken);
+
+    const transactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
+
+    let estimateMethodParams = [];
+
+    // append params for multiple sequential transactions (ref – estimateAccountTransaction method params)
+    transactions.forEach(({ to, value, data }) => {
+      estimateMethodParams = [...estimateMethodParams, to, value, data];
+    });
+
+    const estimatedTransaction = await this.getSdk().estimateAccountTransaction(...estimateMethodParams);
+
+    return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
   }
 
   getConnectedAccountTransaction(txHash: string) {

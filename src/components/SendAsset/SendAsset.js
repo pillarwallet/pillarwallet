@@ -49,7 +49,7 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Balances, AssetData, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -199,7 +199,7 @@ const SendAsset = ({
     }
 
     // $FlowFixMe
-    const transactionPayload: TokenTransactionPayload = {
+    const transactionPayload: TransactionPayload = {
       to: selectedContact.ethAddress,
       // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
