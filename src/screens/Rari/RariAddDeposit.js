@@ -232,7 +232,6 @@ const RariAddDepositScreen = ({
               gasToken={feeInfo?.gasToken}
               isLoading={isEstimating}
               hasError={!!errorMessage}
-              showFiatDefault
             />
           )}
           <Spacing h={16} />

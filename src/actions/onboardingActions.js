@@ -48,6 +48,7 @@ import {
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -61,7 +62,7 @@ import { transformAssetsToObject } from 'utils/assets';
 // services
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import { firebaseMessaging } from 'services/firebase';
+import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 
 // actions
 import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -311,8 +312,10 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
     await dispatch(getTutorialDataAction());
 
+    const enableOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
+
     const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
-    const BASIC_FLOW = tutorialData ? TUTORIAL_FLOW : HOME;
+    const BASIC_FLOW = tutorialData && enableOnboarding ? TUTORIAL_FLOW : HOME;
 
     if (tutorialData && referralToken) {
       // show Tutorial first, then navigate to Referral flow when it's finished/skipped

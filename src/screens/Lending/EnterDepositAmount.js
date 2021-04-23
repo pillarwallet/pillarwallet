@@ -174,7 +174,6 @@ const EnterDepositAmount = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
-                showFiatDefault
               />
             )}
             {!!errorMessage && (
