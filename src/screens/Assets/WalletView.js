@@ -29,14 +29,19 @@ import { ASSET_CATEGORIES as CATEGORY } from 'constants/assetsConstants';
 // Utils
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
+// Types
+import type { AssetCategory } from 'models/Asset';
+
 // Local
 import WalletTab from './tabs/WalletTab';
 import DepositsTab from './tabs/DepositsTab';
 import InvestmentsTab from './tabs/InvestmentsTab';
 
-function WalletView() {
-  const [tabIndex, setTabIndex] = React.useState(0);
+type Props = {|
+  initialCategory: ?AssetCategory,
+|};
 
+function WalletView({ initialCategory }: Props) {
   const config = useAssetCategoriesConfig();
 
   const items = [
@@ -48,6 +53,9 @@ function WalletView() {
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: DepositsTab },
     { key: CATEGORY.DATASETS, title: config[CATEGORY.DATASETS].title, component: DepositsTab },
   ];
+
+  const initialTabIndex = items.findIndex(item => item.key === initialCategory);
+  const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
 
   return <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />;
 }

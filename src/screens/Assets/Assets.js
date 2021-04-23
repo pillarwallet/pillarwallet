@@ -53,7 +53,6 @@ import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/th
 // Local
 import PPNView from './PPNView';
 import WalletView from './WalletView';
-import LegacyWalletView from './LegacyWalletView';
 import WalletActivation from './WalletActivation';
 
 const VIEWS = {
@@ -77,6 +76,8 @@ function AssetsScreen() {
 
   const theme = useTheme();
   const colors = useThemeColors();
+
+  const { category } = navigation.state.params;
 
   React.useEffect(() => {
     if (!Object.keys(assets).length) {
@@ -177,7 +178,7 @@ function AssetsScreen() {
     switch (viewType) {
       case VIEWS.SMART_WALLET_VIEW:
         return (
-          <WalletView />
+          <WalletView initialCategory={category} />
           // <LegacyWalletView
           //   showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
           //   onScroll={onScroll}
