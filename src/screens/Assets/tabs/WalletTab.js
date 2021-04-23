@@ -91,10 +91,11 @@ function WalletTab() {
   };
 
   const renderSectionHeader = ({ title, chain }: Section) => {
-    const chainTitle = config[chain].title;
+    const chainConfig = config[chain];
     return (
       <SectionHeader>
-        {title} - {chainTitle}
+        <SectionTitle>{title}</SectionTitle>
+        <SectionChain color={chainConfig.color}>{chainConfig.title}</SectionChain>
       </SectionHeader>
     );
   };
@@ -184,12 +185,22 @@ const Container = styled.View`
 
 const ListHeader = styled.View`
   align-items: center;
-  margin: 24px 0;
+  margin: ${spacing.largePlus}px 0;
 `;
 
-const SectionHeader = styled(Text)`
+const SectionHeader = styled.View`
+  flex-direction: row;
+  align-items: baseline;
   padding: ${spacing.medium}px ${spacing.large}px ${spacing.medium}px;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const SectionTitle = styled(Text)`
   font-family: '${appFont.medium}';
   font-size: ${fontSizes.big}px;
-  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const SectionChain = styled(Text)`
+  margin-left: ${spacing.medium}px;
+  font-size: ${fontSizes.small}px;
 `;
