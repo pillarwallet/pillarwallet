@@ -19,7 +19,8 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
+import { SectionList, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
@@ -33,6 +34,8 @@ import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
+import { POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
 import { walletBalanceSelector } from 'selectors/balances';
@@ -42,11 +45,20 @@ import { appFont, fontSizes, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { SectionBase } from 'utils/types/react-native';
+import type { SectionBase, ImageSource } from 'utils/types/react-native';
 import type { Chain, ChainRecord } from 'models/Asset';
+
+// Local
+import ServicesModal from '../components/ServicesModal';
+import ServiceListItem from '../components/ServiceListItem';
+
+const aaveIcon = require('assets/images/apps/aave.png');
+const rariIcon = require('assets/images/rari_logo.png');
+const poolTogetherIcon = require('assets/images/pool_together.png');
 
 function BaseTab() {
   const { t } = useTranslationWithPrefix('assets.deposits');
+  const navigation = useNavigation();
 
   const balance = useRootSelector(walletBalanceSelector);
   const balanceChange = BigNumber(10);
@@ -56,9 +68,29 @@ function BaseTab() {
   const config = useChainsConfig();
   const safeArea = useSafeAreaInsets();
 
-  const navigateToDeposit = () => {};
+  const navigateToServices = () => {
+    Modal.open(() => (
+      <ServicesModal title="Deposit">
+        <ServiceListItem
+          title="Pool Together"
+          iconSource={poolTogetherIcon}
+          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
+        />
+        <ServiceListItem
+          title="Aave"
+          iconSource={aaveIcon}
+          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
+        />
+        <ServiceListItem
+          title="Rari"
+          iconSource={rariIcon}
+          onPress={() => navigation.navigate(POOLTOGETHER_DASHBOARD)}
+        />
+      </ServicesModal>
+    ));
+  };
 
-  const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToDeposit }];
+  const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     return (
@@ -129,6 +161,16 @@ const useChainItems = (): ChainRecord<Item[]> => {
     ],
     xdai: [{ key: '3', title: 'xDai', iconUrl: '', symbol: 'DAI', value: BigNumber(1000) }],
   };
+};
+
+type ServiceItem = {|
+  title: string,
+  imageSource: ImageSource,
+  onPress: () => mixed,
+|};
+
+const useServiceItems = (): ServiceItem[] => {
+  return [];
 };
 
 const Container = styled.View`

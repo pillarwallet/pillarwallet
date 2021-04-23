@@ -1,0 +1,92 @@
+// @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2021 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+import * as React from 'react';
+import { Image as RNImage } from 'react-native';
+import styled from 'styled-components/native';
+
+// Components
+import Text from 'components/modern/Text';
+
+// Utils
+import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
+
+// Types
+import type { ImageSource } from 'utils/types/react-native';
+
+type Props = {|
+  iconSource?: ImageSource,
+  title: ?string,
+  subtitle?: ?string,
+  rightAddOn?: React.Node,
+  onPress?: () => mixed,
+|};
+
+function ServiceListItem({ iconSource, title, subtitle, rightAddOn, onPress }: Props) {
+  const colors = useThemeColors();
+
+  return (
+    <TouchableContainer onPress={onPress} disabled={!onPress}>
+      <IconContainer>{!!iconSource && <IconImage source={iconSource} />}</IconContainer>
+
+      <TitleContainer>
+        <Text variant="medium" numberOfLines={1}>
+          {title}
+        </Text>
+        {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
+      </TitleContainer>
+
+      {rightAddOn && <RightAddOn>{rightAddOn}</RightAddOn>}
+    </TouchableContainer>
+  );
+}
+
+export default ServiceListItem;
+
+const TouchableContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  padding: ${spacing.small}px ${spacing.large}px;
+  min-height: 64px;
+`;
+
+const IconContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  margin-right: ${spacing.medium}px;
+  width: 48px;
+`;
+
+const TitleContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
+
+const RightAddOn = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+  margin-left: ${spacing.medium}px;
+`;
+
+const IconImage = styled(RNImage)`
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+`;
