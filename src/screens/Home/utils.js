@@ -21,7 +21,6 @@
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import {
-  totalBalanceSelector,
   walletBalanceSelector,
   depositsBalanceSelector,
   investmentsBalanceSelector,
@@ -32,48 +31,67 @@ import { contactsCountSelector } from 'selectors/contacts';
 
 // Utils
 import { BigNumber } from 'utils/common';
+import { sum, sumOrNull } from 'utils/bigNumber';
 
 // Types
-import type { WalletInfo, BalanceInfo } from 'models/Home';
+import type {
+  ChainSummaries,
+  ChainBalances,
+  CategoryBalances,
+  Balance,
+} from 'models/Home';
 
-export const useTotalBalance = (): BalanceInfo => {
-  const totalBalance = useRootSelector(totalBalanceSelector);
 
-  return {
-    balanceInFiat: totalBalance,
+export function useChainSummaries(): ChainSummaries {
+  const ethereum = {
+    walletAddress: useRootSelector(activeAccountAddressSelector),
+    collectibleCount: useRootSelector(accountCollectiblesSelector).length,
+    contactCount: useRootSelector(contactsCountSelector),
   };
-};
 
-export const useWalletInfo = (): WalletInfo => {
-  const accountAddress = useRootSelector(activeAccountAddressSelector);
+  return { ethereum };
+}
 
-  const walletBalance = useRootSelector(walletBalanceSelector);
-  const depositsBalance = useRootSelector(depositsBalanceSelector);
-  const investmentsBalance = useRootSelector(investmentsBalanceSelector);
-  const liquidityPoolsBalance = useRootSelector(liquidityPoolsBalanceSelector);
+export function useChainBalances(): ChainBalances {
+  const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
+  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
+  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
+  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
+  const rewards = { balanceInFiat: BigNumber(0) };
+  const datasets = { balanceInFiat: BigNumber(0) };
 
-  const collectiblesCount = useRootSelector(accountCollectiblesSelector).length;
-  const contactsCount = useRootSelector(contactsCountSelector);
-
-  return {
-    ethereum: {
-      walletAddress: accountAddress,
-      wallet: {
-        balanceInFiat: walletBalance,
-      },
-      deposits: wrapBalance(depositsBalance),
-      investments: wrapBalance(investmentsBalance),
-      liquidityPools: wrapBalance(liquidityPoolsBalance),
-      collectibles: collectiblesCount,
-      contacts: contactsCount,
-    },
+  const ethereum = {
+    wallet,
+    deposits,
+    investments,
+    liquidityPools,
+    rewards,
+    datasets,
   };
-};
 
-const wrapBalance = (balance: BigNumber): BalanceInfo | void => {
-  if (balance.isZero()) return undefined;
+  return { ethereum };
+}
 
+export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
+  const balances = Object.keys(chains).map((key) => chains[key]);
   return {
-    balanceInFiat: balance,
+    wallet: getTotalBalances(balances.map((chain) => chain?.wallet)),
+    deposits: getTotalBalances(balances.map((chain) => chain?.deposits)),
+    investments: getTotalBalances(balances.map((chain) => chain?.investments)),
+    liquidityPools: getTotalBalances(balances.map((chain) => chain?.liquidityPools)),
+    rewards: getTotalBalances(balances.map((chain) => chain?.rewards)),
+    datasets: getTotalBalances(balances.map((chain) => chain?.datasets)),
   };
-};
+}
+
+export function getCategoryBalancesTotal(categories: CategoryBalances): Balance {
+  const balances = Object.keys(categories).map((key) => categories[key]);
+  return getTotalBalances(balances);
+}
+
+export function getTotalBalances(balances: (?Balance)[]): Balance {
+  return {
+    balanceInFiat: sum(balances.map((b) => b?.balanceInFiat)),
+    changeInFiat: sumOrNull(balances.map((b) => b?.changeInFiat)),
+  };
+}

@@ -34,20 +34,25 @@ import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from '
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { spacing } from 'utils/variables';
 
+// Types
+import type { Balance } from 'models/Home';
+
 // Local
-import { useTotalBalance } from './utils';
 import SpecialButton from './components/SpecialButton';
 
 
-function BalanceSection() {
+type Props = {|
+  balance: Balance
+|};
+
+function BalanceSection({ balance }: Props) {
   const { t } = useTranslationWithPrefix('home.balance');
 
-  const total = useTotalBalance();
   const fiatCurrency = useFiatCurrency();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const initialBalance = total.changeInFiat ? total.balanceInFiat.minus(total.changeInFiat) : null;
-  const formattedChange = formatFiatChangeExtended(total.changeInFiat, initialBalance, fiatCurrency);
+  const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
+  const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -57,7 +62,7 @@ function BalanceSection() {
     <Container>
       <FirstColumn>
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(total.balanceInFiat, fiatCurrency, { exact: true })}
+          {formatFiatValue(balance.balanceInFiat, fiatCurrency, { exact: true })}
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>

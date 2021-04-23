@@ -39,21 +39,33 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 
 // Local
 import BalanceSection from './BalanceSection';
+import AssetsPieChart from './AssetsPieChart';
 import AssetsSection from './AssetsSection';
 import Controls from './Controls';
 import FloatingActions from './FloatingActions';
+import {
+  useChainSummaries,
+  useChainBalances,
+  getChainBalancesTotal,
+  getCategoryBalancesTotal,
+} from './utils';
 
 function Home() {
   const navigation = useNavigation();
 
   const [showSideChains, setShowSideChains] = React.useState(false);
 
+  const chainSummaries = useChainSummaries();
+  const chainsBalances = useChainBalances();
   const user = useUser();
 
   const handleToggleSideChains = () => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
     setShowSideChains(!showSideChains);
   };
+
+  const categoryBalances = showSideChains ? getChainBalancesTotal(chainsBalances) : chainsBalances.ethereum;
+  const totalBalance = getCategoryBalancesTotal(categoryBalances);
 
   return (
     <Container>
@@ -70,11 +82,17 @@ function Home() {
         noPaddingTop
       />
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
-        <BalanceSection />
+        <BalanceSection balance={totalBalance} />
+
+        <AssetsPieChart categoryBalances={categoryBalances} />
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 
-        <AssetsSection showSideChains={showSideChains} />
+        <AssetsSection
+          chainSummaries={chainSummaries}
+          chainBalances={chainsBalances}
+          showSideChains={showSideChains}
+        />
       </Content>
 
       <FloatingActions />

@@ -23,70 +23,107 @@ import t from 'translations/translate';
 
 import { getCurrencySymbol } from 'utils/common';
 
+function wrapBigNumber(value: ?BigNumber | number): ?BigNumber {
+  if (value == null) return null;
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+}
+
 /**
  * Modern formatting functions.
  *
  * Common assumptions:
- * - numeric input as BigNumber,
- * - accepts null and undefined values but returns null instead of formatted value as well as NaNs and ininity,
+ * - output user-facing strings
+ * - numeric input as BigNumber or number
+ * - accepts null and undefined values but returns null instead of formatted value as well as NaNs and ininity
  */
 
 type FormatValueOptions = {|
-  decimalPlaces?: number; // default: undefined -> truncate factional zeros
+  decimalPlaces?: number, // default: undefined -> full precision
+  stripTrailingZeros?: boolean, // default: false
 |};
 
 /**
- * 1000 => 1,000
+ * Generic formattting function.
+ *
+ * Does not make assumption about formatted output.
  */
-export function formatValue(value: ?BigNumber, options?: FormatValueOptions) {
+export function formatValue(value: ?BigNumber | number, options?: FormatValueOptions) {
+  value = wrapBigNumber(value);
   if (!value || !value.isFinite()) return null;
 
-  const format = {
-    decimalSeparator: '.',
-    groupSeparator: ',',
-    groupSize: 3,
-  };
+  const stripTrailingZeros = options?.stripTrailingZeros ?? false;
 
-  // $FlowFixMe: incorrect flow-typed `decimalPlaces` nullability
-  return value.toFormat(options?.decimalPlaces, BigNumber.ROUND_DOWN, format);
+  if (options?.decimalPlaces != null) {
+    value = value.decimalPlaces(options?.decimalPlaces, BigNumber.ROUND_DOWN);
+  }
+
+  return stripTrailingZeros ? value.toFormat() : value.toFormat(options?.decimalPlaces, BigNumber.ROUND_DOWN);
 }
 
 /**
- * 0.5 => '50%'
- * -0.01234 => '-1,23%'
+ * Format percent value.
+ * By defaults outputs 1 decimal places, without stripping zeros.
+ *
+ * Examples:
+ *   0.5 => '50.0%'
+ *   -0.01234 => '-1.2%'
+ *
  */
-export function formatPercentValue(value: ?BigNumber) {
+export function formatPercentValue(value: ?BigNumber, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;
 
-  return t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2 }) });
+  return t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 1, ...options }) });
 }
 
 /**
- * 0.5 => '+50%'
- * -0.01234 => '-1,23%'
+ * Format percent change with +/- sign.
+ * By defaults outputs 2 decimal places, without stripping zeros.
+ *
+ * Examples:
+ *   0.5 => '+50.00%'
+ *   -0.01234 => '-1.23%'
+ *
  */
-export function formatPercentChange(value: ?BigNumber) {
+export function formatPercentChange(value: ?BigNumber, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;
 
   return value.gte(0)
-    ? t('positivePercentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2 }) })
-    : t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2 }) });
+    ? t('positivePercentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2, ...options }) })
+    : t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2, ...options }) });
 }
 
 /**
- * 1000 => '1.00K'
- * 1234000 => '1.23M'
+ * Format value with K, M, B units if needed.
+ * By defaults outputs 2 decimal places, without stripping zeros.
+ *
+ * Examples:
+ *   1000 => '1.00K'
+ *   1234000 => '1.23M'
+ *
  */
-export function formatValueWithUnit(value: ?BigNumber) {
+export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOptions) {
   if (!value || !value.isFinite()) return null;
 
   const threshold = 0.85;
 
-  if (value.gte(threshold * 1e12)) return t('units.1e12', { value: value.dividedBy(1e12).toFixed(2) });
-  if (value.gte(threshold * 1e9)) return t('units.1e9', { value: value.dividedBy(1e9).toFixed(2) });
-  if (value.gte(threshold * 1e6)) return t('units.1e6', { value: value.dividedBy(1e6).toFixed(2) });
-  if (value.gte(threshold * 1e3)) return t('units.1e3', { value: value.dividedBy(1e3).toFixed(2) });
-  return value.toFixed(2);
+  if (value.gte(threshold * 1e12)) {
+    return t('units.1e12', { value: formatValue(value.dividedBy(1e12), { decimalPlaces: 2, ...options }) });
+  }
+
+  if (value.gte(threshold * 1e9)) {
+    return t('units.1e9', { value: formatValue(value.dividedBy(1e9), { decimalPlaces: 2, ...options }) });
+  }
+
+  if (value.gte(threshold * 1e6)) {
+    return t('units.1e6', { value: formatValue(value.dividedBy(1e6), { decimalPlaces: 2, ...options }) });
+  }
+
+  if (value.gte(threshold * 1e3)) {
+    return t('units.1e3', { value: formatValue(value.dividedBy(1e3), { decimalPlaces: 2, ...options }) });
+  }
+
+  return formatValue(value, { decimalPlaces: 2, ...options });
 }
 
 type FormatFiatValueOptions = {|

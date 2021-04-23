@@ -24,53 +24,110 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
+import { CHAINS } from 'constants/assetsConstants';
 import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
+import { formatValue, formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { ChainInfo, BalanceInfo } from 'models/Home';
+import type { ChainSummaries, ChainBalances, Balance } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
-import { useWalletInfo } from './utils';
 import HomeListHeader from './components/HomeListHeader';
 import HomeListItem from './components/HomeListItem';
 
-
 type Props = {|
+  chainSummaries: ChainSummaries,
+  chainBalances: ChainBalances,
   showSideChains: boolean,
 |};
 
-function AssetsSection({ showSideChains }: Props) {
+function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
-  const wallet = useWalletInfo();
   const fiatCurrency = useFiatCurrency();
 
-  const chains = useChainsConfig();
-  const categories = useAssetCategoriesConfig();
+  const chainsConfig = useChainsConfig();
+  const categoriesConfig = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
-  const renderBalanceItem = (category: AssetCategory, balance: ?BalanceInfo) => {
-    if (!balance || !categories[category]) return null;
+  const renderChain = (chain: Chain, showHeader: boolean) => {
+    const summary = chainSummaries[chain];
+    const categoryBalances = chainBalances[chain];
+    const { title, iconName, color } = chainsConfig[chain];
+
+    if (!summary && !categoryBalances) return null;
+
+    return (
+      <React.Fragment key={chain}>
+        {showHeader && (
+          <HomeListHeader
+            key={`${chain}-header`}
+            title={title}
+            iconName={iconName}
+            color={color}
+            walletAddress={summary?.walletAddress}
+          />
+        )}
+
+        {!!categoryBalances &&
+          Object.keys(categoryBalances).map((category) =>
+            renderBalanceItem(chain, category, categoryBalances[category]),
+          )}
+
+        {summary?.collectibleCount != null && (
+          <HomeListItem
+            key={`${chain}-collectibles`}
+            title={tRoot('assetCategories.collectibles')}
+            iconName="collectible"
+            onPress={() => navigation.navigate(ASSETS)}
+            value={formatValue(summary.collectibleCount)}
+          />
+        )}
+
+        {summary?.contactCount != null && (
+          <HomeListItem
+            key={`${chain}-contacts`}
+            title={t('contacts')}
+            iconName="contacts"
+            onPress={() => navigation.navigate(CONTACTS_FLOW)}
+            value={formatValue(summary.contactCount)}
+          />
+        )}
+
+        {/* Temporary entry until other UI provided */}
+        {chain === CHAINS.ETHEREUM && (
+          <HomeListItem
+            key={`${chain}-services`}
+            title={t('services')}
+            iconName="info"
+            onPress={() => navigation.navigate(SERVICES_FLOW)}
+          />
+        )}
+      </React.Fragment>
+    );
+  };
+
+  const renderBalanceItem = (chain: Chain, category: AssetCategory, balance: ?Balance) => {
+    if (!balance || !categoriesConfig[category]) return null;
 
     const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
 
     const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
     const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
-    const { title, iconName } = categories[category];
+    const { title, iconName } = categoriesConfig[category];
 
     return (
       <HomeListItem
+        key={`${chain}-${category}`}
         title={title}
         iconName={iconName}
         onPress={() => navigation.navigate(ASSETS, { category })}
@@ -81,69 +138,11 @@ function AssetsSection({ showSideChains }: Props) {
     );
   };
 
-  const renderChainItems = (chainInfo: ?ChainInfo) => {
-    if (!chainInfo) return null;
-
-    const formattedCollectibles = chainInfo.collectibles?.toFixed() ?? '0';
-    const formattedContacts = chainInfo.contacts?.toFixed() ?? '0';
-
-    return (
-      <>
-        {renderBalanceItem(ASSET_CATEGORIES.WALLET, chainInfo.wallet)}
-        {renderBalanceItem(ASSET_CATEGORIES.DEPOSITS, chainInfo.deposits)}
-        {renderBalanceItem(ASSET_CATEGORIES.INVESTMENTS, chainInfo.investments)}
-        {renderBalanceItem(ASSET_CATEGORIES.LIQUIDITY_POOLS, chainInfo.liquidityPools)}
-        {renderBalanceItem(ASSET_CATEGORIES.REWARDS, chainInfo.rewards)}
-        {renderBalanceItem(ASSET_CATEGORIES.DATASETS, chainInfo.datasets)}
-
-        {chainInfo.collectibles != null && (
-          <HomeListItem
-            title={tRoot('assetCategories.collectibles')}
-            iconName="collectible"
-            onPress={() => navigation.navigate(ASSETS)}
-            value={formattedCollectibles}
-          />
-        )}
-
-        {chainInfo.contacts != null && (
-          <HomeListItem
-            title={t('contacts')}
-            iconName="contacts"
-            onPress={() => navigation.navigate(CONTACTS_FLOW)}
-            value={formattedContacts}
-          />
-        )}
-
-        {/* Temporary entry until other UI provided */}
-        <HomeListItem title={t('services')} iconName="info" onPress={() => navigation.navigate(SERVICES_FLOW)} />
-      </>
-    );
-  };
-
-  const renderChain = (chain: Chain, chainInfo: ?ChainInfo) => {
-    if (!chainInfo) return null;
-
-    const { title, iconName, color } = chains[chain];
-    return (
-      <>
-        <HomeListHeader title={title} iconName={iconName} color={color} walletAddress={chainInfo.walletAddress} />
-        {renderChainItems(chainInfo)}
-      </>
-    );
-  };
-
   if (!showSideChains) {
-    return <Container>{renderChainItems(wallet.ethereum)}</Container>;
+    return <Container>{renderChain(CHAINS.ETHEREUM, false)}</Container>;
   }
 
-  return (
-    <Container>
-      {renderChain(CHAINS.ETHEREUM, wallet.ethereum)}
-      {renderChain(CHAINS.BINANCE, wallet.binance)}
-      {renderChain(CHAINS.XDAI, wallet.xdai)}
-      {renderChain(CHAINS.POLYGON, wallet.xdai)}
-    </Container>
-  );
+  return <Container>{Object.keys(chainBalances).map((key) => renderChain(key, true))}</Container>;
 }
 
 export default AssetsSection;

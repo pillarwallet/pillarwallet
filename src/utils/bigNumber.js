@@ -20,33 +20,28 @@
 
 import { BigNumber } from 'bignumber.js';
 
-type ChainRecord<T> = {|
-  ethereum: T,
-  binance?: T,
-  xdai?: T,
-  polygon?: T,
-|}
+/**
+ * Returns sum of nullable BigNumbers.
+ *
+ * It returns 0 when input is empty or contain only nulls.
+ */
+export function sum(values: (?BigNumber)[]): BigNumber {
+  let total = BigNumber(0);
 
-export type ChainBalances = ChainRecord<CategoryBalances>;
+  values.forEach((value) => {
+    if (value) {
+      total = total.plus(value);
+    }
+  });
 
-export type CategoryBalances = {|
-  wallet?: Balance,
-  deposits?: Balance,
-  investments?: Balance,
-  liquidityPools?: Balance,
-  rewards?: Balance,
-  datasets?: Balance,
-|};
+  return total;
+}
 
-export type Balance = {|
-  balanceInFiat: BigNumber,
-  changeInFiat?: ?BigNumber,
-|};
-
-export type ChainSummaries = ChainRecord<AccountSummary>;
-
-export type AccountSummary = {|
-  walletAddress?: string,
-  collectibleCount?: number,
-  contactCount?: number,
-|};
+/**
+ * Returns sum of nullable BigNumbers.
+ *
+ * It returns null when input is empty or contain only nulls.
+ */
+export function sumOrNull(values: (?BigNumber)[]): BigNumber | null {
+  return values.some((v) => v != null) ? sum(values) : null;
+}
