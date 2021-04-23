@@ -208,8 +208,8 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
 
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
       const accountHistory = allAccountsHistory[accountId].map((transaction) => {
-        const { extra } = transaction;
-        if (extra?.batchHash && isCaseInsensitiveMatch(extra.batchHash ?? '', batchHash)) {
+        // $FlowFixMe – try to fix this with tx extras? 🤔
+        if (isCaseInsensitiveMatch(transaction.extra?.batchHash, batchHash)) {
           return { ...transaction, hash: transactionHash };
         }
 
