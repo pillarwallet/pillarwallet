@@ -577,7 +577,7 @@ class TextInput extends React.Component<Props, State> {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-              )}
+                )}
                 {showRightAddon &&
                 <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
                   {!!rightPlaceholder &&
