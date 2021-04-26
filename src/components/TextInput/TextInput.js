@@ -541,7 +541,7 @@ class TextInput extends React.Component<Props, State> {
                       fallbackSource={fallbackSource}
                       style={{ marginRight: 9 }}
                     />}
-                    <AddonIcon name={leftSideSymbol} />
+                    {!!leftSideSymbol && <AddonIcon name={leftSideSymbol} />}
                     {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                   </LeftSideWrapper>
                 </TouchableWithoutFeedback>}
