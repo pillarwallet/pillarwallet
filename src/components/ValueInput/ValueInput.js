@@ -159,7 +159,7 @@ export const ValueInputComponent = ({
 
   const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
-  const leftPositionValue = formattedValueInFiat === "" ? formatFiat("0", fiatCurrency) : formattedValueInFiat;
+  const leftPositionValue = formattedValueInFiat === '' ? formatFiat('0', fiatCurrency) : formattedValueInFiat;
 
   React.useEffect(() => {
     if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
@@ -221,7 +221,9 @@ export const ValueInputComponent = ({
 
   const openAssetSelector = () => {
     Keyboard.dismiss();
-    onValueChange('0');
+    if (onValueChange) {
+      onValueChange('0');
+    }
     Modal.open(() => (
       <AssetSelectorOptions
         options={assetsOptions}

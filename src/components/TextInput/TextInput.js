@@ -136,7 +136,7 @@ const ButtonWrapper = styled.View`
 `;
 
 const LeftSideWrapper = styled.View`
-  padding-left: 16px;
+  padding-left: 14px;
   flex-direction: row;
   align-items: center;
 `;
@@ -163,6 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
+  padding-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
