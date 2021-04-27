@@ -98,7 +98,7 @@ const useChartProps = (balances: CategoryBalances) => {
   const total = getCategoryBalancesTotal(balances);
 
   // Zero balance case
-  if (total.balanceInFiat.isZero()) {
+  if (total.isZero()) {
     Object.keys(balances).forEach((category, index, array) => {
       const { title } = config[category];
       data.push({ y: 1 / array.length, title, value: 0 });
@@ -109,8 +109,8 @@ const useChartProps = (balances: CategoryBalances) => {
   }
 
   Object.keys(balances).forEach((category) => {
-    const categoryBalance = balances[category]?.balanceInFiat;
-    const totalBalance = total.balanceInFiat;
+    const categoryBalance = balances[category];
+    const totalBalance = total;
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
 
     const value = categoryBalance.dividedBy(totalBalance).toNumber();

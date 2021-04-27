@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
@@ -36,7 +37,7 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { ChainSummaries, ChainBalances, Balance } from 'models/Home';
+import type { ChainSummaries, ChainBalances } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
@@ -115,13 +116,11 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
     );
   };
 
-  const renderBalanceItem = (chain: Chain, category: AssetCategory, balance: ?Balance) => {
+  const renderBalanceItem = (chain: Chain, category: AssetCategory, balance: ?BigNumber) => {
     if (!balance || !categoriesConfig[category]) return null;
 
-    const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
+    const formattedBalance = formatFiatValue(balance ?? 0, fiatCurrency);
 
-    const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
-    const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
     const { title, iconName } = categoriesConfig[category];
 
     return (
@@ -131,8 +130,6 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
         iconName={iconName}
         onPress={() => navigation.navigate(ASSETS, { category })}
         value={formattedBalance}
-        secondaryValue={formattedChange}
-        secondaryValueColor={balance.changeInFiat?.gte(0) ? colors.positive : colors.secondaryText}
       />
     );
   };

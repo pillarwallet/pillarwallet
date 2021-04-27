@@ -30,17 +30,12 @@ type ChainRecord<T> = {|
 export type ChainBalances = ChainRecord<CategoryBalances>;
 
 export type CategoryBalances = {|
-  wallet?: Balance,
-  deposits?: Balance,
-  investments?: Balance,
-  liquidityPools?: Balance,
-  rewards?: Balance,
-  datasets?: Balance,
-|};
-
-export type Balance = {|
-  balanceInFiat: BigNumber,
-  changeInFiat?: ?BigNumber,
+  wallet?: BigNumber,
+  deposits?: BigNumber,
+  investments?: BigNumber,
+  liquidityPools?: BigNumber,
+  rewards?: BigNumber,
+  datasets?: BigNumber,
 |};
 
 export type ChainSummaries = ChainRecord<AccountSummary>;

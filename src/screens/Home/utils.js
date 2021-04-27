@@ -31,14 +31,13 @@ import { contactsCountSelector } from 'selectors/contacts';
 
 // Utils
 import { BigNumber } from 'utils/common';
-import { sum, sumOrNull } from 'utils/bigNumber';
+import { sum } from 'utils/bigNumber';
 
 // Types
 import type {
   ChainSummaries,
   ChainBalances,
   CategoryBalances,
-  Balance,
 } from 'models/Home';
 
 
@@ -53,12 +52,12 @@ export function useChainSummaries(): ChainSummaries {
 }
 
 export function useChainBalances(): ChainBalances {
-  const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
-  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
-  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
-  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
-  const rewards = { balanceInFiat: BigNumber(0) };
-  const datasets = { balanceInFiat: BigNumber(0) };
+  const wallet = useRootSelector(walletBalanceSelector);
+  const deposits = useRootSelector(depositsBalanceSelector);
+  const investments = useRootSelector(investmentsBalanceSelector);
+  const liquidityPools = useRootSelector(liquidityPoolsBalanceSelector);
+  const rewards = BigNumber(0);
+  const datasets = BigNumber(0);
 
   const ethereum = {
     wallet,
@@ -75,23 +74,17 @@ export function useChainBalances(): ChainBalances {
 export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
   const balances = Object.keys(chains).map((key) => chains[key]);
   return {
-    wallet: getTotalBalances(balances.map((chain) => chain?.wallet)),
-    deposits: getTotalBalances(balances.map((chain) => chain?.deposits)),
-    investments: getTotalBalances(balances.map((chain) => chain?.investments)),
-    liquidityPools: getTotalBalances(balances.map((chain) => chain?.liquidityPools)),
-    rewards: getTotalBalances(balances.map((chain) => chain?.rewards)),
-    datasets: getTotalBalances(balances.map((chain) => chain?.datasets)),
+    wallet: sum(balances.map((chain) => chain?.wallet)),
+    deposits: sum(balances.map((chain) => chain?.deposits)),
+    investments: sum(balances.map((chain) => chain?.investments)),
+    liquidityPools: sum(balances.map((chain) => chain?.liquidityPools)),
+    rewards: sum(balances.map((chain) => chain?.rewards)),
+    datasets: sum(balances.map((chain) => chain?.datasets)),
   };
 }
 
-export function getCategoryBalancesTotal(categories: CategoryBalances): Balance {
+export function getCategoryBalancesTotal(categories: CategoryBalances): BigNumber {
   const balances = Object.keys(categories).map((key) => categories[key]);
-  return getTotalBalances(balances);
+  return sum(balances);
 }
 
-export function getTotalBalances(balances: (?Balance)[]): Balance {
-  return {
-    balanceInFiat: sum(balances.map((b) => b?.balanceInFiat)),
-    changeInFiat: sumOrNull(balances.map((b) => b?.changeInFiat)),
-  };
-}

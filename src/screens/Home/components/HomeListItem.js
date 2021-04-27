@@ -36,8 +36,6 @@ export type Props = {|
   iconName: IconName,
   onPress: ?() => mixed,
   value?: ?string,
-  secondaryValue?: ?string,
-  secondaryValueColor?: string,
 |};
 
 function HomeListItem({
@@ -45,8 +43,6 @@ function HomeListItem({
   iconName,
   onPress,
   value,
-  secondaryValue,
-  secondaryValueColor,
 }: Props) {
   return (
     <Container onPress={onPress}>
@@ -56,7 +52,6 @@ function HomeListItem({
 
       <ValueContainer>
         {!!value && <Value>{value}</Value>}
-        {!!secondaryValue && <SecondaryValue $color={secondaryValueColor}>{secondaryValue}</SecondaryValue>}
       </ValueContainer>
     </Container>
   );
@@ -88,9 +83,4 @@ const ValueContainer = styled.View`
 const Value = styled(Text)`
   ${fontStyles.big};
   font-variant: tabular-nums;
-`;
-
-const SecondaryValue = styled(Text)`
-  font-variant: tabular-nums;
-  ${({ $color }) => `color: ${$color}`};
 `;
