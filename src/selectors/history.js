@@ -22,11 +22,7 @@ import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 
 // utils
-import {
-  findFirstArchanovaAccount,
-  getAccountId,
-  getActiveAccountId,
-} from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
