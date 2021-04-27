@@ -85,28 +85,30 @@ import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
-import { addExchangeAllowanceAction } from './exchangeActions';
+import { addExchangeAllowanceIfNeededAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 
-type TransactionStatus = {
+export type TransactionStatus = {
   isSuccess: boolean,
   error: ?string,
   noRetry?: boolean,
-  to: string,
+  hash?: string,
+  batchHash?: string,
 };
 
 type TransactionResult = {
   error?: string,
   hash?: string,
-  noRetry?: boolean,
+  batchHash?: string,
 };
 
 export const sendAssetAction = (
   transaction: TransactionPayload,
-  callback: (result: TransactionStatus) => void,
+  callback: (status: TransactionStatus) => void,
+  waitForActualTransactionHash: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -114,10 +116,8 @@ export const sendAssetAction = (
       symbol,
       usePPN = false,
       receiverEnsName,
-      note,
       gasToken,
       txFeeInWei,
-      extra: transactionExtra,
     } = transaction;
 
     const to = toChecksumAddress(transaction.to);
@@ -159,7 +159,6 @@ export const sendAssetAction = (
         callback({
           isSuccess: false,
           error: ERROR_TYPE.NOT_OWNED,
-          to,
           noRetry: true,
         });
         return;
@@ -187,69 +186,94 @@ export const sendAssetAction = (
       callback({
         isSuccess: false,
         error: t('error.transactionFailed.default'),
-        to,
       });
       return;
     }
 
     const transactionResult: TransactionResult = await activeWalletService
       .sendTransaction(transaction, accountAddress, usePPN)
-      .then(({ hash }) => ({ hash }))
       .catch((error) => catchTransactionError(error, logTransactionType, transaction));
 
-    const transactionHash = transactionResult?.hash;
-    if (!transactionHash) {
+    let transactionHash = transactionResult?.hash;
+    const transactionBatchHash = transactionResult?.batchHash;
+
+    /**
+     * This (waitForTransactionHashFromSubmittedBatch) covers edge case for Wallet Connect alone,
+     * but might be used for other scenarios where transaction hash is needed on submit callback.
+     *
+     * If transaction is sent through Etherspot then transaction will be submitted asynchronously
+     * along with batch which won't provide actual transaction hash instantaneously.
+     *
+     * Wallet Connect approve request expects actual transaction hash to be sent back to Dapp
+     * for it to track the status of it or etc. on Dapp side.
+     *
+     * The only approach here that makes sense is to subscribe for submitted batch updates
+     * by its hash and hold callback until we get the actual transaction hash
+     * which we can send back to Dapp and provide seamless experience on both sides.
+     *
+     * How long batch takes to proceed? According to Etherspot team there are 4 nodes working
+     * with transactions and this number can be increased if batches are queuing for longer times.
+     */
+    if (isEtherspotAccount(activeAccount)
+      && waitForActualTransactionHash
+      && !transactionHash
+      && transactionBatchHash) {
+      transactionHash = await etherspotService
+        .waitForTransactionHashFromSubmittedBatch(transactionBatchHash)
+        .catch((error) => {
+          reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
+          return null;
+        });
+    }
+
+    if (!transactionHash && !transactionBatchHash) {
       callback({
         isSuccess: false,
         error: transactionResult?.error || t('error.transactionFailed.default'),
-        to,
       });
       return;
     }
-
-    let historyTx;
 
     const transactionValue = !isCollectibleTransaction && transaction.amount
       ? parseTokenAmount(transaction.amount, transaction.decimals)
       : 0;
 
-    if (transactionHash) {
-      historyTx = buildHistoryTransaction({
-        ...transactionResult,
-        to,
-        hash: transactionHash,
-        from: accountAddress,
-        // $FlowFixMe
-        asset: isCollectibleTransaction ? transaction.name : symbol,
-        gasPrice: transaction.gasPrice,
-        gasLimit: transaction.gasLimit,
-        isPPNTransaction: !!usePPN,
-        status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
-        value: transactionValue,
-        feeWithGasToken,
-      });
+    let historyTx = buildHistoryTransaction({
+      ...transactionResult,
+      to,
+      hash: transactionHash,
+      batchHash: transactionBatchHash,
+      from: accountAddress,
+      // $FlowFixMe: either will be present
+      asset: isCollectibleTransaction ? transaction.name : symbol,
+      gasPrice: transaction.gasPrice,
+      gasLimit: transaction.gasLimit,
+      isPPNTransaction: !!usePPN,
+      status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+      value: transactionValue,
+      feeWithGasToken,
+    });
 
-      if (transaction.extra) {
-        historyTx = {
-          ...historyTx,
-          extra: transaction.extra,
-        };
-      }
+    if (transaction.extra) {
+      historyTx = {
+        ...historyTx,
+        extra: transaction.extra,
+      };
+    }
 
-      if (transaction.tag) {
-        historyTx = {
-          ...historyTx,
-        };
-      }
+    if (transaction.tag) {
+      historyTx = {
+        ...historyTx,
+      };
+    }
 
-      if (isCollectibleTransaction) {
-        historyTx = {
-          ...historyTx,
-          type: COLLECTIBLE_TRANSACTION,
-          icon: collectibleInfo?.icon,
-          assetData: collectibleInfo,
-        };
-      }
+    if (isCollectibleTransaction) {
+      historyTx = {
+        ...historyTx,
+        type: COLLECTIBLE_TRANSACTION,
+        icon: collectibleInfo?.icon,
+        assetData: collectibleInfo,
+      };
     }
 
     if (isArchanovaAccount(activeAccount) && !usePPN && transactionHash) {
@@ -295,254 +319,16 @@ export const sendAssetAction = (
       dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
     }
 
-    const allowancePayload = transactionExtra?.allowance;
-    if (allowancePayload && !isEmpty(allowancePayload)) {
-      const { provider, fromAssetCode, toAssetCode } = allowancePayload;
-      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, transactionHash));
-    }
+    dispatch(addExchangeAllowanceIfNeededAction(historyTx));
 
     callback({
       isSuccess: true,
       error: null,
-      txHash: transactionHash,
-      note,
-      to,
+      hash: transactionHash,
+      batchHash: transactionBatchHash,
     });
   };
 };
-
-// TODO: remove on PR review
-// export const sendAssetActionLegacy = (
-//   transaction: TransactionPayload,
-//   wallet: Object,
-//   callback: Function = noop,
-// ) => {
-//   return async (dispatch: Dispatch, getState: GetState) => {
-//     const tokenType = get(transaction, 'tokenType', '');
-//     const symbol = get(transaction, 'symbol', '');
-//     const allowancePayload = get(transaction, 'extra.allowance', {});
-//     const usePPN = get(transaction, 'usePPN', false);
-//     const receiverEnsName = get(transaction, 'receiverEnsName');
-//
-//     if (tokenType === COLLECTIBLES) {
-//       await dispatch(fetchCollectiblesAction());
-//     }
-//
-//     const {
-//       accounts: { data: accounts },
-//       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
-//     } = getState();
-//
-//     const accountId = getActiveAccountId(accounts);
-//     const activeAccount = getActiveAccount(accounts);
-//     const accountAddress = getActiveAccountAddress(accounts);
-//     const activeAccountType = getActiveAccountType(accounts);
-//     if (!activeAccount) return;
-//
-//     if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-//       await dispatch(ensureArchanovaAccountConnectedAction(wallet.privateKey));
-//     }
-//
-//     let tokenTx = {};
-//     let historyTx;
-//     const accountCollectibles = collectibles[accountId] || [];
-//     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-//     const to = toChecksumAddress(transaction.to);
-//     const { note, gasToken, txFeeInWei } = transaction;
-//
-//     // get wallet provider
-//     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-//     // $FlowFixMe: flow update to 0.122
-//     const walletProvider = await cryptoWallet.getProvider();
-//
-//     // build fee with gas token if present
-//     const feeWithGasToken = !isEmpty(gasToken)
-//       ? parseFeeWithGasToken(gasToken, txFeeInWei)
-//       : null;
-//
-//     // send collectible
-//     if (tokenType === COLLECTIBLES) {
-//       // $FlowFixMe
-//       const { tokenId } = (transaction: CollectibleTransactionPayload);
-//       const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
-//       if (!collectibleInfo) {
-//         tokenTx = {
-//           error: ERROR_TYPE.NOT_OWNED,
-//           hash: null,
-//           noRetry: true,
-//         };
-//       } else {
-//         // $FlowFixMe
-//         tokenTx = await walletProvider.transferERC721(
-//           activeAccount,
-//           // $FlowFixMe
-//           transaction,
-//           getState(),
-//         );
-//
-//         // $FlowFixMe
-//         if (tokenTx.hash) {
-//           historyTx = {
-//             ...buildHistoryTransaction({
-//               ...tokenTx,
-//               asset: transaction.name,
-//               note,
-//               feeWithGasToken,
-//             }),
-//             to,
-//             from: accountAddress,
-//             assetData: { ...collectibleInfo },
-//             type: COLLECTIBLE_TRANSACTION,
-//             icon: collectibleInfo.icon,
-//           };
-//         }
-//       }
-//       // send Ether
-//     } else if (symbol === ETH) {
-//       // $FlowFixMe
-//       tokenTx = await walletProvider.transferETH(
-//         activeAccount,
-//         // $FlowFixMe
-//         transaction,
-//         getState(),
-//       );
-//
-//       // $FlowFixMe
-//       if (tokenTx.hash) {
-//         historyTx = buildHistoryTransaction({
-//           ...tokenTx,
-//           asset: symbol,
-//           note,
-//           gasPrice: transaction.gasPrice,
-//           gasLimit: transaction.gasLimit,
-//           isPPNTransaction: usePPN,
-//           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
-//           extra: transaction.extra || null,
-//           tag: transaction.tag || null,
-//           feeWithGasToken,
-//         });
-//       }
-//       // send ERC20 token
-//     } else {
-//       const {
-//         amount,
-//         decimals,
-//         // $FlowFixMe
-//       } = (transaction: TransactionPayload);
-//
-//       tokenTx = await walletProvider.transferERC20(
-//         activeAccount,
-//         // $FlowFixMe
-//         transaction,
-//         getState(),
-//       );
-//
-//       // $FlowFixMe
-//       if (tokenTx.hash) {
-//         historyTx = buildHistoryTransaction({
-//           ...tokenTx,
-//           asset: symbol,
-//           value: parseTokenAmount(amount, decimals),
-//           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-//           note,
-//           gasPrice: transaction.gasPrice,
-//           gasLimit: transaction.gasLimit,
-//           isPPNTransaction: usePPN,
-//           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
-//           extra: transaction.extra || null,
-//           tag: transaction.tag || null,
-//           feeWithGasToken,
-//         });
-//       }
-//     }
-//
-//     if (isArchanovaAccount(activeAccount) && !usePPN && tokenTx.hash) {
-//       dispatch({
-//         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
-//         payload: tokenTx.hash,
-//       });
-//     }
-//
-//     // update transaction history
-//     if (historyTx) {
-//       if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
-//         dispatch({
-//           type: ADD_COLLECTIBLE_TRANSACTION,
-//           payload: {
-//             transactionData: { ...historyTx },
-//             tokenId: transaction.tokenId,
-//             accountId,
-//           },
-//         });
-//         const updatedCollectiblesHistory = {
-//           ...collectiblesHistory,
-//           [accountId]: [...accountCollectiblesHistory, historyTx],
-//         };
-//         await dispatch(saveDbAction(
-//          'collectiblesHistory',
-//          { collectiblesHistory: updatedCollectiblesHistory },
-//          true
-//         ));
-//         const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
-//         const updatedCollectibles = {
-//           ...collectibles,
-//           [accountId]: updatedAccountCollectibles,
-//         };
-//         dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
-//       } else {
-//         // check if there's a need to commit synthetic asset transaction
-//         const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
-//         if (!isEmpty(syntheticTransactionExtra)) {
-//           const { transactionId, toAddress } = syntheticTransactionExtra;
-//           if (transactionId) {
-//             dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
-//             // change history receiver address to actual receiver address rather than synthetics service address
-//             historyTx = { ...historyTx, to: toAddress };
-//           } else {
-//             reportLog('Failed to get transactionId during synthetics exchange.', { hash: historyTx.hash });
-//           }
-//         }
-//
-//         dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
-//
-//         const { history: { data: currentHistory } } = getState();
-//         const accountHistory = currentHistory[accountId] || [];
-//         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-//         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-//         dispatch(saveDbAction('history', { history: updatedHistory }, true));
-//       }
-//
-//       if (receiverEnsName) {
-//         dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
-//       }
-//     }
-//
-//     // update transaction count
-//     if (tokenTx.hash && tokenTx.transactionCount) {
-//       const txCountNew = { lastCount: tokenTx.transactionCount, lastNonce: tokenTx.nonce };
-//       dispatch({
-//         type: UPDATE_TX_COUNT,
-//         payload: txCountNew,
-//       });
-//       dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
-//     }
-//
-//     const txStatus: TransactionStatus = tokenTx.hash
-//       ? {
-//         isSuccess: true, error: null, note, to, txHash: tokenTx.hash,
-//       }
-//       : {
-//         isSuccess: false, error: tokenTx.error, note, to, noRetry: tokenTx.noRetry,
-//       };
-//
-//     if (Object.keys(allowancePayload).length && tokenTx.hash) {
-//       const { provider, fromAssetCode, toAssetCode } = allowancePayload;
-//       dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
-//     }
-//
-//     callback(txStatus);
-//   };
-// };
 
 export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
   return async (dispatch: Dispatch, getState: GetState) => {

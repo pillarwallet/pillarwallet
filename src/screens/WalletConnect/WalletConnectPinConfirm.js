@@ -45,15 +45,20 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 import type { TransactionPayload } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+import type { TransactionStatus } from 'actions/assetsActions';
 
 
 type Props = {
   requests: CallRequest[],
   navigation: NavigationScreenProp<*>,
-  approveCallRequest: (callId: number, result: any) => Function,
-  rejectCallRequest: (callId: number, errorMsg?: string) => Function,
-  sendAsset: (payload: TransactionPayload, navigate: Function) => Function,
-  resetIncorrectPassword: () => Function,
+  approveCallRequest: (callId: number, result: any) => void,
+  rejectCallRequest: (callId: number, errorMessage?: string) => void,
+  sendAsset: (
+    payload: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+    waitForActualTransactionHash: boolean,
+  ) => void,
+  resetIncorrectPassword: () => void,
   useBiometrics: boolean,
 };
 
@@ -84,7 +89,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     const { navigation, rejectCallRequest, resetIncorrectPassword } = this.props;
     const { request } = this;
     if (request) {
-      await rejectCallRequest(request.callId);
+      rejectCallRequest(request.callId);
     }
     resetIncorrectPassword();
     navigation.dismiss();
@@ -131,18 +136,20 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } = this.props;
 
     const transactionPayload = navigation.getParam('transactionPayload', {});
-
-    sendAsset(transactionPayload, async (txStatus: Object) => {
-      if (txStatus.isSuccess) {
-        await approveCallRequest(request.callId, txStatus.txHash);
+    const statusCallback = (transactionStatus: TransactionStatus) => {
+      if (transactionStatus.isSuccess) {
+        approveCallRequest(request.callId, transactionStatus.hash);
       } else {
-        await rejectCallRequest(request.callId);
+        rejectCallRequest(request.callId);
       }
+
       this.setState({ isChecking: false }, () => {
         this.handleDismissal();
-        this.handleNavigationToTransactionState(txStatus);
+        this.handleNavigationToTransactionState(transactionStatus);
       });
-    });
+    };
+
+    sendAsset(transactionPayload, statusCallback, true);
   };
 
   handleSignTransaction = async (request: CallRequest, wallet: Object) => {
@@ -150,9 +157,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     const trx = request.params[0];
     try {
       const result = await signTransaction(trx, wallet);
-      await approveCallRequest(request.callId, result);
+      approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(request.callId);
+      rejectCallRequest(request.callId);
     }
     this.completeCheckingAndDismiss();
   };
@@ -169,9 +176,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
         message = request.params[1]; // eslint-disable-line
         result = await signMessage(message, wallet);
       }
-      await approveCallRequest(request.callId, result);
+      approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(request.callId, error.toString());
+      rejectCallRequest(request.callId, error.toString());
     }
     this.completeCheckingAndDismiss();
   };
@@ -181,9 +188,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     try {
       const message = request.params[1]; // eslint-disable-line
       const result = await signTypedData(message, wallet);
-      await approveCallRequest(request.callId, result);
+      approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(request.callId, error.toString());
+      rejectCallRequest(request.callId, error.toString());
     }
     this.completeCheckingAndDismiss();
   };
@@ -224,15 +231,13 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  approveCallRequest: (callId: number, result: any) => {
-    dispatch(approveCallRequestAction(callId, result));
-  },
-  rejectCallRequest: (callId: number, errorMsg?: string) => {
-    dispatch(rejectCallRequestAction(callId, errorMsg));
-  },
-  sendAsset: (transaction: TransactionPayload, navigate) => {
-    dispatch(sendAssetAction(transaction, navigate));
-  },
+  approveCallRequest: (callId: number, result: any) => dispatch(approveCallRequestAction(callId, result)),
+  rejectCallRequest: (callId: number, errorMessage?: string) => dispatch(rejectCallRequestAction(callId, errorMessage)),
+  sendAsset: (
+    transaction: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+    waitForActualTransactionHash: boolean = false,
+  ) => dispatch(sendAssetAction(transaction, callback, waitForActualTransactionHash)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

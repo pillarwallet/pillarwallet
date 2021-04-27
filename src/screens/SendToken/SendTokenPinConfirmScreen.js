@@ -37,11 +37,15 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { TransactionStatus } from 'actions/assetsActions';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (transactionPayload: TransactionPayload, navigate: Function) => void,
+  sendAsset: (
+    transactionPayload: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+  ) => void,
   resetIncorrectPassword: () => void,
   accounts: Accounts,
   isOnline: boolean,
@@ -140,9 +144,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  sendAsset: (transaction: TransactionPayload, callback) => {
-    dispatch(sendAssetAction(transaction, callback));
-  },
+  sendAsset: (
+    transaction: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+  ) => dispatch(sendAssetAction(transaction, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });

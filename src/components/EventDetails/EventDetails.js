@@ -68,10 +68,17 @@ import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
-import { getActiveAccount, getActiveAccountAddress, isArchanovaAccount } from 'utils/accounts';
+import {
+  findAccountByAddress,
+  getActiveAccount,
+  getActiveAccountAddress,
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
 
 // services
-import archanovaInstance from 'services/archanova';
+import archanovaService from 'services/archanova';
+import etherspotService from 'services/etherspot';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
@@ -481,9 +488,13 @@ export class EventDetail extends React.Component<Props> {
     });
   };
 
-  viewOnTheBlockchain = () => {
-    const { hash } = this.props.event;
-    if (!hash) {
+  viewOnTheBlockchain = async () => {
+    const {
+      accounts,
+      event: { hash, from, batchHash },
+    } = this.props;
+
+    if (!hash && !batchHash) {
       Toast.show({
         message: t('toast.cannotFindTransactionHash'),
         emoji: 'woman-shrugging',
@@ -493,7 +504,18 @@ export class EventDetail extends React.Component<Props> {
       return;
     }
 
-    const explorerLink = archanovaInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const fromAccount = findAccountByAddress(from, accounts);
+
+    // if actual transaction hash is not yet obtained then try to get by batch hash directly
+    let explorerLink;
+    if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
+      explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+    } else {
+      explorerLink = fromAccount && isArchanovaAccount(fromAccount)
+        ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
+        : etherspotService.getTransactionExplorerLink(hash);
+    }
+
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),

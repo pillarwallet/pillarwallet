@@ -29,8 +29,11 @@ import {
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
   IncreaseP2PPaymentChannelAmountDto,
+  NotificationTypes,
+  GatewayTransactionStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
+import { getEnv } from 'configs/envConfig';
 
 // utils
 import { getEnsName, parseTokenAmount, reportErrorLog } from 'utils/common';
@@ -46,6 +49,8 @@ import type { Asset, Balance } from 'models/Asset';
 import type { EthereumTransaction, TransactionPayload } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 
+
+type EtherspotTransactionSentResult = { batchHash: string };
 
 class EtherspotService {
   sdk: EtherspotSdk;
@@ -182,7 +187,7 @@ class EtherspotService {
   async setTransactionsBatchAndSend(
     transactions: EthereumTransaction[],
     useGasTokenAddress?: string,
-  ) {
+  ): Promise<?EtherspotTransactionSentResult> {
     // clear batch
     this.clearTransactionsBatch();
 
@@ -196,7 +201,7 @@ class EtherspotService {
     await this.estimateTransactionsBatch(useGasTokenAddress);
 
     // submit current batch
-    return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));
+    return this.sdk.submitGatewayBatch().then(({ hash: batchHash }) => ({ batchHash }));
   }
 
   async sendP2PTransaction(transaction: TransactionPayload) {
@@ -215,7 +220,7 @@ class EtherspotService {
     transaction: TransactionPayload,
     fromAccountAddress: string,
     isP2P?: boolean,
-  ) {
+  ): Promise<?EtherspotTransactionSentResult> {
     if (isP2P) {
       // TODO: uncomment P2P partial implementation once it's available for Etherspot
       // return this.sendP2PTransaction(transaction);
@@ -230,6 +235,51 @@ class EtherspotService {
     return this.sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
       reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
       return null;
+    });
+  }
+
+  async getTransactionExplorerLinkByBatch(batchHash: string): Promise<?string> {
+    const submittedBatch = await this.getSubmittedBatchByHash(batchHash);
+
+    const transactionHash = submittedBatch?.transaction?.hash;
+    if (!transactionHash) return null;
+
+    return this.getTransactionExplorerLink(transactionHash);
+  }
+
+  getTransactionExplorerLink(transactionHash: string): string {
+    return `${getEnv().TX_DETAILS_URL}${transactionHash}`;
+  }
+
+  waitForTransactionHashFromSubmittedBatch(batchHash: string): Promise<string> {
+    let temporaryBatchSubscription;
+
+    return new Promise((resolve, reject) => {
+      temporaryBatchSubscription = this.sdk.notifications$
+        .pipe(map(async (notification) => {
+          if (notification.type === NotificationTypes.GatewayBatchUpdated) {
+            const submittedBatch = await this.sdk.getGatewaySubmittedBatch({ hash: batchHash });
+
+            const failedStates = [
+              GatewayTransactionStates.Canceling,
+              GatewayTransactionStates.Canceled,
+              GatewayTransactionStates.Reverted,
+            ];
+
+            let finishSubscription;
+            if (submittedBatch?.transaction?.state && failedStates.includes(submittedBatch?.transaction?.state)) {
+              finishSubscription = () => reject(submittedBatch.transaction.state);
+            } else if (submittedBatch?.transaction?.hash) {
+              finishSubscription = () => resolve(submittedBatch.transaction.hash);
+            }
+
+            if (finishSubscription) {
+              if (temporaryBatchSubscription) temporaryBatchSubscription.unsubscribe();
+              finishSubscription();
+            }
+          }
+        }))
+        .subscribe();
     });
   }
 

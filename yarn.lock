@@ -1218,10 +1218,10 @@
     testrpc "0.0.1"
     web3-utils "^1.0.0-beta.31"
 
-"@etherspot/contracts@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.2.0.tgz#6db659b68537f301ce484c795f4e99d3f10f552f"
-  integrity sha512-UgkEJvv54lZaaiH4gS6EC07q2sRq1teuIJ0WPNFF+8nKc9u392+c6AyaTluzBrmdqHV1l6V+zkN20wMPkbtmSg==
+"@etherspot/contracts@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.2.1.tgz#a2fb3f86592e96e1622209b9b0d62661a236f8cb"
+  integrity sha512-mm0DNgJ9VAzwsuQok9MqJvBvi1Y6rQvFMImJy8XAp/7qE202yabEjMJRVvkVUV1+iD3oZ6UeN5Gfz9FJvxGB8g==
 
 "@ethersproject/abi@5.0.7", "@ethersproject/abi@^5.0.5":
   version "5.0.7"
@@ -7894,13 +7894,13 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.0.tgz#87b1a9a8757bb7d9c16f320170c92c1785615960"
-  integrity sha512-YJBKeV3GRfewm2NNkfV4Tgw80lmjZOI9svEHY/NsAhgZBleVT0Eb2xyibrcKgQwY7OHSen6ldppbf631jeQwgQ==
+etherspot@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.3.tgz#ba9876377bb88179bd3adc9fbbd2c39581261648"
+  integrity sha512-9tMKblPM9FuiGyNZ1fcmqGyc6dEJnfUnSNTuWQMMDZXQcviSds5GwetOyuIXffV1NRVVNqOeSG+bsSdXcj7VZg==
   dependencies:
     "@apollo/client" "3.3.11"
-    "@etherspot/contracts" "1.2.0"
+    "@etherspot/contracts" "1.2.1"
     class-transformer "0.4.0"
     class-validator "0.13.1"
     cross-fetch "3.0.6"

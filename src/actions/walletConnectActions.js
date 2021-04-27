@@ -418,18 +418,13 @@ export const toggleWCPromoCardAction = (collapsed: boolean): WalletConnectToggle
 export const approveSessionAction = (peerId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { pendingConnector: connector } } = getState();
-
     if (!connector) {
-      dispatch(
-        walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
-      );
-
+      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
       return;
     }
 
     if (connector.peerId !== peerId) {
       dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
-
       return;
     }
 
@@ -472,7 +467,6 @@ export const approveSessionAction = (peerId: string) => {
       });
     } catch (e) {
       dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));
-
       return;
     }
 
@@ -495,7 +489,6 @@ export const rejectSessionAction = (peerId: string) => {
 
     if (connector.peerId !== peerId) {
       dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
-
       return;
     }
 
@@ -503,7 +496,6 @@ export const rejectSessionAction = (peerId: string) => {
       await connector.rejectSession();
     } catch (e) {
       dispatch(walletConnectError(SESSION_REJECTION_ERROR, e.toString()));
-
       return;
     }
 
@@ -512,7 +504,7 @@ export const rejectSessionAction = (peerId: string) => {
 };
 
 export const rejectCallRequestAction = (callId: number, errorMsg?: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectors, requests } } = getState();
 
     const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
@@ -522,43 +514,42 @@ export const rejectCallRequestAction = (callId: number, errorMsg?: string) => {
     }
 
     const connector = connectors.find(c => c.peerId === request.peerId);
-    if (connector) {
-      dispatch(walletConnectCallRejected(callId));
-      connector.rejectRequest({
-        id: +callId,
-        error: { message: errorMsg || t('error.walletConnect.requestRejected') },
-      });
-    } else {
+    if (!connector) {
       dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
+      return;
     }
+
+    dispatch(walletConnectCallRejected(callId));
+    connector.rejectRequest({
+      id: +callId,
+      error: { message: errorMsg || t('error.walletConnect.requestRejected') },
+    });
   };
 };
 
 export const approveCallRequestAction = (callId: number, result: any) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectors, requests } } = getState();
+
+    if (!result) {
+      dispatch(rejectCallRequestAction(callId));
+      return;
+    }
 
     const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
     if (!request) {
-      if (result) {
-        dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
-      }
-
-      return;
-    }
-    if (!result) {
-      dispatch(rejectCallRequestAction(callId));
-
+      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
       return;
     }
 
     const connector = connectors.find(c => c.peerId === request.peerId);
-    if (connector) {
-      dispatch(walletConnectCallApproved(callId));
-      connector.approveRequest({ id: +callId, result });
-    } else {
+    if (!connector) {
       dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
+      return;
     }
+
+    dispatch(walletConnectCallApproved(callId));
+    connector.approveRequest({ id: +callId, result });
   };
 };
 
@@ -568,7 +559,6 @@ const loadLegacySessions = async (): Promise<Session[]> => {
 
   if (walletconnect) {
     const { sessions = [] } = walletconnect;
-
     return sessions;
   }
 

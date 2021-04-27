@@ -45,10 +45,12 @@ import type {
 import type { Accounts } from 'models/Account';
 
 import { mapTransactionsHistory } from 'utils/feedData';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 export const buildHistoryTransaction = ({
   from,
   hash,
+  batchHash,
   to,
   value,
   gasPrice,
@@ -70,8 +72,10 @@ export const buildHistoryTransaction = ({
   value: typeof value === 'object' ? value.toString() : value,
   from,
   hash,
+  batchHash,
   to,
-  _id: hash,
+  // $FlowFixMe: either will be present for _id
+  _id: hash || batchHash,
   asset,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
@@ -119,7 +123,7 @@ export function updateHistoryRecord(
   const accounts = Object.keys(allHistory);
   const updatedHistory = accounts.reduce((history, accountId) => {
     const accountHistory = allHistory[accountId].map(transaction => {
-      if (transaction.hash.toLowerCase() !== hashToUpdate) {
+      if (!isCaseInsensitiveMatch(transaction.hash, hashToUpdate)) {
         return transaction;
       }
       txUpdated = modifier(transaction);

@@ -73,7 +73,7 @@ import { getEnv } from 'configs/envConfig';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { AllowanceTransaction } from 'models/Transaction';
+import type { AllowanceTransaction, Transaction } from 'models/Transaction';
 import type {
   WBTCGatewayAddressParams, WBTCGatewayAddressResponse, PendingWBTCTransaction, FetchedWBTCTx,
 } from 'models/WBTC';
@@ -243,13 +243,17 @@ export const setTokenAllowanceAction = (
   };
 };
 
-export const addExchangeAllowanceAction = (
-  provider: string,
-  fromAssetCode: string,
-  toAssetCode: string,
-  transactionHash: string,
-) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+export const addExchangeAllowanceIfNeededAction = ({
+  hash: transactionHash,
+  extra,
+}: Transaction) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    // no need to add if not allowance tx or no tx hash
+    if (!extra?.allowance || !transactionHash) return;
+
+    // $FlowFixMe: ignore for now
+    const { provider, fromAssetCode, toAssetCode } = extra.allowance;
+
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
@@ -260,10 +264,11 @@ export const addExchangeAllowanceAction = (
     };
 
     // filter pending for current provider and asset match to override failed transactions
-    const allowances = _allowances
-      .filter(({ provider: _provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) =>
-        fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider,
-      );
+    const allowances = _allowances.filter(({
+      provider: _provider,
+      fromAssetCode: _fromAssetCode,
+      toAssetCode: _toAssetCode,
+    }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider);
 
     allowances.push(allowance);
 

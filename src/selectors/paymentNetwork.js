@@ -98,9 +98,10 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
   accountAssetsSelector,
   (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
     return PPNTransactions
-      .filter(
-        ({ hash, stateInPPN }) => stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history),
-      )
+      .filter(({
+        hash,
+        stateInPPN,
+      }) => stateInPPN === PAYMENT_COMPLETED && hash && !isHiddenUnsettledTransaction(hash, history))
       .reduce((nonZeroBalances, transaction) => {
         const { value: rawValue, asset: symbol } = transaction;
 

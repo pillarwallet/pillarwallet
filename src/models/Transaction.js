@@ -113,6 +113,14 @@ export type EtherspotTransactionExtra = {|
   batchHash: string,
 |};
 
+export type AllowanceTransactionExtra = {|
+  allowance: {
+    provider: string,
+    fromAssetCode: string,
+    toAssetCode: string,
+  },
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -122,6 +130,7 @@ export type TransactionExtra = TxSettlementItem[]
   | TxSablierExtra
   | RariExtra
   | LiquidityPoolsExtra
+  | AllowanceTransactionExtra
   | EtherspotTransactionExtra;
 
 export type GasToken = {
@@ -137,7 +146,8 @@ export type FeeWithGasToken = {
 
 export type Transaction = {
   _id: string,
-  hash: string,
+  hash?: string,
+  batchHash?: string,
   to: string,
   from: string,
   createdAt: number,
@@ -191,7 +201,8 @@ export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
 
 export type TransactionEthers = {
   from: string,
-  hash: string,
+  hash?: string,
+  batchHash?: string,
   to: string,
   value: string | Object,
   gasPrice?: Object | number,

@@ -41,6 +41,7 @@ import {
 import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
+import { addExchangeAllowanceIfNeededAction } from 'actions/exchangeActions';
 
 // services
 import etherspot from 'services/etherspot';
@@ -208,8 +209,7 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
 
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
       const accountHistory = allAccountsHistory[accountId].map((transaction) => {
-        // $FlowFixMe – try to fix this with tx extras? 🤔
-        if (isCaseInsensitiveMatch(transaction.extra?.batchHash, batchHash)) {
+        if (isCaseInsensitiveMatch(transaction.batchHash, batchHash)) {
           return { ...transaction, hash: transactionHash };
         }
 
@@ -241,8 +241,8 @@ export const subscribeToEtherspotNotificationsAction = () => {
 
         const accountHistory = accountHistorySelector(getState());
         const existingTransaction = accountHistory.find(({
-          extra,
-        }) => isCaseInsensitiveMatch(extra?.batchHash, batchHash));
+          batchHash: existingBatchHash,
+        }) => isCaseInsensitiveMatch(existingBatchHash, batchHash));
 
         // check if matching transaction exists in history, if not – nothing to update
         if (!existingTransaction) return;
@@ -270,6 +270,11 @@ export const subscribeToEtherspotNotificationsAction = () => {
             const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
             notificationMessage = t('toast.transactionSent', { paymentInfo });
           }
+        }
+
+        // updates to perform once actual tx submitted from batch
+        if (transactionHash) {
+          dispatch(addExchangeAllowanceIfNeededAction(existingTransaction));
         }
       }
 
