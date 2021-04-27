@@ -38,10 +38,4 @@ export type CategoryBalances = {|
   datasets?: BigNumber,
 |};
 
-export type ChainSummaries = ChainRecord<AccountSummary>;
-
-export type AccountSummary = {|
-  walletAddress?: string,
-  collectibleCount?: number,
-  contactCount?: number,
-|};
+export type ChainCollectibleCount = ChainRecord<number>;

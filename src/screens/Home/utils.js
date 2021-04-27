@@ -34,18 +34,7 @@ import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 
 // Types
-import type { ChainSummaries, ChainCategoryBalances, CategoryBalances } from 'models/Home';
-
-
-export function useChainSummaries(): ChainSummaries {
-  const ethereum = {
-    walletAddress: useRootSelector(activeAccountAddressSelector),
-    collectibleCount: useRootSelector(accountCollectiblesSelector).length,
-    contactCount: useRootSelector(contactsCountSelector),
-  };
-
-  return { ethereum };
-}
+import type { CategoryBalances, ChainCategoryBalances, ChainCollectibleCount } from 'models/Home';
 
 export function useChainCategoryBalances(): ChainCategoryBalances {
   const wallet = useRootSelector(walletBalanceSelector);
@@ -67,6 +56,11 @@ export function useChainCategoryBalances(): ChainCategoryBalances {
   return { ethereum };
 }
 
+export function useChainCollectibleCount(): ChainCollectibleCount {
+  const ethereum = useRootSelector(accountCollectiblesSelector).length;
+  return { ethereum };
+}
+
 export function getChainBalancesTotal(chains: ChainCategoryBalances): CategoryBalances {
   const balances = Object.keys(chains).map((key) => chains[key]);
   return {
@@ -84,3 +78,7 @@ export function getCategoryBalancesTotal(categories: CategoryBalances): BigNumbe
   return sum(balances);
 }
 
+export function getTotalCollectibleCount(collectibleCountPerChain: ChainCollectibleCount): number {
+  const counts = Object.keys(collectibleCountPerChain).map((chain) => collectibleCountPerChain[chain]);
+  return counts.reduce((total, count) => count != null ? total + count : total, 0);
+}

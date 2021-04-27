@@ -36,19 +36,21 @@ import { formatValue, formatFiatValue } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { ChainSummaries, ChainCategoryBalances, CategoryBalances } from 'models/Home';
+import type { ChainSummaries, ChainCategoryBalances, CategoryBalances, ChainCollectibleCount } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
+import { getTotalCollectibleCount } from './utils';
 
 type Props = {|
   chainSummaries: ChainSummaries,
   categoryBalances: CategoryBalances,
   chainCategoryBalances: ChainCategoryBalances,
+  chainCollectibleCount: ChainCollectibleCount,
 |};
 
-function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances }: Props) {
+function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances, chainCollectibleCount }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -56,6 +58,8 @@ function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
+
+  const totalCollectibleCount = getTotalCollectibleCount(chainCollectibleCount);
 
   const renderCategory = (category: $Keys<CategoryBalances>) => {
     const balance = categoryBalances[category];
@@ -78,15 +82,15 @@ function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances
     <Container>
       {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategory(category))}
 
-      {/* {summary?.collectibleCount != null && (
+      {totalCollectibleCount != null && (
         <CategoryListItem
-          key={`${chain}-collectibles`}
+          key="collectibles"
           title={tRoot('assetCategories.collectibles')}
           iconName="collectible"
           onPress={() => navigation.navigate(ASSETS)}
-          value={formatValue(summary.collectibleCount)}
+          value={formatValue(totalCollectibleCount)}
         />
-      )} */}
+      )}
 
       {/* Temporary entry until other UI provided */}
       <CategoryListItem
