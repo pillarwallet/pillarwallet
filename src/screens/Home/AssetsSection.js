@@ -32,9 +32,8 @@ import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConsta
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { formatValue, formatFiatValue, formatFiatChangeExtended } from 'utils/format';
+import { formatValue, formatFiatValue } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
-import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ChainSummaries, ChainBalances } from 'models/Home';
@@ -42,7 +41,7 @@ import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
 import HomeListHeader from './components/HomeListHeader';
-import HomeListItem from './components/HomeListItem';
+import CategoryListItem from './components/CategoryListItem';
 
 type Props = {|
   chainSummaries: ChainSummaries,
@@ -57,7 +56,6 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
-  const colors = useThemeColors();
 
   const renderChain = (chain: Chain, showHeader: boolean) => {
     const summary = chainSummaries[chain];
@@ -84,7 +82,7 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
           )}
 
         {summary?.collectibleCount != null && (
-          <HomeListItem
+          <CategoryListItem
             key={`${chain}-collectibles`}
             title={tRoot('assetCategories.collectibles')}
             iconName="collectible"
@@ -94,7 +92,7 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
         )}
 
         {summary?.contactCount != null && (
-          <HomeListItem
+          <CategoryListItem
             key={`${chain}-contacts`}
             title={t('contacts')}
             iconName="contacts"
@@ -104,14 +102,12 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
         )}
 
         {/* Temporary entry until other UI provided */}
-        {chain === CHAINS.ETHEREUM && (
-          <HomeListItem
+          <CategoryListItem
             key={`${chain}-services`}
             title={t('services')}
             iconName="info"
             onPress={() => navigation.navigate(SERVICES_FLOW)}
           />
-        )}
       </React.Fragment>
     );
   };
@@ -124,7 +120,7 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
     const { title, iconName } = categoriesConfig[category];
 
     return (
-      <HomeListItem
+      <CategoryListItem
         key={`${chain}-${category}`}
         title={title}
         iconName={iconName}

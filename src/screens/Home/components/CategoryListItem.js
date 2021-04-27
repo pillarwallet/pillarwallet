@@ -38,7 +38,7 @@ export type Props = {|
   value?: ?string,
 |};
 
-function HomeListItem({
+function CategoryListItem({
   title,
   iconName,
   onPress,
@@ -57,7 +57,7 @@ function HomeListItem({
   );
 }
 
-export default HomeListItem;
+export default CategoryListItem;
 
 const Container = styled.TouchableOpacity`
   flex-direction: row;
