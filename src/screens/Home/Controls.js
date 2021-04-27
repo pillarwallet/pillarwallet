@@ -20,28 +20,14 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
-
-// Components
-import Switcher from 'components/Switcher';
-import Text from 'components/modern/Text';
 
 // Utils
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
-type Props = {|
-  showSideChains: boolean,
-  onToggleSideChains: (boolean) => mixed,
-|};
-
-function Controls({ showSideChains, onToggleSideChains }: Props) {
-  const { t } = useTranslationWithPrefix('home.controls');
-
+// This is reporarily empty, but will hold chart type selection button.
+function Controls() {
   return (
-    <Container>
-      <SwitchLabel>{t('sideChains')}</SwitchLabel>
-      <Switcher isOn={showSideChains} onToggle={onToggleSideChains} />
-    </Container>
+    <Container />
   );
 }
 
@@ -51,9 +37,4 @@ const Container = styled.View`
   flex-direction: row;
   align-items: center;
   margin: ${spacing.mediumLarge}px 0 0;
-`;
-
-const SwitchLabel = styled(Text)`
-  ${fontStyles.small};
-  margin-right: ${spacing.small}px;
 `;

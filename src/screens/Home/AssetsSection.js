@@ -46,10 +46,9 @@ import HomeListItem from './components/HomeListItem';
 type Props = {|
   chainSummaries: ChainSummaries,
   chainBalances: ChainBalances,
-  showSideChains: boolean,
 |};
 
-function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props) {
+function AssetsSection({ chainSummaries, chainBalances }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -137,10 +136,6 @@ function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props)
       />
     );
   };
-
-  if (!showSideChains) {
-    return <Container>{renderChain(CHAINS.ETHEREUM, false)}</Container>;
-  }
 
   return <Container>{Object.keys(chainBalances).map((key) => renderChain(key, true))}</Container>;
 }

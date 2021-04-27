@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 
 // Components
@@ -35,7 +34,6 @@ import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 import { useUser } from 'selectors/user';
 
 // Utils
-import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useThemeColors } from 'utils/themes';
 
 // Local
@@ -53,21 +51,13 @@ import {
 
 function Home() {
   const navigation = useNavigation();
-
-  const [showSideChains, setShowSideChains] = React.useState(false);
+  const colors = useThemeColors();
 
   const chainSummaries = useChainSummaries();
   const chainsBalances = useChainBalances();
   const user = useUser();
 
-  const colors = useThemeColors();
-
-  const handleToggleSideChains = () => {
-    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    setShowSideChains(!showSideChains);
-  };
-
-  const categoryBalances = showSideChains ? getChainBalancesTotal(chainsBalances) : chainsBalances.ethereum;
+  const categoryBalances = getChainBalancesTotal(chainsBalances);
   const totalBalance = getCategoryBalancesTotal(categoryBalances);
 
   return (
@@ -84,9 +74,12 @@ function Home() {
 
         <AssetsPieChart categoryBalances={categoryBalances} />
 
-        <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
+        <Controls />
 
-        <AssetsSection chainSummaries={chainSummaries} chainBalances={chainsBalances} showSideChains={showSideChains} />
+        <AssetsSection
+          chainSummaries={chainSummaries}
+          chainBalances={chainsBalances}
+        />
       </Content>
 
       <FloatingActions />
