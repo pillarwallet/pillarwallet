@@ -19,10 +19,14 @@
 */
 
 export const CHAINS = {
-  ETHEREUM: ('ethereum': 'ethereum'),
+  POLYGON: ('polygon': 'polygon'),
   BINANCE: ('binance': 'binance'),
   XDAI: ('xdai': 'xdai'),
-  POLYGON: ('polygon': 'polygon'),
+  ETHEREUM: ('ethereum': 'ethereum'),
+};
+
+export const CHAINS_ARCHANOVA = {
+  ETHEREUM: ('ethereum': 'ethereum'),
 };
 
 export const ASSET_CATEGORIES = {

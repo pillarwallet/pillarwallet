@@ -19,13 +19,14 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { CHAINS } from 'constants/assetsConstants';
+import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
@@ -33,6 +34,7 @@ import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
@@ -41,6 +43,7 @@ import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
+import ChainListItem from './components/ChainListItem';
 import { getTotalCollectibleCount } from './utils';
 
 type Props = {|
@@ -49,9 +52,13 @@ type Props = {|
   collectibleCountPerChain: CollectibleCountPerChain,
 |};
 
+type FlagPerCategory = { [AssetCategory]: ?boolean };
+
 function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectibleCountPerChain }: Props) {
-  const { t, tRoot } = useTranslationWithPrefix('home.assets');
+  const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
+
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
 
   const fiatCurrency = useFiatCurrency();
 
@@ -60,36 +67,83 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-  const renderCategory = (category: $Keys<CategoryBalance>) => {
-    const balance = categoryBalances[category];
-    const formattedBalance = formatFiatValue(balance ?? BigNumber(0), fiatCurrency);
+  const toggleShowChains = (category: AssetCategory) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    const previousValue = showChainsPerCategory[category];
+    // $FlowFixMe: flow is able to handle this
+    setShowChainsPerCategory({ ...showChainsPerCategory, [category]: !previousValue });
+  };
+
+  const renderCategoryWithBalance = (category: $Keys<CategoryBalance>) => {
+    const balance = categoryBalances[category] ?? BigNumber(0);
+    const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
+    const showChains = showChainsPerCategory[category];
 
     return (
-      <CategoryListItem
-        key={`${category}`}
+      <React.Fragment key={`${category}-fragment`}>
+        <CategoryListItem
+          key={`${category}`}
+          iconName={iconName}
+          title={title}
+          value={formattedBalance}
+          onPress={() => toggleShowChains(category)}
+        />
+        {showChains && Object.keys(CHAINS).map((key) => renderChainWithBalance(category, CHAINS[key]))}
+      </React.Fragment>
+    );
+  };
+
+  const renderChainWithBalance = (category: $Keys<CategoryBalance>, chain: Chain) => {
+    const balance = categoryBalancesPerChain[chain]?.[category] ?? BigNumber(0);
+    const formattedBalance = formatFiatValue(balance, fiatCurrency);
+
+    const { title } = chainsConfig[chain];
+
+    return (
+      <ChainListItem
+        key={`${category}-${chain}`}
         title={title}
-        iconName={iconName}
-        onPress={() => navigation.navigate(ASSETS, { category })}
         value={formattedBalance}
+        onPress={() => navigation.navigate(ASSETS, { category, chain })}
+      />
+    );
+  };
+
+  const renderCollectiblesCategory = () => {
+    const { title, iconName } = categoriesConfig.collectibles;
+    const showChains = showChainsPerCategory.collectibles;
+    return (
+      <React.Fragment key="collectibles-fragment">
+        <CategoryListItem
+          key="collectibles"
+          title={title}
+          iconName={iconName}
+          onPress={() => toggleShowChains(ASSET_CATEGORIES.COLLECTIBLES)}
+          value={formatValue(totalCollectibleCount)}
+        />
+        {showChains && Object.keys(CHAINS).map((key) => renderChainCollectibleCount(CHAINS[key]))}
+      </React.Fragment>
+    );
+  };
+
+  const renderChainCollectibleCount = (chain: Chain) => {
+    return (
+      <ChainListItem
+        key={`collectibles-${chain}`}
+        title={chainsConfig[chain].title}
+        value={formatValue(collectibleCountPerChain[chain] ?? 0)}
+        onPress={() => navigation.navigate(ASSETS, { category: ASSET_CATEGORIES.COLLECTIBLES, chain })}
       />
     );
   };
 
   return (
     <Container>
-      {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategory(category))}
+      {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategoryWithBalance(category))}
 
-      {totalCollectibleCount != null && (
-        <CategoryListItem
-          key="collectibles"
-          title={tRoot('assetCategories.collectibles')}
-          iconName="collectible"
-          onPress={() => navigation.navigate(ASSETS)}
-          value={formatValue(totalCollectibleCount)}
-        />
-      )}
+      {renderCollectiblesCategory()}
 
       {/* Temporary entry until other UI provided */}
       <CategoryListItem
