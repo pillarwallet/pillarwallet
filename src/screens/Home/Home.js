@@ -43,22 +43,22 @@ import AssetsSection from './AssetsSection';
 import Controls from './Controls';
 import FloatingActions from './FloatingActions';
 import {
-  useChainCollectibleCount,
-  useChainCategoryBalances,
-  getChainBalancesTotal,
-  getCategoryBalancesTotal,
+  useCollectibleCountPerChain,
+  useCategoryBalancesPerChain,
+  getTotalCategoryBalances,
+  getTotalBalance,
 } from './utils';
 
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const chainsBalances = useChainCategoryBalances();
-  const chainCollectibleCount = useChainCollectibleCount();
-  const user = useUser();
+  const chainsBalances = useCategoryBalancesPerChain();
+  const categoryBalances = getTotalCategoryBalances(chainsBalances);
+  const totalBalance = getTotalBalance(categoryBalances);
 
-  const categoryBalances = getChainBalancesTotal(chainsBalances);
-  const totalBalance = getCategoryBalancesTotal(categoryBalances);
+  const collectibleCountPerChain = useCollectibleCountPerChain();
+  const user = useUser();
 
   return (
     <Container>
@@ -78,8 +78,8 @@ function Home() {
 
         <AssetsSection
           categoryBalances={categoryBalances}
-          chainCategoryBalances={chainsBalances}
-          chainCollectibleCount={chainCollectibleCount}
+          categoryBalancesPerChain={chainsBalances}
+          collectibleCountPerChain={collectibleCountPerChain}
         />
       </Content>
 

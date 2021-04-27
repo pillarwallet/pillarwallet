@@ -32,13 +32,13 @@ import { fontSizes } from 'utils/variables';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { CategoryBalances } from 'models/Home';
+import type { CategoryBalance } from 'models/Home';
 
 // Local
-import { getCategoryBalancesTotal } from './utils';
+import { getTotalBalance } from './utils';
 
 type Props = {|
-  categoryBalances: CategoryBalances,
+  categoryBalances: CategoryBalance,
 |};
 
 function AssetsPieChart({ categoryBalances }: Props) {
@@ -88,14 +88,14 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: CategoryBalances) => {
+const useChartProps = (balances: CategoryBalance) => {
   const config = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  const total = getCategoryBalancesTotal(balances);
+  const total = getTotalBalance(balances);
 
   // Zero balance case
   if (total.isZero()) {

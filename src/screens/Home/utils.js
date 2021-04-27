@@ -19,7 +19,7 @@
 */
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector } from 'selectors';
 import {
   walletBalanceSelector,
   depositsBalanceSelector,
@@ -27,16 +27,15 @@ import {
   liquidityPoolsBalanceSelector,
 } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import { contactsCountSelector } from 'selectors/contacts';
 
 // Utils
 import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 
 // Types
-import type { CategoryBalances, ChainCategoryBalances, ChainCollectibleCount } from 'models/Home';
+import type { CategoryBalance, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
 
-export function useChainCategoryBalances(): ChainCategoryBalances {
+export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
   const wallet = useRootSelector(walletBalanceSelector);
   const deposits = useRootSelector(depositsBalanceSelector);
   const investments = useRootSelector(investmentsBalanceSelector);
@@ -56,12 +55,12 @@ export function useChainCategoryBalances(): ChainCategoryBalances {
   return { ethereum };
 }
 
-export function useChainCollectibleCount(): ChainCollectibleCount {
+export function useCollectibleCountPerChain(): CollectibleCountPerChain {
   const ethereum = useRootSelector(accountCollectiblesSelector).length;
   return { ethereum };
 }
 
-export function getChainBalancesTotal(chains: ChainCategoryBalances): CategoryBalances {
+export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalance {
   const balances = Object.keys(chains).map((key) => chains[key]);
   return {
     wallet: sum(balances.map((chain) => chain?.wallet)),
@@ -73,12 +72,12 @@ export function getChainBalancesTotal(chains: ChainCategoryBalances): CategoryBa
   };
 }
 
-export function getCategoryBalancesTotal(categories: CategoryBalances): BigNumber {
+export function getTotalBalance(categories: CategoryBalance): BigNumber {
   const balances = Object.keys(categories).map((key) => categories[key]);
   return sum(balances);
 }
 
-export function getTotalCollectibleCount(collectibleCountPerChain: ChainCollectibleCount): number {
+export function getTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {
   const counts = Object.keys(collectibleCountPerChain).map((chain) => collectibleCountPerChain[chain]);
   return counts.reduce((total, count) => count != null ? total + count : total, 0);
 }

@@ -36,7 +36,7 @@ import { formatValue, formatFiatValue } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { ChainSummaries, ChainCategoryBalances, CategoryBalances, ChainCollectibleCount } from 'models/Home';
+import type { CategoryBalancesPerChain, CategoryBalance, CollectibleCountPerChain } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
@@ -44,13 +44,12 @@ import CategoryListItem from './components/CategoryListItem';
 import { getTotalCollectibleCount } from './utils';
 
 type Props = {|
-  chainSummaries: ChainSummaries,
-  categoryBalances: CategoryBalances,
-  chainCategoryBalances: ChainCategoryBalances,
-  chainCollectibleCount: ChainCollectibleCount,
+  categoryBalances: CategoryBalance,
+  categoryBalancesPerChain: CategoryBalancesPerChain,
+  collectibleCountPerChain: CollectibleCountPerChain,
 |};
 
-function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances, chainCollectibleCount }: Props) {
+function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectibleCountPerChain }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -59,9 +58,9 @@ function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
-  const totalCollectibleCount = getTotalCollectibleCount(chainCollectibleCount);
+  const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-  const renderCategory = (category: $Keys<CategoryBalances>) => {
+  const renderCategory = (category: $Keys<CategoryBalance>) => {
     const balance = categoryBalances[category];
     const formattedBalance = formatFiatValue(balance ?? BigNumber(0), fiatCurrency);
 
