@@ -115,7 +115,7 @@ const SendContainer = (props: Props) => {
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: customScreenTitle || t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
-      minAvoidHeight={800}
+      minAvoidHeight={900}
     >
       <Wrapper>
         <InputWrapper>

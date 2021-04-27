@@ -163,7 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9px;
+  padding-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -479,7 +479,7 @@ class TextInput extends React.Component<Props, State> {
     const { genericToken } = images(theme);
     if (fallbackToGenericToken) fallbackSource = genericToken;
 
-    let inputHeight = 54;
+    let inputHeight = 62;
     if (customInputHeight) {
       inputHeight = customInputHeight;
     } else if (multiline) {
@@ -541,7 +541,7 @@ class TextInput extends React.Component<Props, State> {
                       fallbackSource={fallbackSource}
                       style={{ marginRight: 9 }}
                     />}
-                    <AddonIcon name={leftSideSymbol} />
+                    {!!leftSideSymbol && <AddonIcon name={leftSideSymbol} />}
                     {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                   </LeftSideWrapper>
                 </TouchableWithoutFeedback>}
