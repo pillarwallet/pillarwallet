@@ -79,6 +79,7 @@ function Home() {
         <AssetsSection
           chainSummaries={chainSummaries}
           chainBalances={chainsBalances}
+          categoryBalances={categoryBalances}
         />
       </Content>
 

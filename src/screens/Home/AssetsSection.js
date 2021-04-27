@@ -36,7 +36,7 @@ import { formatValue, formatFiatValue } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { ChainSummaries, ChainBalances } from 'models/Home';
+import type { ChainSummaries, ChainBalances, CategoryBalances } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
@@ -46,9 +46,10 @@ import CategoryListItem from './components/CategoryListItem';
 type Props = {|
   chainSummaries: ChainSummaries,
   chainBalances: ChainBalances,
+  categoryBalances: CategoryBalances,
 |};
 
-function AssetsSection({ chainSummaries, chainBalances }: Props) {
+function AssetsSection({ chainSummaries, chainBalances, categoryBalances }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -57,71 +58,15 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
-  const renderChain = (chain: Chain, showHeader: boolean) => {
-    const summary = chainSummaries[chain];
-    const categoryBalances = chainBalances[chain];
-    const { title, iconName, color } = chainsConfig[chain];
-
-    if (!summary && !categoryBalances) return null;
-
-    return (
-      <React.Fragment key={chain}>
-        {showHeader && (
-          <HomeListHeader
-            key={`${chain}-header`}
-            title={title}
-            iconName={iconName}
-            color={color}
-            walletAddress={summary?.walletAddress}
-          />
-        )}
-
-        {!!categoryBalances &&
-          Object.keys(categoryBalances).map((category) =>
-            renderBalanceItem(chain, category, categoryBalances[category]),
-          )}
-
-        {summary?.collectibleCount != null && (
-          <CategoryListItem
-            key={`${chain}-collectibles`}
-            title={tRoot('assetCategories.collectibles')}
-            iconName="collectible"
-            onPress={() => navigation.navigate(ASSETS)}
-            value={formatValue(summary.collectibleCount)}
-          />
-        )}
-
-        {summary?.contactCount != null && (
-          <CategoryListItem
-            key={`${chain}-contacts`}
-            title={t('contacts')}
-            iconName="contacts"
-            onPress={() => navigation.navigate(CONTACTS_FLOW)}
-            value={formatValue(summary.contactCount)}
-          />
-        )}
-
-        {/* Temporary entry until other UI provided */}
-          <CategoryListItem
-            key={`${chain}-services`}
-            title={t('services')}
-            iconName="info"
-            onPress={() => navigation.navigate(SERVICES_FLOW)}
-          />
-      </React.Fragment>
-    );
-  };
-
-  const renderBalanceItem = (chain: Chain, category: AssetCategory, balance: ?BigNumber) => {
-    if (!balance || !categoriesConfig[category]) return null;
-
-    const formattedBalance = formatFiatValue(balance ?? 0, fiatCurrency);
+  const renderCategory = (category: $Keys<CategoryBalances>) => {
+    const balance = categoryBalances[category];
+    const formattedBalance = formatFiatValue(balance ?? BigNumber(0), fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
 
     return (
       <CategoryListItem
-        key={`${chain}-${category}`}
+        key={`${category}`}
         title={title}
         iconName={iconName}
         onPress={() => navigation.navigate(ASSETS, { category })}
@@ -130,7 +75,32 @@ function AssetsSection({ chainSummaries, chainBalances }: Props) {
     );
   };
 
-  return <Container>{Object.keys(chainBalances).map((key) => renderChain(key, true))}</Container>;
+  return (
+    <Container>
+      {!!categoryBalances &&
+        Object.keys(categoryBalances).map((category) =>
+          renderCategory(category),
+        )}
+
+      {/* {summary?.collectibleCount != null && (
+        <CategoryListItem
+          key={`${chain}-collectibles`}
+          title={tRoot('assetCategories.collectibles')}
+          iconName="collectible"
+          onPress={() => navigation.navigate(ASSETS)}
+          value={formatValue(summary.collectibleCount)}
+        />
+      )} */}
+
+      {/* Temporary entry until other UI provided */}
+      <CategoryListItem
+        key="services"
+        title={t('services')}
+        iconName="info"
+        onPress={() => navigation.navigate(SERVICES_FLOW)}
+      />
+    </Container>
+  );
 }
 
 export default AssetsSection;
