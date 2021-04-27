@@ -57,11 +57,11 @@ import { accountBalancesSelector } from 'selectors/balances';
 // types
 import type { Theme } from 'models/Theme';
 import type { Balances } from 'models/Asset';
-import type { EstimatedTransactionFee } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { ArchanovaTransactionEstimate } from 'services/archanova';
 
 type StateProps = {|
-  deploymentEstimate: ?{ raw: Object, formatted: EstimatedTransactionFee },
+  deploymentEstimate: ?{ raw: Object, formatted: ArchanovaTransactionEstimate },
   gettingDeploymentEstimate: boolean,
   isOnline: boolean,
   balances: Balances,

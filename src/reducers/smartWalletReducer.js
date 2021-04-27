@@ -40,7 +40,7 @@ import type {
   ConnectedArchanovaWalletAccount,
   ArchanovaWalletDeploymentError,
 } from 'models/ArchanovaWalletAccount';
-import type { EstimatedTransactionFee } from 'models/Transaction';
+import type { ArchanovaTransactionEstimate } from 'services/archanova';
 
 
 export type SmartWalletReducerState = {
@@ -51,7 +51,7 @@ export type SmartWalletReducerState = {
     status: ?string,
     deploymentEstimate: ?{
       raw: Object,
-      formatted: EstimatedTransactionFee,
+      formatted: ArchanovaTransactionEstimate,
     },
     gettingDeploymentEstimate: boolean,
     deploymentStarted: boolean,

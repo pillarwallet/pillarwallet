@@ -51,8 +51,12 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
-import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetData, Balances, Rates } from 'models/Asset';
+import type {
+  TransactionPayload,
+  TransactionFeeInfo,
+  TransactionToEstimate,
+} from 'models/Transaction';
+import type { Asset, Balances, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
 //  selectors
@@ -76,6 +80,7 @@ import { spacing } from 'utils/variables';
 import ExchangeStatus from './ExchangeStatus';
 import { getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
+
 
 export type EnableData = {
   providerName: string,
@@ -112,7 +117,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
   resetEstimateTransaction: () => void,
 };
 
@@ -238,7 +243,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const providerName = getCryptoProviderName(provider);
 
     resetEstimateTransaction();
-    estimateTransaction(payToAddress, 0, data);
+    estimateTransaction({ to: payToAddress, value: 0, data });
 
     const transactionPayload = {
       amount: 0,
@@ -521,9 +526,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback),
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => dispatch(
-    estimateTransactionAction(recipientAddress, value, data, assetData),
-  ),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));

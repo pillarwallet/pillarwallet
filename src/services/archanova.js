@@ -26,7 +26,7 @@ import {
   sdkConstants,
   sdkInterfaces,
 } from '@smartwallet/sdk';
-import { ethToWei, toChecksumAddress } from '@netgum/utils';
+import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
@@ -35,7 +35,6 @@ import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
 import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 // utils
@@ -44,43 +43,15 @@ import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
-// services
-import { encodeContractMethod } from 'services/assets';
-
 // types
 import type { ConnectedArchanovaWalletAccount, ArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
 import type SDKWrapper from 'services/api';
-import type { AssetData } from 'models/Asset';
-import type { EstimatedTransactionFee, GasToken, TransactionPayload } from 'models/Transaction';
+import type { GasToken, EthereumTransaction, TransactionPayload } from 'models/Transaction';
 
-// assets
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-
-
-const {
-  GasPriceStrategies: {
-    Avg: AVG,
-    Fast: FAST,
-  },
-} = sdkConstants;
-
-const TransactionSpeeds = {
-  [AVG]: AVG,
-  [FAST]: FAST,
-};
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 
-export type AccountTransaction = {
-  recipient: string,
-  value: number | string | BigNumber,
-  data?: string | Buffer,
-  transactionSpeed?: $Keys<typeof TransactionSpeeds>,
-  gasToken?: ?GasToken,
-  sequentialTransactions?: AccountTransaction[],
-};
-
-export type EstimatePayload = {
+export type ArchanovaEstimatePayload = {
   gasFee: BigNumber,
   signedGasPrice: {
     gasPrice: BigNumber,
@@ -89,6 +60,12 @@ export type EstimatePayload = {
   gasToken: sdkInterfaces.IGasToken;
   relayerVersion: number;
   relayerFeatures: sdkInterfaces.RelayerFeatures;
+};
+
+export type ArchanovaTransactionEstimate = {
+  ethCost: BigNumber,
+  gasTokenCost?: ?BigNumber,
+  gasToken?: ?GasToken,
 };
 
 type ParsedEstimate = {
@@ -102,7 +79,7 @@ type ParsedEstimate = {
 
 let subscribedToEvents = false;
 
-export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEstimate => {
+export const parseEstimatePayload = (estimatePayload: ArchanovaEstimatePayload): ParsedEstimate => {
   const gasAmount = get(estimatePayload, 'gasFee');
   const gasToken = get(estimatePayload, 'gasToken');
   const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
@@ -342,48 +319,6 @@ class Archanova {
     return null;
   }
 
-  async transferAsset(transaction: AccountTransaction) {
-    let estimateError;
-    const {
-      recipient,
-      value,
-      data,
-      transactionSpeed = TransactionSpeeds[AVG],
-      gasToken,
-      sequentialTransactions = [],
-    } = transaction;
-
-    let estimateMethodParams = [
-      recipient,
-      value,
-      data,
-    ];
-
-    // supporting 2, can be added up to 5
-    if (sequentialTransactions.length) {
-      estimateMethodParams = [
-        ...estimateMethodParams,
-        sequentialTransactions[0].recipient,
-        sequentialTransactions[0].value,
-        sequentialTransactions[0].data,
-      ];
-    }
-
-    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
-
-    const estimatedTransaction = await this.getSdk()
-      .estimateAccountTransaction(...estimateMethodParams)
-      .catch((e) => { estimateError = e; });
-
-    if (!estimatedTransaction) {
-      return Promise.reject(new Error(estimateError));
-    }
-
-    const payForGasWithToken = !isEmpty(gasToken);
-
-    return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
-  }
-
   createAccountPayment(
     recipient: string,
     token: ?string,
@@ -523,52 +458,34 @@ class Archanova {
     return items;
   }
 
-  async estimateAccountTransaction(
-    transaction: AccountTransaction,
-    assetData: ?AssetData,
-  ): Promise<?EstimatedTransactionFee> {
-    const {
-      value: rawValue,
-      sequentialTransactions = [],
-      transactionSpeed = TransactionSpeeds[AVG],
-    } = transaction;
-    let { data, recipient } = transaction;
-    const decimals = get(assetData, 'decimals');
-    const assetSymbol = get(assetData, 'token', ETH);
-    const contractAddress = get(assetData, 'contractAddress');
+  async estimateAccountTransactions(transactions: EthereumTransaction[]): Promise<?ArchanovaTransactionEstimate> {
+    // let value;
+    // // eth or token transfer
+    // if (assetSymbol === ETH) {
+    //   value = ethToWei(rawValue);
+    // } else if (!data) {
+    //   const tokenTransferValue = decimals > 0
+    //     ? utils.parseUnits(rawValue.toString(), decimals)
+    //     : EthersBigNumber.from(rawValue.toString());
+    //   data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
+    //   recipient = contractAddress;
+    //   value = 0; // value is in encoded token transfer
+    // }
+    //
+    // let estimateMethodParams = [
+    //   recipient,
+    //   value,
+    //   data,
+    // ];
 
-    let value;
-    // eth or token transfer
-    if (assetSymbol === ETH) {
-      value = ethToWei(rawValue);
-    } else if (!data) {
-      const tokenTransferValue = decimals > 0
-        ? utils.parseUnits(rawValue.toString(), decimals)
-        : EthersBigNumber.from(rawValue.toString());
-      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
-      recipient = contractAddress;
-      value = 0; // value is in encoded token transfer
-    }
+    let estimateMethodParams = [];
 
-    let estimateMethodParams = [
-      recipient,
-      value,
-      data,
-    ];
+    // append params for multiple sequential transactions (ref – estimateAccountTransaction method params)
+    transactions.forEach(({ to, value, data }) => {
+      estimateMethodParams = [...estimateMethodParams, to, value, data];
+    });
 
-    // can be added up to 5
-    if (sequentialTransactions.length) {
-      sequentialTransactions.forEach(tx => {
-        estimateMethodParams = [
-          ...estimateMethodParams,
-          tx.recipient,
-          ethToWei(tx.value || 0),
-          tx.data,
-        ];
-      });
-    }
-
-    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+    estimateMethodParams = [...estimateMethodParams];
 
     const estimated = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
@@ -601,8 +518,7 @@ class Archanova {
               reportLog('Smart Wallet service error message json parser failed', {
                 parseError,
                 error,
-                transaction,
-                assetData,
+                transactions,
               });
             }
           } else {
@@ -612,8 +528,7 @@ class Archanova {
         }
         reportErrorLog('Smart Wallet service estimateAccountTransaction failed', {
           errorMessage,
-          transaction,
-          assetData,
+          transactions,
         });
         throw new Error(errorMessage);
       });

@@ -56,15 +56,15 @@ import type { Accounts } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
   TransactionFeeInfo,
-  EstimatedTransactionFee,
   Transaction,
   TransactionExtra,
   GasToken,
 } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { EstimatePayload } from 'services/archanova';
+import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
+
 
 // utils
 import { getActiveAccount, isArchanovaAccount } from './accounts';
@@ -355,7 +355,7 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
   return get(smartWalletState, 'upgrade.deploymentData.hash', '');
 };
 
-export const buildArchanovaTransactionEstimate = (apiEstimate: EstimatePayload) => {
+export const buildArchanovaTransactionEstimate = (apiEstimate: ArchanovaEstimatePayload) => {
   const {
     gasAmount,
     gasPrice,
@@ -388,7 +388,7 @@ export const buildArchanovaTransactionEstimate = (apiEstimate: EstimatePayload) 
 };
 
 export const buildArchanovaTxFeeInfo = (
-  estimated: ?EstimatedTransactionFee,
+  estimated: ?ArchanovaTransactionEstimate,
   useGasToken: boolean,
 ): TransactionFeeInfo => {
   if (!estimated) return { fee: null };

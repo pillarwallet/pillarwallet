@@ -80,7 +80,7 @@ export const buildEthereumTransaction = async (
   tokenType: ?string,
   contractAddress: ?string,
   tokenId: ?string,
-) => {
+): Promise<EthereumTransaction> => {
   let value;
 
   if (tokenType !== COLLECTIBLES) {
@@ -101,7 +101,11 @@ export const buildEthereumTransaction = async (
     value = EthersBigNumber.from(0);
   }
 
-  return { to, data, value };
+  let transaction = { to, value };
+
+  if (data) transaction = { ...transaction, data };
+
+  return transaction;
 };
 
 export const mapToEthereumTransactions = async (

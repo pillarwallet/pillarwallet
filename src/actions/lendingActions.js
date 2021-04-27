@@ -21,7 +21,11 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionsAction,
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+} from 'actions/transactionEstimateActions';
 
 // services
 import aaveService from 'services/aave';
@@ -41,7 +45,6 @@ import {
   SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT,
   SET_FETCHING_LENDING_DEPOSITED_ASSETS,
 } from 'constants/lendingConstants';
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -138,7 +141,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
     if (!smartWalletAccount) return;
 
     // initiate state earlier
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     // may include approve transaction
     const aaveDepositNeededTransactions = await getAaveDepositTransactions(
@@ -147,21 +150,13 @@ export const calculateLendingDepositTransactionEstimateAction = (
       asset,
     );
 
-    const sequentialTransactions = aaveDepositNeededTransactions
-      .slice(1) // exclude first, take rest if exist
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactions = aaveDepositNeededTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      aaveDepositNeededTransactions[0].to,
-      aaveDepositNeededTransactions[0].amount,
-      aaveDepositNeededTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactions));
   };
 };
 
@@ -175,14 +170,14 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
     if (!smartWalletAccount) return;
 
     // initiate state earlier
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = await getAaveWithdrawTransaction(
+    const { to, amount: value, data } = await getAaveWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
       withdrawAmount,
       depositedAsset,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };

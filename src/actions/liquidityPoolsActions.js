@@ -17,6 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
+// actions
+import {
+  estimateTransactionAction,
+  estimateTransactionsAction,
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+} from 'actions/transactionEstimateActions';
+
+// components
+import Toast from 'components/Toast';
+
+// constants
 import {
   SET_FETCHING_LIQUIDITY_POOLS_DATA,
   SET_UNIPOOL_DATA,
@@ -24,8 +38,9 @@ import {
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
+
+// utils
 import {
   getStakedAmount,
   getEarnedAmount,
@@ -40,10 +55,11 @@ import {
 } from 'utils/liquidityPools';
 import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+
+// services
 import { GraphQueryError } from 'services/theGraph';
-import Toast from 'components/Toast';
-import t from 'translations/translate';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { LiquidityPool, UnipoolLiquidityPool } from 'models/LiquidityPools';
@@ -145,7 +161,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const addLiquidityTransactions = await getAddLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
@@ -159,28 +175,17 @@ export const calculateAddLiquidityTransactionEstimateAction = (
     });
 
     if (!addLiquidityTransactions) {
-      Toast.show({
-        message: t('toast.cannotAddLiquidity'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotAddLiquidity')));
+      return;
     }
 
-    const sequentialTransactions = addLiquidityTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactions = addLiquidityTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      addLiquidityTransactions[0].to,
-      addLiquidityTransactions[0].amount,
-      addLiquidityTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactions));
   };
 };
 
@@ -194,7 +199,7 @@ export const calculateStakeTransactionEstimateAction = (
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const stakeTransactions = await getStakeTransactions(
       pool,
@@ -207,28 +212,17 @@ export const calculateStakeTransactionEstimateAction = (
     });
 
     if (!stakeTransactions) {
-      Toast.show({
-        message: t('toast.cannotStakeTokens'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotStakeTokens')));
+      return;
     }
 
-    const sequentialTransactions = stakeTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactions = stakeTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      stakeTransactions[0].to,
-      stakeTransactions[0].amount,
-      stakeTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactions));
   };
 };
 
@@ -241,15 +235,15 @@ export const calculateUnstakeTransactionEstimateAction = (
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = getUnstakeTransaction(
+    const { to, amount: value, data } = getUnstakeTransaction(
       pool,
       getAccountAddress(smartWalletAccount),
       tokenAmount,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 
@@ -265,7 +259,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
@@ -280,28 +274,17 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
     });
 
     if (!removeLiquidityTransactions) {
-      Toast.show({
-        message: t('toast.cannotRemoveLiquidity'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotRemoveLiquidity')));
+      return;
     }
 
-    const sequentialTransactions = removeLiquidityTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactions = removeLiquidityTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      removeLiquidityTransactions[0].to,
-      removeLiquidityTransactions[0].amount,
-      removeLiquidityTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactions));
   };
 };
 
@@ -311,15 +294,15 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: UnipoolLiqu
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = getClaimRewardsTransaction(
+    const { to, amount: value, data } = getClaimRewardsTransaction(
       pool,
       getAccountAddress(smartWalletAccount),
       amountToClaim,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 

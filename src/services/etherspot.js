@@ -26,7 +26,6 @@ import {
   Accounts as EtherspotAccounts,
   EnvNames,
   ENSNode,
-  GatewayEstimatedBatch,
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
   IncreaseP2PPaymentChannelAmountDto,
@@ -170,7 +169,7 @@ class EtherspotService {
     return this.sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(transactions: EthereumTransaction[]): Promise<?GatewayEstimatedBatch> {
+  setTransactionsBatch(transactions: EthereumTransaction[]) {
     return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
   }
 

@@ -22,6 +22,8 @@ import { BigNumber } from 'bignumber.js';
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import type { AssetData } from 'models/Asset';
+import type { Value } from 'utils/common';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -206,12 +208,6 @@ export type TransactionEthers = {
   type?: string,
 };
 
-export type EstimatedTransactionFee = {
-  ethCost: BigNumber,
-  gasTokenCost?: ?BigNumber,
-  gasToken?: ?GasToken,
-};
-
 export type TransactionFeeInfo = {
   fee: ?BigNumber,
   gasToken?: ?GasToken,
@@ -227,5 +223,12 @@ export type AllowanceTransaction = {
 export type EthereumTransaction = {
   to: string,
   value: EthersBigNumber,
-  data: ?string,
+  data?: string,
+};
+
+export type TransactionToEstimate = {
+  to: string,
+  value: Value,
+  assetData?: AssetData,
+  data?: string,
 };

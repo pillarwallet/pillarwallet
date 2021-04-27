@@ -59,11 +59,15 @@ import {
 } from 'constants/walletConnectConstants';
 
 // types
-import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type {
+  TransactionPayload,
+  TransactionFeeInfo,
+  TransactionToEstimate,
+} from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -89,7 +93,7 @@ type Props = {
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  estimateTransaction: (recipient: string, value: number, data: ?string, assetData: AssetData) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
   resetEstimateTransaction: () => void,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
@@ -182,7 +186,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
     const assetData = { contractAddress, token: symbol, decimals };
 
-    estimateTransaction(to, value, data, assetData);
+    estimateTransaction({
+      to,
+      value,
+      data,
+      assetData,
+    });
   };
 
   handleFormSubmit = (request, transactionPayload) => {
@@ -447,12 +456,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    data: ?string,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
