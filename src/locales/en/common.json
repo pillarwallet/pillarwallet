@@ -1502,7 +1502,7 @@
     "liquidityPoolsStake": "{{value}} {{token}} staked.",
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
-    "noActiveAccountFound": "No active account found. Please"
+    "noActiveAccountFound": "No active account found."
   },
 
   "exchangeContent": {
