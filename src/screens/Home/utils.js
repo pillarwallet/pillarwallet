@@ -34,11 +34,7 @@ import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 
 // Types
-import type {
-  ChainSummaries,
-  ChainBalances,
-  CategoryBalances,
-} from 'models/Home';
+import type { ChainSummaries, ChainCategoryBalances, CategoryBalances } from 'models/Home';
 
 
 export function useChainSummaries(): ChainSummaries {
@@ -51,7 +47,7 @@ export function useChainSummaries(): ChainSummaries {
   return { ethereum };
 }
 
-export function useChainBalances(): ChainBalances {
+export function useChainCategoryBalances(): ChainCategoryBalances {
   const wallet = useRootSelector(walletBalanceSelector);
   const deposits = useRootSelector(depositsBalanceSelector);
   const investments = useRootSelector(investmentsBalanceSelector);
@@ -71,7 +67,7 @@ export function useChainBalances(): ChainBalances {
   return { ethereum };
 }
 
-export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
+export function getChainBalancesTotal(chains: ChainCategoryBalances): CategoryBalances {
   const balances = Object.keys(chains).map((key) => chains[key]);
   return {
     wallet: sum(balances.map((chain) => chain?.wallet)),

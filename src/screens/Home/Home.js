@@ -44,7 +44,7 @@ import Controls from './Controls';
 import FloatingActions from './FloatingActions';
 import {
   useChainSummaries,
-  useChainBalances,
+  useChainCategoryBalances,
   getChainBalancesTotal,
   getCategoryBalancesTotal,
 } from './utils';
@@ -54,7 +54,7 @@ function Home() {
   const colors = useThemeColors();
 
   const chainSummaries = useChainSummaries();
-  const chainsBalances = useChainBalances();
+  const chainsBalances = useChainCategoryBalances();
   const user = useUser();
 
   const categoryBalances = getChainBalancesTotal(chainsBalances);
@@ -78,8 +78,8 @@ function Home() {
 
         <AssetsSection
           chainSummaries={chainSummaries}
-          chainBalances={chainsBalances}
           categoryBalances={categoryBalances}
+          chainCategoryBalances={chainsBalances}
         />
       </Content>
 

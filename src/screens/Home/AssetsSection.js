@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
 import { CHAINS } from 'constants/assetsConstants';
-import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
+import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -36,20 +36,19 @@ import { formatValue, formatFiatValue } from 'utils/format';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { ChainSummaries, ChainBalances, CategoryBalances } from 'models/Home';
+import type { ChainSummaries, ChainCategoryBalances, CategoryBalances } from 'models/Home';
 import type { Chain, AssetCategory } from 'models/Asset';
 
 // Local
-import HomeListHeader from './components/HomeListHeader';
 import CategoryListItem from './components/CategoryListItem';
 
 type Props = {|
   chainSummaries: ChainSummaries,
-  chainBalances: ChainBalances,
   categoryBalances: CategoryBalances,
+  chainCategoryBalances: ChainCategoryBalances,
 |};
 
-function AssetsSection({ chainSummaries, chainBalances, categoryBalances }: Props) {
+function AssetsSection({ chainSummaries, categoryBalances, chainCategoryBalances }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -77,10 +76,7 @@ function AssetsSection({ chainSummaries, chainBalances, categoryBalances }: Prop
 
   return (
     <Container>
-      {!!categoryBalances &&
-        Object.keys(categoryBalances).map((category) =>
-          renderCategory(category),
-        )}
+      {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategory(category))}
 
       {/* {summary?.collectibleCount != null && (
         <CategoryListItem

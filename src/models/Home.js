@@ -27,7 +27,7 @@ type ChainRecord<T> = {|
   polygon?: T,
 |}
 
-export type ChainBalances = ChainRecord<CategoryBalances>;
+export type ChainCategoryBalances = ChainRecord<CategoryBalances>;
 
 export type CategoryBalances = {|
   wallet?: BigNumber,
