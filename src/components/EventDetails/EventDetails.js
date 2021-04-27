@@ -900,25 +900,24 @@ export class EventDetail extends React.Component<Props> {
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-        if (isArchanovaAccountActive) {
-          const topUpMoreButton = {
-            title: t('button.topUpMore'),
-            onPress: this.topUpPillarNetwork,
-            secondary: true,
-          };
-          eventData = {
-            buttons: isPending
-              ? [topUpMoreButton]
-              : [
-                {
-                  title: t('button.send'),
-                  onPress: this.sendSynthetic,
-                  secondary: true,
-                },
-                topUpMoreButton,
-              ],
-          };
-        }
+        if (!isArchanovaAccountActive) break;
+        const topUpMoreButton = {
+          title: t('button.topUpMore'),
+          onPress: this.topUpPillarNetwork,
+          secondary: true,
+        };
+        eventData = {
+          buttons: isPending
+            ? [topUpMoreButton]
+            : [
+              {
+                title: t('button.send'),
+                onPress: this.sendSynthetic,
+                secondary: true,
+              },
+              topUpMoreButton,
+            ],
+        };
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         eventData = {
@@ -928,31 +927,29 @@ export class EventDetail extends React.Component<Props> {
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
-        if (isArchanovaAccountActive) {
-          eventData = {
-            buttons: [
-              {
-                title: t('button.withdrawMore'),
-                onPress: this.PPNWithdraw,
-                secondary: true,
-              },
-            ],
-          };
-        }
+        if (!isArchanovaAccountActive) break;
+        eventData = {
+          buttons: [
+            {
+              title: t('button.withdrawMore'),
+              onPress: this.PPNWithdraw,
+              secondary: true,
+            },
+          ],
+        };
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
-        if (isArchanovaAccountActive) {
-          eventData = {
-            settleEventData: event,
-            buttons: [
-              {
-                title: t('button.settleMore'),
-                onPress: this.settle,
-                secondary: true,
-              },
-            ],
-          };
-        }
+        if (!isArchanovaAccountActive) break;
+        eventData = {
+          settleEventData: event,
+          buttons: [
+            {
+              title: t('button.settleMore'),
+              onPress: this.settle,
+              secondary: true,
+            },
+          ],
+        };
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {

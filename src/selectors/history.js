@@ -22,7 +22,7 @@ import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 
 // utils
-import { findFirstArchanovaAccount, getActiveAccountId } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
@@ -47,10 +47,10 @@ export const archanovaAccountHistorySelector = createSelector(
   historySelector,
   accountsSelector,
   (history, accounts) => {
-    const userHasArchanovaAccount = findFirstArchanovaAccount(accounts);
-    if (!userHasArchanovaAccount) return [];
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    if (!archanovaAccount) return [];
 
-    const archanovaAccountId = getActiveAccountId(accounts);
+    const archanovaAccountId = getAccountId(archanovaAccount);
     if (!archanovaAccountId) return [];
 
     return orderBy(history[archanovaAccountId] || [], ['createdAt'], ['desc']);

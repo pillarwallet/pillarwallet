@@ -125,7 +125,7 @@ class ServicesScreen extends React.Component<Props> {
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
-  navigateToArchanovaSupportedServiceScreen = (route: string) => {
+  navigateToRouteIfArchanovaWalletActivated = (route: string) => {
     const { navigation, isArchanovaWalletActivated } = this.props;
     if (!isArchanovaWalletActivated) return;
 
@@ -154,7 +154,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.liquidityPools.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(LIQUIDITY_POOLS),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(LIQUIDITY_POOLS),
       });
     }
 
@@ -165,7 +165,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.aaveDeposit.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(LENDING_CHOOSE_DEPOSIT),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(LENDING_CHOOSE_DEPOSIT),
       });
     }
 
@@ -176,7 +176,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.poolTogether.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(POOLTOGETHER_DASHBOARD),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(POOLTOGETHER_DASHBOARD),
       });
     }
 
@@ -187,7 +187,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.sablier.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(SABLIER_STREAMS),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(SABLIER_STREAMS),
       });
     }
 
@@ -198,7 +198,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('wbtcCafe.trade'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(WBTC_CAFE),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(WBTC_CAFE),
       });
     }
 
@@ -209,7 +209,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.rari.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToArchanovaSupportedServiceScreen(RARI_DEPOSIT),
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(RARI_DEPOSIT),
       });
     }
 
