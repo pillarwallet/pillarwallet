@@ -34,9 +34,14 @@ import {
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // utils
-import { getEnsName, parseTokenAmount, reportErrorLog } from 'utils/common';
+import {
+  getEnsName,
+  parseTokenAmount,
+  reportErrorLog,
+} from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { addressesEqual } from 'utils/assets';
 import { mapToEthereumTransactions } from 'utils/transactions';
@@ -181,7 +186,21 @@ class EtherspotService {
   estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
     return this.sdk
       .estimateGatewayBatch({ refundToken: useGasTokenAddress })
-      .then((result) => result?.estimation);
+      .then((result) => result?.estimation)
+      .catch((error) => {
+        let etherspotErrorMessage;
+        try {
+          // parsing etherspot estimate error based on return scheme
+          const errorMessageJson = JSON.parse(error.message.trim());
+          ([etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints));
+        } catch (e) {
+          // unable to parse json
+        }
+
+        const errorMessage = etherspotErrorMessage || error?.message || t('error.unableToEstimateTransaction');
+        reportErrorLog('estimateTransactionsBatch -> estimateGatewayBatch failed', { errorMessage });
+        throw new Error(errorMessage);
+      });
   }
 
   async setTransactionsBatchAndSend(
