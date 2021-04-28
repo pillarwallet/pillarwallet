@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { ScrollView, Keyboard } from 'react-native';
 import t from 'translations/translate';
 
 // components
@@ -115,20 +116,26 @@ const SendContainer = (props: Props) => {
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: customScreenTitle || t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
-      minAvoidHeight={900}
+      minAvoidHeight={800}
     >
-      <Wrapper>
-        <InputWrapper>
-          {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
-        </InputWrapper>
+      <ScrollView
+        onScroll={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flex: 1 }}
+      >
+        <Wrapper>
+          <InputWrapper>
+            {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
+          </InputWrapper>
 
-        <ArrowIcon />
-        <Spacing h={20} />
+          <ArrowIcon />
+          <Spacing h={20} />
 
-        <ContactSelector {...customSelectorProps} />
-      </Wrapper>
+          <ContactSelector {...customSelectorProps} />
+        </Wrapper>
 
-      {children}
+        {children}
+      </ScrollView>
     </ContainerWithHeader>
   );
 };
