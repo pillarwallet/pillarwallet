@@ -163,7 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  padding-right: 9px;
+  margin-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -479,7 +479,7 @@ class TextInput extends React.Component<Props, State> {
     const { genericToken } = images(theme);
     if (fallbackToGenericToken) fallbackSource = genericToken;
 
-    let inputHeight = 62;
+    let inputHeight = 54;
     if (customInputHeight) {
       inputHeight = customInputHeight;
     } else if (multiline) {

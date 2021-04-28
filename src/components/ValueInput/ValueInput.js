@@ -248,10 +248,6 @@ export const ValueInputComponent = ({
 
   const openAssetSelector = () => {
     Keyboard.dismiss();
-
-    if (onValueChange) {
-      onValueChange('0');
-    }
     Modal.open(() => (
       <AssetSelectorOptions
         options={assetsOptions}
@@ -302,6 +298,13 @@ export const ValueInputComponent = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
+
+  React.useEffect(() => {
+    if (onValueChange) {
+      onValueChange('0');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetData.name]);
 
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
