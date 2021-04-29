@@ -61,7 +61,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   border-radius: 6px;
   width: 100%;
   padding: 14px ${spacing.large}px;
-  ${({ theme, variant }) => (variant === 'primary' ? `background-color: ${theme.colors.buttonPrimaryBackground}` : '')};
+  ${({ theme, variant }) => variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, variant }) =>
     variant === 'secondary' ? `background-color: ${theme.colors.buttonSecondaryBackground}` : ''};
 `;
