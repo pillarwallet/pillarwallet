@@ -453,7 +453,7 @@ export class EventDetail extends React.Component<Props> {
     const { baseFiatCurrency, rates } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const rate = getRate(rates, token, fiatCurrency);
-    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
+    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency, { isFormatAmount: true });
     return t('label.feeTokenFiat', {
       tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
     });

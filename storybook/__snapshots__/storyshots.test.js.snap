@@ -44725,7 +44725,7 @@ exports[`Storyshots ReviewSummary token 1`] = `
             ]
           }
         >
-          € 25.53
+          €25.53
         </Text>
       </View>
     </View>
@@ -47210,7 +47210,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -47493,7 +47493,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -47591,7 +47591,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -50514,7 +50514,7 @@ exports[`Storyshots Value Input default 1`] = `
                 ]
               }
             >
-              0.51 ETH (£ 94.78)
+              0.51 ETH (£94.78)
             </Text>
           </View>
         </View>
@@ -50636,7 +50636,7 @@ exports[`Storyshots Value Input default 1`] = `
                           }
                         }
                         disableAssetSelection={false}
-                        labelText="0.51 ETH (£ 94.78)"
+                        labelText="0.51 ETH (£94.78)"
                         onAssetPress={[Function]}
                         onLabelPress={[Function]}
                       />
@@ -51207,7 +51207,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                     }
                   >
                     2 Sep
-$ 1,066.86
+$1.07K
                   </Text>
                 </View>
               </RNSVGForeignObject>
