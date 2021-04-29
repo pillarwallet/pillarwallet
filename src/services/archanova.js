@@ -459,25 +459,6 @@ class Archanova {
   }
 
   async estimateAccountTransactions(transactions: EthereumTransaction[]): Promise<?ArchanovaTransactionEstimate> {
-    // let value;
-    // // eth or token transfer
-    // if (assetSymbol === ETH) {
-    //   value = ethToWei(rawValue);
-    // } else if (!data) {
-    //   const tokenTransferValue = decimals > 0
-    //     ? utils.parseUnits(rawValue.toString(), decimals)
-    //     : EthersBigNumber.from(rawValue.toString());
-    //   data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
-    //   recipient = contractAddress;
-    //   value = 0; // value is in encoded token transfer
-    // }
-    //
-    // let estimateMethodParams = [
-    //   recipient,
-    //   value,
-    //   data,
-    // ];
-
     let estimateMethodParams = [];
 
     // append params for multiple sequential transactions (ref – estimateAccountTransaction method params)

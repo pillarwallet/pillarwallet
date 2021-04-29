@@ -42,6 +42,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
 import { addExchangeAllowanceIfNeededAction } from 'actions/exchangeActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // services
 import etherspot from 'services/etherspot';
@@ -263,6 +264,7 @@ export const subscribeToEtherspotNotificationsAction = () => {
         if (existingTransaction.status !== mappedEtherspotBatchStatus
           && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS) {
           dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
+          dispatch(fetchAssetsBalancesAction());
 
           if (!isEmpty(assetData)) {
             const { symbol, decimals } = assetData;
