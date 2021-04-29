@@ -80,6 +80,7 @@ export const useSmartWalletStatus = (): SmartWalletStatus => {
 };
 
 // Temporary stuff to get info about smart wallet type
+// TODO: combine this with etherspot work once it's in
 export type SmartWalletType = "etherspot" | "archanova";
 
 export const SMART_WALLET_TYPES = {
