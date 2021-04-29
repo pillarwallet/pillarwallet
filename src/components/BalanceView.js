@@ -70,7 +70,6 @@ const CurrencySymbol = styled(Text)`
   font-family: '${appFont.archiaMedium}';
   ${fontStyles.big};
   margin-top: 6px;
-  margin-right: 4px;
 `;
 
 const Balance = styled(Text)`
