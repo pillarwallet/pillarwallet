@@ -81,6 +81,7 @@ function AssetsPieChart({ categoryBalances }: Props) {
 }
 
 export default AssetsPieChart;
+
 type ChartDatum = {|
   y: number,
   title: string,
