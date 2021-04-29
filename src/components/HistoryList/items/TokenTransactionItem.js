@@ -50,16 +50,14 @@ function TokenTransactionItem({ event, onPress }: Props) {
 
   if (event.type === 'tokenReceived') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
-
+    const { value, symbol } = event.value;
     return (
       <HistoryListItem
         iconName="arrow-down"
         iconColor={colors.positive}
         iconBorderColor={colors.positiveWeak}
         title={ensName ?? formatHexAddress(event.fromAddress)}
-        valueComponent={
-          <TokenValueView value={event.value.value} symbol={event.value.symbol} variant="medium" mode="change" />
-        }
+        valueComponent={<TokenValueView value={value} symbol={symbol} variant="medium" mode="change" />}
         status={event.status}
         onPress={onPress}
       />
@@ -68,21 +66,14 @@ function TokenTransactionItem({ event, onPress }: Props) {
 
   if (event.type === 'tokenSent') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
-
+    const { value, symbol } = event.value;
     return (
       <HistoryListItem
         iconName="arrow-up"
         iconColor={colors.negative}
         iconBorderColor={colors.negativeWeak}
         title={ensName ?? formatHexAddress(event.toAddress)}
-        valueComponent={
-          <TokenValueView
-            value={event.value.value?.negated()}
-            symbol={event.value.symbol}
-            variant="medium"
-            mode="change"
-          />
-        }
+        valueComponent={<TokenValueView value={value?.negated()} symbol={symbol} variant="medium" mode="change" />}
         status={event.status}
         onPress={onPress}
       />

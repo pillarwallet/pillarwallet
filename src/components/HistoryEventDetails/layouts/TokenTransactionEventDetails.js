@@ -73,6 +73,7 @@ function TokenTransactionEventDetails({ event }: Props) {
 
   if (event.type === 'tokenReceived') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
+    const { value, symbol } = event.value;
 
     return (
       <BaseEventDetails
@@ -83,12 +84,7 @@ function TokenTransactionEventDetails({ event }: Props) {
         iconBorderColor={colors.positiveWeak}
       >
         <Row>
-          <TokenValueView
-            value={event.value.value}
-            symbol={event.value.symbol}
-            variant="large"
-            mode="change"
-          />
+          <TokenValueView value={value} symbol={symbol} variant="large" mode="change" />
           <TransactionStatusIcon status={event.status} size={24} />
         </Row>
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
@@ -107,6 +103,7 @@ function TokenTransactionEventDetails({ event }: Props) {
 
   if (event.type === 'tokenSent') {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
+    const { value, symbol } = event.value;
 
     return (
       <BaseEventDetails
@@ -117,12 +114,7 @@ function TokenTransactionEventDetails({ event }: Props) {
         iconBorderColor={colors.negativeWeak}
       >
         <Row>
-          <TokenValueView
-            value={event.value.value.negated()}
-            symbol={event.value.symbol}
-            variant="large"
-            mode="change"
-          />
+          <TokenValueView value={value.negated()} symbol={symbol} variant="large" mode="change" />
           <TransactionStatusIcon status={event.status} size={24} />
         </Row>
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
