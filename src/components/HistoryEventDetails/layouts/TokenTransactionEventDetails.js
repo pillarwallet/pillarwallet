@@ -44,7 +44,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { TokenTransactionEvent } from 'models/History';
+import { EVENT_TYPE, type TokenTransactionEvent } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
@@ -71,7 +71,7 @@ function TokenTransactionEventDetails({ event }: Props) {
     });
   };
 
-  if (event.type === 'tokenReceived') {
+  if (event.type === EVENT_TYPE.TOKEN_RECEIVED) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
     const { value, symbol } = event.value;
 
@@ -101,7 +101,7 @@ function TokenTransactionEventDetails({ event }: Props) {
     );
   }
 
-  if (event.type === 'tokenSent') {
+  if (event.type === EVENT_TYPE.TOKEN_SENT) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
     const { value, symbol } = event.value;
 

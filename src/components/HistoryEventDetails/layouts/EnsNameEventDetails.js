@@ -34,13 +34,13 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { EnsNameEvent } from 'models/History';
+import { type EnsNameRegisteredEvent, EVENT_TYPE } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
-  event: EnsNameEvent,
+  event: EnsNameRegisteredEvent,
 |};
 
 function EnsNameEventDetails({ event }: Props) {
@@ -50,7 +50,7 @@ function EnsNameEventDetails({ event }: Props) {
   return (
     <BaseEventDetails
       date={event.date}
-      title={t('ensName')}
+      title={t(EVENT_TYPE.ENS_NAME_REGISTERED)}
       subtitle={event.ensName}
       iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} width={64} height={64} />}
     >

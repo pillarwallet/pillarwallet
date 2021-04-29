@@ -28,7 +28,7 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import { TRANSACTION_STATUS, type CollectibleTransactionEvent } from 'models/History';
+import { type CollectibleTransactionEvent, EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
@@ -44,7 +44,7 @@ function CollectibleTransactionItem({ event, onPress }: Props) {
 
   const isPending = event.status === TRANSACTION_STATUS.PENDING;
 
-  if (event.type === 'collectibleReceived') {
+  if (event.type === EVENT_TYPE.COLLECTIBLE_RECEIVED) {
     const statusText = isPending ? t('label.receiving') : t('label.received');
     return (
       <HistoryListItem
@@ -57,7 +57,7 @@ function CollectibleTransactionItem({ event, onPress }: Props) {
     );
   }
 
-  if (event.type === 'collectibleSent') {
+  if (event.type === EVENT_TYPE.COLLECTIBLE_SENT) {
     const statusText = isPending ? t('label.sending') : t('label.sent');
     return (
       <HistoryListItem

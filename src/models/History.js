@@ -20,8 +20,27 @@
 
 import type { TokenValue, FiatValue } from 'models/Value';
 
-export type TransactionStatus = 'confirmed' | 'failed' | 'pending' | 'timedout';
+/**
+ * Enum of all supported event types.
+ */
+export const EVENT_TYPE = {
+  TOKEN_RECEIVED: ('tokenReceived': 'tokenReceived'),
+  TOKEN_SENT: ('tokenSent': 'tokenSent'),
+  COLLECTIBLE_RECEIVED: ('collectibleReceived': 'collectibleReceived'),
+  COLLECTIBLE_SENT: ('collectibleSent': 'collectibleSent'),
+  TOKEN_EXCHANGE: ('tokenExchange': 'tokenExchange'),
+  EXCHANGE_FROM_FIAT: ('exchangeFromFiat', 'exchangeFromFiat'),
+  WALLET_CREATED: ('walletCreated': 'walletCreated'),
+  WALLET_ACTIVATED: ('walletActivated': 'walletActivated'),
+  BADGE_RECEIVED: ('badgeReceived': 'badgeReceived'),
+  ENS_NAME_REGISTERED: ('ensNameRegistered': 'ensNameRegistered'),
+};
 
+export type EventType = $Values<typeof EVENT_TYPE>;
+
+/**
+ * Transaction status for events that relate to trasactions.
+ */
 export const TRANSACTION_STATUS = {
   CONFIRMED: ('confirmed': 'confirmed'),
   FAILED: ('failed': 'failed'),
@@ -29,15 +48,23 @@ export const TRANSACTION_STATUS = {
   TIMEDOUT: ('timedout': 'timedout'),
 };
 
+export type TransactionStatus = $Values<typeof TRANSACTION_STATUS>;
+
+/**
+ * Union type describing all supported event types.
+ */
 export type Event =
   | TokenTransactionEvent
   | CollectibleTransactionEvent
   | TokenExchangeEvent
   | ExchangeFromFiatEvent
   | WalletEvent
-  | EnsNameEvent
+  | EnsNameRegisteredEvent
   | BadgeReceivedEvent;
 
+/**
+ * Common fields in all events.
+ */
 type EventCommon = {|
   date: Date,
   id: string,
@@ -47,7 +74,7 @@ export type TokenTransactionEvent = TokenReceivedEvent | TokenSentEvent;
 
 export type TokenReceivedEvent = {|
   ...EventCommon,
-  type: 'tokenReceived',
+  type: typeof EVENT_TYPE.TOKEN_RECEIVED,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -57,7 +84,7 @@ export type TokenReceivedEvent = {|
 
 export type TokenSentEvent = {|
   ...EventCommon,
-  type: 'tokenSent',
+  type: typeof EVENT_TYPE.TOKEN_SENT,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -71,7 +98,7 @@ export type CollectibleTransactionEvent = CollectibleReceivedEvent | Collectible
 
 export type CollectibleReceivedEvent = {|
   ...EventCommon,
-  type: 'collectibleReceived',
+  type: typeof EVENT_TYPE.COLLECTIBLE_RECEIVED,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -82,7 +109,7 @@ export type CollectibleReceivedEvent = {|
 
 export type CollectibleSentEvent = {|
   ...EventCommon,
-  type: 'collectibleSent',
+  type: typeof EVENT_TYPE.COLLECTIBLE_SENT,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -94,7 +121,7 @@ export type CollectibleSentEvent = {|
 
 export type TokenExchangeEvent = {|
   ...EventCommon,
-  type: 'tokenExchange',
+  type: typeof EVENT_TYPE.TOKEN_EXCHANGE,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -106,7 +133,7 @@ export type TokenExchangeEvent = {|
 
 export type ExchangeFromFiatEvent = {|
   ...EventCommon,
-  type: 'exchangeFromFiat',
+  type: typeof EVENT_TYPE.EXCHANGE_FROM_FIAT,
   hash: string,
   fromAddress: string,
   toAddress: string,
@@ -120,20 +147,20 @@ export type WalletEvent = WalletCreated | WalletActivated;
 
 export type WalletCreated = {|
   ...EventCommon,
-  type: 'walletCreated',
+  type: typeof EVENT_TYPE.WALLET_CREATED,
 |};
 
 export type WalletActivated = {|
   ...EventCommon,
-  type: 'walletActivated',
+  type: typeof EVENT_TYPE.WALLET_ACTIVATED,
   hash: string,
   fee: TokenValue,
   status: TransactionStatus,
 |};
 
-export type EnsNameEvent = {|
+export type EnsNameRegisteredEvent = {|
   ...EventCommon,
-  type: 'ensName',
+  type: typeof EVENT_TYPE.ENS_NAME_REGISTERED,
   ensName: string,
   hash: string,
   fee: TokenValue,
@@ -141,7 +168,7 @@ export type EnsNameEvent = {|
 
 export type BadgeReceivedEvent = {|
   ...EventCommon,
-  type: 'badgeReceived',
+  type: typeof EVENT_TYPE.BADGE_RECEIVED,
   badgeId: string,
   title?: string,
   iconUrl: ?string,

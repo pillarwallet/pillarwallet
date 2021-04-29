@@ -28,7 +28,7 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { WalletEvent } from 'models/History';
+import { type WalletEvent, EVENT_TYPE } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
@@ -42,7 +42,7 @@ function WalletEventItem({ event, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
-  if (event.type === 'walletCreated') {
+  if (event.type === EVENT_TYPE.WALLET_CREATED) {
     return (
       <HistoryListItem
         iconName="wallet"
@@ -53,7 +53,7 @@ function WalletEventItem({ event, onPress }: Props) {
     );
   }
 
-  if (event.type === 'walletActivated') {
+  if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
     return (
       <HistoryListItem
         iconName="wallet"

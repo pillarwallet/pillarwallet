@@ -48,7 +48,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { WalletEvent } from 'models/History';
+import { EVENT_TYPE, type WalletEvent } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
@@ -80,7 +80,7 @@ function WalletEventDetails({ event }: Props) {
 
   const navigateToInviteFriends = () => dispatch(goToInvitationFlowAction());
 
-  if (event.type === 'walletCreated') {
+  if (event.type === EVENT_TYPE.WALLET_CREATED) {
     return (
       <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
         <Text variant="large">{t('label.created')}</Text>
@@ -97,7 +97,7 @@ function WalletEventDetails({ event }: Props) {
     );
   }
 
-  if (event.type === 'walletActivated') {
+  if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
     return (
       <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
         <Row>

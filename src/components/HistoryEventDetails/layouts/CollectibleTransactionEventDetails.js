@@ -40,7 +40,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import { TRANSACTION_STATUS, type CollectibleTransactionEvent } from 'models/History';
+import { type CollectibleTransactionEvent, EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
@@ -56,7 +56,7 @@ function CollectibleTransactionEventDetails({ event }: Props) {
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
   const isPending = event.status === TRANSACTION_STATUS.PENDING;
 
-  if (event.type === 'collectibleReceived') {
+  if (event.type === EVENT_TYPE.COLLECTIBLE_RECEIVED) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
     const username = ensName ?? formatHexAddress(event.fromAddress);
     const statusText = isPending ? t('label.receiving') : t('label.received');
@@ -80,7 +80,7 @@ function CollectibleTransactionEventDetails({ event }: Props) {
     );
   }
 
-  if (event.type === 'collectibleSent') {
+  if (event.type === EVENT_TYPE.COLLECTIBLE_SENT) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
     const username = ensName ?? formatHexAddress(event.toAddress);
     const statusText = isPending ? t('label.sending') : t('label.sent');

@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import HistoryList from 'components/HistoryList';
 
 // Types
-import { type Event, TRANSACTION_STATUS } from 'models/History';
+import { EVENT_TYPE, TRANSACTION_STATUS, type Event } from 'models/History';
 
 function HistoryListEtherspot() {
   const items = useHistoryEvents();
@@ -40,7 +40,7 @@ export default HistoryListEtherspot;
 function useHistoryEvents(): Event[] {
   return [
     {
-      type: 'tokenReceived',
+      type: EVENT_TYPE.TOKEN_RECEIVED,
       id: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c',
       hash: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c',
       date: new Date('2021-04-14'),
@@ -53,7 +53,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.TIMEDOUT,
     },
     {
-      type: 'tokenSent',
+      type: EVENT_TYPE.TOKEN_SENT,
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       date: new Date('2021-04-14'),
@@ -70,7 +70,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.FAILED,
     },
     {
-      type: 'collectibleReceived',
+      type: EVENT_TYPE.COLLECTIBLE_RECEIVED,
       date: new Date('2021-04-12'),
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123',
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
@@ -82,7 +82,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.PENDING,
     },
     {
-      type: 'collectibleSent',
+      type: EVENT_TYPE.COLLECTIBLE_SENT,
       id: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456',
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       date: new Date('2021-04-12'),
@@ -98,7 +98,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.TIMEDOUT,
     },
     {
-      type: 'tokenExchange',
+      type: EVENT_TYPE.TOKEN_EXCHANGE,
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       id: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670e',
       date: new Date('2021-04-19'),
@@ -113,7 +113,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.CONFIRMED,
     },
     {
-      type: 'exchangeFromFiat',
+      type: EVENT_TYPE.EXCHANGE_FROM_FIAT,
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
       id: '0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d',
       date: new Date('2021-04-19'),
@@ -128,7 +128,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.CONFIRMED,
     },
     {
-      type: 'badgeReceived',
+      type: EVENT_TYPE.BADGE_RECEIVED,
       id: '5ca21c49754407000644f73b',
       badgeId: '5ca21c49754407000644f73b',
       date: new Date('2021-04-13'),
@@ -137,7 +137,7 @@ function useHistoryEvents(): Event[] {
         'https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png',
     },
     {
-      type: 'ensName',
+      type: EVENT_TYPE.ENS_NAME_REGISTERED,
       id: 'ensName-1',
       date: new Date('2021-04-10'),
       ensName: 'maciej.pillar.eth',
@@ -145,7 +145,7 @@ function useHistoryEvents(): Event[] {
       fee: { value: BigNumber(0.0022311), symbol: 'ETH' },
     },
     {
-      type: 'walletActivated',
+      type: EVENT_TYPE.WALLET_ACTIVATED,
       id: '5ca21c49754407000644f73b-x',
       date: new Date('2021-04-10'),
       hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
@@ -153,7 +153,7 @@ function useHistoryEvents(): Event[] {
       status: TRANSACTION_STATUS.PENDING,
     },
     {
-      type: 'walletCreated',
+      type: EVENT_TYPE.WALLET_CREATED,
       id: '5ca21c49754407000644f73b',
       date: new Date('2021-04-10'),
     },

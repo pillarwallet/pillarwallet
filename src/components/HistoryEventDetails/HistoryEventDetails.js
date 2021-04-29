@@ -21,7 +21,7 @@
 import * as React from 'react';
 
 // Types
-import type { Event } from 'models/History';
+import { type Event, EVENT_TYPE } from 'models/History';
 
 // Local
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
@@ -38,22 +38,22 @@ type Props = {|
 
 function HistoryEventDetails({ event }: Props) {
   switch (event.type) {
-    case 'tokenReceived':
-    case 'tokenSent':
+    case EVENT_TYPE.TOKEN_RECEIVED:
+    case EVENT_TYPE.TOKEN_SENT:
       return <TokenTransactionEventDetails event={event} />;
-    case 'collectibleReceived':
-    case 'collectibleSent':
+    case EVENT_TYPE.COLLECTIBLE_RECEIVED:
+    case EVENT_TYPE.COLLECTIBLE_SENT:
       return <CollectibleTransactionEventDetails event={event} />;
-    case 'tokenExchange':
+    case EVENT_TYPE.TOKEN_EXCHANGE:
       return <TokenExchangeEventDetails event={event} />;
-    case 'exchangeFromFiat':
+    case EVENT_TYPE.EXCHANGE_FROM_FIAT:
       return <ExchangeFromFiatEventDetails event={event} />;
-    case 'walletCreated':
-    case 'walletActivated':
+    case EVENT_TYPE.WALLET_CREATED:
+    case EVENT_TYPE.WALLET_ACTIVATED:
       return <WalletEventDetails event={event} />;
-    case 'ensName':
+    case EVENT_TYPE.ENS_NAME_REGISTERED:
       return <EnsNameEventDetails event={event} />;
-    case 'badgeReceived':
+    case EVENT_TYPE.BADGE_RECEIVED:
       return <BadgeReceivedEventDetails event={event} />;
     default:
       return null;

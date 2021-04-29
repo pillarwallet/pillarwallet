@@ -32,14 +32,14 @@ import { formatHexAddress } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { TokenReceivedEvent, TokenSentEvent } from 'models/History';
+import { type TokenTransactionEvent, EVENT_TYPE } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
 
 
 type Props = {|
-  event: TokenReceivedEvent | TokenSentEvent,
+  event: TokenTransactionEvent,
   onPress?: () => mixed,
 |};
 
@@ -48,7 +48,7 @@ function TokenTransactionItem({ event, onPress }: Props) {
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
 
-  if (event.type === 'tokenReceived') {
+  if (event.type === EVENT_TYPE.TOKEN_RECEIVED) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
     const { value, symbol } = event.value;
     return (
@@ -64,7 +64,7 @@ function TokenTransactionItem({ event, onPress }: Props) {
     );
   }
 
-  if (event.type === 'tokenSent') {
+  if (event.type === EVENT_TYPE.TOKEN_SENT) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.toAddress);
     const { value, symbol } = event.value;
     return (

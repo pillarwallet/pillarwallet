@@ -29,13 +29,13 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { EnsNameEvent } from 'models/History';
+import { type EnsNameRegisteredEvent } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
 
 type Props = {|
-  event: EnsNameEvent,
+  event: EnsNameRegisteredEvent,
   onPress?: () => mixed,
 |};
 

@@ -33,7 +33,7 @@ import { humanizeDateString } from 'utils/date';
 import { appFont, spacing } from 'utils/variables';
 
 // Types
-import type { Event } from 'models/History';
+import { EVENT_TYPE, type Event } from 'models/History';
 
 // Local
 import { mapEventsToSections, type HistorySection } from './utils';
@@ -64,22 +64,22 @@ function HistoryList({ items }: Props) {
 
   const renderEvent = (event: Event) => {
     switch (event.type) {
-      case 'tokenReceived':
-      case 'tokenSent':
+      case EVENT_TYPE.TOKEN_RECEIVED:
+      case EVENT_TYPE.TOKEN_SENT:
         return <TokenTransactionItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'collectibleReceived':
-      case 'collectibleSent':
+      case EVENT_TYPE.COLLECTIBLE_RECEIVED:
+      case EVENT_TYPE.COLLECTIBLE_SENT:
         return <CollectibleTransactionItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'tokenExchange':
+      case EVENT_TYPE.TOKEN_EXCHANGE:
         return <TokenExchangeItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'exchangeFromFiat':
+      case EVENT_TYPE.EXCHANGE_FROM_FIAT:
         return <ExchangeFromFiatItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'walletCreated':
-      case 'walletActivated':
+      case EVENT_TYPE.WALLET_CREATED:
+      case EVENT_TYPE.WALLET_ACTIVATED:
         return <WalletEventItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'ensName':
+      case EVENT_TYPE.ENS_NAME_REGISTERED:
         return <EnsNameItem event={event} onPress={() => showEventDetails(event)} />;
-      case 'badgeReceived':
+      case EVENT_TYPE.BADGE_RECEIVED:
         return <BadgeReceivedItem event={event} onPress={() => showEventDetails(event)} />;
       default:
         return null;

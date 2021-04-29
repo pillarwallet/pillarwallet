@@ -28,7 +28,7 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { BadgeReceivedEvent } from 'models/History';
+import { type BadgeReceivedEvent } from 'models/History';
 
 // Local
 import HistoryListItem from './HistoryListItem';
