@@ -42,7 +42,7 @@ import SpecialButton from './components/SpecialButton';
 
 
 type Props = {|
-  balance: Balance
+  balance: Balance,
 |};
 
 function BalanceSection({ balance }: Props) {
