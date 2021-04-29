@@ -31,6 +31,7 @@ import {
   IncreaseP2PPaymentChannelAmountDto,
   NotificationTypes,
   GatewayTransactionStates,
+  Transaction as EtherspotTransaction,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import { getEnv } from 'configs/envConfig';
@@ -281,6 +282,15 @@ class EtherspotService {
         }))
         .subscribe();
     });
+  }
+
+  getTransactionsByAddress(address: string): Promise<?EtherspotTransaction[]> {
+    return this.sdk.getTransactions({ account: address })
+      .then(({ items }) => items)
+      .catch((error) => {
+        reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, error });
+        return null;
+      });
   }
 
   async logout(): Promise<void> {

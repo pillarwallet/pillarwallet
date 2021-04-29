@@ -25,13 +25,13 @@ import t from 'translations/translate';
 
 // constants
 import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_DEPLOYMENT_ERRORS,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_UPGRADE_STATUSES,
+} from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   TX_CONFIRMED_STATUS,
@@ -82,13 +82,13 @@ const getMessage = (
   isArchanovaWalletActive: boolean,
 ): { title?: TranslatedString, message?: TranslatedString } => {
   switch (status) {
-    case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
+    case ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (!isArchanovaWalletActive) return {};
       return {
         title: t('insight.smartWalletActivate.default.title'),
         message: t('insight.smartWalletActivate.default.description'),
       };
-    case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
+    case ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING:
       if (!isArchanovaWalletActive) return {};
       // TODO: get average time
       return {
@@ -123,7 +123,7 @@ export const isConnectedToArchanovaSmartAccount = (connectedAccountRecord: ?Obje
 
 export const getDeployErrorMessage = (errorType: string) => ({
   title: t('insight.smartWalletActivate.activationFailed.title'),
-  message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+  message: errorType === ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
     ? t('insight.smartWalletActivate.activationFailed.error.needToSetupSmartAccount')
     : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
@@ -286,7 +286,7 @@ export const parseArchanovaTransactions = (
     } else if (transactionType === AccountTransactionTypes.UpdateAccountEnsName) {
       transaction = {
         ...transaction,
-        tag: SET_SMART_WALLET_ACCOUNT_ENS,
+        tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
         extra: {
           ensName: get(fromDetails, 'account.ensName'),
         },
@@ -295,14 +295,14 @@ export const parseArchanovaTransactions = (
       const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
       if (!isEmpty(addedDeviceAddress)) {
         const tag = addressesEqual(addedDeviceAddress, relayerExtensionAddress)
-          ? SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER
-          : SMART_WALLET_ACCOUNT_DEVICE_ADDED;
+          ? ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER
+          : ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED;
         transaction = { ...transaction, tag };
       }
     } else if (transactionType === AccountTransactionTypes.RemoveDevice) {
       transaction = {
         ...transaction,
-        tag: SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+        tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
       };
     }
 
@@ -344,7 +344,7 @@ export const isHiddenUnsettledTransaction = (
 export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-  return !error && (deploymentStarted || archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
+  return !error && (deploymentStarted || archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING);
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {

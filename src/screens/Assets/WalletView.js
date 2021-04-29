@@ -40,7 +40,7 @@ import CollectiblesList from 'components/CollectiblesList';
 
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -142,7 +142,7 @@ class WalletView extends React.Component<Props, State> {
     const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
     const deploymentData = getDeploymentData(smartWalletState);
     return !isEmpty(sendingBlockedMessage)
-      && archanovaWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      && archanovaWalletStatus.status !== ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       && !deploymentData.error;
   };
 

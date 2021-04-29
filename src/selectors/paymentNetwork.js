@@ -23,7 +23,7 @@ import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 
 // constants
-import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
+import { ARCHANOVA_PPN_PAYMENT_COMPLETED } from 'constants/archanovaConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -101,7 +101,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
       .filter(({
         hash,
         stateInPPN,
-      }) => stateInPPN === PAYMENT_COMPLETED && hash && !isHiddenUnsettledTransaction(hash, history))
+      }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED && hash && !isHiddenUnsettledTransaction(hash, history))
       .reduce((nonZeroBalances, transaction) => {
         const { value: rawValue, asset: symbol } = transaction;
 

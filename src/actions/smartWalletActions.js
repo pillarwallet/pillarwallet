@@ -31,27 +31,27 @@ import Toast from 'components/Toast';
 
 // constants
 import {
-  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
-  PAYMENT_COMPLETED,
-  PAYMENT_PROCESSED,
-  RESET_SMART_WALLET_DEPLOYMENT,
-  SET_CHECKING_SMART_WALLET_SESSION,
-  SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  SET_SMART_WALLET_DEPLOYMENT_DATA,
-  SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
-  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
-  SET_SMART_WALLET_SDK_INIT,
-  SET_SMART_WALLET_UPGRADE_STATUS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_DEPLOYMENT_ERRORS,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-  SMART_WALLET_UPGRADE_STATUSES,
-  START_SMART_WALLET_DEPLOYMENT,
-} from 'constants/smartWalletConstants';
+  ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  ARCHANOVA_PPN_PAYMENT_COMPLETED,
+  ARCHANOVA_PPN_PAYMENT_PROCESSED,
+  RESET_ARCHANOVA_WALLET_DEPLOYMENT,
+  SET_CHECKING_ARCHANOVA_SESSION,
+  SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  SET_ARCHANOVA_WALLET_ACCOUNTS,
+  SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
+  SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
+  SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_ARCHANOVA_SDK_INIT,
+  SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_UPGRADE_STATUSES,
+  START_ARCHANOVA_WALLET_DEPLOYMENT,
+} from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
@@ -171,7 +171,7 @@ import {
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
   afterHistoryUpdatedAction,
-  fetchSmartWalletTransactionsAction,
+  fetchTransactionsHistoryAction,
   insertTransactionAction,
 } from './historyActions';
 import {
@@ -228,7 +228,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
-      type: SET_SMART_WALLET_ACCOUNTS,
+      type: SET_ARCHANOVA_WALLET_ACCOUNTS,
       payload: smartAccounts,
     });
     await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
@@ -259,14 +259,14 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
-    if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-      dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
+    if (upgradeStatus === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+      dispatch({ type: RESET_ARCHANOVA_WALLET_DEPLOYMENT });
 
       const accountAssets = accountAssetsSelector(getState());
       if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction());
     }
     dispatch({
-      type: SET_SMART_WALLET_UPGRADE_STATUS,
+      type: SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
       payload: upgradeStatus,
     });
   };
@@ -280,7 +280,7 @@ export const setSmartWalletDeploymentDataAction = (
     const deploymentData = { hash, error };
     dispatch(saveDbAction('smartWallet', { deploymentData }));
     dispatch({
-      type: SET_SMART_WALLET_DEPLOYMENT_DATA,
+      type: SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
       payload: deploymentData,
     });
   };
@@ -297,7 +297,7 @@ export const setSmartWalletConnectedAccount = (connectedAccount: ArchanovaWallet
     const smartWalletAccountDevices = get(connectedAccount, 'devices', []);
     const mapped = mapToConnectedDevices(smartWalletAccountDevices);
     dispatch(setConnectedDevicesAction(mapped));
-    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
+    dispatch({ type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
   };
 };
 
@@ -337,9 +337,9 @@ export const connectArchanovaAccountAction = (accountId: string) => {
     // sync deployed account state
     const connectedAccountState = accountWithDevices?.state;
     const currentUpgradeStatus = getState().smartWallet.upgrade?.status;
-    if (currentUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
+    if (currentUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
       && connectedAccountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
     }
   };
 };
@@ -360,15 +360,15 @@ export const deploySmartWalletAction = () => {
       },
     } = getState();
 
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted) {
-      dispatch({ type: START_SMART_WALLET_DEPLOYMENT });
+    if (upgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted) {
+      dispatch({ type: START_ARCHANOVA_WALLET_DEPLOYMENT });
     }
 
     await dispatch(resetSmartWalletDeploymentDataAction());
     await dispatch(setActiveAccountAction(accountAddress));
 
     if (accountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       printLog('deploySmartWalletAction account is already deployed!');
       return;
     }
@@ -376,8 +376,8 @@ export const deploySmartWalletAction = () => {
     const { deployTxHash, error } = await archanovaService.deployAccount(deploymentEstimate?.raw);
 
     if (!deployTxHash) {
-      await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
-      if (isCaseInsensitiveMatch(error, SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED)) {
+      await dispatch(setSmartWalletDeploymentDataAction(null, ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
+      if (isCaseInsensitiveMatch(error, ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.REVERTED)) {
         Toast.show({
           message: t('toast.smartWalletActivationUnavailable'),
           emoji: 'hushed',
@@ -390,8 +390,8 @@ export const deploySmartWalletAction = () => {
     await dispatch(setSmartWalletDeploymentDataAction(deployTxHash));
 
     // depends from where it's called status might already be `deploying`
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
-      await dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYING));
+    if (upgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+      await dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING));
     }
 
     // update account info
@@ -572,7 +572,7 @@ export const syncVirtualAccountTransactionsAction = () => {
     if (transformedNewPayments.length) {
       const newLastSyncedId = newOrUpdatedPayments[0].id;
       dispatch({
-        type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
+        type: SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
         payload: newLastSyncedId,
       });
       await dispatch(saveDbAction('smartWallet', { lastSyncedPaymentId: newLastSyncedId }));
@@ -653,8 +653,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         && newAccountDeviceNextState !== createdDeviceState) {
         // check if current wallet smart wallet account device is deployed
         if (currentAccountState !== deployedDeviceState
-          && accountUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-          dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+          && accountUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+          dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
         } else {
           // otherwise it's actual smart wallet device deployment
@@ -807,7 +807,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               currentHistory = getState().history.data;
             }
           } else {
-            dispatch(fetchSmartWalletTransactionsAction());
+            dispatch(fetchTransactionsHistoryAction());
           }
           dispatch(fetchAssetsBalancesAction());
         }
@@ -874,9 +874,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       // check if received transaction
       if (addressesEqual(archanovaAccountAddress, txReceiverAddress)
         && !addressesEqual(txReceiverAddress, txSenderAddress)
-        && [PAYMENT_COMPLETED, PAYMENT_PROCESSED].includes(txStatus)) {
+        && [ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_PPN_PAYMENT_PROCESSED].includes(txStatus)) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
-        if (txStatus === PAYMENT_COMPLETED) {
+        if (txStatus === ARCHANOVA_PPN_PAYMENT_COMPLETED) {
           Toast.show({
             message: t('toast.transactionReceived', { paymentInfo }),
             emoji: 'ok_hand',
@@ -907,7 +907,7 @@ export const initArchanovaSdkAction = (walletPrivateKey: string, forceInit: bool
     );
     const initialized: boolean = archanovaService.sdkInitialized;
     dispatch({
-      type: SET_SMART_WALLET_SDK_INIT,
+      type: SET_ARCHANOVA_SDK_INIT,
       payload: initialized,
     });
   };
@@ -1384,7 +1384,7 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
     if (!archanovaAccountsHasBalances) return;
 
-    dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: archanovaAccounts });
+    dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: archanovaAccounts });
     await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
 
     // register missed accounts on the backend
@@ -1451,7 +1451,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
         });
         return;
       }
-      dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
+      dispatch({ type: ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
     }
 
     const accountDeviceDeploymentHash = await archanovaService.deployAccountDevice(deviceAddress, payWithGasToken);
@@ -1477,7 +1477,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
       to: accountAddress,
       value: '0',
       asset: ETH,
-      tag: SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+      tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
     });
     dispatch(insertTransactionAction(historyTx, accountId));
 
@@ -1513,7 +1513,7 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
       to: accountAddress,
       value: '0',
       asset: ETH,
-      tag: SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+      tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
     });
     dispatch(insertTransactionAction(historyTx, accountId));
 
@@ -1540,7 +1540,7 @@ export const setSmartWalletEnsNameAction = (username: string) => {
       to: accountAddress,
       value: '0',
       asset: ETH,
-      tag: SET_SMART_WALLET_ACCOUNT_ENS,
+      tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
       extra: {
         ensName: normalizedUsername,
       },
@@ -1587,7 +1587,7 @@ export const switchToGasTokenRelayerAction = () => {
       to: accountAddress,
       value: '0',
       asset: ETH,
-      tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+      tag: ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
     });
     dispatch(insertTransactionAction(historyTx, accountId));
     dispatch(fetchConnectedArchanovaAccountAction());
@@ -1653,7 +1653,7 @@ export const checkIfArchanovaWalletWasRegisteredAction = (privateKey: string, sm
 
 export const estimateSmartWalletDeploymentAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: true });
+    dispatch({ type: SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE, payload: true });
 
     const rawEstimate = await archanovaService
       .estimateAccountDeployment()
@@ -1667,7 +1667,7 @@ export const estimateSmartWalletDeploymentAction = () => {
       formatted: formatEstimated(parseEstimatePayload(rawEstimate)),
     };
 
-    dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
+    dispatch({ type: SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
   };
 };
 
@@ -1690,7 +1690,7 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     if (isCheckingSmartWalletSession) return;
 
-    dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: true });
+    dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: true });
 
     let smartWalletNeedsInit;
 
@@ -1716,7 +1716,7 @@ export const checkArchanovaSessionIfNeededAction = () => {
       smartWalletNeedsInit = true;
     }
 
-    dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: false });
+    dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) return;
 

@@ -172,6 +172,10 @@ export type TransactionsStore = {
   [accountId: string]: Transaction[],
 };
 
+export type HistoryLastSyncIds = {
+  [accountId: string]: string,
+};
+
 export type TransactionPayload = {
   gasLimit?: number,
   to: string,

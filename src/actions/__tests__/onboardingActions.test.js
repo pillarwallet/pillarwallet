@@ -28,7 +28,7 @@ import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } fro
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
-import { SET_SMART_WALLET_ACCOUNTS, SET_SMART_WALLET_SDK_INIT } from 'constants/smartWalletConstants';
+import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DEFAULT_ACCOUNTS_ASSETS_DATA_KEY,
@@ -293,7 +293,7 @@ describe('Onboarding actions', () => {
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
 
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true }, // archanova init for account check
+      { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
       { type: UPDATE_ACCOUNTS, payload: [mockNewEtherspotAccount] },
@@ -346,10 +346,10 @@ describe('Onboarding actions', () => {
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
 
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true }, // archanova init for account check
+      { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova
-      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockArchanovaAccountApiData] },
+      { type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: [mockArchanovaAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount] },
       {
         type: SET_INITIAL_ASSETS,

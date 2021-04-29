@@ -49,7 +49,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS } from 'constants/navigationConstants';
 
@@ -178,7 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
         };
 
       default:
-        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
+        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
@@ -248,7 +248,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
-            showDeploySmartWallet={archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+            showDeploySmartWallet={archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />);
       default:

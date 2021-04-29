@@ -19,13 +19,18 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { type GatewayEstimatedBatch, GatewayBatchStates } from 'etherspot';
+import {
+  type GatewayEstimatedBatch,
+  type Transaction as EtherspotTransaction,
+  GatewayBatchStates,
+} from 'etherspot';
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // types
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 
 
 export const buildEtherspotTxFeeInfo = (
@@ -61,3 +66,38 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
     default: return null;
   }
 };
+
+export const parseEtherspotTransactions = (
+  etherspotTransactions: EtherspotTransaction[],
+  supportedAssets: Asset[],
+  assets: Asset[],
+): Transaction[] => etherspotTransactions
+  .reduce((mappedHistoryTransactions, etherspotTransaction) => {
+    return mappedHistoryTransactions;
+    // const {
+    //   from,
+    //   to,
+    //   gasLimit,
+    //   gasPrice,
+    //   gasUsed,
+    //   hash,
+    //   status,
+    //   value: ethValue,
+    //   asset,
+    // } = etherspotTransaction;
+    //
+    // if (asset) {
+    //   const {
+    //     name,
+    //     value: assetValue,
+    //     decimal,
+    //     contract: contractAddress,
+    //   } = asset;
+    //   // const supportedAsset = find
+    // }
+    //
+    // const mappedTransaction = buildHistoryTransaction({
+    //
+    // });
+    // return [...mappedHistoryTransactions, mappedTransaction]
+  }, []);

@@ -67,7 +67,7 @@ import { firebaseMessaging } from 'services/firebase';
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -260,7 +260,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       await dispatch(initEtherspotServiceAction(privateKey));
       await dispatch(importEtherspotAccountsAction());
 
-      await dispatch(fetchSmartWalletTransactionsAction());
+      await dispatch(fetchTransactionsHistoryAction());
       dispatch(managePPNInitFlagAction());
 
       // add wallet created / imported events

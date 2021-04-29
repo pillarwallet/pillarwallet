@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
@@ -42,7 +42,7 @@ export const isArchanovaWalletActivatedSelector = ({
 }: RootReducerState,
 ) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
-  return archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+  return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
 export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } }: RootReducerState) => {

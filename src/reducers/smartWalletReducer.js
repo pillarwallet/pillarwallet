@@ -18,21 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  SET_SMART_WALLET_SDK_INIT,
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  SET_SMART_WALLET_UPGRADE_STATUS,
-  SET_SMART_WALLET_DEPLOYMENT_DATA,
-  RESET_SMART_WALLET,
-  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
-  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-  START_SMART_WALLET_DEPLOYMENT,
-  RESET_SMART_WALLET_DEPLOYMENT,
-  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
-  SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
-  SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
-  SET_CHECKING_SMART_WALLET_SESSION,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_SDK_INIT,
+  SET_ARCHANOVA_WALLET_ACCOUNTS,
+  SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
+  SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
+  SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
+  RESET_ARCHANOVA_WALLET,
+  SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID,
+  START_ARCHANOVA_WALLET_DEPLOYMENT,
+  RESET_ARCHANOVA_WALLET_DEPLOYMENT,
+  ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_CHECKING_ARCHANOVA_SESSION,
+} from 'constants/archanovaConstants';
 
 // types
 import type {
@@ -94,25 +94,25 @@ export default function smartWalletReducer(
   action: SmartWalletReducerAction,
 ): SmartWalletReducerState {
   switch (action.type) {
-    case SET_SMART_WALLET_SDK_INIT:
+    case SET_ARCHANOVA_SDK_INIT:
       return {
         ...state,
         // $FlowFixMe: flow update to 0.122
         sdkInitialized: action.payload,
       };
-    case SET_SMART_WALLET_ACCOUNTS:
+    case SET_ARCHANOVA_WALLET_ACCOUNTS:
       return {
         ...state,
         // $FlowFixMe: flow update to 0.122
         accounts: action.payload,
       };
-    case SET_SMART_WALLET_CONNECTED_ACCOUNT:
+    case SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT:
       return {
         ...state,
         // $FlowFixMe: flow update to 0.122
         connectedAccount: action.payload,
       };
-    case SET_SMART_WALLET_UPGRADE_STATUS:
+    case SET_ARCHANOVA_WALLET_UPGRADE_STATUS:
       return {
         ...state,
         upgrade: {
@@ -120,7 +120,7 @@ export default function smartWalletReducer(
           status: action.payload,
         },
       };
-    case SET_SMART_WALLET_DEPLOYMENT_DATA:
+    case SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA:
       return {
         ...state,
         upgrade: {
@@ -131,19 +131,19 @@ export default function smartWalletReducer(
           },
         },
       };
-    case SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID:
+    case SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID:
       return {
         ...state,
         lastSyncedPaymentId: action.payload || initialState.lastSyncedPaymentId,
       };
-    case SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID:
+    case SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID:
       return {
         ...state,
         lastSyncedTransactionId: action.payload || initialState.lastSyncedTransactionId,
       };
-    case RESET_SMART_WALLET:
+    case RESET_ARCHANOVA_WALLET:
       return { ...initialState };
-    case START_SMART_WALLET_DEPLOYMENT:
+    case START_ARCHANOVA_WALLET_DEPLOYMENT:
       return {
         ...state,
         upgrade: {
@@ -151,7 +151,7 @@ export default function smartWalletReducer(
           deploymentStarted: true,
         },
       };
-    case RESET_SMART_WALLET_DEPLOYMENT:
+    case RESET_ARCHANOVA_WALLET_DEPLOYMENT:
       return {
         ...state,
         upgrade: {
@@ -159,7 +159,7 @@ export default function smartWalletReducer(
           deploymentStarted: false,
         },
       };
-    case ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE:
+    case ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE:
       return {
         ...state,
         connectedAccount: {
@@ -170,7 +170,7 @@ export default function smartWalletReducer(
           ],
         },
       };
-    case SET_SMART_WALLET_DEPLOYMENT_ESTIMATE:
+    case SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE:
       return {
         ...state,
         upgrade: {
@@ -179,7 +179,7 @@ export default function smartWalletReducer(
           gettingDeploymentEstimate: false,
         },
       };
-    case SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE:
+    case SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE:
       return {
         ...state,
         upgrade: {
@@ -188,7 +188,7 @@ export default function smartWalletReducer(
           gettingDeploymentEstimate: action.payload,
         },
       };
-    case SET_CHECKING_SMART_WALLET_SESSION:
+    case SET_CHECKING_ARCHANOVA_SESSION:
       return {
         ...state,
         // $FlowFixMe: flow update to 0.122

@@ -74,11 +74,11 @@ import {
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/archanovaConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
@@ -198,7 +198,7 @@ const rariLogo = require('assets/images/rari_logo.png');
 
 export class ActivityFeedItem extends React.Component<Props> {
   NAMES = () => ({
-    SMART_WALLET: t('smartWallet'),
+    LEGACY_SMART_WALLET: t('legacySmartWallet'),
     KEY_WALLET: t('keyWallet'),
     PPN_NETWORK: t('pillarNetwork'),
     AAVE_DEPOSIT: t('aaveDeposit'),
@@ -347,7 +347,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
       case 'Smart Wallet created':
         return {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().CREATED,
           badge: isArchanovaWalletActivated ? null : t('label.needToActivate'),
@@ -440,7 +440,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
         data = {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().ACTIVATED,
         };
@@ -464,7 +464,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else if (event.smartWalletEvent) {
           data = {
-            label: this.NAMES().SMART_WALLET,
+            label: this.NAMES().LEGACY_SMART_WALLET,
             subtext: this.TO().PPN_NETWORK,
             itemImageSource: smartWalletIcon,
             fullItemValue: fullItemValuePPN,
@@ -482,9 +482,9 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         }
         break;
-      case SET_SMART_WALLET_ACCOUNT_ENS:
+      case SET_ARCHANOVA_WALLET_ACCOUNT_ENS:
         data = {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: smartWalletIcon,
           subtext: t('label.registerEnsName'),
         };
@@ -537,16 +537,16 @@ export class ActivityFeedItem extends React.Component<Props> {
             </ListWrapper>),
         };
         break;
-      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+      case ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         data = {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: smartWalletIcon,
           subtext: t('label.enableSmartWalletGasRelayerPLR'),
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED:
         data = {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: roundedPhoneIcon,
           subtext: t('label.smartWalletAccountDeviceAdded'),
           actionLabel: this.STATUSES().ADDED,
@@ -564,9 +564,9 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: wbtcLogo,
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED:
         data = {
-          label: this.NAMES().SMART_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: roundedPhoneIcon,
           subtext: t('label.smartWalletAccountDeviceRemoved'),
           actionLabel: this.STATUSES().REMOVED,
@@ -826,7 +826,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         if (isPPNTransaction) {
           if (isArchanovaAccountAddress(event.from, accounts) && isArchanovaAccountAddress(event.to, accounts)) {
             data = {
-              label: isAssetView ? this.NAMES().PPN_NETWORK : this.NAMES().SMART_WALLET,
+              label: isAssetView ? this.NAMES().PPN_NETWORK : this.NAMES().LEGACY_SMART_WALLET,
               subtext: isAssetView ? '' : this.FROM().PPN_NETWORK,
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
