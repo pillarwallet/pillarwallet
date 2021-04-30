@@ -44,7 +44,7 @@ import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { viewOnBlockchain } from 'utils/external';
+import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
