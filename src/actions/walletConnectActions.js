@@ -145,7 +145,7 @@ const walletConnectSessionReceived = (): WalletConnectSessionReceived => ({
 });
 
 const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcRequest) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     const {
       icons, name, url,
     } = connector.peerMeta || {
@@ -187,11 +187,10 @@ const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcReques
 };
 
 const subscribeToEvents = (connector: Connector) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     connector.on(CALL_REQUEST_EVENT, (e: any, payload: JsonRpcRequest) => {
       if (e) {
         dispatch(walletConnectError(CALL_REQUEST_ERROR, e.toString()));
-
         return;
       }
 
@@ -201,7 +200,6 @@ const subscribeToEvents = (connector: Connector) => {
     connector.on(DISCONNECT_EVENT, (e: any) => {
       if (e) {
         dispatch(walletConnectError(DISCONNECT_ERROR, e.toString()));
-
         return;
       }
 
@@ -217,7 +215,6 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
     connector.on(SESSION_REQUEST_EVENT, async (e: any, payload: any) => {
       if (e) {
         dispatch(walletConnectError(SESSION_REQUEST_ERROR, e.toString()));
-
         return;
       }
 
@@ -225,7 +222,6 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
 
       if (!peerId || !peerMeta) {
         dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
-
         return;
       }
 

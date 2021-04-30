@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import CheckAuth from 'components/CheckAuth';
@@ -30,6 +31,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // utils
 import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // constants
 import {
@@ -41,11 +43,16 @@ import {
 } from 'constants/walletConnectConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
+// selectors
+import { activeAccountSelector } from 'selectors';
+
 // types
 import type { TransactionPayload } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { TransactionStatus } from 'actions/assetsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
 
 
 type Props = {
@@ -60,6 +67,7 @@ type Props = {
   ) => void,
   resetIncorrectPassword: () => void,
   useBiometrics: boolean,
+  activeAccount: ?Account,
 };
 
 type State = {
@@ -165,13 +173,14 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleSignMessage = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
+    const { approveCallRequest, rejectCallRequest, activeAccount } = this.props;
     let message = '';
     try {
       let result = null;
       if (request.method === PERSONAL_SIGN) {
+        const isLegacyEIP1721 = isArchanovaAccount(activeAccount);
         message = request.params[0]; // eslint-disable-line
-        result = await signPersonalMessage(message, wallet);
+        result = await signPersonalMessage(message, wallet, isLegacyEIP1721);
       } else {
         message = request.params[1]; // eslint-disable-line
         result = await signMessage(message, wallet);
@@ -184,10 +193,11 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleSignTypedData = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
+    const { approveCallRequest, rejectCallRequest, activeAccount } = this.props;
+    const isLegacyEIP1721 = isArchanovaAccount(activeAccount);
     try {
       const message = request.params[1]; // eslint-disable-line
-      const result = await signTypedData(message, wallet);
+      const result = await signTypedData(message, wallet, isLegacyEIP1721);
       approveCallRequest(request.callId, result);
     } catch (error) {
       rejectCallRequest(request.callId, error.toString());
@@ -225,12 +235,21 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 const mapStateToProps = ({
   walletConnect: { requests },
   appSettings: { data: { useBiometrics } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   useBiometrics,
   requests,
 });
 
-const mapDispatchToProps = dispatch => ({
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   approveCallRequest: (callId: number, result: any) => dispatch(approveCallRequestAction(callId, result)),
   rejectCallRequest: (callId: number, errorMessage?: string) => dispatch(rejectCallRequestAction(callId, errorMessage)),
   sendAsset: (
@@ -241,4 +260,4 @@ const mapDispatchToProps = dispatch => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreeen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreeen);

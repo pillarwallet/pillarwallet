@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-// import WalletConnect from '@walletconnect/react-native';
+// import WalletConnect from '@walletconnect/client';
 import {
   WALLETCONNECT_INIT_SESSIONS,
   WALLETCONNECT_SESSION_RECEIVED,

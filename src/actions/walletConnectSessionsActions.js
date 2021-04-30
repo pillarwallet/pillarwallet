@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-// import WalletConnect from '@walletconnect/react-native';
 import {
   WALLETCONNECT_SESSIONS_IMPORTED,
   WALLETCONNECT_SESSIONS_LOADED,
@@ -35,6 +34,7 @@ import type {
 } from 'reducers/walletConnectSessionsReducer';
 
 import type { Session } from 'models/WalletConnect';
+
 
 export const walletConnectSessionsImportedAction = (): WalletConnectSessionsImported => ({
   type: WALLETCONNECT_SESSIONS_IMPORTED,
