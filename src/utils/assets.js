@@ -140,11 +140,11 @@ export const getFormattedRate = (
   amount: number,
   token: string,
   fiatCurrency: string,
-  isFormatAmount?: boolean,
+  shouldCommify?: boolean,
 ): string => {
   const amountInFiat = amount * getRate(rates, token, fiatCurrency);
 
-  return formatFiat(amountInFiat, fiatCurrency, { isFormatAmount });
+  return formatFiat(amountInFiat, fiatCurrency, { shouldCommify });
 };
 
 export const calculateMaxAmount = (
