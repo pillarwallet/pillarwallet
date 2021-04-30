@@ -171,10 +171,6 @@ export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGro
   return (Object.values(transactionsByAsset): any);
 }
 
-export const elipsizeAddress = (address: string) => {
-  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
-};
-
 export const isPendingTransaction = ({ status }: Object) => {
   return status === TX_PENDING_STATUS;
 };
@@ -195,8 +191,4 @@ export const isSWAddress = (address: string, accounts: Accounts) => {
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
   return (!!account && checkIfKeyBasedAccount(account));
-};
-
-export const getElipsizeAddress = (address: string) => {
-  return elipsizeAddress(address);
 };

@@ -215,6 +215,9 @@ export function formatTokenChange(value: ?BigNumber, symbol?: string, options?: 
     : t('negativeTokenValue', { value: formattedValue, token: symbol });
 }
 
-export function formatHexAddress(address: string) {
+export function formatHexAddress(address: ?string) {
+  if (!address) return null;
+  if (address.length <= 12) return address;
+
   return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
 }
