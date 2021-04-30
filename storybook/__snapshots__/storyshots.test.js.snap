@@ -3337,7 +3337,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -3825,7 +3825,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -4082,7 +4082,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -4570,7 +4570,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -9895,7 +9895,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -10383,7 +10383,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -10640,7 +10640,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -11128,7 +11128,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -42126,7 +42126,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 },
                 "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
                 "id": "ensName-1",
-                "type": "ensName",
+                "type": "ensNameRegistered",
               },
               Object {
                 "date": 2021-04-10T00:00:00.000Z,
