@@ -154,7 +154,6 @@ const EnterWithdrawAmount = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
-                showFiatDefault
               />
             )}
             {!!errorMessage && (

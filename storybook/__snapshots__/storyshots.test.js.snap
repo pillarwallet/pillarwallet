@@ -38949,7 +38949,7 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
               ]
             }
           >
-            tokenValue
+            £17562.40
           </Text>
         </View>
         <View
@@ -39077,7 +39077,7 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
               ]
             }
           >
-            tokenValue
+            £17562.40
           </Text>
         </View>
         <View
@@ -44725,7 +44725,7 @@ exports[`Storyshots ReviewSummary token 1`] = `
             ]
           }
         >
-          € 25.53
+          €25.53
         </Text>
       </View>
     </View>
@@ -47210,7 +47210,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -47493,7 +47493,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -47591,7 +47591,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £ 0
+                  £0
                 </Text>
               </View>
             </View>
@@ -47740,55 +47740,24 @@ exports[`Storyshots TextInput default 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -47798,15 +47767,40 @@ exports[`Storyshots TextInput default 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 54,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -47815,6 +47809,7 @@ exports[`Storyshots TextInput default 1`] = `
                     alignTextOnRight={false}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     label="Label"
                     onBlur={[Function]}
@@ -47862,25 +47857,25 @@ exports[`Storyshots TextInput default 1`] = `
                   />
                 </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -47978,55 +47973,24 @@ exports[`Storyshots TextInput multiline 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 120,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -48036,15 +48000,40 @@ exports[`Storyshots TextInput multiline 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 120,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -48053,6 +48042,7 @@ exports[`Storyshots TextInput multiline 1`] = `
                     alignTextOnRight={false}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     label="Label"
                     multiline={true}
@@ -48102,25 +48092,25 @@ exports[`Storyshots TextInput multiline 1`] = `
                   />
                 </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -48266,55 +48256,24 @@ exports[`Storyshots TextInput numeric 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -48324,15 +48283,40 @@ exports[`Storyshots TextInput numeric 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 54,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -48341,6 +48325,7 @@ exports[`Storyshots TextInput numeric 1`] = `
                     alignTextOnRight={true}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     keyboardType="decimal-pad"
                     label="Label"
@@ -48389,25 +48374,25 @@ exports[`Storyshots TextInput numeric 1`] = `
                   />
                 </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -48478,103 +48463,24 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                      "paddingLeft": 14,
-                    },
-                  ]
-                }
-              >
-                <View
-                  name="plus"
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 16,
-                        "marginRight": 9,
-                      },
-                    ]
-                  }
-                />
-                <Text
-                  style={
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "flexWrap": "wrap",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "maxWidth": 80,
-                        "textAlignVertical": "center",
-                      },
-                    ]
-                  }
-                >
-                  left side
-                </Text>
-              </View>
-              <View
-                accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -48584,15 +48490,88 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 54,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "paddingLeft": 14,
+                      },
+                    ]
+                  }
+                >
+                  <View
+                    name="plus"
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontSize": 16,
+                          "marginRight": 9,
+                        },
+                      ]
+                    }
+                  />
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "flexWrap": "wrap",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "maxWidth": 80,
+                          "textAlignVertical": "center",
+                        },
+                      ]
+                    }
+                  >
+                    left side
+                  </Text>
+                </View>
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -48601,6 +48580,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                     alignTextOnRight={true}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     keyboardType="decimal-pad"
                     onBlur={[Function]}
@@ -48646,44 +48626,6 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                     value=""
                   />
                 </View>
-              </View>
-              <View
-                accessible={true}
-                focusable={false}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "opacity": 1,
-                    "paddingRight": 14,
-                  }
-                }
-              >
-                <Text
-                  addMargin={true}
-                  color="#8B939E"
-                  style={
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "marginRight": 8,
-                        "textAlignVertical": "center",
-                      },
-                    ]
-                  }
-                >
-                  addon
-                </Text>
                 <View
                   accessible={true}
                   focusable={false}
@@ -48697,229 +48639,267 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "justifyContent": "center",
+                      "flexDirection": "row",
                       "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 0,
-                      "paddingRight": 0,
-                      "paddingTop": 0,
+                      "paddingRight": 14,
                     }
                   }
                 >
-                  <View
-                    name="plus"
+                  <Text
+                    addMargin={true}
+                    color="#8B939E"
                     style={
                       Array [
                         Object {
-                          "color": "#007AFF",
-                          "fontSize": undefined,
-                          "marginBottom": undefined,
-                          "marginLeft": undefined,
-                          "marginRight": undefined,
-                          "marginTop": undefined,
-                          "paddingTop": 0,
-                        },
-                        Object {},
-                      ]
-                    }
-                  />
-                </View>
-                <View
-                  style={
-                    Object {
-                      "height": 30,
-                    }
-                  }
-                >
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "flex": 1,
-                          "justifyContent": "center",
-                        },
-                        Object {
-                          "marginLeft": 6,
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "marginRight": 8,
+                          "textAlignVertical": "center",
                         },
                       ]
                     }
                   >
-                    <View
-                      animating={true}
-                      animationDuration={4000}
-                      animationEasing={[Function]}
-                      color="#007AFF"
-                      hideAnimationDuration={200}
-                      interaction={true}
-                      renderComponent={[Function]}
-                      style={
-                        Object {
-                          "height": 30,
-                          "opacity": 1,
-                          "width": 30,
-                        }
+                    addon
+                  </Text>
+                  <View
+                    accessible={true}
+                    focusable={false}
+                    onClick={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "opacity": 1,
+                        "paddingBottom": 0,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 0,
                       }
-                      trackWidth={3}
-                    >
-                      <View
-                        style={
+                    }
+                  >
+                    <View
+                      name="plus"
+                      style={
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": undefined,
+                            "marginBottom": undefined,
+                            "marginLeft": undefined,
+                            "marginRight": undefined,
+                            "marginTop": undefined,
+                            "paddingTop": 0,
+                          },
+                          Object {},
+                        ]
+                      }
+                    />
+                  </View>
+                  <View
+                    style={
+                      Object {
+                        "height": 30,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        Array [
                           Object {
                             "alignItems": "center",
-                            "bottom": 0,
+                            "flex": 1,
                             "justifyContent": "center",
-                            "left": 0,
-                            "position": "absolute",
-                            "right": 0,
-                            "top": 0,
+                          },
+                          Object {
+                            "marginLeft": 6,
+                          },
+                        ]
+                      }
+                    >
+                      <View
+                        animating={true}
+                        animationDuration={4000}
+                        animationEasing={[Function]}
+                        color="#007AFF"
+                        hideAnimationDuration={200}
+                        interaction={true}
+                        renderComponent={[Function]}
+                        style={
+                          Object {
+                            "height": 30,
+                            "opacity": 1,
+                            "width": 30,
                           }
                         }
+                        trackWidth={3}
                       >
                         <View
                           style={
                             Object {
-                              "height": 30,
-                              "transform": Array [
-                                Object {
-                                  "rotate": "82.5deg",
-                                },
-                                Object {
-                                  "rotate": "0deg",
-                                },
-                              ],
-                              "width": 30,
+                              "alignItems": "center",
+                              "bottom": 0,
+                              "justifyContent": "center",
+                              "left": 0,
+                              "position": "absolute",
+                              "right": 0,
+                              "top": 0,
                             }
                           }
                         >
                           <View
-                            collapsable={false}
                             style={
                               Object {
-                                "height": 15,
-                                "overflow": "hidden",
+                                "height": 30,
+                                "transform": Array [
+                                  Object {
+                                    "rotate": "82.5deg",
+                                  },
+                                  Object {
+                                    "rotate": "0deg",
+                                  },
+                                ],
                                 "width": 30,
                               }
                             }
                           >
                             <View
+                              collapsable={false}
                               style={
                                 Object {
-                                  "height": 30,
-                                  "transform": Array [
-                                    Object {
-                                      "translateY": 0,
-                                    },
-                                    Object {
-                                      "rotate": "-172.5deg",
-                                    },
-                                  ],
+                                  "height": 15,
+                                  "overflow": "hidden",
                                   "width": 30,
                                 }
                               }
                             >
                               <View
-                                collapsable={false}
                                 style={
                                   Object {
-                                    "height": 15,
-                                    "overflow": "hidden",
+                                    "height": 30,
+                                    "transform": Array [
+                                      Object {
+                                        "translateY": 0,
+                                      },
+                                      Object {
+                                        "rotate": "-172.5deg",
+                                      },
+                                    ],
                                     "width": 30,
                                   }
                                 }
                               >
                                 <View
+                                  collapsable={false}
                                   style={
                                     Object {
-                                      "borderColor": "#007AFF",
-                                      "borderRadius": 15,
-                                      "borderWidth": 3,
-                                      "height": 30,
+                                      "height": 15,
+                                      "overflow": "hidden",
                                       "width": 30,
                                     }
                                   }
-                                />
+                                >
+                                  <View
+                                    style={
+                                      Object {
+                                        "borderColor": "#007AFF",
+                                        "borderRadius": 15,
+                                        "borderWidth": 3,
+                                        "height": 30,
+                                        "width": 30,
+                                      }
+                                    }
+                                  />
+                                </View>
                               </View>
                             </View>
                           </View>
                         </View>
-                      </View>
-                      <View
-                        style={
-                          Object {
-                            "alignItems": "center",
-                            "bottom": 0,
-                            "justifyContent": "center",
-                            "left": 0,
-                            "position": "absolute",
-                            "right": 0,
-                            "top": 0,
-                          }
-                        }
-                      >
                         <View
                           style={
                             Object {
-                              "height": 30,
-                              "transform": Array [
-                                Object {
-                                  "rotate": "82.5deg",
-                                },
-                                Object {
-                                  "rotate": "0deg",
-                                },
-                              ],
-                              "width": 30,
+                              "alignItems": "center",
+                              "bottom": 0,
+                              "justifyContent": "center",
+                              "left": 0,
+                              "position": "absolute",
+                              "right": 0,
+                              "top": 0,
                             }
                           }
                         >
                           <View
-                            collapsable={false}
                             style={
                               Object {
-                                "height": 15,
-                                "overflow": "hidden",
-                                "top": 15,
+                                "height": 30,
+                                "transform": Array [
+                                  Object {
+                                    "rotate": "82.5deg",
+                                  },
+                                  Object {
+                                    "rotate": "0deg",
+                                  },
+                                ],
                                 "width": 30,
                               }
                             }
                           >
                             <View
+                              collapsable={false}
                               style={
                                 Object {
-                                  "height": 30,
-                                  "transform": Array [
-                                    Object {
-                                      "translateY": -15,
-                                    },
-                                    Object {
-                                      "rotate": "352.5deg",
-                                    },
-                                  ],
+                                  "height": 15,
+                                  "overflow": "hidden",
+                                  "top": 15,
                                   "width": 30,
                                 }
                               }
                             >
                               <View
-                                collapsable={false}
                                 style={
                                   Object {
-                                    "height": 15,
-                                    "overflow": "hidden",
+                                    "height": 30,
+                                    "transform": Array [
+                                      Object {
+                                        "translateY": -15,
+                                      },
+                                      Object {
+                                        "rotate": "352.5deg",
+                                      },
+                                    ],
                                     "width": 30,
                                   }
                                 }
                               >
                                 <View
+                                  collapsable={false}
                                   style={
                                     Object {
-                                      "borderColor": "#007AFF",
-                                      "borderRadius": 15,
-                                      "borderWidth": 3,
-                                      "height": 30,
+                                      "height": 15,
+                                      "overflow": "hidden",
                                       "width": 30,
                                     }
                                   }
-                                />
+                                >
+                                  <View
+                                    style={
+                                      Object {
+                                        "borderColor": "#007AFF",
+                                        "borderRadius": 15,
+                                        "borderWidth": 3,
+                                        "height": 30,
+                                        "width": 30,
+                                      }
+                                    }
+                                  />
+                                </View>
                               </View>
                             </View>
                           </View>
@@ -48929,25 +48909,25 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                   </View>
                 </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -49018,55 +48998,24 @@ exports[`Storyshots TextInput with button 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -49076,15 +49025,40 @@ exports[`Storyshots TextInput with button 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 54,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -49093,6 +49067,7 @@ exports[`Storyshots TextInput with button 1`] = `
                     alignTextOnRight={false}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     onBlur={[Function]}
                     onChange={[Function]}
@@ -49137,90 +49112,90 @@ exports[`Storyshots TextInput with button 1`] = `
                     value=""
                   />
                 </View>
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 4,
+                        "paddingLeft": 4,
+                        "paddingRight": 4,
+                        "paddingTop": 4,
+                      },
+                    ]
+                  }
+                >
+                  <View
+                    accessible={true}
+                    focusable={true}
+                    onClick={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "alignSelf": "auto",
+                        "backgroundColor": "#007AFF",
+                        "borderRadius": 3,
+                        "flexDirection": "row",
+                        "height": 32,
+                        "justifyContent": "center",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 12,
+                        "marginTop": 0,
+                        "opacity": 1,
+                        "paddingBottom": 0,
+                        "paddingLeft": 20,
+                        "paddingRight": 20,
+                        "paddingTop": 0,
+                      }
+                    }
+                  >
+                    <Text
+                      small={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#FFFFFF",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 14,
+                            "lineHeight": 14,
+                            "marginTop": 2.52,
+                            "textAlign": "center",
+                            "textAlignVertical": "center",
+                          },
+                        ]
+                      }
+                      variant="default"
+                    >
+                      Button
+                    </Text>
+                  </View>
+                </View>
               </View>
-              <View
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
                 style={
                   Array [
                     Object {
-                      "paddingBottom": 4,
-                      "paddingLeft": 4,
-                      "paddingRight": 4,
-                      "paddingTop": 4,
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
                     },
                   ]
                 }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "alignSelf": "auto",
-                      "backgroundColor": "#007AFF",
-                      "borderRadius": 3,
-                      "flexDirection": "row",
-                      "height": 32,
-                      "justifyContent": "center",
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 12,
-                      "marginTop": 0,
-                      "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 0,
-                    }
-                  }
-                >
-                  <Text
-                    small={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#FFFFFF",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 14,
-                          "marginTop": 2.52,
-                          "textAlign": "center",
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                    variant="default"
-                  >
-                    Button
-                  </Text>
-                </View>
-              </View>
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -49318,55 +49293,24 @@ exports[`Storyshots TextInput with selector 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -49377,82 +49321,107 @@ exports[`Storyshots TextInput with selector 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
-                    "borderBottomLeftRadius": 4,
-                    "borderColor": "#EBF0F6",
-                    "borderStyle": "solid",
-                    "borderTopLeftRadius": 4,
-                    "borderWidth": 1,
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
                     "flexDirection": "row",
                     "height": 54,
-                    "justifyContent": "space-between",
                     "marginBottom": 0,
                     "marginLeft": 0,
                     "marginRight": 0,
                     "marginTop": 0,
+                    "minHeight": 0,
                     "opacity": 1,
-                    "paddingLeft": 16,
-                    "paddingRight": 10,
+                    "width": "100%",
                   }
                 }
               >
                 <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#FFFFFF",
+                      "borderBottomLeftRadius": 4,
+                      "borderColor": "#EBF0F6",
+                      "borderStyle": "solid",
+                      "borderTopLeftRadius": 4,
+                      "borderWidth": 1,
                       "flexDirection": "row",
+                      "height": 54,
+                      "justifyContent": "space-between",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingLeft": 16,
+                      "paddingRight": 10,
                     }
                   }
                 >
-                  <Text
+                  <View
+                    style={
+                      Object {
+                        "flexDirection": "row",
+                      }
+                    }
+                  >
+                    <Text
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
+                        ]
+                      }
+                    >
+                      label.select
+                    </Text>
+                  </View>
+                  <View
+                    name="selector"
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Medium",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "textAlignVertical": "center",
+                          "color": "#818EB3",
+                          "fontSize": 16,
+                          "marginLeft": 15,
                         },
                       ]
                     }
-                  >
-                    label.select
-                  </Text>
+                  />
                 </View>
                 <View
-                  name="selector"
-                  style={
-                    Array [
-                      Object {
-                        "color": "#818EB3",
-                        "fontSize": 16,
-                        "marginLeft": 15,
-                      },
-                    ]
-                  }
-                />
-              </View>
-              <View
-                accessible={true}
-                focusable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-              >
-                <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -49461,6 +49430,7 @@ exports[`Storyshots TextInput with selector 1`] = `
                     alignTextOnRight={false}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     keyboardAppearance="light"
                     label="Label"
                     onBlur={[Function]}
@@ -49507,25 +49477,25 @@ exports[`Storyshots TextInput with selector 1`] = `
                   />
                 </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -50544,7 +50514,7 @@ exports[`Storyshots Value Input default 1`] = `
                 ]
               }
             >
-              0.51 ETH (£ 94.78)
+              0.51 ETH (£94.78)
             </Text>
           </View>
         </View>
@@ -50565,58 +50535,27 @@ exports[`Storyshots Value Input default 1`] = `
           }
         >
           <View
-            error={false}
-            style={
-              Array [
-                Object {
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 4,
-                  "position": "relative",
-                },
-                Object {
-                  "borderRadius": 10,
-                },
-              ]
-            }
+            onLayout={[Function]}
           >
             <View
-              accessible={true}
-              focusable={false}
-              forwardedRef={[Function]}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              error={false}
               style={
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "borderBottomColor": "transparent",
-                  "borderBottomWidth": 0,
-                  "borderColor": "#D9D5DC",
-                  "borderLeftWidth": 0,
-                  "borderRadius": undefined,
-                  "borderRightWidth": 0,
-                  "borderTopWidth": 0,
-                  "borderWidth": undefined,
-                  "flexDirection": "row",
-                  "height": 54,
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "minHeight": 0,
-                  "opacity": 1,
-                  "width": "100%",
-                }
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderRadius": 4,
+                    "position": "relative",
+                  },
+                  Object {
+                    "borderRadius": 10,
+                  },
+                ]
               }
             >
               <View
                 accessible={true}
-                focusable={true}
+                focusable={false}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -50626,15 +50565,40 @@ exports[`Storyshots Value Input default 1`] = `
                 onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "flex": 1,
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "borderBottomColor": "transparent",
+                    "borderBottomWidth": 0,
+                    "borderColor": "#D9D5DC",
+                    "borderLeftWidth": 0,
+                    "borderRadius": undefined,
+                    "borderRightWidth": 0,
+                    "borderTopWidth": 0,
+                    "borderWidth": undefined,
+                    "flexDirection": "row",
+                    "height": 54,
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "minHeight": 0,
+                    "opacity": 1,
+                    "width": "100%",
                   }
                 }
               >
                 <View
-                  onLayout={[Function]}
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
                     Object {
-                      "alignSelf": "stretch",
                       "flex": 1,
                     }
                   }
@@ -50643,6 +50607,7 @@ exports[`Storyshots Value Input default 1`] = `
                     alignTextOnRight={true}
                     allowFontScaling={true}
                     autoCorrect={false}
+                    autoFocus={true}
                     customLabel={
                       <ValueInputHeader
                         asset={
@@ -50671,7 +50636,7 @@ exports[`Storyshots Value Input default 1`] = `
                           }
                         }
                         disableAssetSelection={false}
-                        labelText="0.51 ETH (£ 94.78)"
+                        labelText="0.51 ETH (£94.78)"
                         onAssetPress={[Function]}
                         onLabelPress={[Function]}
                       />
@@ -50724,63 +50689,63 @@ exports[`Storyshots Value Input default 1`] = `
                     value=""
                   />
                 </View>
-              </View>
-              <View
-                accessible={true}
-                focusable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "opacity": 1,
-                    "paddingRight": 14,
-                  }
-                }
-              >
-                <Text
-                  addMargin={false}
-                  color="#8B939E"
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "textAlignVertical": "center",
-                      },
-                    ]
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "opacity": 1,
+                      "paddingRight": 14,
+                    }
                   }
                 >
-                  ETH
-                </Text>
+                  <Text
+                    addMargin={false}
+                    color="#8B939E"
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                      ]
+                    }
+                  >
+                    ETH
+                  </Text>
+                </View>
               </View>
+              <TextInput
+                allowFontScaling={true}
+                autoCorrect={false}
+                caretHidden={true}
+                onFocus={[Function]}
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "bottom": 0,
+                      "height": 1,
+                      "left": 0,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+                underlineColorAndroid="transparent"
+              />
             </View>
-            <TextInput
-              allowFontScaling={true}
-              autoCorrect={false}
-              caretHidden={true}
-              onFocus={[Function]}
-              rejectResponderTermination={true}
-              style={
-                Array [
-                  Object {
-                    "bottom": 0,
-                    "height": 1,
-                    "left": 0,
-                    "position": "absolute",
-                  },
-                ]
-              }
-              underlineColorAndroid="transparent"
-            />
           </View>
         </View>
       </View>
@@ -51242,7 +51207,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                     }
                   >
                     2 Sep
-$ 1,066.86
+$1.07K
                   </Text>
                 </View>
               </RNSVGForeignObject>

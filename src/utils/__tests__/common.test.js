@@ -239,27 +239,27 @@ describe('Common utils', () => {
 
   describe('formatFiat', () => {
     it('should add currency symbol to value string based on currency provided', () => {
-      const expectedValue = '€ 14.30';
+      const expectedValue = '€14.30';
       expect(formatFiat('14.3', 'EUR')).toBe(expectedValue);
     });
     it('should add default (£) currency symbol to value string if no currency is provided', () => {
-      const expectedValue = '£ 14.30';
+      const expectedValue = '£14.30';
       expect(formatFiat('14.3')).toBe(expectedValue);
     });
     it('should round value and show two decimals only', () => {
-      const expectedValue = '£ 14.34';
+      const expectedValue = '£14.34';
       expect(formatFiat('14.336')).toBe(expectedValue);
     });
     it('should add trailing zeros to values missing second decimal', () => {
-      const expectedValue = '£ 14.30';
+      const expectedValue = '£14.30';
       expect(formatFiat('14.3')).toBe(expectedValue);
     });
     it('should add trailing zeros to values missing decimals', () => {
-      const expectedValue = '£ 14.00';
+      const expectedValue = '£14.00';
       expect(formatFiat('14')).toBe(expectedValue);
     });
     it('should show just 0 (without decimals) if value is less than 0', () => {
-      const expectedValue = '£ 0';
+      const expectedValue = '£0';
       expect(formatFiat('0.00')).toBe(expectedValue);
     });
   });
@@ -331,10 +331,10 @@ describe('Common utils', () => {
 
   describe('formatBigFiatAmount', () => {
     it('basic cases', () => {
-      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1.00K');
-      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1.00M');
-      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12.35K');
-      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123.45');
+      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€1.00K');
+      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€1.00M');
+      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€12.35K');
+      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€123.45');
     });
   });
 

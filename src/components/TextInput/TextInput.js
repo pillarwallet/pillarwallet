@@ -513,93 +513,94 @@ class TextInput extends React.Component<Props, State> {
       <View style={[{ paddingBottom: 10, flexDirection: 'column' }, inputWrapperStyle]}>
         {this.renderInputHeader()}
         <InputBorder error={hasError} style={itemHolderStyle}>
-          <ItemHolder error={hasError} style={itemHolderStyle} >
-            <Item
-              isFocused={isFocused}
-              height={inputHeight}
-            >
-              {!!Object.keys(selectorOptions).length &&
-              <Selector
-                fullWidth={fullWidthSelector}
-                onPress={!disabledSelector ? this.openSelector : noop}
-                disabled={disabledSelector}
+          <Tooltip
+            body={errorMessage || ''}
+            isVisible={!!hasError}
+          >
+            <ItemHolder error={hasError} style={itemHolderStyle} >
+              <Item
+                isFocused={isFocused}
                 height={inputHeight}
-                paddingRight={disabledSelector && 16}
               >
-                {this.renderSelector()}
-                {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
-              </Selector>}
-              {showLeftAddon &&
-              <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
-                <LeftSideWrapper>
-                  {(innerImageURI || fallbackSource) && <Image
-                    source={imageSource}
-                    fallbackSource={fallbackSource}
-                    style={{ marginRight: 9 }}
-                  />}
-                  <AddonIcon name={leftSideSymbol} />
-                  {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
-                </LeftSideWrapper>
-              </TouchableWithoutFeedback>}
-              {!fullWidthSelector && (
+                {!!Object.keys(selectorOptions).length &&
+                <Selector
+                  fullWidth={fullWidthSelector}
+                  onPress={!disabledSelector ? this.openSelector : noop}
+                  disabled={disabledSelector}
+                  height={inputHeight}
+                  paddingRight={disabledSelector && 16}
+                >
+                  {this.renderSelector()}
+                  {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
+                </Selector>}
+                {showLeftAddon &&
+                <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
+                  <LeftSideWrapper>
+                    {(innerImageURI || fallbackSource) && <Image
+                      source={imageSource}
+                      fallbackSource={fallbackSource}
+                      style={{ marginRight: 9 }}
+                    />}
+                    <AddonIcon name={leftSideSymbol} />
+                    {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
+                  </LeftSideWrapper>
+                </TouchableWithoutFeedback>}
+                {!fullWidthSelector && (
                 /* $FlowFixMe: incorrect RN flow types */
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
-                    <Tooltip
-                      body={errorMessage || ''}
-                      isVisible={!!hasError}
-                      wrapperStyle={{ alignSelf: 'stretch', flex: 1 }}
-                    >
-                      <InputField
-                        {...inputProps}
-                        ref={(input) => {
+
+                    <InputField
+                      {...inputProps}
+                      ref={(input) => {
                           if (getInputRef) getInputRef(input);
                           this.multilineInputField = input;
                         }}
-                        onChange={this.handleChange}
-                        onBlur={this.handleBlur}
-                        onEndEditing={this.handleBlur}
-                        onFocus={this.handleFocus}
-                        onSubmitEditing={this.handleSubmit}
-                        value={textInputValue}
-                        autoCorrect={autoCorrect}
-                        style={[
+                      onChange={this.handleChange}
+                      onBlur={this.handleBlur}
+                      onEndEditing={this.handleBlur}
+                      onFocus={this.handleFocus}
+                      onSubmitEditing={this.handleSubmit}
+                      value={textInputValue}
+                      autoCorrect={autoCorrect}
+                      style={[
                           defaultInputStyle,
                           customStyle,
                           additionalStyle,
                           !editable && { color: colors.basic010 },
                         ]}
-                        onLayout={onLayout}
-                        placeholderTextColor={colors.basic030}
-                        alignTextOnRight={!!numeric}
-                        smallPadding={!!onRightAddonPress}
-                      />
-                    </Tooltip>
+                      onLayout={onLayout}
+                      placeholderTextColor={colors.basic030}
+                      alignTextOnRight={!!numeric}
+                      smallPadding={!!onRightAddonPress}
+                      autoFocus
+                    />
                   </View>
                 </TouchableWithoutFeedback>
-              )}
-              {showRightAddon &&
-              <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
-                {!!rightPlaceholder &&
+                )}
+                {showRightAddon &&
+                <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
+                  {!!rightPlaceholder &&
                   <PlaceholderRight color={colors.basic030} addMargin={!!iconProps}>
                     {rightPlaceholder}
                   </PlaceholderRight>
                 }
-                {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
-                {!!loading && <Spinner size={30} trackWidth={3} style={{ marginLeft: 6 }} />}
-              </RightSideWrapper>}
-              {!!buttonProps &&
-              <ButtonWrapper>
-                <Button {...buttonProps} block={false} />
-              </ButtonWrapper>}
-            </Item>
-            {Platform.OS === 'ios' && <IosFocusInput
-              caretHidden
-              autoCorrect={false}
-              ref={(ref) => { this.rnInput = ref; }}
-              onFocus={this.handleRNFocus}
-            />}
-          </ItemHolder>
+                  {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
+                  {!!loading && <Spinner size={30} trackWidth={3} style={{ marginLeft: 6 }} />}
+                </RightSideWrapper>}
+                {!!buttonProps &&
+                <ButtonWrapper>
+                  <Button {...buttonProps} block={false} />
+                </ButtonWrapper>}
+              </Item>
+              {Platform.OS === 'ios' && <IosFocusInput
+                caretHidden
+                autoCorrect={false}
+                ref={(ref) => { this.rnInput = ref; }}
+                onFocus={this.handleRNFocus}
+              />}
+            </ItemHolder>
+          </Tooltip>
         </InputBorder>
       </View>
     );

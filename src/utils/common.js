@@ -277,16 +277,22 @@ export const commify = (
   return formatedValue;
 };
 
-export const formatFiatValue = (value: number | string, options?: { skipCents?: boolean }): string => {
-  const formatedValue = commify(value, options);
+export const formatFiatValue = (
+  value: number | string,
+  options?: { skipCents?: boolean, shouldCommify?: boolean },
+): string => {
+  const num = new BigNumber(value).toFixed(2);
+  const formatedValue = options?.skipCents || options?.shouldCommify ? commify(value, options) : formatBigAmount(num);
   return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
 };
 
 export const formatFiat = (
-  value: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
+  value: number | string,
+  baseFiatCurrency?: ?string,
+  options?: { skipCents?: boolean, shouldCommify?: boolean },
 ): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return `${getCurrencySymbol(fiatCurrency)} ${formatFiatValue(value, options)}`;
+  return `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
 };
 
 export const partial = (fn: Function, ...fixedArgs: any) => {
@@ -669,7 +675,7 @@ export const formatBigAmount = (value: Value) => {
 
 export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol} ${formatBigAmount(value)}`;
+  return `${currencySymbol}${formatBigAmount(value)}`;
 };
 
 export const removeTrailingZeros = (amount: string) => {

@@ -30,6 +30,7 @@ export const REMOTE_CONFIG = {
   FEATURE_SABLIER: 'feature_services_sablier',
   FEATURE_RARI: 'feature_services_rari',
   FEATURE_LIQUIDITY_POOLS: 'feature_services_liquidity_pools',
+  FEATURE_STORIES: 'feature_stories',
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
   SABLIER_TIME_START_TOLERANCE: 'feature_services_sablier_time_start_tolerance',
   ALTALIX: 'feature_services_altalix',
@@ -41,6 +42,7 @@ export const REMOTE_CONFIG = {
   APP_LOCALES_LATEST_TIMESTAMP: 'app_locales_latest_timestamp',
   LEGAL_HTML_ENDPOINT_PREFIX: 'app_legal_html_endpoint_prefix',
   RECOVERY_PORTAL_DISABLED: 'recovery_portal_disabled',
+  FEATURE_ONBOARDING: 'feature_onboarding',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -51,6 +53,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_AAVE]: true,
   [REMOTE_CONFIG.FEATURE_POOL_TOGETHER]: true,
   [REMOTE_CONFIG.FEATURE_ALTALIX]: true,
+  [REMOTE_CONFIG.FEATURE_STORIES]: false,
   [REMOTE_CONFIG.WBTC_CAFE]: true,
   [REMOTE_CONFIG.FEATURE_SABLIER]: true,
   [REMOTE_CONFIG.FEATURE_RARI]: true,
@@ -63,4 +66,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP]: '1',
   [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
   [REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED]: false,
+  [REMOTE_CONFIG.FEATURE_ONBOARDING]: false,
 };

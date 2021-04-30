@@ -5,30 +5,20 @@ platform :ios, '10.0'
 
 target 'pillarwallet' do
   config = use_native_modules!
-
   use_react_native!(:path => config["reactNativePath"])
 
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable these next few lines.
-  use_flipper!
   post_install do |installer|
-    flipper_post_install(installer)
-
-    # Fix xcodebuild "supported deployment target" warnings
     installer.pods_project.targets.each do |target|
-        target.build_configurations.each do |config|
-          ## Keep in sync with pbxproj!
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0' 
-        end
+      target.build_configurations.each do |config|
+        config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
       end
+    end
   end
 
   ### Custom Pods
-  
   # pod for splash gif
   pod 'SwiftyGif'
+  pod 'storyly-react-native', :path => '../node_modules/storyly-react-native'
   
   pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
 
@@ -40,4 +30,18 @@ target 'pillarwallet' do
 
   pod 'RNLocalize', :path => '../node_modules/react-native-localize'
   pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
+end
+
+dynamic_frameworks = ['Storyly', 'SDWebImage']
+pre_install do |installer|
+  installer.pod_targets.each do |pod|
+    if dynamic_frameworks.include?(pod.name)
+      def pod.dynamic_framework?;
+        true
+      end
+      def pod.build_type;
+        Pod::BuildType.dynamic_framework
+      end
+    end
+  end
 end
