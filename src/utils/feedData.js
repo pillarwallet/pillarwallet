@@ -21,7 +21,6 @@
 import { BigNumber } from 'bignumber.js';
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
-import t from 'translations/translate';
 
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
