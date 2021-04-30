@@ -20,10 +20,10 @@
 
 // APP FLOW
 export const APP_FLOW = 'APP_FLOW';
-export const TAB_NAVIGATION = 'TAB_NAVIGATION';
+export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
-export const SERVICES_TAB = 'SERVICES_TAB';
+export const SERVICES_FLOW = 'SERVICES_FLOW';
 export const ME_TAB = 'ME_TAB';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
@@ -40,7 +40,7 @@ export const CONFIRM_CLAIM = 'CONFIRM_CLAIM';
 export const MENU = 'MENU';
 export const LOGOUT_PENDING = 'LOGOUT_PENDING';
 export const STORYBOOK = 'STORYBOOK';
-export const CONNECT_TAB = 'CONNECT_TAB';
+export const CONNECT_FLOW = 'CONNECT_FLOW';
 export const PIN_CODE = 'PIN_CODE';
 export const SPLASH_SCREEN = 'SPLASH_SCREEN';
 
@@ -108,8 +108,8 @@ export const SEND_COLLECTIBLE_CONFIRM = 'SEND_COLLECTIBLE_CONFIRM';
 export const CONTACT = 'CONTACT';
 
 // HOME FLOW
+export const HOME_FLOW = 'HOME_FLOW';
 export const HOME = 'HOME';
-export const HOME_TAB = 'HOME_TAB';
 
 // EXCHANGE FLOW
 export const EXCHANGE_FLOW = 'EXCHANGE_FLOW';

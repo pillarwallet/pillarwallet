@@ -38,7 +38,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { findFirstArchanovaAccount, getAccountName, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { calculateBalanceInFiat } from 'utils/assets';
+import { getTotalBalanceInFiat } from 'utils/assets';
 import { images } from 'utils/images';
 import { responsiveSize } from 'utils/ui';
 
@@ -187,7 +187,7 @@ const AccountsScreen = ({
       const isActiveWallet = !!isActive && isEthereumActive;
       let walletBalance;
       if (accountBalances) {
-        const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
+        const thisAccountBalance = getTotalBalanceInFiat(accountBalances, rates, fiatCurrency);
         walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
       }
       return {

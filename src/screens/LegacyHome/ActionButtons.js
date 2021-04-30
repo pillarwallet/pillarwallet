@@ -40,7 +40,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { calculateBalanceInFiat } from 'utils/assets';
+import { getTotalBalanceInFiat } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { spacing } from 'utils/variables';
 
@@ -88,7 +88,7 @@ const ActionButtons = ({
   }, [activeAccountAddress]);
 
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-  const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency)
+  const isSendButtonActive = getTotalBalanceInFiat(activeAccountBalances, rates, fiatCurrency)
     && isEmpty(archanovaWalletStatus?.sendingBlockedMessage);
 
   return (

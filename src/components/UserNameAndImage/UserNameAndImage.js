@@ -20,27 +20,53 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { withNavigation } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 
+// Components
 import ProfileImage from 'components/ProfileImage';
-import { MediumText } from 'components/Typography';
+import Text from 'components/modern/Text';
 
+// Contants
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
-import { spacing } from 'utils/variables';
+// Utils
+import { fontStyles, spacing } from 'utils/variables';
 
-import type { NavigationScreenProp } from 'react-navigation';
+// Types
 import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
 
 
 type Props = {
   user: User,
-  navigation: NavigationScreenProp<*>,
-  userProps: ProfileImageProps,
+  userProps?: ProfileImageProps,
   profileImageWidth?: number,
 };
 
+const UserNameAndImage = ({
+  user = {},
+  userProps = {},
+  profileImageWidth = 24,
+}: Props) => {
+  const navigation = useNavigation();
+
+  const { profileImage, lastUpdateTime, username } = user;
+  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+  return (
+    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
+      <ProfileImage
+        {...userProps}
+        uri={userImageUri}
+        userName={username}
+        diameter={profileImageWidth}
+        noShadow
+      />
+      {!!username && <UserName>{username}</UserName>}
+    </UserWrapper>
+  );
+};
+
+export default UserNameAndImage;
 
 const UserWrapper = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
@@ -48,35 +74,9 @@ const UserWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const UserName = styled(MediumText)`
-  margin-left: 10px;
+const UserName = styled(Text)`
+  ${fontStyles.medium};
+  margin-left: ${spacing.small}px;
   flex-wrap: wrap;
   flex-shrink: 1;
 `;
-
-
-const UserNameAndImage = (props: Props) => {
-  const {
-    user = {},
-    navigation,
-    userProps = {},
-    profileImageWidth = 24,
-  } = props;
-  const { profileImage, lastUpdateTime, username } = user;
-  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
-  return (
-    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      {/* $FlowFixMe: flow update to 0.122 */}
-      <ProfileImage
-        uri={userImageUri}
-        userName={username}
-        diameter={profileImageWidth}
-        noShadow
-        {...userProps}
-      />
-      {!!username && <UserName>{username}</UserName>}
-    </UserWrapper>
-  );
-};
-
-export default withNavigation(UserNameAndImage);

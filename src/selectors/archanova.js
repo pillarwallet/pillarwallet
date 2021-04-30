@@ -34,6 +34,9 @@ import { isProdEnv } from 'utils/environment';
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
+// selectors
+import { useRootSelector } from 'selectors';
+
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
@@ -93,3 +96,9 @@ export const isEnsMigrationNeededSelector = createSelector(
     return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;
   },
 );
+
+export const useSmartWalletStatus = (): ArchanovaWalletStatus => {
+  const accounts = useRootSelector(root => root.accounts.data);
+  const smartWalletState = useRootSelector((root) => root.smartWallet);
+  return getArchanovaWalletStatus(accounts, smartWalletState);
+};

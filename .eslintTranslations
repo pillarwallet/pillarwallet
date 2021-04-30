@@ -148,6 +148,7 @@
         "animationOut",
         "autoCapitalize",
         "backgroundColor",
+        "color",
         "contentAlign",
         "contentInsetAdjustmentBehavior",
         "ellipsizeMode",

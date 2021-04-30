@@ -60,8 +60,8 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
-import { calculateBalanceInFiat } from 'utils/assets';
-import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
+import { getTotalBalanceInFiat } from 'utils/assets';
+import { getArchanovaWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 
 // partials
@@ -208,7 +208,7 @@ class WalletView extends React.Component<Props, State> {
     // SEARCH
     const isInSearchMode = this.isInSearchMode();
 
-    const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
+    const balance = getTotalBalanceInFiat(balances, rates, baseFiatCurrency || defaultFiatCurrency);
 
     const deploymentData = getDeploymentData(smartWalletState);
 

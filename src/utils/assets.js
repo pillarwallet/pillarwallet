@@ -38,6 +38,8 @@ import type {
   AssetBalance,
   Balance,
   Balances,
+  MixedBalance,
+  MixedBalances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
@@ -216,8 +218,8 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: Balances, rates: Rates): number => {
-  const balanceValues: Balance[] = Object.keys(balances).map(key => balances[key]);
+export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): number => {
+  const balanceValues: MixedBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;
@@ -233,19 +235,13 @@ export const balanceInEth = (balances: Balances, rates: Rates): number => {
   }, 0);
 };
 
-export const calculateBalanceInFiat = (
-  rates: Rates,
-  balances: Balances,
-  currency: string,
-) => {
+export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
   }
 
-  const totalEth = balanceInEth(balances, rates);
-
-  return get(ethRates, currency, 0) * totalEth;
+  return get(ethRates, currency, 0) * balanceInEth(balances, rates);
 };
 
 export const getPPNTokenAddress = (token: string, assets: Assets): ?string => {
