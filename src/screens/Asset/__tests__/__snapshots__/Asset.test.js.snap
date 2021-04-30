@@ -744,7 +744,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               ]
             }
           >
-            £ 0
+            £0
           </Text>
         </View>
       </View>
