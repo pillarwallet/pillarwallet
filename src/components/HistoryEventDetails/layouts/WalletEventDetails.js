@@ -31,6 +31,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import Text from 'components/modern/Text';
+import Toast from 'components/Toast';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 
@@ -43,7 +44,7 @@ import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { viewOnBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/external';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -73,7 +74,15 @@ function WalletEventDetails({ event }: Props) {
 
   const openTopUp = () => {
     const smartWalletAddress = getSmartWalletAddress(accounts);
-    if (!smartWalletAddress) return;
+    if (!smartWalletAddress) {
+      Toast.show({
+        message: t('toast.cannotGetWalletAddress'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
 
     Modal.open(() => <ReceiveModal address={smartWalletAddress} />);
   };

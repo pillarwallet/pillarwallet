@@ -34,7 +34,7 @@ import TransactionStatusText from 'components/modern/TransactionStatusText';
 import { EXCHANGE } from 'constants/navigationConstants';
 
 // Utils
-import { viewOnBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 

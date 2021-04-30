@@ -35,7 +35,7 @@ import { useRootSelector } from 'selectors';
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
-import { viewOnBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 

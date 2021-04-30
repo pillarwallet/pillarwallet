@@ -31,7 +31,7 @@ import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 
 // Utils
-import { viewOnBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 

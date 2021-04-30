@@ -29,7 +29,7 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
-import { viewOnBlockchain } from 'utils/linking';
+import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
