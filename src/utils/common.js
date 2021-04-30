@@ -279,17 +279,17 @@ export const commify = (
 
 export const formatFiatValue = (
   value: number | string,
-  options?: { skipCents?: boolean, isFormatAmount?: boolean },
+  options?: { skipCents?: boolean, shouldCommify?: boolean },
 ): string => {
   const num = new BigNumber(value).toFixed(2);
-  const formatedValue = options?.skipCents || options?.isFormatAmount ? commify(value, options) : formatBigAmount(num);
+  const formatedValue = options?.skipCents || options?.shouldCommify ? commify(value, options) : formatBigAmount(num);
   return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
 };
 
 export const formatFiat = (
   value: number | string,
   baseFiatCurrency?: ?string,
-  options?: { skipCents?: boolean, isFormatAmount?: boolean },
+  options?: { skipCents?: boolean, shouldCommify?: boolean },
 ): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   return `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
