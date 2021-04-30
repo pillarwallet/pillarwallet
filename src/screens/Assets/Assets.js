@@ -313,7 +313,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: !!activeAccount && [{
+          rightItems: activeAccount ? [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,
@@ -321,7 +321,7 @@ class AssetsScreen extends React.Component<Props, State> {
               onPress: headerButtonAction,
               ...customHeaderButtonProps,
             },
-          }],
+          }] : null,
           centerItems: [{
             title: t('title.assets'),
           }],
