@@ -322,10 +322,10 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
-          leftItems: [{
+          centerItems: [{
             title: t('title.assets'),
           }],
-          noBack: true,
+          sideFlex: 5,
         }}
         inset={{ bottom: 0 }}
         tab

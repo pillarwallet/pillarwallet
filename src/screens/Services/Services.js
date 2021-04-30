@@ -365,14 +365,14 @@ class ServicesScreen extends React.Component<Props> {
     return (
       <ContainerWithHeader
         headerProps={{
-          noBack: true,
+          centerItems: [{ title: t('servicesContent.title.servicesScreen') }],
           rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
-          leftItems: [{ title: t('servicesContent.title.servicesScreen') }],
+          sideFlex: 5,
         }}
         inset={{ bottom: 'never' }}
         tab
       >
-        {onScroll => (
+        {(onScroll) => (
           <React.Fragment>
             <FlatList
               data={services}

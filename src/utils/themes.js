@@ -26,8 +26,16 @@ import type { Theme, ColorsByThemeProps } from 'models/Theme';
 import lightThemeColors from './themes/lightTheme';
 import darkThemeColors from './themes/darkTheme';
 
+const commonColors = {
+  ethereum: '#497391',
+  binance: '#f7931a',
+  xdai: '#62a7a5',
+  polygon: '#8247e5',
+};
+
 // will be removed after transition
 export const lightThemeColorsOld = {
+  ...commonColors,
   text: '#0A1427',
   accent: '#818EB3',
   primary: '#007AFF',
@@ -70,10 +78,13 @@ export const lightThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: lightThemeColors.primaryAccent130,
   checkBoxField: '#e0eeff',
+  pieChartCenter: lightThemeColors.basic070,
+  pieChartEmpty: '#f2f2f2',
 };
 
 // will be removed after transition
 export const darkThemeColorsOld = {
+  ...commonColors,
   text: '#B1BBD9',
   accent: '#818EB3',
   primary: '#007AFF',
@@ -116,6 +127,8 @@ export const darkThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: darkThemeColors.primaryAccent140,
   checkBoxField: darkThemeColors.basic090,
+  pieChartCenter: darkThemeColors.basic050,
+  pieChartEmpty: darkThemeColors.basic060,
 };
 
 export const themedColors = {

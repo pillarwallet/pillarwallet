@@ -24,11 +24,12 @@
   "negativeValue": "- {{value}}",
   "positiveTokenValue": "+ {{value}} {{token}}",
   "negativeTokenValue": "- {{value}} {{token}}",
-  "positivePercentValue": "+ {{value}} %",
-  "negativePercentValue": "- {{value}} %",
+  "fiatValue": "{{symbol}}{{value}}",
+  "percentValue": "{{value}}%",
+  "positivePercentValue": "+{{value}}%",
+  "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
-  "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
@@ -42,9 +43,9 @@
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
-  "inTimeDaysHoursMinutes":"In {{days}}d {{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
+  "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+  "inTimeDaysHoursMinutes": "In {{days}}d {{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutesLayout": "{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
   "hour": "{{count}} hour",
@@ -53,6 +54,30 @@
   "minute_plural": "{{count}} minutes",
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+
+  "units": {
+    "1e3": "{{value}}K",
+    "1e6": "{{value}}M",
+    "1e9": "{{value}}B",
+    "1e12": "{{value}}T"
+  },
+
+  "chains": {
+    "ethereum": "Ethereum",
+    "binance": "Binance Smart Chain",
+    "xdai": "xDai Network",
+    "polygon": "Polygon"
+  },
+
+  "assetCategories": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
+    "liquidityPools": "Pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles"
+  },
 
   "navigationTabs": {
     "home": "Home",
@@ -526,6 +551,25 @@
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
       "rari": "Can't connect to Rari service.",
       "liquidityPools": "Can't connect to Liquidity Pools service"
+    }
+  },
+
+  "home": {
+    "balance": {
+      "addCash": "Add Cash",
+      "lastWeek": "Last week"
+    },
+    "assets": {
+      "contacts": "Contacts",
+      "services": "Services"
+    },
+    "controls": {
+      "sideChains": "Layer 2"
+    },
+    "actions": {
+      "send": "Send",
+      "swap": "Swap",
+      "connect": "Connect"
     }
   },
 
@@ -1486,8 +1530,8 @@
     "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
     "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
     "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
-    "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
-    "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
+    "rariWithdraw": "{{amount}} {{token}} withdrawn from Rari Capital.",
+    "rariTransfer": "{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
     "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
     "rariNotEnoughLiquidity": "Not enough liquidity to exchange this token. Please select another token.",
@@ -1618,7 +1662,7 @@
       "subtitle": {
         "whatIsRari": "What is Rari?",
         "howDoesRariEarn": "How does Rari Earn Yield?",
-        "rariPools":"Rari Pools",
+        "rariPools": "Rari Pools",
         "deposits": "Deposits",
         "withdrawals": "Withdrawals",
         "RGT": "$RGT (Rari Governance Token)",

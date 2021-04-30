@@ -19,47 +19,57 @@
 */
 
 import * as React from 'react';
+import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
-import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 // Types
-import type { IconName } from 'components/Icon';
+import type { ImageSource } from 'utils/types/react-native';
+import type { IconName } from 'components/modern/Icon';
 
 export type Item = {|
   title: string,
-  iconName: IconName,
+  iconName?: IconName,
+  iconSource?: ImageSource,
   onPress?: () => mixed,
+  disabled?: boolean,
 |};
 
 type Props = {|
   items: (?Item | false)[],
+  applyBottomInset?: boolean,
 |};
 
-const FloatingButtons = ({ items: falsyItems }: Props) => {
+const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) => {
   const items: Item[] = (falsyItems.filter(Boolean): any);
 
   if (items.length === 0) {
     return null;
   }
 
+  const forceInset = applyBottomInset ? { bottom: 'always' } : undefined;
+
   return (
-    <Container>
-      {items.map((item) => (
-        <ItemView key={item.title} onPress={item.onPress} testID="FloatingButtonItem">
-          <ItemIconWrapper>
-            <ItemIcon name={item.iconName} />
-          </ItemIconWrapper>
-          <ItemTitle>{item.title}</ItemTitle>
-        </ItemView>
-      ))}
-    </Container>
+    <FloatingContainer forceInset={forceInset}>
+      <Container>
+        {items.map((item) => (
+          <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
+            <ItemIconWrapper>
+              {!!item.iconName && <Icon name={item.iconName} />}
+              {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
+            </ItemIconWrapper>
+            <ItemTitle>{item.title}</ItemTitle>
+          </ItemTouchable>
+        ))}
+      </Container>
+    </FloatingContainer>
   );
 };
 
@@ -69,11 +79,14 @@ FloatingButtons.SCROLL_VIEW_BOTTOM_INSET = 120;
 
 export default FloatingButtons;
 
-const Container = styled(SafeAreaView)`
+const FloatingContainer = styled(SafeAreaView)`
   position: absolute;
   bottom: ${spacing.large}px;
-  flex-direction: row;
   align-self: center;
+`;
+
+const Container = styled.View`
+  flex-direction: row;
   align-items: center;
   padding-horizontal: ${spacing.large / 2}px;
   background-color: ${({ theme }) => theme.colors.basic050};
@@ -85,11 +98,12 @@ const Container = styled(SafeAreaView)`
   elevation: 6;
 `;
 
-const ItemView = styled.TouchableOpacity`
+const ItemTouchable = styled.TouchableOpacity`
   align-items: center;
   padding-horizontal: ${spacing.largePlus / 2}px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
+  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
 const ItemIconWrapper = styled.View`
@@ -99,12 +113,12 @@ const ItemIconWrapper = styled.View`
   margin-horizontal: ${spacing.largePlus}px;
 `;
 
-const ItemIcon = styled(Icon)`
-  font-size: 24px;
-  color: ${({ theme }) => theme.colors.basic010};
+const ItemIconImage = styled(Image)`
+  width: 24px;
+  height: 24px;
 `;
 
-const ItemTitle = styled(BaseText).attrs({ regular: true })`
-  margin-top: ${spacing.extraSmall}px;
+const ItemTitle = styled(Text)`
+  margin-top: 6px;
   text-align: center;
 `;

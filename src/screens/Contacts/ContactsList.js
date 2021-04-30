@@ -138,7 +138,7 @@ const ContactsList = () => {
     },
     !!contacts.length && {
       title: t('button.send'),
-      iconName: 'paperPlane',
+      iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW),
     },
   ];
@@ -196,7 +196,7 @@ const ContactsList = () => {
           <Button title={t('button.addToAddressBook')} onPress={() => openContactDetails(customAddressContact)} />
         </ActionButtonsContainer>
       ) : (
-        <FloatingButtons items={buttons} />
+        <FloatingButtons items={buttons} applyBottomInset={false} />
       )}
     </ContainerWithHeader>
   );

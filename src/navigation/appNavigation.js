@@ -20,14 +20,12 @@
 
 import * as React from 'react';
 import { createStackNavigator, CardStyleInterpolators } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { View, Image, AppState } from 'react-native';
+import { AppState } from 'react-native';
 import { withTheme } from 'styled-components/native';
 import { withTranslation } from 'react-i18next';
-import t from 'translations/translate';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -148,9 +146,7 @@ import TutorialScreen from 'screens/Tutorial';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
-import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
-import { BaseText } from 'components/Typography';
 import UsernameFailed from 'components/UsernameFailed';
 
 // actions
@@ -171,21 +167,21 @@ import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
 
 // constants
 import {
+  MAIN_FLOW,
   ASSETS,
   ASSET,
   ASSET_SEARCH,
-  SERVICES_TAB,
+  SERVICES_FLOW,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
   HOME,
-  HOME_TAB,
+  HOME_FLOW,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
   CHANGE_PIN_CONFIRM_NEW_PIN,
-  TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
@@ -239,7 +235,7 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
-  CONNECT_TAB,
+  CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
@@ -325,10 +321,9 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 
 
 // utils
-import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getColorByThemeOutsideStyled, getThemeByType, getThemeColors } from 'utils/themes';
+import { getThemeByType, getThemeColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -344,11 +339,6 @@ const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
-
-const iconWallet = require('assets/icons/icon_wallet_outline.png');
-const iconServices = require('assets/icons/icon_services.png');
-const iconHome = require('assets/icons/icon_home_smrt.png');
-const iconConnect = require('assets/icons/icon_connect.png');
 
 const StackNavigatorModalConfig = {
   defaultNavigationOptions: {
@@ -370,14 +360,6 @@ const StackNavigatorConfig = {
   },
 };
 
-const hideTabNavigatorOnChildView = ({ navigation }) => {
-  const tabBarVisible = navigation.state.index < 1;
-  return {
-    tabBarVisible,
-    animationEnabled: true,
-  };
-};
-
 // ASSETS FLOW
 const assetsFlow = createStackNavigator(
   {
@@ -390,8 +372,6 @@ const assetsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
@@ -402,16 +382,12 @@ const exchangeFlow = createStackNavigator({
   [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // SERVICES FLOW
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
   [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
-
-servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLET CONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
@@ -423,8 +399,6 @@ const walletConnectCallRequestFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-walletConnectCallRequestFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
@@ -435,8 +409,6 @@ const walletConnectFlow = createStackNavigator(
   },
   StackNavigatorConfig,
 );
-
-walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 
 // HOME FLOW
@@ -459,138 +431,6 @@ const homeFlow = createStackNavigator({
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
-
-homeFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-const LIGHT_NAVBAR_DETAIL_COLOR = '#cdd2d4';
-
-const tabBarIcon = ({
-  icon,
-  hasIndicator,
-  theme,
-}) => ({ focused }) => {
-  const colors = getThemeColors(theme);
-  const tintColor = focused
-    ? colors.primaryAccent130
-    : getColorByThemeOutsideStyled(theme.current, { darkKey: 'basic020', lightCustom: LIGHT_NAVBAR_DETAIL_COLOR });
-
-  return (
-    <View style={{ padding: 4 }}>
-      <Image
-        style={{
-          width: 24,
-          height: 24,
-          tintColor,
-        }}
-        resizeMode="contain"
-        source={icon}
-      />
-      {!!hasIndicator && (
-        <View
-          style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.indicator,
-            borderRadius: 4,
-            position: 'absolute',
-            top: 4,
-            right: 4,
-          }}
-        />
-      )}
-    </View>
-  );
-};
-
-const tabBarLabel = ({ text, theme }) => ({ focused }) => {
-  const colors = getThemeColors(theme);
-  const textColor = focused
-    ? colors.primaryAccent130
-    : getColorByThemeOutsideStyled(theme.current, { darkKey: 'basic020', lightCustom: LIGHT_NAVBAR_DETAIL_COLOR });
-
-  return (
-    <BaseText
-      style={{
-        fontSize: fontSizes.regular,
-        color: textColor,
-        textAlign: 'center',
-      }}
-      numberOfLines={1}
-    >
-      {text}
-    </BaseText>
-  );
-};
-
-// TAB NAVIGATION FLOW
-const tabNavigation = createBottomTabNavigator(
-  {
-    [HOME_TAB]: {
-      screen: homeFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconHome,
-          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator
-            || !!screenProps.intercomNotificationsCount),
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: t('navigationTabs.home'), theme: screenProps.theme }),
-      }),
-    },
-    [ASSETS]: {
-      screen: assetsFlow,
-      navigationOptions: ({ screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconWallet,
-          hasIndicator: false,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: t('navigationTabs.assets'), theme: screenProps.theme }),
-      }),
-    },
-    [CONNECT_TAB]: {
-      screen: walletConnectFlow,
-      navigationOptions: ({ screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconConnect,
-          hasIndicator: false,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: t('navigationTabs.connect'), theme: screenProps.theme }),
-      }),
-    },
-    [SERVICES_TAB]: {
-      screen: servicesFlow,
-      navigationOptions: ({ screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconServices,
-          hasIndicator: false,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: t('navigationTabs.services'), theme: screenProps.theme }),
-      }),
-    },
-  }, {
-    tabBarOptions: {
-      style: {
-        elevation: 14,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        height: 54,
-      },
-      tabStyle: {
-        paddingTop: 5,
-        paddingBottom: 5,
-      },
-    },
-    tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
-    animationEnabled: false,
-    swipeEnabled: false,
-    tabBarComponent: props => <CustomTabBarComponent {...props} />,
-  },
-);
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator(
@@ -652,22 +492,16 @@ const manageWalletsFlow = createStackNavigator({
   [FUND_CONFIRM]: FundConfirmScreen,
 }, StackNavigatorConfig);
 
-manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
-
-manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // TANK FLOWS
 const tankSettleFlow = createStackNavigator({
   [SETTLE_BALANCE]: SettleBalanceScreen,
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
 }, StackNavigatorConfig);
-
-tankSettleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // UNSETTLED ASSETS FLOW
 const unsettledAssetsFlow = createStackNavigator({
@@ -676,21 +510,15 @@ const unsettledAssetsFlow = createStackNavigator({
   [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
 }, StackNavigatorConfig);
 
-unsettledAssetsFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
 }, StackNavigatorConfig);
 
-tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const tankWithdrawalFlow = createStackNavigator({
   [TANK_WITHDRAWAL]: TankWithdrawalScreen,
   [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
 }, StackNavigatorConfig);
-
-tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const menuFlow = createStackNavigator({
   [MENU]: MenuScreen,
@@ -706,21 +534,15 @@ const recoveryPortalSetupFlow = createStackNavigator({
   [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
 }, StackNavigatorConfig);
 
-recoveryPortalSetupFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const connectedDevicesFlow = createStackNavigator({
   [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
   [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
 }, StackNavigatorConfig);
 
-connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const recoveryPortalRecoveryFlow = createStackNavigator({
   [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
   [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
 }, StackNavigatorConfig);
-
-recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // POOLTOGETHER FLOW
 const poolTogetherFlow = createStackNavigator({
@@ -733,8 +555,6 @@ const poolTogetherFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
-poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const lendingAddDepositsFlow = createStackNavigator({
   [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
   [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
@@ -742,16 +562,12 @@ const lendingAddDepositsFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
-lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const lendingWithdrawDepositsFlow = createStackNavigator({
   [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
   [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
-
-lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const keyBasedAssetTransferFlow = createStackNavigator({
   [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
@@ -762,13 +578,9 @@ const keyBasedAssetTransferFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
-keyBasedAssetTransferFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 const contactsFlow = createStackNavigator({
   [CONTACTS_LIST]: ContactsListScreen,
 }, StackNavigatorConfig);
-
-contactsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const sablierFlow = createStackNavigator({
   [SABLIER_STREAMS]: SablierStreamsScreen,
@@ -781,8 +593,6 @@ const sablierFlow = createStackNavigator({
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
-
-sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const rariFlow = createStackNavigator({
   [RARI_DEPOSIT]: RariDepositScreen,
@@ -798,8 +608,6 @@ const rariFlow = createStackNavigator({
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
-
-rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
@@ -818,12 +626,21 @@ const liquidityPoolsFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
-liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
+const MainStack = createStackNavigator(
+  {
+    [HOME_FLOW]: homeFlow,
+    [ASSETS]: assetsFlow,
+  },
+  StackNavigatorConfig,
+);
 
-// APP NAVIGATION FLOW
+// Below screens/flows will appear as modals
 const AppFlowNavigation = createStackNavigator(
   {
-    [TAB_NAVIGATION]: tabNavigation,
+    [MAIN_FLOW]: MainStack,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
+    [CONNECT_FLOW]: walletConnectFlow,
+    [SERVICES_FLOW]: servicesFlow,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
@@ -848,7 +665,6 @@ const AppFlowNavigation = createStackNavigator(
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
-    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,

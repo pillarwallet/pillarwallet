@@ -148,7 +148,6 @@ const WBTCCafe = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        noBottomBorder: true,
         centerItems: [{ title: t('wbtcCafe.cafe') }],
         wrapperStyle: { backgroundColor, width: '100%' },
         rightItems: [hasSeenWbtcCafeIntro && { icon: 'info-circle-inverse', onPress: toggleIntro }],
