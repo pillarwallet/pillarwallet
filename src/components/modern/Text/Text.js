@@ -27,13 +27,13 @@ import { appFont, objectFontStyles } from 'utils/variables';
 
 // Types
 import type { TextProps, TextStyleProp } from 'utils/types/react-native';
-import type { ThemeColors } from 'models/Theme';
 
+export type TextVariant = $Keys<typeof objectFontStyles>
 
 type Props = {|
   ...TextProps,
-  variant?: $Keys<typeof objectFontStyles>,
-  color?: $Keys<ThemeColors>,
+  variant?: TextVariant,
+  color?: string,
 |};
 
 function Text({
@@ -47,7 +47,7 @@ function Text({
 
   const resultStyle = [
     baseStyle,
-    { color: colors[color ?? 'basic010'] },
+    { color: color ?? colors.text },
     // Apply `regular` font style only if there is no `font-size` style in order to
     // avoid automatically setting regular 'line-height'.
     !propStyle?.fontSize && objectFontStyles.regular,

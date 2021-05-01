@@ -21,7 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
-import { getCurrencySymbol } from 'utils/common';
+import { getCurrencySymbol, getDecimalPlaces } from 'utils/common';
 
 function wrapBigNumber(value: ?BigNumber | number): ?BigNumber {
   if (value == null) return null;
@@ -126,11 +126,18 @@ export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOpti
   return formatValue(value, { decimalPlaces: 2, ...options });
 }
 
-type FormatFiatValueOptions = {|
+/**
+ * Common fiat formatting options:
+ * @prop exact: whether to show the exact value, by default false, meaning it will use K, M, B units.
+ */
+ type FormatFiatOptions = {|
   exact: boolean, // default: false
 |};
 
-export function formatFiatValue(value: ?BigNumber, currency?: string, options?: FormatFiatValueOptions) {
+/**
+ * Format fiat value, for use cases such as balance.
+ */
+export function formatFiatValue(value: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
   const formattedValue = options?.exact ? formatValue(value, { decimalPlaces: 2 }) : formatValueWithUnit(value);
   if (!formattedValue) return null;
 
@@ -138,7 +145,21 @@ export function formatFiatValue(value: ?BigNumber, currency?: string, options?: 
 }
 
 /**
- * Formats fiat change as `+10.00% ($100.00)`.
+ * Formats fiat change as `+ $100.00`.
+ * Format fiat value with plus or minus sign, for use cases such as change in balance.
+ */
+export function formatFiatChange(change: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
+  const formattedAbsValue = formatFiatValue(change?.abs(), currency, options);
+  if (!formattedAbsValue) return null;
+
+  return change?.gte(0)
+    ? t('positiveValue', { value: formattedAbsValue })
+    : t('negativeValue', { value: formattedAbsValue });
+}
+
+
+/**
+ * Formats profit as `+10.00% ($100.00)`.
  *
  * Handles edge cases of missing change and/or balance values.
  */
@@ -162,4 +183,40 @@ export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?Bi
   if (formattedChangeInFiat) return formattedChangeInFiat;
 
   return null;
+}
+
+/**
+ * Format token value change without + sign.
+ * Default number of decimal places depends on token symbol and trailing zeroes are stripped.
+ */
+export function formatTokenValue(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
+  if (!value || !value.isFinite()) return null;
+
+  const decimalPlaces = getDecimalPlaces(symbol);
+  const formattedValue = formatValue(value.abs(), { decimalPlaces, ...options });
+
+  return value.gte(0)
+    ? t('tokenValue', { value: formattedValue, token: symbol })
+    : t('negativeTokenValue', { value: formattedValue, token: symbol });
+}
+
+/**
+ * Format token value change with +/- sign.
+ * Default number of decimal places depends on token symbol and trailing zeroes are stripped.
+ */
+export function formatTokenChange(value: ?BigNumber, symbol?: string, options?: FormatValueOptions) {
+  if (!value || !value.isFinite()) return null;
+
+  const decimalPlaces = getDecimalPlaces(symbol);
+  const formattedValue = formatValue(value.abs(), { decimalPlaces, ...options });
+
+  return value.gte(0)
+    ? t('positiveTokenValue', { value: formattedValue, token: symbol })
+    : t('negativeTokenValue', { value: formattedValue, token: symbol });
+}
+
+export function formatHexAddress(address: string) {
+  if (address?.length <= 12) return address;
+
+  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
 }

@@ -34,6 +34,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Image from 'components/Image';
+import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
@@ -292,6 +293,9 @@ class AssetScreen extends React.Component<Props> {
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
+    // TODO: Here provide Etherspot transactions history.
+    const historyItems = [];
+
     return (
       <ContainerWithHeader
         navigation={navigation}
@@ -357,13 +361,19 @@ class AssetScreen extends React.Component<Props> {
             />
             {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
-          {!!relatedTransactions.length &&
-          <ActivityFeed
-            feedTitle={t('title.transactions')}
-            navigation={navigation}
-            feedData={relatedTransactions}
-            isAssetView
-          />}
+
+          {!!relatedTransactions.length && (
+            <ActivityFeed
+              feedTitle={t('title.transactions')}
+              navigation={navigation}
+              feedData={relatedTransactions}
+              isAssetView
+            />
+          )}
+
+          {!!historyItems.length && (
+            <HistoryList items={historyItems} />
+          )}
         </ScrollWrapper>
         <RetryGraphQueryBox
           message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}

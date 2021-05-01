@@ -37,6 +37,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';
+import HistoryList from 'components/HistoryList';
 import SlideModal from 'components/Modals/SlideModal';
 import Modal from 'components/Modal';
 
@@ -187,6 +188,9 @@ class CollectibleScreen extends React.Component<Props> {
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
     const { towellie: genericCollectible } = images(theme);
 
+    // TODO: Here provide Etherspot transactions history.
+    const historyItems = [];
+
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
         <ScrollWrapper>
@@ -215,15 +219,19 @@ class CollectibleScreen extends React.Component<Props> {
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
-          {!!relatedCollectibleTransactions.length &&
-          <ActivityFeed
-            navigation={navigation}
-            feedData={relatedCollectibleTransactions}
-            showArrowsOnly
-            contentContainerStyle={{ paddingTop: 10 }}
-            invertAddon
-            feedTitle={t('title.transactions')}
-          />}
+
+          {!!relatedCollectibleTransactions.length && (
+            <ActivityFeed
+              navigation={navigation}
+              feedData={relatedCollectibleTransactions}
+              showArrowsOnly
+              contentContainerStyle={{ paddingTop: 10 }}
+              invertAddon
+              feedTitle={t('title.transactions')}
+            />
+          )}
+
+          {!!historyItems.length && <HistoryList items={historyItems} />}
         </ScrollWrapper>
       </ContainerWithHeader>
     );

@@ -31,6 +31,7 @@ import { getAccountAddress } from 'utils/accounts';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, AccountAllowances } from 'models/Offer';
+import type { Asset, AssetsByAccount } from 'models/Asset';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -77,14 +78,14 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
+export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
-export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
+export const supportedAssetsSelector = ({ assets }: RootReducerState): Asset[] =>
   get(assets, 'supportedAssets', []);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>

@@ -3337,7 +3337,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -3825,7 +3825,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -4082,7 +4082,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -4570,7 +4570,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -9895,7 +9895,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -10383,7 +10383,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -10640,7 +10640,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -11128,7 +11128,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                   }
                   type="ACTION"
                 >
-                  ellipsedMiddleString
+                  0x222222
                 </Text>
               </View>
             </View>
@@ -41660,6 +41660,1994 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
         </View>
       </View>
     </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots HistoryList basic transactions 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+      ]
+    }
+  >
+    <RCTScrollView
+      contentContainerStyle={
+        Object {
+          "paddingBottom": 0,
+        }
+      }
+      data={
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.218001",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670e",
+                "status": "confirmed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "PLR",
+                  "value": "2500",
+                },
+                "type": "tokenExchange",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.218001",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670e",
+                "status": "pending",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "PLR",
+                  "value": "2500",
+                },
+                "type": "tokenExchange",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.218001",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670e",
+                "status": "failed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "PLR",
+                  "value": "2500",
+                },
+                "type": "tokenExchange",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.218001",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670e",
+                "status": "timedout",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "PLR",
+                  "value": "2500",
+                },
+                "type": "tokenExchange",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "currency": "USD",
+                  "value": "154.5",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d",
+                "status": "confirmed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.65",
+                },
+                "type": "exchangeFromFiat",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "currency": "USD",
+                  "value": "154.5",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d",
+                "status": "pending",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.65",
+                },
+                "type": "exchangeFromFiat",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "currency": "USD",
+                  "value": "154.5",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d",
+                "status": "failed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.65",
+                },
+                "type": "exchangeFromFiat",
+              },
+              Object {
+                "date": 2021-04-19T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "fromValue": Object {
+                  "currency": "USD",
+                  "value": "154.5",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670d",
+                "status": "timedout",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "toValue": Object {
+                  "symbol": "ETH",
+                  "value": "0.65",
+                },
+                "type": "exchangeFromFiat",
+              },
+            ],
+            "date": 2021-04-19T00:00:00.000Z,
+            "key": "2021-04-19",
+          },
+          Object {
+            "data": Array [
+              Object {
+                "date": 2021-04-14T00:00:00.000Z,
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "hash": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "status": "confirmed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "tokenReceived",
+                "value": Object {
+                  "symbol": "ETH",
+                  "value": "4.2",
+                },
+              },
+              Object {
+                "date": 2021-04-14T00:00:00.000Z,
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "hash": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "status": "pending",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "tokenReceived",
+                "value": Object {
+                  "symbol": "ETH",
+                  "value": "4.2",
+                },
+              },
+              Object {
+                "date": 2021-04-14T00:00:00.000Z,
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "hash": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "status": "failed",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "tokenReceived",
+                "value": Object {
+                  "symbol": "ETH",
+                  "value": "4.2",
+                },
+              },
+              Object {
+                "date": 2021-04-14T00:00:00.000Z,
+                "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
+                "hash": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "id": "0xb0da60fa0c07d8b8f5636f8bf02216dd4235d6d8f9e76c058c07d6a9f494670c",
+                "status": "timedout",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "tokenReceived",
+                "value": Object {
+                  "symbol": "ETH",
+                  "value": "4.2",
+                },
+              },
+            ],
+            "date": 2021-04-14T00:00:00.000Z,
+            "key": "2021-04-14",
+          },
+          Object {
+            "data": Array [
+              Object {
+                "date": 2021-04-13T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "status": "confirmed",
+                "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "type": "tokenSent",
+                "value": Object {
+                  "symbol": "PLR",
+                  "value": "100",
+                },
+              },
+              Object {
+                "date": 2021-04-13T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "status": "pending",
+                "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "type": "tokenSent",
+                "value": Object {
+                  "symbol": "PLR",
+                  "value": "100",
+                },
+              },
+              Object {
+                "date": 2021-04-13T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "status": "failed",
+                "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "type": "tokenSent",
+                "value": Object {
+                  "symbol": "PLR",
+                  "value": "100",
+                },
+              },
+              Object {
+                "date": 2021-04-13T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "status": "timedout",
+                "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "type": "tokenSent",
+                "value": Object {
+                  "symbol": "PLR",
+                  "value": "100",
+                },
+              },
+              Object {
+                "badgeId": "5ca21c49754407000644f73b",
+                "date": 2021-04-13T00:00:00.000Z,
+                "iconUrl": "https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png",
+                "id": "5ca21c49754407000644f73b",
+                "title": "Coin Collector",
+                "type": "badgeReceived",
+              },
+            ],
+            "date": 2021-04-13T00:00:00.000Z,
+            "key": "2021-04-13",
+          },
+          Object {
+            "data": Array [
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "confirmed",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleReceived",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "pending",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleReceived",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "failed",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleReceived",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15123",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "timedout",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleReceived",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "confirmed",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleSent",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "pending",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleSent",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "failed",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleSent",
+              },
+              Object {
+                "date": 2021-04-12T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.012345678",
+                },
+                "fromAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15456",
+                "imageUrl": "https://lh3.googleusercontent.com/upSSwyYkXf4eMI-0QQhkx1oxgLiacjH425t7sDxDX3JFwfxMhgcwMG70oM5ZhsS4WX2LJwlsBBStSBPJcFNIONWq",
+                "status": "timedout",
+                "title": "Old Asynchronous Helmet",
+                "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
+                "type": "collectibleSent",
+              },
+            ],
+            "date": 2021-04-12T00:00:00.000Z,
+            "key": "2021-04-12",
+          },
+          Object {
+            "data": Array [
+              Object {
+                "date": 2021-04-10T00:00:00.000Z,
+                "ensName": "maciej.pillar.eth",
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.0022311",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "ensName-1",
+                "type": "ensNameRegistered",
+              },
+              Object {
+                "date": 2021-04-10T00:00:00.000Z,
+                "fee": Object {
+                  "symbol": "ETH",
+                  "value": "0.0222311",
+                },
+                "hash": "0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0",
+                "id": "5ca21c49754407000644f73b-x",
+                "status": "confirmed",
+                "type": "walletActivated",
+              },
+              Object {
+                "date": 2021-04-10T00:00:00.000Z,
+                "id": "5ca21c49754407000644f73b",
+                "type": "walletCreated",
+              },
+            ],
+            "date": 2021-04-10T00:00:00.000Z,
+            "key": "2021-04-10",
+          },
+        ]
+      }
+      disableVirtualization={false}
+      getItem={[Function]}
+      getItemCount={[Function]}
+      horizontal={false}
+      initialNumToRender={10}
+      keyExtractor={[Function]}
+      maxToRenderPerBatch={10}
+      onContentSizeChange={[Function]}
+      onEndReachedThreshold={2}
+      onLayout={[Function]}
+      onMomentumScrollEnd={[Function]}
+      onScroll={[Function]}
+      onScrollBeginDrag={[Function]}
+      onScrollEndDrag={[Function]}
+      renderItem={[Function]}
+      scrollEventThrottle={50}
+      stickyHeaderIndices={
+        Array [
+          0,
+        ]
+      }
+      updateCellsBatchingPeriod={50}
+      windowSize={21}
+    >
+      <View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Object {
+                  "color": "#0A1427",
+                },
+                Object {
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                false,
+                Array [
+                  Object {
+                    "backgroundColor": "#FAFAFA",
+                    "color": "#818EB3",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "paddingBottom": 8,
+                    "paddingLeft": 20,
+                    "paddingRight": 20,
+                    "paddingTop": 20,
+                  },
+                ],
+              ]
+            }
+          >
+            Apr 19
+          </Text>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeTokenValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeTokenValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeTokenValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeTokenValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FAFAFA",
+                "flexDirection": "row",
+                "minHeight": 64,
+                "opacity": 1,
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "justifyContent": "center",
+                    "marginRight": 12,
+                    "width": 48,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "borderColor": "#ebf0f6",
+                      "borderRadius": 24,
+                      "borderWidth": 1,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "width": 48,
+                    },
+                  ]
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                ]
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#0A1427",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    Object {
+                      "fontSize": 16,
+                      "lineHeight": 24,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                label.fromToFormat
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "justifyContent": "center",
+                    "marginLeft": 12,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-end",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  negativeValue
+                </Text>
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Object {
+                        "color": "#2AA057",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      Array [
+                        Object {
+                          "fontVariant": Array [
+                            "tabular-nums",
+                          ],
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  positiveTokenValue
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View
+          onLayout={[Function]}
+          style={null}
+        />
+        <View
+          style={
+            Object {
+              "height": 0,
+            }
+          }
+        />
+      </View>
+    </RCTScrollView>
   </View>
 </View>
 `;

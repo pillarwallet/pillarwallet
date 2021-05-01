@@ -29,13 +29,14 @@ import HeaderBlock from 'components/HeaderBlock';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
-import { MENU } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
 import { useUser } from 'selectors/user';
 
 // Utils
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
+import { useThemeColors } from 'utils/themes';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -59,6 +60,8 @@ function Home() {
   const chainsBalances = useChainBalances();
   const user = useUser();
 
+  const colors = useThemeColors();
+
   const handleToggleSideChains = () => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
     setShowSideChains(!showSideChains);
@@ -70,14 +73,9 @@ function Home() {
   return (
     <Container>
       <HeaderBlock
-        leftItems={[
-          {
-            icon: 'hamburger',
-            iconProps: { secondary: true, style: { marginLeft: -4 } },
-            onPress: () => navigation.navigate(MENU),
-          },
-        ]}
+        leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
         centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
+        rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop
       />
@@ -88,11 +86,7 @@ function Home() {
 
         <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
 
-        <AssetsSection
-          chainSummaries={chainSummaries}
-          chainBalances={chainsBalances}
-          showSideChains={showSideChains}
-        />
+        <AssetsSection chainSummaries={chainSummaries} chainBalances={chainsBalances} showSideChains={showSideChains} />
       </Content>
 
       <FloatingActions />
