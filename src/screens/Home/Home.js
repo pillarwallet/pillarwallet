@@ -25,6 +25,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { Container, Content } from 'components/modern/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
+import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
@@ -69,6 +70,8 @@ function Home() {
         noPaddingTop
       />
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
+        <Stories />
+
         <BalanceSection balanceInFiat={totalBalance} />
 
         <AssetsPieChart categoryBalances={categoryBalances} />
