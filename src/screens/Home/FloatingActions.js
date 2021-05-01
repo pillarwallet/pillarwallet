@@ -25,12 +25,14 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
+import Modal from 'components/Modal';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
 import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { totalBalanceSelector } from 'selectors/balances';
 import { useSmartWalletStatus } from 'selectors/smartWallet';
 
@@ -38,20 +40,31 @@ function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
   const navigation = useNavigation();
 
+  const address = useRootSelector(activeAccountAddressSelector);
+
   const { isSendEnabled, isExchangeEnabled } = useEnabledActions();
+
+  const showReceiveModal = () => {
+    Modal.open(() => <ReceiveModal address={address} />);
+  };
 
   const items = [
     {
-      title: t('send'),
-      iconName: 'send',
-      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-      disabled: !isSendEnabled,
+      title: t('receive'),
+      iconName: 'qrcode',
+      onPress: showReceiveModal,
     },
     {
       title: t('swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(EXCHANGE_FLOW),
       disabled: !isExchangeEnabled,
+    },
+    {
+      title: t('send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+      disabled: !isSendEnabled,
     },
     {
       title: t('connect'),

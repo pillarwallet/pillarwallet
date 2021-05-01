@@ -60,7 +60,13 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
     <FloatingContainer forceInset={forceInset}>
       <Container>
         {items.map((item) => (
-          <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
+          <ItemTouchable
+            key={item.title}
+            onPress={item.onPress}
+            disabled={item.disabled}
+            $narrow={items.length > 3}
+            testID="FloatingButtonItem"
+          >
             <ItemIconWrapper>
               {!!item.iconName && <Icon name={item.iconName} />}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
@@ -100,10 +106,10 @@ const Container = styled.View`
 
 const ItemTouchable = styled.TouchableOpacity`
   align-items: center;
-  padding-horizontal: ${spacing.largePlus / 2}px;
+  padding-horizontal: ${({ $narrow }) => ($narrow ? 6 / 2 : spacing.largePlus / 2)}px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
-  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `;
 
 const ItemIconWrapper = styled.View`

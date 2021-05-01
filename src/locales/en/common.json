@@ -570,10 +570,8 @@
       "contacts": "Contacts",
       "services": "Services"
     },
-    "controls": {
-      "sideChains": "Layer 2"
-    },
     "actions": {
+      "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
       "connect": "Connect"

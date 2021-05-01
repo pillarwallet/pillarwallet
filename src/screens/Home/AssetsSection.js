@@ -161,7 +161,9 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
         isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : navigateToActivateSmartWallet}
+        onPress={
+          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : navigateToActivateSmartWallet
+        }
       />
     );
   };
