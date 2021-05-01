@@ -20,25 +20,43 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { useTranslation } from 'translations/translate';
 
 // Components
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
 
 export type Props = {|
   title: string,
   onPress: ?() => mixed,
   value?: ?string,
+  isDeployed?: boolean,
 |};
 
-function CategoryListItem({ title, onPress, value }: Props) {
+function CategoryListItem({ title, onPress, value, isDeployed = true }: Props) {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+
   return (
     <Container onPress={onPress}>
       <Title>{title}</Title>
 
-      <ValueContainer>{!!value && <Value>{value}</Value>}</ValueContainer>
+      {isDeployed && !!value && (
+        <ValueContainer>
+          <Value>{value}</Value>
+        </ValueContainer>
+      )}
+
+      {!isDeployed && (
+        <ValueContainer>
+          <DeployValue>{t('button.deploy')}</DeployValue>
+          <Icon name="question" width={14} height={14} color={colors.labelTertiary} />
+        </ValueContainer>
+      )}
     </Container>
   );
 }
@@ -58,11 +76,16 @@ const Title = styled(Text)`
 `;
 
 const ValueContainer = styled.View`
-  justify-content: center;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Value = styled(Text)`
   ${fontStyles.medium};
   font-variant: tabular-nums;
+`;
+
+const DeployValue = styled(Text)`
+  ${fontStyles.medium};
+  margin-right: ${spacing.small}px;
 `;

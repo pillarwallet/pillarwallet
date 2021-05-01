@@ -26,11 +26,11 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
+import { ASSETS, SERVICES_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
-import { useSupportedChains } from 'selectors/smartWallet';
+import { useRootSelector, useFiatCurrency } from 'selectors';
+import { useSupportedChains, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -40,7 +40,7 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 // Types
 import type { CategoryBalancesPerChain, CategoryBalance, CollectibleCountPerChain } from 'models/Home';
 import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
-import { type Chain } from 'models/Chain';
+import { type Chain, CHAIN } from 'models/Chain';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -63,6 +63,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
+  const isDeployedOnEthereum = useRootSelector(isSmartWalletActivatedSelector);
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
@@ -70,6 +71,10 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
     navigation.navigate(ASSETS, { category, chain });
+  };
+
+  const navigateToActivateSmartWallet = () => {
+    navigation.navigate(SMART_WALLET_INTRO);
   };
 
   const toggleShowChains = (category: AssetCategory) => {
@@ -80,8 +85,12 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   };
 
   const handlePressAssetCategory = (category: AssetCategory) => {
-    if (chains.length && chains.length > 1) toggleShowChains(category);
-    else navigateToAssetDetails(category);
+    if (chains.length && chains.length > 1) {
+      toggleShowChains(category);
+      return;
+    }
+
+    navigateToAssetDetails(category);
   };
 
   const renderCategoryWithBalance = (category: $Keys<CategoryBalance>) => {
@@ -111,12 +120,16 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
     const { title } = chainsConfig[chain];
 
+    // Show deploy only for Ethereum (if not deployed).
+    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
+
     return (
       <ChainListItem
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        onPress={() => navigateToAssetDetails(category, chain)}
+        isDeployed={isDeployed}
+        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : navigateToActivateSmartWallet}
       />
     );
   };
@@ -139,12 +152,16 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   };
 
   const renderChainCollectibleCount = (chain: Chain) => {
+    // Show deploy only for Ethereum (if not deployed).
+    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
+
     return (
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
-        onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
+        isDeployed={isDeployed}
+        onPress={isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : navigateToActivateSmartWallet}
       />
     );
   };
