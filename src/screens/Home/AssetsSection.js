@@ -30,6 +30,7 @@ import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
+import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -39,7 +40,7 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 // Types
 import type { CategoryBalancesPerChain, CategoryBalance, CollectibleCountPerChain } from 'models/Home';
 import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain } from 'models/Chain';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -60,18 +61,27 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
 
+  const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
-
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
   const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
+
+  const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
+    navigation.navigate(ASSETS, { category, chain });
+  };
 
   const toggleShowChains = (category: AssetCategory) => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
     const previousValue = showChainsPerCategory[category];
     // $FlowFixMe: flow is able to handle this
     setShowChainsPerCategory({ ...showChainsPerCategory, [category]: !previousValue });
+  };
+
+  const handlePressAssetCategory = (category: AssetCategory) => {
+    if (chains.length && chains.length > 1) toggleShowChains(category);
+    else navigateToAssetDetails(category);
   };
 
   const renderCategoryWithBalance = (category: $Keys<CategoryBalance>) => {
@@ -88,9 +98,9 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
           iconName={iconName}
           title={title}
           value={formattedBalance}
-          onPress={() => toggleShowChains(category)}
+          onPress={() => handlePressAssetCategory(category)}
         />
-        {showChains && Object.keys(CHAIN).map((key) => renderChainWithBalance(category, CHAIN[key]))}
+        {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
       </React.Fragment>
     );
   };
@@ -106,7 +116,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        onPress={() => navigation.navigate(ASSETS, { category, chain })}
+        onPress={() => navigateToAssetDetails(category, chain)}
       />
     );
   };
@@ -120,10 +130,10 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
           key="collectibles"
           title={title}
           iconName={iconName}
-          onPress={() => toggleShowChains(ASSET_CATEGORY.COLLECTIBLES)}
+          onPress={() => handlePressAssetCategory(ASSET_CATEGORY.COLLECTIBLES)}
           value={formatValue(totalCollectibleCount)}
         />
-        {showChains && Object.keys(CHAIN).map((key) => renderChainCollectibleCount(CHAIN[key]))}
+        {showChains && chains.map(renderChainCollectibleCount)}
       </React.Fragment>
     );
   };
@@ -134,7 +144,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
-        onPress={() => navigation.navigate(ASSETS, { category: ASSET_CATEGORY.COLLECTIBLES, chain })}
+        onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
       />
     );
   };
