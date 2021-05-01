@@ -53,8 +53,8 @@ const Container = styled.TouchableOpacity`
 
 const Title = styled(Text)`
   flex: 1;
-  margin: ${spacing.large}px 0 ${spacing.large}px 36px;
-  ${fontStyles.big};
+  margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
+  ${fontStyles.medium};
 `;
 
 const ValueContainer = styled.View`
@@ -63,6 +63,6 @@ const ValueContainer = styled.View`
 `;
 
 const Value = styled(Text)`
-  ${fontStyles.big};
+  ${fontStyles.medium};
   font-variant: tabular-nums;
 `;
