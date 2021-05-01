@@ -52,15 +52,7 @@ export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
     rewards,
   };
 
-  const binance = {
-    investments: BigNumber(2014),
-  };
-
-  const xdai = {
-    deposits: BigNumber(10000),
-  };
-
-  return { ethereum, xdai, binance };
+  return { ethereum };
 }
 
 export function useCollectibleCountPerChain(): CollectibleCountPerChain {
