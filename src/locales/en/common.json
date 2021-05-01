@@ -571,7 +571,8 @@
   "home": {
     "balance": {
       "addCash": "Add Cash",
-      "lastWeek": "Last week"
+      "lastWeek": "Last week",
+      "hint": "Start by adding cash"
     },
     "assets": {
       "contacts": "Contacts",
