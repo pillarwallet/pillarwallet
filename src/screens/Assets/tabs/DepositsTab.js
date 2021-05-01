@@ -31,9 +31,10 @@ import { orderBy, groupBy } from 'lodash';
 // Components
 import BalanceView from 'components/BalanceView';
 import BottomModal from 'components/modern/BottomModal';
-import FiatValueView from 'components/modern/FiatValueView';
+import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
+import { Spacing } from 'components/modern/Layout';
 
 import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
@@ -95,7 +96,6 @@ function DepositsTab() {
     setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
   };
 
-
   const navigateToServices = () => {
     Modal.open(() => (
       <BottomModal title={t('deposit')}>
@@ -118,8 +118,8 @@ function DepositsTab() {
   const renderListHeader = () => {
     return (
       <ListHeader>
-        <BalanceView balance={balance.value} />
-        {!!balance.change && <FiatValueView value={balance.change} currency={currency} mode="change" />}
+        <BalanceView balance={balance.value} style={styles.balanceView} />
+        {!!balance.change && <FiatChangeView value={balance.value} change={balance.change} currency={currency} />}
       </ListHeader>
     );
   };
@@ -186,9 +186,10 @@ export function getSectionItems(items: Item[]): Item[] {
 
 const useBalance = (): FiatBalance => {
   const value = useRootSelector(depositsBalanceSelector);
-  return { value };
+  return { value: BigNumber(110), change: BigNumber(10) };
 };
 
+// PROVIDE REAL DATA HERE
 const useChainAssets = (): ChainRecord<Item[]> => {
   const ethereum = [
     {
@@ -227,8 +228,15 @@ const useChainAssets = (): ChainRecord<Item[]> => {
       change: BigNumber(1.2),
     },
   ];
+
   return { ethereum, polygon };
 };
+
+const styles = {
+  balanceView: {
+    marginBottom: spacing.extraSmall,
+  }
+}
 
 const Container = styled.View`
   flex: 1;
@@ -236,5 +244,5 @@ const Container = styled.View`
 
 const ListHeader = styled.View`
   align-items: center;
-  margin: ${spacing.largePlus}px 0;
+  margin: ${spacing.largePlus}px 0 ${spacing.small}px;
 `;
