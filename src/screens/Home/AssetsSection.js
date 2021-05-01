@@ -26,7 +26,6 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
@@ -39,7 +38,8 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
 import type { CategoryBalancesPerChain, CategoryBalance, CollectibleCountPerChain } from 'models/Home';
-import type { Chain, AssetCategory } from 'models/Asset';
+import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
+import { type Chain, CHAIN } from 'models/Chain';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -90,7 +90,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
           value={formattedBalance}
           onPress={() => toggleShowChains(category)}
         />
-        {showChains && Object.keys(CHAINS).map((key) => renderChainWithBalance(category, CHAINS[key]))}
+        {showChains && Object.keys(CHAIN).map((key) => renderChainWithBalance(category, CHAIN[key]))}
       </React.Fragment>
     );
   };
@@ -120,10 +120,10 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
           key="collectibles"
           title={title}
           iconName={iconName}
-          onPress={() => toggleShowChains(ASSET_CATEGORIES.COLLECTIBLES)}
+          onPress={() => toggleShowChains(ASSET_CATEGORY.COLLECTIBLES)}
           value={formatValue(totalCollectibleCount)}
         />
-        {showChains && Object.keys(CHAINS).map((key) => renderChainCollectibleCount(CHAINS[key]))}
+        {showChains && Object.keys(CHAIN).map((key) => renderChainCollectibleCount(CHAIN[key]))}
       </React.Fragment>
     );
   };
@@ -134,7 +134,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
-        onPress={() => navigation.navigate(ASSETS, { category: ASSET_CATEGORIES.COLLECTIBLES, chain })}
+        onPress={() => navigation.navigate(ASSETS, { category: ASSET_CATEGORY.COLLECTIBLES, chain })}
       />
     );
   };

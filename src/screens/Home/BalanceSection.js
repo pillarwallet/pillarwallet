@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -35,18 +36,16 @@ import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// Types
-import type { Balance } from 'models/Home';
-
 // Local
 import SpecialButton from './components/SpecialButton';
 
 
 type Props = {|
-  balance: Balance,
+  balanceInFiat: BigNumber,
+  changeInFiat?: ?BigNumber,
 |};
 
-function BalanceSection({ balance }: Props) {
+function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
   const { t } = useTranslationWithPrefix('home.balance');
 
   const fiatCurrency = useFiatCurrency();
@@ -54,8 +53,8 @@ function BalanceSection({ balance }: Props) {
 
   const colors = useThemeColors();
 
-  const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
-  const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
+  const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
+  const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
@@ -65,7 +64,7 @@ function BalanceSection({ balance }: Props) {
     <Container>
       <FirstColumn>
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(balance.balanceInFiat, fiatCurrency, { exact: true })}
+          {formatFiatValue(balanceInFiat, fiatCurrency, { exact: true })}
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>

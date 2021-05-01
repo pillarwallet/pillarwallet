@@ -18,23 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
+export const ASSET_CATEGORY = {
+  WALLET: ('wallet': 'wallet'),
+  DEPOSITS: ('deposits': 'deposits'),
+  INVESTMENTS: ('investments': 'investments'),
+  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
+  COLLECTIBLES: ('collectibles': 'collectibles'),
+  REWARDS: ('rewards': 'rewards'),
+};
 
-type ChainRecord<T> = {|
-  ethereum: T,
-  binance?: T,
-  xdai?: T,
-  polygon?: T,
-|}
-
-export type CategoryBalancesPerChain = ChainRecord<CategoryBalance>;
-
-export type CategoryBalance = {|
-  wallet?: BigNumber,
-  deposits?: BigNumber,
-  investments?: BigNumber,
-  liquidityPools?: BigNumber,
-  rewards?: BigNumber,
-|};
-
-export type CollectibleCountPerChain = ChainRecord<number>;
+export type AssetCategory = $Values<typeof ASSET_CATEGORY>;

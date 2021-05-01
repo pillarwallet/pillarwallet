@@ -27,7 +27,7 @@ import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Selectors
-import { useSmartWalletType, SMART_WALLET_TYPES } from 'selectors/smartWallet';
+import { useSmartWalletType, SMART_WALLET_TYPE } from 'selectors/smartWallet';
 
 // Local
 import HistoryListEtherspot from './HistoryListEtherspot';
@@ -45,8 +45,8 @@ function HistoryScreen() {
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
-      {walletType === SMART_WALLET_TYPES.ETHERSPOT && <HistoryListEtherspot />}
-      {walletType === SMART_WALLET_TYPES.ARCHANOVA && <HistoryListArchanova />}
+      {walletType === SMART_WALLET_TYPE.ETHERSPOT && <HistoryListEtherspot />}
+      {walletType === SMART_WALLET_TYPE.ARCHANOVA && <HistoryListArchanova />}
     </Container>
   );
 }

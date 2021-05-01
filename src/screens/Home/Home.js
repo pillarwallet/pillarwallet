@@ -70,7 +70,7 @@ function Home() {
         noPaddingTop
       />
       <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
-        <BalanceSection balance={totalBalance} />
+        <BalanceSection balanceInFiat={totalBalance} />
 
         <AssetsPieChart categoryBalances={categoryBalances} />
 

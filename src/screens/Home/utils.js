@@ -41,7 +41,6 @@ export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
   const investments = useRootSelector(investmentsBalanceSelector);
   const liquidityPools = useRootSelector(liquidityPoolsBalanceSelector);
   const rewards = BigNumber(0);
-  const datasets = BigNumber(0);
 
   const ethereum = {
     wallet,
@@ -49,7 +48,6 @@ export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
     investments,
     liquidityPools,
     rewards,
-    datasets,
   };
 
   return { ethereum };
@@ -68,7 +66,6 @@ export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): Cate
     investments: sum(balances.map((chain) => chain?.investments)),
     liquidityPools: sum(balances.map((chain) => chain?.liquidityPools)),
     rewards: sum(balances.map((chain) => chain?.rewards)),
-    datasets: sum(balances.map((chain) => chain?.datasets)),
   };
 }
 
