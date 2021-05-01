@@ -55,12 +55,12 @@ function Home() {
   const colors = useThemeColors();
 
   const categoryBalancesPerChain = useCategoryBalancesPerChain();
+  const collectibleCountPerChain = useCollectibleCountPerChain();
+  const user = useUser();
+
   const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
   const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
   const totalBalance = getTotalBalance(categoryBalances);
-
-  const collectibleCountPerChain = useCollectibleCountPerChain();
-  const user = useUser();
 
   return (
     <Container>
@@ -71,6 +71,7 @@ function Home() {
         navigation={navigation}
         noPaddingTop
       />
+
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
