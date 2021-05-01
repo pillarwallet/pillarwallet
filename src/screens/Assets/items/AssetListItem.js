@@ -32,7 +32,7 @@ import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
@@ -44,32 +44,48 @@ type Props = {|
   value: BigNumber,
   change?: BigNumber,
   onPress?: () => mixed,
+  serviceTitle: string,
+  showServiceTitle?: boolean,
 |};
 
-function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
+function AssetListItem({ title, subtitle, iconSource, value, change, onPress, serviceTitle, showServiceTitle }: Props) {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
 
   return (
-    <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <IconContainer>{!!iconSource && <IconImage source={iconSource} />}</IconContainer>
+    <Container>
+      {!!showServiceTitle && <Header>{serviceTitle}</Header>}
 
-      <TitleContainer>
-        <Text variant="medium" numberOfLines={1}>{title}</Text>
-        {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
-      </TitleContainer>
+      <ItemTouchableContainer onPress={onPress} disabled={!onPress}>
+        <IconContainer>{!!iconSource && <IconImage source={iconSource} />}</IconContainer>
 
-      <RightAddOn>
-        <FiatValueView value={value} currency={currency} />
-        <FiatValueView value={change} currency={currency} mode="change" />
-      </RightAddOn>
-    </TouchableContainer>
+        <TitleContainer>
+          <Text variant="medium" numberOfLines={1}>
+            {title}
+          </Text>
+          {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
+        </TitleContainer>
+
+        <RightAddOn>
+          <FiatValueView value={value} currency={currency} variant="medium" />
+          <FiatValueView value={change} currency={currency} mode="change" />
+        </RightAddOn>
+      </ItemTouchableContainer>
+    </Container>
   );
 }
 
 export default AssetListItem;
 
-const TouchableContainer = styled.TouchableOpacity`
+const Container = styled.View``;
+
+const Header = styled(Text)`
+  padding: ${spacing.medium}px ${spacing.layoutSides}px;
+  font-family: ${appFont.medium};
+  ${fontStyles.big};
+`;
+
+const ItemTouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   padding: ${spacing.small}px ${spacing.large}px;
   min-height: 64px;

@@ -28,7 +28,7 @@ import darkThemeColors from './themes/darkTheme';
 
 const commonColors = {
   ethereum: '#497391',
-  binance: '#f7931a',
+  binance: '#f3ba2f',
   xdai: '#62a7a5',
   polygon: '#8247e5',
 };

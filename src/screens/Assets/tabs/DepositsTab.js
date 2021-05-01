@@ -19,12 +19,14 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { orderBy, groupBy } from 'lodash';
 
 // Components
 import BalanceView from 'components/BalanceView';
@@ -38,35 +40,61 @@ import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationCons
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
 import { depositsBalanceSelector } from 'selectors/balances';
+import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
+import { sum } from 'utils/bigNumber';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain, CHAIN, type ChainRecord } from 'models/Chain';
 import { type Service, SERVICE } from 'models/Services';
 import type { FiatBalance } from 'models/Value';
 
 // Local
-import SectionHeader from '../components/SectionHeader';
+import ChainListHeader from '../items/ChainListHeader';
 import ServiceListItem from '../items/ServiceListItem';
 import AssetListItem from '../items/AssetListItem';
 
 const aaveIcon = require('assets/images/apps/aave.png');
 const rariIcon = require('assets/images/rari_logo.png');
 
+type FlagPerChain = { [Chain]: ?boolean };
+
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
   const navigation = useNavigation();
+  const safeArea = useSafeAreaInsets();
+
+  const { chain } = navigation.state.params;
+
+  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [chain]: true });
 
   const balance = useBalance();
-  const sections = useAssetSections();
   const currency = useFiatCurrency();
+  const chains = useSupportedChains();
+  const assets = useChainAssets();
 
-  //const servicesConfig = useServicesConfig();
+  const sections = chains.map((chain) => {
+    const items = getSectionItems(assets[chain] ?? []);
+    const balance = sum(items.map(item => item.value));
 
-  const safeArea = useSafeAreaInsets();
+    return {
+      key: chain,
+      chain,
+      balance,
+      data: showItemsPerChain[chain] ? items : [],
+    };
+  });
+
+  const toggleShowItems = (chain: Chain) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    // $FlowFixMe: flow is able to handle this
+    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
+  };
+
 
   const navigateToServices = () => {
     Modal.open(() => (
@@ -96,13 +124,23 @@ function DepositsTab() {
     );
   };
 
-  const renderSectionHeader = ({ service, chain }: Section) => {
-   //const { title } = servicesConfig[service];
-    return <SectionHeader title={service} chain={chain} />;
+  const renderSectionHeader = ({ chain, balance }: Section) => {
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = ({ title, iconSource, value, change }: Item) => {
-    return <AssetListItem title={title} iconSource={iconSource} value={value} change={change} />;
+  const renderItem = ({ title, iconSource, value, change, service, showServiceTitle }: Item) => {
+    const subtitle = "Current APY: 2.04%";
+    return (
+      <AssetListItem
+        title={title}
+        subtitle={subtitle}
+        iconSource={iconSource}
+        value={value}
+        change={change}
+        serviceTitle={service}
+        showServiceTitle={showServiceTitle}
+      />
+    );
   };
 
   return (
@@ -125,38 +163,71 @@ export default DepositsTab;
 type Section = {
   ...SectionBase<Item>,
   chain: Chain,
-  service: Service,
+  balance: BigNumber,
 };
 
 type Item = {|
   key: string,
+  service: string,
+  showServiceTitle?: boolean, // Controls whether to show service title header
   title: string,
   iconSource: ImageSource,
   value: BigNumber,
   change?: BigNumber,
 |};
 
+// Because we display three level data (chain -> service -> item) but SectionList supports only two levels, we need to handle service header at the level of list item
+export function getSectionItems(items: Item[]): Item[] {
+  const sortedItems = orderBy(items, ['service', 'value'], ['asc', 'desc']);
+  return sortedItems.map((item, index) => {
+    return sortedItems[index - 1]?.service !== item.service ? { ...item, showServiceTitle: true } : item;
+  });
+}
+
 const useBalance = (): FiatBalance => {
   const value = useRootSelector(depositsBalanceSelector);
   return { value };
 };
 
-const useAssetSections = (): Section[] => {
-  const rari = {
-    key: `${SERVICE.RARI}-${CHAIN.ETHEREUM}`,
-    chain: CHAIN.ETHEREUM,
-    service: SERVICE.RARI,
-    data: [{ key: 'rari-1', title: 'Stable pool', iconSource: rariIcon, value: BigNumber(10), change: BigNumber(1.2) }],
-  };
+const useChainAssets = (): ChainRecord<Item[]> => {
+  const ethereum = [
+    {
+      key: 'rari-1',
+      title: 'Stable pool',
+      service: 'Rari',
+      iconSource: rariIcon,
+      value: BigNumber(10),
+      change: BigNumber(1.2),
+    },
+    {
+      key: 'rari-2',
+      title: 'Yield pool',
+      service: 'Rari',
+      iconSource: rariIcon,
+      value: BigNumber(15),
+      change: BigNumber(5),
+    },
+    {
+      key: 'aave-1',
+      title: 'AAVE Pool 1',
+      service: 'Aave',
+      iconSource: aaveIcon,
+      value: BigNumber(10),
+      change: BigNumber(1.2),
+    },
+  ];
 
-  const aave = {
-    key: `${SERVICE.AAVE}-${CHAIN.ETHEREUM}`,
-    chain: CHAIN.ETHEREUM,
-    service: SERVICE.AAVE,
-    data: [{ key: 'aave-1', title: 'AAVE Pool 1', iconSource: aaveIcon, value: BigNumber(10), change: BigNumber(1.2) }],
-  };
-
-  return [rari, aave].filter((item) => !!item.data.length);
+  const polygon = [
+    {
+      key: 'rari-3',
+      title: 'Stable pool',
+      service: 'Rari',
+      iconSource: rariIcon,
+      value: BigNumber(10),
+      change: BigNumber(1.2),
+    },
+  ];
+  return { ethereum, polygon };
 };
 
 const Container = styled.View`
