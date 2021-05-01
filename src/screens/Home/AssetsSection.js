@@ -36,6 +36,7 @@ import { useSupportedChains, isSmartWalletActivatedSelector } from 'selectors/sm
 import { formatValue, formatFiatValue } from 'utils/format';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { CategoryBalancesPerChain, CategoryBalance, CollectibleCountPerChain } from 'models/Home';
@@ -187,4 +188,6 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
 export default AssetsSection;
 
-const Container = styled.View``;
+const Container = styled.View`
+  padding: 0 ${spacing.large}px;
+`;

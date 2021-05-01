@@ -71,7 +71,10 @@ function Home() {
         navigation={navigation}
         noPaddingTop
       />
-      <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
+      <Content
+        contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        paddingHorizontal={0}
+      >
         <Stories />
 
         <BalanceSection balanceInFiat={totalBalance} />

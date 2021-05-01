@@ -55,9 +55,14 @@ function AssetPieChart({ categoryBalances }: Props) {
       : null;
   };
 
-  const lableSvgStyle = {
+  const titleSvgStyle = {
     fontSize: fontSizes.small,
-    fill: colors.basic010,
+    fill: colors.text,
+  };
+
+  const valueSvgStyle = {
+    fontSize: fontSizes.small,
+    fill: colors.secondaryText,
   };
 
   return (
@@ -73,7 +78,7 @@ function AssetPieChart({ categoryBalances }: Props) {
           height={300}
           radius={92}
           innerRadius={55}
-          labelComponent={<VictoryLabel text={getLabelTexts} style={lableSvgStyle} lineHeight={1.5} />}
+          labelComponent={<VictoryLabel text={getLabelTexts} style={[titleSvgStyle, valueSvgStyle]} lineHeight={1.5} />}
         />
       </Svg>
     </Container>

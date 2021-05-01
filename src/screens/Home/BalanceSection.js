@@ -86,6 +86,7 @@ export default BalanceSection;
 const Container = styled.View`
   flex-direction: row;
   justify-content: center;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 const FirstColumn = styled.View`

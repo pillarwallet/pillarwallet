@@ -21,6 +21,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import PagerView from 'react-native-pager-view';
+import styled from 'styled-components/native';
+
+// Components
+import PagerControl from 'components/modern/PagerControl';
 
 // Types
 import type { CategoryBalance, ChainBalance } from 'models/Home';
@@ -35,15 +39,32 @@ type Props = {|
 |};
 
 function ChartsSection({ categoryBalances, chainBalances }: Props) {
+  const pagerRef = React.useRef<any>();
+
+  const [currentPage, setCurrentPage] = React.useState(0);
+
+  const handleChangePage = (page: number) => {
+    setCurrentPage(page);
+    pagerRef.current.setPage(page);
+  };
+
+  const handlePageScroll = (event: any) => {
+    const page = Math.round(event.nativeEvent.position + event.nativeEvent.offset);
+    setCurrentPage(page);
+  };
+
   return (
-    <PagerView style={styles.pageView} initialPage={0}>
-      <View key="1">
-        <AssetPieChart categoryBalances={categoryBalances} />
-      </View>
-      <View key="2">
-        <ChainPieChart chainBalances={chainBalances} />
-      </View>
-    </PagerView>
+    <Container>
+      <PagerView ref={pagerRef} onPageScroll={handlePageScroll} style={styles.pageView}>
+        <View key="assets" collapsable={false}>
+          <AssetPieChart categoryBalances={categoryBalances} />
+        </View>
+        <View key="chains" collapsable={false}>
+          <ChainPieChart chainBalances={chainBalances} />
+        </View>
+      </PagerView>
+      <PagerControl pageCount={2} currentPage={currentPage} onChangePage={handleChangePage} />
+    </Container>
   );
 }
 
@@ -54,3 +75,5 @@ const styles = {
     height: 300,
   },
 };
+
+const Container = styled.View``;
