@@ -40,7 +40,6 @@ import { useThemeColors } from 'utils/themes';
 import BalanceSection from './BalanceSection';
 import AssetsPieChart from './AssetsPieChart';
 import AssetsSection from './AssetsSection';
-import Controls from './Controls';
 import FloatingActions from './FloatingActions';
 import {
   useCollectibleCountPerChain,
@@ -73,8 +72,6 @@ function Home() {
         <BalanceSection balanceInFiat={totalBalance} />
 
         <AssetsPieChart categoryBalances={categoryBalances} />
-
-        <Controls />
 
         <AssetsSection
           categoryBalances={categoryBalances}
