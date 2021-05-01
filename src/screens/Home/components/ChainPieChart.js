@@ -29,20 +29,20 @@ import { BigNumber } from 'utils/common';
 import { formatPercentValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
-import { useAssetCategoriesConfig } from 'utils/uiConfig';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { CategoryBalance } from 'models/Home';
+import type { ChainBalance } from 'models/Home';
 
 // Local
-import { getTotalBalance } from './utils';
+import { getTotalBalance } from '../utils';
 
 type Props = {|
-  categoryBalances: CategoryBalance,
+  chainBalances: ChainBalance,
 |};
 
-function AssetsPieChart({ categoryBalances }: Props) {
-  const { data, colorScale } = useChartProps(categoryBalances);
+function ChainPieChart({ chainBalances }: Props) {
+  const { data, colorScale } = useChartProps(chainBalances);
   const colors = useThemeColors();
 
   const window = useWindowDimensions();
@@ -62,15 +62,15 @@ function AssetsPieChart({ categoryBalances }: Props) {
 
   return (
     <Container>
-      <Svg width={window.width} height={320}>
-        <Circle fill={colors.pieChartCenter} r={55} cx={window.width / 2} cy={160} />
+      <Svg width={window.width} height={300}>
+        <Circle fill={colors.pieChartCenter} r={55} cx={window.width / 2} cy={150} />
         <VictoryPie
           standalone={false}
           data={data}
           colorScale={colorScale}
           animate
           width={window.width}
-          height={320}
+          height={300}
           radius={92}
           innerRadius={55}
           labelComponent={<VictoryLabel text={getLabelTexts} style={lableSvgStyle} lineHeight={1.5} />}
@@ -80,7 +80,7 @@ function AssetsPieChart({ categoryBalances }: Props) {
   );
 }
 
-export default AssetsPieChart;
+export default ChainPieChart;
 
 type ChartDatum = {|
   y: number,
@@ -88,8 +88,8 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: CategoryBalance) => {
-  const config = useAssetCategoriesConfig();
+const useChartProps = (balances: ChainBalance) => {
+  const config = useChainsConfig();
   const colors = useThemeColors();
 
   const data: ChartDatum[] = [];
@@ -114,9 +114,9 @@ const useChartProps = (balances: CategoryBalance) => {
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
 
     const value = categoryBalance.dividedBy(totalBalance).toNumber();
-    const { title, chartColor } = config[category];
-    data.push({ y: value, title, value });
-    colorScale.push(chartColor);
+    const { titleShort, color } = config[category];
+    data.push({ y: value, title: titleShort, value });
+    colorScale.push(color);
   });
 
   return { data, colorScale };

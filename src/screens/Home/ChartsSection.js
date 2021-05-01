@@ -18,25 +18,39 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
+import * as React from 'react';
+import { View } from 'react-native';
+import PagerView from 'react-native-pager-view';
 
-type ChainRecord<T> = {|
-  ethereum: T,
-  binance?: T,
-  xdai?: T,
-  polygon?: T,
-|}
+// Types
+import type { CategoryBalance, ChainBalance } from 'models/Home';
 
-export type CategoryBalancesPerChain = ChainRecord<CategoryBalance>;
+// Local
+import AssetPieChart from './components/AssetPieChart';
+import ChainPieChart from './components/ChainPieChart';
 
-export type CategoryBalance = {|
-  wallet?: BigNumber,
-  deposits?: BigNumber,
-  investments?: BigNumber,
-  liquidityPools?: BigNumber,
-  rewards?: BigNumber,
+type Props = {|
+  categoryBalances: CategoryBalance,
+  chainBalances: ChainBalance,
 |};
 
-export type ChainBalance = ChainRecord<BigNumber>;
+function ChartsSection({ categoryBalances, chainBalances }: Props) {
+  return (
+    <PagerView style={styles.pageView} initialPage={0}>
+      <View key="1">
+        <AssetPieChart categoryBalances={categoryBalances} />
+      </View>
+      <View key="2">
+        <ChainPieChart chainBalances={chainBalances} />
+      </View>
+    </PagerView>
+  );
+}
 
-export type CollectibleCountPerChain = ChainRecord<number>;
+export default ChartsSection;
+
+const styles = {
+  pageView: {
+    height: 300,
+  },
+};

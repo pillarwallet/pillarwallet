@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useTranslationWithPrefix } from 'translations/translate';
+import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -31,6 +31,7 @@ import { type Chain, CHAIN } from 'models/Chain';
 
 type ChainConfig = {|
   title: string,
+  titleShort: string,
   iconName: IconName,
   color: string,
 |};
@@ -39,27 +40,31 @@ type ChainConfig = {|
  * Returns common UI aspects (texts, icons, color) for displaying main Ethereum chain and side chains.
  */
 export function useChainsConfig(): { [key: Chain]: ChainConfig} {
-  const { t } = useTranslationWithPrefix('chains');
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return {
     [CHAIN.POLYGON]: {
-      title: t('polygon'),
+      title: t('chains.polygon'),
+      titleShort: t('chainsShort.polygon'),
       iconName: 'polygon',
       color: colors.polygon,
     },
     [CHAIN.BINANCE]: {
-      title: t('binance'),
+      title: t('chains.binance'),
+      titleShort: t('chainsShort.binance'),
       iconName: 'binance',
       color: colors.binance,
     },
     [CHAIN.XDAI]: {
-      title: t('xdai'),
+      title: t('chains.xdai'),
+      titleShort: t('chainsShort.xdai'),
       iconName: 'xdai',
       color: colors.xdai,
     },
     [CHAIN.ETHEREUM]: {
-      title: t('ethereum'),
+      title: t('chains.ethereum'),
+      titleShort: t('chainsShort.ethereum'),
       iconName: 'ethereum',
       color: colors.ethereum,
     },

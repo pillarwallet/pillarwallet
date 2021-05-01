@@ -63,9 +63,16 @@
   },
 
   "chains": {
-    "ethereum": "Ethereum",
+    "ethereum": "Ethereum Mainnet",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
+    "polygon": "Polygon"
+  },
+
+  "chainsShort": {
+    "ethereum": "Mainnet",
+    "binance": "BSC",
+    "xdai": "xDai",
     "polygon": "Polygon"
   },
 

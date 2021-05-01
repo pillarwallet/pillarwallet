@@ -39,13 +39,14 @@ import { useThemeColors } from 'utils/themes';
 
 // Local
 import BalanceSection from './BalanceSection';
-import AssetsPieChart from './AssetsPieChart';
+import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import {
   useCollectibleCountPerChain,
   useCategoryBalancesPerChain,
   getTotalCategoryBalances,
+  getTotalChainBalances,
   getTotalBalance,
 } from './utils';
 
@@ -53,8 +54,9 @@ function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const chainsBalances = useCategoryBalancesPerChain();
-  const categoryBalances = getTotalCategoryBalances(chainsBalances);
+  const categoryBalancesPerChain = useCategoryBalancesPerChain();
+  const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
+  const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
   const totalBalance = getTotalBalance(categoryBalances);
 
   const collectibleCountPerChain = useCollectibleCountPerChain();
@@ -74,11 +76,11 @@ function Home() {
 
         <BalanceSection balanceInFiat={totalBalance} />
 
-        <AssetsPieChart categoryBalances={categoryBalances} />
+        <ChartsSection categoryBalances={categoryBalances} chainBalances={chainBalances} />
 
         <AssetsSection
           categoryBalances={categoryBalances}
-          categoryBalancesPerChain={chainsBalances}
+          categoryBalancesPerChain={categoryBalancesPerChain}
           collectibleCountPerChain={collectibleCountPerChain}
         />
       </Content>

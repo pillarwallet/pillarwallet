@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { mapValues } from 'lodash';
+
 // Selectors
 import { useRootSelector } from 'selectors';
 import {
@@ -33,7 +35,7 @@ import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 
 // Types
-import type { CategoryBalance, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
+import type { CategoryBalance, ChainBalance, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
 
 export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
   const wallet = useRootSelector(walletBalanceSelector);
@@ -50,7 +52,15 @@ export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
     rewards,
   };
 
-  return { ethereum };
+  const binance = {
+    investments: BigNumber(2014),
+  };
+
+  const xdai = {
+    deposits: BigNumber(10000),
+  };
+
+  return { ethereum, xdai, binance };
 }
 
 export function useCollectibleCountPerChain(): CollectibleCountPerChain {
@@ -59,18 +69,22 @@ export function useCollectibleCountPerChain(): CollectibleCountPerChain {
 }
 
 export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalance {
-  const balances = Object.keys(chains).map((key) => chains[key]);
+  const chainBalances = Object.keys(chains).map((key) => chains[key]);
   return {
-    wallet: sum(balances.map((chain) => chain?.wallet)),
-    deposits: sum(balances.map((chain) => chain?.deposits)),
-    investments: sum(balances.map((chain) => chain?.investments)),
-    liquidityPools: sum(balances.map((chain) => chain?.liquidityPools)),
-    rewards: sum(balances.map((chain) => chain?.rewards)),
+    wallet: sum(chainBalances.map((chain) => chain?.wallet)),
+    deposits: sum(chainBalances.map((chain) => chain?.deposits)),
+    investments: sum(chainBalances.map((chain) => chain?.investments)),
+    liquidityPools: sum(chainBalances.map((chain) => chain?.liquidityPools)),
+    rewards: sum(chainBalances.map((chain) => chain?.rewards)),
   };
 }
 
-export function getTotalBalance(categories: CategoryBalance): BigNumber {
-  const balances = Object.keys(categories).map((key) => categories[key]);
+export function getTotalChainBalances(chains: CategoryBalancesPerChain): ChainBalance {
+  return mapValues(chains, (balances) => getTotalBalance(balances));
+}
+
+export function getTotalBalance(entries: { [key: string]: BigNumber}): BigNumber {
+  const balances = Object.keys(entries).map((key) => entries[key]);
   return sum(balances);
 }
 
