@@ -99,7 +99,7 @@ export const allAccountsAssetsSelector = createSelector(
 );
 
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
-  assetsSelector,
+  allAccountsAssetsSelector,
   supportedAssetsSelector,
   assetSelector,
   (assets, supportedAssets, asset) => {

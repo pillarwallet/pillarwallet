@@ -78,3 +78,16 @@ export const useSmartWalletStatus = (): SmartWalletStatus => {
   const smartWalletState = useRootSelector((root) => root.smartWallet);
   return getSmartWalletStatus(accounts, smartWalletState);
 };
+
+// Temporary stuff to get info about smart wallet type
+// TODO: combine this with etherspot work once it's in
+export type SmartWalletType = "etherspot" | "archanova";
+
+export const SMART_WALLET_TYPES = {
+  ETHERSPOT: ('etherspot': 'etherspot'),
+  ARCHANOVA: ('archanova': 'archanova'),
+};
+
+export const useSmartWalletType = (): SmartWalletType => {
+  return SMART_WALLET_TYPES.ARCHANOVA;
+};

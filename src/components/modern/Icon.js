@@ -20,9 +20,13 @@
 /* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
+import { View } from 'react-native';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 // Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
@@ -50,6 +54,7 @@ import IconExchange from 'assets/icons/svg/icon-24-exchange.svg';
 import IconFailed from 'assets/icons/svg/icon-24-failed.svg';
 import IconGift from 'assets/icons/svg/icon-24-gift.svg';
 import IconHighFees from 'assets/icons/svg/icon-24-high-fees.svg';
+import IconHistory from 'assets/icons/svg/icon-24-history.svg';
 import IconImage from 'assets/icons/svg/icon-24-image.svg';
 import IconInfo from 'assets/icons/svg/icon-24-info.svg';
 import IconInvestment from 'assets/icons/svg/icon-24-investment.svg';
@@ -66,6 +71,7 @@ import IconPending from 'assets/icons/svg/icon-24-pending.svg';
 import IconPercentCircle from 'assets/icons/svg/icon-24-percent-circle.svg';
 import IconPhone from 'assets/icons/svg/icon-24-phone.svg';
 import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
+import IconProfile from 'assets/icons/svg/icon-48-profile.svg';
 import IconPower from 'assets/icons/svg/icon-24-power.svg';
 import IconQrCode from 'assets/icons/svg/icon-24-qrcode.svg';
 import IconReward from 'assets/icons/svg/icon-24-reward.svg';
@@ -84,6 +90,7 @@ import IconThumbUp from 'assets/icons/svg/icon-24-thumb-up.svg';
 import IconUser from 'assets/icons/svg/icon-24-user.svg';
 import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
+import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -119,6 +126,7 @@ const components = {
   failed: IconFailed,
   gift: IconGift,
   'high-fees': IconHighFees,
+  history: IconHistory,
   image: IconImage,
   info: IconInfo,
   investment: IconInvestment,
@@ -135,6 +143,7 @@ const components = {
   'percent-circle': IconPercentCircle,
   phone: IconPhone,
   plus: IconPlus,
+  profile: IconProfile,
   power: IconPower,
   qrcode: IconQrCode,
   reward: IconReward,
@@ -153,6 +162,7 @@ const components = {
   user: IconUser,
   wallet: IconWallet,
   warning: IconWarning,
+  withdraw: IconWithdraw,
 
   // Service icons
   binance: IconBinance,
@@ -169,6 +179,7 @@ type Props = {|
   color?: string,
   width?: number,
   height?: number,
+  style?: ViewStyleProp,
 |};
 
 /**
@@ -182,11 +193,20 @@ type Props = {|
  * @note Use it only for small icon-like images.
  * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
  */
-function Icon({ name, color, ...rest }: Props) {
+function Icon({
+  name,
+  color,
+  style,
+  ...rest
+}: Props) {
   const colors = useThemeColors();
 
   const Component = components[name];
-  return Component ? <Component fill={color ?? colors.basic010} {...rest} /> : null;
+  return Component ? (
+    <View style={style}>
+      <Component fill={color ?? colors.basic010} {...rest} />
+    </View>
+  ) : null;
 }
 
 export default Icon;

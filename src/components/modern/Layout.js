@@ -75,3 +75,30 @@ const contentStyles = {
     flex: 1,
   },
 };
+
+/**
+ * Display items as a row, centered vertically.
+ */
+export const Row: React.ComponentType<ViewProps> = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+/**
+ * Display items as a row, centered vertically.
+ */
+export const ColumnRight: React.ComponentType<ViewProps> = styled.View`
+  align-items: flex-end;
+`;
+
+type SpacingProps = {|
+  h?: number,
+  w?: number,
+  flex?: number,
+|};
+
+export const Spacing: React.ComponentType<SpacingProps> = styled.View`
+  height: ${({ h }) => h ?? 0}px;
+  width: ${({ w }) => w ?? 0}px;
+  ${({ flex }) => (flex != null ? `flex: ${flex}` : '')};
+`;

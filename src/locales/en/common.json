@@ -167,6 +167,7 @@
     "sending": "Sending",
     "sent": "Sent",
     "settle": "Settle",
+    "settlement": "Settlement",
     "smartWalletAccountDevice": "Smart Wallet account device",
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
@@ -177,6 +178,7 @@
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
     "toSmartWallet": "to Smart Wallet",
+    "wallet": "Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
     "yesterday": "Yesterday",
@@ -238,7 +240,10 @@
     "fromWalletToRari": "Wallet → Rari Capital",
     "rewardsClaimed": "Rewards claimed",
     "keyFacts": "Key facts",
-    "multiple": "Multiple"
+    "multiple": "Multiple",
+    "walletToPillarPay": "Wallet → Pillar Pay",
+    "pillarPayToWallet": "Pillar Pay → Wallet",
+    "fromToFormat": "{{from}} → {{to}}"
   },
 
   "button": {
@@ -263,6 +268,7 @@
     "depositMore": "Deposit more",
     "explore": "Explore",
     "exchange": "Exchange",
+    "exchangeMore": "Exchange more",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
     "inviteFriend": "Invite friend",
@@ -571,6 +577,10 @@
       "swap": "Swap",
       "connect": "Connect"
     }
+  },
+
+  "history": {
+    "title": "Transactions history"
   },
 
   "badgeText": {
@@ -1514,6 +1524,7 @@
     "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
+    "cannotGetWalletAddress": "Cannot get wallet address.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
