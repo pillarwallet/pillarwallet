@@ -20,7 +20,6 @@
 
 import { BigNumber } from 'bignumber.js';
 import type { ChainRecord } from 'models/Chain';
-import type { FiatBalance } from 'models/Value';
 
 export type CategoryBalancesPerChain = ChainRecord<CategoryBalances>;
 

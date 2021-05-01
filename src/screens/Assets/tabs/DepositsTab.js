@@ -19,14 +19,13 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation } from 'react-native';
+import { LayoutAnimation, SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { orderBy, groupBy } from 'lodash';
+import { orderBy } from 'lodash';
 
 // Components
 import BalanceView from 'components/BalanceView';
@@ -34,7 +33,6 @@ import BottomModal from 'components/modern/BottomModal';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import { Spacing } from 'components/modern/Layout';
 
 import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
@@ -50,8 +48,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import { type Chain, CHAIN, type ChainRecord } from 'models/Chain';
-import { type Service, SERVICE } from 'models/Services';
+import { type Chain, type ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
 
 // Local
@@ -69,14 +66,14 @@ function DepositsTab() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const { chain } = navigation.state.params;
+  const { chain: initialChain } = navigation.state.params;
 
-  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [chain]: true });
+  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const balance = useBalance();
+  const categoryBalance = useCategoryBalance();
+  const assets = useChainAssets();
   const currency = useFiatCurrency();
   const chains = useSupportedChains();
-  const assets = useChainAssets();
 
   const sections = chains.map((chain) => {
     const items = getSectionItems(assets[chain] ?? []);
@@ -116,10 +113,11 @@ function DepositsTab() {
   const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
+    const { value, change } = categoryBalance;
     return (
       <ListHeader>
-        <BalanceView balance={balance.value} style={styles.balanceView} />
-        {!!balance.change && <FiatChangeView value={balance.value} change={balance.change} currency={currency} />}
+        <BalanceView balance={value} style={styles.balanceView} />
+        {!!change && <FiatChangeView value={value} change={change} currency={currency} />}
       </ListHeader>
     );
   };
@@ -184,7 +182,7 @@ export function getSectionItems(items: Item[]): Item[] {
   });
 }
 
-const useBalance = (): FiatBalance => {
+const useCategoryBalance = (): FiatBalance => {
   const value = useRootSelector(depositsBalanceSelector);
   return { value: BigNumber(110), change: BigNumber(10) };
 };

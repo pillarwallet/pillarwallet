@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import { TabView as RNTabView, TabBar } from 'react-native-tab-view';
 import styled from 'styled-components/native';
 

@@ -29,7 +29,7 @@ import { appFont, fontSizes, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { Chain } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   title: string,

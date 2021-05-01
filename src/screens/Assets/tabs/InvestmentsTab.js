@@ -93,7 +93,7 @@ function InvestmentsTab() {
   };
 
   const renderItem = ({ title, iconSource, value, change }: Item) => {
-    return <AssetListItem title={title} iconSource={iconSource} value={value} change={change} />;
+    return <AssetListItem title={title} iconSource={iconSource} value={value} change={change} serviceTitle="Liquidity Pool" />;
   };
 
   return (

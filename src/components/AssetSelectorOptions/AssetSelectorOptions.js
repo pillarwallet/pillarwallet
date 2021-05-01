@@ -34,7 +34,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
 // Constants
-import { TOKENS, COLLECTIBLES, ETH, PLR } from 'constants/assetsConstants';
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 // Utils
 import { defaultSortAssetOptions } from 'utils/assets';

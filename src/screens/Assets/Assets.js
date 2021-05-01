@@ -41,13 +41,13 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // Constants
 import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Utils
 import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
+import { isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 
 // Local
@@ -152,7 +152,7 @@ function AssetsScreen() {
   };
 
   const renderView = (viewType: string, onScroll: (Object) => void) => {
-    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    // const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {

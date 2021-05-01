@@ -23,8 +23,6 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
-import FiatValueView from 'components/modern/FiatValueView';
-import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Selectors
@@ -32,13 +30,11 @@ import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatFiatValue } from 'utils/format';
-import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain } from 'models/Chain';
 
 type Props = {|
   chain: Chain,
@@ -47,7 +43,6 @@ type Props = {|
 |};
 
 function ChainListHeader({ chain, balance, onPress }: Props) {
-  const colors = useThemeColors();
   const currency = useFiatCurrency();
 
   const { title, color } = useChainsConfig()[chain];
@@ -56,6 +51,7 @@ function ChainListHeader({ chain, balance, onPress }: Props) {
 
   return (
     <TouchableContainer onPress={onPress}>
+      {/* eslint-disable-next-line i18next/no-literal-string */}
       <Text variant="medium" color={color}>{title} · {fiatValue}</Text>
     </TouchableContainer>
   );
