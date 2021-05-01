@@ -23,6 +23,9 @@ import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { range } from 'lodash';
 
+// Utils
+import { spacing } from 'utils/variables';
+
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
@@ -59,14 +62,14 @@ const Dot = styled.View`
   width: 6px;
   height: 6px;
   border-radius: 3px;
+  margin: ${spacing.medium}px ${spacing.small / 2}px;
   background-color: ${({ theme }) => theme.colors.pagerInactive};
-  margin: 3px;
 `;
 
 const ActiveDot = styled.View`
   width: 6px;
   height: 6px;
   border-radius: 3px;
+  margin: ${spacing.medium}px ${spacing.small / 2}px;
   background-color: ${({ theme }) => theme.colors.pagerActive};
-  margin: 3px;
 `;

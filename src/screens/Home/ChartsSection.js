@@ -22,6 +22,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styled from 'styled-components/native';
+import { clamp } from 'lodash';
 
 // Components
 import PagerControl from 'components/modern/PagerControl';
@@ -50,7 +51,7 @@ function ChartsSection({ categoryBalances, chainBalances }: Props) {
 
   const handlePageScroll = (event: any) => {
     const page = Math.round(event.nativeEvent.position + event.nativeEvent.offset);
-    setCurrentPage(page);
+    setCurrentPage(clamp(page, 0, 1));
   };
 
   return (
