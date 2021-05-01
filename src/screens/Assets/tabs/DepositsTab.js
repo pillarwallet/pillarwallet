@@ -33,7 +33,6 @@ import FiatValueView from 'components/modern/FiatValueView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 
-import { CHAINS } from 'constants/assetsConstants';
 import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
 // Selectors
@@ -42,11 +41,10 @@ import { depositsBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { useServicesConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import type { Chain } from 'models/Asset';
+import { type Chain, CHAIN } from 'models/Chain';
 import { type Service, SERVICE } from 'models/Services';
 import type { FiatBalance } from 'models/Value';
 
@@ -66,7 +64,7 @@ function DepositsTab() {
   const sections = useAssetSections();
   const currency = useFiatCurrency();
 
-  const servicesConfig = useServicesConfig();
+  //const servicesConfig = useServicesConfig();
 
   const safeArea = useSafeAreaInsets();
 
@@ -99,8 +97,8 @@ function DepositsTab() {
   };
 
   const renderSectionHeader = ({ service, chain }: Section) => {
-    const { title } = servicesConfig[service];
-    return <SectionHeader title={title} chain={chain} />;
+   //const { title } = servicesConfig[service];
+    return <SectionHeader title={service} chain={chain} />;
   };
 
   const renderItem = ({ title, iconSource, value, change }: Item) => {
@@ -145,15 +143,15 @@ const useBalance = (): FiatBalance => {
 
 const useAssetSections = (): Section[] => {
   const rari = {
-    key: `${SERVICE.RARI}-${CHAINS.ETHEREUM}`,
-    chain: CHAINS.ETHEREUM,
+    key: `${SERVICE.RARI}-${CHAIN.ETHEREUM}`,
+    chain: CHAIN.ETHEREUM,
     service: SERVICE.RARI,
     data: [{ key: 'rari-1', title: 'Stable pool', iconSource: rariIcon, value: BigNumber(10), change: BigNumber(1.2) }],
   };
 
   const aave = {
-    key: `${SERVICE.AAVE}-${CHAINS.ETHEREUM}`,
-    chain: CHAINS.ETHEREUM,
+    key: `${SERVICE.AAVE}-${CHAIN.ETHEREUM}`,
+    chain: CHAIN.ETHEREUM,
     service: SERVICE.AAVE,
     data: [{ key: 'aave-1', title: 'AAVE Pool 1', iconSource: aaveIcon, value: BigNumber(10), change: BigNumber(1.2) }],
   };

@@ -23,14 +23,11 @@ import * as React from 'react';
 // Components
 import TabView from 'components/modern/TabView';
 
-// Contants
-import { ASSET_CATEGORIES as CATEGORY } from 'constants/assetsConstants';
-
 // Utils
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import type { AssetCategory } from 'models/Asset';
+import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './tabs/WalletTab';
@@ -51,7 +48,6 @@ function WalletView({ initialCategory }: Props) {
     { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: DepositsTab },
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: DepositsTab },
-    { key: CATEGORY.DATASETS, title: config[CATEGORY.DATASETS].title, component: DepositsTab },
   ];
 
   const initialTabIndex = items.findIndex(item => item.key === initialCategory);

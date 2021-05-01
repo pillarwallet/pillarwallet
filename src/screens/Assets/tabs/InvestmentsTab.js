@@ -33,7 +33,6 @@ import FiatValueView from 'components/modern/FiatValueView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 
-import { CHAINS } from 'constants/assetsConstants';
 import { LENDING_ADD_DEPOSIT_FLOW } from 'constants/navigationConstants';
 
 // Selectors
@@ -42,11 +41,10 @@ import { depositsBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { useServicesConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import type { Chain } from 'models/Asset';
+import { type Chain, CHAIN } from 'models/Chain';
 import { type Service, SERVICE } from 'models/Services';
 import type { FiatBalance } from 'models/Value';
 
@@ -64,8 +62,6 @@ function InvestmentsTab() {
   const balance = useBalance();
   const sections = useAssetSections();
   const currency = useFiatCurrency();
-
-  const servicesConfig = useServicesConfig();
 
   const safeArea = useSafeAreaInsets();
 
@@ -93,8 +89,7 @@ function InvestmentsTab() {
   };
 
   const renderSectionHeader = ({ service, chain }: Section) => {
-    const { title } = servicesConfig[service];
-    return <SectionHeader title={title} chain={chain} />;
+    return <SectionHeader title={service} chain={chain} />;
   };
 
   const renderItem = ({ title, iconSource, value, change }: Item) => {
@@ -139,8 +134,8 @@ const useBalance = (): FiatBalance => {
 
 const useAssetSections = (): Section[] => {
   const poolTogether = {
-    key: `${SERVICE.POOL_TOGETHER}-${CHAINS.ETHEREUM}`,
-    chain: CHAINS.ETHEREUM,
+    key: `${SERVICE.POOL_TOGETHER}-${CHAIN.ETHEREUM}`,
+    chain: CHAIN.ETHEREUM,
     service: SERVICE.POOL_TOGETHER,
     data: [{ key: 'rari-1', title: 'Stable pool', iconSource: poolTogetherIcon, value: BigNumber(10), change: BigNumber(1.2) }],
   };
