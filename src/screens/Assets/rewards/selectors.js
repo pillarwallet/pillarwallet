@@ -39,12 +39,13 @@ export type RewardItem = {|
   title: string,
   iconUrl?: string,
   value: BigNumber,
+  symbol: string,
   navigateAction?: () => mixed,
 |};
 
 // TODO: provide real assets data
 export function useRewardsAssets(): ChainRecord<RewardItem[]> {
-  const ethereum = [
+  const polygon = [
     {
       key: 'pillar-1',
       service: 'Uniswap v2 ETH/PLR',
@@ -53,10 +54,13 @@ export function useRewardsAssets(): ChainRecord<RewardItem[]> {
       value: BigNumber(10000),
       symbol: 'PLR',
     },
+  ];
+
+  const xdai = [
     {
       key: 'ocean-1',
-      service: 'Ocean Protocol',
-      title: 'Fantastic Ray Pool',
+      service: 'Ocean Market',
+      title: 'Ocean Protocol',
       value: BigNumber(67),
       symbol: 'OCEAN',
     },
@@ -68,5 +72,5 @@ export function useRewardsAssets(): ChainRecord<RewardItem[]> {
       symbol: 'RGT',
     },
   ];
-  return { ethereum };
+  return { polygon, xdai };
 }

@@ -22,8 +22,8 @@ import * as React from 'react';
 import { LayoutAnimation, SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -32,11 +32,12 @@ import FloatingButtons from 'components/FloatingButtons';
 import Text from 'components/modern/Text';
 
 // Selectors
+import { useRates, useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
+import { getRate } from 'utils/assets';
 import { sum } from 'utils/bigNumber';
-import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
@@ -46,18 +47,17 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import { type RewardItem, useRewardsBalance, useRewardsAssets } from '../selectors/rewards';
+import { type RewardItem, useRewardsBalance, useRewardsAssets } from './selectors';
+import RewardListItem from './RewardListItem';
 import ChainListHeader from '../components/ChainListHeader';
-import ServiceListHeader from '../components/ServiceListHeader';
-import AssetListItem from '../items/AssetListItem';
 
 type FlagPerChain = { [Chain]: ?boolean };
 
 function RewardsTab() {
   const { t } = useTranslationWithPrefix('assets.rewards');
   const navigation = useNavigation();
-  const safeArea = useSafeAreaInsets();
   const colors = useThemeColors();
+  const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
 
@@ -72,7 +72,6 @@ function RewardsTab() {
     setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
   };
 
-
   const renderListHeader = () => {
     return (
       <ListHeader>
@@ -86,13 +85,17 @@ function RewardsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<RewardItem>) => {
-    if (headerListItem.type === 'header') {
-      return <ServiceListHeader title={headerListItem.key} />;
-    }
-
-    const { title, iconUrl, value, navigateAction } = headerListItem.item;
-    return <AssetListItem title={title} iconSource={iconUrl ? { uri: iconUrl } : null} value={value} onPress={navigateAction} />;
+  const renderItem = ({ title, service, iconUrl, value, symbol, navigateAction }: RewardItem) => {
+    return (
+      <RewardListItem
+        title={title}
+        subtitle={service}
+        iconUrl={iconUrl}
+        value={value}
+        symbol={symbol}
+        onPress={navigateAction}
+      />
+    );
   };
 
   return (
@@ -111,7 +114,7 @@ function RewardsTab() {
 export default RewardsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<RewardItem>>,
+  ...SectionBase<RewardItem>,
   chain: Chain,
   balance: BigNumber,
 };
@@ -119,17 +122,14 @@ type Section = {
 const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useRewardsAssets();
+  const rates = useRates();
+  const currency = useFiatCurrency();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = sum(items.map((item) => item.value));
-
-    return {
-      key: chain,
-      chain,
-      balance,
-      data: showChainAssets[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
-    };
+    const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
+    const data = showChainAssets[chain] ? items : [];
+    return { key: chain, chain, balance, data };
   });
 };
 

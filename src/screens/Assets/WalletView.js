@@ -34,7 +34,7 @@ import WalletTab from './tabs/WalletTab';
 import DepositsTab from './tabs/DepositsTab';
 import InvestmentsTab from './tabs/InvestmentsTab';
 import LiquidityPoolsTab from './tabs/LiquidityPoolsTab';
-import RewardsTab from './tabs/RewardsTab';
+import RewardsTab from './rewards/RewardsTab';
 
 type Props = {|
   initialCategory: ?AssetCategory,
@@ -52,7 +52,7 @@ function WalletView({ initialCategory }: Props) {
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
   ];
 
-  const initialTabIndex = items.findIndex(item => item.key === initialCategory);
+  const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
   const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
 
   return <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />;

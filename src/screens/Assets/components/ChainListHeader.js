@@ -47,12 +47,13 @@ function ChainListHeader({ chain, balance, onPress }: Props) {
 
   const { title, color } = useChainsConfig()[chain];
 
-  const fiatValue = formatFiatValue(balance, currency);
+  const fiatValue = formatFiatValue(balance, currency, { exact: true });
 
   return (
     <TouchableContainer onPress={onPress}>
-      {/* eslint-disable-next-line i18next/no-literal-string */}
-      <Text variant="medium" color={color}>{title} · {fiatValue}</Text>
+      <Text variant="medium" color={color}>
+        {title} · {fiatValue}
+      </Text>
     </TouchableContainer>
   );
 }
@@ -64,4 +65,3 @@ const TouchableContainer = styled.TouchableOpacity`
   padding: ${spacing.extraLarge}px ${spacing.large}px ${spacing.small}px;
   align-items: center;
 `;
-
