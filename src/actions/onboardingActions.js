@@ -58,6 +58,7 @@ import { generateMnemonicPhrase } from 'utils/wallet';
 import { isCaseInsensitiveMatch, reportErrorLog, reportLog } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { transformAssetsToObject } from 'utils/assets';
+import { log } from 'utils/logger';
 
 // services
 import { navigate } from 'services/navigation';
@@ -94,10 +95,12 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     if (!username) {
       reportLog('setupUserAction failed: no username', { recoveryData });
+      log.info('setupUserAction failed: no username', { recoveryData });
       return;
     }
 
     dispatch({ type: SET_REGISTERING_USER, payload: true });
+    log.info('onBoarding username registeration failed: reset');
     dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false }); // reset
 
     const {
@@ -112,6 +115,7 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
       reportLog('setupUserAction failed: no privateKey', { recoveryData });
+      log.info('setupUserAction failed: no privateKey', { recoveryData });
       dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
     }
@@ -121,10 +125,12 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
       await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
         reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
+        log.error('firebaseMessaging.registerForRemoteNotifications failed', { error });
       });
       await firebaseMessaging.requestPermission().catch(() => null);
       const fcmToken = await firebaseMessaging.getToken().catch((error) => {
         reportErrorLog('firebaseMessaging.getToken failed', { error });
+        log.error('firebaseMessaging.getToken failed', { error });
         return null;
       });
 
@@ -138,7 +144,9 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
           ? t('auth:error.registrationApiUsernameFailed')
           : t('auth:error.registrationApiFailedWithNoReason');
         reportErrorLog('setupUserAction user registration failed', { error, username, recoveryData });
+        log.error('setupUserAction user registration failed', { error, username, recoveryData });
         if (usernameFailed) {
+          log.info('onBoarding username registeration failed');
           dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: true });
         }
         dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
@@ -175,6 +183,8 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     dispatch({ type: SET_USER, payload: userInfo });
 
     dispatch({ type: SET_REGISTERING_USER, payload: false });
+
+    log.info('setupUserActions done');
   };
 };
 
@@ -190,6 +200,7 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
 
     if (!pinCode) {
       reportLog('setupWalletAction failed: no pinCode');
+      log.info('setupWalletAction failed: no pinCode');
       return;
     }
 
@@ -215,6 +226,8 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
     await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
 
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+
+    log.info('setupWalletAction done');
   };
 };
 
@@ -228,6 +241,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     if (!privateKey) {
       reportLog('setupAppServicesAction failed: no privateKey');
+      log.info('setupAppServicesAction failed: no privateKey');
       return;
     }
 
@@ -273,15 +287,19 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch(checkForWalletBackupToastAction());
 
     dispatch(loadRemoteConfigWithUserPropertiesAction());
+
+    log.info('setupAppServicesAction done');
   };
 };
 
 export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    log.info('finishOnboardingAction dispatch');
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: true });
 
     // reset on retry
     if (retry) {
+      log.info('SET_ONBOARDING_ERROR: reset on retry');
       dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
     }
 
@@ -302,7 +320,11 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
 
     // do not reset onboarding in case there were errors as retry will happen in app flow
-    if (!errorMessage && !usernameRegistrationFailed) dispatch({ type: RESET_ONBOARDING });
+    if (!errorMessage && !usernameRegistrationFailed) {
+      dispatch({ type: RESET_ONBOARDING });
+    } else {
+      log.error(errorMessage);
+    }
 
     // reset if recovery was pending as it's successful recover by this step
     if (isRecoveryPending) {
@@ -336,10 +358,13 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
+
+    log.info('finishOnboardingAction done');
   };
 };
 
 export const beginOnboardingAction = (enableBiometrics?: boolean) => {
+  log.info('beginOnboardingAction dispatch');
   return async (dispatch: Dispatch, getState: GetState) => {
     // pass current onboarding, referrals and some session values to keep after redux state reset
     const {
@@ -388,10 +413,13 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     }
 
     dispatch(finishOnboardingAction());
+
+    log.info('beginOnboardingAction done');
   };
 };
 
 export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
+  log.info('importWalletFromMnemonicAction dispatch');
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch({ type: SET_IMPORTING_WALLET });
 
@@ -403,6 +431,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     }
 
     if (!importedWallet) {
+      log.error('SET_ONBOARDING_ERROR', t('auth:error.incorrectBackupPhrase.default'));
       dispatch({ type: SET_ONBOARDING_ERROR, payload: t('auth:error.incorrectBackupPhrase.default') });
       return;
     }
@@ -428,29 +457,36 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+
+    log.info('importWalletFromMnemonicAction done');
   };
 };
 
 let usernameCheckOfflineToastShown = false;
 
 export const resetUsernameCheckAction = (resetOfflineToast?: boolean) => {
+  log.info('resetUsernameCheckAction dispatch');
   return (dispatch: Dispatch) => {
     if (resetOfflineToast) usernameCheckOfflineToastShown = false;
     dispatch({ type: SET_ONBOARDING_USER, payload: null });
     dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
+    log.info('resetUsernameCheckAction done');
   };
 };
 
 export const resetOnboardingAction = () => ({ type: RESET_ONBOARDING });
 
 export const resetOnboardingAndNavigateAction = (routeName: string) => {
+  log.info('resetOnboardingAndNavigateAction dispatch');
   return (dispatch: Dispatch) => {
     dispatch(resetOnboardingAction());
     navigate(NavigationActions.navigate({ routeName }));
+    log.info('resetOnboardingAndNavigateAction Done');
   };
 };
 
 export const checkUsernameAvailabilityAction = (username: string) => {
+  log.info('checkUsernameAvailabilityAction dispatch');
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch(resetUsernameCheckAction());
 
@@ -463,6 +499,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
           emoji: 'satellite_antenna',
         });
         usernameCheckOfflineToastShown = true;
+        log.info(t('auth:toast.userIsOffline'));
       }
       dispatch({
         type: SET_ONBOARDING_USER,
@@ -482,6 +519,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
 
     if (result?.status === 400 || usernameTaken) {
       const errorMessage = result?.message || t('auth:error.invalidUsername.default');
+      log.error(usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage);
       dispatch({
         type: SET_ONBOARDING_ERROR,
         payload: usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage,
@@ -493,12 +531,27 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       type: SET_ONBOARDING_USER,
       payload: { username },
     });
+
+    log.info('checkUsernameAvailabilityAction done');
   };
 };
 
-export const setOnboardingPinCodeAction = (pinCode: string) => ({
-  type: SET_ONBOARDING_PIN_CODE,
-  payload: pinCode,
-});
+export const setOnboardingPinCodeAction = (pinCode: string) => {
+  log.info('setOnboardingPinCodeAction dispatch');
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: SET_ONBOARDING_PIN_CODE,
+      payload: pinCode,
+    });
+  };
+};
 
-export const resetWalletImportErrorAction = () => ({ type: SET_ONBOARDING_ERROR, payload: null });
+export const resetWalletImportErrorAction = () => {
+  log.info('resetWalletImportErrorAction dispatch');
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: SET_ONBOARDING_ERROR,
+      payload: null,
+    });
+  };
+};
