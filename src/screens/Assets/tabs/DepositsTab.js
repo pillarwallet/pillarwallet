@@ -25,7 +25,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { orderBy } from 'lodash';
 
 // Components
 import BalanceView from 'components/BalanceView';
@@ -37,24 +36,26 @@ import Modal from 'components/Modal';
 import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency } from 'selectors';
-import { depositsBalanceSelector } from 'selectors/balances';
+import { useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
 import { sum } from 'utils/bigNumber';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
+import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { formatPercentValue } from 'utils/format';
 
 // Types
-import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import { type Chain, type ChainRecord } from 'models/Chain';
-import type { FiatBalance } from 'models/Value';
+import type { SectionBase } from 'utils/types/react-native';
+import type { Chain } from 'models/Chain';
 
 // Local
-import ChainListHeader from '../items/ChainListHeader';
-import ServiceListItem from '../items/ServiceListItem';
+import { type DepositItem, useDepositsBalance, useDepositsAssets } from '../selectors/deposits';
+import ChainListHeader from '../components/ChainListHeader';
+import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
+import ServiceListItem from '../items/ServiceListItem';
 
 const aaveIcon = require('assets/images/apps/aave.png');
 const rariIcon = require('assets/images/rari_logo.png');
@@ -70,20 +71,20 @@ function DepositsTab() {
 
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const categoryBalance = useCategoryBalance();
-  const assets = useChainAssets();
+  const totalBalance = useDepositsBalance();
+  const assets = useDepositsAssets();
   const currency = useFiatCurrency();
   const chains = useSupportedChains();
 
-  const sections = chains.map((chain) => {
-    const items = getSectionItems(assets[chain] ?? []);
-    const balance = sum(items.map(item => item.value));
+  const sections: Section[] = chains.map((chain) => {
+    const items = assets[chain] ?? [];
+    const balance = sum(items.map((item) => item.value));
 
     return {
       key: chain,
       chain,
       balance,
-      data: showItemsPerChain[chain] ? items : [],
+      data: showItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
     };
   });
 
@@ -113,11 +114,11 @@ function DepositsTab() {
   const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
-    const { value, change } = categoryBalance;
+    const { value, change } = totalBalance;
     return (
       <ListHeader>
-        <BalanceView balance={value} style={styles.balanceView} />
-        {!!change && <FiatChangeView value={value} change={change} currency={currency} />}
+        <BalanceView balance={totalBalance.value} style={styles.balanceView} />
+        {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
       </ListHeader>
     );
   };
@@ -126,19 +127,15 @@ function DepositsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = ({ title, iconSource, value, change, service, showServiceTitle }: Item) => {
-    const subtitle = "Current APY: 2.04%";
-    return (
-      <AssetListItem
-        title={title}
-        subtitle={subtitle}
-        iconSource={iconSource}
-        value={value}
-        change={change}
-        serviceTitle={service}
-        showServiceTitle={showServiceTitle}
-      />
-    );
+  const renderItem = (headerListItem: HeaderListItem<DepositItem>) => {
+    if (headerListItem.type === 'header') {
+      return <ServiceListHeader title={headerListItem.key} />;
+    }
+
+    const { title, iconSource, value, change, currentApy } = headerListItem.item;
+    const formattedCurrencApy = formatPercentValue(currentApy);
+    const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
+    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
   };
 
   return (
@@ -159,82 +156,16 @@ function DepositsTab() {
 export default DepositsTab;
 
 type Section = {
-  ...SectionBase<Item>,
+  ...SectionBase<HeaderListItem<DepositItem>>,
   chain: Chain,
   balance: BigNumber,
-};
-
-type Item = {|
-  key: string,
-  service: string,
-  showServiceTitle?: boolean, // Controls whether to show service title header
-  title: string,
-  iconSource: ImageSource,
-  value: BigNumber,
-  change?: BigNumber,
-|};
-
-// Because we display three level data (chain -> service -> item) but SectionList supports only two levels, we need to handle service header at the level of list item
-export function getSectionItems(items: Item[]): Item[] {
-  const sortedItems = orderBy(items, ['service', 'value'], ['asc', 'desc']);
-  return sortedItems.map((item, index) => {
-    return sortedItems[index - 1]?.service !== item.service ? { ...item, showServiceTitle: true } : item;
-  });
-}
-
-const useCategoryBalance = (): FiatBalance => {
-  const value = useRootSelector(depositsBalanceSelector);
-  return { value: BigNumber(110), change: BigNumber(10) };
-};
-
-// PROVIDE REAL DATA HERE
-const useChainAssets = (): ChainRecord<Item[]> => {
-  const ethereum = [
-    {
-      key: 'rari-1',
-      title: 'Stable pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-    },
-    {
-      key: 'rari-2',
-      title: 'Yield pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(15),
-      change: BigNumber(5),
-    },
-    {
-      key: 'aave-1',
-      title: 'AAVE Pool 1',
-      service: 'Aave',
-      iconSource: aaveIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-    },
-  ];
-
-  const polygon = [
-    {
-      key: 'rari-3',
-      title: 'Stable pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-    },
-  ];
-
-  return { ethereum, polygon };
 };
 
 const styles = {
   balanceView: {
     marginBottom: spacing.extraSmall,
-  }
-}
+  },
+};
 
 const Container = styled.View`
   flex: 1;
