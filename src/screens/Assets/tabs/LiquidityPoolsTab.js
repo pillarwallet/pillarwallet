@@ -49,7 +49,12 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import { type DepositItem, useDepositsBalance, useDepositsAssets, useDepositApps } from '../selectors/deposits';
+import {
+  type LiquidityPoolItem,
+  useLiquidityPoolsBalance,
+  useLiquidityPoolAssets,
+  useLiquidityPoolApps,
+} from '../selectors/liquidityPools';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
@@ -57,8 +62,8 @@ import ServiceListItem from '../items/ServiceListItem';
 
 type FlagPerChain = { [Chain]: ?boolean };
 
-function DepositsTab() {
-  const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
+function LiquidityPoolsTab() {
+  const { t, tRoot } = useTranslationWithPrefix('assets.liquidityPools');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
@@ -66,9 +71,9 @@ function DepositsTab() {
 
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const totalBalance = useDepositsBalance();
+  const totalBalance = useLiquidityPoolsBalance();
   const sections = useSectionData(showItemsPerChain);
-  const apps = useDepositApps();
+  const apps = useLiquidityPoolApps();
   const currency = useFiatCurrency();
 
   const toggleShowItems = (chain: Chain) => {
@@ -79,12 +84,12 @@ function DepositsTab() {
 
   const navigateToServices = () => {
     Modal.open(() => (
-      <BottomModal title={t('deposit')}>
-        {apps.map(({ title, iconSource, navigationPath }) => (
+      <BottomModal title={t('addLiquidity')}>
+        {apps.map(({ title, iconUrl, navigationPath }) => (
           <ServiceListItem
             key={title}
             title={title}
-            iconSource={iconSource}
+            iconSource={{ uri: iconUrl }}
             onPress={() => navigation.navigate(navigationPath)}
           />
         ))}
@@ -92,7 +97,7 @@ function DepositsTab() {
     ));
   };
 
-  const buttons = [apps.length > 0 && { title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [apps.length > 0 && { title: t('addLiquidity'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -108,15 +113,17 @@ function DepositsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<DepositItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<LiquidityPoolItem>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconSource, value, change, currentApy } = headerListItem.item;
-    const formattedCurrencApy = formatPercentValue(currentApy);
+    const { title, iconUrl, value, change, poolShare } = headerListItem.item;
+    const formattedCurrencApy = formatPercentValue(poolShare);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
+    return (
+      <AssetListItem title={title} subtitle={subtitle} iconSource={{ uri: iconUrl }} value={value} change={change} />
+    );
   };
 
   return (
@@ -134,17 +141,17 @@ function DepositsTab() {
   );
 }
 
-export default DepositsTab;
+export default LiquidityPoolsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<DepositItem>>,
+  ...SectionBase<HeaderListItem<LiquidityPoolItem>>,
   chain: Chain,
   balance: BigNumber,
 };
 
 const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const assetsPerChain = useDepositsAssets();
+  const assetsPerChain = useLiquidityPoolAssets();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];

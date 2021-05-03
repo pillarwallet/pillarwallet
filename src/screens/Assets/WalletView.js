@@ -33,6 +33,7 @@ import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCate
 import WalletTab from './tabs/WalletTab';
 import DepositsTab from './tabs/DepositsTab';
 import InvestmentsTab from './tabs/InvestmentsTab';
+import LiquidityPoolsTab from './tabs/LiquidityPoolsTab';
 
 type Props = {|
   initialCategory: ?AssetCategory,
@@ -45,7 +46,7 @@ function WalletView({ initialCategory }: Props) {
     { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
     { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
     { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
-    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: DepositsTab },
+    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: DepositsTab },
   ];

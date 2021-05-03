@@ -19,8 +19,8 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation, SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
@@ -29,71 +29,99 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import BalanceView from 'components/BalanceView';
 import BottomModal from 'components/modern/BottomModal';
-import FiatValueView from 'components/modern/FiatValueView';
+import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 
-import { LENDING_ADD_DEPOSIT_FLOW } from 'constants/navigationConstants';
-
 // Selectors
-import { useRootSelector, useFiatCurrency } from 'selectors';
-import { depositsBalanceSelector } from 'selectors/balances';
+import { useFiatCurrency } from 'selectors';
+import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
+import { sum } from 'utils/bigNumber';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
+import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { formatPercentValue } from 'utils/format';
 
 // Types
-import type { SectionBase, ImageSource } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
-import { type Service, SERVICE } from 'models/Services';
-import type { FiatBalance } from 'models/Value';
+import type { SectionBase } from 'utils/types/react-native';
+import type { Chain } from 'models/Chain';
 
 // Local
-import SectionHeader from '../components/SectionHeader';
-import ServiceListItem from '../items/ServiceListItem';
+import {
+  type InvestmentItem,
+  useInvestmentsBalance,
+  useInvestmentAssets,
+  useInvestmentApps,
+} from '../selectors/investments';
+import ChainListHeader from '../components/ChainListHeader';
+import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
+import ServiceListItem from '../items/ServiceListItem';
 
-const poolTogetherIcon = require('assets/images/apps/pool_together.png');
+type FlagPerChain = { [Chain]: ?boolean };
 
 function InvestmentsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.investments');
   const navigation = useNavigation();
+  const safeArea = useSafeAreaInsets();
 
-  const balance = useBalance();
-  const sections = useAssetSections();
+  const { chain: initialChain } = navigation.state.params;
+
+  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
+
+  const totalBalance = useInvestmentsBalance();
+  const sections = useSectionData(showItemsPerChain);
+  const apps = useInvestmentApps();
   const currency = useFiatCurrency();
 
-  const safeArea = useSafeAreaInsets();
+  const toggleShowItems = (chain: Chain) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    // $FlowFixMe: type inference limitation
+    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
+  };
 
   const navigateToServices = () => {
     Modal.open(() => (
       <BottomModal title={t('invest')}>
-        <ServiceListItem
-          title={tRoot('services.poolTogether')}
-          iconSource={poolTogetherIcon}
-          onPress={() => navigation.navigate(LENDING_ADD_DEPOSIT_FLOW)}
-        />
+        {apps.map(({ title, iconSource, navigationPath }) => (
+          <ServiceListItem
+            key={title}
+            title={title}
+            iconSource={iconSource}
+            onPress={() => navigation.navigate(navigationPath)}
+          />
+        ))}
       </BottomModal>
     ));
   };
 
-  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [apps.length > 0 && { title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
+    const { value, change } = totalBalance;
     return (
       <ListHeader>
-        <BalanceView balance={balance.value} />
-        {!!balance.change && <FiatValueView value={balance.change} currency={currency} mode="change" />}
+        <BalanceView balance={totalBalance.value} style={styles.balanceView} />
+        {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
       </ListHeader>
     );
   };
 
-  const renderSectionHeader = ({ service, chain }: Section) => {
-    return <SectionHeader title={service} chain={chain} />;
+  const renderSectionHeader = ({ chain, balance }: Section) => {
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = ({ title, iconSource, value, change }: Item) => {
-    return <AssetListItem title={title} iconSource={iconSource} value={value} change={change} serviceTitle="Liquidity Pool" />;
+  const renderItem = (headerListItem: HeaderListItem<InvestmentItem>) => {
+    if (headerListItem.type === 'header') {
+      return <ServiceListHeader title={headerListItem.key} />;
+    }
+
+    const { title, iconSource, value, change, currentApy } = headerListItem.item;
+    const formattedCurrencApy = formatPercentValue(currentApy);
+    const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
+    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
   };
 
   return (
@@ -114,33 +142,32 @@ function InvestmentsTab() {
 export default InvestmentsTab;
 
 type Section = {
-  ...SectionBase<Item>,
+  ...SectionBase<HeaderListItem<InvestmentItem>>,
   chain: Chain,
-  service: Service,
+  balance: BigNumber,
 };
 
-type Item = {|
-  key: string,
-  title: string,
-  iconSource: ImageSource,
-  value: BigNumber,
-  change?: BigNumber,
-|};
+const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+  const chains = useSupportedChains();
+  const assetsPerChain = useInvestmentAssets();
 
-const useBalance = (): FiatBalance => {
-  const value = useRootSelector(depositsBalanceSelector);
-  return { value };
+  return chains.map((chain) => {
+    const items = assetsPerChain[chain] ?? [];
+    const balance = sum(items.map((item) => item.value));
+
+    return {
+      key: chain,
+      chain,
+      balance,
+      data: showChainAssets[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
+    };
+  });
 };
 
-const useAssetSections = (): Section[] => {
-  const poolTogether = {
-    key: `${SERVICE.POOL_TOGETHER}-${CHAIN.ETHEREUM}`,
-    chain: CHAIN.ETHEREUM,
-    service: SERVICE.POOL_TOGETHER,
-    data: [{ key: 'rari-1', title: 'Stable pool', iconSource: poolTogetherIcon, value: BigNumber(10), change: BigNumber(1.2) }],
-  };
-
-  return [poolTogether].filter((item) => !!item.data.length);
+const styles = {
+  balanceView: {
+    marginBottom: spacing.extraSmall,
+  },
 };
 
 const Container = styled.View`
@@ -149,5 +176,5 @@ const Container = styled.View`
 
 const ListHeader = styled.View`
   align-items: center;
-  margin: ${spacing.largePlus}px 0;
+  margin: ${spacing.largePlus}px 0 ${spacing.small}px;
 `;
