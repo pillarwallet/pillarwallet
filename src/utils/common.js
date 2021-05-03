@@ -277,19 +277,13 @@ export const commify = (
   return formatedValue;
 };
 
-export const formatFiatValue = (
-  value: number | string,
-  options?: { skipCents?: boolean, shouldCommify?: boolean },
-): string => {
-  const num = new BigNumber(value).toFixed(2);
-  const formatedValue = options?.skipCents || options?.shouldCommify ? commify(value, options) : formatBigAmount(num);
+export const formatFiatValue = (value: number | string, options?: { skipCents?: boolean }): string => {
+  const formatedValue = commify(value, options);
   return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
 };
 
 export const formatFiat = (
-  value: number | string,
-  baseFiatCurrency?: ?string,
-  options?: { skipCents?: boolean, shouldCommify?: boolean },
+  value: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
 ): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   return `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
