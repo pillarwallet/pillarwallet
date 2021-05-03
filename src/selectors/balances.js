@@ -214,3 +214,6 @@ export const liquidityPoolsBalanceSelector: (RootReducerState) => BigNumber = cr
   },
 );
 
+export const rewardsBalanceSelector: (RootReducerState) => BigNumber = () => {
+  return BigNumber(0);
+};

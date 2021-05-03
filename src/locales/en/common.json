@@ -611,6 +611,9 @@
     },
     "liquidityPools": {
       "addLiquidity": "Add liquidity"
+    },
+    "rewards": {
+      "availableToClaim": "Available to claim"
     }
   },
 

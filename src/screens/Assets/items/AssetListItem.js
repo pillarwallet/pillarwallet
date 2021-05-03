@@ -32,6 +32,7 @@ import Text from 'components/modern/Text';
 import { useFiatCurrency } from 'selectors';
 
 // Utils
+import { useThemedImages } from 'utils/images';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -41,7 +42,7 @@ import type { ImageSource } from 'utils/types/react-native';
 type Props = {|
   title: ?string,
   subtitle?: ?string,
-  iconSource: ImageSource,
+  iconSource: ?ImageSource,
   value: BigNumber,
   change?: BigNumber,
   onPress?: () => mixed,
@@ -51,9 +52,11 @@ function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: 
   const colors = useThemeColors();
   const currency = useFiatCurrency();
 
+  const { genericToken } = useThemedImages();
+
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <IconContainer>{!!iconSource && <IconImage source={iconSource} />}</IconContainer>
+      <IconContainer><IconImage source={iconSource ?? genericToken} /></IconContainer>
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
