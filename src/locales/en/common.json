@@ -86,7 +86,7 @@
     "collectibles": "Collectibles"
   },
 
-  "services": {
+  "apps": {
     "aave": "Aave",
     "rari": "Rari Capital",
     "poolTogether": "Pool Together"

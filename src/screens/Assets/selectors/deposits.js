@@ -19,6 +19,10 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { useTranslation } from 'translations/translate';
+
+// Constants
+import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -32,6 +36,10 @@ import type { FiatBalance } from 'models/Value';
 const aaveIcon = require('assets/images/apps/aave.png');
 const rariIcon = require('assets/images/rari_logo.png');
 
+export function useDepositsBalance(): FiatBalance {
+  const value = useRootSelector(depositsBalanceSelector);
+  return { value };
+}
 export type DepositItem = {|
   key: string,
   service: string,
@@ -42,12 +50,8 @@ export type DepositItem = {|
   currentApy?: BigNumber,
 |};
 
-export function useDepositsBalance(): FiatBalance {
-  const value = useRootSelector(depositsBalanceSelector);
-  return { value };
-}
 
-// TODO: provide real data
+// TODO: provide real assets data
 export function useDepositsAssets(): ChainRecord<DepositItem[]> {
   const ethereum = [
     {
@@ -92,4 +96,20 @@ export function useDepositsAssets(): ChainRecord<DepositItem[]> {
   ];
 
   return { ethereum, polygon };
+}
+
+export type DepositApp = {|
+  title: string,
+  subtitle?: string,
+  iconSource: ImageSource,
+  navigationPath: string,
+|};
+
+export function useDepositApps(): DepositApp[] {
+  const { t } = useTranslation();
+
+  return [
+    { title: t('apps.aave'), iconSource: aaveIcon, navigationPath: LENDING_ADD_DEPOSIT_FLOW },
+    { title: t('apps.rari'), iconSource: rariIcon, navigationPath: RARI_DEPOSIT },
+  ];
 }

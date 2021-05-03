@@ -33,8 +33,6 @@ import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 
-import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
-
 // Selectors
 import { useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
@@ -51,14 +49,11 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import { type DepositItem, useDepositsBalance, useDepositsAssets } from '../selectors/deposits';
+import { type DepositItem, useDepositsBalance, useDepositsAssets, useDepositApps } from '../selectors/deposits';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
 import ServiceListItem from '../items/ServiceListItem';
-
-const aaveIcon = require('assets/images/apps/aave.png');
-const rariIcon = require('assets/images/rari_logo.png');
 
 type FlagPerChain = { [Chain]: ?boolean };
 
@@ -72,41 +67,27 @@ function DepositsTab() {
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
   const totalBalance = useDepositsBalance();
-  const assets = useDepositsAssets();
+  const sections = useSectionData(showItemsPerChain);
+  const apps = useDepositApps();
   const currency = useFiatCurrency();
-  const chains = useSupportedChains();
-
-  const sections: Section[] = chains.map((chain) => {
-    const items = assets[chain] ?? [];
-    const balance = sum(items.map((item) => item.value));
-
-    return {
-      key: chain,
-      chain,
-      balance,
-      data: showItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
-    };
-  });
 
   const toggleShowItems = (chain: Chain) => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    // $FlowFixMe: flow is able to handle this
+    // $FlowFixMe: type inference limitation
     setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
   };
 
   const navigateToServices = () => {
     Modal.open(() => (
       <BottomModal title={t('deposit')}>
-        <ServiceListItem
-          title={tRoot('services.aave')}
-          iconSource={aaveIcon}
-          onPress={() => navigation.navigate(LENDING_ADD_DEPOSIT_FLOW)}
-        />
-        <ServiceListItem
-          title={tRoot('services.rari')}
-          iconSource={rariIcon}
-          onPress={() => navigation.navigate(RARI_DEPOSIT)}
-        />
+        {apps.map(({ title, iconSource, navigationPath }) => (
+          <ServiceListItem
+            key={title}
+            title={title}
+            iconSource={iconSource}
+            onPress={() => { console.log("PRESS"); navigation.navigate(navigationPath); }}
+          />
+        ))}
       </BottomModal>
     ));
   };
@@ -159,6 +140,23 @@ type Section = {
   ...SectionBase<HeaderListItem<DepositItem>>,
   chain: Chain,
   balance: BigNumber,
+};
+
+const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+  const chains = useSupportedChains();
+  const assetsPerChain = useDepositsAssets();
+
+  return chains.map((chain) => {
+    const items = assetsPerChain[chain] ?? [];
+    const balance = sum(items.map((item) => item.value));
+
+    return {
+      key: chain,
+      chain,
+      balance,
+      data: showChainAssets[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
+    };
+  });
 };
 
 const styles = {
