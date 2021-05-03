@@ -18,13 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Platform } from 'react-native';
+import * as React from 'react';
+import { Platform, LayoutAnimation } from 'react-native';
 
 // Configs
 import { getEnv } from 'configs/envConfig';
 
+// Utils
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
+
 // Types
 import type { Asset } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 type AssetDetailsContext = {|
   accountAddress: ?string,
@@ -33,10 +38,7 @@ type AssetDetailsContext = {|
 /**
  * Extracted from AssetList.js. Asset screen expects specific but untyped format of data as navigation param.
  */
-export function buildAssetDataNavigationParam(
-  asset: Asset,
-  { accountAddress }: AssetDetailsContext,
-) {
+export function buildAssetDataNavigationParam(asset: Asset, { accountAddress }: AssetDetailsContext) {
   const { symbol, name, iconUrl, decimals, iconMonoUrl, patternUrl, wallpaperUrl } = asset;
 
   const fullIconMonoUrl = iconMonoUrl ? `${getEnv().SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
@@ -57,4 +59,21 @@ export function buildAssetDataNavigationParam(
     description: asset.description,
     decimals,
   };
+}
+
+export type FlagPerChain = { [Chain]: ?boolean };
+
+export function useExpandItemsPerChain(initialChain?: Chain) {
+  const [expandItemsPerChain, setExpandItemsPerChain] = React.useState<FlagPerChain>(
+    // $FlowFixMe: type inference limitation
+    initialChain ? { [initialChain]: true } : {},
+  );
+
+  const toggleExpandItems = (chain: Chain) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    // $FlowFixMe: type inference limitation
+    setExpandItemsPerChain({ ...expandItemsPerChain, [chain]: !expandItemsPerChain[chain] });
+  };
+
+  return { expandItemsPerChain, toggleExpandItems };
 }

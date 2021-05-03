@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation, SectionList } from 'react-native';
+import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
@@ -44,7 +44,6 @@ import { useSupportedChains } from 'selectors/smartWallet';
 // Utils
 import { getRate, getAssetFromRegistry } from 'utils/assets';
 import { sum } from 'utils/bigNumber';
-import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -54,27 +53,21 @@ import type { Chain } from 'models/Chain';
 // Local
 import ChainListHeader from '../components/ChainListHeader';
 import WalletListItem from './WalletListItem';
-import { buildAssetDataNavigationParam } from '../utils';
+import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
 import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
 
-type FlagPerChain = { [Chain]: ?boolean };
-
 function WalletTab() {
-  const { t, tRoot } = useTranslationWithPrefix('assets.wallet');
+  const { tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
-  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const toggleShowItems = (chain: Chain) => {
-    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    // $FlowFixMe: type inference limitation
-    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
-  };
+  const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useWalletBalance();
-  const sections = useSectionData(showItemsPerChain);
+  const sections = useSectionData(expandItemsPerChain);
+  const currency = useFiatCurrency();
   const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
@@ -101,7 +94,7 @@ function WalletTab() {
   };
 
   const renderSectionHeader = ({ chain, balance }: Section) => {
-    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
   const renderItem = (item: WalletItem) => {
@@ -159,7 +152,7 @@ type Section = {
   balance: BigNumber,
 };
 
-const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useWalletAssets();
   const rates = useRates();
@@ -168,7 +161,7 @@ const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
     const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
-    const data = showChainAssets[chain] ? items : [];
+    const data = expandItemsPerChain[chain] ? items : [];
     return { key: chain, chain, balance, data };
   });
 };

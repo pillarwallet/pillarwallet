@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation, SectionList } from 'react-native';
+import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
@@ -39,7 +39,6 @@ import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
 import { sum } from 'utils/bigNumber';
-import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { formatPercentValue } from 'utils/format';
@@ -49,18 +48,17 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
+import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
+import ChainListHeader from '../components/ChainListHeader';
+import ServiceListHeader from '../components/ServiceListHeader';
+import AssetListItem from '../items/AssetListItem';
+import ServiceListItem from '../items/ServiceListItem';
 import {
   type LiquidityPoolItem,
   useLiquidityPoolsBalance,
   useLiquidityPoolAssets,
   useLiquidityPoolApps,
 } from './selectors';
-import ChainListHeader from '../components/ChainListHeader';
-import ServiceListHeader from '../components/ServiceListHeader';
-import AssetListItem from '../items/AssetListItem';
-import ServiceListItem from '../items/ServiceListItem';
-
-type FlagPerChain = { [Chain]: ?boolean };
 
 function LiquidityPoolsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.liquidityPools');
@@ -68,19 +66,12 @@ function LiquidityPoolsTab() {
   const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
-
-  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
+  const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useLiquidityPoolsBalance();
-  const sections = useSectionData(showItemsPerChain);
+  const sections = useSectionData(expandItemsPerChain);
   const apps = useLiquidityPoolApps();
   const currency = useFiatCurrency();
-
-  const toggleShowItems = (chain: Chain) => {
-    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    // $FlowFixMe: type inference limitation
-    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
-  };
 
   const navigateToServices = () => {
     Modal.open(() => (
@@ -110,7 +101,7 @@ function LiquidityPoolsTab() {
   };
 
   const renderSectionHeader = ({ chain, balance }: Section) => {
-    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
   const renderItem = (headerListItem: HeaderListItem<LiquidityPoolItem>) => {
@@ -149,7 +140,7 @@ type Section = {
   balance: BigNumber,
 };
 
-const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useLiquidityPoolAssets();
 
@@ -161,7 +152,7 @@ const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
       key: chain,
       chain,
       balance,
-      data: showChainAssets[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
+      data: expandItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
     };
   });
 };
