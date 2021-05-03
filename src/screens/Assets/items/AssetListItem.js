@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import FiatValueView from 'components/modern/FiatValueView';
+import FiatChangeView from 'components/modern/FiatChangeView';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
@@ -63,7 +64,7 @@ function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: 
 
       <RightAddOn>
         <FiatValueView value={value} currency={currency} variant="medium" />
-        <FiatValueView value={change} currency={currency} mode="change" />
+        <FiatChangeView value={value} change={change} currency={currency} />
       </RightAddOn>
     </TouchableContainer>
   );

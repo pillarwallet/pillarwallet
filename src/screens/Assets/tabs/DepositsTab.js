@@ -113,10 +113,10 @@ function DepositsTab() {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconSource, value, change, currentApy } = headerListItem.item;
+    const { title, iconSource, value, interests, currentApy } = headerListItem.item;
     const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
+    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={interests} />;
   };
 
   return (

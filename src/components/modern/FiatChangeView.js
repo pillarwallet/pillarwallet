@@ -45,12 +45,12 @@ function FiatChangeView({ value, change, currency, variant = 'regular', color, s
 
   if (!change) return null;
 
-  const intialBalance = value?.minus(change);
+  const initialBalance = value?.minus(change);
   const changeColor = color ?? (change.gte(0) ? colors?.positive : colors?.text);
 
   return (
     <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
-      {formatFiatChangeExtended(change, intialBalance, currency)}
+      {formatFiatChangeExtended(change, initialBalance, currency)}
     </Text>
   );
 }

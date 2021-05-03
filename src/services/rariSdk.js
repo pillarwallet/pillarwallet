@@ -60,3 +60,15 @@ export const fetchPoolCurrentApy = async (type: RariPool): Promise<BigNumber> =>
 
 export const usePoolCurrentApy = (type: RariPool) =>
   useQuery(['Rari', type, 'CurrentApy'], () => fetchPoolCurrentApy(type));
+
+export const usePoolCurrentApys = () => {
+  const stableApyQuery = usePoolCurrentApy(RARI_POOLS.STABLE_POOL);
+  const yieldApyQuery = usePoolCurrentApy(RARI_POOLS.YIELD_POOL);
+  const ethereumApyQuery = usePoolCurrentApy(RARI_POOLS.ETH_POOL);
+
+  return {
+    [RARI_POOLS.STABLE_POOL]: stableApyQuery.data,
+    [RARI_POOLS.YIELD_POOL]: yieldApyQuery.data,
+    [RARI_POOLS.ETH_POOL]: ethereumApyQuery.data,
+  };
+};

@@ -23,10 +23,19 @@ import { useTranslation } from 'translations/translate';
 
 // Constants
 import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, useRates, useFiatCurrency } from 'selectors';
 import { depositsBalanceSelector } from 'selectors/balances';
+
+// Services
+import { usePoolCurrentApys } from 'services/rariSdk';
+
+// Utils
+import { convertUSDToFiat, getBalanceInFiat } from 'utils/assets';
+import { wrapBigNumber } from 'utils/common';
+import { getImageUrl } from 'utils/images';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
@@ -46,56 +55,72 @@ export type DepositItem = {|
   title: string,
   iconSource: ImageSource,
   value: BigNumber,
-  change?: BigNumber,
+  interests?: BigNumber,
   currentApy?: BigNumber,
 |};
 
 
 // TODO: provide real assets data
 export function useDepositsAssets(): ChainRecord<DepositItem[]> {
-  const ethereum = [
-    {
-      key: 'rari-1',
-      title: 'Stable pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-      currentApy: BigNumber(0.012),
-    },
-    {
-      key: 'rari-2',
-      title: 'Yield pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(15),
-      change: BigNumber(5),
-      currentApy: BigNumber(0.023),
-    },
-    {
-      key: 'aave-1',
-      title: 'AAVE Pool 1',
-      service: 'Aave',
-      iconSource: aaveIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-      currentApy: BigNumber(0.034),
-    },
-  ];
+  const aaveDeposits = useAaveDeposits();
+  const rariDeposits = useRariDeposits();
+  const ethereum = [...aaveDeposits, ...rariDeposits];
+  return { ethereum };
+}
 
-  const polygon = [
-    {
-      key: 'rari-3',
-      title: 'Stable pool',
-      service: 'Rari',
-      iconSource: rariIcon,
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-      currentApy: BigNumber(0.045),
-    },
-  ];
+function useAaveDeposits(): DepositItem[] {
+  const { t } = useTranslation();
 
-  return { ethereum, polygon };
+  const deposits = useRootSelector((root) => root.lending.depositedAssets);
+  const rates = useRates();
+  const currency = useFiatCurrency();
+
+  return deposits
+    .map((deposit) => {
+      const value = getBalanceInFiat(currency, deposit.currentBalance, rates, deposit.symbol);
+      const interests = getBalanceInFiat(currency, deposit.earnedAmount, rates, deposit.symbol);
+      return {
+        key: deposit.aaveTokenAddress,
+        title: deposit.name,
+        service: t('apps.aave'),
+        iconSource: aaveIcon,
+        value: wrapBigNumber(value),
+        interests: wrapBigNumber(interests),
+        currentApy: BigNumber(deposit.earnInterestRate / 100),
+      };
+    });
+}
+
+function useRariDeposits(): DepositItem[] {
+  const { t } = useTranslation();
+
+  const deposits = useRootSelector((root) => root.rari.userDepositInUSD);
+  const userInterests = useRootSelector((root) => root.rari.userInterests);
+  const rates = useRates();
+  const currency = useFiatCurrency();
+  const currentApys = usePoolCurrentApys();
+
+  const titles = {
+    [RARI_POOLS.STABLE_POOL]: t('rariContent.depositsList.stablePool'),
+    [RARI_POOLS.YIELD_POOL]: t('rariContent.depositsList.yieldPool'),
+    [RARI_POOLS.ETH_POOL]: t('rariContent.depositsList.ethPool'),
+  };
+
+  return Object.keys(deposits)
+    .filter((pool) => !!deposits[pool])
+    .map((pool) => {
+      const fiatValue = convertUSDToFiat(deposits[pool], rates, currency);
+      const fiatChange = convertUSDToFiat(userInterests[pool]?.interests ?? 0, rates, currency);
+      return {
+        key: pool,
+        title: titles[pool],
+        service: t('apps.rari'),
+        iconSource: rariIcon,
+        value: BigNumber(fiatValue),
+        interests: BigNumber(fiatChange),
+        currentApy: currentApys[pool],
+      };
+    });
 }
 
 export type DepositApp = {|
