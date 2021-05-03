@@ -19,10 +19,11 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import { LENDING_ADD_DEPOSIT_FLOW, RARI_DEPOSIT } from 'constants/navigationConstants';
+import { LENDING_CHOOSE_DEPOSIT, LENDING_VIEW_DEPOSITED_ASSET, RARI_DEPOSIT } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
 // Selectors
@@ -35,7 +36,6 @@ import { usePoolCurrentApys } from 'services/rariSdk';
 // Utils
 import { convertUSDToFiat, getBalanceInFiat } from 'utils/assets';
 import { wrapBigNumber } from 'utils/common';
-import { getImageUrl } from 'utils/images';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
@@ -57,6 +57,7 @@ export type DepositItem = {|
   value: BigNumber,
   interests?: BigNumber,
   currentApy?: BigNumber,
+  navigateAction?: () => mixed,
 |};
 
 
@@ -70,6 +71,7 @@ export function useDepositsAssets(): ChainRecord<DepositItem[]> {
 
 function useAaveDeposits(): DepositItem[] {
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const deposits = useRootSelector((root) => root.lending.depositedAssets);
   const rates = useRates();
@@ -87,12 +89,14 @@ function useAaveDeposits(): DepositItem[] {
         value: wrapBigNumber(value),
         interests: wrapBigNumber(interests),
         currentApy: BigNumber(deposit.earnInterestRate / 100),
+        navigateAction: () => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset: deposit }),
       };
     });
 }
 
 function useRariDeposits(): DepositItem[] {
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const deposits = useRootSelector((root) => root.rari.userDepositInUSD);
   const userInterests = useRootSelector((root) => root.rari.userInterests);
@@ -119,6 +123,7 @@ function useRariDeposits(): DepositItem[] {
         value: BigNumber(fiatValue),
         interests: BigNumber(fiatChange),
         currentApy: currentApys[pool],
+        navigateAction: () => navigation.navigate(RARI_DEPOSIT),
       };
     });
 }
@@ -134,7 +139,7 @@ export function useDepositApps(): DepositApp[] {
   const { t } = useTranslation();
 
   return [
-    { title: t('apps.aave'), iconSource: aaveIcon, navigationPath: LENDING_ADD_DEPOSIT_FLOW },
+    { title: t('apps.aave'), iconSource: aaveIcon, navigationPath: LENDING_CHOOSE_DEPOSIT },
     { title: t('apps.rari'), iconSource: rariIcon, navigationPath: RARI_DEPOSIT },
   ];
 }
