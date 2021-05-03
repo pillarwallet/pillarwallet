@@ -39,6 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase } from 'utils/wallet';
+import { log } from 'utils/logger';
 
 // services
 import { navigate } from 'services/navigation';
@@ -142,6 +143,7 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
 export const initRecoveryPortalWalletRecoverAction = () => {
   return async (dispatch: Dispatch) => {
     // make sure everything onboarding wallet and smart wallet service are reset
+    log.info('SET_ONBOARDING_WALLET: smart wallet service are reset');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     await smartWalletService.reset();
 
@@ -158,6 +160,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
 
     // set temporary smart wallet and subscribe for events
     await smartWalletService.init(privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
+    log.info('SET_ONBOARDING_WALLET: set up of temporary smart wallet');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };

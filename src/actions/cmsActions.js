@@ -26,6 +26,7 @@ import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
 import type { CmsData } from 'models/CMSData';
 import { getTutorialDataObject, isValidTutorialData } from 'utils/cms';
+import { log } from 'utils/logger';
 
 const {
   ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
@@ -40,12 +41,17 @@ export const getTutorialDataAction = () => async (dispatch: Dispatch, getState: 
   try {
     const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
     const tutorialData = getTutorialDataObject(response);
-    if (!isValidTutorialData(tutorialData)) return;
+    if (!isValidTutorialData(tutorialData)) {
+      log.info('user got invalid tutorial data');
+      return;
+    }
     dispatch({
       type: SET_TUTORIAL_DATA,
       payload: tutorialData,
     });
+    log.info('user tutorial data is set');
   } catch (e) {
     reportErrorLog(e);
+    log.error(e);
   }
 };
