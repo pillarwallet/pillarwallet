@@ -50,19 +50,22 @@ export function useRewardsAssets(): ChainRecord<RewardItem[]> {
       service: 'Uniswap v2 ETH/PLR',
       title: 'Pillar',
       iconUrl: getImageUrl('asset/images/tokens/icons/plrColor.png', 3),
-      value: BigNumber(259.4),
+      value: BigNumber(10000),
+      symbol: 'PLR',
     },
     {
       key: 'ocean-1',
       service: 'Ocean Protocol',
       title: 'Fantastic Ray Pool',
-      value: BigNumber(50.4),
+      value: BigNumber(67),
+      symbol: 'OCEAN',
     },
     {
       key: 'rari-1',
       service: 'Rari Capital',
       title: 'Rari Governance Token',
-      value: BigNumber(65.6),
+      value: BigNumber(254),
+      symbol: 'RGT',
     },
   ];
   return { ethereum };
