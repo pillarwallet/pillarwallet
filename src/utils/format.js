@@ -132,7 +132,7 @@ export function formatValueWithUnit(value: ?BigNumber | number, options?: Format
  * Common fiat formatting options:
  * @prop exact: whether to show the exact value, by default false, meaning it will use K, M, B units.
  */
- type FormatFiatOptions = {|
+type FormatFiatOptions = {|
   exact: boolean, // default: false
 |};
 
@@ -159,7 +159,6 @@ export function formatFiatChange(change: ?BigNumber, currency?: string, options?
     : t('negativeValue', { value: formattedAbsValue });
 }
 
-
 /**
  * Formats profit as `+10.00% ($100.00)`.
  *
@@ -176,7 +175,7 @@ export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?Bi
   // Special case missing/incorrect/negative balance.
   if (!initialBalance || !initialBalance.isFinite() || !initialBalance.gte(0)) return formattedChangeInFiat;
 
-  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance));
+  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance), { stripTrailingZeros: true });
 
   if (formattedChangeInFiat && formattedChangeInPercent) {
     return `${formattedChangeInPercent} (${formattedChangeInFiat})`;

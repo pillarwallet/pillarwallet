@@ -49,12 +49,7 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import {
-  type InvestmentItem,
-  useInvestmentsBalance,
-  useInvestmentAssets,
-  useInvestmentApps,
-} from '../selectors/investments';
+import { type DepositItem, useDepositsBalance, useDepositsAssets, useDepositApps } from './selectors';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
@@ -62,8 +57,8 @@ import ServiceListItem from '../items/ServiceListItem';
 
 type FlagPerChain = { [Chain]: ?boolean };
 
-function InvestmentsTab() {
-  const { t, tRoot } = useTranslationWithPrefix('assets.investments');
+function DepositsTab() {
+  const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
@@ -71,9 +66,9 @@ function InvestmentsTab() {
 
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const totalBalance = useInvestmentsBalance();
+  const totalBalance = useDepositsBalance();
   const sections = useSectionData(showItemsPerChain);
-  const apps = useInvestmentApps();
+  const apps = useDepositApps();
   const currency = useFiatCurrency();
 
   const toggleShowItems = (chain: Chain) => {
@@ -84,7 +79,7 @@ function InvestmentsTab() {
 
   const navigateToServices = () => {
     Modal.open(() => (
-      <BottomModal title={t('invest')}>
+      <BottomModal title={t('deposit')}>
         {apps.map(({ title, iconSource, navigationPath }) => (
           <ServiceListItem
             key={title}
@@ -97,7 +92,7 @@ function InvestmentsTab() {
     ));
   };
 
-  const buttons = [apps.length > 0 && { title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [apps.length > 0 && { title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -113,15 +108,24 @@ function InvestmentsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<InvestmentItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<DepositItem>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconSource, value, change, currentApy } = headerListItem.item;
+    const { title, iconSource, value, interests, currentApy, navigateAction } = headerListItem.item;
     const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
+    return (
+      <AssetListItem
+        title={title}
+        subtitle={subtitle}
+        iconSource={iconSource}
+        value={value}
+        change={interests}
+        onPress={navigateAction}
+      />
+    );
   };
 
   return (
@@ -139,17 +143,17 @@ function InvestmentsTab() {
   );
 }
 
-export default InvestmentsTab;
+export default DepositsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<InvestmentItem>>,
+  ...SectionBase<HeaderListItem<DepositItem>>,
   chain: Chain,
   balance: BigNumber,
 };
 
 const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const assetsPerChain = useInvestmentAssets();
+  const assetsPerChain = useDepositsAssets();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];

@@ -49,12 +49,7 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import {
-  type LiquidityPoolItem,
-  useLiquidityPoolsBalance,
-  useLiquidityPoolAssets,
-  useLiquidityPoolApps,
-} from '../selectors/liquidityPools';
+import { type InvestmentItem, useInvestmentsBalance, useInvestmentAssets, useInvestmentApps } from './selectors';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
 import AssetListItem from '../items/AssetListItem';
@@ -62,8 +57,8 @@ import ServiceListItem from '../items/ServiceListItem';
 
 type FlagPerChain = { [Chain]: ?boolean };
 
-function LiquidityPoolsTab() {
-  const { t, tRoot } = useTranslationWithPrefix('assets.liquidityPools');
+function InvestmentsTab() {
+  const { t, tRoot } = useTranslationWithPrefix('assets.investments');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
@@ -71,9 +66,9 @@ function LiquidityPoolsTab() {
 
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
-  const totalBalance = useLiquidityPoolsBalance();
+  const totalBalance = useInvestmentsBalance();
   const sections = useSectionData(showItemsPerChain);
-  const apps = useLiquidityPoolApps();
+  const apps = useInvestmentApps();
   const currency = useFiatCurrency();
 
   const toggleShowItems = (chain: Chain) => {
@@ -84,12 +79,12 @@ function LiquidityPoolsTab() {
 
   const navigateToServices = () => {
     Modal.open(() => (
-      <BottomModal title={t('addLiquidity')}>
-        {apps.map(({ title, iconUrl, navigationPath }) => (
+      <BottomModal title={t('invest')}>
+        {apps.map(({ title, iconSource, navigationPath }) => (
           <ServiceListItem
             key={title}
             title={title}
-            iconSource={{ uri: iconUrl }}
+            iconSource={iconSource}
             onPress={() => navigation.navigate(navigationPath)}
           />
         ))}
@@ -97,7 +92,7 @@ function LiquidityPoolsTab() {
     ));
   };
 
-  const buttons = [apps.length > 0 && { title: t('addLiquidity'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [apps.length > 0 && { title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -113,17 +108,15 @@ function LiquidityPoolsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<LiquidityPoolItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<InvestmentItem>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change, poolShare } = headerListItem.item;
-    const formattedCurrencApy = formatPercentValue(poolShare);
+    const { title, iconSource, value, change, currentApy } = headerListItem.item;
+    const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return (
-      <AssetListItem title={title} subtitle={subtitle} iconSource={{ uri: iconUrl }} value={value} change={change} />
-    );
+    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
   };
 
   return (
@@ -141,17 +134,17 @@ function LiquidityPoolsTab() {
   );
 }
 
-export default LiquidityPoolsTab;
+export default InvestmentsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<LiquidityPoolItem>>,
+  ...SectionBase<HeaderListItem<InvestmentItem>>,
   chain: Chain,
   balance: BigNumber,
 };
 
 const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const assetsPerChain = useLiquidityPoolAssets();
+  const assetsPerChain = useInvestmentAssets();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];

@@ -30,10 +30,10 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
 // Local
-import WalletTab from './tabs/WalletTab';
-import DepositsTab from './tabs/DepositsTab';
-import InvestmentsTab from './tabs/InvestmentsTab';
-import LiquidityPoolsTab from './tabs/LiquidityPoolsTab';
+import WalletTab from './wallet/WalletTab';
+import DepositsTab from './deposits/DepositsTab';
+import InvestmentsTab from './investments/InvestmentsTab';
+import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
 import RewardsTab from './rewards/RewardsTab';
 
 type Props = {|

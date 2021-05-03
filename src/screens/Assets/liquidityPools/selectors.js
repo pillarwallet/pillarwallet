@@ -36,6 +36,7 @@ export function useLiquidityPoolsBalance(): FiatBalance {
   const value = useRootSelector(liquidityPoolsBalanceSelector);
   return { value };
 }
+
 export type LiquidityPoolItem = {|
   key: string,
   service: string,

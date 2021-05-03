@@ -60,7 +60,6 @@ function RewardsTab() {
   const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
-
   const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
 
   const totalBalance = useRewardsBalance();

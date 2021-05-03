@@ -19,59 +19,70 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation, SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import AddFundsModal from 'components/AddFundsModal';
-import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
+import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import WalletAddress from 'components/WalletAddress';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Contants
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
-import { visibleActiveAccountAssetsWithBalanceSelector, assetRegistrySelector } from 'selectors/assets';
-import { walletBalanceSelector } from 'selectors/balances';
+import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { assetRegistrySelector } from 'selectors/assets';
+import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
-import { defaultSortAssetOptions, getAssetFromRegistry } from 'utils/assets';
+import { getRate, getAssetFromRegistry } from 'utils/assets';
+import { sum } from 'utils/bigNumber';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import type { Chain, ChainRecord } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 
 // Local
-import SectionHeader from '../components/SectionHeader';
+import ChainListHeader from '../components/ChainListHeader';
+import WalletListItem from './WalletListItem';
 import { buildAssetDataNavigationParam } from '../utils';
+import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
+
+type FlagPerChain = { [Chain]: ?boolean };
 
 function WalletTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
+  const safeArea = useSafeAreaInsets();
 
-  const balance = useRootSelector(walletBalanceSelector);
-  const items = useChainItems();
+  const { chain: initialChain } = navigation.state.params;
+  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
+
+  const toggleShowItems = (chain: Chain) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    // $FlowFixMe: type inference limitation
+    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
+  };
+
+  const totalBalance = useWalletBalance();
+  const sections = useSectionData(showItemsPerChain);
   const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const safeArea = useSafeAreaInsets();
-
-  const hasPositiveBalance = balance.gt(0);
-
-  const navigateAddFunds = () => {
-    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
+  const showReceiveModal = () => {
+    Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
 
-  const navigateToAssetDetails = (item: Item) => {
+  const navigateToAssetDetails = (item: WalletItem) => {
     const asset = getAssetFromRegistry(assetRegistry, item.symbol);
     if (!asset) return;
 
@@ -80,41 +91,41 @@ function WalletTab() {
   };
 
   const renderListHeader = () => {
+    const { value, change } = totalBalance;
     return (
       <ListHeader>
-        <BalanceView balance={balance} />
-        <WalletAddress />
+        <BalanceView balance={totalBalance.value} style={styles.balanceView} />
+        {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
       </ListHeader>
     );
   };
 
-  const renderSectionHeader = ({ title, chain }: Section) => {
-    return <SectionHeader title={title} chain={chain} />;
+  const renderSectionHeader = ({ chain, balance }: Section) => {
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
   };
 
-  const renderItem = (item: Item) => {
+  const renderItem = (item: WalletItem) => {
     return (
-      <AssetListItem
-        name={item.title}
+      <WalletListItem
+        title={item.title}
         iconUrl={item.iconUrl}
-        balance={item.value}
+        value={item.value}
+        change={BigNumber(0.01)}
         symbol={item.symbol}
         onPress={() => navigateToAssetDetails(item)}
       />
     );
   };
 
-  const sections = Object.keys(items).map((chain) => ({
-    key: chain,
-    chain,
-    title: t('tokens'),
-    data: items[chain] ?? [],
-  }));
-
+  const hasPositiveBalance = totalBalance.value.gt(0);
   const buttons = [
-    { title: t('addFunds'), iconName: 'plus', onPress: navigateAddFunds },
+    {
+      title: tRoot('button.receive'),
+      iconName: 'qrcode',
+      onPress: showReceiveModal,
+    },
     hasPositiveBalance && {
-      title: tRoot('button.exchange'),
+      title: tRoot('button.swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(EXCHANGE_FLOW),
     },
@@ -143,31 +154,29 @@ function WalletTab() {
 export default WalletTab;
 
 type Section = {
-  ...SectionBase<Item>,
-  title: string,
+  ...SectionBase<WalletItem>,
   chain: Chain,
+  balance: BigNumber,
 };
 
-type Item = {|
-  key: string,
-  title: string,
-  iconUrl: ?string,
-  value: BigNumber,
-  symbol: string,
-|};
+const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+  const chains = useSupportedChains();
+  const assetsPerChain = useWalletAssets();
+  const rates = useRates();
+  const currency = useFiatCurrency();
 
-const useChainItems = (): ChainRecord<Item[]> => {
-  const assets = useRootSelector(visibleActiveAccountAssetsWithBalanceSelector);
+  return chains.map((chain) => {
+    const items = assetsPerChain[chain] ?? [];
+    const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
+    const data = showChainAssets[chain] ? items : [];
+    return { key: chain, chain, balance, data };
+  });
+};
 
-  const ethereum = defaultSortAssetOptions(assets).map((asset) => ({
-    key: `ethereum-${asset.symbol}`,
-    title: asset.name,
-    iconUrl: asset.imageUrl,
-    symbol: asset.symbol,
-    value: BigNumber(asset.balance?.balance ?? 0),
-  }));
-
-  return { ethereum };
+const styles = {
+  balanceView: {
+    marginBottom: spacing.extraSmall,
+  },
 };
 
 const Container = styled.View`
