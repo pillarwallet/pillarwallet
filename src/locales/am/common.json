@@ -486,7 +486,7 @@
     "walletConnect": {
       "assetNotSupported": "ይሄ ግብይት ወይም ቶክን በአሁኑ ግዜ በፒላር አይደገፍም",
       "unsupportedAction": "ይርታ ይሄ አማራጭ ለግዜው ስራ ላይ አልዋለም",
-      "noMatchingWallet": "የፈለጉት የዎሌት ኮኔክት ማገናኛ አልተገኘም",
+      "noMatchingConnector": "የፈለጉት የዎሌት ኮኔክት ማገናኛ አልተገኘም",
       "requestNotFound": "ጥያቄው አልተገኘም",
       "requestRejected": "የጥሪው ጥያቄ ተቀባይ አላገኘም",
       "invalidSession": "ያለፈበት የዎሌት ኮኔክት ክፈለ-ግዜ",

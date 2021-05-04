@@ -18,275 +18,84 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import get from 'lodash.get';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
-  WALLETCONNECT_CANCEL_REQUEST,
-  WALLETCONNECT_TIMEOUT,
-  WALLETCONNECT_INIT_SESSIONS,
-  WALLETCONNECT_SESSION_RECEIVED,
-  WALLETCONNECT_SESSION_REQUEST,
-  WALLETCONNECT_SESSION_APPROVED,
-  WALLETCONNECT_SESSION_REJECTED,
-  WALLETCONNECT_SESSION_DISCONNECTED,
-  WALLETCONNECT_SESSIONS_KILLED,
-  WALLETCONNECT_CALL_REQUEST,
-  WALLETCONNECT_CALL_REJECTED,
-  WALLETCONNECT_CALL_APPROVED,
-  WALLETCONNECT_ERROR,
-  SESSION_REQUEST_EVENT,
-  CALL_REQUEST_EVENT,
-  DISCONNECT_EVENT,
-  SESSION_REQUEST_ERROR,
-  CALL_REQUEST_ERROR,
-  DISCONNECT_ERROR,
-  SESSION_KILLED_ERROR,
-  SESSION_APPROVAL_ERROR,
-  SESSION_REJECTION_ERROR,
-  TOGGLE_WALLET_CONNECT_PROMO_CARD,
+  REMOVE_WALLETCONNECT_CALL_REQUEST,
+  ADD_WALLETCONNECT_CALL_REQUEST,
+  RESET_WALLETCONNECT_CONNECTOR_REQUEST,
+  SET_WALLETCONNECT_REQUEST_ERROR,
+  WALLETCONNECT_EVENT,
+  SET_WALLETCONNECT_CONNECTOR_REQUEST,
+  ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
 } from 'constants/walletConnectConstants';
 import {
-  WALLETCONNECT_SESSION_REQUEST_SCREEN,
-  WALLETCONNECT_CALL_REQUEST_SCREEN,
   ASSETS,
+  WALLETCONNECT_CALL_REQUEST_SCREEN,
+  WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
 
 // services, utils
-import Storage from 'services/storage';
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
+import { getAccountAddress, isArchanovaAccount } from 'utils/accounts';
 import {
-  getAccountAddress,
-  getActiveAccount,
-  isArchanovaAccount,
-} from 'utils/accounts';
-import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
+  isSupportedDappUrl,
+  mapCallRequestToTransactionPayload,
+} from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
 
 // actions
 import {
-  walletConnectSessionsImportedAction,
-  walletConnectSessionsLoadedAction,
-  walletConnectSessionAddedAction,
-  walletConnectSessionRemovedAction,
-  walletConnectSessionsRemovedAction,
+  addWalletConnectSessionAction,
+  disconnectWalletConnectSessionByPeerIdAction,
+  removeWalletConnectSessionAction,
 } from 'actions/walletConnectSessionsActions';
 import { logEventAction } from 'actions/analyticsActions';
+import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 
 // components
 import Toast from 'components/Toast';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import {
+  activeAccountSelector,
+  supportedAssetsSelector,
+} from 'selectors';
 
 // models, types
-import type { Connector, Session, CallRequest, JsonRpcRequest } from 'models/WalletConnect';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
-  WalletConnectError,
-  WalletConnectInitSessions,
-  WalletConnectSessionReceived,
-  WalletConnectSessionApproved,
-  WalletConnectSessionDisconnected,
-  WalletConnectSessionsKilled,
-  WalletConnectCallRequest,
-  WalletConnectCallRejected,
-  WalletConnectCallApproved,
-  WalletConnectTogglePromoCard,
+  CallRequest,
+  Connector,
+  JsonRpcRequest,
+} from 'models/WalletConnect';
+import type {
+  Dispatch,
+  GetState,
+} from 'reducers/rootReducer';
+import type {
+  SetWalletConnectRequestError,
 } from 'reducers/walletConnectReducer';
+import type { WalletConnectConnector } from 'models/WalletConnect';
+import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
+import {
+  estimateTransactionAction,
+  resetEstimateTransactionAction,
+} from 'actions/transactionEstimateActions';
+import { accountAssetsSelector } from 'selectors/assets';
+import { getAssetsAsList } from 'utils/assets';
 
 
-const walletConnectError = (code: string, message: string): WalletConnectError => ({
-  type: WALLETCONNECT_ERROR,
-  payload: { code, message },
-});
-
-const walletConnectInitSessions = (connectors: Connector[]): WalletConnectInitSessions => ({
-  type: WALLETCONNECT_INIT_SESSIONS,
-  connectors,
-});
-
-const walletConnectSessionApproved = (connector: Connector): WalletConnectSessionApproved => ({
-  type: WALLETCONNECT_SESSION_APPROVED,
-  connector,
-});
-
-const walletConnectCallRequest = (request: CallRequest): WalletConnectCallRequest => ({
-  type: WALLETCONNECT_CALL_REQUEST,
-  request,
-});
-
-const walletConnectSessionDisconnected = (connector: Connector): WalletConnectSessionDisconnected => ({
-  type: WALLETCONNECT_SESSION_DISCONNECTED,
-  connector,
-});
-
-const walletConnectSessionsKilled = (connectors: Connector[]): WalletConnectSessionsKilled => ({
-  type: WALLETCONNECT_SESSIONS_KILLED,
-  connectors,
-});
-
-const walletConnectCallRejected = (callId: number): WalletConnectCallRejected => ({
-  type: WALLETCONNECT_CALL_REJECTED,
-  callId,
-});
-
-const walletConnectCallApproved = (callId: number): WalletConnectCallApproved => ({
-  type: WALLETCONNECT_CALL_APPROVED,
-  callId,
-});
-
-const walletConnectSessionReceived = (): WalletConnectSessionReceived => ({
-  type: WALLETCONNECT_SESSION_RECEIVED,
-});
-
-const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcRequest) => {
+const setWalletConnectErrorAction = (message: string): SetWalletConnectRequestError => {
   return (dispatch: Dispatch) => {
-    const {
-      icons, name, url,
-    } = connector.peerMeta || {
-      icons: [], name: '', url: '',
-    };
+    dispatch({ type: SET_WALLETCONNECT_REQUEST_ERROR, payload: { message }});
 
-    const request: CallRequest = {
-      name,
-      url,
-      icon: get(icons, '[0]'),
-      callId: payload.id,
-      peerId: connector.peerId,
-      method: payload.method,
-      params: payload.params,
-    };
-
-    dispatch(walletConnectCallRequest(request));
-
-    const navParams = {
-      callId: request.callId,
-      method: request.method,
-    };
-
-    if (!isNavigationAllowed()) {
-      updateNavigationLastScreenState({
-        lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
-        lastActiveScreenParams: navParams,
-      });
-      return;
-    }
-
-    const navigateToAppAction = NavigationActions.navigate({
-      routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
-      params: navParams,
-    });
-
-    navigate(navigateToAppAction);
-  };
-};
-
-const subscribeToEvents = (connector: Connector) => {
-  return (dispatch: Dispatch) => {
-    connector.on(CALL_REQUEST_EVENT, (e: any, payload: JsonRpcRequest) => {
-      if (e) {
-        dispatch(walletConnectError(CALL_REQUEST_ERROR, e.toString()));
-        return;
-      }
-
-      dispatch(onWalletConnectCallRequest(connector, payload));
-    });
-
-    connector.on(DISCONNECT_EVENT, (e: any) => {
-      if (e) {
-        dispatch(walletConnectError(DISCONNECT_ERROR, e.toString()));
-        return;
-      }
-
-      dispatch(walletConnectSessionDisconnected(connector));
-      dispatch(walletConnectSessionRemovedAction(connector.peerId));
-      dispatch(logEventAction('walletconnect_disconnected'));
-    });
-  };
-};
-
-const subscribeToSessionRequestEvent = (connector: Connector) => {
-  return async (dispatch: Dispatch) => {
-    connector.on(SESSION_REQUEST_EVENT, async (e: any, payload: any) => {
-      if (e) {
-        dispatch(walletConnectError(SESSION_REQUEST_ERROR, e.toString()));
-        return;
-      }
-
-      const { peerId, peerMeta } = get(payload, 'params[0]', {});
-
-      if (!peerId || !peerMeta) {
-        dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
-        return;
-      }
-
-      if (!shouldAllowSession(peerMeta.url)) {
-        Toast.show({
-          message: t('toast.walletConnectUnsupportedApp'),
-          emoji: 'eyes',
-          supportLink: true,
-          autoClose: false,
-        });
-        return;
-      }
-
-      dispatch(walletConnectSessionReceived());
-      navigate(
-        NavigationActions.navigate({
-          routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
-          params: { peerId, peerMeta },
-        }),
-      );
-    });
-  };
-};
-
-export const killWalletConnectSession = (peerId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectors } } = getState();
-
-    const matchingConnectors = connectors.filter(c => c.peerId === peerId);
-
-    if (!matchingConnectors.length) {
-      dispatch(
-        walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
-      );
-
-      return;
-    }
-
-    try {
-      const peerIds = await Promise.all(matchingConnectors.map(async c => {
-        await c.killSession();
-
-        return c.peerId;
-      }));
-
-      dispatch(walletConnectSessionsKilled(matchingConnectors));
-      dispatch(walletConnectSessionsRemovedAction(peerIds));
-    } catch (e) {
-      dispatch(walletConnectError(SESSION_KILLED_ERROR, e.toString()));
-
-      return;
-    }
-
-    dispatch(logEventAction('walletconnect_session_killed'));
-  };
-};
-
-const killAllWalletConnectSessions = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnectSessions: { sessions } } = getState();
-    sessions.forEach((s: Session) => {
-      dispatch(killWalletConnectSession(s.peerId));
-    });
     Toast.show({
-      message: t('toast.walletConnectConnectionsExpired'),
+      message: message || t('toast.walletConnectFailed'),
       emoji: 'eyes',
       supportLink: true,
       autoClose: false,
@@ -294,315 +103,291 @@ const killAllWalletConnectSessions = () => {
   };
 };
 
-export const killWalletConnectSessionByUrl = (url: string, skipPeerId?: string) => {
+export const resetWalletConnectConnectorRequestAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectors } } = getState();
+    const { walletConnect: { connectorRequest } } = getState();
 
-    const matchingConnectors = connectors.filter(c => {
-      const { peerMeta } = c;
-      if (!peerMeta) {
-        return false;
-      }
-      if (skipPeerId && skipPeerId === c.peerId) {
-        return false;
-      }
+    if (!connectorRequest) return;
 
-      return peerMeta.url === url;
-    });
-
-    if (!matchingConnectors.length) {
-      if (!skipPeerId) {
-        dispatch(
-          walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
-        );
-      }
-
-      return;
+    if (connectorRequest.connected) {
+      await connectorRequest.killSession();
     }
 
-    try {
-      const peerIds = await Promise.all(matchingConnectors.map(async c => {
-        await c.killSession();
-
-        return c.peerId;
-      }));
-
-      dispatch(walletConnectSessionsKilled(matchingConnectors));
-      dispatch(walletConnectSessionsRemovedAction(peerIds));
-    } catch (e) {
-      dispatch(walletConnectError(SESSION_KILLED_ERROR, e.toString()));
-
-      return;
-    }
-
-    dispatch(logEventAction('walletconnect_session_killed'));
+    dispatch(logEventAction('walletconnect_connector_rejected'));
+    dispatch({ type: RESET_WALLETCONNECT_CONNECTOR_REQUEST });
   };
 };
 
-export const cancelWaitingRequestAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { pendingConnector: connector } } = getState();
+export const connectToWalletConnectConnectorAction = (uri: string) => {
+  return (dispatch: Dispatch) => {
+    // reset any previous
+    dispatch(resetWalletConnectConnectorRequestAction());
 
+    const connector = createConnector({ uri });
     if (!connector) {
+      dispatch(setWalletConnectErrorAction(t('toast.walletConnectFailed')));
       return;
     }
 
-    if (connector.connected) {
-      connector.killSession();
-    }
+    dispatch(logEventAction('walletconnect_connector_requested'));
 
-    dispatch(logEventAction('walletconnect_rejected'));
-    dispatch({ type: WALLETCONNECT_CANCEL_REQUEST });
-  };
-};
-
-const sessionRequestTimedOut = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      walletConnect: {
-        waitingForSession,
-        pendingConnector: connector,
-      },
-    } = getState();
-
-    if (!connector || !waitingForSession) {
-      return;
-    }
-
-    dispatch(logEventAction('walletconnect_timed_oud'));
-
-    Toast.show({
-      message: t('toast.walletConnectSessionTimedOut'),
-      emoji: 'snail',
-      supportLink: true,
-      autoClose: false,
-    });
-
-    dispatch(cancelWaitingRequestAction());
-  };
-};
-
-export const requestSessionAction = (uri: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    try {
-      const { walletConnect: { pendingConnector } } = getState();
-      if (pendingConnector) {
-        dispatch(
-          walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.alreadyPending')),
-        );
+    connector.on(WALLETCONNECT_EVENT.SESSION_REQUEST, async (error: Error, payload: any) => {
+      if (error) {
+        dispatch(setWalletConnectErrorAction(error?.message));
         return;
       }
 
-      const connector = createConnector({ uri });
+      const { peerId, peerMeta } = payload?.params?.[0] || {};
 
-      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, connector });
-      dispatch(subscribeToSessionRequestEvent(connector));
-      dispatch(logEventAction('walletconnect_requested'));
-
-      setTimeout(() => dispatch(sessionRequestTimedOut()), WALLETCONNECT_TIMEOUT);
-    } catch (e) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, e.toString()));
-    }
-  };
-};
-
-export const toggleWCPromoCardAction = (collapsed: boolean): WalletConnectTogglePromoCard => ({
-  type: TOGGLE_WALLET_CONNECT_PROMO_CARD,
-  payload: { collapsed },
-});
-
-export const approveSessionAction = (peerId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { pendingConnector: connector } } = getState();
-    if (!connector) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
-      return;
-    }
-
-    if (connector.peerId !== peerId) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
-      return;
-    }
-
-    const { peerMeta } = connector;
-    if (peerMeta) {
-      dispatch(killWalletConnectSessionByUrl(peerMeta.url, peerId));
-    }
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    try {
-      const activeAccount = getActiveAccount(accounts);
-
-      if (!activeAccount) {
-        Toast.show({
-          message: t('toast.noActiveAccountFound'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
+      if (!peerId || !peerMeta) {
+        dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
         return;
       }
 
-      if (isArchanovaAccount(activeAccount)
-        && !isArchanovaWalletActivatedSelector(getState())) {
-        Toast.show({
-          message: t('toast.walletConnectSmartWalletNotActive'),
-          emoji: 'point_up',
-          link: t('label.activateSmartWallet'),
-          onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })), // contains sw activation card
-          autoClose: false,
-        });
+      if (!isSupportedDappUrl(peerMeta.url)) {
+        dispatch(setWalletConnectErrorAction(t('toast.walletConnectUnsupportedApp')));
         return;
       }
 
-      const accountAddress = getAccountAddress(activeAccount);
-      await connector.approveSession({
-        accounts: [accountAddress],
-        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+      dispatch({
+        type: SET_WALLETCONNECT_CONNECTOR_REQUEST,
+        payload: { connectorRequest: connector },
       });
-    } catch (e) {
-      dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));
-      return;
-    }
 
-    dispatch(walletConnectSessionApproved(connector));
-    dispatch(walletConnectSessionAddedAction(connector.session));
-    dispatch(subscribeToEvents(connector));
-    dispatch(toggleWCPromoCardAction(true));
-
-    dispatch(logEventAction('walletconnect_connected'));
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+          params: { peerId, peerMeta },
+        }),
+      );
+    });
   };
 };
 
-export const rejectSessionAction = (peerId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { pendingConnector: connector } } = getState();
-
-    if (!connector) {
+export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { walletConnect: { connectorRequest } } = getState();
+    if (!connectorRequest) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
     }
 
-    if (connector.peerId !== peerId) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
+    if (connectorRequest.peerId !== peerId) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
+      return;
+    }
+
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      Toast.show({
+        message: t('toast.noActiveAccountFound'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const requiresSmartWalletDeployment = isArchanovaAccount(activeAccount)
+      && !isArchanovaWalletActivatedSelector(getState());
+    if (requiresSmartWalletDeployment) {
+      Toast.show({
+        message: t('toast.walletConnectSmartWalletNotActive'),
+        emoji: 'point_up',
+        link: t('label.activateSmartWallet'),
+        onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })), // contains sw activation card
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountAddress = getAccountAddress(activeAccount);
+
+    const sessionData = {
+      accounts: [accountAddress],
+      chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+    };
+
+    try {
+      connectorRequest.approveSession(sessionData);
+
+      dispatch({ type: ADD_WALLETCONNECT_SESSION, payload: { session: connectorRequest.session }});
+      dispatch(subscribeToWalletConnectConnectorEventsAction(connectorRequest));
+
+      dispatch(hideWalletConnectPromoCardAction());
+
+      dispatch(logEventAction('walletconnect_connected'));
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
+
+    dispatch(resetWalletConnectConnectorRequestAction());
+  };
+};
+
+export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { walletConnect: { connectorRequest } } = getState();
+    if (!connectorRequest) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
+      return;
+    }
+
+    if (connectorRequest.peerId !== peerId) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
       return;
     }
 
     try {
-      await connector.rejectSession();
-    } catch (e) {
-      dispatch(walletConnectError(SESSION_REJECTION_ERROR, e.toString()));
-      return;
+      connectorRequest.rejectSession();
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
     }
 
-    dispatch({ type: WALLETCONNECT_SESSION_REJECTED });
+    dispatch(resetWalletConnectConnectorRequestAction());
   };
 };
 
-export const rejectCallRequestAction = (callId: number, errorMsg?: string) => {
+export const rejectWalletConnectCallRequestAction = (callId: number, rejectReasonMessage?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectors, requests } } = getState();
+    const { walletConnect: { activeConnectors, callRequests } } = getState();
 
-    const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
-    if (!request) {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
+    const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
+    if (!callRequest) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.requestNotFound')));
       return;
     }
 
-    const connector = connectors.find(c => c.peerId === request.peerId);
-    if (!connector) {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
+    const activeConnector = activeConnectors.find(({ peerId }) => peerId === callRequest.peerId);
+    if (!activeConnector) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
     }
 
-    dispatch(walletConnectCallRejected(callId));
-    connector.rejectRequest({
-      id: +callId,
-      error: { message: errorMsg || t('error.walletConnect.requestRejected') },
-    });
+    console.log('activeConnector: ', activeConnector)
+
+    try {
+      activeConnector.rejectRequest({
+        id: +callId,
+        error: { message: rejectReasonMessage || t('error.walletConnect.requestRejected') },
+      });
+      dispatch({ type: REMOVE_WALLETCONNECT_CALL_REQUEST, payload: { callId } });
+    } catch (error) {
+      reportErrorLog('rejectWalletConnectCallRequestAction -> rejectRequest failed', { error });
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestRejectFailed')));
+    }
   };
 };
 
-export const approveCallRequestAction = (callId: number, result: any) => {
+export const approveWalletConnectCallRequestAction = (callId: number, result: any) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectors, requests } } = getState();
+    const { walletConnect: { activeConnectors, callRequests } } = getState();
 
-    if (!result) {
-      dispatch(rejectCallRequestAction(callId));
+    const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
+    if (!callRequest) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.requestNotFound')));
       return;
     }
 
-    const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
-    if (!request) {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
+    const activeConnector = activeConnectors.find(({ peerId }) => peerId === callRequest.peerId);
+    if (!activeConnector) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
     }
 
-    const connector = connectors.find(c => c.peerId === request.peerId);
-    if (!connector) {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
-      return;
+    try {
+      activeConnector.approveRequest({ id: +callId, result });
+      dispatch({ type: REMOVE_WALLETCONNECT_CALL_REQUEST, payload: { callId } });
+    } catch (error) {
+      reportErrorLog('approveWalletConnectCallRequestAction -> approveRequest failed', { error });
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestApproveFailed')));
     }
-
-    dispatch(walletConnectCallApproved(callId));
-    connector.approveRequest({ id: +callId, result });
   };
 };
 
-const loadLegacySessions = async (): Promise<Session[]> => {
-  const storage = Storage.getInstance('db');
-  const walletconnect = await storage.get('walletconnect');
+export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletConnectConnector) => {
+  return (dispatch: Dispatch) => {
+    dispatch({ type: ADD_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { connector }});
 
-  if (walletconnect) {
-    const { sessions = [] } = walletconnect;
-    return sessions;
-  }
-
-  return [];
-};
-
-export const initWalletConnectSessions = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      walletConnectSessions: { isImported, sessions },
-      wallet: { data: walletData },
-    } = getState();
-
-    const keyBasedWalletAddress = walletData?.address;
-    if (!keyBasedWalletAddress) {
-      reportErrorLog('initWalletConnectSessions failed', { keyBasedWalletAddress });
-      return;
-    }
-
-    if (shouldClearWCSessions(sessions, keyBasedWalletAddress)) {
-      dispatch(killAllWalletConnectSessions());
-    }
-
-    let initialSessions = sessions;
-    if (!isImported) {
-      initialSessions = await loadLegacySessions();
-      dispatch(walletConnectSessionsImportedAction());
-    }
-
-    const initialConnectors: Connector[] = [];
-
-    initialSessions.forEach(session => {
-      if (!session.connected) return;
-
-      try {
-        const connector = createConnector({ session });
-        dispatch(subscribeToEvents(connector));
-
-        initialConnectors.push(connector);
-      } catch (e) {
-        // Connection error
+    connector.on(WALLETCONNECT_EVENT.CALL_REQUEST, (error: Error, payload: JsonRpcRequest) => {
+      if (error) {
+        dispatch(setWalletConnectErrorAction(error?.message));
+        return;
       }
+
+      const { peerId, peerMeta } = connector;
+      if (!peerId || !peerMeta) {
+        dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+        return;
+      }
+
+      const { icons, name = null, url = null } = peerMeta;
+      const { id: callId, method, params } = payload;
+
+      if (!callId) {
+        dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+        return;
+      }
+
+      const callRequest: CallRequest = {
+        name,
+        url,
+        peerId,
+        callId,
+        method,
+        params,
+        icon: icons?.[0] || null,
+      };
+
+      dispatch({
+        type: ADD_WALLETCONNECT_CALL_REQUEST,
+        payload: { callRequest },
+      });
+
+      const navParams = { callId, method };
+
+      if (!isNavigationAllowed()) {
+        updateNavigationLastScreenState({
+          lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
+          lastActiveScreenParams: navParams,
+        });
+        return;
+      }
+
+      const navigateToAppAction = NavigationActions.navigate({
+        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+        params: navParams,
+      });
+
+      navigate(navigateToAppAction);
     });
 
-    const connectors: Connector[] = initialConnectors.filter(c => !!c);
-    if (connectors.length) {
-      dispatch(walletConnectInitSessions(connectors));
-      dispatch(walletConnectSessionsLoadedAction(connectors.map(c => c.session)));
-    }
+    connector.on(WALLETCONNECT_EVENT.DISCONNECT, (error: Error) => {
+      if (error) {
+        dispatch(setWalletConnectErrorAction(error?.message));
+        return;
+      }
+
+      if (!connector?.peerId) {
+        reportErrorLog('subscribeToWalletConnectConnectorEventsAction -> disconnect failed: no peerId', { connector });
+        return;
+      }
+
+      dispatch(disconnectWalletConnectSessionByPeerIdAction(connector.peerId));
+      dispatch(logEventAction('walletconnect_disconnected'));
+    });
+  };
+};
+
+export const estimateWalletConnectCallRequestTransactionAction = (callRequest: CallRequest) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    dispatch(resetEstimateTransactionAction());
+
+    const accountAssets = getAssetsAsList(accountAssetsSelector(getState()));
+    const supportedAssets = supportedAssetsSelector(getState())
+
+    const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
+
+    dispatch(estimateTransactionAction({ value, to, data }));
   };
 };

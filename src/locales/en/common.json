@@ -513,11 +513,14 @@
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
       "unsupportedAction": "We are sorry, but we do not support this action yet",
-      "noMatchingWallet": "No Matching Wallet Connect Connectors Found",
+      "noMatchingConnector": "No Matching Wallet Connect Connectors Found",
       "requestNotFound": "Request not found",
       "requestRejected": "Call Request Rejected",
       "invalidSession": "Invalid Wallet Connect session",
-      "alreadyPending": "A connection is already waiting"
+      "alreadyPending": "A connection is already waiting",
+      "callRequestRejectFailed": "Call Request reject failed",
+      "callRequestApproveFailed": "Call Request approve failed",
+      "invalidRequest": "Invalid Wallet Connect request"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
@@ -1252,7 +1255,8 @@
       "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
     },
     "error": {
-      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed."
+      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
+      "unsupportedRequestCallRequestType": "Unsupported Call Request type."
     }
   },
 
@@ -1502,7 +1506,10 @@
     "liquidityPoolsStake": "{{value}} {{token}} staked.",
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
-    "noActiveAccountFound": "No active account found."
+    "noActiveAccountFound": "No active account found.",
+    "walletConnectFailed": "Wallet Connect failed.",
+    "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
+    "walletConnectCallRequestRejectFailed": "Failed to reject Call Request."
   },
 
   "exchangeContent": {

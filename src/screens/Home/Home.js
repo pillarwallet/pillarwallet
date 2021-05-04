@@ -34,7 +34,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Banner from 'components/Banner';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
-import Requests from 'screens/WalletConnect/Requests';
+import WalletConnectCallRequestList from 'screens/WalletConnect/WalletConnectCallRequestList';
 import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -132,7 +132,6 @@ type Props = {
   history: Object[],
   badges: Badges,
   fetchBadges: Function,
-  pendingConnector: ?Connector,
   activeAccount: ?Account,
   accounts: Accounts,
   userEvents: UserEvent[],
@@ -145,7 +144,7 @@ type Props = {
   hidePoolTogether: boolean,
   toggleBadges: () => void,
   togglePoolTogether: () => void,
-  walletConnectRequests: CallRequest[],
+  walletConnectCallRequests: CallRequest[],
   fetchAllAccountsBalances: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
@@ -547,7 +546,7 @@ class HomeScreen extends React.Component<Props> {
       theme,
       hideBadges,
       toggleBadges,
-      walletConnectRequests,
+      walletConnectCallRequests,
       user,
       goToInvitationFlow,
       isPillarRewardCampaignActive,
@@ -594,6 +593,8 @@ class HomeScreen extends React.Component<Props> {
     const referralBannerText = isPillarRewardCampaignActive
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
+
+    const walletConnectCallRequestsCount = walletConnectCallRequests?.length || 0;
 
     return (
       <React.Fragment>
@@ -644,16 +645,18 @@ class HomeScreen extends React.Component<Props> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart rewardActive={isPillarRewardCampaignActive} />
-                  {!!walletConnectRequests &&
-                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
-                    {walletConnectRequests.length > 1 &&
-                    <ButtonText
-                      onPress={() => { navigation.navigate(WALLETCONNECT); }}
-                      buttonText={t('button.viewAllItemsAmount', { amount: walletConnectRequests.length })}
-                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
-                    />}
-                    <Requests showLastOneOnly />
-                  </RequestsWrapper>}
+                  {!!walletConnectCallRequestsCount && (
+                    <RequestsWrapper marginOnTop={walletConnectCallRequestsCount === 1}>
+                      {walletConnectCallRequestsCount > 1 && (
+                        <ButtonText
+                          onPress={() => { navigation.navigate(WALLETCONNECT); }}
+                          buttonText={t('button.viewAllItemsAmount', { amount: walletConnectCallRequestsCount })}
+                          wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
+                        />
+                      )}
+                      <WalletConnectCallRequestList showLastOneOnly />
+                    </RequestsWrapper>
+                  )}
                   <Banner
                     isVisible={!referFriendsOnHomeScreenDismissed}
                     onPress={goToInvitationFlow}
@@ -725,7 +728,7 @@ const mapStateToProps = ({
       baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari, hideLiquidityPools,
     },
   },
-  walletConnect: { requests: walletConnectRequests },
+  walletConnect: { callRequests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
   lending: { depositedAssets, isFetchingDepositedAssets },
@@ -752,7 +755,7 @@ const mapStateToProps = ({
   hideSablier,
   hideRari,
   hideLiquidityPools,
-  walletConnectRequests,
+  walletConnectCallRequests: walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
   hideLendingDeposits,

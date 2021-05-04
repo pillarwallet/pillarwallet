@@ -18,52 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  WALLETCONNECT_SESSIONS_LOADED,
-  WALLETCONNECT_SESSIONS_IMPORTED,
-  WALLETCONNECT_SESSION_ADDED,
-  WALLETCONNECT_SESSION_REMOVED,
-  WALLETCONNECT_SESSIONS_REMOVED,
+  ADD_WALLETCONNECT_SESSION,
+  SET_WALLETCONNECT_SESSIONS_IMPORTED,
+  REMOVE_WALLETCONNECT_SESSION,
 } from 'constants/walletConnectSessionsConstants';
 
 import type { Session } from 'models/WalletConnect';
+
+export type WalletConnectSessionAdded = {
+  session: Session,
+};
+
+export type WalletConnectSessionRemoved = {
+  peerId: string,
+};
+
+export type WalletConnectSessionsReducerAction = {
+  type: string,
+  payload?: WalletConnectSessionAdded | WalletConnectSessionRemoved,
+};
 
 export type WalletConnectSessionsReducerState = {
   isImported: boolean,
   sessions: Session[],
 };
 
-export type WalletConnectSessionsImported = {
-  type: 'WALLETCONNECT_SESSIONS_IMPORTED',
-};
-
-export type WalletConnectSessionsLoaded = {
-  type: 'WALLETCONNECT_SESSIONS_LOADED',
-  sessions: Session[],
-};
-
-export type WalletConnectSessionAdded = {
-  type: 'WALLETCONNECT_SESSION_ADDED',
-  session: Session,
-};
-
-export type WalletConnectSessionRemoved = {
-  type: 'WALLETCONNECT_SESSION_REMOVED',
-  peerId: string,
-};
-
-export type WalletConnectSessionsRemoved = {
-  type: 'WALLETCONNECT_SESSIONS_REMOVED',
-  peerIds: string[],
-};
-
-export type WalletConnectSessionsReducerAction =
-  | WalletConnectSessionsImported
-  | WalletConnectSessionsLoaded
-  | WalletConnectSessionAdded
-  | WalletConnectSessionsRemoved
-  | WalletConnectSessionRemoved;
-
-const initialState = {
+const initialState: WalletConnectSessionsReducerState = {
   sessions: [],
   isImported: false,
 };
@@ -75,32 +55,17 @@ const walletConnectSessionsReducer = (
   const { sessions } = state;
 
   switch (action.type) {
-    case WALLETCONNECT_SESSIONS_IMPORTED:
+    case SET_WALLETCONNECT_SESSIONS_IMPORTED:
       return { ...state, isImported: true };
 
-    case WALLETCONNECT_SESSIONS_LOADED:
-      return { ...state, sessions: action.sessions };
+    case ADD_WALLETCONNECT_SESSION:
+      return { ...state, sessions: [...sessions, action.payload] };
 
-    case WALLETCONNECT_SESSION_ADDED:
+    case REMOVE_WALLETCONNECT_SESSION:
+      const { peerId: peerIdToRemove } = action.payload;
       return {
         ...state,
-        sessions: [...sessions, action.session],
-      };
-
-    case WALLETCONNECT_SESSION_REMOVED:
-      const { peerId: actionPeerId } = action;
-
-      return {
-        ...state,
-        sessions: sessions.filter(({ peerId }) => peerId !== actionPeerId),
-      };
-
-    case WALLETCONNECT_SESSIONS_REMOVED:
-      const { peerIds } = action;
-
-      return {
-        ...state,
-        sessions: sessions.filter(({ peerId }) => peerIds.indexOf(peerId) === -1),
+        sessions: sessions.filter(({ peerId }) => peerId !== peerIdToRemove),
       };
 
     default:

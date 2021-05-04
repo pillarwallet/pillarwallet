@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  WALLETCONNECT_SESSIONS_LOADED,
+  ADD_WALLETCONNECT_SESSION,
   WALLETCONNECT_SESSION_ADDED,
-  WALLETCONNECT_SESSION_REMOVED,
+  REMOVE_WALLETCONNECT_SESSION,
   WALLETCONNECT_SESSIONS_REMOVED,
 } from 'constants/walletConnectSessionsConstants';
 import reducer from 'reducers/walletConnectSessionsReducer';
@@ -45,7 +45,7 @@ describe('WalletConnectSessions reducer', () => {
       const session2 = mockSession('session2');
 
       const result = reducer(undefined, {
-        type: WALLETCONNECT_SESSIONS_LOADED,
+        type: ADD_WALLETCONNECT_SESSION,
         sessions: [session1, session2],
       });
 
@@ -85,7 +85,7 @@ describe('WalletConnectSessions reducer', () => {
       state = reducer(state, { type: WALLETCONNECT_SESSION_ADDED, session: session2 });
 
       const result = reducer(state, {
-        type: WALLETCONNECT_SESSION_REMOVED,
+        type: REMOVE_WALLETCONNECT_SESSION,
         peerId: session2.peerId,
       });
 

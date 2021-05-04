@@ -19,18 +19,18 @@
 */
 import WalletConnect from '@walletconnect/client';
 import {
-  WALLETCONNECT_ERROR,
+  SET_WALLETCONNECT_REQUEST_ERROR,
   // WALLETCONNECT_CLEAR_PENDING,
-  WALLETCONNECT_CANCEL_REQUEST,
+  RESET_WALLETCONNECT_CONNECTOR_REQUEST,
   WALLETCONNECT_INIT_SESSIONS,
   WALLETCONNECT_SESSION_DISCONNECTED,
   WALLETCONNECT_SESSIONS_KILLED,
-  WALLETCONNECT_SESSION_APPROVED,
+  SET_WALLETCONNECT_CONNECTOR_REQUEST,
   WALLETCONNECT_SESSION_REQUEST,
   WALLETCONNECT_SESSION_REJECTED,
   WALLETCONNECT_CALL_APPROVED,
-  WALLETCONNECT_CALL_REJECTED,
-  WALLETCONNECT_CALL_REQUEST,
+  REMOVE_WALLETCONNECT_CALL_REQUEST,
+  ADD_WALLETCONNECT_CALL_REQUEST,
 } from 'constants/walletConnectConstants';
 import reducer from 'reducers/walletConnectReducer';
 
@@ -122,7 +122,7 @@ describe('WalletConnect reducer', () => {
       });
 
       const result = reducer(state, {
-        type: WALLETCONNECT_SESSION_APPROVED,
+        type: SET_WALLETCONNECT_CONNECTOR_REQUEST,
         connector: connector2,
       });
 
@@ -173,7 +173,7 @@ describe('WalletConnect reducer', () => {
       });
 
       const result = reducer(state, {
-        type: WALLETCONNECT_CANCEL_REQUEST,
+        type: RESET_WALLETCONNECT_CONNECTOR_REQUEST,
       });
 
       expect(result).toMatchObject({
@@ -213,7 +213,7 @@ describe('WalletConnect reducer', () => {
   describe('handles WALLETCONNECT_ERROR', () => {
     it('stores error', () => {
       const result = reducer(undefined, {
-        type: WALLETCONNECT_ERROR,
+        type: SET_WALLETCONNECT_REQUEST_ERROR,
         payload: {
           code: 'error-code',
           message: 'error-message',
@@ -234,7 +234,7 @@ describe('WalletConnect reducer', () => {
       const request = mockRequest(1);
 
       const result = reducer(undefined, {
-        type: WALLETCONNECT_CALL_REQUEST,
+        type: ADD_WALLETCONNECT_CALL_REQUEST,
         request,
       });
 
@@ -249,7 +249,7 @@ describe('WalletConnect reducer', () => {
       const request = mockRequest(1);
 
       const state = reducer(undefined, {
-        type: WALLETCONNECT_CALL_REQUEST,
+        type: ADD_WALLETCONNECT_CALL_REQUEST,
         request,
       });
       const result = reducer(state, {
@@ -268,11 +268,11 @@ describe('WalletConnect reducer', () => {
       const request = mockRequest(1);
 
       const state = reducer(undefined, {
-        type: WALLETCONNECT_CALL_REQUEST,
+        type: ADD_WALLETCONNECT_CALL_REQUEST,
         request,
       });
       const result = reducer(state, {
-        type: WALLETCONNECT_CALL_REJECTED,
+        type: REMOVE_WALLETCONNECT_CALL_REQUEST,
         callId: 1,
       });
 

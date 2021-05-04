@@ -309,3 +309,10 @@ export const setAppLanguageAction = (language: string) => {
     dispatch(saveDbAction('app_settings', { appSettings: localisationSettings }));
   };
 };
+
+export const hideWalletConnectPromoCardAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { hideWalletConnectPromoCard: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideWalletConnectPromoCard: true } });
+  };
+};

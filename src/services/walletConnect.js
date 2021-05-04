@@ -18,7 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import WalletConnect from '@walletconnect/client';
-import type { IWalletConnectOptions } from '@walletconnect/client';
+
+// utils
+import { reportErrorLog } from 'utils/common';
+
+// services
+import Storage from 'services/storage';
+
+// types
+import type { Session, Connector } from 'models/WalletConnect';
 
 /* eslint-disable i18next/no-literal-string */
 const clientMeta = {
@@ -32,5 +40,24 @@ const clientMeta = {
 /* eslint-enable i18next/no-literal-string */
 
 export const createConnector = (
-  options: IWalletConnectOptions,
-): WalletConnect => new WalletConnect({ ...options, clientMeta });
+  options: Connector,
+): ?WalletConnect => {
+  try {
+    return new WalletConnect({ ...options, clientMeta });
+  } catch (error) {
+    reportErrorLog('walletConnect -> createConnector failed', { error })
+    return null;
+  }
+}
+
+export const loadLegacyWalletConnectSessions = async (): Promise<Session[]> => {
+  const storage = Storage.getInstance('db');
+  const walletconnect = await storage.get('walletconnect');
+
+  if (walletconnect) {
+    const { sessions = [] } = walletconnect;
+    return sessions;
+  }
+
+  return [];
+};

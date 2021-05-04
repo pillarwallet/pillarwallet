@@ -17,19 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { BigNumber } from 'bignumber.js';
-import get from 'lodash.get';
 import t from 'translations/translate';
-
-// actions
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -43,7 +37,10 @@ import Toast from 'components/Toast';
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+import {
+  getAssetsAsList,
+  isEnoughBalanceForTransactionFee,
+} from 'utils/assets';
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
 
@@ -59,51 +56,36 @@ import {
 } from 'constants/walletConnectConstants';
 
 // utils
+import { mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
 
-// types
-import type { Asset, Assets, Balances } from 'models/Asset';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { CallRequest } from 'models/WalletConnect';
-import type { Theme } from 'models/Theme';
-import type {
-  TransactionPayload,
-  TransactionFeeInfo,
-  TransactionToEstimate,
-} from 'models/Transaction';
-import type { Account } from 'models/Account';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// hooks
+import useWalletConnect from 'hooks/useWalletConnect';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
-import { activeAccountSelector } from 'selectors';
+import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 
-// local components
-import withWCRequests from './withWCRequests';
+// types
+import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Theme } from 'models/Theme';
+import type { TransactionFeeInfo } from 'models/Transaction';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
 
 
 type Props = {
-  accounts: Account[],
-  navigation: NavigationScreenProp<*>,
-  requests: CallRequest[],
   balances: Balances,
   theme: Theme,
-  getTransactionDetails: (request: ?CallRequest) => Object,
-  getTransactionPayload: (estimate: Object, request: ?CallRequest) => TransactionPayload,
-  isUnsupportedTransaction: (transaction: Object) => boolean,
-  rejectWCRequest: (request: CallRequest) => void,
-  acceptWCRequest: (request: CallRequest, transactionPayload: ?TransactionPayload) => void,
-  accountAssets: Assets,
-  supportedAssets: Asset[],
-  estimateTransaction: (transaction: TransactionToEstimate) => void,
-  resetEstimateTransaction: () => void,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
   isArchanovaWalletActivated: boolean,
   activeAccount: ?Account,
+  accountAssets: Assets,
+  supportedAssets: Asset[],
 };
 
 const FooterWrapper = styled.View`
@@ -134,319 +116,234 @@ const OptionButton = styled(Button)`
   flex-grow: 1;
 `;
 
-class WalletConnectCallRequestScreen extends React.Component<Props> {
-  request: ?CallRequest = null;
-  transactionDetails: Object;
-  unsupportedTransaction: boolean;
+const WalletConnectCallRequestScreen = ({
+  theme,
+  isEstimating,
+  balances,
+  feeInfo,
+  estimateErrorMessage,
+  isArchanovaWalletActivated,
+  estimateTransaction,
+  activeAccount,
+  accountAssets,
+  supportedAssets,
+} : Props) => {
+  const navigation = useNavigation();
+  const {
+    callRequests,
+    cancelCallRequest,
+    approveCallRequest,
+    estimateCallRequestTransaction,
+  } = useWalletConnect();
 
-  constructor(props: Props) {
-    super(props);
-    const {
-      navigation,
-      requests,
-      getTransactionDetails,
-      isUnsupportedTransaction,
-    } = props;
-    const requestCallId = +navigation.getParam('callId', 0);
-    const request = requests.find(({ callId }) => callId === requestCallId);
+  const callRequestId = navigation.getParam('callId');
+  const callRequest = callRequests.find(({ callId }) => callId === +callRequestId);
+  const callRequestMethod = callRequest?.method;
 
-    this.request = request;
-    this.transactionDetails = getTransactionDetails(request);
-    this.unsupportedTransaction = isUnsupportedTransaction(this.transactionDetails);
+  let requestType;
+  switch (callRequestMethod) {
+    case ETH_SEND_TX:
+    case ETH_SIGN_TX:
+      requestType = REQUEST_TYPE.TRANSACTION;
+      break;
+    case ETH_SIGN:
+    case ETH_SIGN_TYPED_DATA:
+    case PERSONAL_SIGN:
+      requestType = REQUEST_TYPE.MESSAGE;
+      break;
+    default:
+      requestType = REQUEST_TYPE.UNSUPPORTED;
   }
 
-  componentDidMount() {
-    const requestMethod = get(this.request, 'method');
-    const {
-      isArchanovaWalletActivated,
-      resetEstimateTransaction,
-      activeAccount,
-    } = this.props;
+  const transactionPayload = requestType === REQUEST_TYPE.TRANSACTION
+    ? mapCallRequestToTransactionPayload(callRequest, getAssetsAsList(accountAssets), supportedAssets)
+    : null;
 
-    // cannot estimate if smart wallet account not deployed
-    if (!activeAccount || (isArchanovaAccount(activeAccount) && !isArchanovaWalletActivated)) return;
+  useEffect(() => {
+    if (requestType !== REQUEST_TYPE.TRANSACTION) return;
+    estimateCallRequestTransaction(callRequest);
+  }, [callRequestMethod]);
 
-    resetEstimateTransaction();
-    if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
-      this.fetchTransactionEstimate();
+  const colors = getThemeColors(theme);
+
+  let errorMessage = requestType === REQUEST_TYPE.UNSUPPORTED
+   ? t('walletConnectContent.error.unsupportedRequestCallRequestType')
+   : estimateErrorMessage;
+
+  if (!errorMessage && isArchanovaAccount(activeAccount) || !isArchanovaWalletActivated) {
+    errorMessage = t('walletConnectContent.error.smartWalletNeedToBeActivated');
+  }
+
+  if (requestType === REQUEST_TYPE.TRANSACTION) {
+      const { amount, symbol, decimals } = transactionPayload;
+      if (!errorMessage && feeInfo && !isEnoughBalanceForTransactionFee(balances, {
+        amount,
+        symbol,
+        decimals,
+        txFeeInWei: feeInfo?.fee,
+        gasToken: feeInfo?.gasToken,
+      })) {
+      errorMessage = t('error.notEnoughTokenForFee', { token: gasToken || ETH });
     }
   }
 
-  fetchTransactionEstimate = () => {
-    if (this.unsupportedTransaction) return;
-
-    const { accountAssets, supportedAssets, estimateTransaction } = this.props;
-    const {
-      amount,
-      to,
-      contractAddress,
-      data,
-    } = this.transactionDetails;
-
-    if (!to) return;
-
-    const value = Number(amount || 0);
-
-    const { symbol, decimals } = getAssetDataByAddress(
-      getAssetsAsList(accountAssets),
-      supportedAssets,
-      contractAddress,
-    );
-
-    const assetData = { contractAddress, token: symbol, decimals };
-
-    estimateTransaction({
-      to,
-      value,
-      data,
-      assetData,
-    });
-  };
-
-  handleFormSubmit = (request, transactionPayload) => {
-    Keyboard.dismiss();
-    if (!request) return;
-    this.props.acceptWCRequest(request, transactionPayload);
-  };
-
-  handleDismissal = () => {
-    const { request } = this;
-    const { navigation, rejectWCRequest } = this.props;
-
-    if (request) {
-      rejectWCRequest(request);
+  const onApprovePress = () => {
+    if (!callRequest) {
+      Toast.show({
+        message: t('toast.walletConnectCallRequestApproveFailed'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+    } else {
+      approveCallRequest(callRequest, transactionPayload);
     }
+
     navigation.dismiss();
   };
 
-  render() {
-    const {
-      balances,
-      theme,
-      getTransactionPayload,
-      feeInfo,
-      isEstimating,
-      estimateErrorMessage,
-      isArchanovaWalletActivated,
-    } = this.props;
+  const onRejectPress = () => {
+    if (!callRequest) {
+      Toast.show({
+        message: t('toast.walletConnectCallRequestRejectFailed'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+    }
 
-    const colors = getThemeColors(theme);
+    cancelCallRequest(callRequest);
+    navigation.dismiss();
+  };
 
-    const { request } = this;
-    const {
-      icon,
-      name,
-      method,
-      params = [],
-    } = request || {};
+  const renderTransactionDetails = () => {
+    const feeDisplayValue = formatTransactionFee(feeInfo?.fee, feeInfo?.gasToken);
+    const { genericToken } = images(theme);
+    const { icon, name } = callRequest;
+    const { amount, symbol, to } = transactionPayload;
 
-    let type = REQUEST_TYPE.CALL;
-    let body = null;
-    let address = '';
-    let message = '';
-    let errorMessage = isArchanovaWalletActivated
-      ? estimateErrorMessage
-      : t('walletConnectContent.error.smartWalletNeedToBeActivated');
-    let transactionPayload;
+    return (
+      <>
+        <LabeledRow>
+          <Label>{t('walletConnectContent.label.requestFrom')}</Label>
+          <Value>{name}</Value>
+        </LabeledRow>
+        {!!icon && (
+          <Image
+            key={name}
+            style={{
+              height: 55,
+              width: 55,
+              marginBottom: spacing.mediumLarge,
+            }}
+            source={{ uri: icon }}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+          />
+        )}
+        <LabeledRow>
+          <Label>{t('transactions.label.amount')}</Label>
+          <Value>{t('tokenValue', { value: amount, token: symbol })}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>{t('transactions.label.recipientAddress')}</Label>
+          <Value>{to}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>{t('transactions.label.transactionFee')}</Label>
+          <LabelSub>
+            {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
+          </LabelSub>
+          {!!isEstimating && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
+          {!isEstimating && <Value>{feeDisplayValue}</Value>}
+        </LabeledRow>
+      </>
+    );
+  };
 
-    const gasToken = feeInfo?.gasToken || null;
-    const txFeeInWei = feeInfo?.fee || new BigNumber(0);
+  const renderMessageDetails = () => {
+    const { params = [] } = callRequest;
 
-    switch (method) {
-      case ETH_SEND_TX:
-      case ETH_SIGN_TX:
-        type = REQUEST_TYPE.TRANSACTION;
+    const preparedParams = callRequestMethod === PERSONAL_SIGN
+      ? params.reverse() // different param order on PERSONAL_SIGN
+      : params;
 
-        const estimatePart = {
-          txFeeInWei,
-          gasToken: {},
-        };
-        if (gasToken) estimatePart.gasToken = gasToken;
-        transactionPayload = getTransactionPayload(estimatePart, request);
+    const [address] = preparedParams;
 
-        const {
-          to,
-          data = '',
-          amount,
-          symbol,
-          decimals,
-        } = transactionPayload;
-        if (!to) {
-          Toast.show({ message: t('toast.walkthroughFailed'), emoji: 'hushed' });
-          errorMessage = t('error.transactionFailed.cantCalculateFee');
-        } else if (this.unsupportedTransaction) {
-          errorMessage = t('error.walletConnect.assetNotSupported');
-        } else if (feeInfo && !isEnoughBalanceForTransactionFee(balances, {
-          amount,
-          symbol,
-          decimals,
-          txFeeInWei,
-          gasToken,
-        })) {
-          errorMessage = t('error.notEnoughTokenForFee', { token: gasToken || ETH });
-        }
-
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-
-        const { genericToken } = images(theme);
-
-        body = (
-          <ScrollWrapper regularPadding>
-            <LabeledRow>
-              <Label>{t('walletConnectContent.label.requestFrom')}</Label>
-              <Value>{name}</Value>
-            </LabeledRow>
-            {!!icon && (
-              <Image
-                key={name}
-                style={{
-                  height: 55,
-                  width: 55,
-                  marginBottom: spacing.mediumLarge,
-                }}
-                source={{ uri: icon }}
-                fallbackSource={genericToken}
-                resizeMode="contain"
-              />
-            )}
-            {!this.unsupportedTransaction &&
-              <LabeledRow>
-                <Label>{t('transactions.label.amount')}</Label>
-                <Value>{t('tokenValue', { value: amount, token: symbol })}</Value>
-              </LabeledRow>
-            }
-            <LabeledRow>
-              <Label>{t('transactions.label.recipientAddress')}</Label>
-              <Value>{to}</Value>
-            </LabeledRow>
-            {!this.unsupportedTransaction &&
-              <LabeledRow>
-                <Label>{t('transactions.label.transactionFee')}</Label>
-                <LabelSub>
-                  {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
-                </LabelSub>
-                {!!isEstimating && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
-                {!isEstimating && <Value>{feeDisplayValue}</Value>}
-              </LabeledRow>
-            }
-            {data.toLowerCase() !== '0x' && (
-              <LabeledRow>
-                <Label>{t('transactions.label.data')}</Label>
-                <Value>{data}</Value>
-              </LabeledRow>
-            )}
-          </ScrollWrapper>
-        );
-        break;
-      case ETH_SIGN:
-        type = REQUEST_TYPE.MESSAGE;
-
-        address = params[0]; // eslint-disable-line
-        message = params[1]; // eslint-disable-line
-        body = (
-          <ScrollWrapper regularPadding>
-            <LabeledRow>
-              <Label>{t('transactions.label.address')}</Label>
-              <Value>{address}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>{t('transactions.label.message')}</Label>
-              <Value>{message}</Value>
-            </LabeledRow>
-          </ScrollWrapper>
-        );
-        break;
-      case ETH_SIGN_TYPED_DATA:
-        type = REQUEST_TYPE.MESSAGE;
-
-        [address, message] = params;
-
-        body = (
-          <ScrollWrapper regularPadding>
-            <LabeledRow>
-              <Label>{t('transactions.label.address')}</Label>
-              <Value>{address}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>{t('transactions.label.message')}</Label>
-              <Value>{t('transactions.paragraph.typedDataMessage')}</Value>
-            </LabeledRow>
-          </ScrollWrapper>
-        );
-        break;
-      case PERSONAL_SIGN:
-        type = REQUEST_TYPE.MESSAGE;
-        address = params[1]; // eslint-disable-line
-        try {
-          message = utils.toUtf8String(params[0]);
-        } catch (e) {
-          ([message] = params);
-        }
-
-        body = (
-          <ScrollWrapper regularPadding>
-            <LabeledRow>
-              <Label>{t('transactions.label.address')}</Label>
-              <Value>{address}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>{t('transactions.label.message')}</Label>
-              <Value>{message}</Value>
-            </LabeledRow>
-          </ScrollWrapper>
-        );
-        break;
-      default:
-        type = REQUEST_TYPE.UNSUPPORTED;
-        errorMessage = t('error.walletConnect.unsupportedAction');
-        break;
+    let message;
+    if (callRequestMethod === PERSONAL_SIGN) {
+      try {
+        message = utils.toUtf8String(preparedParams[1])
+      } catch (e) {
+        ([,message] = preparedParams);
+      }
+    } else if (callRequestMethod === ETH_SIGN_TYPED_DATA) {
+      message = t('transactions.paragraph.typedDataMessage');
+    } else {
+      ([,message] = preparedParams);
     }
 
     return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{
-            title: t([
-              `walletConnectContent.title.requestType.${type}`,
-              'walletConnectContent.title.requestType.default',
-            ]),
-          }],
-        }}
-      >
-        {body}
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.basic070}>
-          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
-          <FooterWrapper>
+      <>
+        <LabeledRow>
+          <Label>{t('transactions.label.address')}</Label>
+          <Value>{address}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>{t('transactions.label.message')}</Label>
+          <Value>{message}</Value>
+        </LabeledRow>
+      </>
+    );
+  };
+
+  const isSubmitDisabled = !!errorMessage || (requestType === REQUEST_TYPE.TRANSACTION && isEstimating)
+
+  return (
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [{
+          title: t([
+            `walletConnectContent.title.requestType.${requestType}`,
+            'walletConnectContent.title.requestType.default',
+          ]),
+        }],
+      }}
+    >
+      {requestType !== REQUEST_TYPE.UNSUPPORTED && (
+        <ScrollWrapper regularPadding>
+          {requestType === REQUEST_TYPE.TRANSACTION && renderTransactionDetails()}
+          {requestType === REQUEST_TYPE.MESSAGE && renderMessageDetails()}
+        </ScrollWrapper>
+      )}
+      <Footer keyboardVerticalOffset={40} backgroundColor={colors.basic070}>
+        {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+        <FooterWrapper>
+          {requestType !== REQUEST_TYPE.UNSUPPORTED && (
             <OptionButton
-              onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
-              disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && isEstimating)}
+              onPress={onApprovePress}
+              disabled={isSubmitDisabled}
               title={
                 t([
-                  `walletConnectContent.button.approveType.${type}`,
+                  `walletConnectContent.button.approveType.${requestType}`,
                   'walletConnectContent.button.approveType.default',
                 ])
               }
             />
-            <OptionButton
-              danger
-              transparent
-              onPress={this.handleDismissal}
-              title={t('button.reject')}
-            />
-          </FooterWrapper>
-        </Footer>
-      </ContainerWithHeader>
-    );
-  }
-}
+          )}
+          <OptionButton
+            danger
+            transparent
+            onPress={onRejectPress}
+            title={t('button.reject')}
+          />
+        </FooterWrapper>
+      </Footer>
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
-  accounts: { data: accounts },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  accounts,
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
@@ -454,9 +351,10 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  accountAssets: accountAssetsSelector,
   isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
   activeAccount: activeAccountSelector,
+  supportedAssets: supportedAssetsSelector,
+  accountAssets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -464,11 +362,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
-  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-});
-
-export default withWCRequests(
-  withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen)),
-);
+export default withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen));

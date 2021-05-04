@@ -23,24 +23,29 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
+// actions
+import { connectToWalletConnectConnectorAction } from 'actions/walletConnectActions';
+
+// components
 import CircleButton from 'components/CircleButton';
 import Toast from 'components/Toast';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Modal from 'components/Modal';
 
+// utils
 import { fontSizes } from 'utils/variables';
-import {
-  requestSessionAction,
-  cancelWaitingRequestAction,
-} from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+
+// hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+
 
 type Props = {
   isOnline: boolean,
-  requestWalletConnectSession: (uri: string) => void,
   executeDeepLink: (uri: string) => void,
-  cancelWaitingRequest: () => void,
 };
 
 const Container = styled.View`
@@ -49,9 +54,15 @@ const Container = styled.View`
   margin-bottom: 36px;
 `;
 
-class QRCodeScanButton extends React.Component<Props> {
-  openQRScanner = () => {
-    const { isOnline } = this.props;
+const validateQRCode = (uri: string): boolean => uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
+
+const WalletConnectQRCodeScanButton = ({
+  isOnline,
+  executeDeepLink,
+}: Props) => {
+  const { connectToConnector } = useWalletConnect();
+
+  const openQRScanner = () => {
     if (!isOnline) {
       Toast.show({
         message: t('toast.userIsOffline'),
@@ -61,46 +72,31 @@ class QRCodeScanButton extends React.Component<Props> {
     }
     Modal.open(() => (
       <QRCodeScanner
-        validator={this.validateQRCode}
-        onRead={this.handleQRRead}
+        validator={validateQRCode}
+        onRead={handleQRRead}
       />
     ));
   };
 
-  validateQRCode = (uri: string): boolean => {
-    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
-  };
-
-  handleQRRead = (uri: string) => {
-    const {
-      requestWalletConnectSession,
-      executeDeepLink,
-    } = this.props;
-
+  const handleQRRead = (uri: string) => {
     if (uri.startsWith('wc:')) {
-      requestWalletConnectSession(uri);
+      connectToConnector(uri);
     } else {
       executeDeepLink(uri);
     }
   };
 
-  cancelWaiting = () => {
-    this.props.cancelWaitingRequest();
-  };
-
-  render() {
-    return (
-      <Container>
-        <CircleButton
-          fontIcon="connect-active"
-          fontIconStyle={{ fontSize: fontSizes.large }}
-          label={t('button.connect')}
-          onPress={this.openQRScanner}
-        />
-      </Container>
-    );
-  }
-}
+  return (
+    <Container>
+      <CircleButton
+        fontIcon="connect-active"
+        fontIconStyle={{ fontSize: fontSizes.large }}
+        label={t('button.connect')}
+        onPress={openQRScanner}
+      />
+    </Container>
+  );
+};
 
 const mapStateToProps = ({
   session: { data: { isOnline } },
@@ -109,9 +105,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  requestWalletConnectSession: uri => dispatch(requestSessionAction(uri)),
   executeDeepLink: uri => dispatch(executeDeepLinkAction(uri)),
-  cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(QRCodeScanButton);
+export default connect(mapStateToProps, mapDispatchToProps)(WalletConnectQRCodeScanButton);

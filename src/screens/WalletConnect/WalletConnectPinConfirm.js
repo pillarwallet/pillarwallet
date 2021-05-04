@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import CheckAuth from 'components/CheckAuth';
 
 // actions
-import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
+import { approveWalletConnectCallRequestAction, rejectWalletConnectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
@@ -233,11 +233,11 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  walletConnect: { requests },
+  walletConnect: { callRequests },
   appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
-  requests,
+  callRequests: callRequests,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -250,8 +250,8 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  approveCallRequest: (callId: number, result: any) => dispatch(approveCallRequestAction(callId, result)),
-  rejectCallRequest: (callId: number, errorMessage?: string) => dispatch(rejectCallRequestAction(callId, errorMessage)),
+  approveCallRequest: (callId: number, result: any) => dispatch(approveWalletConnectCallRequestAction(callId, result)),
+  rejectCallRequest: (callId: number, errorMessage?: string) => dispatch(rejectWalletConnectCallRequestAction(callId, errorMessage)),
   sendAsset: (
     transaction: TransactionPayload,
     callback: (status: TransactionStatus) => void,

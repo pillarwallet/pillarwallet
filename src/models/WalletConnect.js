@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-// Based on types from:
-// https://github.com/WalletConnect/walletconnect-monorepo/blob/master/packages/types/index.d.ts
+export type Connector = {};
 
 export type ClientMeta = {|
   description: string,
@@ -102,36 +101,3 @@ export type JsonRpcResponseError = {|
 |};
 
 type Callback = (e: any, payload: any) => any;
-
-export type Connector = {|
-  bridge: string,
-  key: string,
-  nextKey: string,
-  clientId: string,
-  peerId: string,
-  clientMeta: ?ClientMeta,
-  peerMeta: ?ClientMeta,
-  handshakeTopic: string,
-  handshakeId: number,
-  accounts: string[],
-  chainId: number,
-  networkId: number,
-  rpcUrl: string,
-  connected: boolean,
-  pending: boolean,
-  session: Session,
-  on: (event: string, callback: Callback) => void,
-  createSession: (opts?: { chainId: number }) => Promise<void>,
-  approveSession: (sessionStatus: SessionStatus) => void,
-  rejectSession: (sessionError?: SessionError) => void,
-  updateSession: (sessionStatus: SessionStatus) => void,
-  killSession: (sessionError?: SessionError) => Promise<void>,
-  sendTransaction: (tx: ITxData) => Promise<any>,
-  signTransaction: (tx: ITxData) => Promise<any>,
-  signMessage: (params: any[]) => Promise<any>,
-  signPersonalMessage: (params: any[]) => Promise<any>,
-  signTypedData: (params: any[]) => Promise<any>,
-  sendCustomRequest: (request: $Shape<JsonRpcRequest>) => Promise<any>,
-  approveRequest: (response: $Shape<JsonRpcResponseSuccess>) => void,
-  rejectRequest: (response: $Shape<JsonRpcResponseError>) => void,
-|};
