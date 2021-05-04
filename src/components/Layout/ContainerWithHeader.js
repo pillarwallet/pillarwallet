@@ -58,6 +58,7 @@ type Props = {
   keyboardShouldPersistTaps?: KeyboardShouldPersistTaps,
   footerContainerStyle?: Object,
   footerContainerInset?: Object,
+  onScroll?: Function,
 };
 
 type State = {
@@ -138,6 +139,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
       footer,
       keyboardShouldPersistTaps = 'never',
       shouldFooterAvoidKeyboard = true,
+      onScroll,
     } = this.props;
 
     if (!shouldRenderFooter) {
@@ -172,6 +174,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
           style={{ flex: 1 }}
           contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}
           keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+          onScroll={onScroll}
         >
           {content}
         </ScrollWrapper>

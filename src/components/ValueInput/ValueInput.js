@@ -300,8 +300,10 @@ export const ValueInputComponent = ({
   }, [errorMessage]);
 
   React.useEffect(() => {
-    onValueChange?.('0');
-    setValueInFiat('0');
+    if (value) {
+      onValueChange?.('0');
+      setValueInFiat('0');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetData.name]);
 

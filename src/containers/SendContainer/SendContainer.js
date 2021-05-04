@@ -117,11 +117,12 @@ const SendContainer = (props: Props) => {
       headerProps={{ centerItems: [{ title: customScreenTitle || t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
+      keyboardShouldPersistTaps="handled"
+      onScroll={() => { !footerProps.isNextButtonVisible ? Keyboard.dismiss() : null; }}
     >
       <ScrollView
         onScroll={() => Keyboard.dismiss()}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
       >
         <Wrapper>
           <InputWrapper>
