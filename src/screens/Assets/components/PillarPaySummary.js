@@ -25,8 +25,16 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
+import FiatValueView from 'components/modern/FiatValueView';
 import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
+
+// Contants
+import { FUND_TANK } from 'constants/navigationConstants';
+
+// Selectors
+import { useRootSelector, useFiatCurrency } from 'selectors';
+import { paymentNetworkBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -44,12 +52,15 @@ function PillarPaySummary({ style }: Props) {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
+  const balance = useRootSelector(paymentNetworkBalanceSelector);
+  const currency = useFiatCurrency();
+
   const navigateToPillarPay = () => {
     console.log('Navigate to Pillar Pay');
   };
 
   const navigateToTopUp = () => {
-    console.log('Navigate to Top Up');
+    navigation.navigate(FUND_TANK);
   };
 
   return (
@@ -59,7 +70,7 @@ function PillarPaySummary({ style }: Props) {
         <Icon name="question" width={12} height={12} color={colors.labelTertiary} />
       </TitleWrapper>
 
-      <Balance variant="big">$360</Balance>
+      <FiatValueView value={balance} currency={currency} variant="big" />
       <Button title={t('topUp')} variant="text" compact onPress={navigateToTopUp} />
     </TouchableContainer>
   );
@@ -88,8 +99,4 @@ const TitleWrapper = styled.View`
 const Title = styled(Text)`
   font-family: '${appFont.medium};
   margin-right: ${spacing.small}px;
-`;
-
-const Balance = styled(Text)`
-  font-variant: tabular-nums;
 `;

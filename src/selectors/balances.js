@@ -88,6 +88,7 @@ export const allBalancesSelector = createSelector(
   },
 );
 
+
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
   (hasPositiveBalance) => !!hasPositiveBalance,
@@ -179,6 +180,16 @@ export const walletBalanceSelector: (RootReducerState) => BigNumber = createSele
       getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
         getTotalBalanceInFiat(sablierBalances, rates, fiatCurrency),
     );
+  },
+);
+
+export const paymentNetworkBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  availableStakeSelector,
+  ratesSelector,
+  fiatCurrencySelector,
+  (ppnBalance: number, rates: Rates, currency: string) => {
+    const balances: Balances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
   },
 );
 
