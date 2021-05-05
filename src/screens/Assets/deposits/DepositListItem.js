@@ -36,19 +36,16 @@ import { useThemedImages } from 'utils/images';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// Types
-import type { ImageSource } from 'utils/types/react-native';
-
 type Props = {|
   title: ?string,
   subtitle?: ?string,
-  iconSource: ?ImageSource,
+  iconUrl: ?string,
   value: BigNumber,
   change?: BigNumber,
   onPress?: () => mixed,
 |};
 
-function DepositListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
+function DepositListItem({ title, subtitle, iconUrl, value, change, onPress }: Props) {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
 
@@ -57,7 +54,7 @@ function DepositListItem({ title, subtitle, iconSource, value, change, onPress }
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
       <IconContainer>
-        <IconImage source={iconSource ?? genericToken} />
+        <IconImage source={iconUrl ? { uri: iconUrl } : genericToken} />
       </IconContainer>
 
       <TitleContainer>

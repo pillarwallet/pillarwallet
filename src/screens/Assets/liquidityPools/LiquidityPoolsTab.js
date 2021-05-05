@@ -97,18 +97,8 @@ function LiquidityPoolsTab() {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change, poolShare } = headerListItem.item;
-    const formattedCurrencApy = formatPercentValue(poolShare);
-    const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return (
-      <LiquidityPoolListItem
-        title={title}
-        subtitle={subtitle}
-        iconSource={{ uri: iconUrl }}
-        value={value}
-        change={change}
-      />
-    );
+    const { title, iconUrl, value, change } = headerListItem.item;
+    return <LiquidityPoolListItem title={title} iconUrl={iconUrl} value={value} change={change} />;
   };
 
   return (

@@ -25,37 +25,35 @@ import { useRootSelector } from 'selectors';
 import { investmentsBalanceSelector } from 'selectors/balances';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-
-const poolTogetherIcon = require('assets/images/apps/pool_together.png');
 
 export function useInvestmentsBalance(): FiatBalance {
   const value = useRootSelector(investmentsBalanceSelector);
   return { value };
 }
+
+/** Note: items are groupped by service. */
 export type InvestmentItem = {|
   key: string,
   service: string,
   title: string,
-  iconSource: ImageSource,
+  iconUrl: ?string,
   value: BigNumber,
-  change?: BigNumber,
-  currentApy?: BigNumber,
+  change?: ?BigNumber,
 |};
 
 // TODO: provide real assets data
 export function useInvestmentAssets(): ChainRecord<InvestmentItem[]> {
+  /* eslint-disable i18next/no-literal-string */
   const ethereum = [
     {
       key: 'rari-1',
       title: 'Stable pool',
       service: 'Pool Together',
-      iconSource: poolTogetherIcon,
+      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
       value: BigNumber(10),
       change: BigNumber(1.2),
-      currentApy: BigNumber(0.012),
     },
   ];
 

@@ -93,12 +93,8 @@ function InvestmentsTab() {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconSource, value, change, currentApy } = headerListItem.item;
-    const formattedCurrencApy = formatPercentValue(currentApy);
-    const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return (
-      <InvestmentListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />
-    );
+    const { title, iconUrl, value, change } = headerListItem.item;
+    return <InvestmentListItem title={title} iconUrl={iconUrl} value={value} change={change} />;
   };
 
   return (

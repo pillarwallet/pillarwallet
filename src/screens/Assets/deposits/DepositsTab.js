@@ -94,16 +94,16 @@ function DepositsTab() {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconSource, value, interests, currentApy, navigateAction } = headerListItem.item;
+    const { title, iconUrl, value, change, currentApy, navigateAction } = headerListItem.item;
     const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
     return (
       <DepositListItem
         title={title}
         subtitle={subtitle}
-        iconSource={iconSource}
+        iconUrl={iconUrl}
         value={value}
-        change={interests}
+        change={change}
         onPress={navigateAction}
       />
     );

@@ -33,23 +33,17 @@ import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { useThemedImages } from 'utils/images';
-import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-
-// Types
-import type { ImageSource } from 'utils/types/react-native';
 
 type Props = {|
   title: ?string,
-  subtitle?: ?string,
-  iconSource: ?ImageSource,
+  iconUrl: ?string,
   value: BigNumber,
-  change?: BigNumber,
+  change?: ?BigNumber,
   onPress?: () => mixed,
 |};
 
-function InvestmentListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
-  const colors = useThemeColors();
+function InvestmentListItem({ title, iconUrl, value, change, onPress }: Props) {
   const currency = useFiatCurrency();
 
   const { genericToken } = useThemedImages();
@@ -57,14 +51,13 @@ function InvestmentListItem({ title, subtitle, iconSource, value, change, onPres
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
       <IconContainer>
-        <IconImage source={iconSource ?? genericToken} />
+        <IconImage source={iconUrl ? { uri: iconUrl } : genericToken} />
       </IconContainer>
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
           {title}
         </Text>
-        {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
       </TitleContainer>
 
       <RightAddOn>
