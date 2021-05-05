@@ -39,6 +39,8 @@ import DepositsTab from './deposits/DepositsTab';
 import InvestmentsTab from './investments/InvestmentsTab';
 import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
 import RewardsTab from './rewards/RewardsTab';
+import CollectiblesTab from './collectibles/CollectiblesTab';
+
 
 function Assets() {
   const navigation = useNavigation();
@@ -50,8 +52,8 @@ function Assets() {
     { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
     { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
     { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
-    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
+    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
   ];
 
   const { category: initialCategory } = navigation.state.params;

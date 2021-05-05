@@ -19,49 +19,62 @@
 */
 
 import * as React from 'react';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
+import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
-// Selectors
-import { useFiatCurrency } from 'selectors';
-
 // Utils
-import { formatFiatValue } from 'utils/format';
 import { spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
-
-// Types
-import { type Chain } from 'models/Chain';
 
 type Props = {|
-  chain: Chain,
+  title: ?string,
+  iconUrl: ?string,
   onPress?: () => mixed,
-  balance?: ?BigNumber,
+  width: number,
 |};
 
-function ChainListHeader({ chain, onPress, balance }: Props) {
-  const currency = useFiatCurrency();
-
-  const { title, color } = useChainsConfig()[chain];
-
-  const fiatValue = formatFiatValue(balance, currency, { stripTrailingZeros: true });
-
+function CollectibleListItem({ title, iconUrl, onPress, width }: Props) {
   return (
-    <TouchableContainer onPress={onPress}>
-      <Text variant="medium" color={color}>
-        {title}{fiatValue != null && ` · ${fiatValue}`}
-      </Text>
+    <TouchableContainer onPress={onPress} disabled={!onPress} style={{ width }}>
+      <IconContainer width={width}>
+        {!!iconUrl && <Icon source={{ uri: iconUrl }} resizeMode={Image.resizeMode.contain} />}
+      </IconContainer>
+
+      <TitleContainer>
+        <Text variant="small" numberOfLines={1}>
+          {title}
+        </Text>
+      </TitleContainer>
     </TouchableContainer>
   );
 }
 
-export default ChainListHeader;
+export default CollectibleListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.background};
-  padding: ${spacing.extraLarge}px ${spacing.large}px ${spacing.small}px;
   align-items: center;
+  margin: ${spacing.extraSmall}px;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.basic050}};
+`;
+
+const IconContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  width: ${({ width }) => width - 32}px;
+  height: ${({ width }) => width - 32}px;
+  padding: 12px;
+`;
+
+const Icon = styled(Image)`
+  flex: 1;
+  aspect-ratio: 1;
+`;
+
+const TitleContainer = styled.View`
+  justify-content: center;
+  margin-top: 16px;
 `;
