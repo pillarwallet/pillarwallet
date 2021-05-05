@@ -31,7 +31,7 @@ import TabView from 'components/modern/TabView';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
+import { ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './wallet/WalletTab';
@@ -40,14 +40,9 @@ import InvestmentsTab from './investments/InvestmentsTab';
 import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
 import RewardsTab from './rewards/RewardsTab';
 
-type Props = {|
-  initialCategory: ?AssetCategory,
-|};
-
-function WalletView({ initialCategory }: Props) {
+function Assets() {
   const navigation = useNavigation();
   const { t } = useTranslation();
-
   const config = useAssetCategoriesConfig();
 
   const items = [
@@ -58,6 +53,8 @@ function WalletView({ initialCategory }: Props) {
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
     { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
   ];
+
+  const { category: initialCategory } = navigation.state.params;
 
   const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
   const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
@@ -74,4 +71,4 @@ function WalletView({ initialCategory }: Props) {
   );
 }
 
-export default WalletView;
+export default Assets;

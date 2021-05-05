@@ -30,7 +30,7 @@ import { withTranslation } from 'react-i18next';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import AssetSearchScreen from 'screens/Assets/AssetSearch';
+import AssetSearchScreen from 'screens/AssetSearch/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
