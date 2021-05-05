@@ -602,7 +602,11 @@
   "assets": {
     "wallet": {
       "tokens": "Tokens",
-      "addFunds": "Add funds"
+      "addFunds": "Add funds",
+      "pillarPay": {
+        "title": "Pillar Pay",
+        "topUp": "Top up"
+      }
     },
     "deposits": {
       "deposit": "Deposit"

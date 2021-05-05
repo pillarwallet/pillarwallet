@@ -52,6 +52,7 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import ChainListHeader from '../components/ChainListHeader';
+import PillarPaySummary from '../components/PillarPaySummary';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
 import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
@@ -87,8 +88,12 @@ function WalletTab() {
     const { value, change } = totalBalance;
     return (
       <ListHeader>
-        <BalanceView balance={totalBalance.value} style={styles.balanceView} />
-        {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
+        <BalanceView balance={totalBalance.value} />
+        {!!change && (
+          <FiatChangeView value={value} change={totalBalance.change} currency={currency} style={styles.balanceChange} />
+        )}
+
+        <PillarPaySummary style={styles.pillarPay} />
       </ListHeader>
     );
   };
@@ -167,8 +172,11 @@ const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
 };
 
 const styles = {
-  balanceView: {
-    marginBottom: spacing.extraSmall,
+  balanceChange: {
+    marginTop: spacing.extraSmall,
+  },
+  pillarPay: {
+    marginTop: spacing.extraLarge,
   },
 };
 
@@ -178,5 +186,6 @@ const Container = styled.View`
 
 const ListHeader = styled.View`
   align-items: center;
-  margin: ${spacing.largePlus}px 0;
+  margin-top: ${spacing.largePlus}px;
+  margin-bottom: ${spacing.mediumLarge}px;
 `;
