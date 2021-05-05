@@ -23,7 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import { LENDING_CHOOSE_DEPOSIT, LENDING_VIEW_DEPOSITED_ASSET, RARI_DEPOSIT } from 'constants/navigationConstants';
+import { LENDING_VIEW_DEPOSITED_ASSET, RARI_DEPOSIT } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
 // Selectors
@@ -126,20 +126,4 @@ function useRariDeposits(): DepositItem[] {
         navigateAction: () => navigation.navigate(RARI_DEPOSIT),
       };
     });
-}
-
-export type DepositApp = {|
-  title: string,
-  subtitle?: string,
-  iconSource: ImageSource,
-  navigationPath: string,
-|};
-
-export function useDepositApps(): DepositApp[] {
-  const { t } = useTranslation();
-
-  return [
-    { title: t('apps.aave'), iconSource: aaveIcon, navigationPath: LENDING_CHOOSE_DEPOSIT },
-    { title: t('apps.rari'), iconSource: rariIcon, navigationPath: RARI_DEPOSIT },
-  ];
 }

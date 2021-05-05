@@ -28,10 +28,11 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import BottomModal from 'components/modern/BottomModal';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
-import Modal from 'components/Modal';
+
+// Constants
+import { SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -51,9 +52,8 @@ import type { Chain } from 'models/Chain';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
-import AssetListItem from '../items/AssetListItem';
-import ServiceListItem from '../items/ServiceListItem';
-import { type DepositItem, useDepositsBalance, useDepositsAssets, useDepositApps } from './selectors';
+import DepositListItem from './DepositListItem';
+import { type DepositItem, useDepositsBalance, useDepositsAssets } from './selectors';
 
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
@@ -66,25 +66,14 @@ function DepositsTab() {
 
   const totalBalance = useDepositsBalance();
   const sections = useSectionData(expandItemsPerChain);
-  const apps = useDepositApps();
   const currency = useFiatCurrency();
 
   const navigateToServices = () => {
-    Modal.open(() => (
-      <BottomModal title={t('deposit')}>
-        {apps.map(({ title, iconSource, navigationPath }) => (
-          <ServiceListItem
-            key={title}
-            title={title}
-            iconSource={iconSource}
-            onPress={() => navigation.navigate(navigationPath)}
-          />
-        ))}
-      </BottomModal>
-    ));
+    // TODO: navigate to new Wallet Connect screen when available
+    navigation.navigate(SERVICES_FLOW);
   };
 
-  const buttons = [apps.length > 0 && { title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -109,7 +98,7 @@ function DepositsTab() {
     const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
     return (
-      <AssetListItem
+      <DepositListItem
         title={title}
         subtitle={subtitle}
         iconSource={iconSource}

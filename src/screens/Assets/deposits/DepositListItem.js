@@ -48,7 +48,7 @@ type Props = {|
   onPress?: () => mixed,
 |};
 
-function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
+function DepositListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
 
@@ -56,7 +56,9 @@ function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: 
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <IconContainer><IconImage source={iconSource ?? genericToken} /></IconContainer>
+      <IconContainer>
+        <IconImage source={iconSource ?? genericToken} />
+      </IconContainer>
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -73,7 +75,7 @@ function AssetListItem({ title, subtitle, iconSource, value, change, onPress }: 
   );
 }
 
-export default AssetListItem;
+export default DepositListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

@@ -19,13 +19,20 @@
 */
 
 import * as React from 'react';
-import { Image as RNImage } from 'react-native';
+import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
+import FiatValueView from 'components/modern/FiatValueView';
+import FiatChangeView from 'components/modern/FiatChangeView';
+import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
+// Selectors
+import { useFiatCurrency } from 'selectors';
+
 // Utils
+import { useThemedImages } from 'utils/images';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -33,19 +40,25 @@ import { spacing } from 'utils/variables';
 import type { ImageSource } from 'utils/types/react-native';
 
 type Props = {|
-  iconSource?: ImageSource,
   title: ?string,
   subtitle?: ?string,
-  rightAddOn?: React.Node,
+  iconSource: ?ImageSource,
+  value: BigNumber,
+  change?: BigNumber,
   onPress?: () => mixed,
 |};
 
-function ServiceListItem({ iconSource, title, subtitle, rightAddOn, onPress }: Props) {
+function LiquidityPoolListItem({ title, subtitle, iconSource, value, change, onPress }: Props) {
   const colors = useThemeColors();
+  const currency = useFiatCurrency();
+
+  const { genericToken } = useThemedImages();
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <IconContainer>{!!iconSource && <IconImage source={iconSource} />}</IconContainer>
+      <IconContainer>
+        <IconImage source={iconSource ?? genericToken} />
+      </IconContainer>
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -54,12 +67,15 @@ function ServiceListItem({ iconSource, title, subtitle, rightAddOn, onPress }: P
         {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
       </TitleContainer>
 
-      {rightAddOn && <RightAddOn>{rightAddOn}</RightAddOn>}
+      <RightAddOn>
+        <FiatValueView value={value} currency={currency} variant="medium" />
+        <FiatChangeView value={value} change={change} currency={currency} />
+      </RightAddOn>
     </TouchableContainer>
   );
 }
 
-export default ServiceListItem;
+export default LiquidityPoolListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
@@ -74,6 +90,11 @@ const IconContainer = styled.View`
   width: 48px;
 `;
 
+const IconImage = styled(Image)`
+  width: 48px;
+  height: 48px;
+`;
+
 const TitleContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -83,10 +104,4 @@ const RightAddOn = styled.View`
   justify-content: center;
   align-items: flex-end;
   margin-left: ${spacing.medium}px;
-`;
-
-const IconImage = styled(RNImage)`
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
 `;

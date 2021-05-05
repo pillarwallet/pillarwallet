@@ -28,10 +28,11 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import BottomModal from 'components/modern/BottomModal';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
-import Modal from 'components/Modal';
+
+// Constants
+import { SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -51,13 +52,11 @@ import type { Chain } from 'models/Chain';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
-import AssetListItem from '../items/AssetListItem';
-import ServiceListItem from '../items/ServiceListItem';
+import LiquidityPoolListItem from './LiquidityPoolListItem';
 import {
   type LiquidityPoolItem,
   useLiquidityPoolsBalance,
   useLiquidityPoolAssets,
-  useLiquidityPoolApps,
 } from './selectors';
 
 function LiquidityPoolsTab() {
@@ -70,25 +69,14 @@ function LiquidityPoolsTab() {
 
   const totalBalance = useLiquidityPoolsBalance();
   const sections = useSectionData(expandItemsPerChain);
-  const apps = useLiquidityPoolApps();
   const currency = useFiatCurrency();
 
   const navigateToServices = () => {
-    Modal.open(() => (
-      <BottomModal title={t('addLiquidity')}>
-        {apps.map(({ title, iconUrl, navigationPath }) => (
-          <ServiceListItem
-            key={title}
-            title={title}
-            iconSource={{ uri: iconUrl }}
-            onPress={() => navigation.navigate(navigationPath)}
-          />
-        ))}
-      </BottomModal>
-    ));
+    // TODO: navigate to new Wallet Connect screen when available
+    navigation.navigate(SERVICES_FLOW);
   };
 
-  const buttons = [apps.length > 0 && { title: t('addLiquidity'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('addLiquidity'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -113,7 +101,13 @@ function LiquidityPoolsTab() {
     const formattedCurrencApy = formatPercentValue(poolShare);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
     return (
-      <AssetListItem title={title} subtitle={subtitle} iconSource={{ uri: iconUrl }} value={value} change={change} />
+      <LiquidityPoolListItem
+        title={title}
+        subtitle={subtitle}
+        iconSource={{ uri: iconUrl }}
+        value={value}
+        change={change}
+      />
     );
   };
 

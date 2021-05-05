@@ -19,10 +19,6 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { useTranslation } from 'translations/translate';
-
-// Constants
-import { POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -64,17 +60,4 @@ export function useInvestmentAssets(): ChainRecord<InvestmentItem[]> {
   ];
 
   return { ethereum };
-}
-
-export type InvestmentApp = {|
-  title: string,
-  subtitle?: string,
-  iconSource: ImageSource,
-  navigationPath: string,
-|};
-
-export function useInvestmentApps(): InvestmentApp[] {
-  const { t } = useTranslation();
-
-  return [{ title: t('apps.poolTogether'), iconSource: poolTogetherIcon, navigationPath: POOLTOGETHER_DASHBOARD }];
 }

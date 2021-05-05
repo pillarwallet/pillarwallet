@@ -19,10 +19,6 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { useTranslation } from 'translations/translate';
-
-// Constants
-import { LIQUIDITY_POOLS } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -71,23 +67,4 @@ export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolItem[]> {
   ];
 
   return { ethereum };
-}
-
-export type LiquidityPoolApp = {|
-  title: string,
-  subtitle?: string,
-  iconUrl: string,
-  navigationPath: string,
-|};
-
-export function useLiquidityPoolApps(): LiquidityPoolApp[] {
-  const { t } = useTranslation();
-
-  return [
-    {
-      title: t('apps.uniswap'),
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/uniColor.png?size=3',
-      navigationPath: LIQUIDITY_POOLS,
-    },
-  ];
 }

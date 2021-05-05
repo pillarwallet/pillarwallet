@@ -28,10 +28,11 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import BottomModal from 'components/modern/BottomModal';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
-import Modal from 'components/Modal';
+
+// Constants
+import { SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -51,9 +52,8 @@ import type { Chain } from 'models/Chain';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
-import AssetListItem from '../items/AssetListItem';
-import ServiceListItem from '../items/ServiceListItem';
-import { type InvestmentItem, useInvestmentsBalance, useInvestmentAssets, useInvestmentApps } from './selectors';
+import InvestmentListItem from './InvestmentListItem';
+import { type InvestmentItem, useInvestmentsBalance, useInvestmentAssets } from './selectors';
 
 function InvestmentsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.investments');
@@ -65,25 +65,14 @@ function InvestmentsTab() {
 
   const totalBalance = useInvestmentsBalance();
   const sections = useSectionData(expandItemsPerChain);
-  const apps = useInvestmentApps();
   const currency = useFiatCurrency();
 
   const navigateToServices = () => {
-    Modal.open(() => (
-      <BottomModal title={t('invest')}>
-        {apps.map(({ title, iconSource, navigationPath }) => (
-          <ServiceListItem
-            key={title}
-            title={title}
-            iconSource={iconSource}
-            onPress={() => navigation.navigate(navigationPath)}
-          />
-        ))}
-      </BottomModal>
-    ));
+    // TODO: navigate to new Wallet Connect screen when available
+    navigation.navigate(SERVICES_FLOW);
   };
 
-  const buttons = [apps.length > 0 && { title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -107,7 +96,9 @@ function InvestmentsTab() {
     const { title, iconSource, value, change, currentApy } = headerListItem.item;
     const formattedCurrencApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrencApy ? tRoot('label.currentApyFormat', { value: formattedCurrencApy }) : undefined;
-    return <AssetListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />;
+    return (
+      <InvestmentListItem title={title} subtitle={subtitle} iconSource={iconSource} value={value} change={change} />
+    );
   };
 
   return (
