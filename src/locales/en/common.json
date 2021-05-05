@@ -80,6 +80,16 @@
     "wallet": "Wallet",
     "deposits": "Deposits",
     "investments": "Investments",
+    "liquidityPools": "Liquidity pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles"
+  },
+
+  "assetCategoriesShort": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
     "liquidityPools": "Pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
@@ -598,7 +608,7 @@
   "history": {
     "title": "Transactions history"
   },
-  
+
   "assets": {
     "wallet": {
       "tokens": "Tokens",

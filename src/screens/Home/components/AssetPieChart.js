@@ -105,8 +105,8 @@ const useChartProps = (balances: CategoryBalances) => {
   // Zero balance case
   if (total.isZero()) {
     Object.keys(balances).forEach((category, index, array) => {
-      const { title } = config[category];
-      data.push({ y: 1 / array.length, title, value: 0 });
+      const { titleShort } = config[category];
+      data.push({ y: 1 / array.length, title: titleShort, value: 0 });
       colorScale.push(colors.pieChartEmpty);
     });
 
@@ -119,8 +119,8 @@ const useChartProps = (balances: CategoryBalances) => {
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
 
     const value = categoryBalance.dividedBy(totalBalance).toNumber();
-    const { title, chartColor } = config[category];
-    data.push({ y: value, title, value });
+    const { titleShort, chartColor } = config[category];
+    data.push({ y: value, title: titleShort, value });
     colorScale.push(chartColor);
   });
 
