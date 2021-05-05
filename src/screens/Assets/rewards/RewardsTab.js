@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation, SectionList } from 'react-native';
+import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -32,13 +32,9 @@ import FloatingButtons from 'components/FloatingButtons';
 import Text from 'components/modern/Text';
 
 // Selectors
-import { useRates, useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
-import { getRate } from 'utils/assets';
-import { sum } from 'utils/bigNumber';
-import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -47,11 +43,10 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import { type RewardItem, useRewardsBalance, useRewardsAssets } from './selectors';
-import RewardListItem from './RewardListItem';
+import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
-
-type FlagPerChain = { [Chain]: ?boolean };
+import { type RewardItem, useRewardsBalance, useRewardsChainBalances, useRewardsAssets } from './selectors';
+import RewardListItem from './RewardListItem';
 
 function RewardsTab() {
   const { t } = useTranslationWithPrefix('assets.rewards');
@@ -60,16 +55,10 @@ function RewardsTab() {
   const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
-  const [showItemsPerChain, setShowItemsPerChain] = React.useState<FlagPerChain>({ [initialChain]: true });
-
+  const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
+ 
   const totalBalance = useRewardsBalance();
-  const sections = useSectionData(showItemsPerChain);
-
-  const toggleShowItems = (chain: Chain) => {
-    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    // $FlowFixMe: type inference limitation
-    setShowItemsPerChain({ ...showItemsPerChain, [chain]: !showItemsPerChain[chain] });
-  };
+  const sections = useSectionData(expandItemsPerChain);
 
   const renderListHeader = () => {
     return (
@@ -81,7 +70,7 @@ function RewardsTab() {
   };
 
   const renderSectionHeader = ({ chain, balance }: Section) => {
-    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleShowItems(chain)} />;
+    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
   const renderItem = ({ title, service, iconUrl, value, symbol, navigateAction }: RewardItem) => {
@@ -118,16 +107,15 @@ type Section = {
   balance: BigNumber,
 };
 
-const useSectionData = (showChainAssets: FlagPerChain): Section[] => {
+const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
+  const balancePerChain = useRewardsChainBalances();
   const assetsPerChain = useRewardsAssets();
-  const rates = useRates();
-  const currency = useFiatCurrency();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
-    const data = showChainAssets[chain] ? items : [];
+    const balance = balancePerChain[chain] ?? BigNumber(0);
+    const data = expandItemsPerChain[chain] ? items : [];
     return { key: chain, chain, balance, data };
   });
 };

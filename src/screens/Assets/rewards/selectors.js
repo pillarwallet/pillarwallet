@@ -34,6 +34,10 @@ export function useRewardsBalance(): BigNumber {
   return useRootSelector(rewardsBalanceSelector);
 }
 
+export function useRewardsChainBalances(): ChainRecord<BigNumber> {
+  return { polygon: BigNumber(100), xdai: BigNumber(200) };
+}
+
 export type RewardItem = {|
   key: string,
   service: string,

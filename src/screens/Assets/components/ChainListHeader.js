@@ -38,11 +38,12 @@ import { type Chain } from 'models/Chain';
 
 type Props = {|
   chain: Chain,
-  balance: BigNumber,
+  balance: ?BigNumber,
+  count: ?number,
   onPress?: () => mixed,
 |};
 
-function ChainListHeader({ chain, balance, onPress }: Props) {
+function ChainListHeader({ chain, balance, count, onPress }: Props) {
   const currency = useFiatCurrency();
 
   const { title, color } = useChainsConfig()[chain];
@@ -52,7 +53,7 @@ function ChainListHeader({ chain, balance, onPress }: Props) {
   return (
     <TouchableContainer onPress={onPress}>
       <Text variant="medium" color={color}>
-        {title} · {fiatValue}
+        {title}  ·  {fiatValue}{count}
       </Text>
     </TouchableContainer>
   );

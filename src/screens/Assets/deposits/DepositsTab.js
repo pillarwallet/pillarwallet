@@ -39,7 +39,6 @@ import { useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
-import { sum } from 'utils/bigNumber';
 import { spacing } from 'utils/variables';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { formatPercentValue } from 'utils/format';
@@ -53,7 +52,7 @@ import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
 import ServiceListHeader from '../components/ServiceListHeader';
 import DepositListItem from './DepositListItem';
-import { type DepositItem, useDepositsBalance, useDepositsAssets } from './selectors';
+import { type DepositItem, useDepositsBalance, useDepositsChainBalances, useDepositsAssets } from './selectors';
 
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
@@ -134,18 +133,14 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
+  const balancePerChain = useDepositsChainBalances();
   const assetsPerChain = useDepositsAssets();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = sum(items.map((item) => item.value));
-
-    return {
-      key: chain,
-      chain,
-      balance,
-      data: expandItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : [],
-    };
+    const balance = balancePerChain[chain] ?? BigNumber(0);
+    const data = expandItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : []
+    return { key: chain, chain, balance, data };
   });
 };
 

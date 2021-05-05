@@ -32,6 +32,11 @@ export function useDepositsBalance(): FiatBalance {
   const value = useRootSelector(depositsBalanceSelector);
   return { value };
 }
+
+export function useDepositsChainBalances(): ChainRecord<BigNumber> {
+  return { ethereum: BigNumber(10) };
+}
+
 export type DepositItem = {|
   key: string,
   service: string,

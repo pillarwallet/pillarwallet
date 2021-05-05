@@ -33,6 +33,9 @@ export function useLiquidityPoolsBalance(): FiatBalance {
   return { value };
 }
 
+export function useLiquidityPoolsChainBalances(): ChainRecord<BigNumber> {
+  return { polygon: BigNumber(761.5), xdai: BigNumber(120.2) };
+}
 export type LiquidityPoolItem = {|
   key: string,
   service: string,

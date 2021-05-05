@@ -33,6 +33,10 @@ export function useInvestmentsBalance(): FiatBalance {
   return { value };
 }
 
+export function useInvestmentsChainBalances(): ChainRecord<BigNumber> {
+  return { ethereum: BigNumber(10) };
+}
+
 /** Note: items are groupped by service. */
 export type InvestmentItem = {|
   key: string,
