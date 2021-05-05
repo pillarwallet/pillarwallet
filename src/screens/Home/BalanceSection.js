@@ -66,7 +66,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
     <Container>
       <FirstColumn>
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(balanceInFiat, fiatCurrency, { exact: true })}
+          {formatFiatValue(balanceInFiat, fiatCurrency)}
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>

@@ -49,7 +49,7 @@ export const useWalletAssets = (): ChainRecord<WalletItem[]> => {
   const assets = useRootSelector(visibleActiveAccountAssetsWithBalanceSelector);
 
   const ethereum = defaultSortAssetOptions(assets).map((asset) => ({
-    key: `ethereum-${asset.symbol}`,
+    key: `ethereum-${asset.address ?? ''}`,
     title: asset.name,
     iconUrl: asset.imageUrl,
     symbol: asset.symbol,

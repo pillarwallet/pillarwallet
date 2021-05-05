@@ -42,7 +42,7 @@ type Props = {
 function BalanceView({ balance, style }: Props) {
   const currency = useFiatCurrency();
 
-  return <Balance style={style}>{formatFiatValue(balance, currency, { exact: true })}</Balance>;
+  return <Balance style={style}>{formatFiatValue(balance, currency)}</Balance>;
 }
 
 export default BalanceView;

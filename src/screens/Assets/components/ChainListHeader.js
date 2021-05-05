@@ -47,7 +47,7 @@ function ChainListHeader({ chain, balance, onPress }: Props) {
 
   const { title, color } = useChainsConfig()[chain];
 
-  const fiatValue = formatFiatValue(balance, currency, { exact: true });
+  const fiatValue = formatFiatValue(balance, currency, { stripTrailingZeros: true });
 
   return (
     <TouchableContainer onPress={onPress}>

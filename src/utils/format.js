@@ -129,18 +129,10 @@ export function formatValueWithUnit(value: ?BigNumber | number, options?: Format
 }
 
 /**
- * Common fiat formatting options:
- * @prop exact: whether to show the exact value, by default false, meaning it will use K, M, B units.
- */
-type FormatFiatOptions = {|
-  exact: boolean, // default: false
-|};
-
-/**
  * Format fiat value, for use cases such as balance.
  */
-export function formatFiatValue(value: ?BigNumber | number, currency?: string, options?: FormatFiatOptions) {
-  const formattedValue = options?.exact ? formatValue(value, { decimalPlaces: 2 }) : formatValueWithUnit(value);
+export function formatFiatValue(value: ?BigNumber | number, currency?: string, options?: FormatValueOptions) {
+  const formattedValue = formatValue(value, { decimalPlaces: 2, ...options });
   if (!formattedValue) return null;
 
   return currency ? t('fiatValue', { value: formattedValue, symbol: getCurrencySymbol(currency) }) : formattedValue;
@@ -150,7 +142,7 @@ export function formatFiatValue(value: ?BigNumber | number, currency?: string, o
  * Formats fiat change as `+ $100.00`.
  * Format fiat value with plus or minus sign, for use cases such as change in balance.
  */
-export function formatFiatChange(change: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
+export function formatFiatChange(change: ?BigNumber, currency?: string, options?: FormatValueOptions) {
   const formattedAbsValue = formatFiatValue(change?.abs(), currency, options);
   if (!formattedAbsValue) return null;
 

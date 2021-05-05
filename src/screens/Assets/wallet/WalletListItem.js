@@ -55,7 +55,7 @@ function WalletListItem({ title, iconUrl, value, change, symbol, onPress }: Prop
   const rate = getRate(rates, symbol, currency);
   const fiatValue = value.times(rate);
   const tokenValue = formatTokenValue(value, symbol);
-  const unitPrice = formatFiatValue(rate, currency, { exact: true });
+  const unitPrice = formatFiatValue(rate, currency);
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
