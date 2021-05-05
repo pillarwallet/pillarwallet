@@ -20,208 +20,58 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
-import t from 'translations/translate';
+import { useTranslation } from 'translations/translate';
 
 // Components
-import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Spinner from 'components/Spinner';
-import Button from 'components/Button';
-
-// Selectors
-import { useRootSelector, activeAccountSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
-import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
-
-// Actions
-import { fetchInitialAssetsAction } from 'actions/assetsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-
-// Constants
-import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS } from 'constants/navigationConstants';
+import { Container } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
+import TabView from 'components/modern/TabView';
 
 // Utils
-import { getAccountName } from 'utils/accounts';
-import { isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
-import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
+import { useAssetCategoriesConfig } from 'utils/uiConfig';
+
+// Types
+import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
 // Local
-import WalletView from './WalletView';
-import WalletActivation from './WalletActivation';
+import WalletTab from './wallet/WalletTab';
+import DepositsTab from './deposits/DepositsTab';
+import InvestmentsTab from './investments/InvestmentsTab';
+import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
+import RewardsTab from './rewards/RewardsTab';
 
-const VIEWS = {
-  SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
-  PPN_VIEW: 'PPN_VIEW',
-};
+type Props = {|
+  initialCategory: ?AssetCategory,
+|};
 
-function AssetsScreen() {
+function WalletView({ initialCategory }: Props) {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
-  const accounts = useRootSelector((root) => root.accounts.data);
-  const assets = useRootSelector(accountAssetsSelector);
-  const assetsState = useRootSelector((root) => root.assets.assetsState);
-  const smartWalletState = useRootSelector(root => root.smartWallet);
-  const blockchainNetworks = useRootSelector((root) => root.blockchainNetwork.data);
-  const activeAccount = useRootSelector(activeAccountSelector);
-  const availableStake = useRootSelector(availableStakeSelector);
-  const PPNTransactions = useRootSelector(PPNIncomingTransactionsSelector);
+  const config = useAssetCategoriesConfig();
 
-  const dispatch = useDispatch();
+  const items = [
+    { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
+    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
+    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
+    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
+    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: DepositsTab },
+    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
+  ];
 
-  const theme = useTheme();
-  const colors = useThemeColors();
-
-  const { category } = navigation.state.params;
-
-  React.useEffect(() => {
-    if (!Object.keys(assets).length) {
-      dispatch(fetchInitialAssetsAction());
-    }
-
-    dispatch(fetchAllCollectiblesDataAction());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
-
-  // shouldComponentUpdate(nextProps: Props, nextState: State) {
-  //   const { navigation } = this.props;
-  //   const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-  //   const isFocused = navigation.isFocused();
-
-  //   if (!isFocused) {
-  //     if (!isEq) this.forceRender = true;
-  //     return false;
-  //   }
-
-  //   if (this.forceRender) {
-  //     this.forceRender = false;
-  //     return true;
-  //   }
-
-  //   return !isEq;
-  // }
-
-  const getScreenInfo = () => {
-    const { type: walletType } = activeAccount || {};
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', translationKey: '' };
-    const { id: activeBNetworkId, translationKey } = activeBNetwork;
-    const activeBNetworkTitle = t(translationKey);
-
-    switch (activeBNetworkId) {
-      case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
-        return {
-          label: getAccountName(walletType),
-          action: () => navigation.navigate(ACCOUNTS),
-          screenView: VIEWS.SMART_WALLET_VIEW,
-          customHeaderButtonProps: {
-            backgroundColor: colors.primaryAccent130,
-          },
-        };
-
-      default:
-        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
-        return {
-          label: activeBNetworkTitle,
-          action: () => navigation.navigate(ACCOUNTS),
-          screenView: VIEWS.PPN_VIEW,
-          customHeaderButtonProps: {
-            isActive: availableStake > 0 || hasUnsettledTx,
-            backgroundColor: getColorByThemeOutsideStyled(theme.current, {
-              lightCustom: 'transparent',
-              darkKey: 'synthetic140',
-            }),
-            color: getColorByThemeOutsideStyled(theme.current, {
-              lightKey: 'basic010',
-              darkKey: 'basic090',
-            }),
-            style: {
-              borderWidth: 1,
-              borderColor: getColorByThemeOutsideStyled(theme.current, {
-                lightKey: 'basic005',
-                darkKey: 'synthetic140',
-              }),
-            },
-          },
-        };
-    }
-  };
-
-  const renderView = (viewType: string, onScroll: (Object) => void) => {
-    // const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
-
-    if (!Object.keys(assets).length && assetsState === FETCHED) {
-      return (
-        <Container center inset={{ bottom: 0 }}>
-          <BaseText style={{ marginBottom: 20 }}>{t('label.loadingDefaultAssets')}</BaseText>
-          {assetsState !== FETCH_INITIAL_FAILED && <Spinner />}
-          {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title={t('button.tryAgain')} onPress={() => dispatch(fetchInitialAssetsAction())} />
-          )}
-        </Container>
-      );
-    }
-
-    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
-      const deploymentHash = getDeploymentHash(smartWalletState);
-
-      if (deploymentHash) {
-        return <WalletActivation deploymentHash={deploymentHash} />;
-      }
-    }
-
-    switch (viewType) {
-      case VIEWS.SMART_WALLET_VIEW:
-        return (
-          <WalletView initialCategory={category} />
-          // <LegacyWalletView
-          //   showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
-          //   onScroll={onScroll}
-          // />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const {
-    label: headerButtonLabel,
-    action: headerButtonAction,
-    screenView,
-    customHeaderButtonProps,
-  } = getScreenInfo();
+  const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
+  const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
 
   return (
-    <ContainerWithHeader
-      headerProps={{
-        rightItems: activeAccount ? [
-          {
-            actionButton: {
-              key: 'manageAccounts',
-              label: headerButtonLabel,
-              hasChevron: true,
-              onPress: headerButtonAction,
-              ...customHeaderButtonProps,
-            },
-          },
-        ] : null,
-        centerItems: [
-          {
-            title: t('title.assets'),
-          },
-        ],
-        sideFlex: 5,
-      }}
-      inset={{ bottom: 0 }}
-      tab
-    >
-      {(onScroll) => renderView(screenView, onScroll)}
-    </ContainerWithHeader>
+    <Container>
+      <HeaderBlock
+        centerItems={[{ title: t('title.assets') }]}
+        navigation={navigation}
+        noPaddingTop
+      />
+      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />
+    </Container>
   );
 }
 
-export default AssetsScreen;
+export default WalletView;

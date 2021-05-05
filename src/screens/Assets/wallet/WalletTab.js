@@ -176,7 +176,7 @@ const styles = {
     marginTop: spacing.extraSmall,
   },
   pillarPay: {
-    marginTop: spacing.extraLarge,
+    marginTop: spacing.largePlus,
   },
 };
 
