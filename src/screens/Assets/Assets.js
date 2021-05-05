@@ -51,7 +51,6 @@ import { isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { useTheme, useThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 
 // Local
-import PPNView from './PPNView';
 import WalletView from './WalletView';
 import WalletActivation from './WalletActivation';
 
@@ -184,8 +183,6 @@ function AssetsScreen() {
           //   onScroll={onScroll}
           // />
         );
-      case VIEWS.PPN_VIEW:
-        return <PPNView onScroll={onScroll} />;
       default:
         return null;
     }

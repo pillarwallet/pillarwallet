@@ -648,6 +648,7 @@
       }
     },
     "title": {
+      "home": "Pillar Payment Network",
       "settleTransactionsScreen": "Settle transactions",
       "fundTankScreen": "Fund PLR tank",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",

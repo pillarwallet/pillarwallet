@@ -30,7 +30,7 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Contants
-import { FUND_TANK } from 'constants/navigationConstants';
+import { PPN_HOME, FUND_TANK } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
@@ -56,7 +56,7 @@ function PillarPaySummary({ style }: Props) {
   const currency = useFiatCurrency();
 
   const navigateToPillarPay = () => {
-    console.log('Navigate to Pillar Pay');
+    navigation.navigate(PPN_HOME);
   };
 
   const navigateToTopUp = () => {
@@ -64,7 +64,7 @@ function PillarPaySummary({ style }: Props) {
   };
 
   return (
-    <TouchableContainer style={style}>
+    <TouchableContainer onPress={navigateToPillarPay} style={style}>
       <TitleWrapper>
         <Title variant="big">{t('title')}</Title>
         <Icon name="question" width={12} height={12} color={colors.labelTertiary} />
