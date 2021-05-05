@@ -59,7 +59,7 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
   const { width } = Dimensions.get('window');
 
   const renderTabBar = (props: mixed) => {
-    const tabBarStyle = { backgroundColor: colors.background };
+    const tabBarStyle = { backgroundColor: colors.background, shadowColor: 'transparent' };
     const tabStyle = [scrollEnabled && styles.tabStyleScrollEnabled];
 
     return (
