@@ -74,17 +74,8 @@ function RewardsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = ({ title, service, iconUrl, value, symbol, navigateAction }: RewardItem) => {
-    return (
-      <RewardListItem
-        title={title}
-        subtitle={service}
-        iconUrl={iconUrl}
-        value={value}
-        symbol={symbol}
-        onPress={navigateAction}
-      />
-    );
+  const renderItem = ({ title, service, iconUrl, value, symbol }: RewardItem) => {
+    return <RewardListItem title={title} subtitle={service} iconUrl={iconUrl} value={value} symbol={symbol} />;
   };
 
   return (

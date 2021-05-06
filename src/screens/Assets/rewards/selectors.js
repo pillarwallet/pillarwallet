@@ -45,7 +45,6 @@ export type RewardItem = {|
   iconUrl?: string,
   value: BigNumber,
   symbol: string,
-  navigateAction?: () => mixed,
 |};
 
 // TODO: provide real assets data
