@@ -28,6 +28,7 @@ import Toast from 'components/Toast';
 
 // constants
 import {
+  ADD_WALLETCONNECT_SESSION,
   REMOVE_WALLETCONNECT_SESSION,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
 } from 'constants/walletConnectSessionsConstants';
@@ -69,6 +70,10 @@ export const initWalletConnectSessionsAction = () => {
     if (!isImported) {
       const legacySessions = await loadLegacyWalletConnectSessions();
       storedSessions = [...storedSessions, ...legacySessions];
+      legacySessions.forEach((session) => dispatch({
+        type: ADD_WALLETCONNECT_SESSION,
+        payload: { session }
+      }));
       dispatch({ type: SET_WALLETCONNECT_SESSIONS_IMPORTED });
     }
 
@@ -116,17 +121,6 @@ const disconnectAllWalletConnectSessionsAction = () => {
       supportLink: true,
       autoClose: false,
     });
-  };
-};
-
-export const disconnectWalletConnectSessionByUrlAction = (url: string) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors } } = getState();
-
-    const matchingConnector = activeConnectors.find(({ peerMeta }) => peerMeta?.url === url);
-    if (!matchingConnector) return;
-
-    dispatch(disconnectWalletConnectSessionByPeerIdAction(matchingConnector.peerId));
   };
 };
 

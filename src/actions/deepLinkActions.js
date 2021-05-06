@@ -43,7 +43,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
     if (isEmpty(validatedDeepLink)) return;
     const { action, query, protocol } = validatedDeepLink;
 
-    if (protocol === 'wc:') {
+    if (protocol === 'wc:' && !isEmpty(query)) {
       dispatch(connectToWalletConnectConnectorAction(deepLink));
       return;
     }
