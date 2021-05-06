@@ -615,7 +615,8 @@
       "addFunds": "Add funds",
       "pillarPay": {
         "title": "Pillar Pay",
-        "topUp": "Top up"
+        "topUp": "Top up",
+        "hint": "Transfer any token for free from your PLR balance."
       }
     },
     "deposits": {

@@ -90,7 +90,7 @@ export const SMART_WALLET_TYPE = {
 export type SmartWalletType = $Values<typeof SMART_WALLET_TYPE>;
 
 export const useSmartWalletType = (): SmartWalletType => {
-  return SMART_WALLET_TYPE.ETHERSPOT;
+  return SMART_WALLET_TYPE.ARCHANOVA;
 };
 
 export const useSupportedChains = (): Chain[] => {
@@ -101,4 +101,9 @@ export const useSupportedChains = (): Chain[] => {
   }
 
   return [CHAIN.ETHEREUM];
+};
+
+export const useIsPillarPaySupported = () => {
+  const smartWalletType = useSmartWalletType();
+  return smartWalletType === SMART_WALLET_TYPE.ARCHANOVA;
 };

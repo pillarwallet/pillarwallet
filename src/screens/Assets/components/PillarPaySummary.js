@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -28,6 +29,7 @@ import Button from 'components/modern/Button';
 import FiatValueView from 'components/modern/FiatValueView';
 import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
+import Tooltip from 'components/Tooltip';
 
 // Contants
 import { PPN_HOME, FUND_TANK } from 'constants/navigationConstants';
@@ -37,6 +39,7 @@ import { useRootSelector, useFiatCurrency } from 'selectors';
 import { paymentNetworkBalanceSelector } from 'selectors/balances';
 
 // Utils
+import { hitSlop20 } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
 import { appFont, spacing } from 'utils/variables';
 
@@ -51,6 +54,8 @@ function PillarPaySummary({ style }: Props) {
   const { t } = useTranslationWithPrefix('assets.wallet.pillarPay');
   const navigation = useNavigation();
   const colors = useThemeColors();
+
+  const [showTooltip, setShowTooltip] = React.useState(false);
 
   const balance = useRootSelector(paymentNetworkBalanceSelector);
   const currency = useFiatCurrency();
@@ -67,7 +72,11 @@ function PillarPaySummary({ style }: Props) {
     <TouchableContainer onPress={navigateToPillarPay} style={style}>
       <TitleWrapper>
         <Title variant="big">{t('title')}</Title>
-        <Icon name="question" width={12} height={12} color={colors.labelTertiary} />
+        <Tooltip body={t('hint')} isVisible={showTooltip} positionOnBottom={false}>
+          <TouchableOpacity hitSlop={hitSlop20} activeOpacity={1} onPress={() => setShowTooltip(!showTooltip)}>
+            <Icon name="question" width={12} height={12} color={colors.labelTertiary} />
+          </TouchableOpacity>
+        </Tooltip>
       </TitleWrapper>
 
       <FiatValueView value={balance} currency={currency} variant="big" />
