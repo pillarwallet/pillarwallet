@@ -45,7 +45,6 @@ export type DepositItem = {|
   value: BigNumber,
   change?: BigNumber,
   currentApy?: BigNumber,
-  navigateAction?: () => mixed,
 |};
 
 

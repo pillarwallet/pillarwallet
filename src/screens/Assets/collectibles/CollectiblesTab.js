@@ -139,7 +139,7 @@ const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerCha
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const data: CollectibleItem[][] = expandItemsPerChain[chain] ? chunk(items, numberOfColumns) : [];
+    const data = expandItemsPerChain[chain] ? chunk(items, numberOfColumns) : [];
     return { key: chain, chain, data };
   });
 };
