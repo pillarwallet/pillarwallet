@@ -1,5 +1,5 @@
 {
-  "name": "WalletConnect",
+  "name": "LegacyWalletConnect",
   "version": "0.0.0",
   "private": true,
   "main": "./WalletConnectScreen.js"
