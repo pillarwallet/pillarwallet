@@ -620,6 +620,12 @@
     }
   },
 
+  "walletConnect": {
+    "home": {
+      "title": "Wallet Connect"
+    }
+  },
+
   "badgeText": {
     "new": "NEW"
   },
