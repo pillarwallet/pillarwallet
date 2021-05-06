@@ -327,7 +327,9 @@ class Archanova {
     reference?: string,
   ) {
     token = toChecksumAddress(token);
-    return this.getSdk().createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
+    return this.getSdk()
+      .createAccountPayment(recipient, token, value.toHexString(), paymentType, reference)
+      .then(({ hash }) => ({ hash }));
   }
 
   async sendTransaction(
@@ -361,7 +363,9 @@ class Archanova {
 
     const estimatedTransaction = await this.getSdk().estimateAccountTransaction(...estimateMethodParams);
 
-    return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
+    return this.getSdk()
+      .submitAccountTransaction(estimatedTransaction, payForGasWithToken)
+      .then((hash) => ({ hash }));
   }
 
   getConnectedAccountTransaction(txHash: string) {
