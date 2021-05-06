@@ -64,7 +64,6 @@ function WalletTab() {
   const safeArea = useSafeAreaInsets();
 
   const { chain: initialChain } = navigation.state.params;
-
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useWalletBalance();

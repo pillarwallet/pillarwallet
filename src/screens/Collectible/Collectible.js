@@ -65,6 +65,15 @@ type Props = {
   theme: Theme,
 };
 
+export type CollectibleNavigationParams = {|
+  assetData: {
+    id: string,
+    name: string,
+    description: ?string,
+    image: ?string, // Image URL
+  },
+|};
+
 const ActionButtonsWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
@@ -120,7 +129,7 @@ class CollectibleScreen extends React.Component<Props> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
-  openCollectibleImage(collectible: Collectible) {
+  openCollectibleImage(collectible: { image: ?string }) {
     const { image } = collectible;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
@@ -164,7 +173,7 @@ class CollectibleScreen extends React.Component<Props> {
       accounts,
       theme,
     } = this.props;
-    const { assetData } = navigation.state.params;
+    const { assetData }: CollectibleNavigationParams = navigation.state.params;
     const {
       id,
       name,

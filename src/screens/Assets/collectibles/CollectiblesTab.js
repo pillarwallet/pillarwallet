@@ -32,7 +32,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { COLLECTIBLE, SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
@@ -50,6 +50,7 @@ import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
 import ChainListFooter from '../components/ChainListFooter';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
+import { buildCollectibleNavigationParams } from './utils';
 import CollectibleListItem from './CollectibleListItem';
 
 function CollectiblesTab() {
@@ -70,6 +71,11 @@ function CollectiblesTab() {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
 
+  const navigateToCollectibleDetails = (item: CollectibleItem) => {
+    const params = buildCollectibleNavigationParams(item);
+    navigation.navigate(COLLECTIBLE, params);
+  };
+
   const renderSectionHeader = ({ chain }: Section) => {
     return <ChainListHeader chain={chain} onPress={() => toggleExpandItems(chain)} />;
   };
@@ -80,20 +86,25 @@ function CollectiblesTab() {
     return (
       <ListRow key={items[0].key}>
         {items.map((item) => (
-          <CollectibleListItem key={item.key} title={item.title} iconUrl={item.iconUrl} width={itemWidth} />
+          <CollectibleListItem
+            key={item.key}
+            title={item.title}
+            iconUrl={item.iconUrl}
+            width={itemWidth}
+            onPress={() => navigateToCollectibleDetails(item)}
+          />
         ))}
       </ListRow>
     );
   };
 
-  const hasCollectibles = true;
   const buttons = [
     {
       title: t('button.receive'),
       iconName: 'qrcode',
       onPress: showReceiveModal,
     },
-    hasCollectibles && {
+    {
       title: t('button.send'),
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW),
