@@ -93,7 +93,6 @@ const WalletConnectPinConfirmScreeen = ({
 
   const handleSendTransaction = (): void => {
     const statusCallback = (transactionStatus: TransactionStatus) => {
-      console.log('transactionStatus: ', transactionStatus)
       if (transactionStatus.isSuccess && transactionStatus.hash) {
         approveCallRequest(callRequest, transactionStatus.hash);
       } else {

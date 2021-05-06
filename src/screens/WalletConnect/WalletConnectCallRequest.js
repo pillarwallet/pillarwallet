@@ -171,7 +171,16 @@ const WalletConnectCallRequestScreen = ({
     }
 
     return null;
-  }, [requestType, activeAccount, isArchanovaWalletActivated, transactionPayload, isEstimating, feeInfo]);
+  }, [
+    requestType,
+    activeAccount,
+    isArchanovaWalletActivated,
+    transactionPayload,
+    isEstimating,
+    estimateErrorMessage,
+    feeInfo,
+    balances,
+  ]);
 
   const onApprovePress = () => {
     if (!callRequest) {
