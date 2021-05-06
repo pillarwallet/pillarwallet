@@ -26,7 +26,7 @@ import { reportErrorLog } from 'utils/common';
 import Storage from 'services/storage';
 
 // types
-import type { Session, Connector } from 'models/WalletConnect';
+import type { WalletConnectSession, WalletConnectConnector, WalletConnectOptions } from 'models/WalletConnect';
 
 /* eslint-disable i18next/no-literal-string */
 const clientMeta = {
@@ -40,17 +40,17 @@ const clientMeta = {
 /* eslint-enable i18next/no-literal-string */
 
 export const createConnector = (
-  options: Connector,
-): ?WalletConnect => {
+  options: WalletConnectOptions,
+): ?WalletConnectConnector => {
   try {
     return new WalletConnect({ ...options, clientMeta });
   } catch (error) {
-    reportErrorLog('walletConnect -> createConnector failed', { error })
+    reportErrorLog('walletConnect -> createConnector failed', { error });
     return null;
   }
-}
+};
 
-export const loadLegacyWalletConnectSessions = async (): Promise<Session[]> => {
+export const loadLegacyWalletConnectSessions = async (): Promise<WalletConnectSession[]> => {
   const storage = Storage.getInstance('db');
   const walletconnect = await storage.get('walletconnect');
 

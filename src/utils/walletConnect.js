@@ -17,27 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import type {
-  CallRequest,
-  Session,
-} from 'models/WalletConnect';
-import {
-  addressesEqual,
-  getAssetData,
-  getAssetDataByAddress,
-} from 'utils/assets';
-import { TransactionPayload } from 'models/Transaction';
+import { BigNumber as EthersBigNumber, Interface, utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import {
-  Interface,
-  utils,
-} from 'ethers';
-import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import t from 'translations/translate';
+
+// constants
 import { ETH } from 'constants/assetsConstants';
-import type { Asset } from 'models/Asset';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
+import {
+  ETH_SEND_TX,
+  ETH_SIGN,
+  ETH_SIGN_TX,
+  ETH_SIGN_TYPED_DATA,
+  PERSONAL_SIGN,
+  REQUEST_TYPE,
+} from 'constants/walletConnectConstants';
+
+// utils
+import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
+
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
+// types
+import type { WalletConnectCallRequest, WalletConnectSession } from 'models/WalletConnect';
+import type { TransactionPayload } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
+
 
 // urls of dapps that don't support smart accounts
 // or that we don't want to support for any reason
@@ -48,7 +54,10 @@ const UNSUPPORTED_APPS_URLS: string[] = [
   'https://www.binance.org',
 ];
 
-export const hasKeyBasedWalletConnectSession = (sessions: Session[], keyWalletAddress: string): boolean => {
+export const hasKeyBasedWalletConnectSession = (
+  sessions: WalletConnectSession[],
+  keyWalletAddress: string,
+): boolean => {
   if (!sessions[0]?.accounts) return false;
   return sessions[0].accounts.some((address) => addressesEqual(address, keyWalletAddress));
 };
@@ -59,11 +68,39 @@ const isTokenTransfer = (data) => typeof data === 'string'
   && data.toLowerCase() !== '0x'
   && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
+export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnectCallRequest): {
+  address: string,
+  message: string,
+} => {
+  const { method, params } = callRequest;
+
+  const preparedParams = method === PERSONAL_SIGN
+    ? params.reverse() // different param order on PERSONAL_SIGN
+    : params;
+
+  const [address] = preparedParams;
+
+  let message;
+  if (method === PERSONAL_SIGN) {
+    try {
+      message = utils.toUtf8String(preparedParams[1]);
+    } catch (e) {
+      ([, message] = preparedParams);
+    }
+  } else if (method === ETH_SIGN_TYPED_DATA) {
+    message = t('transactions.paragraph.typedDataMessage');
+  } else {
+    ([, message] = preparedParams);
+  }
+
+  return { address, message };
+};
+
 export const mapCallRequestToTransactionPayload = (
-  callRequest: CallRequest,
+  callRequest: WalletConnectCallRequest,
   accountAssets: Asset[],
   supportedAssets: Asset[],
-): ?TransactionPayload => {
+): $Shape<TransactionPayload> => {
   const [{ value = 0, data }] = callRequest.params;
   let [{ to }] = callRequest.params;
 
@@ -106,5 +143,18 @@ export const mapCallRequestToTransactionPayload = (
     contractAddress,
     decimals,
   };
+};
 
-}
+export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRequest): string => {
+  switch (callRequest?.method) {
+    case ETH_SEND_TX:
+    case ETH_SIGN_TX:
+      return REQUEST_TYPE.TRANSACTION;
+    case ETH_SIGN:
+    case ETH_SIGN_TYPED_DATA:
+    case PERSONAL_SIGN:
+      return REQUEST_TYPE.MESSAGE;
+    default:
+      return REQUEST_TYPE.UNSUPPORTED;
+  }
+};

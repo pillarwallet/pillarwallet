@@ -19,40 +19,34 @@
 */
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from 'react-navigation-hooks';
 
 // actions
 import { disconnectWalletConnectSessionByUrlAction } from 'actions/walletConnectSessionsActions';
 import {
+  approveWalletConnectCallRequestAction,
+  approveWalletConnectConnectorRequestAction,
+  connectToWalletConnectConnectorAction,
   estimateWalletConnectCallRequestTransactionAction,
   rejectWalletConnectCallRequestAction,
+  rejectWalletConnectConnectorRequestAction,
 } from 'actions/walletConnectActions';
-
-// constants
-import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { WalletConnectReducerState } from 'reducers/walletConnectReducer';
-import type { CallRequest, Connector } from 'models/WalletConnect';
-import type { TransactionPayload } from 'models/Transaction';
+import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 
 
 type WalletConnectHook = {
-  activeConnectors: Connector[],
-  callRequests: CallRequest[],
-  approveConnectorRequest: () => void,
-  cancelConnectorRequest: () => void,
-  approveCallRequest: (
-    callRequest: CallRequest,
-    transactionPayload: ?TransactionPayload,
-  ) => void,
-  cancelCallRequest: (
-    callRequest: CallRequest,
-  ) => void,
+  activeConnectors: WalletConnectConnector[],
+  callRequests: WalletConnectCallRequest[],
+  approveConnectorRequest: (peerId: string) => void,
+  rejectConnectorRequest: (peerId: string) => void,
+  approveCallRequest: (callRequest: WalletConnectCallRequest, result: string) => void,
+  rejectCallRequest: (callRequest: WalletConnectCallRequest, rejectReasonMessage?: string) => void,
   disconnectSessionByUrl: (url: string) => void,
   connectToConnector: (url: string) => void,
-  estimateCallRequestTransaction: (callRequest: CallRequest) => void,
+  estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
 };
 
 const useWalletConnect = (): WalletConnectHook => {
@@ -61,46 +55,42 @@ const useWalletConnect = (): WalletConnectHook => {
     callRequests,
   }: WalletConnectReducerState = useSelector(({ walletConnect }: RootReducerState) => walletConnect);
 
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const connectToConnector = () => { console.log('connectToConnector!'); };
-  const approveConnectorRequest = () => { console.log('approveConnectorRequest!'); };
-  const cancelConnectorRequest = () => { console.log('cancelConnectorRequest!'); };
+  const connectToConnector = (uri: string) => dispatch(connectToWalletConnectConnectorAction(uri));
+  const disconnectSessionByUrl = (url: string) => dispatch(disconnectWalletConnectSessionByUrlAction(url));
+
+  const approveConnectorRequest = (peerId: string) => dispatch(approveWalletConnectConnectorRequestAction(peerId));
+  const rejectConnectorRequest = (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId));
 
   const approveCallRequest = (
-    callRequest: CallRequest,
-    transactionPayload: ?TransactionPayload,
-  ) => {
-    navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-      callId: callRequest.callId,
-      transactionPayload,
-    });
-  };
+    callRequest: WalletConnectCallRequest,
+    result: string,
+  ) => dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result));
 
-  const cancelCallRequest = (
-    callRequest: CallRequest,
-  ) => dispatch(rejectWalletConnectCallRequestAction(callRequest.callId));
-
-  const disconnectSessionByUrl = (
-    url: string,
-  ) => dispatch(disconnectWalletConnectSessionByUrlAction(url));
+  const rejectCallRequest = (
+    callRequest: WalletConnectCallRequest,
+    rejectReasonMessage?: string,
+  ) => dispatch(rejectWalletConnectCallRequestAction(callRequest.callId, rejectReasonMessage));
 
   const estimateCallRequestTransaction = (
-    callRequest: CallRequest,
+    callRequest: WalletConnectCallRequest,
   ) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest));
 
   return useMemo(() => ({
     activeConnectors,
     callRequests,
     approveConnectorRequest,
-    cancelConnectorRequest,
+    rejectConnectorRequest,
     approveCallRequest,
-    cancelCallRequest,
+    rejectCallRequest,
     disconnectSessionByUrl,
     connectToConnector,
     estimateCallRequestTransaction,
-  }), [activeConnectors, callRequests])
+  }), [
+    activeConnectors,
+    callRequests,
+  ]);
 };
 
 export default useWalletConnect;

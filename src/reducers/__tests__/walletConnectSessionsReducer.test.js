@@ -17,16 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+// constants
 import {
   ADD_WALLETCONNECT_SESSION,
-  WALLETCONNECT_SESSION_ADDED,
   REMOVE_WALLETCONNECT_SESSION,
-  WALLETCONNECT_SESSIONS_REMOVED,
 } from 'constants/walletConnectSessionsConstants';
 import reducer from 'reducers/walletConnectSessionsReducer';
-import type { Session } from 'models/WalletConnect';
 
-const mockSession = (peerId: string): Session => ({
+// types
+import type { WalletConnectSession } from 'models/WalletConnect';
+
+const mockSession = (peerId: string): $Shape<WalletConnectSession> => ({
   peerId,
   key: `key-${peerId}`,
   connected: true,
@@ -39,35 +41,19 @@ const mockSession = (peerId: string): Session => ({
 });
 
 describe('WalletConnectSessions reducer', () => {
-  describe('WALLETCONNECT_SESSIONS_LOADED', () => {
-    it('stores new session', () => {
-      const session1 = mockSession('session1');
-      const session2 = mockSession('session2');
-
-      const result = reducer(undefined, {
-        type: ADD_WALLETCONNECT_SESSION,
-        sessions: [session1, session2],
-      });
-
-      expect(result).toMatchObject({
-        sessions: [session1, session2],
-      });
-    });
-  });
-
-  describe('WALLETCONNECT_SESSION_ADDED', () => {
-    it('stores new session', () => {
+  describe('ADD_WALLETCONNECT_SESSION', () => {
+    it('adds new sessions', () => {
       const session1 = mockSession('session1');
       const session2 = mockSession('session2');
 
       const state = reducer(undefined, {
-        type: WALLETCONNECT_SESSION_ADDED,
-        session: session1,
+        type: ADD_WALLETCONNECT_SESSION,
+        payload: { session: session1 },
       });
 
       const result = reducer(state, {
-        type: WALLETCONNECT_SESSION_ADDED,
-        session: session2,
+        type: ADD_WALLETCONNECT_SESSION,
+        payload: { session: session2 },
       });
 
       expect(result).toMatchObject({
@@ -76,40 +62,21 @@ describe('WalletConnectSessions reducer', () => {
     });
   });
 
-  describe('WALLETCONNECT_SESSION_REMOVED', () => {
-    it('updates the sessions', () => {
+  describe('REMOVE_WALLETCONNECT_SESSION', () => {
+    it('removes session', () => {
       const session1 = mockSession('session1');
       const session2 = mockSession('session2');
 
-      let state = reducer(undefined, { type: WALLETCONNECT_SESSION_ADDED, session: session1 });
-      state = reducer(state, { type: WALLETCONNECT_SESSION_ADDED, session: session2 });
+      let state = reducer(undefined, { type: ADD_WALLETCONNECT_SESSION, payload: { session: session1 } });
+      state = reducer(state, { type: ADD_WALLETCONNECT_SESSION, payload: { session: session2 } });
 
       const result = reducer(state, {
         type: REMOVE_WALLETCONNECT_SESSION,
-        peerId: session2.peerId,
+        payload: { peerId: session2.peerId },
       });
 
       expect(result).toMatchObject({
         sessions: [session1],
-      });
-    });
-  });
-
-  describe('WALLETCONNECT_SESSIONS_REMOVED', () => {
-    it('updates the sessions', () => {
-      const session1 = mockSession('session1');
-      const session2 = mockSession('session2');
-
-      let state = reducer(undefined, { type: WALLETCONNECT_SESSION_ADDED, session: session1 });
-      state = reducer(state, { type: WALLETCONNECT_SESSION_ADDED, session: session2 });
-
-      const result = reducer(state, {
-        type: WALLETCONNECT_SESSIONS_REMOVED,
-        peerIds: [session2.peerId, session1.peerId],
-      });
-
-      expect(result).toMatchObject({
-        sessions: [],
       });
     });
   });

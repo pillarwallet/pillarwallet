@@ -69,7 +69,7 @@ const OptionButton = styled(Button)`
 
 const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
   const navigation = useNavigation();
-  const { approveConnectorRequest, cancelConnectorRequest } = useWalletConnect();
+  const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
 
   const {
     description,
@@ -87,7 +87,7 @@ const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
 
   const onRejectPress = () => {
     Keyboard.dismiss();
-    cancelConnectorRequest(peerId);
+    rejectConnectorRequest(peerId);
     navigation.goBack(null);
   };
 

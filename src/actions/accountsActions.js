@@ -40,6 +40,7 @@ import {
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
+import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
@@ -207,6 +208,7 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+    dispatch(updateWalletConnectSessionsByActiveAccount());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };

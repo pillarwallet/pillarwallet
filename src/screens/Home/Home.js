@@ -103,7 +103,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
-import type { CallRequest, Connector } from 'models/WalletConnect';
+import type { WalletConnectCallRequest } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -144,7 +144,7 @@ type Props = {
   hidePoolTogether: boolean,
   toggleBadges: () => void,
   togglePoolTogether: () => void,
-  walletConnectCallRequests: CallRequest[],
+  walletConnectCallRequests: WalletConnectCallRequest[],
   fetchAllAccountsBalances: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,

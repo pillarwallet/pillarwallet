@@ -32,7 +32,6 @@ import {
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
 } from 'constants/walletConnectSessionsConstants';
 import {
-  ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
   REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
   RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
 } from 'constants/walletConnectConstants';
@@ -46,6 +45,9 @@ import { hasKeyBasedWalletConnectSession } from 'utils/walletConnect';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { activeAccountSelector } from 'selectors';
+import { getAccountAddress } from 'utils/accounts';
+import { getEnv } from 'configs/envConfig';
 
 
 export const initWalletConnectSessionsAction = () => {
@@ -90,13 +92,16 @@ export const disconnectWalletConnectSessionByPeerIdAction = (peerId: string) => 
     if (!matchingConnector) return;
 
     await matchingConnector.killSession().catch((error) => {
-      reportErrorLog('disconnectWalletConnectSessionByPeerIdAction -> killSession failed ', { error, matchingConnector });
+      reportErrorLog('disconnectWalletConnectSessionByPeerIdAction -> killSession failed ', {
+        error,
+        matchingConnector,
+      });
     });
 
     dispatch(logEventAction('walletconnect_session_disconnected'));
-    dispatch({ type: REMOVE_WALLETCONNECT_SESSION, payload: { peerId }});
-    dispatch({ type: REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { peerId }});
-};
+    dispatch({ type: REMOVE_WALLETCONNECT_SESSION, payload: { peerId } });
+    dispatch({ type: REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { peerId } });
+  };
 };
 
 const disconnectAllWalletConnectSessionsAction = () => {
@@ -118,9 +123,27 @@ export const disconnectWalletConnectSessionByUrlAction = (url: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { activeConnectors } } = getState();
 
-    const matchingConnector = activeConnectors.find(({ peerMeta }) => peerMeta?.url === url)
+    const matchingConnector = activeConnectors.find(({ peerMeta }) => peerMeta?.url === url);
     if (!matchingConnector) return;
 
     dispatch(disconnectWalletConnectSessionByPeerIdAction(matchingConnector.peerId));
+  };
+};
+
+export const updateWalletConnectSessionsByActiveAccount = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) return;
+
+    const { walletConnect: { activeConnectors } } = getState();
+    const accountAddress = getAccountAddress(activeAccount);
+
+    activeConnectors.forEach((connector) => {
+      const sessionData = {
+        accounts: [accountAddress],
+        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+      };
+      connector.updateSession(sessionData);
+    });
   };
 };

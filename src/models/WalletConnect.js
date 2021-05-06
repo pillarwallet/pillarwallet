@@ -17,87 +17,132 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Connector = {};
 
-export type ClientMeta = {|
-  description: string,
-  url: string,
-  icons?: string[],
-  name: string,
-|};
-
-export type Session = {|
-  connected: boolean,
-  accounts: string[],
-  chainId: number,
+export type WalletConnectConnector = {|
   bridge: string,
   key: string,
   clientId: string,
-  clientMeta?: ClientMeta,
   peerId: string,
-  peerMeta?: ClientMeta,
-  handshakeId: number,
+  clientMeta: WalletConnectClientMeta | null,
+  peerMeta: WalletConnectClientMeta | null,
   handshakeTopic: string,
+  handshakeId: number,
+  uri: string,
+  chainId: number,
+  networkId: number,
+  accounts: string[],
+  rpcUrl: string,
+  connected: boolean,
+  pending: boolean,
+  session: WalletConnectSession,
+  on(event: string, callback: (error: Error | null, payload: any | null) => void): void,
+  connect(opts?: WalletConnectCreateSessionOptions): Promise<WalletConnectSessionStatus>,
+  createSession(opts?: WalletConnectCreateSessionOptions): Promise<void>,
+  approveSession(sessionStatus: WalletConnectSessionStatus): void,
+  rejectSession(sessionError?: WalletConnectSessionError): void,
+  updateSession(sessionStatus: WalletConnectSessionStatus): void,
+  killSession(sessionError?: WalletConnectSessionError): Promise<void>,
+  sendTransaction(tx: WalletConnectTransactionData): Promise<any>,
+  signTransaction(tx: WalletConnectTransactionData): Promise<any>,
+  signMessage(params: any[]): Promise<any>,
+  signPersonalMessage(params: any[]): Promise<any>,
+  signTypedData(params: any[]): Promise<any>,
+  updateChain(chainParams: WalletConnectUpdateChain): Promise<any>,
+  approveRequest(response: WalletConnectRequestApprove): void,
+  rejectRequest(response: WalletConnectRequestReject): void,
 |};
 
-export type CallRequest = {|
-  peerId: string,
-  callId: number,
-  method: string,
-  icon: string,
-  name: string,
-  url: string,
-  params: any[],
+export type WalletConnectClientMeta = {|
+  description: string;
+  url: string;
+  icons: string[];
+  name: string;
 |};
 
-export type SessionStatus = {|
+export type WalletConnectSession = {|
+  connected: boolean;
+  accounts: string[];
+  chainId: number;
+  bridge: string;
+  key: string;
+  clientId: string;
+  clientMeta: WalletConnectClientMeta | null;
+  peerId: string;
+  peerMeta: WalletConnectClientMeta | null;
+  handshakeId: number;
+  handshakeTopic: string;
+|};
+
+type WalletConnectCreateSessionOptions = {|
+  chainId?: number,
+|};
+
+export type WalletConnectSessionStatus = {|
   chainId: number,
   accounts: string[],
   networkId?: number,
   rpcUrl?: string,
 |};
 
-export type SessionError = {|
+type WalletConnectSessionError = {|
   message?: string,
 |};
 
-export type CallTxData = {|
+type WalletConnectSessionStorage = {|
+  getSession: () => WalletConnectSession | null,
+  setSession: (session: WalletConnectSession) => WalletConnectSession,
+  removeSession: () => void;
+|}
+
+export type WalletConnectOptions = {|
+  bridge?: string,
+  uri?: string,
+  session?: WalletConnectSession,
+  storage?: WalletConnectSessionStorage;
+  clientMeta?: WalletConnectClientMeta,
+  qrcodeModal?: {
+    open(uri: string, cb: any, opts?: any): void,
+    close(): void,
+  },
+  qrcodeModalOptions?: { mobileLinks?: string[] },
+|};
+
+type WalletConnectUpdateChain = {|
+  chainId: number,
+  networkId: number,
+  rpcUrl: string,
+  nativeCurrency: {
+    name: string,
+    symbol: string,
+  },
+|};
+
+export type WalletConnectCallRequest = {|
+  peerId: string,
+  callId: number,
+  method: string,
+  icon: string | null,
+  name: string,
+  url: string,
+  params: any[],
+|};
+
+type WalletConnectTransactionData = {|
   to?: string,
   value?: number | string,
   gas?: number | string,
   gasLimit?: number | string,
   gasPrice?: number | string,
   nonce?: number | string,
-  data?: string,
-|};
-
-export type ITxData = {|
-  ...CallTxData,
   from: string,
 |};
 
-export type JsonRpcResponseSuccess = {|
+type WalletConnectRequestApprove = {|
   id: number,
-  jsonrpc: string,
   result: any,
 |};
 
-export type JsonRpcErrorMessage = {|
-  code?: number,
-  message: string,
-|};
-
-export type JsonRpcRequest = {|
+type WalletConnectRequestReject = {|
   id: number,
-  jsonrpc: string,
-  method: string,
-  params: any[],
+  error?: Error,
 |};
-
-export type JsonRpcResponseError = {|
-  id: number,
-  jsonrpc: string,
-  error: JsonRpcErrorMessage,
-|};
-
-type Callback = (e: any, payload: any) => any;

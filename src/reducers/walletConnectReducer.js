@@ -28,49 +28,18 @@ import {
   RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
 } from 'constants/walletConnectConstants';
 
-import type { Connector, CallRequest } from 'models/WalletConnect';
+import type { WalletConnectConnector, WalletConnectCallRequest } from 'models/WalletConnect';
 
-export type SetWalletConnectConnectorRequest = {|
-  connectorRequest: Connector,
-|};
-
-export type AddWalletConnectCallRequest = {|
-  callRequest: CallRequest,
-|};
-
-export type RemoveWalletConnectCallRequest = {|
-  callId: number,
-|};
-
-export type AddWalletConnectActiveConnector = {|
-  connector: CallRequest,
-|};
-
-export type RemoveWalletConnectActiveConnector = {|
-  peerId: number,
-|};
-
-export type SetWalletConnectRequestError = {|
-  message: string,
-|};
-
-
-type WalletConnectReducerActionPayload = SetWalletConnectConnectorRequest
-  | AddWalletConnectCallRequest
-  | RemoveWalletConnectCallRequest
-  | AddWalletConnectActiveConnector
-  | RemoveWalletConnectActiveConnector
-  | SetWalletConnectRequestError;
 
 export type WalletConnectReducerAction = {
   type: string,
-  payload?: WalletConnectReducerActionPayload,
+  payload: any,
 };
 
 export type WalletConnectReducerState = {|
-  activeConnectors: Connector[],
-  connectorRequest: ?Connector,
-  callRequests: CallRequest[],
+  activeConnectors: WalletConnectConnector[],
+  connectorRequest: ?WalletConnectConnector,
+  callRequests: WalletConnectCallRequest[],
   errorMessage: ?string,
 |};
 
@@ -82,14 +51,14 @@ const initialState: WalletConnectReducerState = {
 };
 
 const removeRequestByCallId = (
-  callRequests: CallRequest[],
+  callRequests: WalletConnectCallRequest[],
   callIdToRemove: number,
-): CallRequest[] => callRequests.filter(({ callId }) => +callId !== callIdToRemove);
+): WalletConnectCallRequest[] => callRequests.filter(({ callId }) => +callId !== callIdToRemove);
 
 const removeConnectorByPeerId = (
-  connectors: Connector[],
-  peerIdToRemove: number,
-): Connector[] => connectors.filter(({ peerId }) => +peerId !== peerIdToRemove);
+  connectors: WalletConnectConnector[],
+  peerIdToRemove: string,
+): WalletConnectConnector[] => connectors.filter(({ peerId }) => peerId !== peerIdToRemove);
 
 const walletConnectReducer = (
   state: WalletConnectReducerState = initialState,
@@ -100,7 +69,7 @@ const walletConnectReducer = (
   switch (action.type) {
     case SET_WALLETCONNECT_CONNECTOR_REQUEST:
       const { connectorRequest } = action.payload;
-      return { ...state, connectorRequest: connectorRequest };
+      return { ...state, connectorRequest };
 
     case RESET_WALLETCONNECT_CONNECTOR_REQUEST:
       return { ...state, connectorRequest: null };
@@ -119,14 +88,19 @@ const walletConnectReducer = (
 
     case REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR:
       const { peerId } = action.payload;
-      return { ...state, activeConnectors: removeConnectorByPeerId(activeConnectors, +peerId) };
+      return { ...state, activeConnectors: removeConnectorByPeerId(activeConnectors, peerId) };
 
     case RESET_WALLETCONNECT_ACTIVE_CONNECTORS:
       return { ...state, activeConnectors: [] };
 
     case SET_WALLETCONNECT_REQUEST_ERROR:
       const { message: errorMessage } = action.payload;
-      return { ...state, errorMessage, connectorRequest: null, callRequests: [] };
+      return {
+        ...state,
+        errorMessage,
+        connectorRequest: null,
+        callRequests: [],
+      };
 
     default:
       return state;

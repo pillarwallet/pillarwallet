@@ -1256,7 +1256,8 @@
     },
     "error": {
       "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
-      "unsupportedRequestCallRequestType": "Unsupported Call Request type."
+      "unsupportedRequestCallRequestType": "Unsupported Call Request type.",
+      "unableToShowTransaction": "Unable to show transaction. Contact support."
     }
   },
 
@@ -1509,7 +1510,9 @@
     "noActiveAccountFound": "No active account found.",
     "walletConnectFailed": "Wallet Connect failed.",
     "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
-    "walletConnectCallRequestRejectFailed": "Failed to reject Call Request."
+    "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
+    "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
+    "walletConnectRequestApproved": "Wallet Connect Call Request approved."
   },
 
   "exchangeContent": {

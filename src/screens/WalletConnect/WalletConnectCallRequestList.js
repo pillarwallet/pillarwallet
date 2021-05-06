@@ -82,12 +82,12 @@ const WalletConnectCallRequestList = ({
   showLastOneOnly,
 }: Props) => {
   const navigation = useNavigation();
-  const { cancelCallRequest, callRequests } = useWalletConnect();
+  const { rejectCallRequest, callRequests } = useWalletConnect();
 
   const colors = getThemeColors(theme);
 
-  const renderRequest = ({ item }) => {
-    const { name, icon } = item;
+  const renderRequest = ({ item: callRequest }) => {
+    const { name, icon } = callRequest;
 
     return (
       <CardWrapper>
@@ -110,7 +110,7 @@ const WalletConnectCallRequestList = ({
               margin={0}
               icon="close"
               fontSize={fontSizes.regular}
-              onPress={() => cancelCallRequest(item)}
+              onPress={() => rejectCallRequest(callRequest)}
             />
             <ActionCircleButton
               color={colors.control}
@@ -118,7 +118,7 @@ const WalletConnectCallRequestList = ({
               accept
               icon="check"
               fontSize={fontSizes.small}
-              onPress={() => navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callId: item.callId })}
+              onPress={() => navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callRequest })}
             />
           </ItemContainer>
         </ShadowedCard>
@@ -143,6 +143,6 @@ const WalletConnectCallRequestList = ({
       />
     </React.Fragment>
   );
-}
+};
 
 export default withTheme(WalletConnectCallRequestList);

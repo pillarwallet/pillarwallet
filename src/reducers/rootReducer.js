@@ -30,8 +30,8 @@ import type SDKWrapper from 'services/api';
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
 import smartWalletReducer from './smartWalletReducer';
-import walletConnectReducer from 'reducers/walletConnectReducer';
-import walletConnectSessionsReducer from 'reducers/walletConnectSessionsReducer';
+import walletConnectReducer from './walletConnectReducer';
+import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
@@ -73,11 +73,11 @@ import liquidityPoolsReducer from './liquidityPoolsReducer';
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
-import type { WalletConnectReducerState, WalletConnectReducerAction } from 'reducers/walletConnectReducer';
+import type { WalletConnectReducerState, WalletConnectReducerAction } from './walletConnectReducer';
 import type {
   WalletConnectSessionsReducerAction,
   WalletConnectSessionsReducerState,
-} from 'reducers/walletConnectSessionsReducer';
+} from './walletConnectSessionsReducer';
 import type { AssetsReducerState } from './assetsReducer';
 import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
 import type { RatesReducerState } from './ratesReducer';

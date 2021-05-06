@@ -173,7 +173,7 @@ export function signTypedData(
     return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
   }
 
-  return signTypedData_v4(toBuffer(wallet.privateKey), { data: JSON.parse(data) });
+  return new Promise((resolve) => resolve(signTypedData_v4(toBuffer(wallet.privateKey), { data: JSON.parse(data) })));
 }
 
 export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {

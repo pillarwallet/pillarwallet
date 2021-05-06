@@ -23,9 +23,6 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
-// actions
-import { connectToWalletConnectConnectorAction } from 'actions/walletConnectActions';
-
 // components
 import CircleButton from 'components/CircleButton';
 import Toast from 'components/Toast';

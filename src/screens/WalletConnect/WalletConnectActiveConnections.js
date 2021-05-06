@@ -44,8 +44,14 @@ const WalletConnectActiveConnections = () => {
     disconnectSessionByUrl,
   } = useWalletConnect();
 
-  const onItemPress = ({ peerMeta = {} }) => {
-    const { name, url } = peerMeta;
+  const onItemPress = ({ peerMeta }) => {
+    let name;
+    let url;
+
+    if (peerMeta) {
+      ({ name, url } = peerMeta);
+    }
+
     Alert.alert(
       t('alert.walletConnectDisconnect.title', { name }),
       t('alert.walletConnectDisconnect.message', { name }),
@@ -61,8 +67,14 @@ const WalletConnectActiveConnections = () => {
   };
 
   const renderConnector = ({ item }) => {
-    const { peerMeta = {} } = item;
-    const { name, icons, url } = peerMeta;
+    const { peerMeta } = item;
+    let name;
+    let icons;
+    let url;
+
+    if (peerMeta) {
+      ({ name, url, icons } = peerMeta);
+    }
 
     return (
       <ListItemWithImage

@@ -17,10 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
@@ -37,26 +36,21 @@ import Toast from 'components/Toast';
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import {
-  getAssetsAsList,
-  isEnoughBalanceForTransactionFee,
-} from 'utils/assets';
+import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import {
-  PERSONAL_SIGN,
-  ETH_SEND_TX,
-  ETH_SIGN_TX,
-  REQUEST_TYPE,
-  ETH_SIGN_TYPED_DATA,
-  ETH_SIGN,
-} from 'constants/walletConnectConstants';
+import { REQUEST_TYPE } from 'constants/walletConnectConstants';
+import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
 // utils
-import { mapCallRequestToTransactionPayload } from 'utils/walletConnect';
+import {
+  getWalletConnectCallRequestType,
+  mapCallRequestToTransactionPayload,
+  parseMessageSignParamsFromCallRequest,
+} from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
 
 // hooks
@@ -71,7 +65,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Theme } from 'models/Theme';
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
@@ -123,69 +117,61 @@ const WalletConnectCallRequestScreen = ({
   feeInfo,
   estimateErrorMessage,
   isArchanovaWalletActivated,
-  estimateTransaction,
   activeAccount,
   accountAssets,
   supportedAssets,
-} : Props) => {
+}: Props) => {
   const navigation = useNavigation();
-  const {
-    callRequests,
-    cancelCallRequest,
-    approveCallRequest,
-    estimateCallRequestTransaction,
-  } = useWalletConnect();
+  const { rejectCallRequest, estimateCallRequestTransaction } = useWalletConnect();
 
-  const callRequestId = navigation.getParam('callId');
-  const callRequest = callRequests.find(({ callId }) => callId === +callRequestId);
-  const callRequestMethod = callRequest?.method;
-
-  let requestType;
-  switch (callRequestMethod) {
-    case ETH_SEND_TX:
-    case ETH_SIGN_TX:
-      requestType = REQUEST_TYPE.TRANSACTION;
-      break;
-    case ETH_SIGN:
-    case ETH_SIGN_TYPED_DATA:
-    case PERSONAL_SIGN:
-      requestType = REQUEST_TYPE.MESSAGE;
-      break;
-    default:
-      requestType = REQUEST_TYPE.UNSUPPORTED;
-  }
-
-  const transactionPayload = requestType === REQUEST_TYPE.TRANSACTION
-    ? mapCallRequestToTransactionPayload(callRequest, getAssetsAsList(accountAssets), supportedAssets)
-    : null;
+  const callRequest = navigation.getParam('callRequest');
+  const requestType = getWalletConnectCallRequestType(callRequest);
 
   useEffect(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return;
     estimateCallRequestTransaction(callRequest);
-  }, [callRequestMethod]);
+  }, [callRequest]);
 
   const colors = getThemeColors(theme);
 
-  let errorMessage = requestType === REQUEST_TYPE.UNSUPPORTED
-   ? t('walletConnectContent.error.unsupportedRequestCallRequestType')
-   : estimateErrorMessage;
+  const transactionPayload: TransactionPayload | null = useMemo(() => {
+    if (requestType !== REQUEST_TYPE.TRANSACTION) return null;
+    return mapCallRequestToTransactionPayload(callRequest, getAssetsAsList(accountAssets), supportedAssets);
+  }, [callRequest, accountAssets, supportedAssets, requestType]);
 
-  if (!errorMessage && isArchanovaAccount(activeAccount) || !isArchanovaWalletActivated) {
-    errorMessage = t('walletConnectContent.error.smartWalletNeedToBeActivated');
-  }
+  const errorMessage: string | null = useMemo(() => {
+    if (requestType === REQUEST_TYPE.UNSUPPORTED) {
+      return t('walletConnectContent.error.unsupportedRequestCallRequestType');
+    }
 
-  if (requestType === REQUEST_TYPE.TRANSACTION) {
+    if (isArchanovaAccount(activeAccount) && !isArchanovaWalletActivated) {
+      return t('walletConnectContent.error.smartWalletNeedToBeActivated');
+    }
+
+    if (requestType === REQUEST_TYPE.TRANSACTION && estimateErrorMessage) {
+      return estimateErrorMessage;
+    }
+
+
+    if (requestType === REQUEST_TYPE.TRANSACTION && !isEstimating && !transactionPayload) {
+      return t('walletConnectContent.error.unableToShowTransaction');
+    }
+
+    if (requestType === REQUEST_TYPE.TRANSACTION && transactionPayload && feeInfo) {
       const { amount, symbol, decimals } = transactionPayload;
-      if (!errorMessage && feeInfo && !isEnoughBalanceForTransactionFee(balances, {
+      if (!isEnoughBalanceForTransactionFee(balances, {
         amount,
         symbol,
         decimals,
         txFeeInWei: feeInfo?.fee,
         gasToken: feeInfo?.gasToken,
       })) {
-      errorMessage = t('error.notEnoughTokenForFee', { token: gasToken || ETH });
+        return t('error.notEnoughTokenForFee', { token: feeInfo.gasToken || ETH });
+      }
     }
-  }
+
+    return null;
+  }, [requestType, activeAccount, isArchanovaWalletActivated, transactionPayload, isEstimating, feeInfo]);
 
   const onApprovePress = () => {
     if (!callRequest) {
@@ -194,11 +180,11 @@ const WalletConnectCallRequestScreen = ({
         emoji: 'woman-shrugging',
         supportLink: true,
       });
-    } else {
-      approveCallRequest(callRequest, transactionPayload);
+      navigation.dismiss();
+      return;
     }
 
-    navigation.dismiss();
+    navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, { callRequest, transactionPayload });
   };
 
   const onRejectPress = () => {
@@ -210,12 +196,14 @@ const WalletConnectCallRequestScreen = ({
       });
     }
 
-    cancelCallRequest(callRequest);
+    rejectCallRequest(callRequest);
     navigation.dismiss();
   };
 
   const renderTransactionDetails = () => {
-    const feeDisplayValue = formatTransactionFee(feeInfo?.fee, feeInfo?.gasToken);
+    if (!transactionPayload) return null; // edge case, error message is handled
+
+    const feeDisplayValue = feeInfo?.fee && formatTransactionFee(feeInfo.fee, feeInfo?.gasToken);
     const { genericToken } = images(theme);
     const { icon, name } = callRequest;
     const { amount, symbol, to } = transactionPayload;
@@ -252,7 +240,7 @@ const WalletConnectCallRequestScreen = ({
           <LabelSub>
             {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
           </LabelSub>
-          {!!isEstimating && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
+          {!!isEstimating && <Spinner style={{ marginTop: 15, alignSelf: 'flex-start' }} size={20} trackWidth={2} />}
           {!isEstimating && <Value>{feeDisplayValue}</Value>}
         </LabeledRow>
       </>
@@ -260,26 +248,7 @@ const WalletConnectCallRequestScreen = ({
   };
 
   const renderMessageDetails = () => {
-    const { params = [] } = callRequest;
-
-    const preparedParams = callRequestMethod === PERSONAL_SIGN
-      ? params.reverse() // different param order on PERSONAL_SIGN
-      : params;
-
-    const [address] = preparedParams;
-
-    let message;
-    if (callRequestMethod === PERSONAL_SIGN) {
-      try {
-        message = utils.toUtf8String(preparedParams[1])
-      } catch (e) {
-        ([,message] = preparedParams);
-      }
-    } else if (callRequestMethod === ETH_SIGN_TYPED_DATA) {
-      message = t('transactions.paragraph.typedDataMessage');
-    } else {
-      ([,message] = preparedParams);
-    }
+    const { address, message } = parseMessageSignParamsFromCallRequest(callRequest);
 
     return (
       <>
@@ -295,7 +264,7 @@ const WalletConnectCallRequestScreen = ({
     );
   };
 
-  const isSubmitDisabled = !!errorMessage || (requestType === REQUEST_TYPE.TRANSACTION && isEstimating)
+  const isSubmitDisabled = !!errorMessage || (requestType === REQUEST_TYPE.TRANSACTION && isEstimating);
 
   return (
     <ContainerWithHeader
