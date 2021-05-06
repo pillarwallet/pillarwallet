@@ -57,7 +57,7 @@ function RewardsTab() {
 
   const { chain: initialChain } = navigation.state.params;
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
- 
+
   const totalBalance = useRewardsBalance();
   const sections = useSectionData(expandItemsPerChain);
 

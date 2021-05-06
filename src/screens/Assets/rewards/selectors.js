@@ -50,6 +50,7 @@ export type RewardItem = {|
 
 // TODO: provide real assets data
 export function useRewardsAssets(): ChainRecord<RewardItem[]> {
+  /* eslint-disable i18next/no-literal-string */
   const polygon = [
     {
       key: 'pillar-1',

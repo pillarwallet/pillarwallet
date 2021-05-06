@@ -141,7 +141,7 @@ const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
     const balance = balancePerChain[chain] ?? BigNumber(0);
-    const data = expandItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : []
+    const data = expandItemsPerChain[chain] ? prepareHeaderListItems(items, (item) => item.service) : [];
     return { key: chain, chain, balance, data };
   });
 };

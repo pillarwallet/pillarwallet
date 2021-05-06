@@ -21,7 +21,8 @@
 import { groupBy } from 'lodash';
 
 /**
- * Utilities for working with mixed list of items & headers. Intended for work 
+ * Utilities for working with mixed list of items & headers. Useful when working with
+ * SectionList and having 2-level of headers.
  */
 
 type KeyedItem = { key: string };

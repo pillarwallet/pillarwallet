@@ -47,6 +47,7 @@ export type LiquidityPoolItem = {|
 
 // TODO: provide real assets data
 export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolItem[]> {
+  /* eslint-disable i18next/no-literal-string */
   const ethereum = [
     {
       key: 'uniswap-1',
