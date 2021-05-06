@@ -72,7 +72,7 @@ export const initWalletConnectSessionsAction = () => {
       storedSessions = [...storedSessions, ...legacySessions];
       legacySessions.forEach((session) => dispatch({
         type: ADD_WALLETCONNECT_SESSION,
-        payload: { session }
+        payload: { session },
       }));
       dispatch({ type: SET_WALLETCONNECT_SESSIONS_IMPORTED });
     }
@@ -86,6 +86,17 @@ export const initWalletConnectSessionsAction = () => {
         dispatch(subscribeToWalletConnectConnectorEventsAction(connector));
       }
     });
+  };
+};
+
+export const disconnectWalletConnectSessionByUrlAction = (url: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { walletConnect: { activeConnectors } } = getState();
+
+    const matchingConnector = activeConnectors.find(({ peerMeta }) => peerMeta?.url === url);
+    if (!matchingConnector) return;
+
+    dispatch(disconnectWalletConnectSessionByPeerIdAction(matchingConnector.peerId));
   };
 };
 

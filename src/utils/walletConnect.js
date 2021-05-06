@@ -71,29 +71,32 @@ const isTokenTransfer = (data) => typeof data === 'string'
 export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnectCallRequest): {
   address: string,
   message: string,
+  displayMessage: string,
 } => {
   const { method, params } = callRequest;
 
-  const preparedParams = method === PERSONAL_SIGN
-    ? params.reverse() // different param order on PERSONAL_SIGN
-    : params;
-
-  const [address] = preparedParams;
-
-  let message;
+  let callRequestParams = [...params];
   if (method === PERSONAL_SIGN) {
-    try {
-      message = utils.toUtf8String(preparedParams[1]);
-    } catch (e) {
-      ([, message] = preparedParams);
-    }
-  } else if (method === ETH_SIGN_TYPED_DATA) {
-    message = t('transactions.paragraph.typedDataMessage');
-  } else {
-    ([, message] = preparedParams);
+    // different param order on PERSONAL_SIGN
+    callRequestParams = callRequestParams.reverse();
   }
 
-  return { address, message };
+  const [address, message] = callRequestParams;
+
+  let displayMessage;
+  if (method === PERSONAL_SIGN) {
+    try {
+      displayMessage = utils.toUtf8String(callRequestParams[1]);
+    } catch (e) {
+      ([, displayMessage] = callRequestParams);
+    }
+  } else if (method === ETH_SIGN_TYPED_DATA) {
+    displayMessage = t('transactions.paragraph.typedDataMessage');
+  } else {
+    ([, displayMessage] = callRequestParams);
+  }
+
+  return { address, message, displayMessage };
 };
 
 export const mapCallRequestToTransactionPayload = (
