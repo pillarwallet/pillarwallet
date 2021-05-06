@@ -79,17 +79,17 @@ const setWalletConnectErrorAction = (message: string) => {
   };
 };
 
-export const resetWalletConnectConnectorRequestAction = () => {
+export const resetWalletConnectConnectorRequestAction = (rejectedRequest: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectorRequest } } = getState();
 
     if (!connectorRequest) return;
 
-    if (connectorRequest.connected) {
-      await connectorRequest.killSession();
+    if (rejectedRequest) {
+      if (connectorRequest.connected) await connectorRequest.killSession();
+      dispatch(logEventAction('walletconnect_connector_rejected'));
     }
 
-    dispatch(logEventAction('walletconnect_connector_rejected'));
     dispatch({ type: RESET_WALLETCONNECT_CONNECTOR_REQUEST });
   };
 };
@@ -218,7 +218,7 @@ export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
       dispatch(setWalletConnectErrorAction(error?.message));
     }
 
-    dispatch(resetWalletConnectConnectorRequestAction());
+    dispatch(resetWalletConnectConnectorRequestAction(true));
   };
 };
 
