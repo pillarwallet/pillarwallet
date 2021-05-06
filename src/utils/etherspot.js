@@ -67,6 +67,8 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
   }
 };
 
+// added eslint ignore to reduce #front-end noise as this piece is part of other branch
+/* eslint-disable */
 export const parseEtherspotTransactions = (
   etherspotTransactions: EtherspotTransaction[],
   supportedAssets: Asset[],
@@ -101,3 +103,4 @@ export const parseEtherspotTransactions = (
     // });
     // return [...mappedHistoryTransactions, mappedTransaction]
   }, []);
+/* eslint-enable */

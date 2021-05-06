@@ -130,7 +130,7 @@ const WalletConnectCallRequestScreen = ({
   useEffect(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return;
     estimateCallRequestTransaction(callRequest);
-  }, [callRequest]);
+  }, []);
 
   const colors = getThemeColors(theme);
 
@@ -244,14 +244,16 @@ const WalletConnectCallRequestScreen = ({
           <Label>{t('transactions.label.recipientAddress')}</Label>
           <Value>{to}</Value>
         </LabeledRow>
-        <LabeledRow>
-          <Label>{t('transactions.label.transactionFee')}</Label>
-          <LabelSub>
-            {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
-          </LabelSub>
-          {!!isEstimating && <Spinner style={{ marginTop: 15, alignSelf: 'flex-start' }} size={20} trackWidth={2} />}
-          {!isEstimating && <Value>{feeDisplayValue}</Value>}
-        </LabeledRow>
+        {!estimateErrorMessage && (
+          <LabeledRow>
+            <Label>{t('transactions.label.transactionFee')}</Label>
+            <LabelSub>
+              {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
+            </LabelSub>
+            {!!isEstimating && <Spinner style={{ marginTop: 15, alignSelf: 'flex-start' }} size={20} trackWidth={2} />}
+            {!isEstimating && <Value>{feeDisplayValue}</Value>}
+          </LabeledRow>
+        )}
       </>
     );
   };
