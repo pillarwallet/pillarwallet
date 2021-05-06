@@ -24,11 +24,18 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { chunk } from 'lodash';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
+import Modal from 'components/Modal';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
+
+// Constants
+import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
 // Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Utils
@@ -46,6 +53,7 @@ import { type CollectibleItem, useCollectibleAssets } from './selectors';
 import CollectibleListItem from './CollectibleListItem';
 
 function CollectiblesTab() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
@@ -56,6 +64,11 @@ function CollectiblesTab() {
   const numberOfColumns = 2;
 
   const sections = useSectionData(numberOfColumns, expandItemsPerChain);
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
+
+  const showReceiveModal = () => {
+    Modal.open(() => <ReceiveModal address={accountAddress} />);
+  };
 
   const renderSectionHeader = ({ chain }: Section) => {
     return <ChainListHeader chain={chain} onPress={() => toggleExpandItems(chain)} />;
@@ -73,6 +86,20 @@ function CollectiblesTab() {
     );
   };
 
+  const hasCollectibles = true;
+  const buttons = [
+    {
+      title: t('button.receive'),
+      iconName: 'qrcode',
+      onPress: showReceiveModal,
+    },
+    hasCollectibles && {
+      title: t('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW),
+    },
+  ];
+
   return (
     <Container>
       <SectionList
@@ -82,6 +109,8 @@ function CollectiblesTab() {
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
+
+      <FloatingButtons items={buttons} />
     </Container>
   );
 }
