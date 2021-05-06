@@ -64,7 +64,6 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
             key={item.title}
             onPress={item.onPress}
             disabled={item.disabled}
-            $narrow={items.length > 3}
             testID="FloatingButtonItem"
           >
             <ItemIconWrapper>
@@ -106,7 +105,7 @@ const Container = styled.View`
 
 const ItemTouchable = styled.TouchableOpacity`
   align-items: center;
-  padding-horizontal: ${({ $narrow }) => ($narrow ? 6 / 2 : spacing.largePlus / 2)}px;
+  padding-horizontal: 4px;
   padding-top: ${spacing.mediumLarge}px;
   padding-bottom: ${spacing.medium}px;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
