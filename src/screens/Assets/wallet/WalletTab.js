@@ -51,8 +51,9 @@ import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import ChainListHeader from '../components/ChainListHeader';
 import PillarPaySummary from '../components/PillarPaySummary';
+import ChainListHeader from '../components/ChainListHeader';
+import ChainListFooter from '../components/ChainListFooter';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
 import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
@@ -139,6 +140,7 @@ function WalletTab() {
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderSectionFooter={() => <ChainListFooter />}
         renderItem={({ item }) => renderItem(item)}
         ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
@@ -187,5 +189,5 @@ const Container = styled.View`
 const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
-  margin-bottom: ${spacing.mediumLarge}px;
+  margin-bottom: 40px;
 `;

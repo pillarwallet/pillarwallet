@@ -23,7 +23,7 @@ import { SectionList, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import { range, chunk } from 'lodash';
+import { chunk } from 'lodash';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
@@ -41,6 +41,7 @@ import type { Chain } from 'models/Chain';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ChainListHeader from '../components/ChainListHeader';
+import ChainListFooter from '../components/ChainListFooter';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
 import CollectibleListItem from './CollectibleListItem';
 
@@ -77,6 +78,7 @@ function CollectiblesTab() {
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderSectionFooter={() => <ChainListFooter />}
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />

@@ -62,6 +62,6 @@ export default ChainListHeader;
 
 const TouchableContainer = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.background};
-  padding: ${spacing.extraLarge}px ${spacing.large}px ${spacing.small}px;
+  padding: ${spacing.small}px ${spacing.large}px;
   align-items: center;
 `;
