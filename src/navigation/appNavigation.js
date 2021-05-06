@@ -50,6 +50,7 @@ import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectScreen from 'screens/LegacyWalletConnect';
 import WalletConnectSessionRequest from 'screens/LegacyWalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
@@ -406,7 +407,7 @@ const walletConnectCallRequestFlow = createStackNavigator(
 // WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
-    [WALLETCONNECT]: WalletConnectScreen,
+    [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [EXPLORE_APPS]: ExploreAppsScreen,
