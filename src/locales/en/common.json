@@ -596,8 +596,6 @@
 
   "assets": {
     "wallet": {
-      "tokens": "Tokens",
-      "addFunds": "Add funds",
       "pillarPay": {
         "title": "Pillar Pay",
         "topUp": "Top up",
