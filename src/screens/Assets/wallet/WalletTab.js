@@ -31,6 +31,7 @@ import BalanceView from 'components/BalanceView';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
+import AddFundsModal from 'components/AddFundsModal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Contants
@@ -77,6 +78,10 @@ function WalletTab() {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
 
+  const showAddFundsModal = () => {
+    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
+  };
+
   const navigateToAssetDetails = (item: WalletItem) => {
     const asset = getAssetFromRegistry(assetRegistry, item.symbol);
     if (!asset) return;
@@ -117,23 +122,31 @@ function WalletTab() {
   };
 
   const hasPositiveBalance = totalBalance.value.gt(0);
-  const buttons = [
-    {
-      title: tRoot('button.receive'),
-      iconName: 'qrcode',
-      onPress: showReceiveModal,
-    },
-    hasPositiveBalance && {
-      title: tRoot('button.swap'),
-      iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE_FLOW),
-    },
-    hasPositiveBalance && {
-      title: tRoot('button.send'),
-      iconName: 'send',
-      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-    },
-  ];
+  const buttons = hasPositiveBalance ?
+    [
+      {
+        title: tRoot('button.receive'),
+        iconName: 'qrcode',
+        onPress: showReceiveModal,
+      },
+      {
+        title: tRoot('button.swap'),
+        iconName: 'exchange',
+        onPress: () => navigation.navigate(EXCHANGE_FLOW),
+      },
+      {
+        title: tRoot('button.send'),
+        iconName: 'send',
+        onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+      },
+    ] :
+    [
+      {
+        title: tRoot('button.addCash'),
+        iconName: 'plus',
+        onPress: showAddFundsModal,
+      },
+    ];
 
   return (
     <Container>

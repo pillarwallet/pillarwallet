@@ -47,7 +47,7 @@ type Props = {|
 |};
 
 function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
-  const { t } = useTranslationWithPrefix('home.balance');
+  const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
 
   const fiatCurrency = useFiatCurrency();
@@ -78,7 +78,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
 
       <SecondColumn>
         <Tooltip body={t('hint')} isVisible={showHint}>
-          <SpecialButton title={t('addCash')} iconName="add-cash" onPress={handleAddFunds} />
+          <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={handleAddFunds} />
         </Tooltip>
       </SecondColumn>
     </Container>

@@ -275,6 +275,7 @@
     "activate": "Activate",
     "activatePPN": "Activate Pillar Network",
     "add": "Add",
+    "addCash": "Add cash",
     "addContact": "Add contact",
     "addContacts": "Add contacts",
     "addDetails": "Add details",
@@ -589,7 +590,6 @@
 
   "home": {
     "balance": {
-      "addCash": "Add Cash",
       "lastWeek": "Last week",
       "hint": "Start by adding cash"
     },
