@@ -45,9 +45,9 @@ type Props = {|
 |};
 
 function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnabled }: Props) {
-  const [internalIndex, setInternalIndex] = React.useState(0);
-
   const colors = useThemeColors();
+
+  const [internalIndex, setInternalIndex] = React.useState(0);
 
   const renderScene = ({ route }: { route: TabViewItem }) => {
     return <route.component />;

@@ -96,20 +96,6 @@
     "collectibles": "Collectibles"
   },
 
-  "apps": {
-    "aave": "Aave",
-    "rari": "Rari Capital",
-    "poolTogether": "Pool Together",
-    "uniswap": "Uniswap"
-  },
-
-  "navigationTabs": {
-    "home": "Home",
-    "assets": "Assets",
-    "connect": "Connect",
-    "services": "Services"
-  },
-
   "title": {
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
