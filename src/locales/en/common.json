@@ -590,8 +590,7 @@
 
   "home": {
     "balance": {
-      "lastWeek": "Last week",
-      "hint": "Start by adding cash"
+      "lastWeek": "Last week"
     },
     "assets": {
       "contacts": "Contacts",

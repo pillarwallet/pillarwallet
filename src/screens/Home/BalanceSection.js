@@ -27,7 +27,6 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
-import Tooltip from 'components/Tooltip';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
@@ -60,8 +59,6 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
   }, [accountAddress]);
 
-  const showHint = balanceInFiat.isZero();
-
   return (
     <Container>
       <FirstColumn>
@@ -77,9 +74,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
       </FirstColumn>
 
       <SecondColumn>
-        <Tooltip body={t('hint')} isVisible={showHint}>
-          <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={handleAddFunds} />
-        </Tooltip>
+        <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={handleAddFunds} />
       </SecondColumn>
     </Container>
   );
