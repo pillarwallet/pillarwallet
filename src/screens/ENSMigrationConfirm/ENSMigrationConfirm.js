@@ -94,11 +94,9 @@ const ENSMigrationConfirm = ({
 
   useEffect(() => {
     dispatch(estimateENSMigrationFromArchanovaToEtherspotAction());
-  }, []);
+  }, [dispatch]);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
-  const archanovaAccountEnsName = getAccountEnsName(archanovaAccount);
-  const archanovaAccountAddress = getAccountAddress(archanovaAccount);
 
   const showFees = isEstimating || !!feeInfo;
 
@@ -107,9 +105,13 @@ const ENSMigrationConfirm = ({
     gasToken: feeInfo?.gasToken,
   });
 
-  const errorMessage = isEnoughForFee
+  let errorMessage = isEnoughForFee
     ? estimateErrorMessage
     : tRoot('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
+
+  if (!archanovaAccount) {
+    errorMessage = t('noAccountFound');
+  }
 
   const migrationTransactionStatusCallback = (transactionStatus: TransactionStatus) => {
     navigation.dismiss();
@@ -135,9 +137,14 @@ const ENSMigrationConfirm = ({
       <ScrollWrapper regularPadding contentContainerStyle={{ paddingTop: 80 }}>
         <Title center>{t('title')}</Title>
         <Spacing h={35} />
-        <BaseText medium secondary center>
-          {t('body', { ensName: archanovaAccountEnsName, address: archanovaAccountAddress })}
-        </BaseText>
+        {archanovaAccount && (
+          <BaseText medium secondary center>
+            {t('body', {
+              ensName: getAccountEnsName(archanovaAccount),
+              address: getAccountAddress(archanovaAccount),
+            })}
+          </BaseText>
+        )}
         <Spacing h={50} />
         {showFees && (
           <FeesWrapper>
