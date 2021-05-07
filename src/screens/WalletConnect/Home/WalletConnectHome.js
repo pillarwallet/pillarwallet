@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { View, SectionList, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -29,14 +29,20 @@ import { groupBy, chunk } from 'lodash';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
+import Tabs from 'components/Tabs';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 
+// Selectors
+import { useSupportedChains } from 'selectors/smartWallet';
+
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
+import { type Chain, CHAIN } from 'models/Chain';
 
 // Local
 import { type WalletConnectItem, useWalletConnectItems } from './selectors';
@@ -49,6 +55,17 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const sections = useSectionData(numberOfColumns);
+
+  const tabItems = useTabItems();
+  const [activeTab, setActiveTab] = React.useState(CHAIN.POLYGON);
+
+  const renderListHeader = () => {
+    return (
+      <View>
+        <Tabs tabs={tabItems} activeTab={activeTab} />
+      </View>
+    );
+  };
 
   // Note: in order to achieve multicolumn layout, we group n normal items, into one list row item.
   const renderListRow = (items: WalletConnectItem[]) => {
@@ -71,6 +88,7 @@ function WalletConnectHome() {
         renderSectionFooter={() => <SectionFooter />}
         renderItem={({ item }) => renderListRow(item)}
         keyExtractor={(items) => items[0]?.title}
+        ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
     </Container>
@@ -92,6 +110,16 @@ const useColumnDimensions = () => {
   const numberOfColumns = Math.floor(availableWidth / minColumnWidth);
   const columnWidth = Math.floor(availableWidth / numberOfColumns);
   return { numberOfColumns, columnWidth };
+};
+
+const useTabItems = () => {
+  const chains = useSupportedChains();
+  const config = useChainsConfig();
+
+  return chains.map((chain) => ({
+    id: chain,
+    name: config[chain].titleShort,
+  }));
 };
 
 const useSectionData = (numberOfColumns: number): Section[] => {

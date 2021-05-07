@@ -28,14 +28,44 @@ type Tab = {
   onPress: () => void,
 };
 
-type TabProps = Tab & {
-  active: boolean,
-};
-
 type Props = {
   tabs: Tab[],
   activeTab: string,
   wrapperStyle?: Object,
+};
+
+const Tabs = ({ tabs, activeTab, wrapperStyle }: Props) => {
+  return (
+    <TabsContainer style={wrapperStyle}>
+      {tabs.map(tab => <TabComponent {...tab} active={activeTab === tab.id} key={tab.id} />)}
+    </TabsContainer>
+  );
+};
+
+export default Tabs;
+
+type TabProps = Tab & {
+  active: boolean,
+};
+
+const TabComponent = ({ name, onPress, active }: TabProps) => {
+  if (active) {
+    return (
+      <TabContainer onPress={onPress}>
+        <View>
+          <BaseText regular>{name}</BaseText>
+          <Underline />
+        </View>
+      </TabContainer>
+    );
+  }
+  return (
+    <TabContainer onPress={onPress}>
+      <BaseText regular secondary>
+        {name}
+      </BaseText>
+    </TabContainer>
+  );
 };
 
 const TabsContainer = styled.View`
@@ -55,32 +85,3 @@ const TabContainer = styled.TouchableOpacity`
   flex: 1;
   align-items: center;
 `;
-
-const TabComponent = ({ name, onPress, active }: TabProps) => {
-  if (active) {
-    return (
-      <TabContainer onPress={onPress}>
-        <View>
-          <BaseText regular>{name}</BaseText>
-          <Underline />
-        </View>
-      </TabContainer>
-    );
-  }
-  return (
-    <TabContainer onPress={onPress}>
-      <BaseText regular secondary>{name}</BaseText>
-    </TabContainer>
-  );
-};
-
-const Tabs = ({ tabs, activeTab, wrapperStyle }: Props) => {
-  return (
-    <TabsContainer style={wrapperStyle}>
-      {tabs.map(tab => <TabComponent {...tab} active={activeTab === tab.id} key={tab.id} />)}
-    </TabsContainer>
-  );
-};
-
-export default Tabs;
-
