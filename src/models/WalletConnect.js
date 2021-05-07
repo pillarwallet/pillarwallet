@@ -23,11 +23,11 @@ import type { Chain } from 'models/Chain';
 export type WalletConnectCategory = {|
   id: string,
   title: string,
-  apps: WalletConnectApp[],
 |};
 
 export type WalletConnectApp = {|
   id: string,
+  categoryId: string,
   title: string,
   iconUrl: ?string,
   chains: Chain[],

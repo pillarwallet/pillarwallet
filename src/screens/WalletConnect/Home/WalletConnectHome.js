@@ -36,6 +36,10 @@ import FloatingButtons from 'components/FloatingButtons';
 // Selectors
 import { useSupportedChains } from 'selectors/smartWallet';
 
+// Services
+import { useFetchWalletConnectAppsQuery } from 'services/api/WalletConnectCms/WalletConnectApps';
+import { useFetchWalletConnectCategoriesQuery } from 'services/api/WalletConnectCms/WalletConnectCategories';
+
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
@@ -47,7 +51,7 @@ import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
 import { useWalletConnectCategories } from './selectors';
-import { filterCategoriesByChain } from './utils';
+import { filterAppsByChain } from './utils';
 import WalletConnectListItem from './WalletConnectListItem';
 
 function WalletConnectHome() {
@@ -127,12 +131,22 @@ const useTabItems = () => {
 };
 
 const useSectionData = (chain: ?Chain, numberOfColumns: number): Section[] => {
-  const categories = useWalletConnectCategories();
-  return filterCategoriesByChain(categories, chain).map(({ id, title, apps }) => ({
-    key: id,
-    title,
-    data: chunk(apps, numberOfColumns),
-  }));
+  const categoriesQuery = useFetchWalletConnectCategoriesQuery();
+  const appsQuery = useFetchWalletConnectAppsQuery();
+
+  if (!categoriesQuery.data || !appsQuery.data) return [];
+
+  const categories = categoriesQuery.data;
+  const apps = filterAppsByChain(appsQuery.data, chain);
+
+  return categories.map(({ id, title }) => {
+    const matchingApps = apps.filter(app => app.categoryId === id);
+    return {
+      key: id,
+      title,
+      data: chunk(matchingApps, numberOfColumns),
+    };
+  });
 };
 
 const styles = {
