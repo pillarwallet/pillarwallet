@@ -44,7 +44,11 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  getAccountAddress,
+  getAccountEnsName,
+} from 'utils/accounts';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
@@ -93,7 +97,8 @@ const ENSMigrationConfirm = ({
   }, []);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
-  const ensName = getAccountEnsName(archanovaAccount);
+  const archanovaAccountEnsName = getAccountEnsName(archanovaAccount);
+  const archanovaAccountAddress = getAccountAddress(archanovaAccount);
 
   const showFees = isEstimating || !!feeInfo;
 
@@ -130,7 +135,9 @@ const ENSMigrationConfirm = ({
       <ScrollWrapper regularPadding contentContainerStyle={{ paddingTop: 80 }}>
         <Title center>{t('title')}</Title>
         <Spacing h={35} />
-        <BaseText medium secondary center>{t('body', { ensName })}</BaseText>
+        <BaseText medium secondary center>
+          {t('body', { ensName: archanovaAccountEnsName, address: archanovaAccountAddress })}
+        </BaseText>
         <Spacing h={50} />
         {showFees && (
           <FeesWrapper>
