@@ -26,24 +26,28 @@ import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 type Props = {|
   title: ?string,
   iconUrl: ?string,
   onPress?: () => mixed,
+  width: number,
 |};
 
-function WalletConnectListItem({ title, iconUrl, onPress }: Props) {
+function WalletConnectListItem({ title, iconUrl, onPress, width }: Props) {
+  const colors = useThemeColors();
+
   return (
-    <TouchableContainer onPress={onPress} disabled={!onPress}>
+    <TouchableContainer onPress={onPress} disabled={!onPress} $width={width}>
       <IconContainer>
         <IconImage source={{ uri: iconUrl }} />
       </IconContainer>
 
-      <TitleContainer>
-        <Text variant="medium" numberOfLines={2}>{title}</Text>
-      </TitleContainer>
+      <Title numberOfLines={2} color={colors.secondaryText}>
+        {title}
+      </Title>
     </TouchableContainer>
   );
 }
@@ -51,15 +55,14 @@ function WalletConnectListItem({ title, iconUrl, onPress }: Props) {
 export default WalletConnectListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
-  padding: ${spacing.small}px ${spacing.large}px;
-  min-height: 64px;
+  padding: ${spacing.small}px ${spacing.small}px;
+  width: ${({ $width }) => $width}px;
 `;
 
 const IconContainer = styled.View`
   justify-content: center;
   align-items: center;
-  margin-right: ${spacing.medium}px;
-  width: 48px;
+  margin-bottom: ${spacing.small}px;
 `;
 
 const IconImage = styled(Image)`
@@ -67,7 +70,7 @@ const IconImage = styled(Image)`
   height: 48px;
 `;
 
-const TitleContainer = styled.View`
-  flex: 1;
-  justify-content: center;
+const Title = styled(Text)`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;

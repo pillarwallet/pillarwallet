@@ -74,6 +74,16 @@ export function useWalletConnectItems(): WalletConnectItem[] {
       iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
     },
     {
+      title: 'Alpha Homora 5',
+      category: 'Asset Management',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+    },
+    {
+      title: 'Alpha Homora 6',
+      category: 'Asset Management',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+    },
+    {
       title: 'Rarible',
       category: 'NFT Marketplace',
       iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/6B975E18-9486-4F6E-8EF0-778F4409E1EE.svg',

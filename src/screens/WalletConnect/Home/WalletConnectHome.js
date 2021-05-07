@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { SectionList, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -29,17 +29,17 @@ import { groupBy, chunk } from 'lodash';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
+import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 
 // Utils
-import { spacing } from 'utils/variables';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 
 // Local
 import { type WalletConnectItem, useWalletConnectItems } from './selectors';
-import ServiceListHeader from './ServiceListHeader';
 import WalletConnectListItem from './WalletConnectListItem';
 
 function WalletConnectHome() {
@@ -47,18 +47,18 @@ function WalletConnectHome() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const numberOfColumns = 4;
+  const { numberOfColumns, columnWidth } = useColumnDimensions();
   const sections = useSectionData(numberOfColumns);
 
   const renderSectionHeader = ({ title }: Section) => {
-    return <ServiceListHeader title={title} />;
+    return <SectionHeader>{title}</SectionHeader>;
   };
 
   const renderItem = (items: WalletConnectItem[]) => {
     return (
       <ListRow key={items[0].title}>
         {items.map((item) => (
-          <WalletConnectListItem key={item.title} title={item.title} iconUrl={item.iconUrl} />
+          <WalletConnectListItem key={item.title} title={item.title} iconUrl={item.iconUrl} width={columnWidth} />
         ))}
       </ListRow>
     );
@@ -72,6 +72,7 @@ function WalletConnectHome() {
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderSectionFooter={() => <SectionFooter />}
         renderItem={({ item }) => renderItem(item)}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
@@ -84,6 +85,17 @@ export default WalletConnectHome;
 type Section = {
   ...SectionBase<WalletConnectItem[]>,
   title: string,
+};
+
+const useColumnDimensions = () => {
+  const { width } = useWindowDimensions();
+  const availableWidth = width - (2 * spacing.layoutSides);
+  const minItemWidth = 80;
+
+  const numberOfColumns = Math.floor(availableWidth / minItemWidth);
+  const columnWidth = Math.floor(availableWidth / numberOfColumns);
+
+  return { numberOfColumns, columnWidth };
 };
 
 const useSectionData = (numberOfColumns: number): Section[] => {
@@ -103,6 +115,16 @@ const useSectionData = (numberOfColumns: number): Section[] => {
 const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
-  padding: 0 ${spacing.mediumLarge}px;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
+const SectionHeader = styled(Text)`
+  padding: ${spacing.extraSmall}px ${spacing.layoutSides}px;
+  font-family: ${appFont.medium};
+  ${fontStyles.big};
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const SectionFooter = styled.View`
+  height: 24px;
+`;
