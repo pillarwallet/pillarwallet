@@ -599,6 +599,18 @@
     }
   },
 
+  "migrateENSContent": {
+    "banner": {
+      "title": "Re-point your ENS name to Etherspot"
+    },
+    "details": {
+      "title": "Re-point your ENS name to Etherspot",
+      "body": "Currently, your ENS name points to your Archanova Smart Wallet. This means that any transactions pointing to {{ensName}} will always land in your Archanova Smart Wallet address: (their 0x address). Continue below to re-point your ENS name to your new Etherspot Smart Wallet account",
+      "migrate": "Migrate",
+      "cannotMigrate": "Cannot Migrate"
+    }
+  },
+
   "smartWalletContent": {
     "activationCard": {
       "button": {
@@ -1512,7 +1524,8 @@
     "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
     "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
     "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
-    "walletConnectRequestApproved": "Wallet Connect Call Request approved."
+    "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
+    "ensMigrationCannotProceed": "ENS migration cannot proceed."
   },
 
   "exchangeContent": {

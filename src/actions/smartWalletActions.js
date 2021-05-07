@@ -21,7 +21,7 @@
 import { sdkConstants, sdkModules } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -96,6 +96,7 @@ import {
   accountsSelector,
   activeAccountAddressSelector,
   activeAccountIdSelector,
+  supportedAssetsSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -124,7 +125,9 @@ import {
   findFirstArchanovaAccount,
   getAccountAddress,
   getAccountId,
+  getActiveAccount,
   getActiveAccountId,
+  isArchanovaAccount,
   normalizeForEns,
 } from 'utils/accounts';
 import {
@@ -132,6 +135,7 @@ import {
   isConnectedToArchanovaSmartAccount,
   isHiddenUnsettledTransaction,
   isArchanovaDeviceDeployed,
+  buildENSMigrationTransactions,
 } from 'utils/archanova';
 import {
   addressesEqual,
@@ -160,6 +164,7 @@ import {
   addAccountAction,
   initOnLoginArchanovaAccountAction,
   setActiveAccountAction,
+  switchAccountAction,
   updateAccountExtraIfNeededAction,
 } from './accountsActions';
 import { saveDbAction } from './dbActions';
@@ -167,6 +172,7 @@ import {
   fetchAssetsBalancesAction,
   fetchInitialAssetsAction,
   getAllOwnedAssets,
+  sendAssetAction,
 } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
@@ -183,6 +189,8 @@ import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
 import { fetchUserStreamsAction } from './sablierActions';
 import { lockScreenAction } from './authActions';
+import { estimateTransactionsAction } from './transactionEstimateActions';
+import type { TransactionStatus } from './assetsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -1724,5 +1732,100 @@ export const checkArchanovaSessionIfNeededAction = () => {
       (privateKey: string) => dispatch(initOnLoginArchanovaAccountAction(privateKey)),
       t('paragraph.sessionExpiredReEnterPin'),
     ));
+  };
+};
+
+export const estimateENSMigrationFromArchanovaToEtherspotAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    const migratorTransactions = await buildENSMigrationTransactions(accounts);
+
+    const activeAccount = getActiveAccount(accounts);
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+    if (!migratorTransactions || !activeAccount || !archanovaAccount) {
+      Toast.show({
+        message: t('toast.ensMigrationCannotProceed'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    if (!isArchanovaAccount(activeAccount)) {
+      await dispatch(switchAccountAction(getAccountId(archanovaAccount)));
+    }
+
+    const transactionsToEstimate = migratorTransactions.map(({
+      data,
+      to,
+    }) => ({ to, data, value: EthersBigNumber.from(0) }));
+
+    dispatch(estimateTransactionsAction(transactionsToEstimate));
+  };
+};
+
+export const migrateENSFromArchanovaToEtherspotAction = (
+  statusCallback: (status: TransactionStatus) => void,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    // $FlowFixMe: weird type error that doesn't make any sense
+    const migratorTransactions = await buildENSMigrationTransactions(accounts);
+
+    const activeAccount = getActiveAccount(accounts);
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    const { transactionEstimate: { feeInfo } } = getState();
+
+    if (!migratorTransactions || !activeAccount || !archanovaAccount) {
+      Toast.show({
+        message: t('toast.ensMigrationCannotProceed'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    if (!isArchanovaAccount(activeAccount)) {
+      await dispatch(switchAccountAction(getAccountId(archanovaAccount)));
+    }
+
+    const accountAssets = accountAssetsSelector(getState());
+    const supportedAssets = supportedAssetsSelector(getState());
+    const ethAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, ETH);
+
+    const completeTransactionPayload = migratorTransactions
+      .map(({ data, to }) => ({
+        to,
+        data,
+        amount: 0,
+        symbol: ethAsset.symbol,
+        decimals: ethAsset.decimals,
+        contractAddress: ethAsset.address,
+        txFeeInWei: feeInfo?.fee,
+        gasToken: feeInfo?.gasToken,
+      }))
+      .reduce((transactionPayload, transaction, index) => {
+        if (index === 0) {
+          return {
+            ...transaction,
+            sequentialTransactions: [],
+            extra: { isENSMigrationToEtherspot: true },
+          };
+        }
+
+        const { sequentialTransactions } = transactionPayload;
+
+        return {
+          ...transactionPayload,
+          sequentialTransactions: [...sequentialTransactions, transaction],
+        };
+      }, {});
+
+    dispatch(sendAssetAction(completeTransactionPayload, statusCallback));
   };
 };
