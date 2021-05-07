@@ -84,7 +84,7 @@ function CollectiblesTab() {
     const itemWidth = (width - 48) / numberOfColumns;
 
     return (
-      <ListRow key={items[0].key}>
+      <ListRow>
         {items.map((item) => (
           <CollectibleListItem
             key={item.key}
@@ -118,6 +118,7 @@ function CollectiblesTab() {
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderSectionFooter={() => <ChainListFooter />}
         renderItem={({ item }) => renderItem(item)}
+        keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
 
