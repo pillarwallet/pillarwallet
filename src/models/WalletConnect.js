@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import type { Chain } from 'models/Chain';
+
+// Based on types from:
+// https://github.com/WalletConnect/walletconnect-monorepo/blob/master/packages/types/index.d.ts
 
 export type WalletConnectConnector = {|
   bridge: string,
@@ -145,4 +150,19 @@ type WalletConnectRequestApprove = {|
 type WalletConnectRequestReject = {|
   id: number,
   error?: Error,
+|};
+
+// Wallet Connect CMS types
+
+export type WalletConnectCategory = {|
+  id: string,
+  title: string,
+  apps: WalletConnectApp[],
+|};
+
+export type WalletConnectApp = {|
+  id: string,
+  title: string,
+  iconUrl: ?string,
+  chains: Chain[],
 |};
