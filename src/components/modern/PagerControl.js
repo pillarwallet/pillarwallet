@@ -42,7 +42,7 @@ function PagerControl({ pageCount, currentPage, onChangePage, style }: Props) {
   return (
     <Container style={style}>
       {range(pageCount).map((page) => (
-        <TouchableOpacity onPress={() => onChangePage(page)}>
+        <TouchableOpacity key={page} onPress={() => onChangePage(page)}>
           {page === currentPage ? <ActiveDot /> : <Dot />}
         </TouchableOpacity>
       ))}
