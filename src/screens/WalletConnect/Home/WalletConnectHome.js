@@ -24,23 +24,25 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
-import { groupBy, chunk } from 'lodash';
+import { chunk } from 'lodash';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container, Center } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
+import Spinner from 'components/Spinner';
 
 // Selectors
 import { useSupportedChains } from 'selectors/smartWallet';
 
 // Services
-import { useFetchWalletConnectAppsQuery } from 'services/api/WalletConnectCms/WalletConnectApps';
-import { useFetchWalletConnectCategoriesQuery } from 'services/api/WalletConnectCms/WalletConnectCategories';
+import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
+import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
 
 // Utils
+import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
@@ -50,7 +52,6 @@ import { type Chain } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
-import { useWalletConnectCategories } from './selectors';
 import { filterAppsByChain } from './utils';
 import WalletConnectListItem from './WalletConnectListItem';
 
@@ -63,7 +64,18 @@ function WalletConnectHome() {
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
-  const sections = useSectionData(activeChain, numberOfColumns);
+  const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
+
+  if (isFetching) {
+    return (
+      <Container>
+        <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+        <Center flex={1}>
+          <Spinner />
+        </Center>
+      </Container>
+    );
+  }
 
   const renderListHeader = () => {
     return (
@@ -89,7 +101,7 @@ function WalletConnectHome() {
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <SectionList
-        sections={sections}
+        sections={sections ?? []}
         renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
         renderSectionFooter={() => <SectionFooter />}
         renderItem={({ item }) => renderListRow(item)}
@@ -130,23 +142,32 @@ const useTabItems = () => {
   return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
-const useSectionData = (chain: ?Chain, numberOfColumns: number): Section[] => {
+type SectionData = {|
+  data?: Section[],
+  isFetching?: boolean,
+|};
+
+const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => {
   const categoriesQuery = useFetchWalletConnectCategoriesQuery();
   const appsQuery = useFetchWalletConnectAppsQuery();
 
-  if (!categoriesQuery.data || !appsQuery.data) return [];
+  if (!categoriesQuery.data || !appsQuery.data) return { isFetching: true };
 
   const categories = categoriesQuery.data;
   const apps = filterAppsByChain(appsQuery.data, chain);
 
-  return categories.map(({ id, title }) => {
-    const matchingApps = apps.filter(app => app.categoryId === id);
+  const data = mapNotNil(categories, ({ id, title }) => {
+    const matchingApps = apps.filter((app) => app.categoryId === id);
+    if (matchingApps.length === 0) return null;
+
     return {
       key: id,
       title,
       data: chunk(matchingApps, numberOfColumns),
     };
   });
+
+  return { data, isFetching: false };
 };
 
 const styles = {

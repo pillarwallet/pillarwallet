@@ -29,48 +29,39 @@ import type { QueryResult } from 'utils/types/react-query';
 import { type Chain, CHAIN, CHAIN_ID } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
 
-
 // Utils
-import { mapNotNil } from 'utils/array';
+import * as parse from 'utils/parse';
 
-const APPS = 'dapp_showcase';
+const TYPE_APPS = 'dapp_showcase';
 
 export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectApp[]> {
   return useQuery('WalletConnectApps', () => fetchWalletConnectCategoriesApiCall());
 }
 
 export async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectApp[]> {
-  const data = await Prismic.queryDocumentsByType(APPS);
-  return parseResponseData(data);
-}
-
-/** Parse root response data without crashing on data in invalid format. */
-function parseResponseData(data: Prismic.Response<any>): WalletConnectApp[] {
-  const items = data.results;
-  if (!items || !Array.isArray(items)) return [];
-
-  return mapNotNil(items, (item) => parseApp(item));
+  const data = await Prismic.queryDocumentsByType(TYPE_APPS, { pageSize: 100 });
+  return parse.arrayOrEmpty(data.results, parseApp);
 }
 
 function parseApp(item: ?any): ?WalletConnectApp {
   if (!item) return null;
 
-  const { id } = item;
-  const title = item.data?.name?.[0]?.text;
-  const categoryId = item.data?.category?.id;
-  const iconUrl = item.data?.logo?.url;
-  const chains = parseChains(item.data?.chainagnostic, item.data?.supportedchains);
-  const disabled = item.data?.disabled;
+  const id = parse.stringOrNull(item.id);
+  const title = parse.stringOrNull(item.data?.name?.[0]?.text);
+  const categoryId = parse.stringOrNull(item.data?.category?.id);
+  const chains = parseChains(item);
+  const disabled = parse.booleanOrNull(item.data?.disabled);
   if (!id || !title || !categoryId || !chains.length || disabled) return null;
 
+  const iconUrl = parse.stringOrNull(item.data?.logo?.url);
   return { id, title, categoryId, iconUrl, chains };
 }
 
-function parseChains(chainAgnostic: boolean, supportedChains: any): Chain[] {
-  if (chainAgnostic) return Object.keys(CHAIN).map((key) => CHAIN[key]);
-  if (!Array.isArray(supportedChains)) return [];
+function parseChains(item: any): Chain[] {
+  const isChainAgnostic = parse.booleanOrNull(item.data?.chainagnostic);
+  if (isChainAgnostic) return Object.keys(CHAIN).map((key) => CHAIN[key]);
 
-  const chainIds = supportedChains.map(chain => chain.chainid);
+  const chainIds = parse.arrayOrEmpty(item.data?.supportedchains, (chain) => parse.stringOrNull(chain.chainid));
 
   const result = [];
   if (chainIds.includes(CHAIN_ID.POLYGON)) result.push(CHAIN.POLYGON);

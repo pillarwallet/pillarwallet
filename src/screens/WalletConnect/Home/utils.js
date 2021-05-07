@@ -19,20 +19,7 @@
 */
 
 import type { Chain } from 'models/Chain';
-import type { WalletConnectCategory, WalletConnectApp } from 'models/WalletConnect';
-
-/**
- * Returns categories & apps matching given chain, it removes emtpy categories.
- * If chain is nil it returns all apps.
- */
-export function filterCategoriesByChain(categories: WalletConnectCategory[], chain: ?Chain): WalletConnectCategory[] {
-  const filteredCategories = categories.map((category) => ({
-    ...category,
-    apps: filterAppsByChain(category.apps, chain),
-  }));
-
-  return filteredCategories.filter(category => category.apps.length > 0);
-}
+import type { WalletConnectApp } from 'models/WalletConnect';
 
 /**
  * Returns apps matching given chain.
