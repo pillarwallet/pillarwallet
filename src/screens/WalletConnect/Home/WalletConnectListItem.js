@@ -61,6 +61,7 @@ const TouchableContainer = styled.TouchableOpacity`
 const Icon = styled(Image)`
   width: 48px;
   height: 48px;
+  border-radius: 24px;
 `;
 
 const Title = styled(Text)`
