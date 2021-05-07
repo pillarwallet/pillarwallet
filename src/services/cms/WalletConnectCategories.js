@@ -29,31 +29,24 @@ import type { QueryResult } from 'utils/types/react-query';
 import type { WalletConnectCategory } from 'models/WalletConnect';
 
 // Utils
-import { mapNotNil } from 'utils/array';
+import * as parse from 'utils/parse';
 
-const CATEGORIES = 'dapp_showcase_categories';
+const TYPE_CATEGORIES = 'dapp_showcase_categories';
 
 export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnectCategory[]> {
   return useQuery('WalletConnectCategories', () => fetchWalletConnectCategoriesApiCall());
 }
 
 export async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectCategory[]> {
-  const data = await Prismic.queryDocumentsByType(CATEGORIES);
-  return parseResponseData(data);
-}
-
-function parseResponseData(data: Prismic.Response<any>): WalletConnectCategory[] {
-  const items = data.results;
-  if (!items || !Array.isArray(items)) return [];
-
-  return mapNotNil(items, (item) => parseCategory(item));
+  const data = await Prismic.queryDocumentsByType(TYPE_CATEGORIES, { pageSize: 100 });
+  return parse.arrayOrEmpty(data.results, parseCategory);
 }
 
 function parseCategory(item: any): ?WalletConnectCategory {
   if (!item) return null;
 
-  const { id } = item;
-  const title = item.data?.name?.[0]?.text;
+  const id = parse.stringOrNull(item.id);
+  const title = parse.stringOrNull(item.data?.name?.[0]?.text);
   if (!id || !title) return null;
 
   return { id, title };

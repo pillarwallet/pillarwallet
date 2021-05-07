@@ -18,30 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Prismic from '@prismicio/client';
-import { getEnv } from 'configs/envConfig';
+import { mapNotNil } from 'utils/array';
 
-export const DOCUMENT_TYPE = 'document.type';
+/**
+ * Simple utility function for parsing external JSON content (e.g. API calls response or CMS data);
+ */
 
-const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
-
-export default prismicClient;
-
-type QueryOptions = {|
-  pageSize?: number,
-|};
-
-export function queryDocumentsByType<T>(type: string, options?: QueryOptions): T {
-  return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
+export function stringOrNull(input: ?any): ?string {
+  return typeof input === 'string' ? input : null;
 }
 
-// Partial type def: https://prismic.io/docs/technologies/the-response-object-reactjs
-export type Response<T = any> = {|
-  results: Document<T>[],
-|}
+export function booleanOrNull(input: ?any): ?boolean {
+  return typeof input === 'boolean' ? input : null;
+}
 
-// Partial type def: https://prismic.io/docs/technologies/the-document-object-reactjs
-export type Document<T = any> = {|
-  id: string,
-  data: T,
-|}
+export function arrayOrEmpty<T>(input: ?any, parseItem?: (any) => ?T): T[] {
+  if (!input || !Array.isArray(input)) return [];
+  return parseItem ? mapNotNil(input, parseItem) : input;
+}
