@@ -18,10 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { type Chain, CHAIN } from 'models/Chain';
+
 export type WalletConnectItem = {|
   title: string,
   iconUrl: string,
   category: string,
+  chain: Chain,
 |};
 
 // TODO: mock data, replace with real data when available

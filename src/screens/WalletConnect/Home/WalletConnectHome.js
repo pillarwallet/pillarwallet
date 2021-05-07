@@ -53,16 +53,16 @@ function WalletConnectHome() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const { numberOfColumns, columnWidth } = useColumnDimensions();
-  const sections = useSectionData(numberOfColumns);
-
   const tabItems = useTabItems();
-  const [activeTab, setActiveTab] = React.useState<?Chain>(null);
+  const [activeChain, setActiveChain] = React.useState<?Chain>(null);
+
+  const { numberOfColumns, columnWidth } = useColumnDimensions();
+  const sections = useSectionData(activeChain, numberOfColumns);
 
   const renderListHeader = () => {
     return (
       <View>
-        <TabBar items={tabItems} activeTab={activeTab} onActiveTabChange={setActiveTab} />
+        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabBar} />
       </View>
     );
   };
@@ -124,7 +124,7 @@ const useTabItems = () => {
   return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
-const useSectionData = (numberOfColumns: number): Section[] => {
+const useSectionData = (chain: ?Chain, numberOfColumns: number): Section[] => {
   const items = useWalletConnectItems();
   const groups = groupBy(items, item => item.category);
 
@@ -132,6 +132,12 @@ const useSectionData = (numberOfColumns: number): Section[] => {
     const data = chunk(groups[key], numberOfColumns);
     return { key, title: key, data };
   });
+};
+
+const styles = {
+  tabBar: {
+    paddingHorizontal: 4,
+  },
 };
 
 const SectionHeader = styled(Text)`
