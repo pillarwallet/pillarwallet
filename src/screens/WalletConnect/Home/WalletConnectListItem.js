@@ -41,9 +41,7 @@ function WalletConnectListItem({ title, iconUrl, onPress, width }: Props) {
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress} $width={width}>
-      <IconContainer>
-        <IconImage source={{ uri: iconUrl }} />
-      </IconContainer>
+      <Icon source={{ uri: iconUrl }} />
 
       <Title numberOfLines={2} color={colors.secondaryText}>
         {title}
@@ -55,22 +53,18 @@ function WalletConnectListItem({ title, iconUrl, onPress, width }: Props) {
 export default WalletConnectListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
-  padding: ${spacing.small}px ${spacing.small}px;
   width: ${({ $width }) => $width}px;
-`;
-
-const IconContainer = styled.View`
-  justify-content: center;
   align-items: center;
-  margin-bottom: ${spacing.small}px;
+  padding: ${spacing.small}px ${spacing.small}px;
 `;
 
-const IconImage = styled(Image)`
+const Icon = styled(Image)`
   width: 48px;
   height: 48px;
 `;
 
 const Title = styled(Text)`
+  margin-top: ${spacing.small}px;
   text-align: center;
   color: ${({ theme }) => theme.colors.secondaryText};
 `;

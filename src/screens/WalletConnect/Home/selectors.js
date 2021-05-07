@@ -31,17 +31,12 @@ export function useWalletConnectItems(): WalletConnectItem[] {
     {
       title: 'SushiSwap',
       category: 'Exchanges',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/46C8ACE3-730D-4BA2-94A5-16DD2CB06977.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Curve',
       category: 'Exchanges',
       iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
-    },
-    {
-      title: 'SushiSwap 2',
-      category: 'Exchanges',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/46C8ACE3-730D-4BA2-94A5-16DD2CB06977.svg',
     },
     {
       title: 'Curve 2',
@@ -51,42 +46,32 @@ export function useWalletConnectItems(): WalletConnectItem[] {
     {
       title: 'Alpha Homora',
       category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Alpha Homora 1',
       category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Alpha Homora 2',
       category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Alpha Homora 3',
       category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Alpha Homora 4',
       category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
-    },
-    {
-      title: 'Alpha Homora 5',
-      category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
-    },
-    {
-      title: 'Alpha Homora 6',
-      category: 'Asset Management',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/AD5CD965-3663-4AF9-8D50-6F00D3B0348F.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
     {
       title: 'Rarible',
       category: 'NFT Marketplace',
-      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/6B975E18-9486-4F6E-8EF0-778F4409E1EE.svg',
+      iconUrl: 'https://cdn.zeplin.io/5fa95ca539e6804a10dec0a4/assets/9164EB88-994B-44C4-938F-9EA61023779B.png',
     },
   ];
 }
