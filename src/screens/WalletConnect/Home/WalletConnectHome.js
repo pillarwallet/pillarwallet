@@ -43,9 +43,11 @@ import { useChainsConfig } from 'utils/uiConfig';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain } from 'models/Chain';
+import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
-import { type WalletConnectItem, useWalletConnectItems } from './selectors';
+import { useWalletConnectCategories } from './selectors';
+import { filterCategoriesByChain } from './utils';
 import WalletConnectListItem from './WalletConnectListItem';
 
 function WalletConnectHome() {
@@ -68,11 +70,11 @@ function WalletConnectHome() {
   };
 
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
-  const renderListRow = (items: WalletConnectItem[]) => {
+  const renderListRow = (items: WalletConnectApp[]) => {
     return (
-      <ListRow key={items[0].title}>
+      <ListRow>
         {items.map((item) => (
-          <WalletConnectListItem key={item.title} title={item.title} iconUrl={item.iconUrl} width={columnWidth} />
+          <WalletConnectListItem key={item.id} title={item.title} iconUrl={item.iconUrl} width={columnWidth} />
         ))}
       </ListRow>
     );
@@ -87,7 +89,7 @@ function WalletConnectHome() {
         renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
         renderSectionFooter={() => <SectionFooter />}
         renderItem={({ item }) => renderListRow(item)}
-        keyExtractor={(items) => items[0]?.title}
+        keyExtractor={(items) => items[0]?.id}
         ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
@@ -98,7 +100,7 @@ function WalletConnectHome() {
 export default WalletConnectHome;
 
 type Section = {
-  ...SectionBase<WalletConnectItem[]>,
+  ...SectionBase<WalletConnectApp[]>,
   title: string,
 };
 
@@ -125,13 +127,12 @@ const useTabItems = () => {
 };
 
 const useSectionData = (chain: ?Chain, numberOfColumns: number): Section[] => {
-  const items = useWalletConnectItems();
-  const groups = groupBy(items, item => item.category);
-
-  return Object.keys(groups).map(key => {
-    const data = chunk(groups[key], numberOfColumns);
-    return { key, title: key, data };
-  });
+  const categories = useWalletConnectCategories();
+  return filterCategoriesByChain(categories, chain).map(({ id, title, apps }) => ({
+    key: id,
+    title,
+    data: chunk(apps, numberOfColumns),
+  }));
 };
 
 const styles = {
