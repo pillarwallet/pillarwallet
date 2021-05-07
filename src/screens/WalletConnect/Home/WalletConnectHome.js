@@ -23,13 +23,13 @@ import { View, SectionList, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
+import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 import { groupBy, chunk } from 'lodash';
 
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Tabs from 'components/Tabs';
+import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 
@@ -57,12 +57,12 @@ function WalletConnectHome() {
   const sections = useSectionData(numberOfColumns);
 
   const tabItems = useTabItems();
-  const [activeTab, setActiveTab] = React.useState(CHAIN.POLYGON);
+  const [activeTab, setActiveTab] = React.useState<?string>(null);
 
   const renderListHeader = () => {
     return (
       <View>
-        <Tabs tabs={tabItems} activeTab={activeTab} />
+        <TabBar items={tabItems} activeTab={activeTab} onActiveTabChange={setActiveTab} />
       </View>
     );
   };
@@ -113,13 +113,15 @@ const useColumnDimensions = () => {
 };
 
 const useTabItems = () => {
+  const { t } = useTranslation();
   const chains = useSupportedChains();
   const config = useChainsConfig();
 
-  return chains.map((chain) => ({
-    id: chain,
-    name: config[chain].titleShort,
+  const chainTabs = chains.map((chain) => ({
+    key: chain,
+    title: config[chain].titleShort,
   }));
+  return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
 const useSectionData = (numberOfColumns: number): Section[] => {

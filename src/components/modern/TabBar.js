@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,67 +17,70 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
-import { TabBar as RNTabBar } from 'react-native-tab-view';
+import { TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
+
 
 // Components
 import Text from 'components/modern/Text';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-export type TabViewItem = {|
-  key: string,
+type TabItem = {|
+  key: ?string,
   title: string,
 |};
 
-type Props = {|
-  items: TabViewItem[],
-  tabIndex: number,
-  onTabIndexChange: (index: number) => mixed,
-  scrollEnabled?: boolean,
-|};
+type Props = {
+  items: TabItem[],
+  activeTab: ?string,
+  onActiveTabChange: (?string) => mixed,
+};
 
-function TabBar({ items, tabIndex, onTabIndexChange, scrollEnabled }: Props) {
-  const colors = useThemeColors();
-
-  const tabBarStyle = { backgroundColor: colors.background, shadowColor: 'transparent' };
-  const tabStyle = [scrollEnabled && styles.tabStyleScrollEnabled];
-
+const TabBar = ({ items, activeTab, onActiveTabChange }: Props) => {
   return (
-    <RNTabBar
-      navigationState={{ index: tabIndex, routes: items }}
-      onTabPress={(scene) => console.log('AAA', scene)}
-      scrollEnabled={scrollEnabled}
-      style={tabBarStyle}
-      tabStyle={tabStyle}
-      renderLabel={({ route, focused }) => (
-        <TabLabelWrapper>
-          <Text color={focused ? colors.text : colors.secondaryText}>{route.title}</Text>
-          {focused && <TabIndicator />}
-        </TabLabelWrapper>
-      )}
-      renderIndicator={() => null}
-    />
+    <Container>
+      {items.map(({ key, title }) => {
+        return activeTab === key ? (
+          <TouchableWithoutFeedback onPress={() => onActiveTabChange(key)}>
+            <TabContainer>
+              <ActiveTabTitle>{title}</ActiveTabTitle>
+              <Underline />
+            </TabContainer>
+          </TouchableWithoutFeedback>
+        ) : (
+          <TouchableWithoutFeedback onPress={() => onActiveTabChange(key)}>
+            <TabContainer>
+              <TabTitle>{title}</TabTitle>
+            </TabContainer>
+          </TouchableWithoutFeedback>
+        );
+      })}
+    </Container>
   );
-}
+};
 
 export default TabBar;
 
-const styles = {
-  tabStyleScrollEnabled: {
-    width: 'auto',
-  },
-};
-
-const TabLabelWrapper = styled.View`
-  padding: 0 ${spacing.medium / 2}px;
+const Container = styled.View`
+  flex-direction: row;
+  width: 100%;
 `;
 
-const TabIndicator = styled.View`
+const TabContainer = styled.View`
+  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.extraSmall}px;
+`;
+
+const ActiveTabTitle = styled(Text)`
+`;
+
+const TabTitle = styled(Text)`
+  color: ${({ theme }) => theme.colors.secondaryText};
+`;
+
+const Underline = styled.View`
   margin-top: 3px;
   border-top-width: 6px;
   border-top-left-radius: 3px;
