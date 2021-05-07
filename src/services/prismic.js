@@ -18,7 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import Prismic from '@prismicio/client';
+import * as Prismic from '@prismicio/client';
 import { getEnv } from 'configs/envConfig';
 
-export default Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
+export const DOCUMENT_TYPE = 'document.type';
+
+const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
+
+export default prismicClient;
+
+export function queryDocumentsByType<T>(type: string): T {
+  return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type));
+}
+
+// Partial type def: https://prismic.io/docs/technologies/the-response-object-reactjs
+export type Response<T = any> = {|
+  results: Document<T>[],
+|}
+
+// Partial type def: https://prismic.io/docs/technologies/the-document-object-reactjs
+export type Document<T = any> = {|
+  id: string,
+  data: T,
+|}
