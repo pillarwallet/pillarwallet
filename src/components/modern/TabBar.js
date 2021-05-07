@@ -28,18 +28,18 @@ import Text from 'components/modern/Text';
 // Utils
 import { spacing } from 'utils/variables';
 
-type TabItem = {|
-  key: ?string,
+type TabItem<Key> = {|
+  key: Key,
   title: string,
 |};
 
-type Props = {
-  items: TabItem[],
-  activeTab: ?string,
-  onActiveTabChange: (?string) => mixed,
+type Props<Key> = {
+  items: TabItem<Key>[],
+  activeTab: Key,
+  onActiveTabChange: (Key) => mixed,
 };
 
-const TabBar = ({ items, activeTab, onActiveTabChange }: Props) => {
+const TabBar = <Key>({ items, activeTab, onActiveTabChange }: Props<Key>) => {
   return (
     <Container>
       {items.map(({ key, title }) => {

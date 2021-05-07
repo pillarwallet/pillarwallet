@@ -42,7 +42,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain } from 'models/Chain';
 
 // Local
 import { type WalletConnectItem, useWalletConnectItems } from './selectors';
@@ -57,7 +57,7 @@ function WalletConnectHome() {
   const sections = useSectionData(numberOfColumns);
 
   const tabItems = useTabItems();
-  const [activeTab, setActiveTab] = React.useState<?string>(null);
+  const [activeTab, setActiveTab] = React.useState<?Chain>(null);
 
   const renderListHeader = () => {
     return (
@@ -67,7 +67,7 @@ function WalletConnectHome() {
     );
   };
 
-  // Note: in order to achieve multicolumn layout, we group n normal items, into one list row item.
+  // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectItem[]) => {
     return (
       <ListRow key={items[0].title}>
