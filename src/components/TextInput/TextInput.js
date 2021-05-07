@@ -88,6 +88,7 @@ type Props = {
 
 type State = {
   isFocused: boolean,
+  selectionStart: Object,
 };
 
 type EventLike = {
@@ -229,22 +230,19 @@ class TextInput extends React.Component<Props, State> {
     super(props);
     this.state = {
       isFocused: false,
+      selectionStart: { start: 0, end: 0 },
     };
   }
 
-  handleBlur = (e: EventLike) => {
-    if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
-      return;
-    }
-
-    const { inputProps: { onBlur, selectorValue = {} }, trim } = this.props;
+  handleBlur = () => {
+    const { inputProps: { onBlur, selectorValue = {}, value }, trim } = this.props;
     const { selector } = selectorValue;
-    const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
+    const value1 = trim ? value.toString().trim() : value;
     if (onBlur) {
       if (selector) {
-        onBlur({ selector, input: value });
+        onBlur({ selector, input: value1 });
       } else {
-        onBlur(value);
+        onBlur(value1);
       }
     }
 
@@ -253,6 +251,12 @@ class TextInput extends React.Component<Props, State> {
         isFocused: false,
       });
     }
+    this.setState({
+      selectionStart: {
+        start: 0,
+        end: 0,
+      },
+    });
   };
 
   handleChange = (e: EventLike) => {
@@ -270,14 +274,24 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
-    const { inputProps: { multiline, onFocus }, keyboardAvoidance } = this.props;
+    const { inputProps: { multiline, onFocus, value }, keyboardAvoidance } = this.props;
     if (Platform.OS === 'ios' && multiline && keyboardAvoidance) {
       this.handleMultilineFocus();
       return;
     }
-    this.setState({
-      isFocused: true,
-    });
+    this.setState(
+      {
+        isFocused: true,
+        selectionStart: {
+          start: value.toString().length,
+          end: value.toString().length,
+        },
+      },
+      () => {
+        this.setState({ selectionStart: null });
+      },
+    );
+
     if (onFocus) {
       onFocus();
     }
@@ -442,7 +456,7 @@ class TextInput extends React.Component<Props, State> {
   }
 
   render() {
-    const { isFocused } = this.state;
+    const { isFocused, selectionStart } = this.state;
     const {
       inputProps,
       errorMessage,
@@ -574,6 +588,7 @@ class TextInput extends React.Component<Props, State> {
                       alignTextOnRight={!!numeric}
                       smallPadding={!!onRightAddonPress}
                       autoFocus
+                      selection={selectionStart}
                     />
                   </View>
                 </TouchableWithoutFeedback>
