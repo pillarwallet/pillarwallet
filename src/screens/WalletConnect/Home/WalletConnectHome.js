@@ -50,11 +50,8 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const sections = useSectionData(numberOfColumns);
 
-  const renderSectionHeader = ({ title }: Section) => {
-    return <SectionHeader>{title}</SectionHeader>;
-  };
-
-  const renderItem = (items: WalletConnectItem[]) => {
+  // Note: in order to achieve multicolumn layout, we group n normal items, into one list row item.
+  const renderListRow = (items: WalletConnectItem[]) => {
     return (
       <ListRow key={items[0].title}>
         {items.map((item) => (
@@ -64,16 +61,16 @@ function WalletConnectHome() {
     );
   };
 
-
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <SectionList
         sections={sections}
-        renderSectionHeader={({ section }) => renderSectionHeader(section)}
+        renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
         renderSectionFooter={() => <SectionFooter />}
-        renderItem={({ item }) => renderItem(item)}
+        renderItem={({ item }) => renderListRow(item)}
+        keyExtractor={(items) => items[0]?.title}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
     </Container>
@@ -90,11 +87,10 @@ type Section = {
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
   const availableWidth = width - (2 * spacing.layoutSides);
-  const minItemWidth = 80;
+  const minColumnWidth = 80;
 
-  const numberOfColumns = Math.floor(availableWidth / minItemWidth);
+  const numberOfColumns = Math.floor(availableWidth / minColumnWidth);
   const columnWidth = Math.floor(availableWidth / numberOfColumns);
-
   return { numberOfColumns, columnWidth };
 };
 
@@ -103,20 +99,10 @@ const useSectionData = (numberOfColumns: number): Section[] => {
   const groups = groupBy(items, item => item.category);
 
   return Object.keys(groups).map(key => {
-    const groupItems = groups[key];
-    return {
-      key,
-      title: key,
-      data: chunk(groupItems, numberOfColumns),
-    };
+    const data = chunk(groups[key], numberOfColumns);
+    return { key, title: key, data };
   });
 };
-
-const ListRow = styled.View`
-  flex-direction: row;
-  align-items: stretch;
-  padding: 0 ${spacing.layoutSides}px;
-`;
 
 const SectionHeader = styled(Text)`
   padding: ${spacing.extraSmall}px ${spacing.layoutSides}px;
@@ -127,4 +113,10 @@ const SectionHeader = styled(Text)`
 
 const SectionFooter = styled.View`
   height: 24px;
+`;
+
+const ListRow = styled.View`
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0 ${spacing.layoutSides}px;
 `;
