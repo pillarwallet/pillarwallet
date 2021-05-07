@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
-
 
 // Components
 import Text from 'components/modern/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 type TabItem<Key> = {|
   key: Key,
@@ -37,37 +39,46 @@ type Props<Key> = {
   items: TabItem<Key>[],
   activeTab: Key,
   onActiveTabChange: (Key) => mixed,
+  style?: ViewStyleProp,
 };
 
-const TabBar = <Key>({ items, activeTab, onActiveTabChange }: Props<Key>) => {
+const TabBar = <Key>({ items, activeTab, onActiveTabChange, style }: Props<Key>) => {
   return (
-    <Container>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.scrollView, style]}>
       {items.map(({ key, title }) => {
         return activeTab === key ? (
           <TouchableWithoutFeedback onPress={() => onActiveTabChange(key)}>
             <TabContainer>
-              <ActiveTabTitle>{title}</ActiveTabTitle>
+              <ActiveTabTitle>
+                {title}
+              </ActiveTabTitle>
               <Underline />
             </TabContainer>
           </TouchableWithoutFeedback>
         ) : (
           <TouchableWithoutFeedback onPress={() => onActiveTabChange(key)}>
             <TabContainer>
-              <TabTitle>{title}</TabTitle>
+              <TabTitle>
+                {title}
+              </TabTitle>
             </TabContainer>
           </TouchableWithoutFeedback>
         );
       })}
-    </Container>
+    </ScrollView>
   );
 };
 
 export default TabBar;
 
-const Container = styled.View`
-  flex-direction: row;
-  width: 100%;
-`;
+const styles = {
+  scrollView: {
+    width: '100%',
+  },
+  scrollViewContent: {
+    flexDirection: 'row',
+  },
+};
 
 const TabContainer = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.extraSmall}px;
