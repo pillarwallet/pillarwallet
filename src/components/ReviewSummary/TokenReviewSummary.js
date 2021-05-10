@@ -62,7 +62,7 @@ export const TokenReviewSummaryComponent = ({
   if (asset) {
     assetIcon = { uri: `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` };
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency, true);
+      fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
     }
   }
 
