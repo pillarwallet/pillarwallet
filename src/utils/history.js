@@ -43,7 +43,9 @@ import type {
   TransactionsStore,
 } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
+import type { Value } from 'utils/common';
 
+// utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch } from 'utils/common';
 
@@ -140,9 +142,9 @@ export function updateHistoryRecord(
 
 export const parseFeeWithGasToken = (
   gasToken: ?GasToken,
-  fee: any,
-): ?FeeWithGasToken => {
-  if (!gasToken || isEmpty(gasToken)) return {};
+  fee: ?Value,
+): FeeWithGasToken | null => {
+  if (!gasToken || isEmpty(gasToken) || !fee) return null;
   const feeInWei = new BigNumber(fee.toString());
   return { feeInWei, gasToken };
 };

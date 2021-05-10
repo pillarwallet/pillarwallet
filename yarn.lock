@@ -1218,6 +1218,18 @@
     testrpc "0.0.1"
     web3-utils "^1.0.0-beta.31"
 
+"@etherspot/archanova-contracts-migrator@1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@etherspot/archanova-contracts-migrator/-/archanova-contracts-migrator-1.0.0-alpha.1.tgz#64ca5cb7f8966b1366c774a2c22dacbb256cb216"
+  integrity sha512-AWwlyRjo1UVdxpqxC2HijZMM54UFjoujVd0cGE02PGvV0d3eTTfXlCz/OcsAyPxhsD1PYqZ0bAsDr4ao82qOKw==
+
+"@etherspot/archanova-migrator@^1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@etherspot/archanova-migrator/-/archanova-migrator-1.0.0-alpha.1.tgz#7ae449cbd7139f42f4742f2201b857a0ac12d7e5"
+  integrity sha512-Azsehdlx9+zZ2P1d5/Cfer6+1uqbfyr4HjSia9nSdsTSMX6CQ4IP1QgSt8d3mZAnxPJH+b3Cni7uoBaN9qopPw==
+  dependencies:
+    "@etherspot/archanova-contracts-migrator" "1.0.0-alpha.1"
+
 "@etherspot/contracts@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.2.1.tgz#a2fb3f86592e96e1622209b9b0d62661a236f8cb"
@@ -2631,9 +2643,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@smartwallet/sdk/-/sdk-2.3.0.tgz#04724b4bb0358fd0f97ee28ff3920ff30ef4f0a3"
+"@smartwallet/sdk@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@smartwallet/sdk/-/sdk-2.4.0.tgz#72bbc58aa6781039959f05bd8047e1cd347a9cff"
+  integrity sha512-j55v7QJGz20Bz3nbkNKuOHC12zXoh4skTsuIyfzjR6C2vCcsHH1Nj+MMdeXtFMWyRKnY732N1nG2mts/RSStgw==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"
@@ -7906,10 +7919,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.3.tgz#ba9876377bb88179bd3adc9fbbd2c39581261648"
-  integrity sha512-9tMKblPM9FuiGyNZ1fcmqGyc6dEJnfUnSNTuWQMMDZXQcviSds5GwetOyuIXffV1NRVVNqOeSG+bsSdXcj7VZg==
+etherspot@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.5.tgz#9a26ca062e7a7a678b313d32021867cb8b71d6b7"
+  integrity sha512-xp8WH7Vcop/tsRAga4i9mp3BMDcEDqw9fvuuEbTh0O9dhG6M4xE5K3UXd18EOYDKKmXaf+jlA3kK436qEZrT6Q==
   dependencies:
     "@apollo/client" "3.3.11"
     "@etherspot/contracts" "1.2.1"

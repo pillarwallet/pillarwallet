@@ -39,6 +39,7 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SablierStream from 'components/SablierStream';
+import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 
 // constants
 import {
@@ -657,6 +658,7 @@ class HomeScreen extends React.Component<Props> {
                       <WalletConnectCallRequestList showLastOneOnly />
                     </RequestsWrapper>
                   )}
+                  <MigrateEnsBanner style={{ marginTop: 15, paddingHorizontal: spacing.medium }} />
                   <Banner
                     isVisible={!referFriendsOnHomeScreenDismissed}
                     onPress={goToInvitationFlow}
