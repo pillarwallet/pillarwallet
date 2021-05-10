@@ -34,13 +34,14 @@ type Props = {|
   iconUrl: ?string,
   onPress?: () => mixed,
   width: number,
+  disabled?: boolean,
 |};
 
-function WalletConnectListItem({ title, iconUrl, onPress, width }: Props) {
+function WalletConnectListItem({ title, iconUrl, onPress, width, disabled = true }: Props) {
   const colors = useThemeColors();
 
   return (
-    <TouchableContainer onPress={onPress} disabled={!onPress} $width={width}>
+    <TouchableContainer onPress={onPress} disabled={disabled} $width={width}>
       <Icon source={{ uri: iconUrl }} />
 
       <Title numberOfLines={2} color={colors.secondaryText}>
@@ -56,6 +57,7 @@ const TouchableContainer = styled.TouchableOpacity`
   width: ${({ $width }) => $width}px;
   align-items: center;
   padding: ${spacing.small}px ${spacing.small}px;
+  ${({ disabled }) => disabled && 'opacity: 0.3;'}
 `;
 
 const Icon = styled(Image)`
