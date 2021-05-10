@@ -209,8 +209,8 @@ export const fetchTransactionsHistoryAction = () => {
       if (etherspotTransactions?.length) {
         const etherspotTransactionsHistory = parseEtherspotTransactions(
           etherspotTransactions,
-          supportedAssets,
           getAssetsAsList(accountAssets),
+          supportedAssets,
         );
 
         newHistoryTransactions = [...newHistoryTransactions, ...etherspotTransactionsHistory];

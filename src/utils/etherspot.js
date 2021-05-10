@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import isEmpty from 'lodash.isempty';
 import {
   type GatewayEstimatedBatch,
   type Transaction as EtherspotTransaction,
@@ -27,11 +28,78 @@ import {
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { ETH } from 'constants/assetsConstants';
+
+// utils
+import { getAssetDataByAddress } from 'utils/assets';
+import { buildHistoryTransaction } from 'utils/history';
 
 // types
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
+
+const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
+  COMPLETED: 'Completed',
+};
+
+export const parseEtherspotTransactions = (
+  etherspotTransactions: EtherspotTransaction[],
+  accountAssets: Asset[],
+  supportedAssets: Asset[],
+): Transaction[] => etherspotTransactions
+  .reduce((mappedHistoryTransactions, etherspotTransaction) => {
+    const {
+      from,
+      to,
+      gasLimit,
+      gasPrice,
+      gasUsed,
+      hash,
+      status: rawStatus,
+      asset: assetPayload,
+    } = etherspotTransaction;
+
+    let { value } = etherspotTransaction;
+    let asset = ETH;
+
+    if (assetPayload) {
+      const {
+        symbol,
+        value: assetValue,
+        contract: contractAddress,
+      } = assetPayload;
+      const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
+
+      if (isEmpty(supportedAsset)) {
+        // asset not supported
+        return mappedHistoryTransactions;
+      }
+
+      value = assetValue;
+      asset = symbol;
+    }
+
+    // TODO: more status to map once Etherspot history back-end fully complete?
+    const status = rawStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED
+      ? TX_CONFIRMED_STATUS
+      : TX_PENDING_STATUS;
+
+    const mappedTransaction = buildHistoryTransaction({
+      from,
+      to,
+      gasLimit,
+      gasPrice,
+      gasUsed,
+      hash,
+      value,
+      asset,
+      status,
+      // createdAt, // TODO: add timestamp when it's added to Etherspot back-end
+    });
+
+    return [...mappedHistoryTransactions, mappedTransaction];
+  }, []);
 
 export const buildEtherspotTxFeeInfo = (
   estimated: ?GatewayEstimatedBatch,
@@ -66,38 +134,3 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
     default: return null;
   }
 };
-
-export const parseEtherspotTransactions = (
-  etherspotTransactions: EtherspotTransaction[],
-  supportedAssets: Asset[],
-  assets: Asset[],
-): Transaction[] => etherspotTransactions
-  .reduce((mappedHistoryTransactions, etherspotTransaction) => {
-    return mappedHistoryTransactions;
-    // const {
-    //   from,
-    //   to,
-    //   gasLimit,
-    //   gasPrice,
-    //   gasUsed,
-    //   hash,
-    //   status,
-    //   value: ethValue,
-    //   asset,
-    // } = etherspotTransaction;
-    //
-    // if (asset) {
-    //   const {
-    //     name,
-    //     value: assetValue,
-    //     decimal,
-    //     contract: contractAddress,
-    //   } = asset;
-    //   // const supportedAsset = find
-    // }
-    //
-    // const mappedTransaction = buildHistoryTransaction({
-    //
-    // });
-    // return [...mappedHistoryTransactions, mappedTransaction]
-  }, []);
