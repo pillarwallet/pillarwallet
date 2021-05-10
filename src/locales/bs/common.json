@@ -486,7 +486,6 @@
     "walletConnect": {
       "assetNotSupported": "Ova transakcija još nije podržana",
       "unsupportedAction": "Žao nam je, ne podržavamo ovo još.",
-      "noMatchingConnector": "Nisu pronađene odgovarajuće Wallet veze",
       "requestNotFound": "Zahtjev nije pronađen",
       "requestRejected": "Zahtjev za poziv je odbijen",
       "invalidSession": "Nevažeća sesija Wallet Connect",
