@@ -52,9 +52,10 @@ import { type Chain, CHAIN } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
+import ConnectFloatingButton from './components/ConnectFloatingButton';
+import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
+import WalletConnectListItem from './components/WalletConnectListItem';
 import { filterAppsByChain } from './utils';
-import WalletConnectListItem from './WalletConnectListItem';
-import ConnectFloatingButton from './ConnectFloatingButton';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -80,10 +81,13 @@ function WalletConnectHome() {
   }
 
   const renderListHeader = () => {
+    const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
+
     return (
-      <View>
-        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabBar} />
-      </View>
+      <ListHeader>
+        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} />
+        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.deployOnEthereumBanner} />}
+      </ListHeader>
     );
   };
 
@@ -186,10 +190,15 @@ const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => 
 };
 
 const styles = {
-  tabBar: {
-    paddingHorizontal: 4,
+  deployOnEthereumBanner: {
+    marginTop: spacing.large,
+    marginBottom: spacing.large,
   },
 };
+
+const ListHeader = styled.View`
+  margin: 0 ${spacing.layoutSides}px ${spacing.large}px;
+`;
 
 const SectionHeader = styled(Text)`
   padding: ${spacing.extraSmall}px ${spacing.layoutSides}px;
