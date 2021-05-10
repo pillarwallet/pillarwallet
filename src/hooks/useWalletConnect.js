@@ -18,7 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+
+// selectors
+import { useRootSelector } from 'selectors';
 
 // actions
 import { disconnectWalletConnectSessionByUrlAction } from 'actions/walletConnectSessionsActions';
@@ -53,7 +56,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
   const {
     activeConnectors,
     callRequests,
-  }: WalletConnectReducerState = useSelector(({ walletConnect }: RootReducerState) => walletConnect);
+  }: WalletConnectReducerState = useRootSelector(({ walletConnect }: RootReducerState) => walletConnect);
 
   const dispatch = useDispatch();
 
