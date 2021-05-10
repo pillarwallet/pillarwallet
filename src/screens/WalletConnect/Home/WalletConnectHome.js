@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
-import { chunk } from 'lodash';
+import { isEqual, chunk } from 'lodash';
 
 // Components
 import { Container, Center } from 'components/modern/Layout';
@@ -35,7 +35,7 @@ import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 
 // Selectors
-import { useSupportedChains } from 'selectors/smartWallet';
+import { useSupportedChains, useIsDeployedOnEthereum } from 'selectors/smartWallet';
 
 // Services
 import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
@@ -48,7 +48,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import { type Chain } from 'models/Chain';
+import { type Chain, CHAIN } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
@@ -66,6 +66,7 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
+  const isDeployedOnEthereum = useIsDeployedOnEthereum();
 
   if (isFetching) {
     return (
@@ -89,11 +90,22 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectApp[]) => {
     return (
-      <ListRow>
-        {items.map((item) => (
-          <WalletConnectListItem key={item.id} title={item.title} iconUrl={item.iconUrl} width={columnWidth} />
-        ))}
-      </ListRow>
+      <ListRow>{items.map(renderItem)}</ListRow>
+    );
+  };
+
+  const renderItem = (item: WalletConnectApp) => {
+    const isEthereumOnly = activeChain === CHAIN.ETHEREUM || isEqual(item.chains.length, [CHAIN.ETHEREUM]);
+    const disabled = isEthereumOnly && !isDeployedOnEthereum;
+
+    return (
+      <WalletConnectListItem
+        key={item.id}
+        title={item.title}
+        iconUrl={item.iconUrl}
+        width={columnWidth}
+        disabled={disabled}
+      />
     );
   };
 

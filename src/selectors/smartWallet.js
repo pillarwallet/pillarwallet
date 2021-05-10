@@ -107,3 +107,7 @@ export const useIsPillarPaySupported = () => {
   const smartWalletType = useSmartWalletType();
   return smartWalletType === SMART_WALLET_TYPE.ARCHANOVA;
 };
+
+export const useIsDeployedOnEthereum = () => {
+  return useRootSelector(isSmartWalletActivatedSelector);
+};
