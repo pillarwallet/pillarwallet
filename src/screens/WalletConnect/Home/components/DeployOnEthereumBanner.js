@@ -24,7 +24,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
-
 // Components
 import Text from 'components/modern/Text';
 import Icon from 'components/Icon';
@@ -44,9 +43,10 @@ type Props = {|
 |};
 
 const DeployEthereumBanner = ({ style }: Props) => {
-  const [isVisible, setIsVisible] = useState(true);
   const { t } = useTranslationWithPrefix('walletConnect.home');
   const navigation = useNavigation();
+
+  const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
 
