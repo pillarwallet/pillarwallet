@@ -79,9 +79,9 @@ export const isEnsMigrationNeededSelector = createSelector(
   archanovaAccountHistorySelector,
   (accounts, archanovaAccountHistory) => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
-    const archanovaAccountHasEns = archanovaAccount && getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix());
 
-    const isEnsMigrationNeeded = !isProdEnv() || archanovaAccountHasEns;
+    const isEnsMigrationNeeded = archanovaAccount
+      && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
 
     const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(({
       extra,
