@@ -54,6 +54,7 @@ import type { WalletConnectApp } from 'models/WalletConnect';
 // Local
 import { filterAppsByChain } from './utils';
 import WalletConnectListItem from './WalletConnectListItem';
+import ConnectFloatingButton from './ConnectFloatingButton';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -109,6 +110,8 @@ function WalletConnectHome() {
         ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
+
+      <ConnectFloatingButton />
     </Container>
   );
 }
