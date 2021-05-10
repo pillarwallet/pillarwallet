@@ -20,6 +20,7 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { useQuery } from 'react-query';
+import { orderBy } from 'lodash';
 
 // Services
 import * as Prismic from 'services/prismic';
@@ -34,16 +35,32 @@ import * as parse from 'utils/parse';
 
 const TYPE_APPS = 'dapp_showcase';
 
+/**
+ * Fetch and parse Wallet Connect apps from Prismic CMS as React Query.
+ */
 export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectApp[]> {
-  return useQuery('WalletConnectApps', () => fetchWalletConnectCategoriesApiCall());
+  return useQuery('WalletConnectApps', () => fetchWalletConnectAppsApiCall());
 }
 
-export async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectApp[]> {
+async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectApp[]> {
   const data = await Prismic.queryDocumentsByType(TYPE_APPS, { pageSize: 100 });
-  return parse.arrayOrEmpty(data.results, parseApp);
+  const parsedData = parse.arrayOrEmpty(data.results, parseApp);
+  return orderBy(parsedData, 'title');
 }
 
-function parseApp(item: ?any): ?WalletConnectApp {
+/**
+ * Type representing Prismic data for app. Contains only fields that are actually used.
+ */
+type AppDto = {
+  name?: [?{ text?: string }],
+  category?: { id?: string },
+  logo?: { url?: string },
+  disabled?: boolean,
+  chainagnostic?: boolean,
+  supportedchains?: [?{ chainid?: string }]
+};
+
+function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectApp {
   if (!item) return null;
 
   const id = parse.stringOrNull(item.id);
@@ -57,7 +74,7 @@ function parseApp(item: ?any): ?WalletConnectApp {
   return { id, title, categoryId, iconUrl, chains };
 }
 
-function parseChains(item: any): Chain[] {
+function parseChains(item: Prismic.Document<AppDto>): Chain[] {
   const isChainAgnostic = parse.booleanOrNull(item.data?.chainagnostic);
   if (isChainAgnostic) return Object.keys(CHAIN).map((key) => CHAIN[key]);
 
