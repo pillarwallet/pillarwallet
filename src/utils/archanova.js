@@ -417,7 +417,7 @@ export const buildArchanovaTxFeeInfo = (
   };
 };
 
-export const buildENSMigrationTransactions = async (
+export const buildEnsMigrationTransactions = async (
   accounts: Accounts,
 ): Promise<TransactionRequest[] | null> => {
   const isKovan = getEnv().NETWORK_PROVIDER === 'kovan';

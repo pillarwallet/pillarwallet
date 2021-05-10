@@ -142,7 +142,7 @@ import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/Claim
 import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
-import ENSMigrationConfirmScreen from 'screens/ENSMigrationConfirm';
+import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -860,7 +860,7 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
-    [ENS_MIGRATION_CONFIRM]: ENSMigrationConfirmScreen,
+    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
   },
   modalTransition,
 );

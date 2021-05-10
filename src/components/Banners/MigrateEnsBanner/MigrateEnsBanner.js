@@ -49,7 +49,7 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
-const MigrateENSBanner = ({ style }: Props) => {
+const MigrateEnsBanner = ({ style }: Props) => {
   const isEnsMigrationNeeded = useSelector(isEnsMigrationNeededSelector);
   const [isVisible, setIsVisible] = useState(isEnsMigrationNeeded);
   const { t } = useTranslationWithPrefix('migrateENSContent');
@@ -122,4 +122,4 @@ const CloseIcon = styled(Icon)`
   font-size: 20px;
 `;
 
-export default MigrateENSBanner;
+export default MigrateEnsBanner;

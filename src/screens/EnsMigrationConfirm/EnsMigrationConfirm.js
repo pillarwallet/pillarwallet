@@ -27,8 +27,8 @@ import { useNavigation } from 'react-navigation-hooks';
 
 // actions
 import {
-  estimateENSMigrationFromArchanovaToEtherspotAction,
-  migrateENSFromArchanovaToEtherspotAction,
+  estimateEnsMigrationFromArchanovaToEtherspotAction,
+  migrateEnsFromArchanovaToEtherspotAction,
 } from 'actions/smartWalletActions';
 
 // constants
@@ -80,7 +80,7 @@ const FeesWrapper = styled.View`
   margin-bottom: ${spacing.largePlus}px;
 `;
 
-const ENSMigrationConfirm = ({
+const EnsMigrationConfirm = ({
   feeInfo,
   accounts,
   isEstimating,
@@ -93,7 +93,7 @@ const ENSMigrationConfirm = ({
   const { t, tRoot } = useTranslationWithPrefix('migrateENSContent.details');
 
   useEffect(() => {
-    dispatch(estimateENSMigrationFromArchanovaToEtherspotAction());
+    dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction());
   }, [dispatch]);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
@@ -126,7 +126,7 @@ const ENSMigrationConfirm = ({
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    dispatch(migrateENSFromArchanovaToEtherspotAction(migrationTransactionStatusCallback));
+    dispatch(migrateEnsFromArchanovaToEtherspotAction(migrationTransactionStatusCallback));
   };
 
   const submitDisabled = !!estimateErrorMessage || isEstimating || isSubmitting;
@@ -192,4 +192,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(ENSMigrationConfirm);
+export default connect(combinedMapStateToProps)(EnsMigrationConfirm);

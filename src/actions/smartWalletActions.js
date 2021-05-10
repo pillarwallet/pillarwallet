@@ -135,7 +135,7 @@ import {
   isConnectedToArchanovaSmartAccount,
   isHiddenUnsettledTransaction,
   isArchanovaDeviceDeployed,
-  buildENSMigrationTransactions,
+  buildEnsMigrationTransactions,
 } from 'utils/archanova';
 import {
   addressesEqual,
@@ -1735,11 +1735,11 @@ export const checkArchanovaSessionIfNeededAction = () => {
   };
 };
 
-export const estimateENSMigrationFromArchanovaToEtherspotAction = () => {
+export const estimateEnsMigrationFromArchanovaToEtherspotAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
 
-    const migratorTransactions = await buildENSMigrationTransactions(accounts);
+    const migratorTransactions = await buildEnsMigrationTransactions(accounts);
 
     const activeAccount = getActiveAccount(accounts);
     const archanovaAccount = findFirstArchanovaAccount(accounts);
@@ -1767,14 +1767,14 @@ export const estimateENSMigrationFromArchanovaToEtherspotAction = () => {
   };
 };
 
-export const migrateENSFromArchanovaToEtherspotAction = (
+export const migrateEnsFromArchanovaToEtherspotAction = (
   statusCallback: (status: TransactionStatus) => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
 
     // $FlowFixMe: weird type error that doesn't make any sense
-    const migratorTransactions = await buildENSMigrationTransactions(accounts);
+    const migratorTransactions = await buildEnsMigrationTransactions(accounts);
 
     const activeAccount = getActiveAccount(accounts);
     const archanovaAccount = findFirstArchanovaAccount(accounts);
