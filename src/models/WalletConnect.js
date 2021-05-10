@@ -35,9 +35,9 @@ export type WalletConnectConnector = {|
   connected: boolean,
   pending: boolean,
   session: WalletConnectSession,
-  on(event: string, callback: (error: Error | null, payload: any | null) => void): void,
-  connect(opts?: WalletConnectCreateSessionOptions): Promise<WalletConnectSessionStatus>,
-  createSession(opts?: WalletConnectCreateSessionOptions): Promise<void>,
+  on(event: string, callback: (error: Error | null, payload: ?any) => void): void,
+  connect(options?: WalletConnectCreateSessionOptions): Promise<WalletConnectSessionStatus>,
+  createSession(options?: WalletConnectCreateSessionOptions): Promise<void>,
   approveSession(sessionStatus: WalletConnectSessionStatus): void,
   rejectSession(sessionError?: WalletConnectSessionError): void,
   updateSession(sessionStatus: WalletConnectSessionStatus): void,
@@ -101,7 +101,7 @@ export type WalletConnectOptions = {|
   storage?: WalletConnectSessionStorage;
   clientMeta?: WalletConnectClientMeta,
   qrcodeModal?: {
-    open(uri: string, cb: any, opts?: any): void,
+    open(uri: string, callback: any, options?: any): void,
     close(): void,
   },
   qrcodeModalOptions?: { mobileLinks?: string[] },

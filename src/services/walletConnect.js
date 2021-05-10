@@ -52,12 +52,7 @@ export const createConnector = (
 
 export const loadLegacyWalletConnectSessions = async (): Promise<WalletConnectSession[]> => {
   const storage = Storage.getInstance('db');
-  const walletconnect = await storage.get('walletconnect');
+  const walletConnectStorage = await storage.get('walletconnect');
 
-  if (walletconnect) {
-    const { sessions = [] } = walletconnect;
-    return sessions;
-  }
-
-  return [];
+  return walletConnectStorage?.sessions ?? [];
 };

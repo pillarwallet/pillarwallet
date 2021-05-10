@@ -37,7 +37,7 @@ import type { WalletConnectReducerState } from 'reducers/walletConnectReducer';
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 
 
-type WalletConnectHook = {
+type UseWalletConnectResult = {|
   activeConnectors: WalletConnectConnector[],
   callRequests: WalletConnectCallRequest[],
   approveConnectorRequest: (peerId: string) => void,
@@ -47,9 +47,9 @@ type WalletConnectHook = {
   disconnectSessionByUrl: (url: string) => void,
   connectToConnector: (url: string) => void,
   estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
-};
+|};
 
-const useWalletConnect = (): WalletConnectHook => {
+const useWalletConnect = (): UseWalletConnectResult => {
   const {
     activeConnectors,
     callRequests,

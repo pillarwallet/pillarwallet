@@ -513,7 +513,7 @@
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
       "unsupportedAction": "We are sorry, but we do not support this action yet",
-      "noMatchingConnector": "No Matching Wallet Connect Connectors Found",
+      "noMatchingConnector": "No matching Wallet Connect connectors found",
       "requestNotFound": "Request not found",
       "requestRejected": "Call Request Rejected",
       "invalidSession": "Invalid Wallet Connect session",
