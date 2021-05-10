@@ -363,7 +363,7 @@ jest.setMock('react-native-keychain', {
   },
 });
 
-jest.setMock('@walletconnect/react-native', WalletConnectMock);
+jest.setMock('@walletconnect/client', WalletConnectMock);
 
 jest.mock('react-native-branch', () => jest.fn());
 

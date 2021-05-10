@@ -123,7 +123,6 @@ export const estimateTransactionsAction = (transactionsToEstimate: TransactionTo
       assetData?.id,
     )));
 
-
     const useGasToken = useGasTokenSelector(getState());
     const accountAssets = accountAssetsSelector(getState());
     const supportedAssets = supportedAssetsSelector(getState());

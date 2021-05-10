@@ -20,27 +20,32 @@
 
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
 
+// components
 import { MediumText, BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import ShadowedCard from 'components/ShadowedCard';
 import Image from 'components/Image';
 import { Spacing } from 'components/Layout';
+
+// utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import type { CallRequest } from 'models/WalletConnect';
-import type { Theme } from 'models/Theme';
+
+// hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
+// constants
 import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
-import withWCRequests from './withWCRequests';
+
+// types
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
-  requests: CallRequest[],
-  rejectWCRequest: (request: CallRequest) => void,
   theme: Theme,
   showLastOneOnly?: boolean,
 };
@@ -72,12 +77,17 @@ const Header = styled(MediumText)`
   padding: 18px ${spacing.layoutSides}px 8px;
 `;
 
+const WalletConnectCallRequestList = ({
+  theme,
+  showLastOneOnly,
+}: Props) => {
+  const navigation = useNavigation();
+  const { rejectCallRequest, callRequests } = useWalletConnect();
 
-class Requests extends React.Component<Props> {
-  renderRequest = ({ item }) => {
-    const { theme, rejectWCRequest, navigation } = this.props;
-    const { name, icon } = item;
-    const colors = getThemeColors(theme);
+  const colors = getThemeColors(theme);
+
+  const renderRequest = ({ item: callRequest }) => {
+    const { name, icon } = callRequest;
 
     return (
       <CardWrapper>
@@ -100,7 +110,7 @@ class Requests extends React.Component<Props> {
               margin={0}
               icon="close"
               fontSize={fontSizes.regular}
-              onPress={() => rejectWCRequest(item)}
+              onPress={() => rejectCallRequest(callRequest)}
             />
             <ActionCircleButton
               color={colors.control}
@@ -108,7 +118,7 @@ class Requests extends React.Component<Props> {
               accept
               icon="check"
               fontSize={fontSizes.small}
-              onPress={() => navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callId: item.callId })}
+              onPress={() => navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callRequest })}
             />
           </ItemContainer>
         </ShadowedCard>
@@ -116,25 +126,23 @@ class Requests extends React.Component<Props> {
     );
   };
 
-  render() {
-    const { requests, showLastOneOnly } = this.props;
-    if (!requests.length) return null;
-    if (showLastOneOnly) {
-      return this.renderRequest({ item: requests[requests.length - 1] });
-    }
+  if (!callRequests.length) return null;
 
-    return (
-      <React.Fragment>
-        <Header regular accent>{t('walletConnectContent.title.requestsList')}</Header>
-        <FlatList
-          data={requests}
-          renderItem={this.renderRequest}
-          keyExtractor={({ callId }) => callId.toString()}
-          contentContainerStyle={{ paddingTop: 10 }}
-        />
-      </React.Fragment>
-    );
+  if (showLastOneOnly) {
+    return renderRequest({ item: callRequests[callRequests.length - 1] });
   }
-}
 
-export default withNavigation(withWCRequests(withTheme(Requests)));
+  return (
+    <React.Fragment>
+      <Header regular accent>{t('walletConnectContent.title.requestsList')}</Header>
+      <FlatList
+        data={callRequests}
+        renderItem={renderRequest}
+        keyExtractor={({ callId }) => `walletconnect-call-request-${callId}`}
+        contentContainerStyle={{ paddingTop: 10 }}
+      />
+    </React.Fragment>
+  );
+};
+
+export default withTheme(WalletConnectCallRequestList);

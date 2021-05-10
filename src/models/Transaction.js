@@ -186,7 +186,7 @@ export type TransactionPayload = {
   tokenType?: string,
   txSpeed?: string,
   gasPrice?: number,
-  txFeeInWei: number,
+  txFeeInWei: ?Value,
   signOnly?: ?boolean,
   signedHash?: ?string,
   note?: ?string,

@@ -19,39 +19,39 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import type { RootReducerState } from 'reducers/rootReducer';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import PromoCard from './PromoCard';
-import QRCodeScanButton from './QRCodeScanButton';
-import ActiveConnections from './ActiveConnections';
-import Requests from './Requests';
+import { ScrollWrapper } from 'components/Layout';
+
+// local components
+import WalletConnectDappsPromoCard from './WalletConnectDappsPromoCard';
+import WalletConnectQRCodeScanButton from './WalletConnectQRCodeScanButton';
+import WalletConnectActiveConnections from './WalletConnectActiveConnections';
+import WalletConnectCallRequestList from './WalletConnectCallRequestList';
 
 
 type Props = {
   sessionLanguageCode: ?string, // important for re-rendering on language change
 };
 
-const WalletConnectScreen = ({ sessionLanguageCode }: Props) => (
+const WalletConnectDashboard = ({ sessionLanguageCode }: Props) => (
   <ContainerWithHeader
     headerProps={{ noBack: true, leftItems: [{ title: t('walletConnectContent.title.connect') }] }}
     inset={{ bottom: 0 }}
     tab
   >
-    {onScroll => (
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16}>
-        <PromoCard sessionLanguageCode={sessionLanguageCode} />
-        <Requests sessionLanguageCode={sessionLanguageCode} />
-        <QRCodeScanButton sessionLanguageCode={sessionLanguageCode} />
-        <ActiveConnections sessionLanguageCode={sessionLanguageCode} />
-      </ScrollView>
-    )}
+    <ScrollWrapper>
+      <WalletConnectDappsPromoCard />
+      <WalletConnectCallRequestList sessionLanguageCode={sessionLanguageCode} />
+      <WalletConnectQRCodeScanButton sessionLanguageCode={sessionLanguageCode} />
+      <WalletConnectActiveConnections sessionLanguageCode={sessionLanguageCode} />
+    </ScrollWrapper>
   </ContainerWithHeader>
 );
-
 
 const mapStateToProps = ({
   session: { data: { sessionLanguageCode } },
@@ -59,4 +59,4 @@ const mapStateToProps = ({
   sessionLanguageCode,
 });
 
-export default connect(mapStateToProps)(WalletConnectScreen);
+export default connect(mapStateToProps)(WalletConnectDashboard);
