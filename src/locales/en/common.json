@@ -1526,7 +1526,7 @@
     "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
     "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
     "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
-    "ensMigrationCannotProceed": "ENS migration cannot proceed."
+    "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed. Please contact support."
   },
 
   "exchangeContent": {
