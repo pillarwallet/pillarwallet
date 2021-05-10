@@ -607,8 +607,8 @@
       "title": "Re-point your ENS name to Etherspot",
       "body": "Currently, your ENS name points to your Archanova Smart Wallet. This means that any transactions pointing to {{ensName}} will always land in your Archanova Smart Wallet address: {{address}}. Continue below to re-point your ENS name to your new Etherspot Smart Wallet account",
       "migrate": "Migrate",
-      "cannotMigrate": "Cannot Migrate",
-      "noAccountFound": "No account found."
+      "cannotMigrate": "Sorry, we can't migrate right now. Please try again.",
+      "noAccountFound": "Sorry, no account found was found."
     }
   },
 
