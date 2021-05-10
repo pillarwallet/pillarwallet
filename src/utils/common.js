@@ -90,7 +90,7 @@ export const reportErrorLog = (
   reportLog(message, extra, Sentry.Severity.Error);
 };
 
-export const logBreadcrumbs = (
+export const logBreadcrumb = (
   category: string,
   message: string,
   level: Sentry.Severity = Sentry.Severity.Info,

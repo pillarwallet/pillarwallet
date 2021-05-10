@@ -39,7 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { logBreadcrumbs } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 
 // services
 import { navigate } from 'services/navigation';
@@ -146,7 +146,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
 
     /* eslint-disable no-template-curly-in-string */
     /* eslint-disable i18next/no-literal-string */
-    logBreadcrumbs('onBoarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
+    logBreadcrumb('onboarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     await smartWalletService.reset();
 
@@ -166,7 +166,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
 
     /* eslint-disable no-template-curly-in-string */
     /* eslint-disable i18next/no-literal-string */
-    logBreadcrumbs('onBoarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
+    logBreadcrumb('onboarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };
