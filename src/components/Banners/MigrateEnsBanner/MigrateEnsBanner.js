@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
-import { useSelector } from 'react-redux';
 
 // components
 import Text from 'components/modern/Text';
@@ -34,6 +33,7 @@ import { ENS_MIGRATION_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
 import { isEnsMigrationNeededSelector } from 'selectors/archanova';
+import { useRootSelector } from 'selectors';
 
 // utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -50,7 +50,7 @@ type Props = {|
 |};
 
 const MigrateEnsBanner = ({ style }: Props) => {
-  const isEnsMigrationNeeded = useSelector(isEnsMigrationNeededSelector);
+  const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
   const [isVisible, setIsVisible] = useState(isEnsMigrationNeeded);
   const { t } = useTranslationWithPrefix('migrateENSContent');
   const navigation = useNavigation();
