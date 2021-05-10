@@ -35,6 +35,7 @@ import {
 
 // utils
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -86,8 +87,12 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
   let displayMessage;
   if (method === PERSONAL_SIGN) {
     try {
-      displayMessage = utils.toUtf8String(callRequestParams[1]);
+      displayMessage = utils.toUtf8String(message);
     } catch (e) {
+      reportErrorLog('parseMessageSignParamsFromCallRequest PERSONAL_SIGN failed', {
+        message,
+        callRequest,
+      });
       ([, displayMessage] = callRequestParams);
     }
   } else if (method === ETH_SIGN_TYPED_DATA) {
