@@ -22,9 +22,9 @@ import React from 'react';
 import { FlatList, Alert, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
+import Instabug from 'instabug-reactnative';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import Intercom from 'react-native-intercom';
 import Emoji from 'react-native-emoji';
 
 import t from 'translations/translate';
@@ -168,14 +168,14 @@ const Menu = ({
       title: t('settingsContent.settingsItem.support.title'),
       icon: 'help',
       iconColor: colors.helpIcon,
-      action: () => Intercom.displayMessenger(),
+      action: () => { Instabug.show(); },
     },
     {
       key: 'knowledgeBase',
       title: t('settingsContent.settingsItem.faq.title'),
       icon: 'dictionary',
       iconColor: colors.positive,
-      action: () => Intercom.displayHelpCenter(),
+      action: () => { Instabug.show(); },
     },
     {
       key: 'storybook',

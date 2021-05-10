@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import { FlatList, Alert } from 'react-native';
+import Instabug from 'instabug-reactnative';
 import { connect } from 'react-redux';
-import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -377,7 +377,7 @@ class ServicesScreen extends React.Component<Props> {
       <ContainerWithHeader
         headerProps={{
           noBack: true,
-          rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ link: t('button.support'), onPress: () => { Instabug.show(); } }],
           leftItems: [{ title: t('servicesContent.title.servicesScreen') }],
         }}
         inset={{ bottom: 'never' }}
