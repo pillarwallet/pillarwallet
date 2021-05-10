@@ -26,10 +26,23 @@ import {
 import type { WalletConnectSession } from 'models/WalletConnect';
 
 
-export type WalletConnectSessionsReducerAction = {
-  type: string,
-  payload: any,
-};
+export type SetWalletConnectSessionsImportedAction = {|
+  type: typeof SET_WALLETCONNECT_SESSIONS_IMPORTED,
+|};
+
+export type AddWalletConnectSessionAction = {|
+  type: typeof ADD_WALLETCONNECT_SESSION,
+  payload: { session: WalletConnectSession }
+|};
+
+export type RemoveWalletConnectSessionAction = {|
+  type: typeof REMOVE_WALLETCONNECT_SESSION,
+  payload: { peerId: string }
+|};
+
+export type WalletConnectSessionsReducerAction = SetWalletConnectSessionsImportedAction
+  | AddWalletConnectSessionAction
+  | RemoveWalletConnectSessionAction;
 
 export type WalletConnectSessionsReducerState = {
   sessions: WalletConnectSession[],
@@ -52,12 +65,14 @@ const walletConnectSessionsReducer = (
       return { ...state, isImported: true };
 
     case ADD_WALLETCONNECT_SESSION:
-      return { ...state, sessions: [...sessions, action.payload.session] };
+      const { session } = action.payload;
+      return { ...state, sessions: [...sessions, session] };
 
     case REMOVE_WALLETCONNECT_SESSION:
+      const { peerId } = action.payload;
       return {
         ...state,
-        sessions: sessions.filter(({ peerId }) => peerId !== action.payload.peerId),
+        sessions: sessions.filter(({ peerId: existingPeerId }) => existingPeerId !== peerId),
       };
 
     default:
