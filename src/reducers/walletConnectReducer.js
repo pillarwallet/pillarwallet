@@ -31,10 +31,52 @@ import {
 import type { WalletConnectConnector, WalletConnectCallRequest } from 'models/WalletConnect';
 
 
-export type WalletConnectReducerAction = {
-  type: string,
-  payload: any,
-};
+export type SetWalletConnectConnectorRequestAction = {|
+  type: typeof SET_WALLETCONNECT_CONNECTOR_REQUEST,
+  payload: { connectorRequest: WalletConnectConnector },
+|};
+
+export type ResetWalletConnectConnectorRequestAction = {|
+  type: typeof RESET_WALLETCONNECT_CONNECTOR_REQUEST,
+|};
+
+export type AddWalletConnectCallRequestAction = {|
+  type: typeof ADD_WALLETCONNECT_CALL_REQUEST,
+  payload: { callRequest: WalletConnectCallRequest }
+|};
+
+export type RemoveWalletConnectCallRequestAction = {|
+  type: typeof REMOVE_WALLETCONNECT_CALL_REQUEST,
+  payload: { callId: string | number }
+|};
+
+export type AddWalletConnectActiveConnectorAction = {|
+  type: typeof ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
+  payload: { connector: WalletConnectConnector }
+|};
+
+export type RemoveWalletConnectActiveConnectorAction = {|
+  type: typeof REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
+  payload: { peerId: string }
+|};
+
+export type ResetWalletConnectActiveConnectorsAction = {|
+  type: typeof RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
+|};
+
+export type SetWalletConnectRequestErrorAction = {|
+  type: typeof SET_WALLETCONNECT_REQUEST_ERROR,
+  payload: { message: string }
+|};
+
+export type WalletConnectReducerAction = SetWalletConnectConnectorRequestAction
+  | ResetWalletConnectConnectorRequestAction
+  | AddWalletConnectCallRequestAction
+  | RemoveWalletConnectCallRequestAction
+  | AddWalletConnectActiveConnectorAction
+  | RemoveWalletConnectActiveConnectorAction
+  | ResetWalletConnectActiveConnectorsAction
+  | SetWalletConnectRequestErrorAction;
 
 export type WalletConnectReducerState = {|
   activeConnectors: WalletConnectConnector[],

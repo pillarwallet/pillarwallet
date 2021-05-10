@@ -37,10 +37,11 @@ import { createConnector } from 'services/walletConnect';
 import reducer from 'reducers/walletConnectReducer';
 
 // types
-import type { WalletConnectCallRequest } from 'models/WalletConnect';
+import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 
 
-const mockConnector = () => createConnector({ uri: 'wc://mock' });
+// $FlowFixMe: this always returns WalletConnectConnector
+const mockConnector = (): WalletConnectConnector => createConnector({ uri: 'wc://mock' });
 
 const mockRequest = (callId: number): WalletConnectCallRequest => {
   return {
@@ -100,7 +101,6 @@ describe('WalletConnect reducer', () => {
 
       const result = reducer(state, {
         type: RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
-        payload: undefined,
       });
 
       expect(result).toMatchObject({
@@ -154,7 +154,6 @@ describe('WalletConnect reducer', () => {
 
       const result = reducer(state, {
         type: RESET_WALLETCONNECT_CONNECTOR_REQUEST,
-        payload: undefined,
       });
 
       expect(result).toMatchObject({
