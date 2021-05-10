@@ -19,7 +19,6 @@
 */
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
-import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
@@ -39,7 +38,7 @@ import {
 // constants
 import {
   ADD_NOTIFICATION,
-  UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
   BCX,
@@ -55,7 +54,6 @@ import {
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
-import Storage from 'services/storage';
 import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
@@ -69,15 +67,11 @@ import { reportErrorLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
 import type { FirebaseMessage } from 'models/Notification';
-
-const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
 let disabledPushNotificationsListener = null;
 let notificationsOpenerListener = null;
-let intercomNotificationsListener = null;
 
 const NOTIFICATION_ROUTES = {
   [BCX]: HOME,
@@ -91,37 +85,6 @@ function checkForSupportAlert(messageData) {
   }
   return false;
 }
-
-export const startListeningIntercomNotificationsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { user } = await storage.get('user');
-    if (!user) return;
-    const { username } = user;
-    const supportHmac = await api.supportHmac();
-
-    Intercom.handlePushMessage();
-    Intercom.registerIdentifiedUser({ userId: username });
-    Intercom.updateUser({ user_id: username, name: username });
-    Intercom.setUserHash(supportHmac);
-    intercomNotificationsListener = ({ count }) => dispatch({
-      type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-      payload: count,
-    });
-    Intercom.getUnreadConversationCount()
-      .then(count => ({ count }))
-      .then(intercomNotificationsListener)
-      .then(() => Intercom.setInAppMessageVisibility('VISIBLE'))
-      .catch(() => { });
-    Intercom.addEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
-  };
-};
-
-export const stopListeningIntercomNotificationsAction = () => {
-  return () => {
-    if (!intercomNotificationsListener) return;
-    Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
-  };
-};
 
 export const showHomeUpdateIndicatorAction = () => ({ type: SHOW_HOME_UPDATE_INDICATOR });
 export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_INDICATOR });

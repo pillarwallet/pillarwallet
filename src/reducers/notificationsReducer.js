@@ -19,7 +19,6 @@
 */
 import {
   ADD_NOTIFICATION,
-  UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
 } from 'constants/notificationConstants';
@@ -27,14 +26,13 @@ import type { Notification } from 'models/Notification';
 
 export type NotificationsReducerState = {
   data: Notification[],
-  intercomNotificationsCount: number,
   showHomeUpdateIndicator: boolean,
 }
 
-type UpdateIntercomNotificationsCountAction = {
-  type: typeof UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-  payload: number,
-};
+// type UpdateIntercomNotificationsCountAction = {
+//   type: typeof UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+//   payload: number,
+// };
 
 type AddNotificationAction = {
   type: typeof ADD_NOTIFICATION,
@@ -50,14 +48,12 @@ type ClearHomeIndicatorAction = {
 };
 
 type NotificationsReducerAction =
-  | UpdateIntercomNotificationsCountAction
   | AddNotificationAction
   | ShowHomeIndicatorAction
   | ClearHomeIndicatorAction;
 
 const initialState = {
   data: [],
-  intercomNotificationsCount: 0,
   showHomeUpdateIndicator: false,
 };
 
@@ -66,8 +62,6 @@ export default function notificationsReducer(
   action: NotificationsReducerAction,
 ) {
   switch (action.type) {
-    case UPDATE_INTERCOM_NOTIFICATIONS_COUNT:
-      return { ...state, intercomNotificationsCount: action.payload };
     case ADD_NOTIFICATION:
       return { ...state, data: [...state.data, action.payload] };
     case SHOW_HOME_UPDATE_INDICATOR:

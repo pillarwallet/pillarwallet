@@ -155,8 +155,6 @@ import UsernameFailed from 'components/UsernameFailed';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
-  startListeningIntercomNotificationsAction,
-  stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
 import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -524,8 +522,7 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
           icon: iconHome,
-          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator
-            || !!screenProps.intercomNotificationsCount),
+          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator),
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: t('navigationTabs.home'), theme: screenProps.theme }),
@@ -870,14 +867,11 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
-  startListeningIntercomNotifications: Function,
-  stopListeningIntercomNotifications: Function,
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   checkForMissedAssets: Function,
   notifications: Notification[],
   showHomeUpdateIndicator: boolean,
-  intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
   wallet: ?EthereumWallet,
   backupStatus: BackupStatus,
@@ -915,7 +909,6 @@ class AppFlow extends React.Component<Props, State> {
   componentDidMount() {
     const {
       startListeningNotifications,
-      startListeningIntercomNotifications,
       checkForMissedAssets,
       fetchAllAccountsBalances,
       fetchAllCollectiblesData,
@@ -935,7 +928,6 @@ class AppFlow extends React.Component<Props, State> {
     if (backupStatus.isRecoveryPending) return;
 
     startListeningNotifications();
-    startListeningIntercomNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
@@ -985,7 +977,6 @@ class AppFlow extends React.Component<Props, State> {
   componentWillUnmount() {
     const {
       stopListeningNotifications,
-      stopListeningIntercomNotifications,
       backupStatus,
     } = this.props;
 
@@ -993,7 +984,6 @@ class AppFlow extends React.Component<Props, State> {
     if (backupStatus.isRecoveryPending) return;
 
     stopListeningNotifications();
-    stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
     BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
@@ -1027,7 +1017,6 @@ class AppFlow extends React.Component<Props, State> {
   handleAppStateChange = (nextAppState: string) => {
     const {
       stopListeningNotifications,
-      stopListeningIntercomNotifications,
       isPickingImage,
       isBrowsingWebView,
       endWalkthrough,
@@ -1044,7 +1033,6 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
         stopListeningNotifications();
-        stopListeningIntercomNotifications();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -1059,7 +1047,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       user,
       showHomeUpdateIndicator,
-      intercomNotificationsCount,
       navigation,
       backupStatus,
       theme,
@@ -1084,7 +1071,6 @@ class AppFlow extends React.Component<Props, State> {
       <MemoizedAppFlowNavigation
         profileImage={user?.profileImage}
         showHomeUpdateIndicator={showHomeUpdateIndicator}
-        intercomNotificationsCount={intercomNotificationsCount}
         isWalletBackedUp={isWalletBackedUp}
         theme={theme}
         language={i18n.language}
@@ -1099,7 +1085,6 @@ class AppFlow extends React.Component<Props, State> {
 const MemoizedAppFlowNavigation = ({
   profileImage,
   showHomeUpdateIndicator,
-  intercomNotificationsCount,
   isWalletBackedUp,
   theme,
   language,
@@ -1109,7 +1094,6 @@ const MemoizedAppFlowNavigation = ({
     () => ({
       profileImage,
       showHomeUpdateIndicator,
-      intercomNotificationsCount,
       isWalletBackedUp,
       theme,
       language,
@@ -1117,7 +1101,6 @@ const MemoizedAppFlowNavigation = ({
     [
       profileImage,
       showHomeUpdateIndicator,
-      intercomNotificationsCount,
       isWalletBackedUp,
       theme,
       language,
@@ -1136,7 +1119,6 @@ const mapStateToProps = ({
   user: { data: user },
   notifications: {
     data: notifications,
-    intercomNotificationsCount,
     showHomeUpdateIndicator,
   },
   wallet: { data: wallet, backupStatus },
@@ -1154,7 +1136,6 @@ const mapStateToProps = ({
   showHomeUpdateIndicator,
   wallet,
   backupStatus,
-  intercomNotificationsCount,
   isPickingImage,
   isBrowsingWebView,
   isOnline,
@@ -1168,9 +1149,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
-  stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
-  startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
-  initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
+  initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
