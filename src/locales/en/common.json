@@ -620,6 +620,7 @@
   "walletConnect": {
     "home": {
       "title": "Wallet Connect",
+      "headerStories": "New and Noteworthy",
       "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
     }
   },
