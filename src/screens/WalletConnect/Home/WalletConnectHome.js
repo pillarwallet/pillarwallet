@@ -33,6 +33,7 @@ import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
+import Stories from 'components/Stories';
 
 // Selectors
 import { useSupportedChains, useIsDeployedOnEthereum } from 'selectors/chains';
@@ -86,8 +87,10 @@ function WalletConnectHome() {
 
     return (
       <ListHeader>
-        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} />
-        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.deployOnEthereumBanner} />}
+        <Stories renderHeader={() => <SectionHeader>{t('headerStories')}</SectionHeader>} />
+
+        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
+        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.deployOnEthereumBanner} style={styles.banner} />}
       </ListHeader>
     );
   };
@@ -192,6 +195,14 @@ const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => 
 };
 
 const styles = {
+  tabs: {
+    marginTop: spacing.medium,
+    marginHorizontal: spacing.large,
+  },
+  banner: {
+    marginVertical: spacing.medium,
+    marginHorizontal: spacing.large,
+  },
   deployOnEthereumBanner: {
     marginTop: spacing.large,
     marginBottom: spacing.large,
@@ -199,7 +210,7 @@ const styles = {
 };
 
 const ListHeader = styled.View`
-  margin: 0 ${spacing.layoutSides}px ${spacing.large}px;
+  margin-bottom: ${spacing.large}px;
 `;
 
 const SectionHeader = styled(Text)`
