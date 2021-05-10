@@ -623,7 +623,8 @@
 
   "walletConnect": {
     "home": {
-      "title": "Wallet Connect"
+      "title": "Wallet Connect",
+      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
     }
   },
 
