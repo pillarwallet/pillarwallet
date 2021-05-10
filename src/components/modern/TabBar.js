@@ -30,19 +30,19 @@ import { spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-type TabItem<Key: string> = {|
+type TabItem<Key: ?string> = {|
   key: Key,
   title: string,
 |};
 
-type Props<Key: string> = {
+type Props<Key: ?string> = {
   items: TabItem<Key>[],
   activeTab: Key,
   onActiveTabChange: (Key) => mixed,
   style?: ViewStyleProp,
 };
 
-const TabBar = <Key: string>({ items, activeTab, onActiveTabChange, style }: Props<Key>) => {
+const TabBar = <Key: ?string>({ items, activeTab, onActiveTabChange, style }: Props<Key>) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.scrollView, style]}>
       {items.map(({ key, title }) => {
