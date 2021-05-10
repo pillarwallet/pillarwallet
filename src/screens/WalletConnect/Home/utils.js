@@ -29,3 +29,11 @@ export function filterAppsByChain(apps: WalletConnectApp[], chain: ?Chain): Wall
   if (!chain) return apps;
   return apps.filter(app => app.chains.includes(chain));
 }
+
+// NOTE: replace by proper useWalletConnect hook when available
+// Mock data
+export function useWalletConnect() {
+  return {
+    activeConnectors: [0, 1, 2, 3],
+  };
+}

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View, SectionList, useWindowDimensions } from 'react-native';
+import { SectionList, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -53,6 +53,7 @@ import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
 import ConnectFloatingButton from './components/ConnectFloatingButton';
+import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
 import WalletConnectListItem from './components/WalletConnectListItem';
 import { filterAppsByChain } from './utils';
@@ -128,6 +129,7 @@ function WalletConnectHome() {
       />
 
       <ConnectFloatingButton />
+      <ConnectedAppsFloatingButton />
     </Container>
   );
 }
