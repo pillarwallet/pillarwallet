@@ -39,7 +39,7 @@ type Props = {|
   title: ?string,
   iconUrl: ?string,
   value: BigNumber,
-  change?: ?BigNumber,
+  change?: BigNumber,
   onPress?: () => mixed,
 |};
 
