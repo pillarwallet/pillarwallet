@@ -27,8 +27,8 @@ import {
   TX_PENDING_STATUS,
   ADD_TRANSACTION,
   UPDATING_TRANSACTION,
+  SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
 } from 'constants/historyConstants';
-import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
@@ -43,27 +43,37 @@ import {
   getAccountId,
   findFirstArchanovaAccount,
   isArchanovaAccount,
+  findFirstEtherspotAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
 import {
   deviceHasGasTokenSupport,
   getGasTokenDetails,
-  mapSdkToAppTxStatus,
-  parseSmartWalletTransactions,
-} from 'utils/smartWallet';
+  parseArchanovaTransactionStatus,
+  parseArchanovaTransactions,
+} from 'utils/archanova';
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
+import { parseEtherspotTransactions } from 'utils/etherspot';
 
 // services
 import archanovaService from 'services/archanova';
+import etherspotService from 'services/etherspot';
 
 // selectors
-import { archanovaAccountAssetsSelector } from 'selectors/assets';
-import { activeAccountSelector, historySelector } from 'selectors';
+import {
+  archanovaAccountAssetsSelector,
+  etherspotAccountAssetsSelector,
+} from 'selectors/assets';
+import {
+  activeAccountSelector,
+  historySelector,
+  supportedAssetsSelector,
+} from 'selectors';
 
 // models, types
 import type { Transaction } from 'models/Transaction';
@@ -84,36 +94,39 @@ export const afterHistoryUpdatedAction = () => {
   };
 };
 
-export const syncAccountHistory = (
+export const syncAccountHistoryAction = (
   apiHistory: Transaction[],
   accountId: string,
-  dispatch: Dispatch,
-  getState: GetState,
+  lastSyncId: ?string,
 ) => {
-  const { history: { data: currentHistory } } = getState();
-  const accountHistory = currentHistory[accountId] || [];
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { history: { data: currentHistory, historyLastSyncIds = {} } } = getState();
+    const accountHistory = currentHistory[accountId] || [];
 
-  const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
-  const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
+    const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
 
-  const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-  const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
+    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
 
-  dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
+    dispatch(afterHistoryUpdatedAction());
 
-  dispatch({
-    type: SET_HISTORY,
-    payload: updatedHistory,
-  });
-
-  dispatch(afterHistoryUpdatedAction());
+    if (lastSyncId) {
+      dispatch({ type: SET_ACCOUNT_HISTORY_LAST_SYNC_ID, payload: { accountId, lastSyncId } });
+      const updatedHistoryLastSyncIds = { ...historyLastSyncIds, [accountId]: lastSyncId };
+      dispatch(saveDbAction('historyLastSyncIds', { historyLastSyncIds: updatedHistoryLastSyncIds }, true));
+    }
+  };
 };
 
-export const fetchSmartWalletTransactionsAction = () => {
+export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       session: { data: { isOnline } },
+      history: { historyLastSyncIds },
     } = getState();
 
     // key based history migration: clean existing
@@ -130,19 +143,21 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     if (!isOnline) return;
 
-    // fetch archanova history only if archanova account exists
+    let newHistoryTransactions = [];
+    const supportedAssets = supportedAssetsSelector(getState());
+
+    // archanova history
     const achanovaAccount = findFirstArchanovaAccount(accounts);
     if (achanovaAccount) {
       const {
         smartWallet: {
-          lastSyncedTransactionId,
+          lastSyncedTransactionId: lastSyncedArchanovaTransactionId,
           connectedAccount,
         },
-        assets: { supportedAssets },
       } = getState();
 
       if (!connectedAccount) {
-        reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
+        reportLog('fetchTransactionsHistoryAction failed, no connected account');
         return;
       }
 
@@ -153,38 +168,57 @@ export const fetchSmartWalletTransactionsAction = () => {
       const accountId = getAccountId(achanovaAccount);
       const accountAddress = getAccountAddress(achanovaAccount);
 
-      const smartWalletTransactions = await archanovaService.getAccountTransactions(lastSyncedTransactionId);
+      const lastSyncedId = historyLastSyncIds?.[accountId] || lastSyncedArchanovaTransactionId;
+      const archanovaTransactions = await archanovaService.getAccountTransactions(+lastSyncedId);
+
       const accountAssets = archanovaAccountAssetsSelector(getState());
       const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
       const assetsList = getAssetsAsList(accountAssets);
-      const smartWalletTransactionHistory = parseSmartWalletTransactions(
-        smartWalletTransactions,
+      const archanovaTransactionsHistory = parseArchanovaTransactions(
+        archanovaTransactions,
         supportedAssets,
         assetsList,
         relayerExtensionDevice?.address,
       );
-      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, archanovaTransactionsHistory);
       const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
       const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
       const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
-      const history = await mapTransactionsHistoryWithLiquidityPools(accountAddress, rariHistory);
+      const finalArchanovaTransactionsHistory = await mapTransactionsHistoryWithLiquidityPools(
+        accountAddress,
+        rariHistory,
+      );
 
-      if (!history.length) return;
-      // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
-      if (smartWalletTransactions.length) {
-        const newLastSyncedId = smartWalletTransactions[0].id;
-        dispatch({
-          type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-          payload: newLastSyncedId,
-        });
-        dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
+      // TODO: Jan: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
+      if (finalArchanovaTransactionsHistory.length) {
+        newHistoryTransactions = [...newHistoryTransactions, ...finalArchanovaTransactionsHistory];
+        const newLastSyncedId = archanovaTransactions?.[0]?.id?.toString();
+        dispatch(syncAccountHistoryAction(finalArchanovaTransactionsHistory, accountId, newLastSyncedId));
       }
-
-      syncAccountHistory(history, accountId, dispatch, getState);
-      dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
     }
 
-    // TODO: fetch etherspot account history
+    // etherspot history
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (etherspotAccount) {
+      const accountAddress = getAccountAddress(etherspotAccount);
+      const accountAssets = etherspotAccountAssetsSelector(getState());
+      const accountId = getAccountId(etherspotAccount);
+
+      const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
+
+      if (etherspotTransactions?.length) {
+        const etherspotTransactionsHistory = parseEtherspotTransactions(
+          etherspotTransactions,
+          getAssetsAsList(accountAssets),
+          supportedAssets,
+        );
+
+        newHistoryTransactions = [...newHistoryTransactions, ...etherspotTransactionsHistory];
+        dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId));
+      }
+    }
+
+    dispatch(extractEnsInfoFromTransactionsAction(newHistoryTransactions));
   };
 };
 
@@ -198,20 +232,23 @@ export const fetchGasInfoAction = () => {
   };
 };
 
-const transactionUpdate = (hash: string) => {
-  return {
-    type: UPDATING_TRANSACTION,
-    payload: hash,
-  };
-};
+const setUpdatingTransactionAction = (hash: ?string) => ({
+  type: UPDATING_TRANSACTION,
+  payload: hash,
+});
 
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { session: { data: { isOnline } } } = getState();
+
     if (!isOnline) return;
 
-    const isArchanovaAccountActive = isArchanovaAccount(activeAccountSelector(getState()));
-    dispatch(transactionUpdate(hash));
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) return;
+
+    const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
+
+    dispatch(setUpdatingTransactionAction(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
@@ -220,22 +257,23 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (isArchanovaAccountActive) {
       sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
-        dispatch(transactionUpdate(''));
+        dispatch(setUpdatingTransactionAction(null));
         return;
       }
-      sdkToAppStatus = mapSdkToAppTxStatus(sdkTransactionInfo.state);
-    }
 
-    // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isArchanovaAccountActive && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
-      reportLog('Wrong transaction status', {
-        hash,
-        sdkToAppStatus,
-        sdkStatus: sdkTransactionInfo?.state,
-        blockchainStatus: trxInfo.status,
-      });
-      dispatch(transactionUpdate(''));
-      return;
+      sdkToAppStatus = parseArchanovaTransactionStatus(sdkTransactionInfo.state);
+
+      // NOTE: if trxInfo is not null, that means transaction was mined or failed
+      if (sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+        reportLog('Wrong transaction status', {
+          hash,
+          sdkToAppStatus,
+          sdkStatus: sdkTransactionInfo?.state,
+          blockchainStatus: trxInfo.status,
+        });
+        dispatch(setUpdatingTransactionAction(null));
+        return;
+      }
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
@@ -244,7 +282,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       : !trxInfo;
 
     if (stillPending) {
-      dispatch(transactionUpdate(''));
+      dispatch(setUpdatingTransactionAction(null));
       return;
     }
 
@@ -313,5 +351,23 @@ export const insertTransactionAction = (historyTx: Transaction, accountId: strin
     // get the updated state and save it into the storage
     const { history: { data: currentHistory } } = getState();
     await dispatch(saveDbAction('history', { history: currentHistory }, true));
+  };
+};
+
+export const setHistoryTransactionStatusByHashAction = (transactionHash: string, status: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const transactionsHistory = historySelector(getState());
+
+    const { txUpdated, updatedHistory } = updateHistoryRecord(
+      transactionsHistory,
+      transactionHash,
+      (transaction) => ({ ...transaction, status }),
+    );
+
+    // check if updated
+    if (!txUpdated) return;
+
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
   };
 };

@@ -68,10 +68,17 @@ import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
-import { getActiveAccount, getActiveAccountAddress, isArchanovaAccount } from 'utils/accounts';
+import {
+  findAccountByAddress,
+  getActiveAccount,
+  getActiveAccountAddress,
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
 
 // services
-import archanovaInstance from 'services/archanova';
+import archanovaService from 'services/archanova';
+import etherspotService from 'services/etherspot';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
@@ -91,11 +98,11 @@ import {
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/archanovaConstants';
 import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
@@ -157,9 +164,9 @@ import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -187,8 +194,8 @@ type StateProps = {|
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
-  updatingTransaction: string,
-  updatingCollectibleTransaction: string,
+  updatingTransaction: ?string,
+  updatingCollectibleTransaction: ?string,
   isPillarRewardCampaignActive: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
@@ -481,9 +488,13 @@ export class EventDetail extends React.Component<Props> {
     });
   };
 
-  viewOnTheBlockchain = () => {
-    const { hash } = this.props.event;
-    if (!hash) {
+  viewOnTheBlockchain = async () => {
+    const {
+      accounts,
+      event: { hash, from, batchHash },
+    } = this.props;
+
+    if (!hash && !batchHash) {
       Toast.show({
         message: t('toast.cannotFindTransactionHash'),
         emoji: 'woman-shrugging',
@@ -493,7 +504,18 @@ export class EventDetail extends React.Component<Props> {
       return;
     }
 
-    const explorerLink = archanovaInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const fromAccount = findAccountByAddress(from, accounts);
+
+    // if actual transaction hash is not yet obtained then try to get by batch hash directly
+    let explorerLink;
+    if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
+      explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+    } else {
+      explorerLink = fromAccount && isArchanovaAccount(fromAccount)
+        ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
+        : etherspotService.getTransactionExplorerLink(hash);
+    }
+
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),
@@ -897,7 +919,7 @@ export class EventDetail extends React.Component<Props> {
             ],
         };
         break;
-      case SET_SMART_WALLET_ACCOUNT_ENS:
+      case SET_ARCHANOVA_WALLET_ACCOUNT_ENS:
         eventData = {
           name: t('ensName'),
           actionTitle: t('label.registered'),
@@ -929,19 +951,19 @@ export class EventDetail extends React.Component<Props> {
           ],
         };
         break;
-      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+      case ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: t('label.smartWalletGasRelayerPLR'),
           actionTitle: isPending ? t('label.enabling') : t('label.enabled'),
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED:
         eventData = {
           name: t('label.newSmartWalletAccountDevice'),
           actionTitle: isPending ? t('label.adding') : t('label.added'),
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
           name: t('label.smartWalletAccountDevice'),
           actionTitle: isPending ? t('label.removing') : t('label.removed'),

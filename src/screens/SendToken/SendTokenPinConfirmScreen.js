@@ -21,27 +21,36 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
+// components
 import CheckAuth from 'components/CheckAuth';
+
+// actions
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
+
+// constants
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
+// types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (transactionPayload: TransactionPayload, wallet: Object, navigate: Function) => void,
+  sendAsset: (
+    transactionPayload: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+  ) => void,
   resetIncorrectPassword: () => void,
   accounts: Accounts,
   isOnline: boolean,
   logEvent: (name: string, properties: Object) => void,
   useBiometrics: boolean,
-}
+};
 
 type State = {
   transactionPayload: TransactionPayload,
@@ -65,7 +74,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     };
   }
 
-  handleTransaction = async (pin: string, wallet: Object) => {
+  handleTransaction = async () => {
     const {
       sendAsset,
       isOnline,
@@ -84,7 +93,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       isChecking: true,
     }, () => {
       logEvent('transaction_sent', { source: this.source });
-      sendAsset(transactionPayload, wallet, this.navigateToTransactionState);
+      sendAsset(transactionPayload, this.navigateToTransactionState);
     });
   };
 
@@ -134,9 +143,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  sendAsset: (transaction: TransactionPayload, wallet: Object, callback) => {
-    dispatch(sendAssetAction(transaction, wallet, callback));
-  },
+  sendAsset: (
+    transaction: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+  ) => dispatch(sendAssetAction(transaction, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });

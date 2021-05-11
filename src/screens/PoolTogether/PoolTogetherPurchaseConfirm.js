@@ -132,7 +132,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     if (purchaseTicketTransactions.length > 1) {
       transactionPayload = {
         ...transactionPayload,
-        sequentialSmartWalletTransactions: purchaseTicketTransactions.slice(1),
+        sequentialTransactions: purchaseTicketTransactions.slice(1),
       };
     }
 

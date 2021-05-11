@@ -86,7 +86,7 @@ export const findKeyBasedAccount = (
 
 export const findFirstArchanovaAccount = (
   accounts: Accounts,
-): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
+): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
 export const findFirstEtherspotAccount = (
   accounts: Accounts,
@@ -95,7 +95,7 @@ export const findFirstEtherspotAccount = (
 export const findFirstSmartWalletAccount = (
   accounts: Accounts,
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET)
-  || findAccountByType(accounts, ACCOUNT_TYPES.SMART_WALLET);
+  || findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
@@ -107,7 +107,7 @@ export const getActiveAccountWalletId = (accounts: Accounts): string => {
 };
 
 export const isSmartWalletAccount = (account: ?Account): boolean => [
-  ACCOUNT_TYPES.SMART_WALLET,
+  ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 ].includes(account?.type);
 
@@ -115,7 +115,7 @@ export const isAccountType = (account: ?Account, type: string): boolean => accou
 
 export const isArchanovaAccount = (
   account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.SMART_WALLET);
+): boolean => isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
 export const isEtherspotAccount = (
   account: ?Account,
@@ -123,7 +123,7 @@ export const isEtherspotAccount = (
 
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
-    case ACCOUNT_TYPES.SMART_WALLET:
+    case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
       return t('legacySmartWallet');
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWallet');
@@ -163,7 +163,7 @@ export const getAccountEnsName = (account: ?Account): ?string => {
   switch (account?.type) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return account?.extra?.ensNode?.name;
-    case ACCOUNT_TYPES.SMART_WALLET:
+    case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
       return account?.extra?.ensName;
     default:
       return null;

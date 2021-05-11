@@ -174,7 +174,7 @@ const RariAddDepositScreen = ({
       if (depositTransactions.length > 1) {
         _transactionPayload = {
           ..._transactionPayload,
-          sequentialSmartWalletTransactions: depositTransactions.slice(1), // take the rest except first,
+          sequentialTransactions: depositTransactions.slice(1), // take the rest except first,
         };
       }
       setTransactionPayload(_transactionPayload);

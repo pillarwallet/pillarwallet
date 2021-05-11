@@ -2689,7 +2689,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
                   }
                   type="ACTION"
                 >
-                  smartWallet
+                  legacySmartWallet
                 </Text>
               </View>
               <View
@@ -9164,7 +9164,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                   }
                   type="DEFAULT"
                 >
-                  smartWallet
+                  legacySmartWallet
                 </Text>
               </View>
             </View>
@@ -9603,7 +9603,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                   }
                   type="DEFAULT"
                 >
-                  smartWallet
+                  legacySmartWallet
                 </Text>
               </View>
               <View

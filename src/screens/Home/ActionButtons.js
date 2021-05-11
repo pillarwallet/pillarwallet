@@ -41,14 +41,14 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getArchanovaWalletStatus } from 'utils/archanova';
 import { spacing } from 'utils/variables';
 
 // models, types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Balances, Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
@@ -87,9 +87,9 @@ const ActionButtons = ({
     Modal.open(() => <AddFundsModal receiveAddress={activeAccountAddress} />);
   }, [activeAccountAddress]);
 
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
   const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency)
-    && isEmpty(smartWalletStatus?.sendingBlockedMessage);
+    && isEmpty(archanovaWalletStatus?.sendingBlockedMessage);
 
   return (
     <React.Fragment>

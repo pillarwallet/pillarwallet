@@ -20,14 +20,22 @@
 
 import { BigNumber as EthersBigNumber } from 'ethers';
 import { getEnv } from 'configs/envConfig';
+
+// constants
 import {
   SABLIER_CREATE_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
 } from 'constants/sablierConstants';
+
+// services
 import { fetchUserStreams } from 'services/sablier';
+
+// utils
 import { addressesEqual } from 'utils/assets';
-import { countDownDHMS } from 'utils/common';
+import { countDownDHMS, isCaseInsensitiveMatch } from 'utils/common';
+
+// types
 import type { Stream } from 'models/Sablier';
 import type { TxSablierExtra, Transaction } from 'models/Transaction';
 
@@ -110,10 +118,11 @@ const buildSablierTransaction = (
 ) => {
   let tag;
   let extra: TxSablierExtra;
-  const txHash = transaction.hash.toLowerCase();
-  const sablierTransaction = streamsTransactions.find(({ id }) => id === txHash);
+  const sablierTransaction = streamsTransactions.find(({ id }) => isCaseInsensitiveMatch(id, transaction?.hash));
 
   if (sablierTransaction) {
+    const txHash = transaction.hash;
+
     const stream = outgoingStreams.find(({ id }) => id === sablierTransaction.stream.id) ||
       incomingStreams.find(({ id }) => id === sablierTransaction.stream.id);
     if (!stream) {

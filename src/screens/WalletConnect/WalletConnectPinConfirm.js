@@ -17,221 +17,200 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { useNavigation } from 'react-navigation-hooks';
+import { Wallet } from 'ethers';
+import { useTranslation } from 'react-i18next';
 
 // components
 import CheckAuth from 'components/CheckAuth';
+import Toast from 'components/Toast';
 
 // actions
-import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // utils
 import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
+import { isArchanovaAccount } from 'utils/accounts';
+import { reportErrorLog } from 'utils/common';
+import { parseMessageSignParamsFromCallRequest } from 'utils/walletConnect';
+
+// hooks
+import useWalletConnect from 'hooks/useWalletConnect';
 
 // constants
 import {
   ETH_SEND_TX,
-  ETH_SIGN,
   ETH_SIGN_TX,
   ETH_SIGN_TYPED_DATA,
   PERSONAL_SIGN,
 } from 'constants/walletConnectConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
+// selectors
+import { activeAccountSelector } from 'selectors';
+
 // types
-import type { TransactionPayload } from 'models/Transaction';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { CallRequest } from 'models/WalletConnect';
+import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
 
 
 type Props = {
-  requests: CallRequest[],
-  navigation: NavigationScreenProp<*>,
-  approveCallRequest: (callId: number, result: any) => Function,
-  rejectCallRequest: (callId: number, errorMsg?: string) => Function,
-  sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
-  resetIncorrectPassword: () => Function,
+  sendAsset: (
+    payload: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+    waitForActualTransactionHash: boolean,
+  ) => void,
+  resetIncorrectPassword: () => void,
   useBiometrics: boolean,
+  activeAccount: ?Account,
 };
 
-type State = {
-  isChecking: boolean,
-};
+const WalletConnectPinConfirmScreeen = ({
+  resetIncorrectPassword,
+  useBiometrics,
+  sendAsset,
+  activeAccount,
+}: Props) => {
+  const [isChecking, setIsChecking] = useState(false);
+  const navigation = useNavigation();
+  const { approveCallRequest, rejectCallRequest } = useWalletConnect();
+  const { t } = useTranslation();
 
-class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
-  request: ?CallRequest;
+  const callRequest = navigation.getParam('callRequest');
+  const transactionPayload = navigation.getParam('transactionPayload');
 
-  state = {
-    isChecking: false,
-  };
-
-  componentDidMount() {
-    const { navigation, requests } = this.props;
-
-    const requestCallId = +navigation.getParam('callId', 0);
-    const request = requests.find(({ callId }) => callId === requestCallId);
-    if (!request) {
-      return;
-    }
-
-    this.request = request;
-  }
-
-  handleDismissal = async () => {
-    const { navigation, rejectCallRequest, resetIncorrectPassword } = this.props;
-    const { request } = this;
-    if (request) {
-      await rejectCallRequest(request.callId);
-    }
+  const dismissScreen = () => {
     resetIncorrectPassword();
+    setIsChecking(false);
     navigation.dismiss();
   };
 
-  completeCheckingAndDismiss = () => this.setState({ isChecking: false }, this.handleDismissal);
+  const handleSendTransaction = (): void => {
+    const statusCallback = (transactionStatus: TransactionStatus) => {
+      if (transactionStatus.isSuccess && transactionStatus.hash) {
+        approveCallRequest(callRequest, transactionStatus.hash);
+      } else {
+        rejectCallRequest(callRequest);
+      }
 
-  handleCallRequest = (pin: string, wallet: Object) => {
-    const { request } = this;
+      dismissScreen();
 
-    if (!request) {
-      return;
-    }
+      navigation.navigate(SEND_TOKEN_TRANSACTION, {
+        ...transactionStatus,
+        noRetry: true,
+        transactionPayload,
+      });
+    };
 
-    let callback = () => {};
-
-    switch (request.method) {
-      case ETH_SEND_TX:
-        callback = () => this.handleSendTransaction(request, wallet);
-        break;
-      case ETH_SIGN_TX:
-        callback = () => this.handleSignTransaction(request, wallet);
-        break;
-      case ETH_SIGN:
-      case PERSONAL_SIGN:
-        callback = () => this.handleSignMessage(request, wallet);
-        break;
-      case ETH_SIGN_TYPED_DATA:
-        callback = () => this.handleSignTypedData(request, wallet);
-        break;
-      default:
-        break;
-    }
-
-    this.setState({ isChecking: true }, callback);
+    sendAsset(transactionPayload, statusCallback, true);
   };
 
-  handleSendTransaction = (request: CallRequest, wallet: Object) => {
-    const {
-      sendAsset, approveCallRequest, rejectCallRequest, navigation,
-    } = this.props;
-    const transactionPayload = navigation.getParam('transactionPayload', {});
-    sendAsset(transactionPayload, wallet, async (txStatus: Object) => {
-      if (txStatus.isSuccess) {
-        await approveCallRequest(request.callId, txStatus.txHash);
-      } else {
-        await rejectCallRequest(request.callId);
-      }
-      this.setState({ isChecking: false }, () => {
-        this.handleDismissal();
-        this.handleNavigationToTransactionState(txStatus);
-      });
+  const handleSignTransaction = async (wallet: Wallet): Promise<?string> => {
+    const { params: [transaction] } = callRequest;
+
+    return signTransaction(transaction, wallet).catch(() => {
+      rejectCallRequest(callRequest);
+      return null;
     });
   };
 
-  handleSignTransaction = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
-    const trx = request.params[0];
-    try {
-      const result = await signTransaction(trx, wallet);
-      await approveCallRequest(request.callId, result);
-    } catch (error) {
-      await rejectCallRequest(request.callId);
-    }
-    this.completeCheckingAndDismiss();
-  };
+  const handleSignMessage = async (wallet: Wallet): Promise<?string> => {
+    const isLegacyEip1271 = isArchanovaAccount(activeAccount);
 
-  handleSignMessage = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
-    let message = '';
+    const { method } = callRequest;
+    const { message } = parseMessageSignParamsFromCallRequest(callRequest);
+
+    let result;
     try {
-      let result = null;
-      if (request.method === PERSONAL_SIGN) {
-        message = request.params[0]; // eslint-disable-line
-        result = await signPersonalMessage(message, wallet);
-      } else {
-        message = request.params[1]; // eslint-disable-line
-        result = await signMessage(message, wallet);
+      switch (method) {
+        case PERSONAL_SIGN:
+          result = await signPersonalMessage(message, wallet, isLegacyEip1271);
+          break;
+        case ETH_SIGN_TYPED_DATA:
+          result = await signTypedData(message, wallet, isLegacyEip1271);
+          break;
+        default:
+          result = signMessage(message, wallet);
       }
-      await approveCallRequest(request.callId, result);
     } catch (error) {
-      await rejectCallRequest(request.callId, error.toString());
+      reportErrorLog('WalletConnectPinConfirmScreeen -> handleSignMessage failed', { message, callRequest, error });
     }
-    this.completeCheckingAndDismiss();
+
+    return result;
   };
 
-  handleSignTypedData = async (request: CallRequest, wallet: Object) => {
-    const { approveCallRequest, rejectCallRequest } = this.props;
-    try {
-      const message = request.params[1]; // eslint-disable-line
-      const result = await signTypedData(message, wallet);
-      await approveCallRequest(request.callId, result);
-    } catch (error) {
-      await rejectCallRequest(request.callId, error.toString());
+  const onPinValid = async (pin: string, wallet: Object) => {
+    setIsChecking(true);
+    const { method } = callRequest;
+
+    if (method === ETH_SEND_TX) {
+      handleSendTransaction();
+      return;
     }
-    this.completeCheckingAndDismiss();
+
+    const signedResult = method === ETH_SIGN_TX
+      ? await handleSignTransaction(wallet)
+      : await handleSignMessage(wallet);
+
+    if (signedResult) {
+      approveCallRequest(callRequest, signedResult);
+      Toast.show({
+        message: t('toast.walletConnectRequestApproved'),
+        emoji: 'ok_hand',
+      });
+    } else {
+      rejectCallRequest(callRequest);
+      Toast.show({
+        message: t('toast.walletConnectRequestRejected'),
+        emoji: 'eyes',
+      });
+    }
+
+    dismissScreen();
   };
 
-  handleNavigationToTransactionState = (params: ?Object) => {
-    const { navigation } = this.props;
-    const transactionPayload = navigation.getParam('transactionPayload', {});
-
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload });
-  };
-
-  handleBack = () => {
-    const { navigation, resetIncorrectPassword } = this.props;
+  const onNavigationBack = () => {
     navigation.goBack(null);
     resetIncorrectPassword();
   };
 
-  render() {
-    const { isChecking } = this.state;
-    const { useBiometrics } = this.props;
-    return (
-      <CheckAuth
-        onPinValid={this.handleCallRequest}
-        isChecking={isChecking}
-        headerProps={{ onBack: this.handleBack }}
-        enforcePin={!useBiometrics}
-      />
-    );
-  }
-}
+  return (
+    <CheckAuth
+      onPinValid={onPinValid}
+      isChecking={isChecking}
+      headerProps={{ onBack: onNavigationBack }}
+      enforcePin={!useBiometrics}
+    />
+  );
+};
 
 const mapStateToProps = ({
-  walletConnect: { requests },
   appSettings: { data: { useBiometrics } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   useBiometrics,
-  requests,
 });
 
-const mapDispatchToProps = dispatch => ({
-  approveCallRequest: (callId: number, result: any) => {
-    dispatch(approveCallRequestAction(callId, result));
-  },
-  rejectCallRequest: (callId: number, errorMsg?: string) => {
-    dispatch(rejectCallRequestAction(callId, errorMsg));
-  },
-  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
-    dispatch(sendAssetAction(transaction, wallet, navigate));
-  },
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  sendAsset: (
+    transaction: TransactionPayload,
+    callback: (status: TransactionStatus) => void,
+    waitForActualTransactionHash: boolean = false,
+  ) => dispatch(sendAssetAction(transaction, callback, waitForActualTransactionHash)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(WalletConnectPinConfirmScreeen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreeen);

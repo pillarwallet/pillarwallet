@@ -24,18 +24,20 @@ import Toast from 'components/Toast';
 
 // services
 import archanovaService from 'services/archanova';
-import { buildERC721TransactionData } from 'services/assets';
+import etherspotService from 'services/etherspot';
 
 // utils
-import { buildTxFeeInfo } from 'utils/smartWallet';
-import { getEthereumProvider, truncateAmount } from 'utils/common';
-
-// config
-import { getEnv } from 'configs/envConfig';
+import { reportErrorLog } from 'utils/common';
+import { buildArchanovaTxFeeInfo } from 'utils/archanova';
+import { buildEthereumTransaction } from 'utils/transactions';
+import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
+import { getAccountAddress, getAccountType } from 'utils/accounts';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/archanova';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -43,20 +45,18 @@ import {
   SET_TRANSACTION_ESTIMATE_FEE_INFO,
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { AccountTransaction } from 'services/archanova';
-import type { Value } from 'utils/common';
-import type { AssetData } from 'models/Asset';
+import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
 
 
 export const resetEstimateTransactionAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: null });
     dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+    dispatch(setEstimatingTransactionAction(false));
   };
 };
 
@@ -65,89 +65,119 @@ export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
   payload: isEstimating,
 });
 
-export const setEstimatingErrorAction = (errorMessage: string) => ({
-  type: SET_TRANSACTION_ESTIMATE_ERROR,
-  payload: errorMessage,
-});
-
-export const estimateTransactionAction = (
-  recipientAddress: string,
-  value: Value,
-  data: ?string,
-  assetData: ?AssetData,
-  sequential: ?AccountTransaction[],
-) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
-
-    const activeAccountAddress = activeAccountAddressSelector(getState());
-
-    let transaction: AccountTransaction = {
-      recipient: recipientAddress,
-      value: truncateAmount(value, assetData?.decimals),
-    };
-
-    if (sequential) {
-      transaction.sequentialTransactions = sequential;
-    }
-
-    if (assetData?.tokenType === COLLECTIBLES && !data && assetData) {
-      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
-      const {
-        name,
-        id,
-        contractAddress,
-        tokenType,
-      } = assetData;
-      const collectibleTransaction = {
-        from: activeAccountAddress,
-        to: recipientAddress,
-        name,
-        tokenId: id,
-        contractAddress,
-        tokenType,
-      };
-      data = await buildERC721TransactionData(collectibleTransaction, provider);
-    }
-    if (data) {
-      transaction = { ...transaction, data };
-    }
-
-    let errorMessage;
-    let feeInfo;
-
-    const estimated = await archanovaService
-      .estimateAccountTransaction(transaction, assetData)
-      .catch((error) => {
-        errorMessage = error?.message
-          ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
-          : t('toast.transactionFeeEstimationFailed');
-        return null;
-      });
-
-    if (!errorMessage) {
-      const useGasToken = useGasTokenSelector(getState());
-      feeInfo = buildTxFeeInfo(estimated, useGasToken);
-    }
-
-    if (!errorMessage && feeInfo && !feeInfo.fee?.gt(0)) {
-      errorMessage = t('toast.transactionFeeEstimationFailed');
-    }
-
-    const currentErrorMessage = getState().transactionEstimate.errorMessage;
-    if (errorMessage) {
-      dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
-      if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
-      Toast.show({
-        message: errorMessage,
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+export const setTransactionsEstimateFeeAction = (feeInfo: ?TransactionFeeInfo) => {
+  return (dispatch: Dispatch) => {
+    if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gt(0))) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
       return;
     }
 
     dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+    dispatch(setEstimatingTransactionAction(false));
+  };
+};
+
+export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const currentErrorMessage = getState().transactionEstimate.errorMessage;
+    if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
+
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
+    dispatch(setEstimatingTransactionAction(false));
+
+    Toast.show({
+      message: errorMessage,
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+  };
+};
+
+export const estimateTransactionsAction = (transactionsToEstimate: TransactionToEstimate[]) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch(setEstimatingTransactionAction(true));
+
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      reportErrorLog('estimateTransactionsAction failed: no active account');
+      return;
+    }
+
+    const activeAccountAddress = getAccountAddress(activeAccount);
+
+    const transactions = await Promise.all(transactionsToEstimate.map(({
+      to,
+      data,
+      value,
+      assetData,
+    }) => buildEthereumTransaction(
+      to,
+      activeAccountAddress,
+      data,
+      Number(value).toString(),
+      assetData?.token,
+      assetData?.decimals,
+      assetData?.tokenType,
+      assetData?.contractAddress,
+      assetData?.id,
+    )));
+
+    const useGasToken = useGasTokenSelector(getState());
+    const accountAssets = accountAssetsSelector(getState());
+    const supportedAssets = supportedAssetsSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
+
+    let errorMessage;
+    let estimated;
+    let feeInfo;
+
+    switch (getAccountType(activeAccount)) {
+      case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+        // reset batch, not a promise
+        try {
+          etherspotService.clearTransactionsBatch();
+        } catch (error) {
+          dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+          reportErrorLog('estimateTransactionsAction failed: clear batch was not successful', { error });
+          return;
+        }
+
+        await etherspotService.setTransactionsBatch(transactions).catch((error) => {
+          errorMessage = error?.message;
+        });
+
+        estimated = await etherspotService.estimateTransactionsBatch(gasToken?.address).catch((error) => {
+          errorMessage = error?.message;
+          return null;
+        });
+        feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
+        break;
+      case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+        estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
+          errorMessage = error?.message;
+          return null;
+        });
+        feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
+        break;
+      default:
+        reportErrorLog('estimateTransactionsAction failed: unsupported account type', { activeAccount });
+        break;
+    }
+
+    if (!feeInfo || errorMessage) {
+      dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
+      return;
+    }
+
+    dispatch(setTransactionsEstimateFeeAction(feeInfo));
+  };
+};
+
+export const estimateTransactionAction = (transaction: TransactionToEstimate) => {
+  return (dispatch: Dispatch) => {
+    dispatch(estimateTransactionsAction([transaction]));
   };
 };

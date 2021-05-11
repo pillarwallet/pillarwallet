@@ -21,6 +21,9 @@
 import { BigNumber } from 'bignumber.js';
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
+import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import type { AssetData } from 'models/Asset';
+import type { Value } from 'utils/common';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -106,6 +109,18 @@ export type LiquidityPoolsExtra = {|
   tokenAmounts?: string[],
 |};
 
+export type EtherspotTransactionExtra = {|
+  batchHash: string,
+|};
+
+export type AllowanceTransactionExtra = {|
+  allowance: {
+    provider: string,
+    fromAssetCode: string,
+    toAssetCode: string,
+  },
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -114,7 +129,9 @@ export type TransactionExtra = TxSettlementItem[]
   | TxPoolTogetherExtra
   | TxSablierExtra
   | RariExtra
-  | LiquidityPoolsExtra;
+  | LiquidityPoolsExtra
+  | AllowanceTransactionExtra
+  | EtherspotTransactionExtra;
 
 export type GasToken = {
   address: string,
@@ -129,7 +146,8 @@ export type FeeWithGasToken = {
 
 export type Transaction = {
   _id: string,
-  hash: string,
+  hash?: string,
+  batchHash?: string,
   to: string,
   from: string,
   createdAt: number,
@@ -154,52 +172,41 @@ export type TransactionsStore = {
   [accountId: string]: Transaction[],
 };
 
-export type TokenTransactionPayload = {
+export type HistoryLastSyncIds = {
+  [accountId: string]: string,
+};
+
+export type TransactionPayload = {
   gasLimit?: number,
-  amount: number | string,
   to: string,
   receiverEnsName?: string,
-  gasPrice?: number,
-  txFeeInWei: number,
-  txSpeed?: string,
-  symbol: string,
-  contractAddress: string,
-  decimals: number,
-  note?: ?string,
   name?: string,
+  contractAddress: string,
   tokenId?: string,
+  tokenType?: string,
+  txSpeed?: string,
+  gasPrice?: number,
+  txFeeInWei: ?Value,
   signOnly?: ?boolean,
   signedHash?: ?string,
+  note?: ?string,
+  gasToken?: ?GasToken,
+  amount: number | string,
+  symbol: string,
+  decimals: number,
   data?: string,
   tag?: string,
   extra?: Object,
   usePPN?: boolean,
-  gasToken?: ?GasToken,
-  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
-}
+  sequentialTransactions?: TransactionPayload[],
+};
 
-export type CollectibleTransactionPayload = {
-  to: string,
-  receiverEnsName?: string,
-  name: string,
-  contractAddress: ?string,
-  tokenType: string,
-  tokenId: string,
-  note?: ?string,
-  signOnly?: ?boolean,
-  signedHash?: ?string,
-  gasPrice?: ?number,
-  gasLimit?: ?number,
-  txSpeed?: string,
-  gasToken?: ?GasToken,
-  txFeeInWei: number,
-}
-
-export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
+export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
 
 export type TransactionEthers = {
   from: string,
-  hash: string,
+  hash?: string,
+  batchHash?: string,
   to: string,
   value: string | Object,
   gasPrice?: Object | number,
@@ -216,12 +223,6 @@ export type TransactionEthers = {
   type?: string,
 };
 
-export type EstimatedTransactionFee = {
-  ethCost: BigNumber,
-  gasTokenCost?: ?BigNumber,
-  gasToken?: ?GasToken,
-};
-
 export type TransactionFeeInfo = {
   fee: ?BigNumber,
   gasToken?: ?GasToken,
@@ -233,3 +234,29 @@ export type AllowanceTransaction = {
   chainId: string,
   data: string,
 };
+
+export type EthereumTransaction = {
+  to: string,
+  value: EthersBigNumber,
+  data?: string,
+};
+
+export type TransactionToEstimate = {
+  to: string,
+  value: Value,
+  assetData?: AssetData,
+  data?: string,
+};
+
+export type TransactionStatus = {|
+  isSuccess: boolean,
+  error: ?string,
+  noRetry?: boolean,
+  hash?: string,
+  batchHash?: string,
+|};
+
+export type TransactionResult = {|
+  hash?: string,
+  batchHash?: string,
+|};

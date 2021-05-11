@@ -48,11 +48,11 @@ import { fetchBitcoinRateAction } from 'actions/ratesActions';
 
 // constants
 import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 
 // utils, services
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
 import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
 import { gatherWBTCFeeData, showWbtcErrorToast, isWbtcCafeActive } from 'services/wbtcCafe';
 import { isArchanovaAccount } from 'utils/accounts';
@@ -67,7 +67,7 @@ import { activeAccountSelector } from 'selectors';
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
 import type { Asset, Assets, AssetOption, Balances, Rates } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -344,8 +344,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { accounts, smartWalletState, activeAccount } = this.props;
     if (!isArchanovaAccount(activeAccount)) return true;
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+    return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
   };
 
   provideOptions = (): ExchangeOptions => {
