@@ -28,15 +28,15 @@ import { clamp } from 'lodash';
 import PagerControl from 'components/modern/PagerControl';
 
 // Types
-import type { CategoryBalance, ChainBalance } from 'models/Home';
+import type { CategoryBalances, ChainBalances } from 'models/Home';
 
 // Local
 import AssetPieChart from './components/AssetPieChart';
 import ChainPieChart from './components/ChainPieChart';
 
 type Props = {|
-  categoryBalances: CategoryBalance,
-  chainBalances: ChainBalance,
+  categoryBalances: CategoryBalances,
+  chainBalances: ChainBalances,
 |};
 
 function ChartsSection({ categoryBalances, chainBalances }: Props) {

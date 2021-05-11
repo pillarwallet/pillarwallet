@@ -32,13 +32,13 @@ import { fontSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
-import type { ChainBalance } from 'models/Home';
+import type { ChainBalances } from 'models/Home';
 
 // Local
 import { getTotalBalance } from '../utils';
 
 type Props = {|
-  chainBalances: ChainBalance,
+  chainBalances: ChainBalances,
 |};
 
 function ChainPieChart({ chainBalances }: Props) {
@@ -93,7 +93,7 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: ChainBalance) => {
+const useChartProps = (balances: ChainBalances) => {
   const config = useChainsConfig();
   const colors = useThemeColors();
 
