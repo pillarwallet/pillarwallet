@@ -106,9 +106,7 @@ export const allAccountsAssetsSelector = createSelector(
 export const assetRegistrySelector: (RootReducerState) => Asset[] = createSelector(
   allAccountsAssetsSelector,
   supportedAssetsSelector,
-  (assets, supportedAssets) => {
-    return [...getAssetsAsList(assets), ...supportedAssets];
-  },
+  (assets, supportedAssets) => [...getAssetsAsList(assets), ...supportedAssets],
 );
 
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
