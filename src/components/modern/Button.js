@@ -61,7 +61,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  ${({ compact }) => !compact && 'width: 100%'};
+  ${({ compact }) => !compact && 'width: 100%;'}
   ${({ compact }) =>
     !compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`};
   ${({ theme, variant }) => variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
