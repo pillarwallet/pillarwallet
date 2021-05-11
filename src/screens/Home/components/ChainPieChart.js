@@ -104,11 +104,13 @@ const useChartProps = (balances: ChainBalances) => {
 
   // Zero balance case
   if (total.isZero()) {
-    Object.keys(balances).forEach((category, index, array) => {
-      const { title } = config[category];
-      data.push({ y: 1 / array.length, title, value: 0 });
-      colorScale.push(colors.pieChartEmpty);
-    });
+    Object.keys(config)
+      .map((chain) => config[chain])
+      .forEach((chainConfig, index, array) => {
+        const { titleShort } = chainConfig;
+        data.push({ y: 1 / array.length, title: titleShort, value: 0 });
+        colorScale.push(colors.pieChartEmpty);
+      });
 
     return { data, colorScale };
   }

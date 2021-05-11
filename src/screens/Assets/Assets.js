@@ -17,359 +17,60 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import isEqual from 'lodash.isequal';
-import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
-import { withTheme } from 'styled-components/native';
-import t from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
+import { useTranslation } from 'translations/translate';
 
-// components
-import { BaseText } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Spinner from 'components/Spinner';
-import Button from 'components/Button';
-import { Container } from 'components/Layout';
+// Components
+import { Container } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
+import TabView from 'components/modern/TabView';
 
-// types
-import type { Assets } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
-import type { Badges } from 'models/Badge';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts, Account } from 'models/Account';
-import type { Transaction } from 'models/Transaction';
-import type { Theme } from 'models/Theme';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// Utils
+import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
-// actions
-import { fetchInitialAssetsAction } from 'actions/assetsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+// Types
+import { ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
-// constants
-import {
-  FETCH_INITIAL_FAILED,
-  FETCHED,
-} from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
+// Local
+import WalletTab from './wallet/WalletTab';
+import DepositsTab from './deposits/DepositsTab';
+import InvestmentsTab from './investments/InvestmentsTab';
+import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
+import RewardsTab from './rewards/RewardsTab';
+import CollectiblesTab from './collectibles/CollectiblesTab';
 
-// utils
-import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
-import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
-import { getSupportedBiometryType } from 'utils/keychain';
 
-// selectors
-import { accountCollectiblesSelector } from 'selectors/collectibles';
-import { accountAssetsSelector } from 'selectors/assets';
-import { activeAccountSelector } from 'selectors';
+function Assets() {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
+  const config = useAssetCategoriesConfig();
 
-// local components
-import PPNView from 'screens/Assets/PPNView';
-import WalletView from 'screens/Assets/WalletView';
-import WalletActivation from 'screens/Assets/WalletActivation';
+  const items = [
+    { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
+    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
+    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
+    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
+    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
+    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
+  ];
 
-type Props = {
-  fetchInitialAssets: () => void,
-  assets: Assets,
-  collectibles: Collectible[],
-  assetsState: ?string,
-  navigation: NavigationScreenProp<*>,
-  badges: Badges,
-  accounts: Accounts,
-  smartWalletState: Object,
-  blockchainNetworks: Object[],
-  activeAccount: ?Account,
-  fetchAllCollectiblesData: () => void,
-  useBiometrics: boolean,
-  backupStatus: Object,
-  availableStake: number,
-  PPNTransactions: Transaction[],
-  theme: Theme,
-};
+  const { category: initialCategory } = navigation.state.params;
 
-type State = {
-  showKeyWalletInsight: boolean,
-  showSmartWalletInsight: boolean,
-  supportsBiometrics: boolean,
-};
+  const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
+  const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
 
-const VIEWS = {
-  SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
-  PPN_VIEW: 'PPN_VIEW',
-};
-
-class AssetsScreen extends React.Component<Props, State> {
-  forceRender = false;
-  state = {
-    showKeyWalletInsight: true,
-    showSmartWalletInsight: false,
-    supportsBiometrics: false,
-  };
-
-  componentDidMount() {
-    const {
-      fetchInitialAssets,
-      fetchAllCollectiblesData,
-      assets,
-    } = this.props;
-
-    if (!Object.keys(assets).length) {
-      fetchInitialAssets();
-    }
-
-    fetchAllCollectiblesData();
-
-    getSupportedBiometryType(biometryType => this.setState({ supportsBiometrics: !!biometryType }));
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { navigation } = this.props;
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-    const isFocused = navigation.isFocused();
-
-    if (!isFocused) {
-      if (!isEq) this.forceRender = true;
-      return false;
-    }
-
-    if (this.forceRender) {
-      this.forceRender = false;
-      return true;
-    }
-
-    return !isEq;
-  }
-
-  hideWalletInsight = (type: string) => {
-    if (type === 'KEY') {
-      this.setState({ showKeyWalletInsight: false });
-    } else {
-      this.setState({ showSmartWalletInsight: false });
-    }
-  };
-
-  getScreenInfo = () => {
-    const {
-      navigation,
-      blockchainNetworks,
-      activeAccount,
-      availableStake,
-      PPNTransactions,
-      theme,
-    } = this.props;
-    const colors = getThemeColors(theme);
-
-    const { type: walletType } = activeAccount || {};
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', translationKey: '' };
-    const { id: activeBNetworkId, translationKey } = activeBNetwork;
-    const activeBNetworkTitle = t(translationKey);
-
-    switch (activeBNetworkId) {
-      case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
-        return {
-          label: getAccountName(walletType),
-          action: () => navigation.navigate(ACCOUNTS),
-          screenView: VIEWS.SMART_WALLET_VIEW,
-          customHeaderButtonProps: {
-            backgroundColor: colors.primaryAccent130,
-          },
-        };
-
-      default:
-        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
-        return {
-          label: activeBNetworkTitle,
-          action: () => navigation.navigate(ACCOUNTS),
-          screenView: VIEWS.PPN_VIEW,
-          customHeaderButtonProps: {
-            isActive: availableStake > 0 || hasUnsettledTx,
-            backgroundColor: getColorByThemeOutsideStyled(theme.current, {
-              lightCustom: 'transparent', darkKey: 'synthetic140',
-            }),
-            color: getColorByThemeOutsideStyled(theme.current, {
-              lightKey: 'basic010', darkKey: 'basic090',
-            }),
-            style: {
-              borderWidth: 1,
-              borderColor: getColorByThemeOutsideStyled(theme.current, {
-                lightKey: 'basic005', darkKey: 'synthetic140',
-              }),
-            },
-          },
-        };
-    }
-  };
-
-  getInsightsList = () => {
-    const {
-      backupStatus,
-      navigation,
-      useBiometrics,
-    } = this.props;
-    const { supportsBiometrics } = this.state;
-
-    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
-    const keyWalletInsights = [
-      {
-        key: 'backup',
-        title: t('insight.keyWalletIntro.description.backupWallet'),
-        status: isBackedUp,
-        onPress: !isBackedUp
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
-      },
-      {
-        key: 'pinCode',
-        title: t('insight.keyWalletIntro.description.setPinCode'),
-        status: true,
-      },
-    ];
-
-    if (supportsBiometrics) {
-      const biometricsInsight = {
-        key: 'biometric',
-        title: t('insight.keyWalletIntro.description.enableBiometrics'),
-        status: useBiometrics,
-        onPress: !useBiometrics
-          ? () => navigation.navigate(WALLET_SETTINGS)
-          : null,
-      };
-      return [...keyWalletInsights, biometricsInsight];
-    }
-
-    return keyWalletInsights;
-  };
-
-  renderView = (viewType: string, onScroll: Object => void) => {
-    const {
-      assets,
-      assetsState,
-      fetchInitialAssets,
-      accounts,
-      smartWalletState,
-    } = this.props;
-    const { showSmartWalletInsight } = this.state;
-
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
-
-    if (!Object.keys(assets).length && assetsState === FETCHED) {
-      return (
-        <Container center inset={{ bottom: 0 }}>
-          <BaseText style={{ marginBottom: 20 }}>{t('label.loadingDefaultAssets')}</BaseText>
-          {assetsState !== FETCH_INITIAL_FAILED && (
-            <Spinner />
-          )}
-          {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title={t('button.tryAgain')} onPress={() => fetchInitialAssets()} />
-          )}
-        </Container>
-      );
-    }
-
-    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
-      const deploymentHash = getDeploymentHash(smartWalletState);
-
-      if (deploymentHash) {
-        return (
-          <WalletActivation deploymentHash={deploymentHash} />
-        );
-      }
-    }
-
-    switch (viewType) {
-      case VIEWS.PPN_VIEW:
-        return <PPNView onScroll={onScroll} />;
-      case VIEWS.SMART_WALLET_VIEW:
-        return (
-          <WalletView
-            showInsight={showSmartWalletInsight}
-            hideInsight={() => this.hideWalletInsight('SMART')}
-            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
-            onScroll={onScroll}
-          />);
-      default:
-        return null;
-    }
-  };
-
-  render() {
-    const { activeAccount } = this.props;
-
-    const screenInfo = this.getScreenInfo();
-    const {
-      label: headerButtonLabel,
-      action: headerButtonAction,
-      screenView,
-      customHeaderButtonProps,
-    } = screenInfo;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          rightItems: activeAccount ? [{
-            actionButton: {
-              key: 'manageAccounts',
-              label: headerButtonLabel,
-              hasChevron: true,
-              onPress: headerButtonAction,
-              ...customHeaderButtonProps,
-            },
-          }] : null,
-          centerItems: [{
-            title: t('title.assets'),
-          }],
-          sideFlex: 5,
-        }}
-        inset={{ bottom: 0 }}
-        tab
-      >
-        {onScroll => this.renderView(screenView, onScroll)}
-      </ContainerWithHeader>
-    );
-  }
+  return (
+    <Container>
+      <HeaderBlock
+        centerItems={[{ title: t('title.assets') }]}
+        navigation={navigation}
+        noPaddingTop
+      />
+      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />
+    </Container>
+  );
 }
 
-const mapStateToProps = ({
-  accounts: { data: accounts },
-  wallet: { backupStatus },
-  assets: { assetsState },
-  appSettings: { data: { useBiometrics } },
-  badges: { data: badges },
-  smartWallet: smartWalletState,
-  blockchainNetwork: { data: blockchainNetworks },
-}: RootReducerState): $Shape<Props> => ({
-  backupStatus,
-  accounts,
-  assetsState,
-  useBiometrics,
-  badges,
-  smartWalletState,
-  blockchainNetworks,
-});
-
-const structuredSelector = createStructuredSelector({
-  collectibles: accountCollectiblesSelector,
-  assets: accountAssetsSelector,
-  activeAccount: activeAccountSelector,
-  availableStake: availableStakeSelector,
-  PPNTransactions: PPNIncomingTransactionsSelector,
-});
-
-const combinedMapStateToProps = (state) => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-});
-
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsScreen));
+export default Assets;

@@ -28,7 +28,7 @@ import darkThemeColors from './themes/darkTheme';
 
 const commonColors = {
   ethereum: '#497391',
-  binance: '#f7931a',
+  binance: '#f3ba2f',
   xdai: '#62a7a5',
   polygon: '#8247e5',
 };
@@ -41,6 +41,7 @@ export const lightThemeColorsOld = {
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
   secondaryText: '#8B939E',
+  background: lightThemeColors.basic070,
   border: '#EDEDED',
   positive: '#2AA057',
   positiveWeak: '#18e65b4c',
@@ -100,7 +101,8 @@ export const darkThemeColorsOld = {
   accent: '#818EB3',
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
-  secondaryText: '#8B939E',
+  secondaryText: darkThemeColors.basic030,
+  background: darkThemeColors.basic070,
   border: '#181F30',
   positive: '#00E097',
   positiveWeak: '#80ff924c',

@@ -91,7 +91,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
       return;
     }
 
-    navigateToAssetDetails(category);
+    navigateToAssetDetails(category, CHAIN.ETHEREUM);
   };
 
   const renderCategoryWithBalance = (category: $Keys<CategoryBalances>) => {

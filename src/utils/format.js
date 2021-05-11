@@ -102,7 +102,9 @@ export function formatPercentChange(value: ?BigNumber, options?: FormatValueOpti
  *   1234000 => '1.23M'
  *
  */
-export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOptions) {
+export function formatValueWithUnit(value: ?BigNumber | number, options?: FormatValueOptions) {
+  value = wrapBigNumber(value);
+
   if (!value || !value.isFinite()) return null;
 
   const threshold = 0.85;
@@ -127,18 +129,10 @@ export function formatValueWithUnit(value: ?BigNumber, options?: FormatValueOpti
 }
 
 /**
- * Common fiat formatting options:
- * @prop exact: whether to show the exact value, by default false, meaning it will use K, M, B units.
- */
- type FormatFiatOptions = {|
-  exact: boolean, // default: false
-|};
-
-/**
  * Format fiat value, for use cases such as balance.
  */
-export function formatFiatValue(value: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
-  const formattedValue = options?.exact ? formatValue(value, { decimalPlaces: 2 }) : formatValueWithUnit(value);
+export function formatFiatValue(value: ?BigNumber | number, currency?: string, options?: FormatValueOptions) {
+  const formattedValue = formatValue(value, { decimalPlaces: 2, ...options });
   if (!formattedValue) return null;
 
   return currency ? t('fiatValue', { value: formattedValue, symbol: getCurrencySymbol(currency) }) : formattedValue;
@@ -148,7 +142,7 @@ export function formatFiatValue(value: ?BigNumber, currency?: string, options?: 
  * Formats fiat change as `+ $100.00`.
  * Format fiat value with plus or minus sign, for use cases such as change in balance.
  */
-export function formatFiatChange(change: ?BigNumber, currency?: string, options?: FormatFiatOptions) {
+export function formatFiatChange(change: ?BigNumber, currency?: string, options?: FormatValueOptions) {
   const formattedAbsValue = formatFiatValue(change?.abs(), currency, options);
   if (!formattedAbsValue) return null;
 
@@ -156,7 +150,6 @@ export function formatFiatChange(change: ?BigNumber, currency?: string, options?
     ? t('positiveValue', { value: formattedAbsValue })
     : t('negativeValue', { value: formattedAbsValue });
 }
-
 
 /**
  * Formats profit as `+10.00% ($100.00)`.
@@ -174,7 +167,7 @@ export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?Bi
   // Special case missing/incorrect/negative balance.
   if (!initialBalance || !initialBalance.isFinite() || !initialBalance.gte(0)) return formattedChangeInFiat;
 
-  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance));
+  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance), { stripTrailingZeros: true });
 
   if (formattedChangeInFiat && formattedChangeInPercent) {
     return `${formattedChangeInPercent} (${formattedChangeInFiat})`;

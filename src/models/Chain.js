@@ -26,3 +26,10 @@ export const CHAIN = {
 };
 
 export type Chain = $Values<typeof CHAIN>;
+
+export type ChainRecord<T> = {|
+  polygon?: T,
+  binance?: T,
+  xdai?: T,
+  ethereum?: T,
+|};

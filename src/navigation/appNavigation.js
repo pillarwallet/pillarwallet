@@ -30,7 +30,7 @@ import { withTranslation } from 'react-i18next';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import AssetSearchScreen from 'screens/Assets/AssetSearch';
+import AssetSearchScreen from 'screens/AssetSearch/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -74,6 +74,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends/ReferFriendsScreen';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
+import PPNHomeScreen from 'screens/PPNHome/PPNHome';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -232,6 +233,7 @@ import {
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
   SERVICES,
+  PPN_HOME,
   STORYBOOK,
   WALLET_SETTINGS,
   COMMUNITY_SETTINGS,
@@ -644,6 +646,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [CONNECT_FLOW]: walletConnectFlow,
     [SERVICES_FLOW]: servicesFlow,
+    [PPN_HOME]: PPNHomeScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,

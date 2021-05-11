@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
+import { useTranslation } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -73,6 +73,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
 
 type AssetCategoryConfig = {|
   title: string,
+  titleShort: string,
   iconName: IconName,
   chartColor: string,
 |};
@@ -81,36 +82,42 @@ type AssetCategoryConfig = {|
  * Returns common UI aspects (texts, icons, color) for displaying asset categories.
  */
 export function useAssetCategoriesConfig(): { [key: AssetCategory]: AssetCategoryConfig } {
-  const { t } = useTranslationWithPrefix('assetCategories');
+  const { t } = useTranslation();
 
   return {
     [ASSET_CATEGORY.WALLET]: {
-      title: t('wallet'),
+      title: t('assetCategories.wallet'),
+      titleShort: t('assetCategoriesShort.wallet'),
       iconName: 'wallet',
       chartColor: '#e91e63',
     },
     [ASSET_CATEGORY.DEPOSITS]: {
-      title: t('deposits'),
+      title: t('assetCategories.deposits'),
+      titleShort: t('assetCategoriesShort.deposits'),
       iconName: 'deposit',
       chartColor: '#9c27b0',
     },
     [ASSET_CATEGORY.INVESTMENTS]: {
-      title: t('investments'),
+      title: t('assetCategories.investments'),
+      titleShort: t('assetCategoriesShort.investments'),
       iconName: 'investment',
       chartColor: '#5727b0',
     },
     [ASSET_CATEGORY.LIQUIDITY_POOLS]: {
-      title: t('liquidityPools'),
+      title: t('assetCategories.liquidityPools'),
+      titleShort: t('assetCategoriesShort.liquidityPools'),
       iconName: 'liquidity-pool',
       chartColor: '#276bb0',
     },
     [ASSET_CATEGORY.COLLECTIBLES]: {
-      title: t('collectibles'),
+      title: t('assetCategories.collectibles'),
+      titleShort: t('assetCategoriesShort.collectibles'),
       iconName: 'collectible',
       chartColor: '#e91e63',
     },
     [ASSET_CATEGORY.REWARDS]: {
-      title: t('rewards'),
+      title: t('assetCategories.rewards'),
+      titleShort: t('assetCategoriesShort.rewards'),
       iconName: 'reward',
       chartColor: '#57acdc',
     },

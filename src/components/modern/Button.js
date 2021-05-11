@@ -37,6 +37,7 @@ type Props = {|
   title?: string,
   onPress: () => mixed,
   variant?: Variant,
+  compact?: boolean,
   style?: ViewStyleProp,
 |};
 
@@ -44,10 +45,11 @@ function Button({
   title,
   onPress,
   variant = 'primary',
+  compact,
   style,
 }: Props) {
   return (
-    <TouchableContainer onPress={onPress} variant={variant} style={style}>
+    <TouchableContainer onPress={onPress} variant={variant} style={style} compact={compact}>
       <Title variant={variant}>{title}</Title>
     </TouchableContainer>
   );
@@ -59,11 +61,12 @@ const TouchableContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  width: 100%;
-  padding: 14px ${spacing.large}px;
+  ${({ compact }) => !compact && 'width: 100%;'}
+  ${({ compact }) =>
+    !compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}
   ${({ theme, variant }) => variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, variant }) =>
-    variant === 'secondary' ? `background-color: ${theme.colors.buttonSecondaryBackground}` : ''};
+    variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
 const Title = styled(Text)`

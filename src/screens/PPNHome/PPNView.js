@@ -148,7 +148,9 @@ const INCOMING = 'INCOMING';
 const SENT = 'SENT';
 const SETTLED = 'SETTLED';
 
-
+/**
+ * This is legacy PPN Home screen extracted from legacy Assets screen.
+ */
 class PPNView extends React.Component<Props, State> {
   state = {
     activeTab: INCOMING,

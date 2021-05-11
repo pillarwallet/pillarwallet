@@ -80,17 +80,20 @@
     "wallet": "Wallet",
     "deposits": "Deposits",
     "investments": "Investments",
-    "liquidityPools": "Pools",
+    "liquidityPools": "Liquidity pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
     "collectibles": "Collectibles"
   },
 
-  "navigationTabs": {
-    "home": "Home",
-    "assets": "Assets",
-    "connect": "Connect",
-    "services": "Services"
+  "assetCategoriesShort": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
+    "liquidityPools": "Pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles"
   },
 
   "title": {
@@ -138,6 +141,7 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
+    "currentApyFormat": "Current APY: {{value}}",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -257,6 +261,7 @@
     "activate": "Activate",
     "activatePPN": "Activate Pillar Network",
     "add": "Add",
+    "addCash": "Add cash",
     "addContact": "Add contact",
     "addContacts": "Add contacts",
     "addDetails": "Add details",
@@ -303,6 +308,7 @@
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
+    "swap": "Swap",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -570,9 +576,7 @@
 
   "home": {
     "balance": {
-      "addCash": "Add Cash",
-      "lastWeek": "Last week",
-      "hint": "Start by adding cash"
+      "lastWeek": "Last week"
     },
     "assets": {
       "contacts": "Contacts",
@@ -588,6 +592,28 @@
 
   "history": {
     "title": "Transactions history"
+  },
+
+  "assets": {
+    "wallet": {
+      "pillarPay": {
+        "title": "Pillar Pay",
+        "topUp": "Top up",
+        "hint": "Transfer any token for free from your PLR balance."
+      }
+    },
+    "deposits": {
+      "deposit": "Deposit"
+    },
+    "investments": {
+      "invest": "Invest"
+    },
+    "liquidityPools": {
+      "addLiquidity": "Add liquidity"
+    },
+    "rewards": {
+      "availableToClaim": "Available to claim"
+    }
   },
 
   "badgeText": {
@@ -616,6 +642,7 @@
       }
     },
     "title": {
+      "home": "Pillar Payment Network",
       "settleTransactionsScreen": "Settle transactions",
       "fundTankScreen": "Fund PLR tank",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",

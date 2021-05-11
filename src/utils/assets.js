@@ -21,10 +21,11 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
+import { orderBy } from 'lodash';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -295,6 +296,10 @@ export const getAssetDataByAddress = (
   || {};
 };
 
+export const getAssetFromRegistry = (assetRegistry: Asset[], symbol: string): ?Asset => {
+  return assetRegistry.find((asset) => asset.symbol === symbol);
+};
+
 export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
   let assetSymbol = null;
   if (!address) return assetSymbol;
@@ -427,4 +432,27 @@ export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency:
     return 0;
   }
   return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};
+
+/**
+ * Sort asset options with default priority
+ */
+export const defaultSortAssetOptions = (options: AssetOption[]): AssetOption[] => {
+  return orderBy(
+    options,
+    [
+      (option: AssetOption) => getAssetOptionSortPriority(option),
+      (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
+      (option: AssetOption) => option.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
+
+export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetOption) => {
+  if (balance?.balance && symbol === ETH) return 4;
+  if (balance?.balance && symbol === PLR) return 3;
+  if (balance?.balance) return 2;
+  if (imageUrl) return 1;
+  return 0;
 };
