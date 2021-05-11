@@ -27,7 +27,6 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
-import Tooltip from 'components/Tooltip';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
@@ -47,7 +46,7 @@ type Props = {|
 |};
 
 function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
-  const { t } = useTranslationWithPrefix('home.balance');
+  const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
 
   const fiatCurrency = useFiatCurrency();
@@ -60,13 +59,11 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
   }, [accountAddress]);
 
-  const showHint = balanceInFiat.isZero();
-
   return (
     <Container>
       <FirstColumn>
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(balanceInFiat, fiatCurrency, { exact: true })}
+          {formatFiatValue(balanceInFiat, fiatCurrency)}
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>
@@ -77,9 +74,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
       </FirstColumn>
 
       <SecondColumn>
-        <Tooltip body={t('hint')} isVisible={showHint}>
-          <SpecialButton title={t('addCash')} iconName="add-cash" onPress={handleAddFunds} />
-        </Tooltip>
+        <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={handleAddFunds} />
       </SecondColumn>
     </Container>
   );

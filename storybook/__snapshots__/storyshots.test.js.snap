@@ -39340,7 +39340,7 @@ exports[`Storyshots FloatingButtons 1 item 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -39447,7 +39447,7 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -39509,7 +39509,7 @@ exports[`Storyshots FloatingButtons 2 items 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -39616,7 +39616,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -39678,7 +39678,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -39740,7 +39740,7 @@ exports[`Storyshots FloatingButtons 3 items 1`] = `
             "alignItems": "center",
             "opacity": 1,
             "paddingBottom": 12,
-            "paddingHorizontal": 12,
+            "paddingHorizontal": 4,
             "paddingTop": 16,
           }
         }
@@ -40031,7 +40031,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
               "alignItems": "center",
               "opacity": 1,
               "paddingBottom": 12,
-              "paddingHorizontal": 12,
+              "paddingHorizontal": 4,
               "paddingTop": 16,
             }
           }
@@ -40093,7 +40093,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
               "alignItems": "center",
               "opacity": 1,
               "paddingBottom": 12,
-              "paddingHorizontal": 12,
+              "paddingHorizontal": 4,
               "paddingTop": 16,
             }
           }
@@ -40155,7 +40155,7 @@ exports[`Storyshots FloatingButtons With flat list 1`] = `
               "alignItems": "center",
               "opacity": 1,
               "paddingBottom": 12,
-              "paddingHorizontal": 12,
+              "paddingHorizontal": 4,
               "paddingTop": 16,
             }
           }

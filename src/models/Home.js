@@ -19,13 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-
-type ChainRecord<T> = {|
-  ethereum: T,
-  binance?: T,
-  xdai?: T,
-  polygon?: T,
-|}
+import type { ChainRecord } from 'models/Chain';
 
 export type CategoryBalancesPerChain = ChainRecord<CategoryBalances>;
 

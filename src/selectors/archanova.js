@@ -126,3 +126,8 @@ export const useSupportedChains = (): Chain[] => {
 
   return [CHAIN.ETHEREUM];
 };
+
+export const useIsPillarPaySupported = () => {
+  const smartWalletType = useSmartWalletType();
+  return smartWalletType === SMART_WALLET_TYPE.ARCHANOVA;
+};
