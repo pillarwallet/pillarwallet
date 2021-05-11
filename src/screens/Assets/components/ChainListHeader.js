@@ -52,6 +52,7 @@ function ChainListHeader({ chain, onPress, balance }: Props) {
   return (
     <TouchableContainer onPress={onPress}>
       <Text variant="medium" color={color}>
+        {/* eslint-disable-next-line i18next/no-literal-string */}
         {title}{fiatValue != null && ` · ${fiatValue}`}
       </Text>
     </TouchableContainer>

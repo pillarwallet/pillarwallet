@@ -71,8 +71,7 @@
         "top:",
         "transparent",
         "width:",
-        "z-index",
-        "·",
+        "z-index"
       ],
       "ignoreCallee": [
         "Buffer.from",

@@ -66,6 +66,7 @@ function WalletListItem({ title, iconUrl, value, change, symbol, onPress }: Prop
           {title}
         </Text>
         <Text color={colors.secondaryText}>
+          {/* eslint-disable-next-line i18next/no-literal-string */}
           {tokenValue} · {unitPrice}
         </Text>
       </TitleContainer>
