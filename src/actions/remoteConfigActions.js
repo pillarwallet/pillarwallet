@@ -24,7 +24,7 @@ import { firebaseRemoteConfig, firebaseAnalytics } from 'services/firebase';
 import { reportLog } from 'utils/common';
 import { log } from 'utils/logger';
 import { isTest } from 'utils/environment';
-import { getEnsName } from 'utils/accounts';
+import { getAccountEnsName, getActiveAccount } from 'utils/accounts';
 import { getEnv } from 'configs/envConfig';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -55,7 +55,7 @@ export const setUserPropertiesAction = () => (
   const { accounts: { data: accounts } } = getState();
 
   const properties = {
-    ens: getEnsName(accounts),
+    ens: getAccountEnsName(getActiveAccount(accounts)),
     network: getEnv().NETWORK_PROVIDER,
     buildNumber: DeviceInfo.getBuildNumber(),
     appVersion: DeviceInfo.getVersion(),

@@ -19,7 +19,9 @@
 */
 
 import get from 'lodash.get';
-import { sdkConstants } from '@smartwallet/sdk';
+
+// actions
+import { reserveEtherspotEnsNameAction } from 'actions/etherspotActions';
 
 // constants
 import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
@@ -28,23 +30,44 @@ import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ens
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // utils
-import { lookupAddress } from 'utils/common';
+import {
+  getEnsName,
+  lookupAddress,
+  reportErrorLog,
+  resolveEnsName,
+} from 'utils/common';
+import { findFirstArchanovaAccount } from 'utils/accounts';
+
+// selectors
+import { accountsSelector } from 'selectors';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { setSmartWalletEnsNameAction } from './smartWalletActions';
 
 
-export const setUserEnsIfEmptyAction = () => {
+export const setEnsNameIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const user = get(getState(), 'user.data', {});
-    const accountState = get(getState(), 'smartWallet.connectedAccount.state');
-    const ensName = get(getState(), 'smartWallet.connectedAccount.ensName');
+    const user = getState().user.data;
+    const { username } = user;
 
-    // check if user needs to set the ens name
-    if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletEnsNameAction(user.username));
+    if (!username) {
+      reportErrorLog('checkUserENSNameAction failed: no username', { user });
+      return;
     }
+
+    const fullEnsName = getEnsName(username);
+    const resolvedAddress = await resolveEnsName(fullEnsName);
+
+    // if address is resolved then it's either already taken or reserved
+    if (resolvedAddress) return;
+
+    const accounts = accountsSelector(getState());
+    const legacySmartWallet = findFirstArchanovaAccount(accounts);
+
+    // perform clean Etherspot ENS reserve only for new accounts that does not have any Archanova account
+    if (legacySmartWallet) return;
+
+    dispatch(reserveEtherspotEnsNameAction(username));
   };
 };
 

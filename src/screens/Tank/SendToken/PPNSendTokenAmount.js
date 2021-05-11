@@ -41,7 +41,7 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload } from 'models/Transaction';
+import type { TransactionPayload } from 'models/Transaction';
 import type { Rates } from 'models/Asset';
 
 // constants
@@ -141,7 +141,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
 
     if (!value) return;
-    const transactionPayload: TokenTransactionPayload = {
+    const transactionPayload: TransactionPayload = {
       to: this.receiver,
       amount: value.amount,
       gasLimit: 0,

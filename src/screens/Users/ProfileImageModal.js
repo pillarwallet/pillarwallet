@@ -39,14 +39,14 @@ import Camera from 'components/Camera';
 
 // selectors
 import { usernameSelector, updatedProfileImageSelector, walletIdSelector } from 'selectors/user';
-import { accountsSelector } from 'selectors/selectors';
+import { activeAccountSelector } from 'selectors/selectors';
 
 // actions
 import { updateUserAvatarAction } from 'actions/userActions';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
-// utlis
-import { getEnsName } from 'utils/accounts';
+// utils
+import { getAccountEnsName } from 'utils/accounts';
 import { reportLog } from 'utils/common';
 
 // partials
@@ -60,7 +60,7 @@ const Wrapper = styled.View`
 const ProfileImageModal: AbstractComponent<{||}> = () => {
   const profileImage = useSelector(updatedProfileImageSelector);
   const username = useSelector(usernameSelector) ?? '';
-  const ensName = getEnsName(useSelector(accountsSelector));
+  const ensName = getAccountEnsName(useSelector(activeAccountSelector));
   const walletId = useSelector(walletIdSelector);
 
   const dispatch = useDispatch();
@@ -121,8 +121,12 @@ const ProfileImageModal: AbstractComponent<{||}> = () => {
       noPadding
     >
       <Wrapper>
-        <MediumText medium center>{ensName}</MediumText>
-        <Spacing h={19} />
+        {!!ensName && (
+          <>
+            <MediumText medium center>{ensName}</MediumText>
+            <Spacing h={19} />
+          </>
+        )}
         <ProfileImage
           uri={profileImage}
           userName={username}

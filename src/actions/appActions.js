@@ -47,12 +47,12 @@ import {
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_DEPLOYMENT_DATA,
-  SET_SMART_WALLET_UPGRADE_STATUS,
-  SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
-  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNTS,
+  SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
+  SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
+  SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
+  SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID,
+} from 'constants/archanovaConstants';
 import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
@@ -69,6 +69,7 @@ import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_RARI_USER_DATA } from 'constants/rariConstants';
+import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -208,11 +209,11 @@ export const initAppAndRedirectAction = () => {
         lastSyncedPaymentId = null,
         lastSyncedTransactionId = null,
       } = get(storageData, 'smartWallet', {});
-      dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
-      dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
-      dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
-      dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
+      dispatch({ type: SET_ARCHANOVA_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
+      dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: smartAccounts });
+      dispatch({ type: SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
+      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
+      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
@@ -221,6 +222,9 @@ export const initAppAndRedirectAction = () => {
 
       const rariData = get(storageData, 'rari');
       if (rariData) dispatch({ type: SET_RARI_USER_DATA, payload: rariData });
+
+      const historyLastSyncIds = get(storageData, 'historyLastSyncIds');
+      if (historyLastSyncIds) dispatch({ type: SET_HISTORY_LAST_SYNC_IDS, payload: historyLastSyncIds });
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });

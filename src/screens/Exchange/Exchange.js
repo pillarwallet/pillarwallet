@@ -48,26 +48,27 @@ import { fetchBitcoinRateAction } from 'actions/ratesActions';
 
 // constants
 import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 
 // utils, services
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
 import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
 import { gatherWBTCFeeData, showWbtcErrorToast, isWbtcCafeActive } from 'services/wbtcCafe';
+import { isArchanovaAccount } from 'utils/accounts';
 
 import { noop } from 'utils/common';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { activeAccountSelector } from 'selectors';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
 import type { Asset, Assets, AssetOption, Balances, Rates } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
+import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
@@ -86,6 +87,7 @@ import {
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
 import WBTCCafeInfo from './WBTCCafeInfo';
+
 
 type Props = {
   rates: Rates,
@@ -108,13 +110,13 @@ type Props = {
   hasSeenExchangeIntro: boolean,
   updateHasSeenExchangeIntro: () => void,
   theme: Theme,
-  isActiveAccountSmartWallet: boolean,
   offers: Offer[],
   wbtcFees: ?WBTCFeesRaw,
   getWbtcFees: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
   getBtcRate: () => void,
+  activeAccount: ?Account
 };
 
 type State = {
@@ -126,7 +128,6 @@ type State = {
   isFormValid: boolean,
   wbtcData: ?WBTCFeesWithRate,
 };
-
 
 const FormWrapper = styled.View`
   padding: 24px 40px 60px;
@@ -339,11 +340,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.emptyMessageTimeout = null;
   };
 
-  checkIfAssetsExchangeIsAllowed = () => {
-    const { accounts, smartWalletState, isActiveAccountSmartWallet } = this.props;
-    if (!isActiveAccountSmartWallet) return true;
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+  isAssetsExchangeAllowed = (): boolean => {
+    const { accounts, smartWalletState, activeAccount } = this.props;
+    if (!isArchanovaAccount(activeAccount)) return true;
+
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+    return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
   };
 
   provideOptions = (): ExchangeOptions => {
@@ -383,6 +385,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       isFetchingUniswapTokens,
       uniswapTokensGraphQueryFailed,
       getExchangeSupportedAssets,
+      activeAccount,
     } = this.props;
 
     const {
@@ -402,8 +405,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
     const deploymentData = getDeploymentData(smartWalletState);
-    const blockView = shouldBlockView(smartWalletState, accounts);
-    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
+    const blockView = isArchanovaAccount(activeAccount) && shouldBlockView(smartWalletState, accounts);
+    const disableNonFiatExchange = !this.isAssetsExchangeAllowed();
 
     return (
       <ContainerWithHeader
@@ -494,7 +497,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
-  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

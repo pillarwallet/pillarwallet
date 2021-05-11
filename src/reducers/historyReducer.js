@@ -19,15 +19,26 @@
 */
 import get from 'lodash.get';
 import { REHYDRATE } from 'redux-persist';
-import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO, UPDATING_TRANSACTION } from 'constants/historyConstants';
-import type { TransactionsStore } from 'models/Transaction';
+import {
+  SET_HISTORY,
+  ADD_TRANSACTION,
+  SET_GAS_INFO,
+  UPDATING_TRANSACTION,
+  SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
+  SET_HISTORY_LAST_SYNC_IDS,
+} from 'constants/historyConstants';
+import type {
+  HistoryLastSyncIds,
+  TransactionsStore,
+} from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 
 export type HistoryReducerState = {
   data: TransactionsStore,
   gasInfo: GasInfo,
   isFetched: boolean,
-  updatingTransaction: string,
+  updatingTransaction: ?string,
+  historyLastSyncIds?: HistoryLastSyncIds,
 }
 
 export type HistoryAction = {
@@ -42,13 +53,15 @@ export const initialState = {
     isFetched: false,
   },
   isFetched: false,
-  updatingTransaction: '',
+  updatingTransaction: null,
 };
 
 export default function historyReducer(
   state: HistoryReducerState = initialState,
   action: HistoryAction,
 ): HistoryReducerState {
+  const { historyLastSyncIds = {} } = state;
+
   switch (action.type) {
     case REHYDRATE:
       return {
@@ -71,16 +84,19 @@ export default function historyReducer(
       return Object.assign(
         {},
         state,
-        { isFetched: true, data: action.payload, updatingTransaction: '' },
+        { isFetched: true, data: action.payload, updatingTransaction: null },
       );
-    case SET_GAS_INFO: {
+    case SET_GAS_INFO:
       const gasPriceInfo = action.payload;
       const isGasFetched = !!Object.keys(gasPriceInfo).length;
       return { ...state, gasInfo: { gasPrice: gasPriceInfo, isFetched: isGasFetched } };
-    }
-    case UPDATING_TRANSACTION: {
+    case UPDATING_TRANSACTION:
       return { ...state, updatingTransaction: action.payload };
-    }
+    case SET_HISTORY_LAST_SYNC_IDS:
+      return { ...state, historyLastSyncIds: { ...historyLastSyncIds, ...action.payload } };
+    case SET_ACCOUNT_HISTORY_LAST_SYNC_ID:
+      const { accountId, lastSyncId } = action.payload;
+      return { ...state, historyLastSyncIds: { ...historyLastSyncIds, [accountId]: lastSyncId } };
     default:
       return state;
   }

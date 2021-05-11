@@ -22,31 +22,34 @@ import { createSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
-import { checkIfSmartWalletAccount } from 'utils/accounts';
+import { accountHasGasTokenSupport, getArchanovaWalletStatus } from 'utils/archanova';
+import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
+import { getEnsPrefix } from 'utils/common';
+import { isProdEnv } from 'utils/environment';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
-// selectors
-import { activeAccountSelector } from 'selectors';
-
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
+
+// local
+import { accountsSelector } from './selectors';
+import { archanovaAccountHistorySelector } from './history';
 
 
-export const isSmartWalletActivatedSelector = ({
+export const isArchanovaWalletActivatedSelector = ({
   accounts: { data: accounts },
   smartWallet,
 }: RootReducerState,
 ) => {
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWallet);
-  return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
+  return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
 export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } }: RootReducerState) => {
@@ -66,9 +69,24 @@ export const useGasTokenSelector = createSelector(
   },
 );
 
-export const isActiveAccountSmartWalletSelector = createSelector(
-  activeAccountSelector,
-  (activeAccount) => {
-    return activeAccount && checkIfSmartWalletAccount(activeAccount);
+/**
+ * return ENS needed if there was no ENS marked transaction sent
+ * on any environment (for test purposes as there is no ENS on Kovan testnet)
+ * or there's existing ENS name on Archanova account on homestead (Mainnet) environment
+ */
+export const isEnsMigrationNeededSelector = createSelector(
+  accountsSelector,
+  archanovaAccountHistorySelector,
+  (accounts, archanovaAccountHistory) => {
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+    const isEnsMigrationNeeded = archanovaAccount
+      && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
+
+    const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(({
+      extra,
+    }) => extra?.isENSMigrationToEtherspot);
+
+    return isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent && isEnsMigrationNeeded;
   },
 );

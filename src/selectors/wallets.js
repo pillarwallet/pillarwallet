@@ -17,67 +17,53 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { sortBy, isEmpty } from 'lodash';
 import { createSelector } from 'reselect';
-import { getAccountAddress, getAccountName, getInactiveUserAccounts, isNotKeyBasedType } from 'utils/accounts';
-import { images } from 'utils/images';
-import { getThemeByType } from 'utils/themes';
+
+// constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// utils
+import { isSmartWalletAccount } from 'utils/accounts';
+
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
+
+// local selectors
 import {
   accountsSelector,
   activeAccountSelector,
   activeBlockchainSelector,
-  themeSelector,
 } from './selectors';
+
 
 export const activeWalletSelector = createSelector(
   activeAccountSelector,
   activeBlockchainSelector,
-  (activeAccount) => {
-    return activeAccount;
-  },
+  (activeAccount) => activeAccount,
 );
 
 export const availableWalletsSelector = createSelector(
   accountsSelector,
   activeBlockchainSelector,
   (accounts) => {
-    const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const availableWallets = [{ ...keyWallet }];
+    const availableWallets = [];
 
-    const smartWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-    if (smartWallet) {
-      availableWallets.unshift({
+    const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    if (keyWallet) availableWallets.push(keyWallet);
+
+    accounts.filter(isSmartWalletAccount).forEach((smartWallet) => {
+      availableWallets.push({
         ...smartWallet,
         isActive: smartWallet.isActive,
       });
-    }
+    });
 
-    return availableWallets;
-  },
-);
-
-export const inactiveUserWalletForSendSelector = createSelector(
-  accountsSelector, themeSelector, (accounts, themeType) => {
-    return getInactiveUserAccounts(accounts)
-      .filter(isNotKeyBasedType)
-      .map(account => {
-        const accountName = getAccountName(account.type);
-        const theme = getThemeByType(themeType);
-        const { smartWalletIcon } = images(theme);
-        const { keyWalletIcon } = images(theme);
-        const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
-
-        return {
-          ...account,
-          ethAddress: getAccountAddress(account),
-          username: accountName,
-          name: accountName,
-          isUserAccount: true,
-          imageSource: walletIcon,
-        };
-      });
+    // etherspot account first
+    return sortBy(
+      availableWallets,
+      ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
+    );
   },
 );
 

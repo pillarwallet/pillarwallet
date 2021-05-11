@@ -30,7 +30,7 @@ import t from 'translations/translate';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -55,9 +55,9 @@ import {
   SEND_SYNTHETIC_AMOUNT,
 } from 'constants/navigationConstants';
 import {
-  PAYMENT_COMPLETED,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
+  ARCHANOVA_PPN_PAYMENT_COMPLETED,
+  ARCHANOVA_WALLET_UPGRADE_STATUSES,
+} from 'constants/archanovaConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -66,7 +66,7 @@ import {
 
 // types
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -76,10 +76,10 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, isDeployingArchanovaWallet, isHiddenUnsettledTransaction } from 'utils/archanova';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { findFirstSmartAccount, getAccountId } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
@@ -101,7 +101,7 @@ type Props = {
   smartWalletState: Object,
   PPNTransactions: Transaction[],
   history: Object[],
-  fetchSmartWalletTransactions: () => void,
+  fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
@@ -175,9 +175,9 @@ class PPNView extends React.Component<Props, State> {
       balances,
       smartWalletState,
     } = this.props;
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
     if (isDeploying) {
       return (
         <InsightWithButton
@@ -195,16 +195,16 @@ class PPNView extends React.Component<Props, State> {
       );
     }
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-    if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-      const smartWalletAccountId = getAccountId(smartWalletAccount);
-      const accountBalances: Balances = balances[smartWalletAccountId];
-      const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
+    if (archanovaAccount && archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+      const archanovaAccountId = getAccountId(archanovaAccount);
+      const accountBalances: Balances = balances[archanovaAccountId];
+      const hasPLRInArchanovaWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
 
       if (!availableStake) {
         const insightProps = {};
-        if (!hasPLRInSmartWallet) {
+        if (!hasPLRInArchanovaWallet) {
           insightProps.buttonTitle = t('button.notEnoughPLR');
           insightProps.buttonProps = { disabled: true, secondary: true };
           insightProps.footerChildren = (
@@ -228,7 +228,7 @@ class PPNView extends React.Component<Props, State> {
       }
 
       return null;
-    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
+    } else if (archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
       return (
         <InsightWithButton
           title={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.title')}
@@ -236,7 +236,7 @@ class PPNView extends React.Component<Props, State> {
             t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.instantTransactions'),
             t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.singleTokenExperience')]}
           buttonTitle={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.button.activatePPN')}
-          onButtonPress={this.openSmartWalletModal}
+          onButtonPress={this.openArchanovaActivationModal}
         />
       );
     }
@@ -244,9 +244,7 @@ class PPNView extends React.Component<Props, State> {
     return null;
   };
 
-  openSmartWalletModal = () => {
-    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
-  };
+  openArchanovaActivationModal = () => Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
 
   render() {
     const { activeTab } = this.state;
@@ -261,7 +259,7 @@ class PPNView extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       history,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       theme,
       onScroll,
       activeAccountAddress,
@@ -281,14 +279,14 @@ class PPNView extends React.Component<Props, State> {
     }
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
-    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    const sendingBlockedMessage = smartWalletUpgradeStatus === ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
         title: t('insight.smartWalletActivate.default.title'),
         message: t('insight.smartWalletActivate.default.description'),
       }
-      : smartWalletStatus.sendingBlockedMessage || {};
+      : archanovaWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = !!Object.keys(sendingBlockedMessage).length;
 
     const PPNTransactionsMapped = mapTransactionsHistory(
@@ -317,7 +315,7 @@ class PPNView extends React.Component<Props, State> {
         default:
           if (addressesEqual(from, activeAccountAddress) && !addressesEqual(to, activeAccountAddress)) {
             filtered.sent = sent.concat(transaction);
-          } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
+          } else if (stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
             filtered.incoming = incoming.concat(transaction);
             filtered.unsettledCount += 1;
           }
@@ -370,7 +368,7 @@ class PPNView extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchSmartWalletTransactions();
+                fetchTransactionsHistory();
                 fetchVirtualAccountBalance();
               }}
             />
@@ -489,7 +487,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

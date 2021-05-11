@@ -48,7 +48,6 @@ import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
@@ -64,15 +63,14 @@ import {
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
+  findFirstArchanovaAccount,
   findFirstEtherspotAccount,
-  findFirstSmartAccount,
-  getActiveAccountType,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
 import Storage from 'services/storage';
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
@@ -85,13 +83,13 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
+import { initOnLoginArchanovaAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
   checkForWalletBackupToastAction,
   updatePinAttemptsAction,
 } from './walletActions';
-import { fetchSmartWalletTransactionsAction } from './historyActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
@@ -102,7 +100,6 @@ import {
   checkAndFinishSmartWalletRecoveryAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
-import { importSmartWalletAccountsAction } from './smartWalletActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
@@ -112,6 +109,7 @@ import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
 } from './etherspotActions';
+import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
 
 
@@ -216,7 +214,7 @@ export const loginAction = (
       if (getState().wallet.backupStatus.isRecoveryPending) {
         dispatch({ type: SET_WALLET, payload: unlockedWallet });
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
+        await archanovaService.init(
           decryptedPrivateKey,
           (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
         );
@@ -252,18 +250,14 @@ export const loginAction = (
 
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
 
-      // init smart wallet
-      await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
+      // Archanova init flow
+      const archanovaAccount = findFirstArchanovaAccount(accounts);
+      if (archanovaAccount) {
+        await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
+      }
 
       // init Etherspot SDK
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
-
-      const smartWalletAccount = findFirstSmartAccount(accounts);
-
-      // key based wallet migration – switch to smart wallet if key based was active
-      if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
-        await dispatch(setActiveAccountAction(smartWalletAccount.id));
-      }
 
       /**
        * set Ethereum network as active if we disable feature flag
@@ -282,17 +276,13 @@ export const loginAction = (
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
 
-        // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
-        if (!smartWalletAccount) {
-          // this will import and set Smart Wallet as current active account
-          await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+        // create etherspot account if does not exist, this also applies as migration from old key based wallets
+        const etherspotAccount = findFirstEtherspotAccount(accounts);
+        if (!etherspotAccount) {
+          dispatch(importEtherspotAccountsAction()); // imports and sets as active
         }
 
-        // silent Etherspot Smart Wallet creation
-        const etherspotSmartWalletAccount = findFirstEtherspotAccount(accounts);
-        if (!etherspotSmartWalletAccount) {
-          dispatch(importEtherspotAccountsAction());
-        }
+        dispatch(setEnsNameIfNeededAction());
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
@@ -320,7 +310,7 @@ export const loginAction = (
           }
 
           dispatch(getWalletsCreationEventsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchReferralRewardAction());
 
           firebaseCrashlytics.setUserId(user.username);
@@ -512,7 +502,7 @@ export const resetAppServicesAction = () => {
      *  portal recovery initially resets smart wallet instance in order to create it's own
      */
     if (!getState().onboarding.isPortalRecovery) {
-      await smartWalletService.reset();
+      await archanovaService.reset();
     }
 
     await etherspotService.logout();

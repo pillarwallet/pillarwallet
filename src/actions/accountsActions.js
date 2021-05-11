@@ -18,10 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkConstants } from '@smartwallet/sdk';
+import { isEqual } from 'lodash';
 
 // constants
 import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
@@ -29,26 +30,27 @@ import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockcha
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
-  checkIfSmartWalletWasRegisteredAction,
-  connectSmartWalletAccountAction,
-  initSmartWalletSdkAction,
+  checkIfArchanovaWalletWasRegisteredAction,
+  connectArchanovaAccountAction,
+  initArchanovaSdkAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+import { connectEtherspotAccountAction } from 'actions/etherspotActions';
+import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
 
 // utils
-import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
 import { navigate } from 'services/navigation';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { accountsSelector, activeAccountSelector } from 'selectors';
 
 // types
 import type { AccountExtra, AccountTypes } from 'models/Account';
@@ -98,6 +100,31 @@ export const addAccountAction = (
   };
 };
 
+export const updateAccountExtraIfNeededAction = (
+  accountId: string,
+  accountExtra: AccountExtra,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+    const accountIndex = accounts.findIndex((account) => getAccountId(account) === accountId);
+    if (accountIndex === -1) return;
+
+    const accountExtraNeedsUpdate = !isEqual(accounts[accountIndex]?.extra, accountExtra);
+    if (!accountExtraNeedsUpdate) return;
+
+    const updatedAccounts = accounts.reduce((updated, account) => {
+      if (getAccountId(account) === accountId) {
+        return [...updated, { ...account, extra: accountExtra }];
+      }
+
+      return [...updated, account];
+    }, []);
+
+    dispatch({ type: UPDATE_ACCOUNTS, payload: updatedAccounts });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
 export const removeAccountAction = (accountAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -136,20 +163,20 @@ export const setActiveAccountAction = (accountId: string) => {
     });
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
 
-    if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
+    if (account.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET || !account.extra) return;
 
     const { state = '' } = connectedAccount;
     if (state === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       return;
     }
     if ([
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
+      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
     ].includes(upgradeStatus)) {
       return;
     }
-    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
+    dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
   };
 };
 
@@ -159,30 +186,34 @@ export const switchAccountAction = (accountId: string) => {
       accounts: { data: accounts },
       smartWallet: { sdkInitialized },
     } = getState();
-    const account = accounts.find(_acc => _acc.id === accountId) || {};
+
+    const activeAccount = accounts.find((account) => getAccountId(account) === accountId);
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
-      if (sdkInitialized) {
-        await dispatch(connectSmartWalletAccountAction(accountId));
-        dispatch(setUserEnsIfEmptyAction());
-      } else {
+    if (activeAccount?.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
+      if (!sdkInitialized) {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
       }
+
+      await dispatch(connectArchanovaAccountAction(accountId));
+    } else if (activeAccount?.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
+      dispatch(connectEtherspotAccountAction(accountId));
     }
 
+    dispatch(setActiveAccountAction(accountId));
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
-    dispatch(fetchSmartWalletTransactionsAction());
+    dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+    dispatch(updateWalletConnectSessionsByActiveAccount());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };
 
-export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
+export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
@@ -190,15 +221,15 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       user: { data: user },
     } = getState();
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
-    await dispatch(initSmartWalletSdkAction(privateKey, true));
+    await dispatch(initArchanovaSdkAction(privateKey, true));
 
     const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
-    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
+    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET; // set to active routine
+    await dispatch(connectArchanovaAccountAction(smartWalletAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 
     if (setAccountActive && blockchainNetwork) {
@@ -212,8 +243,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     // following code should not be done if user is not registered on back-end
     if (!user?.walletId) return;
 
-    dispatch(setUserEnsIfEmptyAction());
-    dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
+    dispatch(checkIfArchanovaWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };
 
@@ -222,7 +252,7 @@ export const fallbackToSmartAccountAction = () => {
     const activeAccount = activeAccountSelector(getState());
     const { accounts: { data: accounts } } = getState();
     if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
-      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
+      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET)
      || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
       if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
     }
