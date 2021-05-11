@@ -63,9 +63,16 @@
   },
 
   "chains": {
-    "ethereum": "Ethereum",
+    "ethereum": "Ethereum Mainnet",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
+    "polygon": "Polygon"
+  },
+
+  "chainsShort": {
+    "ethereum": "Mainnet",
+    "binance": "BSC",
+    "xdai": "xDai",
     "polygon": "Polygon"
   },
 
@@ -266,6 +273,7 @@
     "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
+    "deploy": "Deploy",
     "explore": "Explore",
     "exchange": "Exchange",
     "exchangeMore": "Exchange more",
@@ -563,16 +571,15 @@
   "home": {
     "balance": {
       "addCash": "Add Cash",
-      "lastWeek": "Last week"
+      "lastWeek": "Last week",
+      "hint": "Start by adding cash"
     },
     "assets": {
       "contacts": "Contacts",
       "services": "Services"
     },
-    "controls": {
-      "sideChains": "Layer 2"
-    },
     "actions": {
+      "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
       "connect": "Connect"

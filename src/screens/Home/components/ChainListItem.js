@@ -20,49 +20,48 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { useTranslation } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
 import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
-
-// Type
-import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
-  iconName: IconName,
   onPress: ?() => mixed,
   value?: ?string,
-  secondaryValue?: ?string,
-  secondaryValueColor?: string,
+  isDeployed?: boolean,
 |};
 
-function HomeListItem({
-  title,
-  iconName,
-  onPress,
-  value,
-  secondaryValue,
-  secondaryValueColor,
-}: Props) {
+function CategoryListItem({ title, onPress, value, isDeployed = true }: Props) {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+
   return (
     <Container onPress={onPress}>
-      <ItemIcon name={iconName} />
-
       <Title>{title}</Title>
 
-      <ValueContainer>
-        {!!value && <Value>{value}</Value>}
-        {!!secondaryValue && <SecondaryValue $color={secondaryValueColor}>{secondaryValue}</SecondaryValue>}
-      </ValueContainer>
+      {isDeployed && !!value && (
+        <ValueContainer>
+          <Value>{value}</Value>
+        </ValueContainer>
+      )}
+
+      {!isDeployed && (
+        <ValueContainer>
+          <DeployValue>{t('button.deploy')}</DeployValue>
+          <Icon name="question" width={14} height={14} color={colors.labelTertiary} />
+        </ValueContainer>
+      )}
     </Container>
   );
 }
 
-export default HomeListItem;
+export default CategoryListItem;
 
 const Container = styled.TouchableOpacity`
   flex-direction: row;
@@ -70,27 +69,23 @@ const Container = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const ItemIcon = styled(Icon)`
-  margin-right: ${spacing.medium}px;
-`;
-
 const Title = styled(Text)`
   flex: 1;
-  margin: ${spacing.large}px 0;
-  ${fontStyles.big};
+  margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
+  ${fontStyles.medium};
 `;
 
 const ValueContainer = styled.View`
-  justify-content: center;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Value = styled(Text)`
-  ${fontStyles.big};
+  ${fontStyles.medium};
   font-variant: tabular-nums;
 `;
 
-const SecondaryValue = styled(Text)`
-  font-variant: tabular-nums;
-  ${({ $color }) => `color: ${$color}`};
+const DeployValue = styled(Text)`
+  ${fontStyles.medium};
+  margin-right: ${spacing.small}px;
 `;

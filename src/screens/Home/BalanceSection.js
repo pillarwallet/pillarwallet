@@ -20,12 +20,14 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
+import Tooltip from 'components/Tooltip';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
@@ -35,37 +37,36 @@ import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// Types
-import type { Balance } from 'models/Home';
-
 // Local
 import SpecialButton from './components/SpecialButton';
 
 
 type Props = {|
-  balance: Balance,
+  balanceInFiat: BigNumber,
+  changeInFiat?: ?BigNumber,
 |};
 
-function BalanceSection({ balance }: Props) {
+function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
   const { t } = useTranslationWithPrefix('home.balance');
+  const colors = useThemeColors();
 
   const fiatCurrency = useFiatCurrency();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
-  const colors = useThemeColors();
-
-  const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
-  const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
+  const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
+  const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
   const handleAddFunds = React.useCallback(() => {
     Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
   }, [accountAddress]);
 
+  const showHint = balanceInFiat.isZero();
+
   return (
     <Container>
       <FirstColumn>
         <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(balance.balanceInFiat, fiatCurrency, { exact: true })}
+          {formatFiatValue(balanceInFiat, fiatCurrency, { exact: true })}
         </BalanceText>
         {!!formattedChange && (
           <ProfitContainer>
@@ -76,7 +77,9 @@ function BalanceSection({ balance }: Props) {
       </FirstColumn>
 
       <SecondColumn>
-        <SpecialButton title={t('addCash')} iconName="add-cash" onPress={handleAddFunds} />
+        <Tooltip body={t('hint')} isVisible={showHint}>
+          <SpecialButton title={t('addCash')} iconName="add-cash" onPress={handleAddFunds} />
+        </Tooltip>
       </SecondColumn>
     </Container>
   );
@@ -87,7 +90,7 @@ export default BalanceSection;
 const Container = styled.View`
   flex-direction: row;
   justify-content: center;
-  padding: 10px 0;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 const FirstColumn = styled.View`

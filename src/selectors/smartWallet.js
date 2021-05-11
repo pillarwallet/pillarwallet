@@ -38,6 +38,7 @@ import { useRootSelector, activeAccountSelector } from 'selectors';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import { type Chain, CHAIN } from 'models/Chain';
 
 
 export const isSmartWalletActivatedSelector = ({
@@ -81,13 +82,23 @@ export const useSmartWalletStatus = (): SmartWalletStatus => {
 
 // Temporary stuff to get info about smart wallet type
 // TODO: combine this with etherspot work once it's in
-export type SmartWalletType = "etherspot" | "archanova";
-
-export const SMART_WALLET_TYPES = {
+export const SMART_WALLET_TYPE = {
   ETHERSPOT: ('etherspot': 'etherspot'),
   ARCHANOVA: ('archanova': 'archanova'),
 };
 
+export type SmartWalletType = $Values<typeof SMART_WALLET_TYPE>;
+
 export const useSmartWalletType = (): SmartWalletType => {
-  return SMART_WALLET_TYPES.ARCHANOVA;
+  return SMART_WALLET_TYPE.ARCHANOVA;
+};
+
+export const useSupportedChains = (): Chain[] => {
+  const smartWalletType = useSmartWalletType();
+
+  if (smartWalletType === SMART_WALLET_TYPE.ETHERSPOT) {
+    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
+  }
+
+  return [CHAIN.ETHEREUM];
 };
