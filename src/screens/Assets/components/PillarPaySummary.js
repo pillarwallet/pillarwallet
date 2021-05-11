@@ -106,6 +106,6 @@ const TitleWrapper = styled.View`
 `;
 
 const Title = styled(Text)`
-  font-family: '${appFont.medium};
+  font-family: "${appFont.medium}";
   margin-right: ${spacing.small}px;
 `;

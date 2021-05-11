@@ -54,7 +54,7 @@ const SafeAreaContent = styled(SafeAreaView)`
 
 const Title = styled(Text)`
   margin: ${spacing.small}px 0 ${spacing.large}px;
-  font-family: "${appFont.medium};
+  font-family: "${appFont.medium}";
   ${fontStyles.medium};
 `;
 
