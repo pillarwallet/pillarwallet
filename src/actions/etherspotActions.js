@@ -45,7 +45,7 @@ import { addExchangeAllowanceIfNeededAction } from 'actions/exchangeActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // services
-import etherspot from 'services/etherspot';
+import etherspotService from 'services/etherspot';
 
 // selectors
 import {
@@ -88,7 +88,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const etherspotAccount = await etherspot.getAccount(accountAddress);
+    const etherspotAccount = await etherspotService.getAccount(accountAddress);
 
     if (!etherspotAccount) {
       reportErrorLog('connectEtherspotAccountAction failed: no etherspotAccount', { accountId, account });
@@ -108,7 +108,7 @@ export const initEtherspotServiceAction = (privateKey: string) => {
 
     if (!isOnline) return; // nothing to do
 
-    await etherspot.init(privateKey);
+    await etherspotService.init(privateKey);
 
     const accounts = accountsSelector(getState());
     const etherspotAccount = findFirstEtherspotAccount(accounts);
@@ -130,7 +130,7 @@ export const importEtherspotAccountsAction = () => {
 
     if (!session.isOnline) return; // offline, nothing to dp
 
-    if (!etherspot?.sdk) {
+    if (!etherspotService?.sdk) {
       reportErrorLog('importEtherspotAccountsAction failed: action dispatched when Etherspot SDK was not initialized');
       return;
     }
@@ -147,7 +147,7 @@ export const importEtherspotAccountsAction = () => {
       return;
     }
 
-    const etherspotAccounts = await etherspot.getAccounts();
+    const etherspotAccounts = await etherspotService.getAccounts();
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
       reportErrorLog('importEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
@@ -197,7 +197,7 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
       return;
     }
 
-    const reserved = await etherspot.reserveEnsName(username);
+    const reserved = await etherspotService.reserveEnsName(username);
     if (!reserved) {
       reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
     }
@@ -227,14 +227,14 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
 
 export const subscribeToEtherspotNotificationsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    etherspot.subscribe(async (notification) => {
+    etherspotService.subscribe(async (notification) => {
       let notificationMessage;
 
       if (notification.type === EtherspotNotificationTypes.GatewayBatchUpdated) {
         const { hash: batchHash } = notification.payload;
-        const submittedBatch = await etherspot.getSubmittedBatchByHash(batchHash);
+        const submittedBatch = await etherspotService.getSubmittedBatchByHash(batchHash);
 
-        // check if submitted hash exists within Etherspot. otherwise it's a failure
+        // check if submitted hash exists within Etherspot otherwise it's a failure
         if (!submittedBatch) {
           reportErrorLog('subscribeToEtherspotNotificationsAction failed: no matching batch', { notification });
           return;
@@ -294,6 +294,6 @@ export const subscribeToEtherspotNotificationsAction = () => {
 
 export const unsubscribeToEtherspotNotificationsAction = () => {
   return () => {
-    etherspot.unsubscribe();
+    etherspotService.unsubscribe();
   };
 };

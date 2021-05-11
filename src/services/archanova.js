@@ -35,7 +35,7 @@ import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_DEPLOYMENT_ERRORS } from 'constants/archanovaConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
@@ -250,7 +250,7 @@ class Archanova {
     estimate?: sdkInterfaces.IEstimatedAccountDeployment,
   ): Promise<{ error?: string, deployTxHash?: string }> {
     const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
-    if (!deployEstimate) return { error: SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED };
+    if (!deployEstimate) return { error: ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.REVERTED };
 
     return this.getSdk().deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))

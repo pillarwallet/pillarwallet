@@ -89,7 +89,7 @@ import {
   checkForWalletBackupToastAction,
   updatePinAttemptsAction,
 } from './walletActions';
-import { fetchSmartWalletTransactionsAction } from './historyActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
@@ -310,7 +310,7 @@ export const loginAction = (
           }
 
           dispatch(getWalletsCreationEventsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchReferralRewardAction());
 
           firebaseCrashlytics.setUserId(user.username);

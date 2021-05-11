@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkInterfaces } from '@smartwallet/sdk';
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_DEPLOYMENT_ERRORS } from 'constants/archanovaConstants';
 
 export type ArchanovaWalletAccount = sdkInterfaces.IAccount;
 
@@ -31,7 +31,7 @@ export type ConnectedArchanovaWalletAccount = {
 };
 
 
-export type ArchanovaWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;
+export type ArchanovaWalletDeploymentError = $Keys<typeof ARCHANOVA_WALLET_DEPLOYMENT_ERRORS>;
 
 export type InitArchanovaProps = {
   privateKey?: string,

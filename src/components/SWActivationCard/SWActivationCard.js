@@ -29,7 +29,7 @@ import SWActivationModal from 'components/SWActivationModal';
 import Modal from 'components/Modal';
 
 // constants
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 
 // utils
 import {
@@ -68,7 +68,7 @@ const SWActivationCard = ({
 
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-  if (archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
+  if (archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
 
   const { upgrade: { deploymentStarted } } = smartWalletState;
 

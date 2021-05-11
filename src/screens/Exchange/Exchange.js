@@ -48,7 +48,7 @@ import { fetchBitcoinRateAction } from 'actions/ratesActions';
 
 // constants
 import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 
 // utils, services
@@ -345,7 +345,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (!isArchanovaAccount(activeAccount)) return true;
 
     const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-    return archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+    return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
   };
 
   provideOptions = (): ExchangeOptions => {

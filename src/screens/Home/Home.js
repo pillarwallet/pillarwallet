@@ -34,11 +34,12 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Banner from 'components/Banner';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
-import Requests from 'screens/WalletConnect/Requests';
+import WalletConnectCallRequestList from 'screens/WalletConnect/WalletConnectCallRequestList';
 import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SablierStream from 'components/SablierStream';
+import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 
 // constants
 import {
@@ -58,7 +59,7 @@ import { STAGING } from 'constants/envConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // actions
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { hideHomeUpdateIndicatorAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
@@ -103,7 +104,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
-import type { CallRequest, Connector } from 'models/WalletConnect';
+import type { WalletConnectCallRequest } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -123,7 +124,7 @@ import RariPoolItem from './RariPoolItem';
 type Props = {
   navigation: NavigationScreenProp<*>,
   user: User,
-  fetchSmartWalletTransactions: Function,
+  fetchTransactionsHistory: Function,
   checkForMissedAssets: Function,
   hideHomeUpdateIndicator: () => void,
   intercomNotificationsCount: number,
@@ -132,7 +133,6 @@ type Props = {
   history: Object[],
   badges: Badges,
   fetchBadges: Function,
-  pendingConnector: ?Connector,
   activeAccount: ?Account,
   accounts: Accounts,
   userEvents: UserEvent[],
@@ -145,7 +145,7 @@ type Props = {
   hidePoolTogether: boolean,
   toggleBadges: () => void,
   togglePoolTogether: () => void,
-  walletConnectRequests: CallRequest[],
+  walletConnectCallRequests: WalletConnectCallRequest[],
   fetchAllAccountsBalances: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
@@ -205,7 +205,7 @@ class HomeScreen extends React.Component<Props> {
     const {
       fetchBadges,
       fetchBadgeAwardHistory,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
       fetchDepositedAssets,
       fetchPoolStats,
@@ -233,7 +233,7 @@ class HomeScreen extends React.Component<Props> {
     }
 
     fetchReferralRewardsIssuerAddresses();
-    fetchSmartWalletTransactions();
+    fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();
   }
@@ -264,7 +264,7 @@ class HomeScreen extends React.Component<Props> {
     const {
       checkForMissedAssets,
       fetchAllCollectiblesData,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
@@ -284,7 +284,7 @@ class HomeScreen extends React.Component<Props> {
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
-    fetchSmartWalletTransactions();
+    fetchTransactionsHistory();
     fetchAllAccountsBalances();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
@@ -547,7 +547,7 @@ class HomeScreen extends React.Component<Props> {
       theme,
       hideBadges,
       toggleBadges,
-      walletConnectRequests,
+      walletConnectCallRequests,
       user,
       goToInvitationFlow,
       isPillarRewardCampaignActive,
@@ -594,6 +594,8 @@ class HomeScreen extends React.Component<Props> {
     const referralBannerText = isPillarRewardCampaignActive
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
+
+    const walletConnectCallRequestsCount = walletConnectCallRequests?.length || 0;
 
     return (
       <React.Fragment>
@@ -644,16 +646,19 @@ class HomeScreen extends React.Component<Props> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart rewardActive={isPillarRewardCampaignActive} />
-                  {!!walletConnectRequests &&
-                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
-                    {walletConnectRequests.length > 1 &&
-                    <ButtonText
-                      onPress={() => { navigation.navigate(WALLETCONNECT); }}
-                      buttonText={t('button.viewAllItemsAmount', { amount: walletConnectRequests.length })}
-                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
-                    />}
-                    <Requests showLastOneOnly />
-                  </RequestsWrapper>}
+                  {!!walletConnectCallRequestsCount && (
+                    <RequestsWrapper marginOnTop={walletConnectCallRequestsCount === 1}>
+                      {walletConnectCallRequestsCount > 1 && (
+                        <ButtonText
+                          onPress={() => { navigation.navigate(WALLETCONNECT); }}
+                          buttonText={t('button.viewAllItemsAmount', { amount: walletConnectCallRequestsCount })}
+                          wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
+                        />
+                      )}
+                      <WalletConnectCallRequestList showLastOneOnly />
+                    </RequestsWrapper>
+                  )}
+                  <MigrateEnsBanner style={{ marginTop: 15, paddingHorizontal: spacing.medium }} />
                   <Banner
                     isVisible={!referFriendsOnHomeScreenDismissed}
                     onPress={goToInvitationFlow}
@@ -725,7 +730,7 @@ const mapStateToProps = ({
       baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari, hideLiquidityPools,
     },
   },
-  walletConnect: { requests: walletConnectRequests },
+  walletConnect: { callRequests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
   lending: { depositedAssets, isFetchingDepositedAssets },
@@ -752,7 +757,7 @@ const mapStateToProps = ({
   hideSablier,
   hideRari,
   hideLiquidityPools,
-  walletConnectRequests,
+  walletConnectCallRequests: walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
   hideLendingDeposits,
@@ -782,7 +787,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   hideHomeUpdateIndicator: () => dispatch(hideHomeUpdateIndicatorAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

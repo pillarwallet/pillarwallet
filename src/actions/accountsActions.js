@@ -22,7 +22,7 @@ import { isEqual } from 'lodash';
 
 // constants
 import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
@@ -30,7 +30,7 @@ import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockcha
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   checkIfArchanovaWalletWasRegisteredAction,
   connectArchanovaAccountAction,
@@ -40,6 +40,7 @@ import {
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
+import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
@@ -166,16 +167,16 @@ export const setActiveAccountAction = (accountId: string) => {
 
     const { state = '' } = connectedAccount;
     if (state === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+      dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       return;
     }
     if ([
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
+      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
     ].includes(upgradeStatus)) {
       return;
     }
-    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
+    dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
   };
 };
 
@@ -205,8 +206,9 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
-    dispatch(fetchSmartWalletTransactionsAction());
+    dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+    dispatch(updateWalletConnectSessionsByActiveAccount());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };

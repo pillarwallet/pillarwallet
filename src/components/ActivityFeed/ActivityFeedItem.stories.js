@@ -32,7 +32,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import { SET_ARCHANOVA_WALLET_ACCOUNT_ENS } from 'constants/archanovaConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
@@ -403,7 +403,7 @@ storiesOf('ActivityFeedItem', module)
       {...reduxData}
       event={{
       type: TRANSACTION_EVENT,
-      tag: SET_SMART_WALLET_ACCOUNT_ENS,
+      tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
     }}
     />
   ))

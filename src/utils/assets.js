@@ -293,8 +293,8 @@ export const getAssetDataByAddress = (
   supportedAssetsData: Asset[],
   assetAddress: string,
 ): Asset | Object => {
-  return userAssets.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
-  || supportedAssetsData.find(({ address }: Asset) => isCaseInsensitiveMatch(address, assetAddress))
+  return userAssets.find(({ address }: Asset) => addressesEqual(address, assetAddress))
+  || supportedAssetsData.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || {};
 };
 

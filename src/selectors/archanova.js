@@ -22,11 +22,14 @@ import { createSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getArchanovaWalletStatus } from 'utils/archanova';
+import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
+import { getEnsPrefix } from 'utils/common';
+import { isProdEnv } from 'utils/environment';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -35,6 +38,10 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 
+// local
+import { accountsSelector } from './selectors';
+import { archanovaAccountHistorySelector } from './history';
+
 
 export const isArchanovaWalletActivatedSelector = ({
   accounts: { data: accounts },
@@ -42,7 +49,7 @@ export const isArchanovaWalletActivatedSelector = ({
 }: RootReducerState,
 ) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
-  return archanovaWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
+  return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
 export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } }: RootReducerState) => {
@@ -59,5 +66,27 @@ export const useGasTokenSelector = createSelector(
   preferredGasTokenSelector,
   (isGasTokenSupported, preferredGasToken) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
+  },
+);
+
+/**
+ * return ENS needed if there was no ENS marked transaction sent
+ * on any environment (for test purposes as there is no ENS on Kovan testnet)
+ * or there's existing ENS name on Archanova account on homestead (Mainnet) environment
+ */
+export const isEnsMigrationNeededSelector = createSelector(
+  accountsSelector,
+  archanovaAccountHistorySelector,
+  (accounts, archanovaAccountHistory) => {
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+    const isEnsMigrationNeeded = archanovaAccount
+      && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
+
+    const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(({
+      extra,
+    }) => extra?.isENSMigrationToEtherspot);
+
+    return isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent && isEnsMigrationNeeded;
   },
 );

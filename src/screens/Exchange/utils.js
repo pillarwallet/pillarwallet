@@ -27,7 +27,7 @@ import { getRate, getBalance, sortAssets, getAssetOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
 import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
@@ -214,7 +214,7 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
   const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
   return !isEmpty(sendingBlockedMessage)
-    && archanovaWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    && archanovaWalletStatus.status !== ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
     && !deploymentData.error;
 };
 

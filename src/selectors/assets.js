@@ -22,7 +22,12 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 import type { Assets, Balance, Rates } from 'models/Asset';
-import { findFirstArchanovaAccount, getAccountId, getEnabledAssets } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
+  getAccountId,
+  getEnabledAssets,
+} from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {
@@ -60,12 +65,30 @@ export const archanovaAccountAssetsSelector = createSelector(
   (assets, accounts, hiddenAssets) => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return {};
+
     const accountId = getAccountId(archanovaAccount);
 
-    const activeAccountAssets = get(assets, accountId, {});
-    const activeAccountHiddenAssets = get(hiddenAssets, accountId, []);
+    const accountAssets = get(assets, accountId, {});
+    const accountHiddenAssets = get(hiddenAssets, accountId, []);
 
-    return getEnabledAssets(activeAccountAssets, activeAccountHiddenAssets);
+    return getEnabledAssets(accountAssets, accountHiddenAssets);
+  },
+);
+
+export const etherspotAccountAssetsSelector = createSelector(
+  assetsSelector,
+  accountsSelector,
+  hiddenAssetsSelector,
+  (assets, accounts, hiddenAssets) => {
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return {};
+
+    const accountId = getAccountId(etherspotAccount);
+
+    const accountAssets = get(assets, accountId, {});
+    const accountHiddenAssets = get(hiddenAssets, accountId, []);
+
+    return getEnabledAssets(accountAssets, accountHiddenAssets);
   },
 );
 
