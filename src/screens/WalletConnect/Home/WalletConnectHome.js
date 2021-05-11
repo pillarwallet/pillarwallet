@@ -90,7 +90,8 @@ function WalletConnectHome() {
         <Stories renderHeader={() => <SectionHeader>{t('headerStories')}</SectionHeader>} />
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
-        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.deployOnEthereumBanner} style={styles.banner} />}
+
+        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.banner} />}
       </ListHeader>
     );
   };
@@ -202,10 +203,6 @@ const styles = {
   banner: {
     marginVertical: spacing.medium,
     marginHorizontal: spacing.large,
-  },
-  deployOnEthereumBanner: {
-    marginTop: spacing.large,
-    marginBottom: spacing.large,
   },
 };
 
