@@ -104,7 +104,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     return (
       <React.Fragment key={`${category}-fragment`}>
         <CategoryListItem
-          key={`${category}`}
+          key={category}
           iconName={iconName}
           title={title}
           value={formattedBalance}
