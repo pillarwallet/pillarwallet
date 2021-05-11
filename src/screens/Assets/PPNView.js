@@ -244,9 +244,7 @@ class PPNView extends React.Component<Props, State> {
     return null;
   };
 
-  openArchanovaActivationModal = () => {
-    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
-  };
+  openArchanovaActivationModal = () => Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
 
   render() {
     const { activeTab } = this.state;
