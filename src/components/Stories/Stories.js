@@ -23,9 +23,6 @@ import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
 import { useDispatch } from 'react-redux';
 
-// Components
-import Text from 'components/modern/Text';
-
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
 
