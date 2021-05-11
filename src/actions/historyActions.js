@@ -232,7 +232,7 @@ export const fetchGasInfoAction = () => {
   };
 };
 
-const setUpdatingTransaction = (hash: ?string) => ({
+const setUpdatingTransactionAction = (hash: ?string) => ({
   type: UPDATING_TRANSACTION,
   payload: hash,
 });
@@ -248,7 +248,7 @@ export const updateTransactionStatusAction = (hash: string) => {
 
     const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
 
-    dispatch(setUpdatingTransaction(hash));
+    dispatch(setUpdatingTransactionAction(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
 
@@ -257,7 +257,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (isArchanovaAccountActive) {
       sdkTransactionInfo = await archanovaService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
-        dispatch(setUpdatingTransaction(null));
+        dispatch(setUpdatingTransactionAction(null));
         return;
       }
 
@@ -271,7 +271,7 @@ export const updateTransactionStatusAction = (hash: string) => {
           sdkStatus: sdkTransactionInfo?.state,
           blockchainStatus: trxInfo.status,
         });
-        dispatch(setUpdatingTransaction(null));
+        dispatch(setUpdatingTransactionAction(null));
         return;
       }
     }
@@ -282,7 +282,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       : !trxInfo;
 
     if (stillPending) {
-      dispatch(setUpdatingTransaction(null));
+      dispatch(setUpdatingTransactionAction(null));
       return;
     }
 

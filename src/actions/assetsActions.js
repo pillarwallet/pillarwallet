@@ -78,7 +78,7 @@ import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import type { TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
 
 // actions
 import { logEventAction } from './analyticsActions';
@@ -90,20 +90,6 @@ import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
-
-export type TransactionStatus = {
-  isSuccess: boolean,
-  error: ?string,
-  noRetry?: boolean,
-  hash?: string,
-  batchHash?: string,
-};
-
-type TransactionResult = {
-  error?: string,
-  hash?: string,
-  batchHash?: string,
-};
 
 export const sendAssetAction = (
   transaction: TransactionPayload,
@@ -190,9 +176,22 @@ export const sendAssetAction = (
       return;
     }
 
-    const transactionResult: TransactionResult = await activeWalletService
-      .sendTransaction(transaction, accountAddress, usePPN)
-      .catch((error) => catchTransactionError(error, logTransactionType, transaction));
+    let transactionResult: ?TransactionResult;
+    let transactionErrorMessage: ?string;
+
+    try {
+      transactionResult = await activeWalletService.sendTransaction(transaction, accountAddress, usePPN);
+    } catch (error) {
+      ({ error: transactionErrorMessage } = catchTransactionError(error, logTransactionType, transaction));
+    }
+
+    if (!transactionResult || transactionErrorMessage) {
+      callback({
+        isSuccess: false,
+        error: transactionErrorMessage || t('error.transactionFailed.default'),
+      });
+      return;
+    }
 
     let transactionHash = transactionResult?.hash;
     const transactionBatchHash = transactionResult?.batchHash;
@@ -218,18 +217,17 @@ export const sendAssetAction = (
       && waitForActualTransactionHash
       && !transactionHash
       && transactionBatchHash) {
-      transactionHash = await etherspotService
-        .waitForTransactionHashFromSubmittedBatch(transactionBatchHash)
-        .catch((error) => {
-          reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
-          return null;
-        });
+      try {
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(transactionBatchHash);
+      } catch (error) {
+        reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
+      }
     }
 
     if (!transactionHash && !transactionBatchHash) {
       callback({
         isSuccess: false,
-        error: transactionResult?.error || t('error.transactionFailed.default'),
+        error: t('error.transactionFailed.default'),
       });
       return;
     }

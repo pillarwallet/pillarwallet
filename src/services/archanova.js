@@ -319,7 +319,7 @@ class Archanova {
     return null;
   }
 
-  createAccountPayment(
+  async createAccountPayment(
     recipient: string,
     token: ?string,
     value: EthersBigNumber,
@@ -327,9 +327,16 @@ class Archanova {
     reference?: string,
   ) {
     token = toChecksumAddress(token);
-    return this.getSdk()
-      .createAccountPayment(recipient, token, value.toHexString(), paymentType, reference)
-      .then(({ hash }) => ({ hash }));
+
+    const { hash } = await this.getSdk().createAccountPayment(
+      recipient,
+      token,
+      value.toHexString(),
+      paymentType,
+      reference,
+    );
+
+    return { hash };
   }
 
   async sendTransaction(
@@ -363,9 +370,9 @@ class Archanova {
 
     const estimatedTransaction = await this.getSdk().estimateAccountTransaction(...estimateMethodParams);
 
-    return this.getSdk()
-      .submitAccountTransaction(estimatedTransaction, payForGasWithToken)
-      .then((hash) => ({ hash }));
+    const { hash } = await this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
+
+    return { hash };
   }
 
   getConnectedAccountTransaction(txHash: string) {

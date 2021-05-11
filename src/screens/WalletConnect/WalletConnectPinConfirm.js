@@ -36,6 +36,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
 import { isArchanovaAccount } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
+import { parseMessageSignParamsFromCallRequest } from 'utils/walletConnect';
 
 // hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -53,11 +54,9 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 import { activeAccountSelector } from 'selectors';
 
 // types
-import type { TransactionPayload } from 'models/Transaction';
-import type { TransactionStatus } from 'actions/assetsActions';
+import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-import { parseMessageSignParamsFromCallRequest } from 'utils/walletConnect';
 
 
 type Props = {

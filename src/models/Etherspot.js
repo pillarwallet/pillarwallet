@@ -19,8 +19,8 @@
 */
 import { BigNumber } from 'bignumber.js';
 
-export type EtherspotTransactionEstimate = {
-  refundAmount: BigNumber;
-  estimatedGas: number;
-  estimatedGasPrice: BigNumber;
-};
+export type EtherspotTransactionEstimate = {|
+  refundAmount: BigNumber,
+  estimatedGas: number,
+  estimatedGasPrice: BigNumber,
+|};
