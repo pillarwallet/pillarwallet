@@ -44,7 +44,7 @@ export type InvestmentItem = {|
   title: string,
   iconUrl: ?string,
   value: BigNumber,
-  change?: ?BigNumber,
+  change?: BigNumber,
 |};
 
 // TODO: provide real assets data
