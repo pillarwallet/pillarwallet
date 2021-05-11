@@ -122,31 +122,28 @@ function WalletTab() {
   };
 
   const hasPositiveBalance = totalBalance.value.gt(0);
-  const buttons = hasPositiveBalance ?
-    [
-      {
-        title: tRoot('button.receive'),
-        iconName: 'qrcode',
-        onPress: showReceiveModal,
-      },
-      {
-        title: tRoot('button.swap'),
-        iconName: 'exchange',
-        onPress: () => navigation.navigate(EXCHANGE_FLOW),
-      },
-      {
-        title: tRoot('button.send'),
-        iconName: 'send',
-        onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-      },
-    ] :
-    [
-      {
-        title: tRoot('button.addCash'),
-        iconName: 'plus',
-        onPress: showAddFundsModal,
-      },
-    ];
+  const buttons = [
+    hasPositiveBalance && {
+      title: tRoot('button.receive'),
+      iconName: 'qrcode',
+      onPress: showReceiveModal,
+    },
+    hasPositiveBalance && {
+      title: tRoot('button.swap'),
+      iconName: 'exchange',
+      onPress: () => navigation.navigate(EXCHANGE_FLOW),
+    },
+    hasPositiveBalance && {
+      title: tRoot('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+    },
+    !hasPositiveBalance && {
+      title: tRoot('button.addCash'),
+      iconName: 'plus',
+      onPress: showAddFundsModal,
+    },
+  ];
 
   return (
     <Container>
