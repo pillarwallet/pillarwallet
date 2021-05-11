@@ -66,7 +66,7 @@ const TouchableContainer = styled(TouchableOpacity)`
     !compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}
   ${({ theme, variant }) => variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, variant }) =>
-    variant === 'secondary' ? `background-color: ${theme.colors.buttonSecondaryBackground}` : ''};
+    variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
 const Title = styled(Text)`
