@@ -94,8 +94,8 @@ function DepositsTab() {
     }
 
     const { title, iconUrl, value, change, currentApy } = headerListItem.item;
-    const formattedCurrencyApy = formatPercentValue(currentApy);
-    const subtitle = formattedCurrencyApy ? tRoot('label.currentApyFormat', { value: formattedCurrencyApy }) : undefined;
+    const formattedCurrentApy = formatPercentValue(currentApy);
+    const subtitle = formattedCurrentApy ? tRoot('label.currentApyFormat', { value: formattedCurrentApy }) : undefined;
 
     return <DepositListItem title={title} subtitle={subtitle} iconUrl={iconUrl} value={value} change={change} />;
   };
