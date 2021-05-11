@@ -55,6 +55,7 @@ import type { WalletConnectApp } from 'models/WalletConnect';
 // Local
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
+import WhatIsWalletConnectBanner from './components/WhatIsWalletConnectBanner';
 import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
 import WalletConnectListItem from './components/WalletConnectListItem';
 import { filterAppsByChain } from './utils';
@@ -87,6 +88,8 @@ function WalletConnectHome() {
 
     return (
       <ListHeader>
+        <WhatIsWalletConnectBanner style={styles.banner} />
+
         <Stories renderHeader={() => <SectionHeader>{t('headerStories')}</SectionHeader>} />
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
