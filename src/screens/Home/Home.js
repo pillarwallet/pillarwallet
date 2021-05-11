@@ -19,13 +19,13 @@
 */
 
 import * as React from 'react';
-import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
+import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // Constants
@@ -35,40 +35,32 @@ import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 import { useUser } from 'selectors/user';
 
 // Utils
-import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useThemeColors } from 'utils/themes';
 
 // Local
 import BalanceSection from './BalanceSection';
-import AssetsPieChart from './AssetsPieChart';
+import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
-import Controls from './Controls';
 import FloatingActions from './FloatingActions';
 import {
-  useChainSummaries,
-  useChainBalances,
-  getChainBalancesTotal,
-  getCategoryBalancesTotal,
+  useCollectibleCountPerChain,
+  useCategoryBalancesPerChain,
+  getTotalCategoryBalances,
+  getTotalChainBalances,
+  getTotalBalance,
 } from './utils';
 
 function Home() {
   const navigation = useNavigation();
-
-  const [showSideChains, setShowSideChains] = React.useState(false);
-
-  const chainSummaries = useChainSummaries();
-  const chainsBalances = useChainBalances();
-  const user = useUser();
-
   const colors = useThemeColors();
 
-  const handleToggleSideChains = () => {
-    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    setShowSideChains(!showSideChains);
-  };
+  const categoryBalancesPerChain = useCategoryBalancesPerChain();
+  const collectibleCountPerChain = useCollectibleCountPerChain();
+  const user = useUser();
 
-  const categoryBalances = showSideChains ? getChainBalancesTotal(chainsBalances) : chainsBalances.ethereum;
-  const totalBalance = getCategoryBalancesTotal(categoryBalances);
+  const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
+  const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
+  const totalBalance = getTotalBalance(categoryBalances);
 
   return (
     <Container>
@@ -79,14 +71,22 @@ function Home() {
         navigation={navigation}
         noPaddingTop
       />
-      <Content contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}>
-        <BalanceSection balance={totalBalance} />
 
-        <AssetsPieChart categoryBalances={categoryBalances} />
+      <Content
+        contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        paddingHorizontal={0}
+      >
+        <Stories />
 
-        <Controls showSideChains={showSideChains} onToggleSideChains={handleToggleSideChains} />
+        <BalanceSection balanceInFiat={totalBalance} />
 
-        <AssetsSection chainSummaries={chainSummaries} chainBalances={chainsBalances} showSideChains={showSideChains} />
+        <ChartsSection categoryBalances={categoryBalances} chainBalances={chainBalances} />
+
+        <AssetsSection
+          categoryBalances={categoryBalances}
+          categoryBalancesPerChain={categoryBalancesPerChain}
+          collectibleCountPerChain={collectibleCountPerChain}
+        />
       </Content>
 
       <FloatingActions />

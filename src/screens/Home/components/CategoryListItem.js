@@ -22,50 +22,47 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
-import TextWithCopy from 'components/modern/TextWithCopy';
+import Icon from 'components/modern/Icon';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
-import { appFont, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
-// Types
+// Type
 import type { IconName } from 'components/modern/Icon';
 
 export type Props = {|
   title: string,
-  iconName?: IconName,
-  color?: string,
-  walletAddress?: string,
+  iconName: IconName,
+  onPress: ?() => mixed,
+  value?: ?string,
 |};
 
-function HomeListHeader({
+function CategoryListItem({
   title,
   iconName,
-  color,
-  walletAddress,
+  onPress,
+  value,
 }: Props) {
-  const colors = useThemeColors();
-
   return (
-    <Container>
+    <Container onPress={onPress}>
       <ItemIcon name={iconName} />
-      <Title $color={color} numberOfLines={1}>
-        {title}
-      </Title>
-      <TextWithCopy textToCopy={walletAddress} iconColor={colors.secondaryText} />
+
+      <Title>{title}</Title>
+
+      <ValueContainer>
+        {!!value && <Value>{value}</Value>}
+      </ValueContainer>
     </Container>
   );
 }
 
-export default HomeListHeader;
+export default CategoryListItem;
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   flex-direction: row;
+  justify-content: center;
   align-items: center;
-  margin-top: ${spacing.mediumLarge}px;
-  padding: ${spacing.mediumLarge}px 0;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -73,7 +70,17 @@ const ItemIcon = styled(Icon)`
 `;
 
 const Title = styled(Text)`
-  font-family: '${appFont.medium}';
+  flex: 1;
+  margin: ${spacing.large}px 0;
   ${fontStyles.big};
-  ${({ $color }) => `color: ${$color}`};
+`;
+
+const ValueContainer = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+`;
+
+const Value = styled(Text)`
+  ${fontStyles.big};
+  font-variant: tabular-nums;
 `;

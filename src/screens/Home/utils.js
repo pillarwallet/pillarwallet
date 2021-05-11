@@ -18,8 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { mapValues } from 'lodash';
+
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector } from 'selectors';
 import {
   walletBalanceSelector,
   depositsBalanceSelector,
@@ -27,38 +29,20 @@ import {
   liquidityPoolsBalanceSelector,
 } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import { contactsCountSelector } from 'selectors/contacts';
 
 // Utils
 import { BigNumber } from 'utils/common';
-import { sum, sumOrNull } from 'utils/bigNumber';
+import { sum } from 'utils/bigNumber';
 
 // Types
-import type {
-  ChainSummaries,
-  ChainBalances,
-  CategoryBalances,
-  Balance,
-} from 'models/Home';
+import type { CategoryBalances, ChainBalances, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
 
-
-export function useChainSummaries(): ChainSummaries {
-  const ethereum = {
-    walletAddress: useRootSelector(activeAccountAddressSelector),
-    collectibleCount: useRootSelector(accountCollectiblesSelector).length,
-    contactCount: useRootSelector(contactsCountSelector),
-  };
-
-  return { ethereum };
-}
-
-export function useChainBalances(): ChainBalances {
-  const wallet = { balanceInFiat: useRootSelector(walletBalanceSelector) };
-  const deposits = { balanceInFiat: useRootSelector(depositsBalanceSelector) };
-  const investments = { balanceInFiat: useRootSelector(investmentsBalanceSelector) };
-  const liquidityPools = { balanceInFiat: useRootSelector(liquidityPoolsBalanceSelector) };
-  const rewards = { balanceInFiat: BigNumber(0) };
-  const datasets = { balanceInFiat: BigNumber(0) };
+export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
+  const wallet = useRootSelector(walletBalanceSelector);
+  const deposits = useRootSelector(depositsBalanceSelector);
+  const investments = useRootSelector(investmentsBalanceSelector);
+  const liquidityPools = useRootSelector(liquidityPoolsBalanceSelector);
+  const rewards = BigNumber(0);
 
   const ethereum = {
     wallet,
@@ -66,32 +50,37 @@ export function useChainBalances(): ChainBalances {
     investments,
     liquidityPools,
     rewards,
-    datasets,
   };
 
   return { ethereum };
 }
 
-export function getChainBalancesTotal(chains: ChainBalances): CategoryBalances {
-  const balances = Object.keys(chains).map((key) => chains[key]);
+export function useCollectibleCountPerChain(): CollectibleCountPerChain {
+  const ethereum = useRootSelector(accountCollectiblesSelector).length;
+  return { ethereum };
+}
+
+export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalances {
+  const chainBalances = Object.keys(chains).map((key) => chains[key]);
   return {
-    wallet: getTotalBalances(balances.map((chain) => chain?.wallet)),
-    deposits: getTotalBalances(balances.map((chain) => chain?.deposits)),
-    investments: getTotalBalances(balances.map((chain) => chain?.investments)),
-    liquidityPools: getTotalBalances(balances.map((chain) => chain?.liquidityPools)),
-    rewards: getTotalBalances(balances.map((chain) => chain?.rewards)),
-    datasets: getTotalBalances(balances.map((chain) => chain?.datasets)),
+    wallet: sum(chainBalances.map((chain) => chain?.wallet)),
+    deposits: sum(chainBalances.map((chain) => chain?.deposits)),
+    investments: sum(chainBalances.map((chain) => chain?.investments)),
+    liquidityPools: sum(chainBalances.map((chain) => chain?.liquidityPools)),
+    rewards: sum(chainBalances.map((chain) => chain?.rewards)),
   };
 }
 
-export function getCategoryBalancesTotal(categories: CategoryBalances): Balance {
-  const balances = Object.keys(categories).map((key) => categories[key]);
-  return getTotalBalances(balances);
+export function getTotalChainBalances(chains: CategoryBalancesPerChain): ChainBalances {
+  return mapValues(chains, (balances) => getTotalBalance(balances));
 }
 
-export function getTotalBalances(balances: (?Balance)[]): Balance {
-  return {
-    balanceInFiat: sum(balances.map((b) => b?.balanceInFiat)),
-    changeInFiat: sumOrNull(balances.map((b) => b?.changeInFiat)),
-  };
+export function getTotalBalance(entries: { [key: string]: BigNumber}): BigNumber {
+  const balances = Object.keys(entries).map((key) => entries[key]);
+  return sum(balances);
+}
+
+export function getTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {
+  const counts = Object.keys(collectibleCountPerChain).map((chain) => collectibleCountPerChain[chain]);
+  return counts.reduce((total, count) => count != null ? total + count : total, 0);
 }

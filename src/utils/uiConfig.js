@@ -18,106 +18,101 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useTranslationWithPrefix } from 'translations/translate';
-
-// Contants
-import { CHAINS, ASSET_CATEGORIES } from 'constants/assetsConstants';
+import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { Chain, AssetCategory } from 'models/Asset';
 import type { IconName } from 'components/modern/Icon';
+import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
+import { type Chain, CHAIN } from 'models/Chain';
 
-type ChainsConfig = {
-  [key: Chain]: {|
-    title: string,
-    iconName: IconName,
-    color: string,
-  |},
-};
+
+type ChainConfig = {|
+  title: string,
+  titleShort: string,
+  iconName: IconName,
+  color: string,
+|};
 
 /**
  * Returns common UI aspects (texts, icons, color) for displaying main Ethereum chain and side chains.
  */
-export function useChainsConfig(): ChainsConfig {
-  const { t } = useTranslationWithPrefix('chains');
+export function useChainsConfig(): { [key: Chain]: ChainConfig} {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return {
-    [CHAINS.ETHEREUM]: {
-      title: t('ethereum'),
-      iconName: 'ethereum',
-      color: colors.ethereum,
+    [CHAIN.POLYGON]: {
+      title: t('chains.polygon'),
+      titleShort: t('chainsShort.polygon'),
+      iconName: 'polygon',
+      color: colors.polygon,
     },
-    [CHAINS.BINANCE]: {
-      title: t('binance'),
+    [CHAIN.BINANCE]: {
+      title: t('chains.binance'),
+      titleShort: t('chainsShort.binance'),
       iconName: 'binance',
       color: colors.binance,
     },
-    [CHAINS.XDAI]: {
-      title: t('xdai'),
+    [CHAIN.XDAI]: {
+      title: t('chains.xdai'),
+      titleShort: t('chainsShort.xdai'),
       iconName: 'xdai',
       color: colors.xdai,
     },
-    [CHAINS.POLYGON]: {
-      title: t('polygon'),
-      iconName: 'polygon',
-      color: colors.polygon,
+    [CHAIN.ETHEREUM]: {
+      title: t('chains.ethereum'),
+      titleShort: t('chainsShort.ethereum'),
+      iconName: 'ethereum',
+      color: colors.ethereum,
     },
   };
 }
 
-type AssetCategoriesConfig = {
-  [key: AssetCategory]: {|
-    title: string,
-    iconName: IconName,
-    chartColor: string,
-  |},
-};
+type AssetCategoryConfig = {|
+  title: string,
+  iconName: IconName,
+  chartColor: string,
+|};
 
 /**
  * Returns common UI aspects (texts, icons, color) for displaying asset categories.
  */
-export function useAssetCategoriesConfig(): AssetCategoriesConfig {
+export function useAssetCategoriesConfig(): { [key: AssetCategory]: AssetCategoryConfig } {
   const { t } = useTranslationWithPrefix('assetCategories');
 
   return {
-    [ASSET_CATEGORIES.WALLET]: {
+    [ASSET_CATEGORY.WALLET]: {
       title: t('wallet'),
       iconName: 'wallet',
       chartColor: '#e91e63',
     },
-    [ASSET_CATEGORIES.DEPOSITS]: {
+    [ASSET_CATEGORY.DEPOSITS]: {
       title: t('deposits'),
       iconName: 'deposit',
       chartColor: '#9c27b0',
     },
-    [ASSET_CATEGORIES.INVESTMENTS]: {
+    [ASSET_CATEGORY.INVESTMENTS]: {
       title: t('investments'),
       iconName: 'investment',
       chartColor: '#5727b0',
     },
-    [ASSET_CATEGORIES.LIQUIDITY_POOLS]: {
+    [ASSET_CATEGORY.LIQUIDITY_POOLS]: {
       title: t('liquidityPools'),
       iconName: 'liquidity-pool',
       chartColor: '#276bb0',
     },
-    [ASSET_CATEGORIES.COLLECTIBLES]: {
+    [ASSET_CATEGORY.COLLECTIBLES]: {
       title: t('collectibles'),
       iconName: 'collectible',
       chartColor: '#e91e63',
     },
-    [ASSET_CATEGORIES.REWARDS]: {
+    [ASSET_CATEGORY.REWARDS]: {
       title: t('rewards'),
       iconName: 'reward',
       chartColor: '#57acdc',
-    },
-    [ASSET_CATEGORIES.DATASETS]: {
-      title: t('datasets'),
-      iconName: 'dataset',
-      chartColor: '#57dcbe',
     },
   };
 }

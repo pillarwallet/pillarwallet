@@ -19,132 +19,175 @@
 */
 
 import * as React from 'react';
+import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { CHAINS } from 'constants/assetsConstants';
-import { ASSETS, CONTACTS_FLOW, SERVICES_FLOW } from 'constants/navigationConstants';
+import { ASSETS, SERVICES_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useRootSelector, useFiatCurrency } from 'selectors';
+import { useSupportedChains, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // Utils
-import { formatValue, formatFiatValue, formatFiatChangeExtended } from 'utils/format';
+import { formatValue, formatFiatValue } from 'utils/format';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
-import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 // Types
-import type { ChainSummaries, ChainBalances, Balance } from 'models/Home';
-import type { Chain, AssetCategory } from 'models/Asset';
+import type { CategoryBalancesPerChain, CategoryBalances, CollectibleCountPerChain } from 'models/Home';
+import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
+import { type Chain, CHAIN } from 'models/Chain';
 
 // Local
-import HomeListHeader from './components/HomeListHeader';
-import HomeListItem from './components/HomeListItem';
+import CategoryListItem from './components/CategoryListItem';
+import ChainListItem from './components/ChainListItem';
+import { getTotalCollectibleCount } from './utils';
 
 type Props = {|
-  chainSummaries: ChainSummaries,
-  chainBalances: ChainBalances,
-  showSideChains: boolean,
+  categoryBalances: CategoryBalances,
+  categoryBalancesPerChain: CategoryBalancesPerChain,
+  collectibleCountPerChain: CollectibleCountPerChain,
 |};
 
-function AssetsSection({ chainSummaries, chainBalances, showSideChains }: Props) {
-  const { t, tRoot } = useTranslationWithPrefix('home.assets');
+type FlagPerCategory = { [AssetCategory]: ?boolean };
+
+function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectibleCountPerChain }: Props) {
+  const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
-  const fiatCurrency = useFiatCurrency();
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
 
+  const chains = useSupportedChains();
+  const fiatCurrency = useFiatCurrency();
+  const isDeployedOnEthereum = useRootSelector(isSmartWalletActivatedSelector);
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
-  const colors = useThemeColors();
 
-  const renderChain = (chain: Chain, showHeader: boolean) => {
-    const summary = chainSummaries[chain];
-    const categoryBalances = chainBalances[chain];
-    const { title, iconName, color } = chainsConfig[chain];
+  const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-    if (!summary && !categoryBalances) return null;
+  const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
+    navigation.navigate(ASSETS, { category, chain });
+  };
+
+  const navigateToActivateSmartWallet = () => {
+    navigation.navigate(SMART_WALLET_INTRO);
+  };
+
+  const toggleShowChains = (category: AssetCategory) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    const previousValue = showChainsPerCategory[category];
+    // $FlowFixMe: flow is able to handle this
+    setShowChainsPerCategory({ ...showChainsPerCategory, [category]: !previousValue });
+  };
+
+  const handlePressAssetCategory = (category: AssetCategory) => {
+    if (chains.length && chains.length > 1) {
+      toggleShowChains(category);
+      return;
+    }
+
+    navigateToAssetDetails(category);
+  };
+
+  const renderCategoryWithBalance = (category: $Keys<CategoryBalances>) => {
+    const balance = categoryBalances[category] ?? BigNumber(0);
+    const formattedBalance = formatFiatValue(balance, fiatCurrency);
+
+    const { title, iconName } = categoriesConfig[category];
+    const showChains = showChainsPerCategory[category];
 
     return (
-      <React.Fragment key={chain}>
-        {showHeader && (
-          <HomeListHeader
-            key={`${chain}-header`}
-            title={title}
-            iconName={iconName}
-            color={color}
-            walletAddress={summary?.walletAddress}
-          />
-        )}
-
-        {!!categoryBalances &&
-          Object.keys(categoryBalances).map((category) =>
-            renderBalanceItem(chain, category, categoryBalances[category]),
-          )}
-
-        {summary?.collectibleCount != null && (
-          <HomeListItem
-            key={`${chain}-collectibles`}
-            title={tRoot('assetCategories.collectibles')}
-            iconName="collectible"
-            onPress={() => navigation.navigate(ASSETS)}
-            value={formatValue(summary.collectibleCount)}
-          />
-        )}
-
-        {summary?.contactCount != null && (
-          <HomeListItem
-            key={`${chain}-contacts`}
-            title={t('contacts')}
-            iconName="contacts"
-            onPress={() => navigation.navigate(CONTACTS_FLOW)}
-            value={formatValue(summary.contactCount)}
-          />
-        )}
-
-        {/* Temporary entry until other UI provided */}
-        {chain === CHAINS.ETHEREUM && (
-          <HomeListItem
-            key={`${chain}-services`}
-            title={t('services')}
-            iconName="info"
-            onPress={() => navigation.navigate(SERVICES_FLOW)}
-          />
-        )}
+      <React.Fragment key={`${category}-fragment`}>
+        <CategoryListItem
+          key={category}
+          iconName={iconName}
+          title={title}
+          value={formattedBalance}
+          onPress={() => handlePressAssetCategory(category)}
+        />
+        {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
       </React.Fragment>
     );
   };
 
-  const renderBalanceItem = (chain: Chain, category: AssetCategory, balance: ?Balance) => {
-    if (!balance || !categoriesConfig[category]) return null;
+  const renderChainWithBalance = (category: $Keys<CategoryBalances>, chain: Chain) => {
+    const balance = categoryBalancesPerChain[chain]?.[category] ?? BigNumber(0);
+    const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
-    const formattedBalance = formatFiatValue(balance?.balanceInFiat ?? 0, fiatCurrency);
+    const { title } = chainsConfig[chain];
 
-    const initialBalance = balance.changeInFiat ? balance.balanceInFiat.minus(balance.changeInFiat) : null;
-    const formattedChange = formatFiatChangeExtended(balance.changeInFiat, initialBalance, fiatCurrency);
-    const { title, iconName } = categoriesConfig[category];
+    // Show deploy only for Ethereum (if not deployed).
+    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
 
     return (
-      <HomeListItem
-        key={`${chain}-${category}`}
+      <ChainListItem
+        key={`${category}-${chain}`}
         title={title}
-        iconName={iconName}
-        onPress={() => navigation.navigate(ASSETS, { category })}
         value={formattedBalance}
-        secondaryValue={formattedChange}
-        secondaryValueColor={balance.changeInFiat?.gte(0) ? colors.positive : colors.secondaryText}
+        isDeployed={isDeployed}
+        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : navigateToActivateSmartWallet}
       />
     );
   };
 
-  if (!showSideChains) {
-    return <Container>{renderChain(CHAINS.ETHEREUM, false)}</Container>;
-  }
+  const renderCollectiblesCategory = () => {
+    const { title, iconName } = categoriesConfig.collectibles;
+    const showChains = showChainsPerCategory.collectibles;
+    return (
+      <React.Fragment key="collectibles-fragment">
+        <CategoryListItem
+          key="collectibles"
+          title={title}
+          iconName={iconName}
+          onPress={() => handlePressAssetCategory(ASSET_CATEGORY.COLLECTIBLES)}
+          value={formatValue(totalCollectibleCount)}
+        />
+        {showChains && chains.map(renderChainCollectibleCount)}
+      </React.Fragment>
+    );
+  };
 
-  return <Container>{Object.keys(chainBalances).map((key) => renderChain(key, true))}</Container>;
+  const renderChainCollectibleCount = (chain: Chain) => {
+    // Show deploy only for Ethereum (if not deployed).
+    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
+
+    return (
+      <ChainListItem
+        key={`collectibles-${chain}`}
+        title={chainsConfig[chain].title}
+        value={formatValue(collectibleCountPerChain[chain] ?? 0)}
+        isDeployed={isDeployed}
+        onPress={
+          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : navigateToActivateSmartWallet
+        }
+      />
+    );
+  };
+
+  return (
+    <Container>
+      {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategoryWithBalance(category))}
+
+      {renderCollectiblesCategory()}
+
+      {/* Temporary entry until other UI provided */}
+      <CategoryListItem
+        key="services"
+        title={t('services')}
+        iconName="info"
+        onPress={() => navigation.navigate(SERVICES_FLOW)}
+      />
+    </Container>
+  );
 }
 
 export default AssetsSection;
 
-const Container = styled.View``;
+const Container = styled.View`
+  padding: 0 ${spacing.large}px;
+`;

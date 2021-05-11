@@ -89,6 +89,8 @@ export const lightThemeColorsOld = {
   buttonSecondaryBackground: lightThemeColors.basic060,
   buttonSecondaryTitle: lightThemeColors.basic000,
   buttonTextTitle: lightThemeColors.basic000,
+  pagerActive: '#000000',
+  pagerInactive: '#d4d9db',
 };
 
 // will be removed after transition
@@ -147,6 +149,8 @@ export const darkThemeColorsOld = {
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
+  pagerActive: lightThemeColors.basic010,
+  pagerInactive: '#818eb3',
 };
 
 export const themedColors = {

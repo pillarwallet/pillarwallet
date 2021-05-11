@@ -35,13 +35,13 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import type { CategoryBalances } from 'models/Home';
 
 // Local
-import { getCategoryBalancesTotal } from './utils';
+import { getTotalBalance } from '../utils';
 
 type Props = {|
   categoryBalances: CategoryBalances,
 |};
 
-function AssetsPieChart({ categoryBalances }: Props) {
+function AssetPieChart({ categoryBalances }: Props) {
   const { data, colorScale } = useChartProps(categoryBalances);
   const colors = useThemeColors();
 
@@ -55,32 +55,37 @@ function AssetsPieChart({ categoryBalances }: Props) {
       : null;
   };
 
-  const lableSvgStyle = {
+  const titleSvgStyle = {
     fontSize: fontSizes.small,
-    fill: colors.basic010,
+    fill: colors.text,
+  };
+
+  const valueSvgStyle = {
+    fontSize: fontSizes.small,
+    fill: colors.secondaryText,
   };
 
   return (
     <Container>
-      <Svg width={window.width} height={320}>
-        <Circle fill={colors.pieChartCenter} r={55} cx={window.width / 2} cy={160} />
+      <Svg width={window.width} height={300}>
+        <Circle fill={colors.pieChartCenter} r={55} cx={window.width / 2} cy={150} />
         <VictoryPie
           standalone={false}
           data={data}
           colorScale={colorScale}
           animate
           width={window.width}
-          height={320}
+          height={300}
           radius={92}
           innerRadius={55}
-          labelComponent={<VictoryLabel text={getLabelTexts} style={lableSvgStyle} lineHeight={1.5} />}
+          labelComponent={<VictoryLabel text={getLabelTexts} style={[titleSvgStyle, valueSvgStyle]} lineHeight={1.5} />}
         />
       </Svg>
     </Container>
   );
 }
 
-export default AssetsPieChart;
+export default AssetPieChart;
 
 type ChartDatum = {|
   y: number,
@@ -95,10 +100,10 @@ const useChartProps = (balances: CategoryBalances) => {
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  const total = getCategoryBalancesTotal(balances);
+  const total = getTotalBalance(balances);
 
   // Zero balance case
-  if (total.balanceInFiat.isZero()) {
+  if (total.isZero()) {
     Object.keys(balances).forEach((category, index, array) => {
       const { title } = config[category];
       data.push({ y: 1 / array.length, title, value: 0 });
@@ -109,8 +114,8 @@ const useChartProps = (balances: CategoryBalances) => {
   }
 
   Object.keys(balances).forEach((category) => {
-    const categoryBalance = balances[category]?.balanceInFiat;
-    const totalBalance = total.balanceInFiat;
+    const categoryBalance = balances[category];
+    const totalBalance = total;
     if (!categoryBalance || categoryBalance.isZero() || totalBalance.isZero()) return;
 
     const value = categoryBalance.dividedBy(totalBalance).toNumber();

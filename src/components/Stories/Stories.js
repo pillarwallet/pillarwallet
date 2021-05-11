@@ -52,10 +52,7 @@ const Stories = () => {
 
 const StorylyWthSpacing = styled(Storyly)`
   height: 140px;
-  ${({ $hide }) =>
-    $hide &&
-    // eslint-disable-next-line i18next/no-literal-string
-    'display: none;'}
+  ${({ $hide }) => $hide && 'display: none;'}
   overflow: hidden;
   margin-left: ${spacing.layoutSides}px;
 `;
