@@ -33,6 +33,7 @@ import {
   GatewayTransactionStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
+import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
@@ -51,15 +52,13 @@ import { ETH } from 'constants/assetsConstants';
 
 // types
 import type { Asset, Balance } from 'models/Asset';
-import type { EthereumTransaction, TransactionPayload } from 'models/Transaction';
+import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 
 
-type EtherspotTransactionSentResult = { batchHash: string };
-
 class EtherspotService {
   sdk: EtherspotSdk;
-  subscription: any;
+  subscription: ?Subscription;
 
   async init(privateKey: string): Promise<void> {
     const isMainnet = isProdEnv();
@@ -206,7 +205,7 @@ class EtherspotService {
   async setTransactionsBatchAndSend(
     transactions: EthereumTransaction[],
     useGasTokenAddress?: string,
-  ): Promise<?EtherspotTransactionSentResult> {
+  ): Promise<?TransactionResult> {
     // clear batch
     this.clearTransactionsBatch();
 
@@ -220,7 +219,9 @@ class EtherspotService {
     await this.estimateTransactionsBatch(useGasTokenAddress);
 
     // submit current batch
-    return this.sdk.submitGatewayBatch().then(({ hash: batchHash }) => ({ batchHash }));
+    const { hash: batchHash } = await this.sdk.submitGatewayBatch();
+
+    return { batchHash };
   }
 
   async sendP2PTransaction(transaction: TransactionPayload) {
@@ -232,14 +233,16 @@ class EtherspotService {
       recipient,
     };
 
-    return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
+    const { hash } = await this.sdk.increaseP2PPaymentChannelAmount(increaseRequest);
+
+    return { hash };
   }
 
   async sendTransaction(
     transaction: TransactionPayload,
     fromAccountAddress: string,
     isP2P?: boolean,
-  ): Promise<?EtherspotTransactionSentResult> {
+  ): Promise<?TransactionResult> {
     if (isP2P) {
       // TODO: uncomment P2P partial implementation once it's available for Etherspot
       // return this.sendP2PTransaction(transaction);

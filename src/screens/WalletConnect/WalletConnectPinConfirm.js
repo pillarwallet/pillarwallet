@@ -42,10 +42,9 @@ import {
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 // types
-import type { TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
-import type { TransactionStatus } from 'actions/assetsActions';
 
 
 type Props = {

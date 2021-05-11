@@ -243,3 +243,16 @@ export type TransactionToEstimate = {
   assetData?: AssetData,
   data?: string,
 };
+
+export type TransactionStatus = {|
+  isSuccess: boolean,
+  error: ?string,
+  noRetry?: boolean,
+  hash?: string,
+  batchHash?: string,
+|};
+
+export type TransactionResult = {|
+  hash?: string,
+  batchHash?: string,
+|};

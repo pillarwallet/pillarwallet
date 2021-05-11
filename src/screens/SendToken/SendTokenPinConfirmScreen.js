@@ -34,10 +34,9 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { TransactionStatus } from 'actions/assetsActions';
 
 
 type Props = {
