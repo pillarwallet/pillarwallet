@@ -55,7 +55,7 @@ function RewardsTab() {
   const colors = useThemeColors();
   const safeArea = useSafeAreaInsets();
 
-  const { chain: initialChain } = navigation.state.params;
+  const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useRewardsBalance();

@@ -58,7 +58,7 @@ function CollectiblesTab() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const { chain: initialChain } = navigation.state.params;
+  const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const { width } = useWindowDimensions();

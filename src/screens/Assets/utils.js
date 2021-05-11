@@ -63,7 +63,7 @@ export function buildAssetDataNavigationParam(asset: Asset, { accountAddress }: 
 
 export type FlagPerChain = { [Chain]: ?boolean };
 
-export function useExpandItemsPerChain(initialChain?: Chain) {
+export function useExpandItemsPerChain(initialChain: ?Chain) {
   const [expandItemsPerChain, setExpandItemsPerChain] = React.useState<FlagPerChain>(
     // $FlowFixMe: type inference limitation
     initialChain ? { [initialChain]: true } : {},
