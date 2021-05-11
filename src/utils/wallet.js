@@ -24,7 +24,8 @@ import get from 'lodash.get';
 import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
 import { getEnv } from 'configs/envConfig';
 import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
-import { TypedDataUtils } from 'eth-sig-util';
+// eslint-disable-next-line camelcase
+import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 
 import { getRandomInt, getEthereumProvider, printLog, reportLog, reportErrorLog } from 'utils/common';
 import Storage from 'services/storage';
@@ -105,7 +106,10 @@ export function hashPersonalMessage(message: string): string {
 }
 
 // handle eth_sign
-export function signMessage(message: any, walletInstance: Object): string {
+export function signMessage(
+  message: any,
+  walletInstance: Object,
+): string {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
 
@@ -115,18 +119,26 @@ export function signMessage(message: any, walletInstance: Object): string {
 }
 
 // handle personal_sign
-export function signPersonalMessage(messageHex: string, walletInstance: Object): Promise<string> {
+export function signPersonalMessage(
+  messageHex: string,
+  walletInstance: Object,
+  isLegacyEIP1271: boolean = false, // EIP-1271 had few proposals that went live
+): Promise<string> {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
 
-  const actualMessage = ethers.utils.toUtf8String(messageHex);
-  const data = hashPersonalMessage(actualMessage);
+  let data = messageHex;
+  if (isLegacyEIP1271) {
+    const actualMessage = ethers.utils.toUtf8String(messageHex);
+    data = hashPersonalMessage(actualMessage);
+  }
 
   return wallet.signMessage(ethers.utils.arrayify(data));
 }
 
 export function encodeTypedDataMessage(message: string): string {
   const useV4 = true;
+
   const data = TypedDataUtils.sanitizeData(JSON.parse(message));
 
   const buf = Buffer.concat([
@@ -148,13 +160,20 @@ export function hashTypedDataMessage(message: string): string {
 }
 
 // handle eth_signTypedData
-export function signTypedData(data: string, walletInstance: Object): Promise<string> {
+export function signTypedData(
+  data: string,
+  walletInstance: Object,
+  isLegacyEIP1271: boolean = false, // EIP-1271 had few proposals that went live
+): Promise<string> {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
 
-  const hashedTypedData = hashTypedDataMessage(data);
+  if (isLegacyEIP1271) {
+    const hashedTypedData = hashTypedDataMessage(data);
+    return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
+  }
 
-  return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
+  return signTypedData_v4(toBuffer(wallet.privateKey), { data: JSON.parse(data) });
 }
 
 export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {

@@ -47,7 +47,7 @@ import {
 } from 'constants/assetsConstants';
 
 // services
-import etherspot from 'services/etherspot';
+import etherspotService from 'services/etherspot';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
@@ -370,13 +370,13 @@ export const getEthereumProvider = (network: string) => {
 
 
 export const resolveEnsName = async (ensName: string): Promise<?string> => {
-  const resolved = await etherspot.getEnsNode(ensName);
+  const resolved = await etherspotService.getEnsNode(ensName);
 
   return resolved?.address;
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const resolved = await etherspot.getEnsNode(address);
+  const resolved = await etherspotService.getEnsNode(address);
 
   return resolved?.name;
 };
