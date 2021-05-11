@@ -19,10 +19,9 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { createStructuredSelector } from 'reselect';
 import { useNavigation } from 'react-navigation-hooks';
 
 // actions
@@ -44,32 +43,16 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import {
-  findFirstArchanovaAccount,
-  getAccountAddress,
-  getAccountEnsName,
-} from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountAddress, getAccountEnsName } from 'utils/accounts';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { accountsSelector } from 'selectors';
+import { accountsSelector, useRootSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Balances } from 'models/Asset';
-import type { Accounts } from 'models/Account';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { TransactionFeeInfo } from 'models/Transaction';
-import type { TransactionStatus } from 'actions/assetsActions';
+import type { TransactionStatus } from 'models/Transaction';
 
-
-type Props = {|
-  accounts: Accounts,
-  feeInfo: ?TransactionFeeInfo,
-  isEstimating: boolean,
-  estimateErrorMessage: ?string,
-  balances: Balances,
-|};
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -80,17 +63,18 @@ const FeesWrapper = styled.View`
   margin-bottom: ${spacing.largePlus}px;
 `;
 
-const EnsMigrationConfirm = ({
-  feeInfo,
-  accounts,
-  isEstimating,
-  estimateErrorMessage,
-  balances,
-}: Props) => {
+const EnsMigrationConfirm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('migrateENSContent.details');
+  const accounts = useRootSelector(accountsSelector);
+  const balances = useRootSelector(accountBalancesSelector);
+  const {
+    feeInfo,
+    isEstimating,
+    errorMessage: estimateErrorMessage,
+  } = useRootSelector(({ transactionEstimate }) => transactionEstimate);
 
   useEffect(() => {
     dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction());
@@ -174,22 +158,4 @@ const EnsMigrationConfirm = ({
   );
 };
 
-const mapStateToProps = ({
-  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-}: RootReducerState): $Shape<Props> => ({
-  feeInfo,
-  isEstimating,
-  estimateErrorMessage,
-});
-
-const structuredSelector = createStructuredSelector({
-  accounts: accountsSelector,
-  balances: accountBalancesSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default connect(combinedMapStateToProps)(EnsMigrationConfirm);
+export default EnsMigrationConfirm;

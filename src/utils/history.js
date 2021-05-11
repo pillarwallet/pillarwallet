@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
-import { BigNumber } from 'bignumber.js';
 
 import type SDKWrapper from 'services/api';
 
@@ -47,7 +46,7 @@ import type { Value } from 'utils/common';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 
 export const buildHistoryTransaction = ({
   from,
@@ -145,8 +144,7 @@ export const parseFeeWithGasToken = (
   fee: ?Value,
 ): FeeWithGasToken | null => {
   if (!gasToken || isEmpty(gasToken) || !fee) return null;
-  const feeInWei = new BigNumber(fee.toString());
-  return { feeInWei, gasToken };
+  return { feeInWei: wrapBigNumber(fee), gasToken };
 };
 
 export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash: string): ?Transaction => {

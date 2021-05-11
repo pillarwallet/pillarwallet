@@ -44,10 +44,10 @@ export type WalletConnectSessionsReducerAction = SetWalletConnectSessionsImporte
   | AddWalletConnectSessionAction
   | RemoveWalletConnectSessionAction;
 
-export type WalletConnectSessionsReducerState = {
+export type WalletConnectSessionsReducerState = {|
   sessions: WalletConnectSession[],
   isImported: boolean,
-};
+|};
 
 const initialState: WalletConnectSessionsReducerState = {
   sessions: [],

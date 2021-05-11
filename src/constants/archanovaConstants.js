@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import { sdkConstants } from '@smartwallet/sdk';
 
 export const RESET_ARCHANOVA_WALLET = 'RESET_ARCHANOVA_WALLET';
@@ -41,8 +40,8 @@ export const ARCHANOVA_WALLET_DEPLOYMENT_ERRORS = {
   INSUFFICIENT_FUNDS: 'INSUFFICIENT_FUNDS',
   REVERTED: 'REVERTED',
 };
-export const ARCHANOVA_PPN_PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-export const ARCHANOVA_PPN_PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
+export const ARCHANOVA_PPN_PAYMENT_COMPLETED = sdkConstants?.AccountPaymentStates?.Completed ?? '';
+export const ARCHANOVA_PPN_PAYMENT_PROCESSED = sdkConstants?.AccountPaymentStates?.Processed ?? '';
 export const ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE = 'ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE';
 export const SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE = 'SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE';
 export const SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE = 'SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE';

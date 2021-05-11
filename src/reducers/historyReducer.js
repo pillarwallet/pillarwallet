@@ -60,6 +60,8 @@ export default function historyReducer(
   state: HistoryReducerState = initialState,
   action: HistoryAction,
 ): HistoryReducerState {
+  const { historyLastSyncIds = {} } = state;
+
   switch (action.type) {
     case REHYDRATE:
       return {
@@ -91,10 +93,9 @@ export default function historyReducer(
     case UPDATING_TRANSACTION:
       return { ...state, updatingTransaction: action.payload };
     case SET_HISTORY_LAST_SYNC_IDS:
-      return { ...state, historyLastSyncIds: action.payload };
+      return { ...state, historyLastSyncIds: { ...historyLastSyncIds, ...action.payload } };
     case SET_ACCOUNT_HISTORY_LAST_SYNC_ID:
       const { accountId, lastSyncId } = action.payload;
-      const { historyLastSyncIds = {} } = state;
       return { ...state, historyLastSyncIds: { ...historyLastSyncIds, [accountId]: lastSyncId } };
     default:
       return state;

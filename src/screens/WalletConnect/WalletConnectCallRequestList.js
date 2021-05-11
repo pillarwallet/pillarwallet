@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -33,7 +33,7 @@ import { Spacing } from 'components/Layout';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
+import { useThemeColors } from 'utils/themes';
 
 // hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -41,12 +41,8 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // constants
 import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 
-// types
-import type { Theme } from 'models/Theme';
-
 
 type Props = {
-  theme: Theme,
   showLastOneOnly?: boolean,
 };
 
@@ -77,14 +73,11 @@ const Header = styled(MediumText)`
   padding: 18px ${spacing.layoutSides}px 8px;
 `;
 
-const WalletConnectCallRequestList = ({
-  theme,
-  showLastOneOnly,
-}: Props) => {
+const WalletConnectCallRequestList = ({ showLastOneOnly }: Props) => {
   const navigation = useNavigation();
   const { rejectCallRequest, callRequests } = useWalletConnect();
 
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
 
   const renderRequest = ({ item: callRequest }) => {
     const { name, icon } = callRequest;
@@ -145,4 +138,4 @@ const WalletConnectCallRequestList = ({
   );
 };
 
-export default withTheme(WalletConnectCallRequestList);
+export default WalletConnectCallRequestList;

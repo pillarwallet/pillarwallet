@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useMemo } from 'react';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -35,9 +35,9 @@ import Toast from 'components/Toast';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors, useThemeColors } from 'utils/themes';
 import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { images } from 'utils/images';
+import { useThemedImages } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
 
 // constants
@@ -64,7 +64,6 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
-import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
@@ -72,7 +71,6 @@ import type { Account } from 'models/Account';
 
 type Props = {
   balances: Balances,
-  theme: Theme,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -111,7 +109,6 @@ const OptionButton = styled(Button)`
 `;
 
 const WalletConnectCallRequestScreen = ({
-  theme,
   isEstimating,
   balances,
   feeInfo,
@@ -132,7 +129,8 @@ const WalletConnectCallRequestScreen = ({
     estimateCallRequestTransaction(callRequest);
   }, []);
 
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
+  const { genericToken } = useThemedImages();
 
   const transactionPayload: TransactionPayload | null = useMemo(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return null;
@@ -213,7 +211,6 @@ const WalletConnectCallRequestScreen = ({
     if (!transactionPayload) return null; // edge case, error message is handled
 
     const feeDisplayValue = feeInfo?.fee && formatTransactionFee(feeInfo.fee, feeInfo?.gasToken);
-    const { genericToken } = images(theme);
     const { icon, name } = callRequest;
     const { amount, symbol, to } = transactionPayload;
 
@@ -342,4 +339,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen));
+export default connect(combinedMapStateToProps)(WalletConnectCallRequestScreen);

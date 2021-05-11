@@ -122,13 +122,13 @@ export function signMessage(
 export function signPersonalMessage(
   messageHex: string,
   walletInstance: Object,
-  isLegacyEIP1271: boolean = false, // EIP-1271 had few proposals that went live
+  isLegacyEip1271: boolean = false, // EIP-1271 had few proposals that went live
 ): Promise<string> {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
 
   let data = messageHex;
-  if (isLegacyEIP1271) {
+  if (isLegacyEip1271) {
     const actualMessage = ethers.utils.toUtf8String(messageHex);
     data = hashPersonalMessage(actualMessage);
   }
@@ -163,12 +163,12 @@ export function hashTypedDataMessage(message: string): string {
 export function signTypedData(
   data: string,
   walletInstance: Object,
-  isLegacyEIP1271: boolean = false, // EIP-1271 had few proposals that went live
+  isLegacyEip1271: boolean = false, // EIP-1271 had few proposals that went live
 ): Promise<string> {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
 
-  if (isLegacyEIP1271) {
+  if (isLegacyEip1271) {
     const hashedTypedData = hashTypedDataMessage(data);
     return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
   }

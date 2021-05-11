@@ -120,7 +120,7 @@ const WalletConnectPinConfirmScreeen = ({
   };
 
   const handleSignMessage = async (wallet: Wallet): Promise<?string> => {
-    const isLegacyEIP1721 = isArchanovaAccount(activeAccount);
+    const isLegacyEip1271 = isArchanovaAccount(activeAccount);
 
     const { method } = callRequest;
     const { message } = parseMessageSignParamsFromCallRequest(callRequest);
@@ -129,10 +129,10 @@ const WalletConnectPinConfirmScreeen = ({
     try {
       switch (method) {
         case PERSONAL_SIGN:
-          result = await signPersonalMessage(message, wallet, isLegacyEIP1721);
+          result = await signPersonalMessage(message, wallet, isLegacyEip1271);
           break;
         case ETH_SIGN_TYPED_DATA:
-          result = await signTypedData(message, wallet, isLegacyEIP1721);
+          result = await signTypedData(message, wallet, isLegacyEip1271);
           break;
         default:
           result = signMessage(message, wallet);

@@ -24,6 +24,7 @@ import { getEnv } from 'configs/envConfig';
 import type { Assets, Balance, Rates } from 'models/Asset';
 import {
   findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
   getAccountId,
   getEnabledAssets,
 } from 'utils/accounts';
@@ -79,7 +80,7 @@ export const etherspotAccountAssetsSelector = createSelector(
   accountsSelector,
   hiddenAssetsSelector,
   (assets, accounts, hiddenAssets) => {
-    const etherspotAccount = findFirstArchanovaAccount(accounts);
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) return {};
 
     const accountId = getAccountId(etherspotAccount);

@@ -110,7 +110,7 @@ import type {
 } from 'models/ArchanovaWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { SyntheticTransactionExtra } from 'models/Transaction';
+import type { SyntheticTransactionExtra, TransactionStatus } from 'models/Transaction';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type SDKWrapper from 'services/api';
 
@@ -190,7 +190,6 @@ import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTra
 import { fetchUserStreamsAction } from './sablierActions';
 import { lockScreenAction } from './authActions';
 import { estimateTransactionsAction } from './transactionEstimateActions';
-import type { TransactionStatus } from './assetsActions';
 
 
 const storage = Storage.getInstance('db');
