@@ -21,7 +21,11 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionsAction,
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+} from 'actions/transactionEstimateActions';
 
 // services
 import aaveService from 'services/aave';
@@ -31,7 +35,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { getAssetData, getAssetsAsList } from 'utils/assets';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
 import { getAaveDepositTransactions, getAaveWithdrawTransaction } from 'utils/aave';
 
 // constants
@@ -41,7 +45,6 @@ import {
   SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT,
   SET_FETCHING_LENDING_DEPOSITED_ASSETS,
 } from 'constants/lendingConstants';
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -78,7 +81,7 @@ export const fetchDepositedAssetsAction = () => {
     } = getState();
 
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
@@ -101,7 +104,7 @@ export const fetchDepositedAssetAction = (symbol: string) => {
       lending: { depositedAssets, isFetchingDepositedAssets },
     } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
@@ -134,11 +137,11 @@ export const calculateLendingDepositTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     // initiate state earlier
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     // may include approve transaction
     const aaveDepositNeededTransactions = await getAaveDepositTransactions(
@@ -147,21 +150,13 @@ export const calculateLendingDepositTransactionEstimateAction = (
       asset,
     );
 
-    const sequentialTransactions = aaveDepositNeededTransactions
-      .slice(1) // exclude first, take rest if exist
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactions = aaveDepositNeededTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      aaveDepositNeededTransactions[0].to,
-      aaveDepositNeededTransactions[0].amount,
-      aaveDepositNeededTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactions));
   };
 };
 
@@ -171,18 +166,18 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     // initiate state earlier
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = await getAaveWithdrawTransaction(
+    const { to, amount: value, data } = await getAaveWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
       withdrawAmount,
       depositedAsset,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };

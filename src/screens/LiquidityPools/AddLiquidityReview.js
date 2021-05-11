@@ -108,7 +108,7 @@ const AddLiquidityReviewScreen = ({
     if (addLiquidityTransactions.length > 1) {
       transactionPayload = {
         ...transactionPayload,
-        sequentialSmartWalletTransactions: addLiquidityTransactions.slice(1),
+        sequentialTransactions: addLiquidityTransactions.slice(1),
       };
     }
 

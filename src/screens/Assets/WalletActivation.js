@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import { fontStyles } from 'utils/variables';
 
 // services
-import smartWalletInstance from 'services/smartWallet';
+import archanovaInstance from 'services/archanova';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -74,7 +74,7 @@ class WalletActivation extends React.PureComponent<Props> {
       return;
     }
 
-    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(deploymentHash);
+    const explorerLink = archanovaInstance.getConnectedAccountTransactionExplorerLink(deploymentHash);
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),

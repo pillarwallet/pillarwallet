@@ -19,30 +19,35 @@
 */
 
 import * as React from 'react';
-import { withNavigation } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
+// components
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
+
+// utils
 import { spacing, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { toggleWCPromoCardAction } from 'actions/walletConnectActions';
+
+// constants
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import { EXPLORE_APPS } from 'constants/navigationConstants';
-import type { NavigationScreenProp } from 'react-navigation';
+
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 
 
 type Props = {
-  promoCardCollapsed: boolean,
-  toggleWCPromoCard: (collapsed: boolean) => void,
-  navigation: NavigationScreenProp<mixed>,
+  isPromoCardHidden?: boolean,
+  hidePromoCard: () => void,
 };
 
 const promoImage = require('assets/images/logo_pattern.png');
@@ -88,7 +93,9 @@ const CloseIcon = styled(Icon)`
   color: ${({ theme }) => theme.current === DARK_THEME ? theme.colors.tertiary : theme.colors.text};
 `;
 
-const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props) => {
+const WalletConnectDappsPromoCard = ({ isPromoCardHidden, hidePromoCard }: Props) => {
+  const navigation = useNavigation();
+
   const handleExplorePress = () => {
     navigation.navigate(EXPLORE_APPS);
   };
@@ -104,9 +111,9 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
     />
   );
 
-  if (promoCardCollapsed) {
+  if (isPromoCardHidden) {
     return (
-      <CollapsedWrapper onPress={() => toggleWCPromoCard(false)}>
+      <CollapsedWrapper>
         <CollapsedPromoText small secondary>{t('walletConnectContent.banner.promo.paragraph')}</CollapsedPromoText>
         <Spacing w={70} />
         {renderExploreButton()}
@@ -131,7 +138,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
             {renderExploreButton()}
           </ButtonsContainer>
         </ContentContainer>
-        <CloseIconContainer onPress={() => toggleWCPromoCard(true)}>
+        <CloseIconContainer onPress={hidePromoCard}>
           <CloseIcon name="rounded-close" />
         </CloseIconContainer>
       </ShadowedCard>
@@ -140,13 +147,13 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
 };
 
 const mapStateToProps = ({
-  walletConnect: { promoCardCollapsed },
+  appSettings: { data: { hideWalletConnectPromoCard: isPromoCardHidden } },
 }: RootReducerState): $Shape<Props> => ({
-  promoCardCollapsed,
+  isPromoCardHidden,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  toggleWCPromoCard: (collapsed) => dispatch(toggleWCPromoCardAction(collapsed)),
+  hidePromoCard: () => dispatch(hideWalletConnectPromoCardAction()),
 });
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(PromoCard));
+export default connect(mapStateToProps, mapDispatchToProps)(WalletConnectDappsPromoCard);

@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { saveDbAction } from 'actions/dbActions';
 import { SET_HISTORY } from 'constants/historyConstants';
 import {
-  checkIfSmartWalletAccount,
+  isSmartWalletAccount,
   getActiveAccount,
   getActiveAccountAddress,
   getActiveAccountId,
@@ -26,7 +26,7 @@ export default async function (storageData: Object, dispatch: Function, getState
     reportLog('Possible redux-persist crash');
   }
 
-  if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+  if (activeAccount && isSmartWalletAccount(activeAccount)) {
     const accountAddress = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
     const accountHistory = (history[accountId] || []);

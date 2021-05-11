@@ -32,7 +32,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import { SET_ARCHANOVA_WALLET_ACCOUNT_ENS } from 'constants/archanovaConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
@@ -80,13 +80,13 @@ const dataForAllAccounts = {
       id: '0xKeyWallet',
       type: 'KEY_BASED',
       walletId: '350145cb-b266-488e-8dda-c89d77034226',
-      isActive: true,
+      isActive: false,
     },
     {
       id: '0xSmartWallet',
       type: 'SMART_WALLET',
       walletId: 'f13c646b-435c-4bbc-ab08-4121b7319333',
-      isActive: false,
+      isActive: true,
       extra:
         {
           ensName: null,
@@ -245,7 +245,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x000000',
         to: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -258,7 +258,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x000000',
         to: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
@@ -272,7 +272,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x000000',
         from: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -285,7 +285,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x000000',
         from: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
@@ -299,7 +299,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x111111',
         to: '0x000000',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -312,7 +312,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x111111',
         from: '0x000000',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -403,7 +403,7 @@ storiesOf('ActivityFeedItem', module)
       {...reduxData}
       event={{
       type: TRANSACTION_EVENT,
-      tag: SET_SMART_WALLET_ACCOUNT_ENS,
+      tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
     }}
     />
   ))

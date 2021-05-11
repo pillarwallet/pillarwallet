@@ -46,6 +46,9 @@ import {
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 
+// services
+import etherspotService from 'services/etherspot';
+
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
@@ -88,6 +91,14 @@ export const reportErrorLog = (
   extra?: Object,
 ) => {
   reportLog(message, extra, Sentry.Severity.Error);
+};
+
+export const logBreadcrumb = (
+  category: string,
+  message: string,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  Sentry.addBreadcrumb({ category, message, level });
 };
 
 export const reportOrWarn = (
@@ -365,23 +376,17 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
+
 export const resolveEnsName = async (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  try {
-    return await provider.resolveName(ensName);
-  } catch (error) {
-    reportLog('getReceiverWithEnsName failed', { error });
-    return null;
-  }
+  const resolved = await etherspotService.getEnsNode(ensName);
+
+  return resolved?.address;
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  try {
-    return await provider.lookupAddress(address);
-  } catch (_) {
-    return null;
-  }
+  const resolved = await etherspotService.getEnsNode(address);
+
+  return resolved?.name;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {
@@ -624,7 +629,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
 
 export const getEnsPrefix = () => isProdEnv()
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar.kovan';
+  : '.pillar'; // eslint-disable-line i18next/no-literal-string
 
 export const hitSlop10 = {
   top: 10,
@@ -681,3 +686,5 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
+
+export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;

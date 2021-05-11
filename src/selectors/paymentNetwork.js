@@ -23,7 +23,7 @@ import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 
 // constants
-import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
+import { ARCHANOVA_PPN_PAYMENT_COMPLETED } from 'constants/archanovaConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -32,7 +32,7 @@ import {
 
 // utils
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
-import { isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
@@ -48,7 +48,7 @@ import {
   paymentNetworkBalancesSelector,
   supportedAssetsSelector,
 } from './selectors';
-import { accountHistorySelector, smartAccountHistorySelector } from './history';
+import { accountHistorySelector, archanovaAccountHistorySelector } from './history';
 import { accountAssetsSelector } from './assets';
 
 const ppnTrxTags = [
@@ -85,7 +85,7 @@ export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[
 );
 
 export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
-  smartAccountHistorySelector,
+  archanovaAccountHistorySelector,
   (history: Transaction[]) => {
     return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
   },
@@ -98,9 +98,10 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
   accountAssetsSelector,
   (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
     return PPNTransactions
-      .filter(
-        ({ hash, stateInPPN }) => stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history),
-      )
+      .filter(({
+        hash,
+        stateInPPN,
+      }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED && hash && !isHiddenUnsettledTransaction(hash, history))
       .reduce((nonZeroBalances, transaction) => {
         const { value: rawValue, asset: symbol } = transaction;
 

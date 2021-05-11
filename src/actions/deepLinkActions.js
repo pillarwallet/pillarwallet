@@ -22,7 +22,7 @@ import { Alert } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
-import { requestSessionAction } from 'actions/walletConnectActions';
+import { connectToWalletConnectConnectorAction } from 'actions/walletConnectActions';
 
 // constants
 import { CONFIRM_CLAIM } from 'constants/navigationConstants';
@@ -43,8 +43,8 @@ export const executeDeepLinkAction = (deepLink: string) => {
     if (isEmpty(validatedDeepLink)) return;
     const { action, query, protocol } = validatedDeepLink;
 
-    if (protocol === 'wc:') {
-      dispatch(requestSessionAction(deepLink));
+    if (protocol === 'wc:' && !isEmpty(query)) {
+      dispatch(connectToWalletConnectConnectorAction(deepLink));
       return;
     }
 
@@ -66,7 +66,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
         if (walletConnectUrl) {
           const key = query?.key;
           if (key) walletConnectUrl += `&key=${key}`; // eslint-disable-line i18next/no-literal-string
-          dispatch(requestSessionAction(walletConnectUrl));
+          dispatch(connectToWalletConnectConnectorAction(walletConnectUrl));
         }
         break;
       default:

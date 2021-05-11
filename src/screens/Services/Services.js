@@ -31,7 +31,7 @@ import { loadAltalixAvailability } from 'actions/fiatToCryptoActions';
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
+import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 
@@ -54,13 +54,13 @@ import { openInAppBrowser } from 'utils/inAppBrowser';
 import {
   getActiveAccount,
   getAccountAddress,
-  checkIfSmartWalletAccount,
+  isSmartWalletAccount,
+  isArchanovaAccount,
 } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
-import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -69,7 +69,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
@@ -88,11 +87,9 @@ let areLiquidityPoolsEnabled = true;
 type Props = {
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
-  isActiveAccountSmartWallet: boolean,
-  isSmartWalletActivated: boolean,
+  isArchanovaWalletActivated: boolean,
   user: User,
   accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
   getApi: () => SDKWrapper,
   isAltalixAvailable: null | boolean,
   loadAltalixInfo: () => void,
@@ -128,22 +125,105 @@ class ServicesScreen extends React.Component<Props> {
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
-  getServices = (): Service[] => {
-    const {
-      navigation,
-      isActiveAccountSmartWallet,
-      isSmartWalletActivated,
-    } = this.props;
+  navigateToRouteIfArchanovaWalletActivated = (route: string) => {
+    const { navigation, isArchanovaWalletActivated } = this.props;
+    if (!isArchanovaWalletActivated) return;
 
-    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
-    let SWServiceLabel;
-    if (SWServiceDisabled) {
-      SWServiceLabel = !isSmartWalletActivated
+    navigation.navigate(route);
+  };
+
+  getArchanovaSupportedServices = (): Service[] => {
+    const { isArchanovaWalletActivated, accounts } = this.props;
+
+    const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
+    const servicesDisabled = isArchanovaAccountActive && !isArchanovaWalletActivated;
+
+    let servicesLabel;
+    if (servicesDisabled) {
+      servicesLabel = !isArchanovaWalletActivated
         ? t('servicesContent.label.requiresActivation')
         : t('servicesContent.label.forSmartWallet');
     }
 
-    const services = [];
+    const archanovaSupportedServices = [];
+
+    if (areLiquidityPoolsEnabled) {
+      archanovaSupportedServices.push({
+        key: 'liquidityPools',
+        title: t('servicesContent.liquidityPools.title'),
+        body: t('servicesContent.liquidityPools.description'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(LIQUIDITY_POOLS),
+      });
+    }
+
+    if (isAaveEnabled) {
+      archanovaSupportedServices.push({
+        key: 'depositPool',
+        title: t('servicesContent.aaveDeposit.title'),
+        body: t('servicesContent.aaveDeposit.description'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(LENDING_CHOOSE_DEPOSIT),
+      });
+    }
+
+    if (isPoolTogetherEnabled) {
+      archanovaSupportedServices.push({
+        key: 'poolTogether',
+        title: t('servicesContent.poolTogether.title'),
+        body: t('servicesContent.poolTogether.description'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(POOLTOGETHER_DASHBOARD),
+      });
+    }
+
+    if (isSablierEnabled) {
+      archanovaSupportedServices.push({
+        key: 'sablier',
+        title: t('servicesContent.sablier.title'),
+        body: t('servicesContent.sablier.description'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(SABLIER_STREAMS),
+      });
+    }
+
+    if (isWBTCCafeEnabled) {
+      archanovaSupportedServices.push({
+        key: 'wbtc',
+        title: t('wbtcCafe.cafe'),
+        body: t('wbtcCafe.trade'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(WBTC_CAFE),
+      });
+    }
+
+    if (isRariEnabled) {
+      archanovaSupportedServices.push({
+        key: 'rari',
+        title: t('servicesContent.rari.title'),
+        body: t('servicesContent.rari.description'),
+        disabled: servicesDisabled,
+        label: servicesLabel,
+        action: () => this.navigateToRouteIfArchanovaWalletActivated(RARI_DEPOSIT),
+      });
+    }
+
+    return archanovaSupportedServices;
+  };
+
+  getServices = (): Service[] => {
+    const { navigation, accounts } = this.props;
+
+    // services are left for archanova only and will be decommissioned later
+    const services = isArchanovaAccount(getActiveAccount(accounts))
+      ? this.getArchanovaSupportedServices()
+      : [];
+
     if (isOffersEngineEnabled) {
       services.push({
         key: 'offersEngine',
@@ -152,67 +232,8 @@ class ServicesScreen extends React.Component<Props> {
         action: () => navigation.navigate(EXCHANGE),
       });
     }
+
     services.push(...this.getBuyCryptoServices());
-    if (areLiquidityPoolsEnabled) {
-      services.push({
-        key: 'liquidityPools',
-        title: t('servicesContent.liquidityPools.title'),
-        body: t('servicesContent.liquidityPools.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => isActiveAccountSmartWallet && navigation.navigate(LIQUIDITY_POOLS),
-      });
-    }
-    if (isAaveEnabled) {
-      services.push({
-        key: 'depositPool',
-        title: t('servicesContent.aaveDeposit.title'),
-        body: t('servicesContent.aaveDeposit.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
-      });
-    }
-    if (isPoolTogetherEnabled) {
-      services.push({
-        key: 'poolTogether',
-        title: t('servicesContent.poolTogether.title'),
-        body: t('servicesContent.poolTogether.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
-      });
-    }
-    if (isSablierEnabled) {
-      services.push({
-        key: 'sablier',
-        title: t('servicesContent.sablier.title'),
-        body: t('servicesContent.sablier.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => navigation.navigate(SABLIER_STREAMS),
-      });
-    }
-    if (isWBTCCafeEnabled) {
-      services.push({
-        key: 'wbtc',
-        title: t('wbtcCafe.cafe'),
-        body: t('wbtcCafe.trade'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => navigation.navigate(WBTC_CAFE),
-      });
-    }
-    if (isRariEnabled) {
-      services.push({
-        key: 'rari',
-        title: t('servicesContent.rari.title'),
-        body: t('servicesContent.rari.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => navigation.navigate(RARI_DEPOSIT),
-      });
-    }
 
     return services;
   };
@@ -296,22 +317,12 @@ class ServicesScreen extends React.Component<Props> {
   }
 
   getCryptoPurchaseAddress = (): string | null => {
-    const { accounts, smartWalletState } = this.props;
+    const { accounts } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
-    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
-    if (!smartWalletStatus.hasAccount) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.NO_SW_ACCOUNT} />
-      ));
-      return null;
-    }
-
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE} />
-      ));
+    if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
+      Modal.open(() => <BuyCryptoAccountNotActiveModal />);
       return null;
     }
 
@@ -392,18 +403,15 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
   fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
-  smartWalletState,
   isAltalixAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
-  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

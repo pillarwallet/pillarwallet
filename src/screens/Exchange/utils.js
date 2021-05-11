@@ -27,8 +27,8 @@ import { getRate, getBalance, sortAssets, getAssetOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
+import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
 import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
@@ -36,7 +36,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Rates, Asset, Assets, AssetOption, Balances } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
 
@@ -211,10 +211,10 @@ export const shouldTriggerSearch = (
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
   const deploymentData = getDeploymentData(smartWalletState);
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+  const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
   return !isEmpty(sendingBlockedMessage)
-    && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    && archanovaWalletStatus.status !== ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
     && !deploymentData.error;
 };
 

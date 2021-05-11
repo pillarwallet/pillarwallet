@@ -28,7 +28,7 @@ import {
   SET_SABLIER_GRAPH_QUERY_ERROR,
 } from 'constants/sablierConstants';
 import { callSubgraph, GraphQueryError } from 'services/theGraph';
-import { mockSmartWalletAccount } from 'testUtils/jestSetup';
+import { mockArchanovaAccount } from 'testUtils/jestSetup';
 
 import { fetchUserStreamsAction } from '../sablierActions';
 
@@ -65,7 +65,7 @@ const mockStream = {
 };
 
 const initialState = {
-  accounts: { data: [mockSmartWalletAccount] },
+  accounts: { data: [mockArchanovaAccount] },
 };
 
 describe('Sablier actions', () => {

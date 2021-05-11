@@ -40,7 +40,7 @@ import CollectiblesList from 'components/CollectiblesList';
 
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -48,7 +48,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 import type { Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
@@ -61,7 +61,7 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 
 // partials
@@ -138,11 +138,11 @@ class WalletView extends React.Component<Props, State> {
 
   shouldBlockAssetsView = () => {
     const { accounts, smartWalletState } = this.props;
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+    const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
     const deploymentData = getDeploymentData(smartWalletState);
     return !isEmpty(sendingBlockedMessage)
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      && archanovaWalletStatus.status !== ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       && !deploymentData.error;
   };
 
@@ -195,7 +195,6 @@ class WalletView extends React.Component<Props, State> {
       rates,
       balances,
       baseFiatCurrency,
-      accounts,
       smartWalletState,
       showDeploySmartWallet,
       theme,
@@ -211,10 +210,6 @@ class WalletView extends React.Component<Props, State> {
 
     const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
     const deploymentData = getDeploymentData(smartWalletState);
 
     const blockAssetsView = this.shouldBlockAssetsView();
@@ -303,7 +298,7 @@ class WalletView extends React.Component<Props, State> {
               isSearching={query.length >= MIN_QUERY_LENGTH}
             />
           )}
-          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
+          {!isInSearchMode && (!balance || showDeploySmartWallet) &&
           <ActionsWrapper>
             {!balance && !!activeAccountAddress && (
               <ListItemChevron

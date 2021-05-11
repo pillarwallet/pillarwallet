@@ -47,15 +47,13 @@ import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
 import { addressesEqual } from 'utils/assets';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // selectors
-import {
-  isGasTokenSupportedSelector,
-  isActiveAccountSmartWalletSelector,
-  preferredGasTokenSelector,
-} from 'selectors/smartWallet';
+import { isGasTokenSupportedSelector, preferredGasTokenSelector } from 'selectors/archanova';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
+import { activeAccountSelector } from 'selectors';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -67,6 +65,7 @@ import type { Assets } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
+import type { Account } from 'models/Account';
 
 // local
 import { SettingsSection } from './SettingsSection';
@@ -80,7 +79,6 @@ type Props = {
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
-  isSmartAccount: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
@@ -89,6 +87,7 @@ type Props = {
   devices: ConnectedDevice[],
   activeDeviceAddress: string,
   sessionLanguageCode: ?string,
+  activeAccount: ?Account,
 };
 
 type State = {
@@ -108,19 +107,22 @@ class AppSettings extends React.Component<Props, State> {
       preferredGasToken,
       isGasTokenSupported,
       setPreferredGasToken,
-      isSmartAccount,
       localisation,
       navigation,
       devices,
       activeDeviceAddress,
       sessionLanguageCode,
+      activeAccount,
     } = this.props;
 
-    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
+    const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
+
+    const showRelayerMigration = isArchanovaAccountActive && !isGasTokenSupported;
 
     const hasOtherDevicesLinked = !!devices.length
       && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
-    const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
+    const showGasTokenOption = isArchanovaAccountActive
+      && firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
 
     return [
       {
@@ -251,10 +253,10 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
   preferredGasToken: preferredGasTokenSelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

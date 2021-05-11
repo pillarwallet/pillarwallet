@@ -31,9 +31,8 @@ import Icon from 'components/Icon';
 import Image from 'components/Image';
 import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
-import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { ASSETS } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
@@ -41,23 +40,21 @@ import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { delay } from 'utils/common';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { ensureSmartAccountConnectedAction, setPLRTankAsInitAction } from 'actions/smartWalletActions';
+import { ensureArchanovaAccountConnectedAction, setPLRTankAsInitAction } from 'actions/smartWalletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: Function,
   addNetwork: Function,
-  ensureSmartAccountConnected: Function,
+  ensureArchanovaAccountConnected: Function,
   switchAccount: Function,
   accounts: Accounts,
   smartWalletState: Object,
@@ -137,7 +134,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
   goToPLRTank = async () => {
     const {
-      ensureSmartAccountConnected,
+      ensureArchanovaAccountConnected,
       navigation,
       accounts,
       switchAccount,
@@ -145,7 +142,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
       setActiveBlockchainNetwork,
     } = this.props;
     this.setState({ processingCreate: true });
-    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
     if (!smartAccount) {
       this.setState({ processingCreate: false });
       return;
@@ -153,7 +150,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     await switchAccount(smartAccount.id);
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     await delay(500);
-    ensureSmartAccountConnected()
+    ensureArchanovaAccountConnected()
       .then(() => {
         this.setState({ processingCreate: false },
           () => {
@@ -166,15 +163,9 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
   render() {
     const { processingCreate } = this.state;
-    const {
-      smartWalletState,
-      accounts,
-      navigation,
-      theme,
-    } = this.props;
+    const { theme } = this.props;
     const colors = getThemeColors(theme);
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const needsSmartWallet = !smartWalletStatus.hasAccount;
+
     const features = [
       {
         key: 'instant',
@@ -242,19 +233,6 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               style={{ marginTop: 20 }}
             />
           </CustomWrapper>
-          {!!needsSmartWallet &&
-          <ListItemChevron
-            wrapperStyle={{
-              marginTop: 46,
-              marginBottom: 70,
-              borderColor: colors.PPNText,
-            }}
-            label={t('ppnContent.button.enableSmartWalletForTank')}
-            onPress={() => { navigation.navigate(SMART_WALLET_INTRO); }}
-            color={colors.PPNText}
-            bordered
-          />}
-          {!needsSmartWallet &&
           <ButtonWrapper>
             <Button
               title={t('ppnContent.button.goToTank')}
@@ -267,7 +245,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               textStyle={{ color: colors.PPNSurface }}
               isLoading={processingCreate}
             />
-          </ButtonWrapper>}
+          </ButtonWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
     );
@@ -285,7 +263,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  ensureSmartAccountConnected: () => dispatch(ensureSmartAccountConnectedAction()),
+  ensureArchanovaAccountConnected: () => dispatch(ensureArchanovaAccountConnectedAction()),
   setPLRTankAsInit: () => dispatch(setPLRTankAsInitAction()),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });

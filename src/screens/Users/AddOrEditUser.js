@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import tForm from 'tcomb-form-native';
 import get from 'lodash.get';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -48,7 +49,7 @@ import Icon from 'components/Icon';
 import { spacing, appFont, fontSizes } from 'utils/variables';
 import countries from 'utils/countries.json';
 import { getThemeColors } from 'utils/themes';
-import { getEnsName } from 'utils/accounts';
+import { getAccountEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
 
@@ -59,9 +60,10 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { updatedProfileImageSelector } from 'selectors/user';
+import { activeAccountSelector } from 'selectors';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
 // partials
@@ -76,7 +78,7 @@ type Props = {
   user: User,
   profileImage: string | null,
   updateUser: (walletId: string, field: Object) => void,
-  accounts: Accounts,
+  activeAccount: ?Account,
   theme: Theme,
   privacyInsightDismissed: boolean,
   verificationNoteDismissed: boolean,
@@ -561,11 +563,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { value, focusedField } = this.state;
     const {
       user: { username },
-      accounts,
+      activeAccount,
       profileImage,
     } = this.props;
 
-    const ensName = getEnsName(accounts);
+    const ensName = getAccountEnsName(activeAccount);
+    const usernameOrEnsNamePresent = !!ensName || !!username;
 
     return (
       <ContainerWithHeader
@@ -591,8 +594,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                 </TouchableOpacity>
                 <Spacing h={20} />
                 {!!username && <MediumText large center>{username}</MediumText>}
-                <BaseText regular secondary center>{ensName}</BaseText>
-                <Spacing h={32} />
+                {!!ensName && <BaseText regular secondary center>{ensName}</BaseText>}
+                {usernameOrEnsNamePresent && <Spacing h={32} />}
               </View>
               <Form
                 ref={ref => { this.formRef = ref; }}
@@ -617,26 +620,28 @@ const mapStateToProps = ({
     data: user,
     oneTimePasswordSent,
   },
-  accounts: { data: accounts },
   insights: { privacyInsightDismissed, verificationNoteDismissed },
   referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   oneTimePasswordSent,
-  accounts,
   privacyInsightDismissed,
   verificationNoteDismissed,
   isPillarRewardCampaignActive,
 });
 
-const combinedMapStateToProps = state => ({
+const structuredSelector = createStructuredSelector({
+  activeAccount: activeAccountSelector,
+  profileImage: updatedProfileImageSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
   ...mapStateToProps(state),
-  profileImage: updatedProfileImageSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  updateUser: (walletId: string, field: Object) =>
-    dispatch(updateUserAction(walletId, field)),
+  updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
   dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
   dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),

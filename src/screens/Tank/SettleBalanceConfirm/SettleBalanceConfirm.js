@@ -38,7 +38,7 @@ import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
 import type { Balance, Balances } from 'models/Asset';

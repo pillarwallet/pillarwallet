@@ -530,6 +530,8 @@ const buildUnipoolTransaction = (
   unipoolTransactions,
   liquidityPool,
 ) => {
+  if (!transaction.hash) return transaction;
+
   const { rewardClaims = [], stakes = [], unstakes = [] } = unipoolTransactions;
   const txHash = transaction.hash.toLowerCase();
 
@@ -630,6 +632,8 @@ const buildUniswapTransaction = (
   transaction,
   uniswapTransactions,
 ) => {
+  if (!transaction.hash) return transaction;
+
   const { mints = [], burns = [] } = uniswapTransactions;
   const txHash = transaction.hash.toLowerCase();
 

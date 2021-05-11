@@ -29,7 +29,7 @@ import {
 } from 'constants/poolTogetherConstants';
 import { getPoolTogetherInfo } from 'services/poolTogether';
 import { GraphQueryError } from 'services/theGraph';
-import { mockSmartWalletAccount } from 'testUtils/jestSetup';
+import { mockArchanovaAccount } from 'testUtils/jestSetup';
 
 import { fetchPoolPrizeInfo } from '../poolTogetherActions';
 
@@ -48,7 +48,7 @@ const mockPoolStats = {
 };
 
 const initialState = {
-  accounts: { data: [mockSmartWalletAccount] },
+  accounts: { data: [mockArchanovaAccount] },
   poolTogether: {
     isFetchingPoolStats: false,
     poolStatsGraphQueryFailed: false,

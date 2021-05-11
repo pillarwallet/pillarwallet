@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
-import { BigNumber } from 'bignumber.js';
 
 import type SDKWrapper from 'services/api';
 
@@ -43,12 +42,16 @@ import type {
   TransactionsStore,
 } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
+import type { Value } from 'utils/common';
 
+// utils
 import { mapTransactionsHistory } from 'utils/feedData';
+import { isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 
 export const buildHistoryTransaction = ({
   from,
   hash,
+  batchHash,
   to,
   value,
   gasPrice,
@@ -70,8 +73,10 @@ export const buildHistoryTransaction = ({
   value: typeof value === 'object' ? value.toString() : value,
   from,
   hash,
+  batchHash,
   to,
-  _id: hash,
+  // $FlowFixMe: either will be present for _id
+  _id: hash || batchHash,
   asset,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
@@ -119,7 +124,7 @@ export function updateHistoryRecord(
   const accounts = Object.keys(allHistory);
   const updatedHistory = accounts.reduce((history, accountId) => {
     const accountHistory = allHistory[accountId].map(transaction => {
-      if (transaction.hash.toLowerCase() !== hashToUpdate) {
+      if (!isCaseInsensitiveMatch(transaction.hash, hashToUpdate)) {
         return transaction;
       }
       txUpdated = modifier(transaction);
@@ -136,11 +141,10 @@ export function updateHistoryRecord(
 
 export const parseFeeWithGasToken = (
   gasToken: ?GasToken,
-  fee: any,
-): ?FeeWithGasToken => {
-  if (!gasToken || isEmpty(gasToken)) return {};
-  const feeInWei = new BigNumber(fee.toString());
-  return { feeInWei, gasToken };
+  fee: ?Value,
+): FeeWithGasToken | null => {
+  if (!gasToken || isEmpty(gasToken) || !fee) return null;
+  return { feeInWei: wrapBigNumber(fee), gasToken };
 };
 
 export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash: string): ?Transaction => {
