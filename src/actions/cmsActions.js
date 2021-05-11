@@ -21,7 +21,7 @@
 import { Predicates } from '@prismicio/client';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import prismicClient from 'services/prismic';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
 import type { CmsData } from 'models/CMSData';
@@ -40,12 +40,18 @@ export const getTutorialDataAction = () => async (dispatch: Dispatch, getState: 
   try {
     const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
     const tutorialData = getTutorialDataObject(response);
-    if (!isValidTutorialData(tutorialData)) return;
+    if (!isValidTutorialData(tutorialData)) {
+      return;
+    }
+
+    /* eslint-disable no-template-curly-in-string */
+    /* eslint-disable i18next/no-literal-string */
+    logBreadcrumb('tutorial', 'cmsActions.js: Dispatching action: ${ SET_TUTORIAL_DATA }');
     dispatch({
       type: SET_TUTORIAL_DATA,
       payload: tutorialData,
     });
   } catch (e) {
-    reportErrorLog(e);
+    reportErrorLog('set tutorial data error', e);
   }
 };

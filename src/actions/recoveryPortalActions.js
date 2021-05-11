@@ -39,6 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase } from 'utils/wallet';
+import { logBreadcrumb } from 'utils/common';
 
 // services
 import { navigate } from 'services/navigation';
@@ -142,6 +143,10 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
 export const initRecoveryPortalWalletRecoverAction = () => {
   return async (dispatch: Dispatch) => {
     // make sure everything onboarding wallet and smart wallet service are reset
+
+    /* eslint-disable no-template-curly-in-string */
+    /* eslint-disable i18next/no-literal-string */
+    logBreadcrumb('onboarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     await smartWalletService.reset();
 
@@ -158,6 +163,10 @@ export const initRecoveryPortalWalletRecoverAction = () => {
 
     // set temporary smart wallet and subscribe for events
     await smartWalletService.init(privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
+
+    /* eslint-disable no-template-curly-in-string */
+    /* eslint-disable i18next/no-literal-string */
+    logBreadcrumb('onboarding', 'recoveryPortalAction.js: Dispatching action: ${SET_ONBOARDING_WALLET}');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };
