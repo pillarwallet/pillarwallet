@@ -267,7 +267,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}
-                  showFiatDefault
                 />
               </ContentRow>
             )}

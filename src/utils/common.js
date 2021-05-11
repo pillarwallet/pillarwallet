@@ -93,6 +93,14 @@ export const reportErrorLog = (
   reportLog(message, extra, Sentry.Severity.Error);
 };
 
+export const logBreadcrumb = (
+  category: string,
+  message: string,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  Sentry.addBreadcrumb({ category, message, level });
+};
+
 export const reportOrWarn = (
   message: string,
   extra?: Object,
@@ -289,7 +297,7 @@ export const formatFiat = (
   value: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
 ): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return `${getCurrencySymbol(fiatCurrency)} ${formatFiatValue(value, options)}`;
+  return `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
 };
 
 export const partial = (fn: Function, ...fixedArgs: any) => {
@@ -538,6 +546,7 @@ export const getDeviceWidth = () => {
 };
 
 export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+  if (!feeInWei) return '';
   // fixes exponential values with BigNumber.toPrecision()
   // TODO: fix with BigNumber.toFixed() when updating BigNumber lib
   const parsedFeeInWei = typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei)
@@ -666,7 +675,7 @@ export const formatBigAmount = (value: Value) => {
 
 export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol} ${formatBigAmount(value)}`;
+  return `${currencySymbol}${formatBigAmount(value)}`;
 };
 
 export const removeTrailingZeros = (amount: string) => {

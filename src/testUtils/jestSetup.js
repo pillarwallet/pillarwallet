@@ -370,6 +370,7 @@ jest.mock('react-native-branch', () => jest.fn());
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
   Severity: {},
+  addBreadcrumb: () => {},
 });
 
 jest.setMock('react-native-notifications');

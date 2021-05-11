@@ -148,7 +148,6 @@ const SWActivationModal = ({
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
                 isLoading={gettingDeploymentEstimate}
-                showFiatDefault
               />
             </Centered>
           )}
