@@ -46,7 +46,7 @@ import { getRate } from 'utils/assets';
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
+import { isGasTokenSupportedSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';

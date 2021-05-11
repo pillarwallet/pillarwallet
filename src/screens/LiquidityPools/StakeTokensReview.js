@@ -87,7 +87,7 @@ const StakeTokensReviewScreen = ({
     if (stakeTransactions.length > 1) {
       transactionPayload = {
         ...transactionPayload,
-        sequentialSmartWalletTransactions: stakeTransactions.slice(1),
+        sequentialTransactions: stakeTransactions.slice(1),
       };
     }
 

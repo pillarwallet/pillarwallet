@@ -38,7 +38,7 @@ import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { getAccountEnsName, isSmartWalletAccount } from 'utils/accounts';
+import { getAccountEnsName } from 'utils/accounts';
 
 // models and types
 import type { Account } from 'models/Account';
@@ -138,7 +138,6 @@ const ReceiveModal = ({
 
   const { profileImage, lastUpdateTime = 0, username = '' } = user;
   const ensName = getAccountEnsName(activeAccount);
-  const isSmartWallet = isSmartWalletAccount(activeAccount);
   const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
   const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
@@ -168,18 +167,18 @@ const ReceiveModal = ({
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <WarningBanner rounded small />
-        {!!ensName && !!isSmartWallet &&
-        <InfoView>
-          <BaseText
-            big
-            onPress={() => handleCopyToClipboard(ensName, true)}
-            center
-          >
-            {ensName}
-          </BaseText>
-          <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
-        </InfoView>
-        }
+        {!!ensName && (
+          <InfoView>
+            <BaseText
+              big
+              onPress={() => handleCopyToClipboard(ensName, true)}
+              center
+            >
+              {ensName}
+            </BaseText>
+            <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
+          </InfoView>
+        )}
         <QRCodeWrapper>
           <View style={{ overflow: 'hidden', padding: 10 }}>
             {!!address && <QRCodeWithTheme value={address} size={160} />}

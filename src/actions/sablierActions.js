@@ -20,11 +20,13 @@
 import { BigNumber as EthersBigNumber } from 'ethers';
 
 // actions
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+} from 'actions/transactionEstimateActions';
 import { saveDbAction } from 'actions/dbActions';
 
 // constants
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { SET_STREAMS, SET_FETCHING_STREAMS, SET_SABLIER_GRAPH_QUERY_ERROR } from 'constants/sablierConstants';
 
 // utils
@@ -82,25 +84,25 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to: recipient, amount: value, data } = getSablierWithdrawTransaction(
+    const { to, amount: value, data } = getSablierWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
       amount,
       asset,
       stream,
     );
 
-    dispatch(estimateTransactionAction(recipient, value, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 
 export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) => {
   return (dispatch: Dispatch) => {
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const { to, data } = getSablierCancellationTransaction(stream);
 
-    dispatch(estimateTransactionAction(to, 0, data));
+    dispatch(estimateTransactionAction({ to, value: 0, data }));
   };
 };

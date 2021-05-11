@@ -51,6 +51,7 @@ export type AppSettingsReducerState = {
     omitPinOnLogin: boolean,
     localisation: ?LocalisationOptions,
     hideLiquidityPools?: boolean,
+    hideWalletConnectPromoCard?: boolean,
   },
   isFetched: boolean,
 };

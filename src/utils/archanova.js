@@ -22,16 +22,19 @@ import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
+import { Migrator, TransactionRequest } from '@etherspot/archanova-migrator';
+import { utils, Wallet } from 'ethers';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_DEPLOYMENT_ERRORS,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_UPGRADE_STATUSES,
+} from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   TX_CONFIRMED_STATUS,
@@ -53,23 +56,32 @@ import { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
   TransactionFeeInfo,
-  EstimatedTransactionFee,
   Transaction,
   TransactionExtra,
   GasToken,
 } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { EstimatePayload } from 'services/archanova';
+import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
 
 // utils
-import { getActiveAccount, isSmartWalletAccount } from './accounts';
+import {
+  findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
+  getAccountAddress,
+  getAccountEnsName,
+  getActiveAccount,
+  isArchanovaAccount,
+} from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
-import { isCaseInsensitiveMatch } from './common';
+import {
+  isCaseInsensitiveMatch,
+  reportErrorLog,
+} from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
@@ -79,17 +91,17 @@ const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 
 const getMessage = (
   status: ?string,
-  isSmartWalletActive: boolean,
+  isArchanovaWalletActive: boolean,
 ): { title?: TranslatedString, message?: TranslatedString } => {
   switch (status) {
-    case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
-      if (!isSmartWalletActive) return {};
+    case ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
+      if (!isArchanovaWalletActive) return {};
       return {
         title: t('insight.smartWalletActivate.default.title'),
         message: t('insight.smartWalletActivate.default.description'),
       };
-    case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
-      if (!isSmartWalletActive) return {};
+    case ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING:
+      if (!isArchanovaWalletActive) return {};
       // TODO: get average time
       return {
         title: t('insight.smartWalletActivate.isBeingDeployed.title'),
@@ -100,18 +112,18 @@ const getMessage = (
   }
 };
 
-export const userHasSmartWallet = (accounts: Accounts = []): boolean => accounts.some(isSmartWalletAccount);
-
-export const getSmartWalletStatus = (
+export const getArchanovaWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
-): SmartWalletStatus => {
-  const hasAccount = userHasSmartWallet(accounts);
+): ArchanovaWalletStatus => {
   const activeAccount = getActiveAccount(accounts);
-  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
+  const hasAccount = !isArchanovaAccount(activeAccount);
 
-  const { upgrade: { status } } = smartWalletState;
+  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
+
+  const status = smartWalletState?.upgrade?.status;
   const sendingBlockedMessage = getMessage(status, isSmartWalletActive);
+
   return {
     hasAccount,
     status,
@@ -119,16 +131,16 @@ export const getSmartWalletStatus = (
   };
 };
 
-export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
+export const isConnectedToArchanovaSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
   title: t('insight.smartWalletActivate.activationFailed.title'),
-  message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
+  message: errorType === ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
     ? t('insight.smartWalletActivate.activationFailed.error.needToSetupSmartAccount')
     : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
 
-export const isSmartWalletDeviceDeployed = (
+export const isArchanovaDeviceDeployed = (
   device: ?$Shape<{ state: ?string, nextState: ?string }>,
 ): boolean => [get(device, 'state'), get(device, 'nextState')]
   .includes(sdkConstants.AccountDeviceStates.Deployed);
@@ -139,7 +151,7 @@ export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
 
 export const accountHasGasTokenSupport = (account: Object): boolean => {
   if (isEmpty(get(account, 'devices', []))) return false;
-  return account.devices.some(device => deviceHasGasTokenSupport(device) && isSmartWalletDeviceDeployed(device));
+  return account.devices.some(device => deviceHasGasTokenSupport(device) && isArchanovaDeviceDeployed(device));
 };
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
@@ -152,7 +164,7 @@ export const getGasTokenDetails = (assets: Asset[], supportedAssets: Asset[], ga
   return { decimals, symbol, address };
 };
 
-export const mapSdkToAppTxStatus = (sdkStatus: sdkConstants.AccountTransactionStates): string => {
+export const parseArchanovaTransactionStatus = (sdkStatus: sdkConstants.AccountTransactionStates): string => {
   switch (sdkStatus) {
     case sdkConstants.AccountTransactionStates.Completed:
       return TX_CONFIRMED_STATUS;
@@ -165,12 +177,12 @@ export const mapSdkToAppTxStatus = (sdkStatus: sdkConstants.AccountTransactionSt
   }
 };
 
-export const parseSmartWalletTransactions = (
-  smartWalletTransactions: IAccountTransaction[],
+export const parseArchanovaTransactions = (
+  archanovaTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
   relayerExtensionAddress: ?string,
-): Transaction[] => smartWalletTransactions
+): Transaction[] => archanovaTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
       hash,
@@ -195,7 +207,7 @@ export const parseSmartWalletTransactions = (
 
     // NOTE: same transaction could have multiple records, those are different by index
     // we always leave only one record with the biggest index number
-    const sameHashTransactions = smartWalletTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
+    const sameHashTransactions = archanovaTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
     if (sameHashTransactions.length > 1) { // don't count current transaction
       const maxIndex = Math.max(...sameHashTransactions.map(tx => tx.index));
       if (index < maxIndex) {
@@ -214,7 +226,7 @@ export const parseSmartWalletTransactions = (
     // ignore some transaction types
     if (transactionType === AccountTransactionTypes.TopUpErc20Approve) return mapped;
 
-    const status = mapSdkToAppTxStatus(state);
+    const status = parseArchanovaTransactionStatus(state);
     let value = tokenAddress ? tokenValue : rawValue;
     value = new BigNumber(value.toString());
 
@@ -286,7 +298,7 @@ export const parseSmartWalletTransactions = (
     } else if (transactionType === AccountTransactionTypes.UpdateAccountEnsName) {
       transaction = {
         ...transaction,
-        tag: SET_SMART_WALLET_ACCOUNT_ENS,
+        tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
         extra: {
           ensName: get(fromDetails, 'account.ensName'),
         },
@@ -295,14 +307,14 @@ export const parseSmartWalletTransactions = (
       const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
       if (!isEmpty(addedDeviceAddress)) {
         const tag = addressesEqual(addedDeviceAddress, relayerExtensionAddress)
-          ? SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER
-          : SMART_WALLET_ACCOUNT_DEVICE_ADDED;
+          ? ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER
+          : ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED;
         transaction = { ...transaction, tag };
       }
     } else if (transactionType === AccountTransactionTypes.RemoveDevice) {
       transaction = {
         ...transaction,
-        tag: SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+        tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
       };
     }
 
@@ -341,10 +353,10 @@ export const isHiddenUnsettledTransaction = (
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
 
-export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
+export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  return !error && (deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+  return !error && (deploymentStarted || archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING);
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
@@ -355,7 +367,7 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
   return get(smartWalletState, 'upgrade.deploymentData.hash', '');
 };
 
-export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload) => {
+export const buildArchanovaTransactionEstimate = (apiEstimate: ArchanovaEstimatePayload) => {
   const {
     gasAmount,
     gasPrice,
@@ -387,7 +399,10 @@ export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload
   return estimate;
 };
 
-export const buildTxFeeInfo = (estimated: ?EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+export const buildArchanovaTxFeeInfo = (
+  estimated: ?ArchanovaTransactionEstimate,
+  useGasToken: boolean,
+): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
 
   const { gasTokenCost, gasToken, ethCost } = estimated;
@@ -400,4 +415,41 @@ export const buildTxFeeInfo = (estimated: ?EstimatedTransactionFee, useGasToken:
     fee: gasTokenCost,
     gasToken,
   };
+};
+
+export const buildEnsMigrationTransactions = async (
+  accounts: Accounts,
+): Promise<TransactionRequest[] | null> => {
+  const isKovan = getEnv().NETWORK_PROVIDER === 'kovan';
+
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+  if (!etherspotAccount || !archanovaAccount) return null;
+
+  let migrator = new Migrator({
+    chainId: isKovan ? 42 : 1,
+    archanovaAccount: getAccountAddress(archanovaAccount),
+    etherspotAccount: getAccountAddress(etherspotAccount),
+  });
+
+  const archanovaAccountDevice = Wallet.createRandom();
+
+  migrator = migrator.addAccountDevice();
+
+  // we cannot test ENS migration so let's just add simple transaction
+  migrator = isKovan
+    ? migrator.transferBalance(utils.parseEther('0.001'))
+    : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
+
+  const archanovaAccountDeviceSignature = await archanovaAccountDevice
+    .signMessage(migrator.migrationMessage)
+    .catch((error) => {
+      reportErrorLog('buildENSMigrationTransactions -> signMessage failed', { error });
+      return null;
+    });
+
+  if (!archanovaAccountDeviceSignature) return null;
+
+  return migrator.encodeTransactionRequests(archanovaAccountDeviceSignature);
 };

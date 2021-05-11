@@ -44,14 +44,14 @@ import { themedColors } from 'utils/themes';
 import { ETH } from 'constants/assetsConstants';
 import { formatTransactionFee } from 'utils/common';
 import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
+import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 
 // services
 import archanovaService from 'services/archanova';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
 import type { Balances } from 'models/Asset';
@@ -138,7 +138,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
     this.setState({ gettingFee: true }, async () => {
       const estimated = await archanovaService
         .estimateAccountDeviceDeployment(this.deviceAddress)
-        .then(data => buildTxFeeInfo(data, this.props.useGasToken))
+        .then(data => buildArchanovaTxFeeInfo(data, this.props.useGasToken))
         .catch(() => null);
 
       if (estimated) txFeeInfo = estimated;

@@ -55,9 +55,13 @@ import { isProdEnv } from 'utils/environment';
 import { isWethConvertedTx } from 'utils/uniswap';
 
 // types
-import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type {
+  TransactionPayload,
+  TransactionFeeInfo,
+  TransactionToEstimate,
+} from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
@@ -71,6 +75,7 @@ import ExchangeScheme from './ExchangeScheme';
 import WBTCCafeInfo from './WBTCCafeInfo';
 import ConfirmationTable from './ConfirmationTable';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   rates: Rates,
@@ -83,7 +88,7 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   isOnline: boolean,
-  estimateTransaction: (recipient: string, value: number, data?: string, assetData?: AssetData) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
@@ -97,7 +102,7 @@ const MainWrapper = styled.View`
 `;
 
 // already passed as mixed from other screen, TODO: fix the whole flow?
-type MixedOfferOrder = $Shape<OfferOrder & TokenTransactionPayload>;
+type MixedOfferOrder = $Shape<OfferOrder & TransactionPayload>;
 
 const ExchangeConfirmScreen = ({
   executingExchangeTransaction,
@@ -139,7 +144,7 @@ const ExchangeConfirmScreen = ({
     decimals,
     amount,
     symbol,
-    to: recipient,
+    to,
     contractAddress,
     data,
   } = offerOrder;
@@ -164,7 +169,12 @@ const ExchangeConfirmScreen = ({
       decimals: estimateAsset.decimals,
     };
 
-    estimateTransaction(recipient, Number(amount || 0), data, estimateAssetData);
+    estimateTransaction({
+      to,
+      value: Number(amount || 0),
+      data,
+      assetData: estimateAssetData,
+    });
   };
 
   const fetchWbtcAddress = async () => {
@@ -334,12 +344,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
   getWbtcGatewayAddress: (params) => dispatch(getWbtcGatewayAddressAction(params)),
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    data?: string,
-    assetData?: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

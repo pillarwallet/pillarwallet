@@ -28,7 +28,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
-import { initSmartWalletSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
+import { initArchanovaSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
@@ -43,7 +43,7 @@ import {
   type KeyChainData,
 } from 'utils/keychain';
 
-import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
+import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
 
 
 const ACTIVE_APP_STATE = 'active';
@@ -61,7 +61,7 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitSmartWalletProps) => void,
+  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) => void,
   switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
 };
@@ -309,8 +309,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
   initSmartWalletSdkWithPrivateKeyOrPin: (
-    initProps: InitSmartWalletProps,
-  ) => dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction(initProps)),
+    initProps: InitArchanovaProps,
+  ) => dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 

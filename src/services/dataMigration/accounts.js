@@ -26,7 +26,7 @@ import type { Accounts } from 'models/Account';
 
 function addWalletIdToSmartWalletAccount(accounts: Accounts, walletId: string): Accounts {
   return accounts.map(account => {
-    if (account.type !== ACCOUNT_TYPES.SMART_WALLET) return account;
+    if (account.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) return account;
     return {
       ...account,
       walletId,

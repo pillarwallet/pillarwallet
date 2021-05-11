@@ -41,7 +41,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';

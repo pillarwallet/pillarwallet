@@ -142,7 +142,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
       setActiveBlockchainNetwork,
     } = this.props;
     this.setState({ processingCreate: true });
-    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
     if (!smartAccount) {
       this.setState({ processingCreate: false });
       return;

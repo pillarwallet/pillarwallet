@@ -37,7 +37,7 @@ import { Container } from 'components/Layout';
 import type { Assets } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
@@ -49,13 +49,13 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS } from 'constants/navigationConstants';
 
 // utils
 import { findFirstArchanovaAccount, getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
+import { getArchanovaWalletStatus, isDeployingArchanovaWallet, getDeploymentHash } from 'utils/archanova';
 import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -178,7 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
         };
 
       default:
-        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
+        const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED);
         return {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
@@ -212,9 +212,9 @@ class AssetsScreen extends React.Component<Props, State> {
     } = this.props;
     const { showSmartWalletInsight } = this.state;
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -248,7 +248,7 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
-            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+            showDeploySmartWallet={archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />);
       default:

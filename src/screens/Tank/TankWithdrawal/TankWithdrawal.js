@@ -62,7 +62,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 import { accountBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 
 const ActionsWrapper = styled.View`

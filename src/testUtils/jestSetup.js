@@ -282,7 +282,7 @@ export const mockArchanovaAccount = {
   id: '0x0',
   isActive: false,
   walletId: '',
-  type: ACCOUNT_TYPES.SMART_WALLET,
+  type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   extra: mockArchanovaAccountApiData,
 };
 
@@ -363,7 +363,7 @@ jest.setMock('react-native-keychain', {
   },
 });
 
-jest.setMock('@walletconnect/react-native', WalletConnectMock);
+jest.setMock('@walletconnect/client', WalletConnectMock);
 
 jest.mock('react-native-branch', () => jest.fn());
 
