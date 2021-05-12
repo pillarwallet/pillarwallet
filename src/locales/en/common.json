@@ -622,7 +622,9 @@
       "title": "Wallet Connect",
       "headerStories": "New and Noteworthy",
       "whatIsWalletConnect": "What is Wallet Connect?",
-      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
+      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet.",
+      "connectOnFormat": "Connect on {{title}}",
+      "connectedOnFormat": "⚡️ Connected on {{title}} ⚡️"
     }
   },
 
