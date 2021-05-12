@@ -32,6 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
+import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 import Stories from 'components/Stories';
 
@@ -54,6 +55,7 @@ import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
+import AppDetailsModal from './components/AppDetailsModal';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
@@ -69,6 +71,10 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+
+  const handlePress = (app: WalletConnectApp) => {
+    Modal.open(() => <AppDetailsModal app={app} />);
+  };
 
   const renderListHeader = () => {
     const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
@@ -102,6 +108,7 @@ function WalletConnectHome() {
         iconUrl={item.iconUrl}
         width={columnWidth}
         disabled={disabled}
+        onPress={() => handlePress(item)}
       />
     );
   };

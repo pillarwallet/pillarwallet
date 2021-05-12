@@ -24,21 +24,37 @@ import styled from 'styled-components/native';
 // Components
 import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
+import Image from 'components/Image';
 import Text from 'components/modern/Text';
+import { Spacing } from 'components/modern/Layout';
 
-// utils
+// Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
+import type { ImageSource } from 'utils/types/react-native';
+
 type Props = {|
-  title: string,
+  title?: string,
+  iconSource?: ImageSource,
   children: React.Node,
 |};
 
-function BottomModal({ title, children }: Props) {
+function BottomModal({ title, iconSource, children }: Props) {
+  const renderIcon = () => {
+    if (!iconSource) return null;
+
+    return (
+      <IconWrapper style={{ position: 'absolute', marginTop: -24 }}>
+        <IconImage source={iconSource} />
+      </IconWrapper>
+    );
+  };
+
   return (
-    <SlideModal hideHeader>
+    <SlideModal hideHeader noPadding centerFloatingItem={renderIcon()}>
       <SafeAreaContent>
-        <Title>{title}</Title>
+        <Spacing h={iconSource ? 24 : spacing.small} />
+        {!!title && <Title>{title}</Title>}
         <ChildrenWrapper>{children}</ChildrenWrapper>
       </SafeAreaContent>
     </SlideModal>
@@ -48,13 +64,24 @@ function BottomModal({ title, children }: Props) {
 export default BottomModal;
 
 const SafeAreaContent = styled(SafeAreaView)`
-  padding: ${spacing.large}px 0;
+  padding: ${spacing.large}px;
   align-items: center;
 `;
 
+const IconWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+`;
+
+const IconImage = styled(Image)`
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+`;
+
 const Title = styled(Text)`
-  margin: ${spacing.small}px 0 ${spacing.large}px;
-  font-family: "${appFont.medium}";
+  margin-bottom: ${spacing.large}px;
+  font-family: ${appFont.medium};
   ${fontStyles.medium};
 `;
 
