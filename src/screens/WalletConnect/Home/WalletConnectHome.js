@@ -32,6 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
+import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 import Stories from 'components/Stories';
 
@@ -53,6 +54,7 @@ import { type Chain, CHAIN } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
 
 // Local
+import AppDetailsModal from './components/AppDetailsModal';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import WhatIsWalletConnectBanner from './components/WhatIsWalletConnectBanner';
@@ -82,6 +84,10 @@ function WalletConnectHome() {
       </Container>
     );
   }
+
+  const handlePress = (app: WalletConnectApp) => {
+    Modal.open(() => <AppDetailsModal app={app} />);
+  };
 
   const renderListHeader = () => {
     const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
@@ -117,6 +123,7 @@ function WalletConnectHome() {
         iconUrl={item.iconUrl}
         width={columnWidth}
         disabled={disabled}
+        onPress={() => handlePress(item)}
       />
     );
   };
