@@ -120,6 +120,52 @@ export const formatEstimated = (estimated: ?ParsedEstimate) => {
   };
 };
 
+const parseEstimateError = (error: Error, logExtras: Object = {}) => {
+  let errorMessage = t('error.unableToEstimateTransaction');
+  const errorReplaceString = '[ethjs-query] while formatting outputs from RPC'; // eslint-disable-line
+  if (error?.message) {
+    /**
+     * the return result from Archanova is problematic,
+     * it contains "ethjs-query" part and rest of message is JSON string
+     * this is known issue on Archanova end, but it's not planned to be fixed
+     * return example:
+     * [ethjs-query] while formatting outputs from RPC
+     * '{"value":{"body":"{\"oneMore\":\"escaped\",\"JSON\":\"object\"}"}}'
+     */
+    if (error.message.includes(errorReplaceString)) {
+      try {
+        const messageJsonPart1 = JSON.parse(error.message.replace(errorReplaceString, '').trim().slice(1, -1));
+        const messageJsonPart2 = JSON.parse(messageJsonPart1?.value?.body);
+        const estimateError = messageJsonPart2?.error;
+        if (estimateError?.message) errorMessage = estimateError.message;
+
+        // if it starts with 0x then we shouldn't show (can occur)
+        if (estimateError?.data && !estimateError.data.startsWith('0x')) {
+          errorMessage = `${estimateError.data}: ${errorMessage}`;
+        }
+      } catch (parseError) {
+        // unable to decrypt json
+        reportLog('Smart Wallet service error message json parser failed', {
+          parseError,
+          error,
+          ...logExtras,
+        });
+      }
+    } else {
+      // this means it's more generic error message and not "ethjs-query"
+      errorMessage = error.message;
+    }
+  }
+
+  reportErrorLog('Smart Wallet service estimateAccountTransaction failed', {
+    errorMessage,
+    ...logExtras,
+  });
+
+  throw new Error(errorMessage);
+};
+
+
 class Archanova {
   sdk: Sdk = null;
   sdkInitialized: boolean;
@@ -482,48 +528,18 @@ class Archanova {
     const estimated = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
       .then(parseEstimatePayload)
-      .catch((error) => {
-        let errorMessage = t('error.unableToEstimateTransaction');
-        const errorReplaceString = '[ethjs-query] while formatting outputs from RPC'; // eslint-disable-line
-        if (error?.message) {
-          /**
-           * the return result from Archanova is problematic,
-           * it contains "ethjs-query" part and rest of message is JSON string
-           * this is known issue on Archanova end, but it's not planned to be fixed
-           * return example:
-           * [ethjs-query] while formatting outputs from RPC
-           * '{"value":{"body":"{\"oneMore\":\"escaped\",\"JSON\":\"object\"}"}}'
-           */
-          if (error.message.includes(errorReplaceString)) {
-            try {
-              const messageJsonPart1 = JSON.parse(error.message.replace(errorReplaceString, '').trim().slice(1, -1));
-              const messageJsonPart2 = JSON.parse(messageJsonPart1?.value?.body);
-              const estimateError = messageJsonPart2?.error;
-              if (estimateError?.message) errorMessage = estimateError.message;
+      .catch((error) => parseEstimateError(error, { transactions }));
 
-              // if it starts with 0x then we shouldn't show (can occur)
-              if (estimateError?.data && !estimateError.data.startsWith('0x')) {
-                errorMessage = `${estimateError.data}: ${errorMessage}`;
-              }
-            } catch (parseError) {
-              // unable to decrypt json
-              reportLog('Smart Wallet service error message json parser failed', {
-                parseError,
-                error,
-                transactions,
-              });
-            }
-          } else {
-            // this means it's more generic error message and not "ethjs-query"
-            errorMessage = error.message;
-          }
-        }
-        reportErrorLog('Smart Wallet service estimateAccountTransaction failed', {
-          errorMessage,
-          transactions,
-        });
-        throw new Error(errorMessage);
-      });
+    // $FlowFixMe: bignumber.js typing
+    return formatEstimated(estimated);
+  }
+
+  // required by ENS migrator
+  async estimateAccountRawTransactions(rawTransactions: string[]): Promise<?ArchanovaTransactionEstimate> {
+    const estimated = await this.getSdk()
+      .estimateAccountRawTransactions(rawTransactions)
+      .then(parseEstimatePayload)
+      .catch((error) => parseEstimateError(error, { rawTransactions }));
 
     // $FlowFixMe: bignumber.js typing
     return formatEstimated(estimated);

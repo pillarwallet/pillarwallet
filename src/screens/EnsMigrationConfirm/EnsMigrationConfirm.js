@@ -29,6 +29,7 @@ import {
   estimateEnsMigrationFromArchanovaToEtherspotAction,
   migrateEnsFromArchanovaToEtherspotAction,
 } from 'actions/smartWalletActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -40,15 +41,18 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import CheckAuth from 'components/CheckAuth';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { findFirstArchanovaAccount, getAccountAddress, getAccountEnsName } from 'utils/accounts';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { buildEnsMigrationRawTransactions } from 'utils/archanova';
 
 // selectors
 import { accountsSelector, useRootSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
+import { useBiometricsSelector } from 'selectors/appSettings';
 
 // types
 import type { TransactionStatus } from 'models/Transaction';
@@ -65,20 +69,33 @@ const FeesWrapper = styled.View`
 
 const EnsMigrationConfirm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wallet, setWallet] = useState(null);
+  const [rawTransactions, setRawTransactions] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('migrateENSContent.details');
   const accounts = useRootSelector(accountsSelector);
   const balances = useRootSelector(accountBalancesSelector);
+  const useBiometrics = useRootSelector(useBiometricsSelector);
   const {
     feeInfo,
     isEstimating,
     errorMessage: estimateErrorMessage,
   } = useRootSelector(({ transactionEstimate }) => transactionEstimate);
 
+  const buildRawTransactions = async () => {
+    const transactions = await buildEnsMigrationRawTransactions(accounts, wallet);
+    setRawTransactions(transactions);
+    setWallet(null);
+  };
+
   useEffect(() => {
-    dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction());
-  }, [dispatch]);
+    if (wallet) buildRawTransactions();
+  }, [wallet]);
+
+  useEffect(() => {
+    if (rawTransactions) dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction(rawTransactions));
+  }, [rawTransactions]);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
 
@@ -106,6 +123,15 @@ const EnsMigrationConfirm = () => {
     });
   };
 
+  const onPinValid = (pin: string, unlockedWallet: Object) => {
+    setWallet(unlockedWallet);
+  };
+
+  const onLockedNavigationBack = () => {
+    navigation.goBack(null);
+    dispatch(resetIncorrectPasswordAction());
+  };
+
   const onSubmit = () => {
     if (isSubmitting) return;
 
@@ -115,6 +141,16 @@ const EnsMigrationConfirm = () => {
 
   const submitDisabled = !!estimateErrorMessage || isEstimating || isSubmitting;
   const submitTitle = estimateErrorMessage ? t('cannotMigrate') : t('migrate');
+
+  if (!rawTransactions) {
+    return (
+      <CheckAuth
+        onPinValid={onPinValid}
+        headerProps={{ onBack: onLockedNavigationBack }}
+        enforcePin={!useBiometrics}
+      />
+    );
+  }
 
   return (
     <ContainerWithHeader headerProps={{ floating: true }}>

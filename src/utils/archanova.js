@@ -22,7 +22,7 @@ import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
-import { Migrator, TransactionRequest } from '@etherspot/archanova-migrator';
+import { Migrator } from '@etherspot/archanova-migrator';
 import { utils, Wallet } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
@@ -78,11 +78,9 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
-import {
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-} from './common';
+import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
+import { signMessage } from './wallet';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
@@ -417,9 +415,10 @@ export const buildArchanovaTxFeeInfo = (
   };
 };
 
-export const buildEnsMigrationTransactions = async (
+export const buildEnsMigrationRawTransactions = async (
   accounts: Accounts,
-): Promise<TransactionRequest[] | null> => {
+  wallet: Wallet,
+): Promise<?string[]> => {
   const isKovan = getEnv().NETWORK_PROVIDER === 'kovan';
 
   const etherspotAccount = findFirstEtherspotAccount(accounts);
@@ -433,8 +432,6 @@ export const buildEnsMigrationTransactions = async (
     etherspotAccount: getAccountAddress(etherspotAccount),
   });
 
-  const archanovaAccountDevice = Wallet.createRandom();
-
   migrator = migrator.addAccountDevice();
 
   // we cannot test ENS migration so let's just add simple transaction
@@ -442,14 +439,11 @@ export const buildEnsMigrationTransactions = async (
     ? migrator.transferBalance(utils.parseEther('0.001'))
     : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
 
-  const archanovaAccountDeviceSignature = await archanovaAccountDevice
-    .signMessage(migrator.migrationMessage)
-    .catch((error) => {
-      reportErrorLog('buildENSMigrationTransactions -> signMessage failed', { error });
-      return null;
-    });
+  const archanovaAccountDeviceSignature = await signMessage(migrator.migrationMessage, wallet);
 
   if (!archanovaAccountDeviceSignature) return null;
 
-  return migrator.encodeTransactionRequests(archanovaAccountDeviceSignature);
+  return migrator
+    .encodeTransactionRequests(archanovaAccountDeviceSignature)
+    .map(({ data }) => data);
 };
