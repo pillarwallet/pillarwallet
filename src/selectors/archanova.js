@@ -90,6 +90,6 @@ export const isEnsMigrationNeededSelector = createSelector(
       extra,
     }) => extra?.isENSMigrationToEtherspot);
 
-    return isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent && isEnsMigrationNeeded;
+    return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;
   },
 );
