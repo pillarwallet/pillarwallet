@@ -32,9 +32,8 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
-import { type Chain, CHAIN } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 import type { WalletConnectApp } from 'models/WalletConnect';
-
 
 type Props = {|
   app: WalletConnectApp,
@@ -43,8 +42,9 @@ type Props = {|
 function AppDetailsModal({ app }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.home');
   const configs = useChainsConfig();
-  const activeChains = useActiveChains();
-  const inactiveChains = useInactiveChains();
+
+  const connectedChains = useConnectedChains();
+  const availableChains = useAvailableChains(app);
 
   const connectOnChain = (chain: Chain) => {
     // TODO: implement actual connect logic
@@ -52,20 +52,20 @@ function AppDetailsModal({ app }: Props) {
     console.log('Connect on', chain);
   };
 
-  const renderActiveItem = (chain: Chain) => {
+  const renderConnectedItem = (chain: Chain) => {
     const config = configs[chain];
     return (
-      <ActiveItem key={chain} color={config.color}>
+      <ConnectedItem key={chain} color={config.color}>
         {t('connectedOnFormat', { title: config.title })}
-      </ActiveItem>
+      </ConnectedItem>
     );
   };
 
-  const renderInactiveItem = (chain: Chain) => {
+  const renderAvailableItem = (chain: Chain) => {
     const config = configs[chain];
     return (
       <TouchableOpacity key={chain} onPress={() => connectOnChain(chain)}>
-        <InactiveItem color={config.color}>{t('connectOnFormat', { title: config.title })}</InactiveItem>
+        <AvailableItem color={config.color}>{t('connectOnFormat', { title: config.title })}</AvailableItem>
       </TouchableOpacity>
     );
   };
@@ -74,16 +74,14 @@ function AppDetailsModal({ app }: Props) {
     <BottomModal iconSource={{ uri: app.iconUrl }}>
       <Title>{app.title}</Title>
 
-      {!!activeChains.length && <ActiveItemsContainer>{activeChains.map(renderActiveItem)}</ActiveItemsContainer>}
+      {!!connectedChains.length && (
+        <ConnectedItemsContainer>{connectedChains.map(renderConnectedItem)}</ConnectedItemsContainer>
+      )}
 
-      <Description>
-        Decentralized, community-run ecosystem built on top of Ethereum and other blockchains. The core products include
-        an automated market-making (AMM), decentralized exchange (DEX), Decentralized Money Market (DMM), Yield
-        Instruments, and Staking Derivatives.
-      </Description>
+      {!!app.description && <Description>{app.description}</Description>}
 
-      {!!inactiveChains.length && (
-        <InactiveItemsContainer>{inactiveChains.map(renderInactiveItem)}</InactiveItemsContainer>
+      {!!availableChains.length && (
+        <AvailableItemsContainer>{availableChains.map(renderAvailableItem)}</AvailableItemsContainer>
       )}
     </BottomModal>
   );
@@ -91,14 +89,14 @@ function AppDetailsModal({ app }: Props) {
 
 export default AppDetailsModal;
 
-// TODO: replace with actual active chains for given app
-const useActiveChains = () => {
-  return [CHAIN.POLYGON];
+// TODO: replace with actual connected chains for given app
+const useConnectedChains = () => {
+  return [];
 };
 
-// TODO: replace with actual active chains for given app
-const useInactiveChains = () => {
-  return [CHAIN.XDAI, CHAIN.BINANCE, CHAIN.ETHEREUM];
+// TODO: replace with actual avilable chains for given app
+const useAvailableChains = (app: WalletConnectApp) => {
+  return app.chains;
 };
 
 const Title = styled(Text)`
@@ -106,12 +104,12 @@ const Title = styled(Text)`
   font-size: 20px;
 `;
 
-const ActiveItemsContainer = styled.View`
+const ConnectedItemsContainer = styled.View`
   align-items: center;
   margin: ${spacing.medium}px 0 10px;
 `;
 
-const ActiveItem = styled(Text)`
+const ConnectedItem = styled(Text)`
   padding: ${spacing.extraSmall}px 0;
 `;
 
@@ -121,13 +119,13 @@ const Description = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
-const InactiveItemsContainer = styled.View`
+const AvailableItemsContainer = styled.View`
   width: 100%;
   align-items: stretch;
   margin-top: ${spacing.large}px;
 `;
 
-const InactiveItem = styled(Text)`
+const AvailableItem = styled(Text)`
   padding: ${spacing.medium}px 0;
   text-align: center;
   font-family: ${appFont.medium};
