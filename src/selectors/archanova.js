@@ -78,8 +78,8 @@ export const isEnsMigrationNeededSelector = createSelector(
   accountsSelector,
   archanovaAccountHistorySelector,
   (accounts, archanovaAccountHistory): boolean => {
-    const isDisabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.ENS_MIGRATOR_DISABLED);
-    if (isDisabled) return false;
+    const isEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.ENS_MIGRATOR_ENABLED);
+    if (!isEnabled) return false;
 
     const archanovaAccount = findFirstArchanovaAccount(accounts);
 
