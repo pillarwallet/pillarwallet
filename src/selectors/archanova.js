@@ -77,7 +77,10 @@ export const useGasTokenSelector = createSelector(
 export const isEnsMigrationNeededSelector = createSelector(
   accountsSelector,
   archanovaAccountHistorySelector,
-  (accounts, archanovaAccountHistory) => {
+  (accounts, archanovaAccountHistory): boolean => {
+    const isEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.ENS_MIGRATOR_ENABLED);
+    if (!isEnabled) return false;
+
     const archanovaAccount = findFirstArchanovaAccount(accounts);
 
     const isEnsMigrationNeeded = archanovaAccount
@@ -87,6 +90,6 @@ export const isEnsMigrationNeededSelector = createSelector(
       extra,
     }) => extra?.isENSMigrationToEtherspot);
 
-    return isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent && isEnsMigrationNeeded;
+    return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;
   },
 );
