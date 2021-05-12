@@ -20,17 +20,17 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { useTranslation } from 'translations/translate';
 
 // Components
-import Image from 'components/Image';
+import BottomModal from 'components/modern/BottomModal';
 import Text from 'components/modern/Text';
-import Modal from 'components/Modal';
+import Image from 'components/Image';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Local
-import WalletConnectRequestModal from './WalletConnectRequestModal';
 import { formatRequestType, type RequestViewModel } from './utils';
 
 
@@ -38,53 +38,22 @@ type Props = {|
   request: RequestViewModel,
 |};
 
-function WalletConnectRequestBanner({ request }: Props) {
-  const showRequestModal = () => {
-    Modal.open(() => <WalletConnectRequestModal request={request} />)
-  };
+function WalletConnectRequestModal({ request }: Props) {
+  const { t } = useTranslation();
+
+  const title = formatRequestType(request.type);
 
   return (
-    <TouchableContainer onPress={showRequestModal}>
+    <BottomModal title={title}>
       <IconImage source={{ uri: request.iconUrl }} />
-
-      <Column>
-        <Title>{request.title}</Title>
-        <Subtitle>{formatRequestType(request.type)}</Subtitle>
-      </Column>
-    </TouchableContainer>
+    </BottomModal>
   );
 }
 
-export default WalletConnectRequestBanner;
-
-const TouchableContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  margin: ${spacing.medium / 2}px ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: 30px;
-  shadow-opacity: 0.07;
-  shadow-color: #000;
-  shadow-offset: 0 6px;
-  shadow-radius: 20px;
-  elevation: 6;
-`;
+export default WalletConnectRequestModal;
 
 const IconImage = styled(Image)`
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
-`;
-
-const Column = styled.View`
-  margin-left: ${spacing.mediumLarge}px;
-`;
-
-const Title = styled(Text)`
-  font-family: ${appFont.medium};
-  ${fontStyles.medium};
-`;
-
-const Subtitle = styled(Text)`
-  color: ${({ theme }) => theme.colors.secondaryText};
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
 `;

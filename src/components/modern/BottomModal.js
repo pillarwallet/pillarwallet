@@ -34,7 +34,7 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 import type { ImageSource } from 'utils/types/react-native';
 
 type Props = {|
-  title?: string,
+  title?: ?string,
   iconSource?: ImageSource,
   children: React.Node,
 |};

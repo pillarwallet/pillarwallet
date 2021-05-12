@@ -34,6 +34,8 @@ type Props = {|
 function WalletConnectRequests({ style }: Props) {
   const requests = useRequests();
 
+  if (!requests.length) return null;
+
   return (
     <Container style={style}>
       {requests.map((request) => (

@@ -37,7 +37,7 @@ export type RequestViewModel = {|
 export function useRequests(): RequestViewModel[] {
   return [
     {
-      title: 'Zerion',
+      title: 'Pool Together',
       type: REQUEST_TYPE.TRANSACTION,
       iconUrl:
         'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
