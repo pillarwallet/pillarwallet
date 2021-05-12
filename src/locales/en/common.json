@@ -625,7 +625,11 @@
     "home": {
       "title": "Wallet Connect",
       "headerStories": "New and Noteworthy",
-      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
+      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet.",
+      "details": {
+        "connectOnFormat": "Connect on {{title}}",
+        "connectedOnFormat": "⚡️ Connected on {{title}} ⚡️"
+      }
     },
     "connectedApps": {
       "title": "Connected dapps",
