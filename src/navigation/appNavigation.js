@@ -50,7 +50,6 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
-import WalletConnectScreen from 'screens/LegacyWalletConnect';
 import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
 import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
