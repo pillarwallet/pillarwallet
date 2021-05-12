@@ -35,6 +35,7 @@ import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 import Stories from 'components/Stories';
+import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
 import { useSupportedChains, useIsDeployedOnEthereum } from 'selectors/smartWallet';
@@ -74,17 +75,6 @@ function WalletConnectHome() {
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
   const isDeployedOnEthereum = useIsDeployedOnEthereum();
 
-  if (isFetching) {
-    return (
-      <Container>
-        <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
-        <Center flex={1}>
-          <Spinner />
-        </Center>
-      </Container>
-    );
-  }
-
   const handlePress = (app: WalletConnectApp) => {
     Modal.open(() => <AppDetailsModal app={app} />);
   };
@@ -94,6 +84,8 @@ function WalletConnectHome() {
 
     return (
       <ListHeader>
+        <WalletConnectRequests />
+
         <WhatIsWalletConnectBanner style={styles.banner} />
 
         <Stories renderHeader={() => <SectionHeader>{t('headerStories')}</SectionHeader>} />
@@ -132,15 +124,24 @@ function WalletConnectHome() {
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
-      <SectionList
-        sections={sections ?? []}
-        renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
-        renderSectionFooter={() => <SectionFooter />}
-        renderItem={({ item }) => renderListRow(item)}
-        keyExtractor={(items) => items[0]?.id}
-        ListHeaderComponent={renderListHeader()}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-      />
+      {!isFetching ? (
+        <SectionList
+          sections={sections ?? []}
+          renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
+          renderSectionFooter={() => <SectionFooter />}
+          renderItem={({ item }) => renderListRow(item)}
+          keyExtractor={(items) => items[0]?.id}
+          ListHeaderComponent={renderListHeader()}
+          contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        />
+      ) : (
+        <>
+          {renderListHeader()}
+          <Center flex={1}>
+            <Spinner />
+          </Center>
+        </>
+      )}
 
       <ConnectFloatingButton />
       <ConnectedAppsFloatingButton />

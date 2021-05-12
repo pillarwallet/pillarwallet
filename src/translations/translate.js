@@ -65,11 +65,14 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
 
 export default t;
 
+
+export type TFunction = (key: string, options?: any) => string;
+
 export const useTranslationWithPrefix = (prefix: string) => {
-  const { t: tRoot } = useTranslation();
+  const tRoot: TFunction = useTranslation().t;
 
   // eslint-disable-next-line no-shadow
-  const t = React.useCallback(
+  const t: TFunction = React.useCallback(
     (key: string, options?: any): string => (key != null ? tRoot(`${prefix}.${key}`, options) : ''),
     [tRoot, prefix],
   );

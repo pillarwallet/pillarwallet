@@ -19,6 +19,7 @@
 */
 
 import type { Chain } from 'models/Chain';
+import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 export type WalletConnectCategory = {|
   id: string,
@@ -39,6 +40,18 @@ export type WalletConnectApp = {|
 
 // Based on types from:
 // https://github.com/WalletConnect/walletconnect-monorepo/blob/master/packages/types/index.d.ts
+
+export type WalletConnectCallRequest = {|
+  peerId: string,
+  callId: number,
+  method: string,
+  icon: string | null,
+  name: string,
+  url: string,
+  params: any[],
+|};
+
+export type WalletConnectRequestType = $Values<typeof REQUEST_TYPE>;
 
 export type ClientMeta = {|
   description: string,

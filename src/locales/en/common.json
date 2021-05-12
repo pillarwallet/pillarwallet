@@ -625,6 +625,10 @@
       "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet.",
       "connectOnFormat": "Connect on {{title}}",
       "connectedOnFormat": "⚡️ Connected on {{title}} ⚡️"
+    },
+    "requests": {
+      "messageRequest": "Signature request",
+      "transactionRequest": "Transaction request"
     }
   },
 

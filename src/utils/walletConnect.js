@@ -18,7 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { Session } from 'models/WalletConnect';
+// Constants
+import {
+  ETH_SEND_TX,
+  ETH_SIGN,
+  ETH_SIGN_TX,
+  ETH_SIGN_TYPED_DATA,
+  PERSONAL_SIGN,
+  REQUEST_TYPE,
+} from 'constants/walletConnectConstants';
+
+// Types
+import type { Session, WalletConnectCallRequest } from 'models/WalletConnect';
 
 // urls of dapps that don't support smart accounts
 // or that we don't want to support for any reason
@@ -36,4 +47,18 @@ export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: str
 
 export const shouldAllowSession = (url: string) => {
   return !UNSUPPORTED_APPS_URLS.includes(url);
+};
+
+export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRequest): string => {
+  switch (callRequest?.method) {
+    case ETH_SEND_TX:
+    case ETH_SIGN_TX:
+      return REQUEST_TYPE.TRANSACTION;
+    case ETH_SIGN:
+    case ETH_SIGN_TYPED_DATA:
+    case PERSONAL_SIGN:
+      return REQUEST_TYPE.MESSAGE;
+    default:
+      return REQUEST_TYPE.UNSUPPORTED;
+  }
 };
