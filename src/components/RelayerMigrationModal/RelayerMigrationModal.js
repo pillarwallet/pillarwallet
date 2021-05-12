@@ -37,7 +37,7 @@ import Image from 'components/Image';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
-import { SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
+import { ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/archanovaConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // utils
@@ -95,7 +95,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     const { switchPressed } = this.state;
     const { iconUrl } = accountAssets[PLR] || {};
     const isSwitchPending = accountHistory.some(({ tag, status }) => {
-      return tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
+      return tag === ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });
     const buttonTitle = switchPressed || isSwitchPending
       ? t('relayerMigrationContent.modal.switch.label.waitingForConfirmation')

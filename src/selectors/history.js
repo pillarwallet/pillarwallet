@@ -21,9 +21,10 @@
 import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 
-import { getSmartWalletAddress } from 'utils/accounts';
-import { userHasSmartWallet } from 'utils/smartWallet';
+// utils
+import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 
+// selectors
 import {
   historySelector,
   activeAccountIdSelector,
@@ -42,15 +43,17 @@ export const accountHistorySelector = createSelector(
   },
 );
 
-export const smartAccountHistorySelector = createSelector(
+export const archanovaAccountHistorySelector = createSelector(
   historySelector,
   accountsSelector,
   (history, accounts) => {
-    const userHasSW = userHasSmartWallet(accounts);
-    if (!userHasSW) return [];
-    const smartAccountId = getSmartWalletAddress(accounts);
-    if (!smartAccountId) return [];
-    return orderBy(history[smartAccountId] || [], ['createdAt'], ['desc']);
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    if (!archanovaAccount) return [];
+
+    const archanovaAccountId = getAccountId(archanovaAccount);
+    if (!archanovaAccountId) return [];
+
+    return orderBy(history[archanovaAccountId] || [], ['createdAt'], ['desc']);
   },
 );
 

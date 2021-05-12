@@ -67,10 +67,10 @@ import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 
 // actions
-import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
+import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -82,6 +82,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import { loadSupportedAssetsAction } from 'actions/assetsActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
 
 // other
@@ -294,6 +295,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // user might not be registered at this point
     if (walletId) {
+      await dispatch(loadSupportedAssetsAction());
+
       const rates = await getExchangeRates(defaultInitialAssets);
 
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: setRatesAction');
@@ -308,25 +311,9 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       // create smart wallet account only for new wallets
       logBreadcrumb(
         'onboarding',
-        'onboardingAction.js: Dispatching smart wallet action: importSmartWalletAccountsAction',
+        'onboardingAction.js: Dispatching smartWalletActions action: importArchanovaAccountsIfNeededAction',
       );
-      await dispatch(importSmartWalletAccountsAction(privateKey));
-
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching history action: fetchSmartWalletTransactionsAction',
-      );
-      await dispatch(fetchSmartWalletTransactionsAction());
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching smart wallet action: managePPNInitFlagAction');
-      dispatch(managePPNInitFlagAction());
-
-      // add wallet created / imported events
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching user event action: getWalletsCreationEventsAction',
-      );
-      dispatch(getWalletsCreationEventsAction());
+      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
 
       // Etherspot smart wallet silent account creation
       logBreadcrumb(
@@ -339,7 +326,23 @@ export const setupAppServicesAction = (privateKey: ?string) => {
         'onboarding',
         'onboardingAction.js: Dispatching etherspotActions action: importEtherspotAccountsAction',
       );
-      dispatch(importEtherspotAccountsAction());
+      await dispatch(importEtherspotAccountsAction());
+
+      logBreadcrumb(
+        'onboarding',
+        'onboardingAction.js: Dispatching historyActions action: fetchTransactionsHistoryAction',
+      );
+      await dispatch(fetchTransactionsHistoryAction());
+
+      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching smart wallet action: managePPNInitFlagAction');
+      dispatch(managePPNInitFlagAction());
+
+      // add wallet created / imported events
+      logBreadcrumb(
+        'onboarding',
+        'onboardingAction.js: Dispatching user event action: getWalletsCreationEventsAction',
+      );
+      dispatch(getWalletsCreationEventsAction());
     }
 
     // if wallet was imported let's check its balance for key based assets migration

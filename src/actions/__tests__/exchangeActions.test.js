@@ -73,7 +73,14 @@ const storeState = {
     ],
   },
   history: { data: { [ACC_ID]: [] } },
-  accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.SMART_WALLET }] },
+  accounts: {
+    data: [{
+      id: 'id',
+      walletId: 'walletId',
+      type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
+      isActive: true,
+    }],
+  },
 };
 
 const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: string) => ({

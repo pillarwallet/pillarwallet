@@ -29,7 +29,10 @@ import t from 'translations/translate';
 
 // actions
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionsAction,
+  resetEstimateTransactionAction,
+} from 'actions/transactionEstimateActions';
 
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
@@ -65,8 +68,7 @@ import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 
 import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // types
-import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AccountTransaction } from 'services/smartWallet';
+import type { TransactionToEstimate, TransactionFeeInfo } from 'models/Transaction';
 
 
 const ContentWrapper = styled.View`
@@ -102,12 +104,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-    sequentialTransactions: ?AccountTransaction[],
-  ) => void,
+  estimateTransactions: (transactions: TransactionToEstimate[]) => void,
   resetEstimateTransaction: () => void,
   accountAddress: string,
 };
@@ -153,23 +150,12 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
   updatePurchaseFeeAndTransaction = async () => {
     const { poolToken, numberOfTickets } = this.state;
-    const { estimateTransaction, accountAddress } = this.props;
+    const { estimateTransactions, accountAddress } = this.props;
+
     const purchasePayload = await getPurchaseTicketTransactions(accountAddress, numberOfTickets, poolToken);
+    const transactions = purchasePayload.map(({ to, amount: value, data }) => ({ to, value, data }));
+    estimateTransactions(transactions);
 
-    const sequentialTransactions = purchasePayload
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
-
-    estimateTransaction(
-      purchasePayload[0].to,
-      purchasePayload[0].amount,
-      purchasePayload[0].data,
-      sequentialTransactions,
-    );
     this.setState({ purchasePayload });
   }
 
@@ -341,12 +327,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-    sequentialTransactions: ?AccountTransaction[],
-  ) => dispatch(estimateTransactionAction(receiver, amount, data, null, sequentialTransactions)),
+  estimateTransactions: (transactions: TransactionToEstimate[]) => dispatch(estimateTransactionsAction(transactions)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

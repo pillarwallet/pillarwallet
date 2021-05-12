@@ -17,30 +17,42 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import WalletConnect from '@walletconnect/react-native';
-import type { IWalletConnectOptions } from '@walletconnect/react-native';
+import WalletConnect from '@walletconnect/client';
+
+// utils
+import { reportErrorLog } from 'utils/common';
+
+// services
+import Storage from 'services/storage';
+
+// types
+import type { WalletConnectSession, WalletConnectConnector, WalletConnectOptions } from 'models/WalletConnect';
 
 /* eslint-disable i18next/no-literal-string */
-const getNativeOptions = () => {
-  const nativeOptions = {
-    clientMeta: {
-      name: 'Pillar Wallet',
-      description: 'Social. Secure. Intuitive.',
-      url: 'https://pillarproject.io/wallet',
-      icons: [
-        'https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/8c/36/c7/8c36c7d5-0698-97b5-13b2-a51564706cf5/AppIcon-1x_U007emarketing-85-220-0-6.png/460x0w.jpg',
-      ],
-    },
-  };
-
-  return nativeOptions;
+const clientMeta = {
+  name: 'Pillar Wallet',
+  description: 'Social. Secure. Intuitive.',
+  url: 'https://pillarproject.io/wallet',
+  icons: [
+    'https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/8c/36/c7/8c36c7d5-0698-97b5-13b2-a51564706cf5/AppIcon-1x_U007emarketing-85-220-0-6.png/460x0w.jpg',
+  ],
 };
 /* eslint-enable i18next/no-literal-string */
 
-export const createConnector = (options: IWalletConnectOptions): WalletConnect => {
-  const nativeOptions = getNativeOptions();
+export const createConnector = (
+  options: WalletConnectOptions,
+): ?WalletConnectConnector => {
+  try {
+    return new WalletConnect({ ...options, clientMeta });
+  } catch (error) {
+    reportErrorLog('walletConnect -> createConnector failed', { error });
+    return null;
+  }
+};
 
-  const connector = new WalletConnect(options, nativeOptions);
+export const loadLegacyWalletConnectSessions = async (): Promise<WalletConnectSession[]> => {
+  const storage = Storage.getInstance('db');
+  const walletConnectStorage = await storage.get('walletconnect');
 
-  return connector;
+  return walletConnectStorage?.sessions ?? [];
 };

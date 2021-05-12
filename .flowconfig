@@ -116,6 +116,9 @@ module.name_mapper='^translations' -> '<PROJECT_ROOT>/src/translations'
 module.name_mapper='^containers\/\(.*\)$' -> '<PROJECT_ROOT>/src/containers/\1'
 module.name_mapper='^containers' -> '<PROJECT_ROOT>/src/containers'
 
+module.name_mapper='^hooks\/\(.*\)$' -> '<PROJECT_ROOT>/src/hooks/\1'
+module.name_mapper='^hooks' -> '<PROJECT_ROOT>/src/hooks'
+
 ; ;;; custom paths end ;;;
 
 suppress_type=$FlowIssue

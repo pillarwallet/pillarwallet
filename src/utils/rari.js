@@ -959,10 +959,14 @@ const buildRariTransaction = (
   hashes,
   supportedAssets,
 ): Transaction => {
+  if (!transaction.hash) return transaction;
+
   const {
     transfersOut = [], transfersIn = [], deposits = [], withdrawals = [], claims = [],
   } = rariTransactions;
+
   const txHash = transaction.hash.toLowerCase();
+
   const findRariPool = ({ tokenAddress }): ?RariPool =>
     RARI_POOLS_ARRAY.find(pool => addressesEqual(getRariPoolsEnv(pool).RARI_FUND_TOKEN_ADDRESS, tokenAddress));
 
@@ -982,9 +986,11 @@ const buildRariTransaction = (
       },
     };
   }
+
   rariTransaction = transfersIn
     .concat(transfersOut)
     .find(({ id, from, to }) => id === txHash && from !== ZERO_ADDRESS && to !== ZERO_ADDRESS);
+
   if (rariTransaction) {
     const { to, from, amount } = rariTransaction;
     return {
@@ -1009,6 +1015,7 @@ const buildRariTransaction = (
       },
     };
   }
+
   return transaction;
 };
 

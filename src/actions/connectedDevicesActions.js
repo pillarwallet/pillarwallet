@@ -38,7 +38,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { addressesEqual } from 'utils/assets';
-import { isSmartWalletDeviceDeployed } from 'utils/smartWallet';
+import { isArchanovaDeviceDeployed } from 'utils/archanova';
 
 // services
 import { navigate } from 'services/navigation';
@@ -46,7 +46,7 @@ import { navigate } from 'services/navigation';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
-import type { SmartWalletAccountDevice } from 'models/SmartWalletAccount';
+import type { ArchanovaWalletAccountDevice } from 'models/ArchanovaWalletAccount';
 
 // actions
 import {
@@ -67,7 +67,7 @@ const removePrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-const getConnectedSmartWalletDevice = (getState: GetState, deviceAddress: string): ?SmartWalletAccountDevice => {
+const getConnectedSmartWalletDevice = (getState: GetState, deviceAddress: string): ?ArchanovaWalletAccountDevice => {
   const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);
   return smartWalletAccountDevices.find(
     ({ device }) => addressesEqual(device.address, deviceAddress),
@@ -92,7 +92,7 @@ export const addConnectedDeviceAction = (
 
       // check if account was created
       const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);
-      const newSmartWalletAccountDevice: ?SmartWalletAccountDevice = smartWalletAccountDevices.find(
+      const newSmartWalletAccountDevice: ?ArchanovaWalletAccountDevice = smartWalletAccountDevices.find(
         ({ device }) => addressesEqual(device.address, deviceAddress),
       );
 
@@ -143,7 +143,7 @@ export const removeConnectedDeviceAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
-      if (!isSmartWalletDeviceDeployed(getConnectedSmartWalletDevice(getState, deviceAddress))) {
+      if (!isArchanovaDeviceDeployed(getConnectedSmartWalletDevice(getState, deviceAddress))) {
         await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
         dispatch(completeConnectedDeviceRemoveAction());
       } else {
@@ -172,7 +172,7 @@ export const confirmConnectedDeviceRemoveAction = (device: ConnectedDevice) => {
           return;
         }
         // if state is deployed then we need to undeploy device first
-        if (isSmartWalletDeviceDeployed(smartWalletAccountDevice)) {
+        if (isArchanovaDeviceDeployed(smartWalletAccountDevice)) {
           navigate(NavigationActions.navigate({
             routeName: REMOVE_SMART_WALLET_CONNECTED_DEVICE,
             params: { device },

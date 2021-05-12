@@ -17,11 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type SmartWalletStatus = {
-  status: ?string,
-  hasAccount: boolean,
-  sendingBlockedMessage?: {
-    title?: string,
-    message?: string,
-  }
-};
+import { BigNumber } from 'bignumber.js';
+
+export type EtherspotTransactionEstimate = {|
+  refundAmount: BigNumber,
+  estimatedGas: number,
+  estimatedGasPrice: BigNumber,
+|};

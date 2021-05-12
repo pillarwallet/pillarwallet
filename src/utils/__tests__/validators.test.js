@@ -62,8 +62,16 @@ describe('Validators', () => {
       expect(isValidAddressOrEnsName('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D')).toBeTruthy();
     });
 
-    it('should return false for ENS name', () => {
+    it('should return true for the valid ENS .eth name', () => {
       expect(isValidAddressOrEnsName('test.eth')).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS .crypto name', () => {
+      expect(isValidAddressOrEnsName('test.crypto')).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS .zil name', () => {
+      expect(isValidAddressOrEnsName('test.zil')).toBeTruthy();
     });
 
     it('should return true for the valid ENS name with subdomain', () => {

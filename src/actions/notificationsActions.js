@@ -27,10 +27,14 @@ import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
 
 // actions
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
+import {
+  subscribeToEtherspotNotificationsAction,
+  unsubscribeToEtherspotNotificationsAction,
+} from 'actions/etherspotActions';
 
 // constants
 import {
@@ -125,7 +129,7 @@ export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_IND
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkForMissedAssetsAction());
-    dispatch(fetchSmartWalletTransactionsAction());
+    dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAssetsBalancesAction());
   };
@@ -149,7 +153,7 @@ export const subscribeToSocketEventsAction = () => {
       }
       if (data.type === BCX) {
         dispatch(checkForMissedAssetsAction());
-        dispatch(fetchSmartWalletTransactionsAction());
+        dispatch(fetchTransactionsHistoryAction());
         dispatch(fetchAssetsBalancesAction());
       }
       if (data.type === BADGE) {
@@ -225,14 +229,15 @@ export const subscribeToPushNotificationsAction = () => {
 };
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(subscribeToSocketEventsAction());
     dispatch(subscribeToPushNotificationsAction());
+    dispatch(subscribeToEtherspotNotificationsAction());
   };
 };
 
 export const stopListeningNotificationsAction = () => {
-  return async () => {
+  return (dispatch: Dispatch) => {
     if (disabledPushNotificationsListener !== null) {
       clearInterval(disabledPushNotificationsListener);
       disabledPushNotificationsListener = null;
@@ -242,6 +247,8 @@ export const stopListeningNotificationsAction = () => {
       notificationsListener();
       notificationsListener = null;
     }
+
+    dispatch(unsubscribeToEtherspotNotificationsAction());
   };
 };
 
@@ -283,7 +290,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(checkForMissedAssetsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {

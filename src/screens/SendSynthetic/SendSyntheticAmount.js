@@ -51,12 +51,12 @@ import {
 // models, types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { AssetOption } from 'models/Asset';
-import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+import type { SyntheticTransaction, TransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import archanovaService from 'services/archanova';
 
 // selectors
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
@@ -66,7 +66,6 @@ type Props = {
   navigation: NavigationScreenProp<any>,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
-  isOnline: boolean,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
   syntheticAssets: AssetOption[],
@@ -134,7 +133,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { ethAddress } = value ?? {};
 
-    const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
+    const userInfo = !!ethAddress && await archanovaService.searchAccount(ethAddress).catch(null);
 
     if (userInfo) {
       this.setReceiver(value);
@@ -155,15 +154,16 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   setReceiver = async (value: ?Contact) => {
-    const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
+    const resolved = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
-    if (!receiver) {
+    if (!resolved?.receiver) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
     } else {
+      const { receiver, receiverEnsName = '' } = resolved;
       stateToUpdate = { selectedContact: value, receiver, receiverEnsName };
     }
 
@@ -204,7 +204,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       Keyboard.dismiss();
       if (assetCode === PLR) {
         // go through regular confirm as PLR is staked by the user already so he owns it
-        const transactionPayload: TokenTransactionPayload = {
+        const transactionPayload: TransactionPayload = {
           to: receiver,
           receiverEnsName,
           amount,

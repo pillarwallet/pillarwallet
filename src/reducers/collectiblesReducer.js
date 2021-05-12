@@ -30,7 +30,7 @@ import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collect
 export type CollectiblesReducerState = {
   data: CollectiblesStore,
   transactionHistory: CollectiblesHistoryStore,
-  updatingTransaction: string,
+  updatingTransaction: ?string,
 };
 
 export type CollectiblesAction = {
@@ -41,7 +41,7 @@ export type CollectiblesAction = {
 const initialState = {
   data: {},
   transactionHistory: {},
-  updatingTransaction: '',
+  updatingTransaction: null,
 };
 
 
@@ -59,7 +59,7 @@ const collectiblesReducer = (
       return {
         ...state,
         transactionHistory: action.payload || {},
-        updatingTransaction: '',
+        updatingTransaction: null,
       };
     case UPDATING_COLLECTIBLE_TRANSACTION:
       return {

@@ -1,19 +1,45 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 import { ethers } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
-import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
+
+// utils
+import { getEthereumProvider } from 'utils/common';
+import { catchTransactionError } from 'utils/wallet';
+import { getAccountAddress } from 'utils/accounts';
+
+// services
 import {
   transferERC20,
   transferERC721,
   transferETH,
 } from 'services/assets';
-import { getEthereumProvider } from 'utils/common';
-import { catchTransactionError } from 'utils/wallet';
-import { getAccountAddress } from 'utils/accounts';
+
+// types
+import type { Account } from 'models/Account';
+import type { CollectibleTransactionPayload, TransactionPayload } from 'models/Transaction';
+
 
 type CalculateNonceResult = {
   nonce?: number,
@@ -39,6 +65,15 @@ export default class KeyBasedWalletProvider {
     } = transaction;
     const from = getAccountAddress(account);
     const { nonce, transactionCount } = await this.calculateNonce(from, state, signOnly);
+
+    if (!tokenId) {
+      return catchTransactionError({ message: 'Token ID not found!' }, 'ERC721', {
+        contractAddress,
+        from,
+        to,
+        tokenId,
+      });
+    }
 
     return transferERC721({
       from,
@@ -70,7 +105,7 @@ export default class KeyBasedWalletProvider {
       }));
   }
 
-  async transferETH(account: Account, transaction: TokenTransactionPayload, state: Object) {
+  async transferETH(account: Account, transaction: TransactionPayload, state: Object) {
     const {
       to,
       amount,
@@ -109,7 +144,7 @@ export default class KeyBasedWalletProvider {
       }));
   }
 
-  async transferERC20(account: Account, transaction: TokenTransactionPayload, state: Object) {
+  async transferERC20(account: Account, transaction: TransactionPayload, state: Object) {
     const {
       gasLimit,
       gasPrice,

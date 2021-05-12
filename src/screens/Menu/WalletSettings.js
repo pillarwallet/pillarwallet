@@ -55,7 +55,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -84,7 +84,7 @@ type Props = {
   toggleOmitPinOnLogin: () => void,
   omitPinOnLogin?: boolean,
   backupStatus: BackupStatus,
-  isSmartWalletActivated: boolean,
+  isArchanovaWalletActivated: boolean,
   hasSeenRecoveryPortalIntro: boolean,
   theme: Theme,
 };
@@ -142,12 +142,12 @@ class WalletSettings extends React.Component<Props, State> {
       useBiometrics,
       omitPinOnLogin,
       toggleOmitPinOnLogin,
-      isSmartWalletActivated,
+      isArchanovaWalletActivated,
       hasSeenRecoveryPortalIntro,
     } = this.props;
     const { supportedBiometryType } = this.state;
 
-    const recoveryPortalSubtitle = isSmartWalletActivated
+    const recoveryPortalSubtitle = isArchanovaWalletActivated
       ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
       : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
 
@@ -183,8 +183,8 @@ class WalletSettings extends React.Component<Props, State> {
         key: 'recoveryPortal',
         title: t('settingsContent.settingsItem.recoveryPortal.title'),
         subtitle: recoveryPortalSubtitle,
-        disabled: !isSmartWalletActivated,
-        onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
+        disabled: !isArchanovaWalletActivated,
+        onPress: () => isArchanovaWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
       });
     }
 
@@ -251,8 +251,8 @@ class WalletSettings extends React.Component<Props, State> {
   };
 
   getGlobalSection = () => {
-    const { navigation, isSmartWalletActivated, hasSeenRecoveryPortalIntro } = this.props;
-    const recoveryPortalSubtitle = isSmartWalletActivated
+    const { navigation, isArchanovaWalletActivated, hasSeenRecoveryPortalIntro } = this.props;
+    const recoveryPortalSubtitle = isArchanovaWalletActivated
       ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
       : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
 
@@ -270,8 +270,8 @@ class WalletSettings extends React.Component<Props, State> {
         key: 'recoveryPortal',
         title: t('settingsContent.settingsItem.recoveryPortal.title'),
         subtitle: recoveryPortalSubtitle,
-        disabled: !isSmartWalletActivated,
-        onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
+        disabled: !isArchanovaWalletActivated,
+        onPress: () => isArchanovaWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
       },
     ];
   };
@@ -334,7 +334,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

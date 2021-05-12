@@ -9,6 +9,7 @@
   "pillarTank": "Pillar Tank",
   "poolTogether": "Pool Together",
   "smartWallet": "Smart Wallet",
+  "legacySmartWallet": "Smart Wallet (legacy)",
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
@@ -557,11 +558,14 @@
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
       "unsupportedAction": "We are sorry, but we do not support this action yet",
-      "noMatchingWallet": "No Matching Wallet Connect Connectors Found",
+      "noMatchingConnector": "No matching Wallet Connect connectors found",
       "requestNotFound": "Request not found",
       "requestRejected": "Call Request Rejected",
       "invalidSession": "Invalid Wallet Connect session",
-      "alreadyPending": "A connection is already waiting"
+      "alreadyPending": "A connection is already waiting",
+      "callRequestRejectFailed": "Call Request reject failed",
+      "callRequestApproveFailed": "Call Request approve failed",
+      "invalidRequest": "Invalid Wallet Connect request"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
@@ -680,6 +684,19 @@
         "description": "Only final settlement is recorded on-chain. Batched transactions allow multiple transfers to be combined."
       },
       "settleTransactions": "Settle transactions"
+    }
+  },
+
+  "migrateENSContent": {
+    "banner": {
+      "title": "Re-point your ENS name to Etherspot"
+    },
+    "details": {
+      "title": "Re-point your ENS name to Etherspot",
+      "body": "Currently, your ENS name points to your Archanova Smart Wallet. This means that any transactions pointing to {{ensName}} will always land in your Archanova Smart Wallet address: {{address}}. Continue below to re-point your ENS name to your new Etherspot Smart Wallet account",
+      "migrate": "Migrate",
+      "cannotMigrate": "Sorry, we can't migrate right now. Please try again.",
+      "noAccountFound": "Sorry, no account found was found."
     }
   },
 
@@ -1339,7 +1356,9 @@
       "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
     },
     "error": {
-      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed."
+      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
+      "unsupportedRequestCallRequestType": "Unsupported Call Request type.",
+      "unableToShowTransaction": "Unable to show transaction. Contact support."
     }
   },
 
@@ -1589,18 +1608,18 @@
     "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsStake": "{{value}} {{token}} staked.",
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
-    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed."
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
+    "noActiveAccountFound": "No active account found.",
+    "walletConnectFailed": "Wallet Connect failed.",
+    "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
+    "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
+    "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
+    "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
+    "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed. Please contact support."
   },
 
   "exchangeContent": {
     "modal": {
-      "smartWalletMissing": {
-        "title": "Enable Smart Wallet",
-        "paragraph": "You need a Smart Wallet to receive assets.",
-        "button": {
-          "enable": "Enable"
-        }
-      },
       "smartWalletIsNotActive": {
         "title": "Use Smart Wallet account",
         "paragraph": "Please select your Smart Wallet account to buy cryptocurrency.",

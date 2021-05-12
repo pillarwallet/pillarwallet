@@ -182,7 +182,7 @@ export const getContractMethodAbi = (
   methodName: string,
 ): ?Object => contractAbi.find(item => item.name === methodName);
 
-export const buildERC721TransactionData = async (transaction: Object, provider: any): any => {
+export const buildERC721TransactionData = async (transaction: Object, customProvider?: any): any => {
   const {
     from,
     to,
@@ -192,6 +192,8 @@ export const buildERC721TransactionData = async (transaction: Object, provider: 
 
   let contractAbi;
   let params;
+
+  const provider = customProvider || getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
   const code = await provider.getCode(contractAddress);
   const receiverCode = await provider.getCode(contractAddress);

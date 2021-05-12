@@ -47,7 +47,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 
 type Props = {
