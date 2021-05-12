@@ -21,7 +21,7 @@ import { BigNumber as EthersBigNumber, Interface, utils } from 'ethers';
 import { orderBy, isEmpty } from 'lodash';
 import t from 'translations/translate';
 
-// constants
+// Constants
 import { ETH } from 'constants/assetsConstants';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import {
@@ -41,8 +41,12 @@ import { stripEmoji } from 'utils/strings';
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-// types
-import type { WalletConnectCallRequest, WalletConnectSession } from 'models/WalletConnect';
+// Types
+import type {
+  WalletConnectCallRequest,
+  WalletConnectCallRequestType,
+  WalletConnectSession,
+} from 'models/WalletConnect';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
@@ -154,7 +158,9 @@ export const mapCallRequestToTransactionPayload = (
   };
 };
 
-export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRequest): string => {
+export const getWalletConnectCallRequestType = (
+  callRequest: WalletConnectCallRequest,
+): WalletConnectCallRequestType => {
   switch (callRequest?.method) {
     case ETH_SEND_TX:
     case ETH_SIGN_TX:
@@ -168,6 +174,17 @@ export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRe
   }
 };
 
+export function formatRequestType(type: WalletConnectCallRequestType) {
+  switch (type) {
+    case REQUEST_TYPE.MESSAGE:
+      return t('walletConnect.requests.messageRequest');
+    case REQUEST_TYPE.TRANSACTION:
+      return t('walletConnect.requests.transactionRequest');
+    default:
+      return null;
+  }
+}
+
 /**
  * Heuristic way of parsing app name.
  *
@@ -179,7 +196,10 @@ export const parsePeerName = (name: ?string): string => {
 
   // Remove text after hyphen
   // eslint-disable-next-line prefer-destructuring
-  result = name.split('-')[0];
+  result = result.split('-')[0];
+
+  // eslint-disable-next-line prefer-destructuring
+  result = result.split(':')[0];
 
   // Strip all emojis
   result = stripEmoji(result);
@@ -192,9 +212,9 @@ export const parsePeerName = (name: ?string): string => {
   result = result.trim();
 
   // Limit length
-  if (result.length > 20) {
+  if (result.length > 22) {
     // eslint-disable-next-line i18next/no-literal-string
-    result = `${result.substring(0, 20)}…`;
+    result = `${result.substring(0, 22)}…`;
   }
 
   return result.trim();
@@ -217,4 +237,3 @@ export function pickPeerIcon(icons: ?string[]): ?string {
   const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
   return sortedPngUrls[0];
 }
-

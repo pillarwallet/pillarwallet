@@ -25,7 +25,7 @@ import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 export type ImageProps = FastImageProps;
 
 const getValidSource = (source: FastImageSource | number) => {
-  if (typeof source.uri !== 'string') return source;
+  if (typeof source?.uri !== 'string') return source;
 
   const { uri } = source;
   const isValidSource = uri.startsWith('https://') || uri.startsWith('http://');
