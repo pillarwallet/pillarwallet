@@ -31,6 +31,7 @@ export type WalletConnectApp = {|
   title: string,
   iconUrl: ?string,
   chains: Chain[],
+  description: ?string,
 |};
 
 // --------------------------------------------- HERE BE DRAGONS ---------------------------------------------

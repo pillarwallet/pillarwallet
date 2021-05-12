@@ -53,11 +53,12 @@ async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectApp[]> {
  */
 type AppDto = {
   name?: [?{ text?: string }],
+  description?: [?{ text?: string }],
   category?: { id?: string },
   logo?: { url?: string },
   disabled?: boolean,
   chainagnostic?: boolean,
-  supportedchains?: [?{ chainid?: string }]
+  supportedchains?: [?{ chainid?: string }],
 };
 
 function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectApp {
@@ -67,11 +68,12 @@ function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectApp {
   const title = parse.stringOrNull(item.data?.name?.[0]?.text);
   const categoryId = parse.stringOrNull(item.data?.category?.id);
   const chains = parseChains(item);
+  const description = parse.stringOrNull(item.data?.description?.[0]?.text);
   const disabled = parse.booleanOrNull(item.data?.disabled);
   if (!id || !title || !categoryId || !chains.length || disabled) return null;
 
   const iconUrl = parse.stringOrNull(item.data?.logo?.url);
-  return { id, title, categoryId, iconUrl, chains };
+  return { id, title, categoryId, iconUrl, chains, description };
 }
 
 function parseChains(item: Prismic.Document<AppDto>): Chain[] {
