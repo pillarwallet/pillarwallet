@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import * as React from 'react';
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -30,15 +31,13 @@ import {
   SET_WALLETCONNECT_CONNECTOR_REQUEST,
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
 } from 'constants/walletConnectConstants';
-import {
-  ASSETS,
-  WALLETCONNECT_CALL_REQUEST_SCREEN,
-  WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-} from 'constants/navigationConstants';
+import { ASSETS, WALLETCONNECT_CONNECTOR_REQUEST_SCREEN } from 'constants/navigationConstants';
 import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
 // components
+import Modal from 'components/Modal';
 import Toast from 'components/Toast';
+import WalletConnnectRequestModal from 'screens/WalletConnect/RequestModal';
 
 // services
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
@@ -311,6 +310,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         callId,
         method,
         params,
+        // TODO: use pickPeerIcon
         icon: icons?.[0] || null,
       };
 
@@ -319,22 +319,25 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         payload: { callRequest },
       });
 
-      const navParams = { callRequest, method };
+      // TODO: handle show modal
+      Modal.open(() => <WalletConnnectRequestModal request={callRequest} />);
 
-      if (!isNavigationAllowed()) {
-        updateNavigationLastScreenState({
-          lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
-          lastActiveScreenParams: navParams,
-        });
-        return;
-      }
+      // const navParams = { callRequest, method };
 
-      const navigateToAppAction = NavigationActions.navigate({
-        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
-        params: navParams,
-      });
+      // if (!isNavigationAllowed()) {
+      //   updateNavigationLastScreenState({
+      //     lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
+      //     lastActiveScreenParams: navParams,
+      //   });
+      //   return;
+      // }
 
-      navigate(navigateToAppAction);
+      // const navigateToAppAction = NavigationActions.navigate({
+      //   routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+      //   params: navParams,
+      // });
+
+      // navigate(navigateToAppAction);
     });
 
     connector.on(WALLETCONNECT_EVENT.DISCONNECT, (error: Error | null) => {
