@@ -629,7 +629,8 @@
       "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
     },
     "connectedApps": {
-      "title": "Connected dapps"
+      "title": "Connected dapps",
+      "connected": "Connected"
     }
   },
 

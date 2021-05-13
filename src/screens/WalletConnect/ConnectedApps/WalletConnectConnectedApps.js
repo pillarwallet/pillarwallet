@@ -30,6 +30,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
 // Local
+import ConnectedAppListItem from './ConnectedAppListItem';
 import { type ConnectedAppItem, useConnectedAppItems } from './selectors';
 
 
@@ -40,8 +41,8 @@ function WalletConnectConnectedApps() {
 
   const items = useConnectedAppItems();
 
-  const renderItem = (item: ConnectedAppItem) => {
-    return <Text>{item.title}</Text>;
+  const renderItem = ({ title, iconUrl, chain }: ConnectedAppItem) => {
+    return <ConnectedAppListItem title={title} iconUrl={iconUrl} chain={chain} />;
   };
 
   return (
