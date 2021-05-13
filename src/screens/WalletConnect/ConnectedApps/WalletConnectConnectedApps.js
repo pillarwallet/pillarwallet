@@ -19,40 +19,18 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
-import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
-import { isEqual, chunk } from 'lodash';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Center } from 'components/modern/Layout';
+import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
-import FloatingButtons from 'components/FloatingButtons';
-import Modal from 'components/Modal';
-import Spinner from 'components/Spinner';
-import Stories from 'components/Stories';
-import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
-// Selectors
-import { useSupportedChains, useIsDeployedOnEthereum } from 'selectors/smartWallet';
-
-// Services
-import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
-import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
-
-// Utils
-import { mapNotNil } from 'utils/array';
-import { appFont, fontStyles, spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
-
-// Types
-import type { SectionBase } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
-import type { WalletConnectApp } from 'models/WalletConnect';
+// Local
+import { type ConnectedAppItem, useConnectedAppItems } from './selectors';
 
 
 function WalletConnectConnectedApps() {
@@ -60,11 +38,22 @@ function WalletConnectConnectedApps() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const [activeChain, setActiveChain] = React.useState<?Chain>(null);
+  const items = useConnectedAppItems();
+
+  const renderItem = (item: ConnectedAppItem) => {
+    return <Text>{item.title}</Text>;
+  };
 
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+
+      <FlatList
+        data={items}
+        renderItem={({ item }) => renderItem(item)}
+        keyExtractor={(item) => item.title}
+        contentContainerStyle={{ paddingBottom: safeArea.bottom }}
+      />
     </Container>
   );
 }
