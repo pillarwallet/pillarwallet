@@ -627,6 +627,9 @@
       "headerStories": "New and Noteworthy",
       "whatIsWalletConnect": "What is Wallet Connect?",
       "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
+    },
+    "connectedApps": {
+      "title": "Connected dapps"
     }
   },
 
