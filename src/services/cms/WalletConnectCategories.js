@@ -27,7 +27,7 @@ import * as Prismic from 'services/prismic';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
-import type { WalletConnectCategory } from 'models/WalletConnect';
+import type { WalletConnectCmsCategory } from 'models/WalletConnectCms';
 
 // Utils
 import * as parse from 'utils/parse';
@@ -37,11 +37,11 @@ const TYPE_CATEGORIES = 'dapp_showcase_categories';
 /**
  * Fetch and parse Wallet Connect categories from Prismic CMS as React Query.
  */
-export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnectCategory[]> {
+export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnectCmsCategory[]> {
   return useQuery('WalletConnectCategories', () => fetchWalletConnectCategoriesApiCall());
 }
 
-async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectCategory[]> {
+async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectCmsCategory[]> {
   const data = await Prismic.queryDocumentsByType(TYPE_CATEGORIES, { pageSize: 100 });
   const parseData = parse.arrayOrEmpty(data.results, parseCategory);
   return orderBy(parseData, 'title');
@@ -54,7 +54,7 @@ type CategoryDto = {
   name?: [?{ text?: string }]
 };
 
-function parseCategory(item: ?Prismic.Document<CategoryDto>): ?WalletConnectCategory {
+function parseCategory(item: ?Prismic.Document<CategoryDto>): ?WalletConnectCmsCategory {
   if (!item) return null;
 
   const id = parse.stringOrNull(item.id);

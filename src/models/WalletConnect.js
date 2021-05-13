@@ -18,8 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { Chain } from 'models/Chain';
-
 // Based on types from:
 // https://github.com/WalletConnect/walletconnect-monorepo/blob/master/packages/types/index.d.ts
 
@@ -150,19 +148,4 @@ type WalletConnectRequestApprove = {|
 type WalletConnectRequestReject = {|
   id: number,
   error?: Error,
-|};
-
-// Wallet Connect CMS types
-
-export type WalletConnectCategory = {|
-  id: string,
-  title: string,
-|};
-
-export type WalletConnectApp = {|
-  id: string,
-  categoryId: string,
-  title: string,
-  iconUrl: ?string,
-  chains: Chain[],
 |};

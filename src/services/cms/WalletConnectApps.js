@@ -28,7 +28,7 @@ import * as Prismic from 'services/prismic';
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import { type Chain, CHAIN, CHAIN_ID } from 'models/Chain';
-import type { WalletConnectApp } from 'models/WalletConnect';
+import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Utils
 import * as parse from 'utils/parse';
@@ -38,11 +38,11 @@ const TYPE_APPS = 'dapp_showcase';
 /**
  * Fetch and parse Wallet Connect apps from Prismic CMS as React Query.
  */
-export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectApp[]> {
+export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectCmsApp[]> {
   return useQuery('WalletConnectApps', () => fetchWalletConnectAppsApiCall());
 }
 
-async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectApp[]> {
+async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectCmsApp[]> {
   const data = await Prismic.queryDocumentsByType(TYPE_APPS, { pageSize: 100 });
   const parsedData = parse.arrayOrEmpty(data.results, parseApp);
   return orderBy(parsedData, 'title');
@@ -60,7 +60,7 @@ type AppDto = {
   supportedchains?: [?{ chainid?: string }]
 };
 
-function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectApp {
+function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectCmsApp {
   if (!item) return null;
 
   const id = parse.stringOrNull(item.id);

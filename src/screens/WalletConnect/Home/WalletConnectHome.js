@@ -50,7 +50,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain, CHAIN } from 'models/Chain';
-import type { WalletConnectApp } from 'models/WalletConnect';
+import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Local
 import ConnectFloatingButton from './components/ConnectFloatingButton';
@@ -100,13 +100,13 @@ function WalletConnectHome() {
   };
 
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
-  const renderListRow = (items: WalletConnectApp[]) => {
+  const renderListRow = (items: WalletConnectCmsApp[]) => {
     return (
       <ListRow>{items.map(renderItem)}</ListRow>
     );
   };
 
-  const renderItem = (item: WalletConnectApp) => {
+  const renderItem = (item: WalletConnectCmsApp) => {
     const isEthereumOnly = activeChain === CHAIN.ETHEREUM || isEqual(item.chains.length, [CHAIN.ETHEREUM]);
     const disabled = isEthereumOnly && !isDeployedOnEthereum;
 
@@ -144,7 +144,7 @@ function WalletConnectHome() {
 export default WalletConnectHome;
 
 type Section = {
-  ...SectionBase<WalletConnectApp[]>,
+  ...SectionBase<WalletConnectCmsApp[]>,
   title: string,
 };
 

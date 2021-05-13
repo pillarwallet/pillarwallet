@@ -19,21 +19,16 @@
 */
 
 import type { Chain } from 'models/Chain';
-import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
-/**
- * Returns apps matching given chain.
- * If chain is nil it returns all passed apps.
- */
-export function filterAppsByChain(apps: WalletConnectCmsApp[], chain: ?Chain): WalletConnectCmsApp[] {
-  if (!chain) return apps;
-  return apps.filter(app => app.chains.includes(chain));
-}
+export type WalletConnectCmsCategory = {|
+  id: string,
+  title: string,
+|};
 
-// NOTE: replace by proper useWalletConnect hook when available
-// Mock data
-export function useWalletConnect() {
-  return {
-    activeConnectors: [0, 1, 2, 3],
-  };
-}
+export type WalletConnectCmsApp = {|
+  id: string,
+  categoryId: string,
+  title: string,
+  iconUrl: ?string,
+  chains: Chain[],
+|};
