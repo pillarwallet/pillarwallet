@@ -40,7 +40,7 @@ import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navig
 // Selectors
 import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 import { assetRegistrySelector } from 'selectors/assets';
-import { useSupportedChains, useIsPillarPaySupported } from 'selectors/smartWallet';
+import { useSupportedChains, useIsPillarPaySupported } from 'selectors/archanova';
 
 // Utils
 import { getRate, getAssetFromRegistry } from 'utils/assets';

@@ -59,6 +59,7 @@ import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import { parseEtherspotTransactions } from 'utils/etherspot';
+import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
 
 // services
 import archanovaService from 'services/archanova';
@@ -70,6 +71,7 @@ import {
   etherspotAccountAssetsSelector,
 } from 'selectors/assets';
 import {
+  accountsSelector,
   activeAccountSelector,
   historySelector,
   supportedAssetsSelector,
@@ -79,6 +81,7 @@ import {
 import type { Transaction } from 'models/Transaction';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Event } from 'models/History';
 
 // actions
 import { fetchAssetsBalancesAction } from './assetsActions';
@@ -369,5 +372,12 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
 
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
+  };
+};
+
+export const viewTransactionOnBlockchainAction = (event: Event) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+    viewTransactionOnBlockchain(event, accounts);
   };
 };

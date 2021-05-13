@@ -34,11 +34,12 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Banner from 'components/Banner';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
-import Requests from 'screens/WalletConnect/Requests';
+import WalletConnectCallRequestList from 'screens/WalletConnect/WalletConnectCallRequestList';
 import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SablierStream from 'components/SablierStream';
+import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 
 // constants
 import {
@@ -58,7 +59,7 @@ import { STAGING } from 'constants/envConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // actions
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { hideHomeUpdateIndicatorAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
@@ -82,13 +83,12 @@ import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { fetchRariDataAction } from 'actions/rariActions';
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
-import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
+import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { sablierEventsSelector } from 'selectors/sablier';
 
 // utils
@@ -99,11 +99,12 @@ import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { formatAmountDisplay, formatFiat } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
 import { convertUSDToFiat } from 'utils/assets';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
-import type { CallRequest, Connector } from 'models/WalletConnect';
+import type { WalletConnectCallRequest } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -123,7 +124,7 @@ import RariPoolItem from './RariPoolItem';
 type Props = {
   navigation: NavigationScreenProp<*>,
   user: User,
-  fetchSmartWalletTransactions: Function,
+  fetchTransactionsHistory: Function,
   checkForMissedAssets: Function,
   hideHomeUpdateIndicator: () => void,
   intercomNotificationsCount: number,
@@ -132,7 +133,6 @@ type Props = {
   history: Object[],
   badges: Badges,
   fetchBadges: Function,
-  pendingConnector: ?Connector,
   activeAccount: ?Account,
   accounts: Accounts,
   userEvents: UserEvent[],
@@ -145,7 +145,7 @@ type Props = {
   hidePoolTogether: boolean,
   toggleBadges: () => void,
   togglePoolTogether: () => void,
-  walletConnectRequests: CallRequest[],
+  walletConnectCallRequests: WalletConnectCallRequest[],
   fetchAllAccountsBalances: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
@@ -160,7 +160,6 @@ type Props = {
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
   fetchPoolStats: () => void,
-  isSmartWalletActive: boolean,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
   isFetchingStreams: boolean,
@@ -179,7 +178,7 @@ type Props = {
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   rates: Rates,
   hideLiquidityPools: boolean,
-  checkSmartWalletSession: () => void,
+  checkArchanovaSession: () => void,
 };
 
 const RequestsWrapper = styled.View`
@@ -206,14 +205,14 @@ class HomeScreen extends React.Component<Props> {
     const {
       fetchBadges,
       fetchBadgeAwardHistory,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
       fetchDepositedAssets,
-      isSmartWalletActive,
       fetchPoolStats,
       fetchUserStreams,
       fetchRariData,
       fetchLiquidityPoolsData,
+      activeAccount,
     } = this.props;
 
     resetAppNotificationsBadgeNumber();
@@ -221,19 +220,22 @@ class HomeScreen extends React.Component<Props> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.hideHomeUpdateIndicator();
     });
-    if (isSmartWalletActive) {
+
+    // services are left for archanova only and will be decomissioned later
+    if (isArchanovaAccount(activeAccount)) {
       fetchPoolStats();
+      fetchDepositedAssets();
+      fetchUserStreams();
+      if (!isStaging) {
+        fetchRariData();
+      }
+      fetchLiquidityPoolsData(LIQUIDITY_POOLS());
     }
-    fetchSmartWalletTransactions();
+
+    fetchReferralRewardsIssuerAddresses();
+    fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();
-    fetchReferralRewardsIssuerAddresses();
-    fetchDepositedAssets();
-    fetchUserStreams();
-    if (!isStaging) {
-      fetchRariData();
-    }
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }
 
   componentWillUnmount() {
@@ -262,7 +264,7 @@ class HomeScreen extends React.Component<Props> {
     const {
       checkForMissedAssets,
       fetchAllCollectiblesData,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
@@ -270,24 +272,26 @@ class HomeScreen extends React.Component<Props> {
       fetchReferralReward,
       fetchDepositedAssets,
       fetchPoolStats,
-      isSmartWalletActive,
       fetchUserStreams,
       fetchRariData,
       fetchLiquidityPoolsData,
-      checkSmartWalletSession,
+      checkArchanovaSession,
+      activeAccount,
     } = this.props;
 
-    checkSmartWalletSession();
+    checkArchanovaSession();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
-    fetchSmartWalletTransactions();
+    fetchTransactionsHistory();
     fetchAllAccountsBalances();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
-    fetchDepositedAssets();
-    if (isSmartWalletActive) {
+
+    // services are left for archanova only and will be decomissioned later
+    if (isArchanovaAccount(activeAccount)) {
+      fetchDepositedAssets();
       fetchPoolStats();
       fetchUserStreams();
       if (!isStaging) {
@@ -388,6 +392,148 @@ class HomeScreen extends React.Component<Props> {
     );
   }
 
+  renderServiceWidgets = () => {
+    const {
+      activeAccount,
+      depositedAssets,
+      hideLendingDeposits,
+      toggleLendingDeposits,
+      isFetchingDepositedAssets,
+      poolTogetherUserStats = [],
+      isFetchingPoolStats,
+      hidePoolTogether,
+      togglePoolTogether,
+      incomingStreams,
+      outgoingStreams,
+      isFetchingStreams,
+      toggleSablier,
+      hideSablier,
+      rariUserDepositInUSD,
+      toggleRari,
+      hideRari,
+      isFetchingRariData,
+      hideLiquidityPools,
+      isFetchingLiquidityPoolsData,
+      toggleLiquidityPools,
+      liquidityPoolsReducer,
+      navigation,
+    } = this.props;
+
+    // services are left for archanova only and will be decomissioned later
+    if (!isArchanovaAccount(activeAccount)) return null;
+
+    // pooltogether
+    const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
+
+    // sablier
+    const latestIncomingStream = incomingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
+    const hasStreams = !!streams.length;
+
+    // rari
+    const rariDeposits = Object.keys(rariUserDepositInUSD)
+      .map(rariPool => ({
+        pool: rariPool,
+        balanceInUSD: rariUserDepositInUSD[rariPool],
+      }))
+      .filter(pool => !!pool.balanceInUSD);
+    const hasRariDeposits = !!rariDeposits.length;
+
+    // liquidity pools
+    const purchasedLiquidityPools = LIQUIDITY_POOLS()
+      .map((pool) => ({
+        pool,
+        poolStats: getPoolStats(pool, liquidityPoolsReducer),
+      }))
+      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
+
+    return (
+      <>
+        <DepositedAssets
+          depositedAssets={depositedAssets}
+          isFetchingDepositedAssets={isFetchingDepositedAssets}
+          navigation={navigation}
+          hideLendingDeposits={hideLendingDeposits}
+          toggleLendingDeposits={toggleLendingDeposits}
+        />
+        {!!hasPoolTickets && (
+          <CollapsibleSection
+            label={t('poolTogetherContent.ticketsList.title')}
+            showLoadingSpinner={isFetchingPoolStats}
+            collapseContent={
+              <FlatList
+                data={poolTogetherUserStats}
+                keyExtractor={(item) => item.symbol}
+                renderItem={this.renderPoolTogetherItem}
+                listKey="pool_together"
+              />
+            }
+            onPress={togglePoolTogether}
+            open={!hidePoolTogether}
+          />
+        )}
+        {!!hasStreams && (
+          <CollapsibleSection
+            label={t('sablierContent.moneyStreamingList.title')}
+            showLoadingSpinner={isFetchingStreams}
+            labelRight={isFetchingStreams ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(SABLIER_STREAMS); }}
+            collapseContent={
+              <FlatList
+                data={streams}
+                keyExtractor={(item) => item.id}
+                renderItem={this.renderSablierStream}
+                initialNumToRender={2}
+                listKey="sablier"
+              />
+            }
+            onPress={toggleSablier}
+            open={!hideSablier}
+          />
+        )}
+        {!!hasRariDeposits && (
+          <CollapsibleSection
+            label={t('rariContent.depositsList.title')}
+            showLoadingSpinner={isFetchingRariData}
+            labelRight={isFetchingRariData ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(RARI_DEPOSIT); }}
+            collapseContent={
+              <FlatList
+                data={rariDeposits}
+                keyExtractor={(item) => item.pool}
+                renderItem={this.renderRariPool}
+                initialNumToRender={2}
+                listKey="rari"
+              />
+            }
+            onPress={toggleRari}
+            open={!hideRari}
+          />
+        )}
+        {!!purchasedLiquidityPools.length && (
+          <CollapsibleSection
+            label={t('liquidityPoolsContent.depositsList.title')}
+            showLoadingSpinner={isFetchingLiquidityPoolsData}
+            labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
+            onPressLabelRight={() => { navigation.navigate(LIQUIDITY_POOLS_SCREEN); }}
+            collapseContent={
+              <FlatList
+                data={purchasedLiquidityPools}
+                keyExtractor={(item) => item.pool.name}
+                renderItem={this.renderLiquidityPool}
+                initialNumToRender={2}
+                listKey="liquidityPools"
+              />
+            }
+            onPress={toggleLiquidityPools}
+            open={!hideLiquidityPools}
+          />
+        )}
+      </>
+    );
+  }
+
   render() {
     const {
       intercomNotificationsCount,
@@ -400,36 +546,14 @@ class HomeScreen extends React.Component<Props> {
       badgesEvents,
       theme,
       hideBadges,
-      hidePoolTogether,
       toggleBadges,
-      togglePoolTogether,
-      walletConnectRequests,
+      walletConnectCallRequests,
       user,
       goToInvitationFlow,
       isPillarRewardCampaignActive,
       dismissReferFriends,
       referFriendsOnHomeScreenDismissed,
-      hideLendingDeposits,
-      depositedAssets,
-      toggleLendingDeposits,
-      isFetchingDepositedAssets,
-      poolTogetherUserStats = [],
-      isFetchingPoolStats,
-      isSmartWalletActive,
-      incomingStreams,
-      outgoingStreams,
-      isFetchingStreams,
-      toggleSablier,
-      hideSablier,
       sablierEvents,
-      toggleRari,
-      hideRari,
-      isFetchingRariData,
-      rariUserDepositInUSD,
-      hideLiquidityPools,
-      isFetchingLiquidityPoolsData,
-      toggleLiquidityPools,
-      liquidityPoolsReducer,
     } = this.props;
 
     const tokenTxHistory = history
@@ -471,27 +595,7 @@ class HomeScreen extends React.Component<Props> {
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
 
-    const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
-
-    const latestIncomingStream = incomingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
-    const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
-    const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
-    const hasStreams = !!streams.length;
-
-    const rariDeposits = Object.keys(rariUserDepositInUSD)
-      .map(rariPool => ({
-        pool: rariPool,
-        balanceInUSD: rariUserDepositInUSD[rariPool],
-      }))
-      .filter(pool => !!pool.balanceInUSD);
-    const hasRariDeposits = !!rariDeposits.length;
-
-    const purchasedLiquidityPools = LIQUIDITY_POOLS()
-      .map((pool) => ({
-        pool,
-        poolStats: getPoolStats(pool, liquidityPoolsReducer),
-      }))
-      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
+    const walletConnectCallRequestsCount = walletConnectCallRequests?.length || 0;
 
     return (
       <React.Fragment>
@@ -542,16 +646,19 @@ class HomeScreen extends React.Component<Props> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart rewardActive={isPillarRewardCampaignActive} />
-                  {!!walletConnectRequests &&
-                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
-                    {walletConnectRequests.length > 1 &&
-                    <ButtonText
-                      onPress={() => { navigation.navigate(WALLETCONNECT); }}
-                      buttonText={t('button.viewAllItemsAmount', { amount: walletConnectRequests.length })}
-                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
-                    />}
-                    <Requests showLastOneOnly />
-                  </RequestsWrapper>}
+                  {!!walletConnectCallRequestsCount && (
+                    <RequestsWrapper marginOnTop={walletConnectCallRequestsCount === 1}>
+                      {walletConnectCallRequestsCount > 1 && (
+                        <ButtonText
+                          onPress={() => { navigation.navigate(WALLETCONNECT); }}
+                          buttonText={t('button.viewAllItemsAmount', { amount: walletConnectCallRequestsCount })}
+                          wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
+                        />
+                      )}
+                      <WalletConnectCallRequestList showLastOneOnly />
+                    </RequestsWrapper>
+                  )}
+                  <MigrateEnsBanner style={{ marginTop: 15, paddingHorizontal: spacing.medium }} />
                   <Banner
                     isVisible={!referFriendsOnHomeScreenDismissed}
                     onPress={goToInvitationFlow}
@@ -591,86 +698,7 @@ class HomeScreen extends React.Component<Props> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
-                  <DepositedAssets
-                    depositedAssets={depositedAssets}
-                    isFetchingDepositedAssets={isFetchingDepositedAssets}
-                    navigation={navigation}
-                    hideLendingDeposits={hideLendingDeposits}
-                    toggleLendingDeposits={toggleLendingDeposits}
-                  />
-                  {!!hasPoolTickets && !!isSmartWalletActive &&
-                  <CollapsibleSection
-                    label={t('poolTogetherContent.ticketsList.title')}
-                    showLoadingSpinner={isFetchingPoolStats}
-                    collapseContent={
-                      <FlatList
-                        data={poolTogetherUserStats}
-                        keyExtractor={(item) => item.symbol}
-                        renderItem={this.renderPoolTogetherItem}
-                        listKey="pool_together"
-                      />
-                    }
-                    onPress={togglePoolTogether}
-                    open={!hidePoolTogether}
-                  />
-                  }
-                  {!!hasStreams && !!isSmartWalletActive &&
-                    <CollapsibleSection
-                      label={t('sablierContent.moneyStreamingList.title')}
-                      showLoadingSpinner={isFetchingStreams}
-                      labelRight={isFetchingStreams ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(SABLIER_STREAMS); }}
-                      collapseContent={
-                        <FlatList
-                          data={streams}
-                          keyExtractor={(item) => item.id}
-                          renderItem={this.renderSablierStream}
-                          initialNumToRender={2}
-                          listKey="sablier"
-                        />
-                      }
-                      onPress={toggleSablier}
-                      open={!hideSablier}
-                    />
-                  }
-                  {!!hasRariDeposits && !!isSmartWalletActive &&
-                    <CollapsibleSection
-                      label={t('rariContent.depositsList.title')}
-                      showLoadingSpinner={isFetchingRariData}
-                      labelRight={isFetchingRariData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(RARI_DEPOSIT); }}
-                      collapseContent={
-                        <FlatList
-                          data={rariDeposits}
-                          keyExtractor={(item) => item.pool}
-                          renderItem={this.renderRariPool}
-                          initialNumToRender={2}
-                          listKey="rari"
-                        />
-                      }
-                      onPress={toggleRari}
-                      open={!hideRari}
-                    />
-                  }
-                  {!!purchasedLiquidityPools.length && !!isSmartWalletActive &&
-                    <CollapsibleSection
-                      label={t('liquidityPoolsContent.depositsList.title')}
-                      showLoadingSpinner={isFetchingLiquidityPoolsData}
-                      labelRight={isFetchingLiquidityPoolsData ? null : t('button.viewAll')}
-                      onPressLabelRight={() => { navigation.navigate(LIQUIDITY_POOLS_SCREEN); }}
-                      collapseContent={
-                        <FlatList
-                          data={purchasedLiquidityPools}
-                          keyExtractor={(item) => item.pool.name}
-                          renderItem={this.renderLiquidityPool}
-                          initialNumToRender={2}
-                          listKey="liquidityPools"
-                        />
-                      }
-                      onPress={toggleLiquidityPools}
-                      open={!hideLiquidityPools}
-                    />
-                  }
+                  {this.renderServiceWidgets()}
                 </React.Fragment>
               )}
               flatListProps={{
@@ -702,7 +730,7 @@ const mapStateToProps = ({
       baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari, hideLiquidityPools,
     },
   },
-  walletConnect: { requests: walletConnectRequests },
+  walletConnect: { callRequests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
   lending: { depositedAssets, isFetchingDepositedAssets },
@@ -729,7 +757,7 @@ const mapStateToProps = ({
   hideSablier,
   hideRari,
   hideLiquidityPools,
-  walletConnectRequests,
+  walletConnectCallRequests: walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
   hideLendingDeposits,
@@ -750,7 +778,6 @@ const structuredSelector = createStructuredSelector({
   history: combinedHistorySelector,
   openSeaTxHistory: combinedCollectiblesHistorySelector,
   poolTogetherUserStats: poolTogetherUserStatsSelector,
-  isSmartWalletActive: isActiveAccountSmartWalletSelector,
   sablierEvents: sablierEventsSelector,
 });
 
@@ -760,7 +787,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   hideHomeUpdateIndicator: () => dispatch(hideHomeUpdateIndicatorAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
@@ -782,7 +809,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchRariData: () => dispatch(fetchRariDataAction()),
   fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(liquidityPools)),
   toggleLiquidityPools: () => dispatch(toggleLiquidityPoolsAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
+  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

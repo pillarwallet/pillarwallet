@@ -88,7 +88,7 @@ const ActionButtons = ({
   }, [activeAccountAddress]);
 
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-  const isSendButtonActive = getTotalBalanceInFiat(rates, activeAccountBalances, fiatCurrency)
+  const isSendButtonActive = getTotalBalanceInFiat(activeAccountBalances, rates, fiatCurrency)
     && isEmpty(archanovaWalletStatus?.sendingBlockedMessage);
 
   return (

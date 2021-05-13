@@ -693,7 +693,7 @@ export class EventDetail extends React.Component<Props> {
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
             </BaseText>
           </Row>
-              ))}
+        ))}
         <Spacing h={16} />
         <Divider />
         <Spacing h={16} />

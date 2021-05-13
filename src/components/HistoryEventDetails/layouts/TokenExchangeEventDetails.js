@@ -21,6 +21,10 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Row, ColumnRight, Spacing } from 'components/modern/Layout';
@@ -34,7 +38,6 @@ import TransactionStatusText from 'components/modern/TransactionStatusText';
 import { EXCHANGE } from 'constants/navigationConstants';
 
 // Utils
-import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -51,12 +54,15 @@ type Props = {|
 function TokenExchangeEventDetails({ event }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const colors = useThemeColors();
 
   const navigateToExchange = () => {
     navigation.navigate(EXCHANGE, { fromAssetCode: event.fromValue.symbol, toAssetCode: event.toValue.symbol });
   };
+
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   return (
     <BaseEventDetails
@@ -92,7 +98,7 @@ function TokenExchangeEventDetails({ event }: Props) {
 
       <Button variant="secondary" title={t('button.exchangeMore')} onPress={navigateToExchange} />
       <Spacing h={spacing.small} />
-      <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+      <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
     </BaseEventDetails>
   );
 }

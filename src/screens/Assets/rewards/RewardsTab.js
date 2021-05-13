@@ -32,7 +32,7 @@ import FloatingButtons from 'components/FloatingButtons';
 import Text from 'components/modern/Text';
 
 // Selectors
-import { useSupportedChains } from 'selectors/smartWallet';
+import { useSupportedChains } from 'selectors/archanova';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

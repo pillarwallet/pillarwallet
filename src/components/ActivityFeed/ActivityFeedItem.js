@@ -41,7 +41,6 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/feedData';
 import { formatHexAddress } from 'utils/format';
-import { findAccountByAddress } from 'utils/accounts';
 import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';

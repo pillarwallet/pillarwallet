@@ -41,7 +41,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // Constants
 import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
+import { ARCHANOVA_PPN_PAYMENT_COMPLETED } from 'constants/archanovaConstants';
 import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Utils
@@ -84,7 +84,7 @@ function PPNHome() {
     const { translationKey } = activeBNetwork;
     const activeBNetworkTitle = t(translationKey);
 
-    const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === PAYMENT_COMPLETED);
+    const hasUnsettledTx = PPNTransactions.some(({ stateInPPN }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED);
     return {
       label: activeBNetworkTitle,
       action: () => navigation.navigate(ACCOUNTS),

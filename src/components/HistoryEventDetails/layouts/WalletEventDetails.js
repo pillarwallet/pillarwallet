@@ -37,14 +37,18 @@ import TransactionStatusText from 'components/modern/TransactionStatusText';
 
 // Actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // Utils
-import { getSmartWalletAddress } from 'utils/accounts';
-import { viewOnBlockchain } from 'utils/blockchainExplorer';
+import {
+  getActiveAccount,
+  getActiveAccountAddress,
+  isEtherspotAccount,
+} from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -63,7 +67,9 @@ function WalletEventDetails({ event }: Props) {
   const navigation = useNavigation();
 
   const accounts = useRootSelector((root) => root.accounts.data);
-  const isActivated = useRootSelector(isSmartWalletActivatedSelector);
+  const activeAccount = getActiveAccount(accounts);
+  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
+  const isActivated = isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
   const dispatch = useDispatch();
 
   const colors = useThemeColors();
@@ -73,8 +79,8 @@ function WalletEventDetails({ event }: Props) {
   };
 
   const openTopUp = () => {
-    const smartWalletAddress = getSmartWalletAddress(accounts);
-    if (!smartWalletAddress) {
+    const activeAccountAddress = getActiveAccountAddress(accounts);
+    if (!activeAccountAddress) {
       Toast.show({
         message: t('toast.cannotGetWalletAddress'),
         emoji: 'hushed',
@@ -84,10 +90,12 @@ function WalletEventDetails({ event }: Props) {
       return;
     }
 
-    Modal.open(() => <ReceiveModal address={smartWalletAddress} />);
+    Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
   };
 
   const navigateToInviteFriends = () => dispatch(goToInvitationFlowAction());
+
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     return (
@@ -119,7 +127,7 @@ function WalletEventDetails({ event }: Props) {
         <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
         <Spacing h={spacing.mediumLarge} />
 
-        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
         <Spacing h={spacing.small} />
         <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
       </BaseEventDetails>

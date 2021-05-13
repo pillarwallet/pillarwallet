@@ -27,7 +27,7 @@ import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Selectors
-import { useSmartWalletType, SMART_WALLET_TYPE } from 'selectors/smartWallet';
+import { useSmartWalletType, SMART_WALLET_TYPE } from 'selectors/archanova';
 
 // Local
 import HistoryListEtherspot from './HistoryListEtherspot';

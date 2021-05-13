@@ -36,7 +36,7 @@ import { COLLECTIBLE, SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigat
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
-import { useSupportedChains } from 'selectors/smartWallet';
+import { useSupportedChains } from 'selectors/archanova';
 
 // Utils
 import { spacing } from 'utils/variables';
