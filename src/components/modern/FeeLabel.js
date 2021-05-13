@@ -37,6 +37,10 @@ import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
+
 type Mode = "actual" | "estimate";
 
 type Props = {
@@ -44,6 +48,7 @@ type Props = {
   symbol: string,
   mode?: Mode,
   isLoading?: boolean,
+  style?: ViewStyleProp,
 };
 
 function FeeLabel({
@@ -51,6 +56,7 @@ function FeeLabel({
   symbol,
   mode,
   isLoading,
+  style,
 }: Props) {
   const { t } = useTranslation();
 
@@ -69,7 +75,7 @@ function FeeLabel({
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, symbol);
 
   return (
-    <LabelWrapper>
+    <LabelWrapper style={style}>
       <Text color={colors.basic030}>{mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}</Text>
 
       <Spacing w={8} />

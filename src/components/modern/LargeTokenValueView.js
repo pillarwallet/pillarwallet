@@ -20,34 +20,54 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
+
+// Components
+import Text from 'components/modern/Text';
+
+// Utils
+import { formatTokenValueWithoutSymbol } from 'utils/format';
+import { appFont, spacing } from 'utils/variables';
 
 // Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+import type { TextStyleProp } from 'utils/types/react-native';
 
-// Local
-import WalletConnectRequestBanner from './WalletConnectRequestBanner';
-import { useRequestItems } from './selectors';
 
 type Props = {|
-  style?: ViewStyleProp,
+  value: ?BigNumber,
+  symbol: string,
+  style?: TextStyleProp,
 |};
 
-function WalletConnectRequests({ style }: Props) {
-  const requests = useRequestItems();
-
-  if (!requests.length) return null;
+/**
+ * Large (& stylized) component to display token value.
+ */
+function LargeTokenValueView({ value, symbol, style }: Props) {
+  if (!value) return null;
 
   return (
     <Container style={style}>
-      {requests.map((request) => (
-        <WalletConnectRequestBanner request={request} />
-      ))}
+      <TokenValue>{formatTokenValueWithoutSymbol(value, symbol, { stripTrailingZeros: true })}</TokenValue>
+      <TokenSymbol>{symbol}</TokenSymbol>
     </Container>
   );
 }
 
-export default WalletConnectRequests;
+export default LargeTokenValueView;
 
 const Container = styled.View`
-  margin: 14px 0;
+  flex-direction: row;
+  align-items: baseline;
+`;
+
+const TokenValue = styled(Text)`
+  font-size: 36px;
+  font-variant: tabular-nums;
+`;
+
+const TokenSymbol = styled(Text)`
+  margin-left: ${spacing.extraSmall}px;
+  font-family: ${appFont.medium};
+  font-size: 20px;
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;

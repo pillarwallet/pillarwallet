@@ -31,7 +31,7 @@ import { fontStyles, spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-type Variant = 'primary' | 'secondary' | 'text';
+type Variant = 'primary' | 'secondary' | 'text' | 'text-destructive';
 
 type Props = {|
   title?: string,
@@ -50,7 +50,9 @@ function Button({
 }: Props) {
   return (
     <TouchableContainer onPress={onPress} variant={variant} style={style} compact={compact}>
-      <Title variant={variant}>{title}</Title>
+      <Title variant={variant}>
+        {title}
+      </Title>
     </TouchableContainer>
   );
 }
@@ -74,4 +76,5 @@ const Title = styled(Text)`
   ${({ theme, variant }) => (variant === 'primary' ? `color: ${theme.colors.buttonPrimaryTitle}` : '')};
   ${({ theme, variant }) => (variant === 'secondary' ? `color: ${theme.colors.buttonSecondaryTitle}` : '')};
   ${({ theme, variant }) => (variant === 'text' ? `color: ${theme.colors.buttonTextTitle}` : '')};
+  ${({ theme, variant }) => (variant === 'text-destructive' ? `color: ${theme.colors.negative}` : '')};
 `;

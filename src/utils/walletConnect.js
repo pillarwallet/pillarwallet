@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import t from 'translations/translate';
+
 // Constants
 import {
   ETH_SEND_TX,
@@ -29,7 +31,8 @@ import {
 } from 'constants/walletConnectConstants';
 
 // Types
-import type { Session, WalletConnectCallRequest } from 'models/WalletConnect';
+import type { Session, WalletConnectCallRequest, WalletConnectRequestType } from 'models/WalletConnect';
+
 
 // urls of dapps that don't support smart accounts
 // or that we don't want to support for any reason
@@ -62,3 +65,14 @@ export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRe
       return REQUEST_TYPE.UNSUPPORTED;
   }
 };
+
+export function formatRequestType(type: WalletConnectRequestType) {
+  switch (type) {
+    case REQUEST_TYPE.MESSAGE:
+      return t('walletConnect.requests.messageRequest');
+    case REQUEST_TYPE.TRANSACTION:
+      return t('walletConnect.requests.transactionRequest');
+    default:
+      return null;
+  }
+}

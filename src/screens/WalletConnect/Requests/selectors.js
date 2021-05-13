@@ -18,48 +18,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import t from 'translations/translate';
-
 // Constants
 import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // Types
 import type { WalletConnectRequestType, WalletConnectCallRequest } from 'models/WalletConnect';
 
-export type RequestViewModel = {|
+export type RequestItem = {|
   title: string,
   iconUrl: string,
   type: WalletConnectRequestType,
-  model: ?WalletConnectCallRequest,
+  model: WalletConnectCallRequest,
 |};
 
+/* eslint-disable i18next/no-literal-string */
 // TODO: replace with real WC data
-export function useRequests(): RequestViewModel[] {
+export function useRequestItems(): RequestItem[] {
   return [
     {
       title: 'Pool Together',
       type: REQUEST_TYPE.TRANSACTION,
       iconUrl:
         'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
-      model: null,
+      // $FlowFixMe: mock data
+      model: {},
     },
     {
       title: 'Zerion',
       type: REQUEST_TYPE.MESSAGE,
       iconUrl:
         'https://images.prismic.io/pillar-app/721c5e34-55ce-46c1-ad92-4efd3e64ff4c_1_MRQmNBtjBjLzDO11NoZODA.png?auto=compress,format',
-      model: null,
+      // $FlowFixMe: mock data
+      model: {},
     },
   ];
-}
-
-export function formatRequestType(type: WalletConnectRequestType) {
-  switch (type) {
-    case REQUEST_TYPE.MESSAGE:
-      return t('walletConnect.requests.messageRequest');
-    case REQUEST_TYPE.TRANSACTION:
-      return t('walletConnect.requests.transactionRequest');
-    default:
-      return null;
-  }
 }

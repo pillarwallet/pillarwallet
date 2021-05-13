@@ -25,22 +25,23 @@ import styled from 'styled-components/native';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 import Modal from 'components/Modal';
+import WalletConnectRequestModal from 'screens/WalletConnect/RequestModal';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
+import { formatRequestType } from 'utils/walletConnect';
 
 // Local
-import WalletConnectRequestModal from './WalletConnectRequestModal';
-import { formatRequestType, type RequestViewModel } from './utils';
+import { type RequestItem } from './selectors';
 
 
 type Props = {|
-  request: RequestViewModel,
+  request: RequestItem,
 |};
 
 function WalletConnectRequestBanner({ request }: Props) {
   const showRequestModal = () => {
-    Modal.open(() => <WalletConnectRequestModal request={request} />)
+    Modal.open(() => <WalletConnectRequestModal request={request.model} />);
   };
 
   return (

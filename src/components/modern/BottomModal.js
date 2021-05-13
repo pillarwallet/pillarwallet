@@ -39,7 +39,11 @@ type Props = {|
   children: React.Node,
 |};
 
-function BottomModal({ title, iconSource, children }: Props) {
+type Instance = {
+  close: () => void,
+}
+
+const BottomModal = React.forwardRef<Props, Instance>(({ title, iconSource, children }, ref) => {
   const renderIcon = () => {
     if (!iconSource) return null;
 
@@ -51,7 +55,7 @@ function BottomModal({ title, iconSource, children }: Props) {
   };
 
   return (
-    <SlideModal hideHeader noPadding centerFloatingItem={renderIcon()}>
+    <SlideModal ref={ref} hideHeader noPadding centerFloatingItem={renderIcon()}>
       <SafeAreaContent>
         <Spacing h={iconSource ? 24 : spacing.small} />
         {!!title && <Title>{title}</Title>}
@@ -59,7 +63,7 @@ function BottomModal({ title, iconSource, children }: Props) {
       </SafeAreaContent>
     </SlideModal>
   );
-}
+});
 
 export default BottomModal;
 
@@ -80,7 +84,7 @@ const IconImage = styled(Image)`
 `;
 
 const Title = styled(Text)`
-  margin-bottom: ${spacing.large}px;
+  margin-bottom: ${spacing.mediumLarge}px;
   font-family: ${appFont.medium};
   ${fontStyles.medium};
 `;
