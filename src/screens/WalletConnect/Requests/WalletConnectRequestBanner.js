@@ -27,7 +27,7 @@ import Text from 'components/modern/Text';
 import Modal from 'components/Modal';
 
 // Utils
-import { appFont, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 // Local
 import WalletConnectRequestModal from './WalletConnectRequestModal';
@@ -81,7 +81,6 @@ const Column = styled.View`
 `;
 
 const Title = styled(Text)`
-  font-family: ${appFont.medium};
   ${fontStyles.medium};
 `;
 
