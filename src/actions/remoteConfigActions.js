@@ -54,12 +54,16 @@ export const setUserPropertiesAction = () => (
 ) => {
   const { accounts: { data: accounts } } = getState();
 
-  const properties = {
-    ens: getAccountEnsName(getActiveAccount(accounts)),
+  let properties = {
     network: getEnv().NETWORK_PROVIDER,
     buildNumber: DeviceInfo.getBuildNumber(),
     appVersion: DeviceInfo.getVersion(),
   };
+
+  const accountEnsName = getAccountEnsName(getActiveAccount(accounts));
+  if (accountEnsName) {
+    properties = { ...properties, ens: accountEnsName };
+  }
 
   return firebaseAnalytics
     .setUserProperties(properties)
