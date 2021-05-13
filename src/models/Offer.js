@@ -78,6 +78,6 @@ export type Allowance = {
   enabled?: boolean,
 };
 
-export type Allowances = {
+export type AccountAllowances = {
   [accountId: string]: Allowance[],
 };

@@ -61,7 +61,7 @@ import httpRequest from 'utils/httpRequest';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountsSelector, allAccountsAllowancesSelector } from 'selectors';
+import { accountsSelector, allAccountsExchangeAllowancesSelector } from 'selectors';
 
 // services
 import {
@@ -277,24 +277,20 @@ export const addExchangeAllowanceIfNeededAction = (transaction: Transaction) => 
     }
 
     const senderAccountId = getAccountId(senderAccount);
-    const allowances = allAccountsAllowancesSelector(getState());
+    const allowances = allAccountsExchangeAllowancesSelector(getState());
+
+    const accountAllowances = allowances[senderAccountId] || [];
 
     // filter pending for current provider and asset match to override failed transactions
-    const updatedAllowances = Object.keys(allowances).reduce((updated, allowancesAccountId) => {
-      if (senderAccountId !== allowancesAccountId) return updated;
+    const updatedAccountAllowances = accountAllowances
+      .filter(({
+        provider: _provider,
+        fromAssetCode: _fromAssetCode,
+        toAssetCode: _toAssetCode,
+      }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider)
+      .concat(allowance);
 
-      const accountAllowances = allowances[allowancesAccountId] || [];
-
-      const updatedAccountAllowances = accountAllowances
-        .filter(({
-          provider: _provider,
-          fromAssetCode: _fromAssetCode,
-          toAssetCode: _toAssetCode,
-        }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider)
-        .concat(allowance);
-
-      return { ...updated, [allowancesAccountId]: updatedAccountAllowances };
-    }, {});
+    const updatedAllowances = { ...allowances, [senderAccountId]: updatedAccountAllowances };
 
     dispatch({
       type: ADD_ACCOUNT_EXCHANGE_ALLOWANCE,
@@ -307,12 +303,9 @@ export const addExchangeAllowanceIfNeededAction = (transaction: Transaction) => 
 
 export const enableExchangeAllowanceByHashAction = (transactionHash: string, senderAccountId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const allowances = allAccountsAllowancesSelector(getState());
+    const allowances = allAccountsExchangeAllowancesSelector(getState());
 
-    const combinedAllowances = Object.keys(allowances).reduce((combined, accountId) => [
-      ...combined,
-      ...allowances[accountId],
-    ], []);
+    const combinedAllowances = Object.keys(allowances).flatMap((accountId) => allowances[accountId]);
 
     const allowance = combinedAllowances.find(
       ({ transactionHash: _transactionHash }) => _transactionHash === transactionHash,
@@ -330,17 +323,13 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string, sen
       payload: { accountId: senderAccountId, allowance: updatedAllowance },
     });
 
-    const updatedAllowances = Object.keys(allowances).reduce((updated, allowancesAccountId) => {
-      if (senderAccountId !== allowancesAccountId) return updated;
+    const accountAllowances = allowances[senderAccountId] || [];
 
-      const accountAllowances = allowances[allowancesAccountId] || [];
+    const updatedAccountAllowances = accountAllowances
+      .filter(({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash)
+      .concat(allowance);
 
-      const updatedAccountAllowances = accountAllowances
-        .filter(({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash)
-        .concat(allowance);
-
-      return { ...updated, [allowancesAccountId]: updatedAccountAllowances };
-    }, {});
+    const updatedAllowances = { ...allowances, [senderAccountId]: updatedAccountAllowances };
 
     dispatch(saveDbAction('exchangeAllowances', { allowances: updatedAllowances }, true));
   };
@@ -373,7 +362,7 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
     Object.keys(exchangeAllowances).map((accountId) =>
       exchangeAllowances[accountId]
         .filter(({ enabled }) => !enabled)
-        .map(({ transactionHash, fromAssetCode, toAssetCode }) => {  // eslint-disable-line
+        .forEach(({ transactionHash, fromAssetCode, toAssetCode }) => {
           const enabledAllowance = allHistory.find(
             // $FlowFixMe
             ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,

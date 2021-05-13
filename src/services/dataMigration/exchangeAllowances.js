@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { isArray } from 'lodash';
 import { getAccountId, isArchanovaAccount } from 'utils/accounts';
 
 export default function (storageData: Object) {
   const accounts = storageData?.accounts?.accounts ?? [];
   const { allowances: currentAllowances } = storageData?.exchangeAllowances ?? {};
 
-  if (!isArray(currentAllowances)) return currentAllowances || {};
+  if (!Array.isArray(currentAllowances)) return currentAllowances || {};
 
   // migrate from single account allowances (array of allowances) to multiple account based (array per account)
   return accounts.reduce((updated, account) => {

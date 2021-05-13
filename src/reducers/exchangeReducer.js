@@ -37,7 +37,7 @@ import {
   SET_WBTC_SETTLED_TRANSACTIONS,
   ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowances } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, AccountAllowances } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
@@ -47,7 +47,7 @@ export type ExchangeReducerState = {
     offers: Offer[],
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
-    allowances: Allowances,
+    allowances: AccountAllowances,
     hasNotification: boolean,
     pendingWbtcTransactions: PendingWBTCTransaction[],
     settledWbtcTransactions: Transaction[],
