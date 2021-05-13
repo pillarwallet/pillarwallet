@@ -27,7 +27,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Text from 'components/modern/Text';
-import Icon from 'components/Icon';
+import Icon from 'components/modern/Icon';
 
 // Constants
 import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
@@ -65,9 +65,9 @@ const WhatIsWalletConnect = ({ style }: Props) => {
         </Text>
       </BackgroundGradient>
 
-      <CloseButton onPress={() => setIsVisible(false)} hitSlop={hitSlop20}>
-        <CloseIcon name="rounded-close" />
-      </CloseButton>
+      <CloseTouchable onPress={() => setIsVisible(false)} hitSlop={hitSlop20}>
+        <Icon name="close-circle" color="#fcfdff" width={16} height={16} />
+      </CloseTouchable>
     </TouchableContainer>
   );
 };
@@ -89,13 +89,8 @@ const BackgroundPattern = styled(Image)`
   right: 0;
 `;
 
-const CloseButton = styled.TouchableOpacity`
+const CloseTouchable = styled.TouchableOpacity`
   position: absolute;
   top: 18px;
   right: 18px;
-`;
-
-const CloseIcon = styled(Icon)`
-  color: #fcfdff;
-  font-size: 14px;
 `;
