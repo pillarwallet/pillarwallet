@@ -37,7 +37,7 @@ type Props = {|
   disabled?: boolean,
 |};
 
-function WalletConnectListItem({ title, iconUrl, onPress, width, disabled = true }: Props) {
+function WalletConnectListItem({ title, iconUrl, onPress, width, disabled }: Props) {
   const colors = useThemeColors();
 
   return (

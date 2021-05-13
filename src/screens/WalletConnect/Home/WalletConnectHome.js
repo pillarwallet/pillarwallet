@@ -121,9 +121,12 @@ function WalletConnectHome() {
           contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
       ) : (
-        <Center flex={1}>
-          <Spinner />
-        </Center>
+        <>
+          {renderListHeader()}
+          <Center flex={1}>
+            <Spinner />
+          </Center>
+        </>
       )}
 
       <ConnectFloatingButton />
