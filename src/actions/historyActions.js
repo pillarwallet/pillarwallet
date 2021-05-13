@@ -44,6 +44,7 @@ import {
   findFirstArchanovaAccount,
   isArchanovaAccount,
   findFirstEtherspotAccount,
+  findAccountByAddress,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -377,7 +378,11 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
 
 export const viewTransactionOnBlockchainAction = (event: Event) => {
   return (dispatch: Dispatch, getState: GetState) => {
+    const { hash = null, batchHash = null, fromAddress = null } = event;
+
     const accounts = accountsSelector(getState());
-    viewTransactionOnBlockchain(event, accounts);
+    const fromAccount = fromAddress ? findAccountByAddress(fromAddress, accounts) : null;
+
+    viewTransactionOnBlockchain({ hash, batchHash, fromAccount });
   };
 };

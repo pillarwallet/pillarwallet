@@ -25,22 +25,23 @@ import t from 'translations/translate';
 import Toast from 'components/Toast';
 
 // Utils
-import {
-  findAccountByAddress,
-  isArchanovaAccount,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Services
 import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // Types
-import type { Accounts } from 'models/Account';
-import type { Event } from 'models/History';
+import type { Account } from 'models/Account';
 
-export async function viewTransactionOnBlockchain(event: Event, accounts: Accounts) {
-  const { hash = null, batchHash = null, fromAddress = null } = event;
+type ViewableTransaction = {
+  hash: ?string,
+  batchHash: ?string,
+  fromAccount: ?Account,
+};
+
+export async function viewTransactionOnBlockchain(transaction: ViewableTransaction) {
+  const { hash, batchHash, fromAccount } = transaction;
 
   if (!hash && !batchHash) {
     Toast.show({
@@ -53,11 +54,6 @@ export async function viewTransactionOnBlockchain(event: Event, accounts: Accoun
   }
 
   let explorerLink;
-  let fromAccount;
-
-  if (fromAddress) {
-    fromAccount = findAccountByAddress(fromAddress, accounts);
-  }
 
   if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
     explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);

@@ -27,7 +27,12 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getArchanovaWalletStatus } from 'utils/archanova';
-import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  getAccountEnsName,
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
 import { getEnsPrefix } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 
@@ -35,7 +40,7 @@ import { isProdEnv } from 'utils/environment';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -104,23 +109,10 @@ export const useSmartWalletStatus = (): ArchanovaWalletStatus => {
   return getArchanovaWalletStatus(accounts, archanovaWalletState);
 };
 
-// Temporary stuff to get info about smart wallet type
-// TODO: combine this with etherspot work once it's in
-export const SMART_WALLET_TYPE = {
-  ETHERSPOT: ('etherspot': 'etherspot'),
-  ARCHANOVA: ('archanova': 'archanova'),
-};
-
-export type SmartWalletType = $Values<typeof SMART_WALLET_TYPE>;
-
-export const useSmartWalletType = (): SmartWalletType => {
-  return SMART_WALLET_TYPE.ARCHANOVA;
-};
-
 export const useSupportedChains = (): Chain[] => {
-  const smartWalletType = useSmartWalletType();
+  const activeAccount = useActiveAccount();
 
-  if (smartWalletType === SMART_WALLET_TYPE.ETHERSPOT) {
+  if (isEtherspotAccount(activeAccount)) {
     return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
   }
 
@@ -128,6 +120,6 @@ export const useSupportedChains = (): Chain[] => {
 };
 
 export const useIsPillarPaySupported = () => {
-  const smartWalletType = useSmartWalletType();
-  return smartWalletType === SMART_WALLET_TYPE.ARCHANOVA;
+  const activeAccount = useActiveAccount();
+  return isArchanovaAccount(activeAccount);
 };
