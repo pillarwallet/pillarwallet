@@ -39,8 +39,8 @@ import Stories from 'components/Stories';
 import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 
 // Services
-import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
+import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
 
 // Utils
 import { mapNotNil } from 'utils/array';
@@ -53,11 +53,10 @@ import { type Chain, CHAIN } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Local
+import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
-import WalletConnectListItem from './components/WalletConnectListItem';
-import { filterAppsByChain } from './utils';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -70,17 +69,6 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
-
-  if (isFetching) {
-    return (
-      <Container>
-        <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
-        <Center flex={1}>
-          <Spinner />
-        </Center>
-      </Container>
-    );
-  }
 
   const renderListHeader = () => {
     const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
@@ -122,15 +110,21 @@ function WalletConnectHome() {
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
-      <SectionList
-        sections={sections ?? []}
-        renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
-        renderSectionFooter={() => <SectionFooter />}
-        renderItem={({ item }) => renderListRow(item)}
-        keyExtractor={(items) => items[0]?.id}
-        ListHeaderComponent={renderListHeader()}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-      />
+      {!isFetching ? (
+        <SectionList
+          sections={sections ?? []}
+          renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
+          renderSectionFooter={() => <SectionFooter />}
+          renderItem={({ item }) => renderListRow(item)}
+          keyExtractor={(items) => items[0]?.id}
+          ListHeaderComponent={renderListHeader()}
+          contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        />
+      ) : (
+        <Center flex={1}>
+          <Spinner />
+        </Center>
+      )}
 
       <ConnectFloatingButton />
       <ConnectedAppsFloatingButton />
@@ -193,6 +187,11 @@ const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => 
   });
 
   return { data, isFetching: false };
+};
+
+const filterAppsByChain = (apps: WalletConnectCmsApp[], chain: ?Chain): WalletConnectCmsApp[] => {
+  if (!chain) return apps;
+  return apps.filter((app) => app.chains.includes(chain));
 };
 
 const styles = {
