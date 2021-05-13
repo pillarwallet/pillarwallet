@@ -20,16 +20,24 @@
 
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
+import { parseTokenAmount } from 'utils/common';
+
+// services
+import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
+
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type { FeeInfo } from 'models/PaymentNetwork';
-import type { GasToken } from 'models/Transaction';
+import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
 
 
@@ -60,4 +68,88 @@ export const calculateETHTransactionAmountAfterFee = (
   }
 
   return ethAmount;
+};
+
+export const buildEthereumTransaction = async (
+  to: string,
+  from: string,
+  data: ?string,
+  amount: string,
+  symbol: ?string,
+  decimals: number = 18,
+  tokenType: ?string,
+  contractAddress: ?string,
+  tokenId: ?string,
+): Promise<EthereumTransaction> => {
+  let value;
+
+  if (tokenType !== COLLECTIBLES) {
+    value = EthersBigNumber.from(parseTokenAmount(amount, decimals).toString());
+    if (symbol !== ETH && !data && contractAddress) {
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
+      to = contractAddress;
+      value = EthersBigNumber.from(0); // value is in encoded transfer method as data
+    }
+  } else if (contractAddress) {
+    data = await buildERC721TransactionData({
+      from,
+      to,
+      tokenId,
+      contractAddress,
+    });
+    to = contractAddress;
+    value = EthersBigNumber.from(0);
+  }
+
+  let transaction = { to, value };
+
+  if (data) transaction = { ...transaction, data };
+
+  return transaction;
+};
+
+export const mapToEthereumTransactions = async (
+  transactionPayload: TransactionPayload,
+  fromAddress: string,
+): Promise<EthereumTransaction[]> => {
+  const {
+    to,
+    data,
+    symbol,
+    amount,
+    contractAddress,
+    tokenType,
+    tokenId,
+    decimals = 18,
+    sequentialTransactions = [],
+  } = transactionPayload;
+
+  const transaction = await buildEthereumTransaction(
+    to,
+    fromAddress,
+    data,
+    amount.toString(),
+    symbol,
+    decimals,
+    tokenType,
+    contractAddress,
+    tokenId,
+  );
+
+  let transactions = [transaction];
+
+  // important: maintain array sequence, this gets mapped into arrays as well by reusing same method
+  const mappedSequential = await Promise.all(sequentialTransactions.map((sequential) =>
+    mapToEthereumTransactions(sequential, fromAddress),
+  ));
+
+  // append sequential to transactions batch
+  mappedSequential.forEach((sequential) => {
+    transactions = [
+      ...transactions,
+      ...sequential,
+    ];
+  });
+
+  return transactions;
 };

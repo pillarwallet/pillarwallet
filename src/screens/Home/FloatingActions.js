@@ -34,7 +34,7 @@ import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constant
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { totalBalanceSelector } from 'selectors/balances';
-import { useSmartWalletStatus } from 'selectors/smartWallet';
+import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
@@ -78,7 +78,7 @@ function FloatingActions() {
 
 const useEnabledActions = () => {
   const totalBalance = useRootSelector(totalBalanceSelector);
-  const smartWalletState = useSmartWalletStatus();
+  const smartWalletState = useArchanovaWalletStatus();
 
   const isEnabled = totalBalance.gt(0) && isEmpty(smartWalletState.sendingBlockedMessage);
 

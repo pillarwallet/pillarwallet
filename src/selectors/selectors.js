@@ -22,12 +22,16 @@ import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import get from 'lodash.get';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
+// utils
+import { getAccountAddress } from 'utils/accounts';
+
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Asset, AssetsByAccount } from 'models/Asset';
-
-import { getAccountAddress } from 'utils/accounts';
+import type { Account } from 'models/Account';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -104,3 +108,5 @@ export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
 export const rariSelector = ({ rari }: RootReducerState) => rari;
 
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
+
+export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);

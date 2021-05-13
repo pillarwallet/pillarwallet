@@ -47,7 +47,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { addressesEqual, getRate, getAssetDataByAddress } from 'utils/assets';
+import { getRate, getAssetDataByAddress } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -59,19 +59,26 @@ import {
 import {
   groupPPNTransactions,
   isPendingTransaction,
-  isSWAddress,
   isFailedTransaction,
   isTimedOutTransaction,
+  isArchanovaAccountAddress,
 } from 'utils/feedData';
-import { getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
+import {
+  findAccountByAddress,
+  getActiveAccount,
+  getActiveAccountAddress,
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
 
 // services
-import smartWalletInstance from 'services/smartWallet';
+import archanovaService from 'services/archanova';
+import etherspotService from 'services/etherspot';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
@@ -91,11 +98,11 @@ import {
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
-  SET_SMART_WALLET_ACCOUNT_ENS,
-  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
-  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
-  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-} from 'constants/smartWalletConstants';
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
+  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
+  ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/archanovaConstants';
 import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
@@ -152,14 +159,14 @@ import {
   activeBlockchainSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -173,11 +180,11 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 import type { Stream } from 'models/Sablier';
-
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
+
 
 type StateProps = {|
   rates: Rates,
@@ -187,12 +194,11 @@ type StateProps = {|
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
-  updatingTransaction: string,
-  updatingCollectibleTransaction: string,
+  updatingTransaction: ?string,
+  updatingCollectibleTransaction: ?string,
   isPillarRewardCampaignActive: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
-  keyBasedWalletAddress: ?string,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
   history: TransactionsStore,
@@ -201,14 +207,13 @@ type StateProps = {|
 type SelectorProps = {|
   PPNTransactions: Transaction[],
   mergedPPNTransactions: Transaction[],
-  isSmartWalletActivated: boolean,
+  isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectibleTrx[],
-  isSmartAccount: boolean,
 |};
 
 type DispatchProps = {|
@@ -421,11 +426,7 @@ export class EventDetail extends React.Component<Props> {
 
   syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
-      const { isSmartAccount } = this.props;
       this.timeout = setTimeout(this.updateTransaction, 500);
-      if (!isSmartAccount) {
-        this.timer = setInterval(this.updateTransaction, 10000);
-      }
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
@@ -487,9 +488,13 @@ export class EventDetail extends React.Component<Props> {
     });
   };
 
-  viewOnTheBlockchain = () => {
-    const { hash } = this.props.event;
-    if (!hash) {
+  viewOnTheBlockchain = async () => {
+    const {
+      accounts,
+      event: { hash, from, batchHash },
+    } = this.props;
+
+    if (!hash && !batchHash) {
       Toast.show({
         message: t('toast.cannotFindTransactionHash'),
         emoji: 'woman-shrugging',
@@ -499,7 +504,18 @@ export class EventDetail extends React.Component<Props> {
       return;
     }
 
-    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const fromAccount = findAccountByAddress(from, accounts);
+
+    // if actual transaction hash is not yet obtained then try to get by batch hash directly
+    let explorerLink;
+    if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
+      explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+    } else {
+      explorerLink = fromAccount && isArchanovaAccount(fromAccount)
+        ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
+        : etherspotService.getTransactionExplorerLink(hash);
+    }
+
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),
@@ -524,7 +540,7 @@ export class EventDetail extends React.Component<Props> {
 
   topUpSW = () => {
     const { accounts } = this.props;
-    const smartWalletAddress = getSmartWalletAddress(accounts);
+    const smartWalletAddress = getActiveAccountAddress(accounts);
     if (!smartWalletAddress) return;
     this.openReceiveModal(smartWalletAddress);
   };
@@ -677,7 +693,7 @@ export class EventDetail extends React.Component<Props> {
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
             </BaseText>
           </Row>
-              ))}
+        ))}
         <Spacing h={16} />
         <Divider />
         <Spacing h={16} />
@@ -719,7 +735,7 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
-    const { isSmartWalletActivated } = this.props;
+    const { isArchanovaWalletActivated } = this.props;
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
@@ -744,7 +760,7 @@ export class EventDetail extends React.Component<Props> {
         };
 
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
+          buttons: isArchanovaWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -763,7 +779,7 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated, isSmartWalletActivated } = this.props;
+    const { isPPNActivated, isArchanovaWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -786,7 +802,7 @@ export class EventDetail extends React.Component<Props> {
             ],
           };
         }
-        if (!isSmartWalletActivated) {
+        if (!isArchanovaWalletActivated) {
           return {
             actionTitle: t('label.created'),
             buttons: [
@@ -831,8 +847,6 @@ export class EventDetail extends React.Component<Props> {
       itemData,
       referralRewardIssuersAddresses,
       depositedAssets,
-      isSmartAccount,
-      keyBasedWalletAddress,
       ensRegistry,
       supportedAssets,
     } = this.props;
@@ -854,6 +868,9 @@ export class EventDetail extends React.Component<Props> {
         symbol: depositedAssetSymbol,
       }) => depositedAssetSymbol === event?.extra?.symbol);
     }
+
+    // services are left for archanova only and will be decomissioned later
+    const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -877,10 +894,13 @@ export class EventDetail extends React.Component<Props> {
         eventData = {
           actionTitle: t('label.activated'),
           actionSubtitle: this.getFeeLabel(event),
-          buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
+          buttons: isPPNActivated || !isArchanovaAccountActive
+            ? [referFriendsButton]
+            : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+        if (!isArchanovaAccountActive) break;
         const topUpMoreButton = {
           title: t('button.topUpMore'),
           onPress: this.topUpPillarNetwork,
@@ -899,7 +919,7 @@ export class EventDetail extends React.Component<Props> {
             ],
         };
         break;
-      case SET_SMART_WALLET_ACCOUNT_ENS:
+      case SET_ARCHANOVA_WALLET_ACCOUNT_ENS:
         eventData = {
           name: t('ensName'),
           actionTitle: t('label.registered'),
@@ -907,6 +927,7 @@ export class EventDetail extends React.Component<Props> {
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
+        if (!isArchanovaAccountActive) break;
         eventData = {
           buttons: [
             {
@@ -918,6 +939,7 @@ export class EventDetail extends React.Component<Props> {
         };
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
+        if (!isArchanovaAccountActive) break;
         eventData = {
           settleEventData: event,
           buttons: [
@@ -929,19 +951,19 @@ export class EventDetail extends React.Component<Props> {
           ],
         };
         break;
-      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+      case ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: t('label.smartWalletGasRelayerPLR'),
           actionTitle: isPending ? t('label.enabling') : t('label.enabled'),
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED:
         eventData = {
           name: t('label.newSmartWalletAccountDevice'),
           actionTitle: isPending ? t('label.adding') : t('label.added'),
         };
         break;
-      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+      case ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
           name: t('label.smartWalletAccountDevice'),
           actionTitle: isPending ? t('label.removing') : t('label.removed'),
@@ -953,7 +975,7 @@ export class EventDetail extends React.Component<Props> {
           actionTitle: fullItemValue,
         };
         const aaveDepositButtons = [];
-        if (event?.asset) {
+        if (event?.asset && isArchanovaAccountActive) {
           aaveDepositButtons.push({
             title: t('button.depositMore'),
             onPress: this.onAaveDepositMore,
@@ -975,7 +997,7 @@ export class EventDetail extends React.Component<Props> {
           actionTitle: fullItemValue,
         };
         const aaveWithdrawButtons = [];
-        if (event?.asset && aaveDepositedAsset) {
+        if (event?.asset && aaveDepositedAsset && isArchanovaAccountActive) {
           if (aaveDepositedAsset?.currentBalance > 0) {
             aaveWithdrawButtons.push({
               title: t('button.withdrawMore'),
@@ -993,52 +1015,53 @@ export class EventDetail extends React.Component<Props> {
         break;
       case POOLTOGETHER_DEPOSIT_TRANSACTION:
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const { extra: { symbol } } = event;
         const buttons = [];
-        if (isSmartAccount) {
-          const { extra: { symbol } } = event;
-          if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-            buttons.push({
-              title: t('button.purchaseMore'),
-              onPress: () => this.goToPoolTogetherPurcharse(symbol),
-              secondary: true,
-            });
-          } else {
-            buttons.push({
-              title: t('button.withdrawMore'),
-              onPress: () => this.goToPoolTogetherWithdraw(symbol),
-              secondary: true,
-            });
-          }
-          buttons.push(
-            {
-              title: t('button.viewPoolTogetherPool'),
-              onPress: () => this.goToPoolTogetherPool(symbol),
-              secondary: true,
-            },
-          );
+
+        if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+          buttons.push({
+            title: t('button.purchaseMore'),
+            onPress: () => this.goToPoolTogetherPurcharse(symbol),
+            secondary: true,
+          });
+        } else {
+          buttons.push({
+            title: t('button.withdrawMore'),
+            onPress: () => this.goToPoolTogetherWithdraw(symbol),
+            secondary: true,
+          });
         }
+
+        buttons.push(
+          {
+            title: t('button.viewPoolTogetherPool'),
+            onPress: () => this.goToPoolTogetherPool(symbol),
+            secondary: true,
+          },
+        );
+
         eventData = {
           name: t('poolTogether'),
           customActionTitle: this.renderPoolTogetherTickets(event),
-          buttons,
+          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
       case SABLIER_CREATE_STREAM: {
         const { contactAddress, streamId } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        const buttons = [{
+          title: t('button.viewSablierStream'),
+          secondary: true,
+          onPress: () => this.goToOutgoingStream(streamId),
+        }];
+
         eventData = {
           name: usernameOrAddress,
           sublabel: t('label.outgoingSablierStream'),
           actionSubtitle: t('label.started'),
           fee: this.getFeeLabel(event),
-          buttons: [
-            {
-              title: t('button.viewSablierStream'),
-              secondary: true,
-              onPress: () => this.goToOutgoingStream(streamId),
-            },
-          ],
+          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
@@ -1052,23 +1075,25 @@ export class EventDetail extends React.Component<Props> {
         const stream = incomingStreams.find(({ id }) => id === streamId);
         const formattedStreamAmount = formatAmount(formatUnits(stream?.deposit, decimals), getDecimalPlaces(symbol));
 
+        const buttons = [
+          {
+            title: t('button.withdrawMore'),
+            secondary: true,
+            onPress: () => this.goToStreamWithdraw(streamId),
+          },
+          {
+            title: t('button.viewSablierStream'),
+            secondary: true,
+            onPress: () => this.goToIncomingStream(streamId),
+          },
+        ];
+
         eventData = {
           name: usernameOrAddress,
           sublabel: t('label.withdraw'),
           fee: this.getFeeLabel(event),
           actionSubtitle: t('sablierContent.label.ofTokenValueStream', { value: formattedStreamAmount, token: symbol }),
-          buttons: [
-            {
-              title: t('button.withdrawMore'),
-              secondary: true,
-              onPress: () => this.goToStreamWithdraw(streamId),
-            },
-            {
-              title: t('button.viewSablierStream'),
-              secondary: true,
-              onPress: () => this.goToIncomingStream(streamId),
-            },
-          ],
+          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
@@ -1142,7 +1167,7 @@ export class EventDetail extends React.Component<Props> {
         eventData = {
           name: label,
           sublabel: subtext,
-          buttons,
+          buttons: isArchanovaAccountActive ? buttons : [],
           fee: this.getFeeLabel(event),
           customActionTitle: (
             <ListWrapper>
@@ -1158,13 +1183,14 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case RARI_TRANSFER_TRANSACTION: {
+        const buttons = [{
+          secondary: true,
+          title: t('button.transferMore'),
+          onPress: () => this.goToRariDeposit(),
+        }];
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.transferMore'),
-            onPress: () => this.goToRariDeposit(),
-          }],
           fee: this.getFeeLabel(event),
+          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
@@ -1176,11 +1202,13 @@ export class EventDetail extends React.Component<Props> {
           ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
         );
         eventData = {
-          buttons: this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
           customActionTitle: this.renderLiquidityPoolsExchange(
             tokensData, tokenAmounts, [pool], [amount], { topTokensSecondary: true },
           ),
+          buttons: isArchanovaAccountActive
+            ? this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool)
+            : [],
         };
         break;
       }
@@ -1190,41 +1218,50 @@ export class EventDetail extends React.Component<Props> {
           ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
         );
         eventData = {
-          buttons: this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
           customActionTitle: this.renderLiquidityPoolsExchange(
             [pool], [amount], tokensData, tokenAmounts, { bottomTokensSecondary: true },
           ),
+          buttons: isArchanovaAccountActive
+            ? this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool)
+            : [],
         };
         break;
       }
       case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
+          buttons: isArchanovaAccountActive
+            ? this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool)
+            : [],
         };
         break;
       }
       case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: this.getLiquidityEventButtons(t('button.unstakeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
+          buttons: isArchanovaAccountActive
+            ? this.getLiquidityEventButtons(t('button.unstakeMoreLiquidity'), pool)
+            : [],
         };
         break;
       }
       case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool),
           fee: this.getFeeLabel(event),
+          buttons: isArchanovaAccountActive
+            ? this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool)
+            : [],
         };
         break;
       }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+        const isBetweenArchanovaAccounts = isArchanovaAccountAddress(event.from, accounts)
+          && isArchanovaAccountAddress(event.to, accounts);
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
         const actionSubtitle = isReceived ? t('label.toPPN') : t('label.fromPPN');
@@ -1232,7 +1269,7 @@ export class EventDetail extends React.Component<Props> {
 
         if (isPPNTransaction) {
           eventData = {
-            customActionTitle: !isTrxBetweenSWAccount && (
+            customActionTitle: !isBetweenArchanovaAccounts && (
               <TankAssetBalance
                 amount={
                   getFormattedValue(formattedValue, event.asset, { isPositive: !!isReceived, noSymbol: isZeroValue })
@@ -1241,11 +1278,11 @@ export class EventDetail extends React.Component<Props> {
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             ),
-            actionSubtitle: !isTrxBetweenSWAccount ? actionSubtitle : '',
+            actionSubtitle: !isBetweenArchanovaAccounts ? actionSubtitle : '',
           };
 
           if (isReceived) {
-            if (isTrxBetweenSWAccount) {
+            if (isBetweenArchanovaAccounts) {
               eventData.buttons = [];
             } else {
               eventData.buttons = [
@@ -1273,7 +1310,7 @@ export class EventDetail extends React.Component<Props> {
           }];
           eventData = {
             name: t('poolTogether'),
-            buttons,
+            buttons: isArchanovaAccountActive ? buttons : [],
           };
         } else {
           eventData = {
@@ -1281,7 +1318,6 @@ export class EventDetail extends React.Component<Props> {
           };
 
           let buttons = [];
-          const isFromKWToSW = addressesEqual(event.from, keyBasedWalletAddress) && isSWAddress(event.to, accounts);
 
           const inviteToPillarButton = {
             title: t('button.inviteToPillar'),
@@ -1301,18 +1337,10 @@ export class EventDetail extends React.Component<Props> {
             secondary: true,
           };
 
-          const sendFromSW = {
-            title: t('button.send'),
-            onPress: () => this.send(),
-            secondary: true,
-          };
-
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
-            if (isFromKWToSW) {
-              buttons = [sendFromSW];
-            } else if (isPending) {
+            if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
@@ -1328,9 +1356,13 @@ export class EventDetail extends React.Component<Props> {
           }
         }
     }
+
+    if (!eventData) return null;
+
     if (isPending) {
       eventData.actionIcon = 'pending'; // eslint-disable-line i18next/no-literal-string
     }
+
     if (isFailed || isTimedOut) {
       eventData.isFailed = true;
       eventData.errorMessage = isFailed
@@ -1710,7 +1742,6 @@ const mapStateToProps = ({
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
-  wallet: { data: walletData },
   sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): StateProps => ({
   rates,
@@ -1726,7 +1757,6 @@ const mapStateToProps = ({
   updatingCollectibleTransaction,
   depositedAssets,
   poolStats,
-  keyBasedWalletAddress: walletData?.address,
   incomingStreams,
   outgoingStreams,
 });
@@ -1734,14 +1764,13 @@ const mapStateToProps = ({
 const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   mergedPPNTransactions: combinedPPNTransactionsSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({

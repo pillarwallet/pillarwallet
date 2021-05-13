@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,11 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type SmartWalletStatus = {
-  status: ?string,
-  hasAccount: boolean,
-  sendingBlockedMessage?: {
-    title?: string,
-    message?: string,
+
+// selectors
+import { useActiveAccount } from 'selectors/selectors';
+
+// utils
+import { isEtherspotAccount } from 'utils/accounts';
+
+// constants
+import { CHAIN } from 'models/Chain';
+
+// types
+import type { Chain } from 'models/Chain';
+
+export const useSupportedChains = (): Chain[] => {
+  const activeAccount = useActiveAccount();
+
+  if (isEtherspotAccount(activeAccount)) {
+    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
   }
+
+  return [CHAIN.ETHEREUM];
 };

@@ -27,7 +27,10 @@ import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Selectors
-import { useSmartWalletType, SMART_WALLET_TYPE } from 'selectors/smartWallet';
+import { useActiveAccount } from 'selectors';
+
+// Utils
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Local
 import HistoryListEtherspot from './HistoryListEtherspot';
@@ -38,15 +41,15 @@ function HistoryScreen() {
   const { t } = useTranslationWithPrefix('history');
   const navigation = useNavigation();
 
-  const walletType = useSmartWalletType();
+  const activeAccount = useActiveAccount();
 
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
-      {walletType === SMART_WALLET_TYPE.ETHERSPOT && <HistoryListEtherspot />}
-      {walletType === SMART_WALLET_TYPE.ARCHANOVA && <HistoryListArchanova />}
+      {isEtherspotAccount(activeAccount) && <HistoryListEtherspot />}
+      {isArchanovaAccount(activeAccount) && <HistoryListArchanova />}
     </Container>
   );
 }

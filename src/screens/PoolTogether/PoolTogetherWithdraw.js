@@ -63,7 +63,7 @@ import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 
 import { getWithdrawTicketTransaction } from 'services/poolTogether';
 
 // types
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
 
 
 const ContentWrapper = styled.View`
@@ -100,11 +100,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-  ) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
   resetEstimateTransaction: () => void,
 };
 
@@ -151,8 +147,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     const { poolToken, ticketsCount } = this.state;
     const { estimateTransaction } = this.props;
     const withdrawPayload = getWithdrawTicketTransaction(ticketsCount, poolToken);
-    const { to, data, amount } = withdrawPayload;
-    estimateTransaction(to, amount, data);
+    const { to, data, amount: value } = withdrawPayload;
+    estimateTransaction({ to, value, data });
     this.setState({ withdrawPayload });
   }
 
@@ -327,11 +323,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-  ) => dispatch(estimateTransactionAction(receiver, amount, data)),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

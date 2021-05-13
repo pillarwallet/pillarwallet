@@ -20,6 +20,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Spacing } from 'components/modern/Layout';
@@ -29,7 +33,6 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Utils
-import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -45,7 +48,10 @@ type Props = {|
 
 function EnsNameEventDetails({ event }: Props) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const colors = useThemeColors();
+
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   return (
     <BaseEventDetails
@@ -60,7 +66,7 @@ function EnsNameEventDetails({ event }: Props) {
       <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
       <Spacing h={spacing.mediumLarge} />
 
-      <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+      <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
     </BaseEventDetails>
   );
 }

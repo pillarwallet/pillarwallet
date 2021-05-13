@@ -41,12 +41,12 @@ import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConst
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
-import { useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/archanova';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, AssetData, Rates } from 'models/Asset';
+import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { Balances, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Contact } from 'models/Contact';
 
@@ -58,7 +58,7 @@ type Props = {
   estimateErrorMessage: ?string,
   userDepositInRariToken: {[RariPool]: number},
   contacts: Contact[],
-  estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
   useGasToken: boolean,
   balances: Balances,
   resetEstimateTransaction: () => void,
@@ -129,7 +129,7 @@ const RariTransferScreen = ({
     if ((!inputIsValid || value === 0) || !selectedContact) {
       return;
     }
-    estimateTransaction(selectedContact.ethAddress, value, rariTokenData);
+    estimateTransaction({ to: selectedContact.ethAddress, value, data: rariTokenData });
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +162,7 @@ const RariTransferScreen = ({
     const amountBN = parseTokenBigNumberAmount(amount, rariTokenData.decimals);
 
     // $FlowFixMe
-    const transactionPayload: TokenTransactionPayload = {
+    const transactionPayload: TransactionPayload = {
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
       amount: amount || 0,
@@ -294,11 +294,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RariTransferScreen);

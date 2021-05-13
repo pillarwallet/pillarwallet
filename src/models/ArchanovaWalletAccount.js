@@ -17,28 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import smartWalletService from 'services/smartWallet';
-import { BigNumber } from 'bignumber.js';
+import { sdkInterfaces } from '@smartwallet/sdk';
+import { ARCHANOVA_WALLET_DEPLOYMENT_ERRORS } from 'constants/archanovaConstants';
 
-import type { AccountTransaction } from 'services/smartWallet';
-import type { AssetData } from 'models/Asset';
-import { ETH } from 'constants/assetsConstants';
+export type ArchanovaWalletAccount = sdkInterfaces.IAccount;
 
-describe('Smart Wallet service', () => {
-  const assetData: AssetData = {
-    token: ETH,
-    decimals: 18,
-  };
+export type ArchanovaWalletAccountDevice = sdkInterfaces.IAccountDevice;
 
-  const accountTransaction: AccountTransaction = {
-    recipient: '0x0',
-    value: 1,
-  };
+export type ConnectedArchanovaWalletAccount = {
+  ...ArchanovaWalletAccount,
+  activeDeviceAddress: ?string,
+  devices: ?ArchanovaWalletAccountDevice[],
+};
 
-  it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { ethCost = new BigNumber(0) } =
-      await smartWalletService.estimateAccountTransaction(accountTransaction, assetData) || {};
-    expect(ethCost.eq(350000000000000)).toBeTruthy();
-  });
-});
 
+export type ArchanovaWalletDeploymentError = $Keys<typeof ARCHANOVA_WALLET_DEPLOYMENT_ERRORS>;
+
+export type InitArchanovaProps = {
+  privateKey?: string,
+  pin?: string,
+}

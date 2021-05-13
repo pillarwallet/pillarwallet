@@ -37,8 +37,8 @@ import { updateWBTCCafeTransactionsAction } from 'actions/exchangeActions';
 
 // utils, services
 import { getValidPendingTransactions, mapPendingToTransactions } from 'services/wbtcCafe';
-import { getSmartWalletAddress } from 'utils/accounts';
 import { getDeviceHeight } from 'utils/common';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -50,6 +50,7 @@ import type { Accounts } from 'models/Account';
 // constants
 import { WBTC, BTC } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
+
 
 import WBTCCafeIntro from './WBTCCafeIntro';
 
@@ -111,7 +112,7 @@ const WBTCCafe = ({
 
   const getFeedData = () => {
     const pendingTxs =
-      mapPendingToTransactions(getValidPendingTransactions(pendingWbtcTransactions), getSmartWalletAddress(accounts));
+      mapPendingToTransactions(getValidPendingTransactions(pendingWbtcTransactions), getActiveAccountAddress(accounts));
     return [...pendingTxs, ...settledWbtcTransactions];
   };
 

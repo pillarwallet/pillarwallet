@@ -45,8 +45,8 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { images } from 'utils/images';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -57,11 +57,11 @@ import { accountBalancesSelector } from 'selectors/balances';
 // types
 import type { Theme } from 'models/Theme';
 import type { Balances } from 'models/Asset';
-import type { EstimatedTransactionFee } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { ArchanovaTransactionEstimate } from 'services/archanova';
 
 type StateProps = {|
-  deploymentEstimate: ?{ raw: Object, formatted: EstimatedTransactionFee },
+  deploymentEstimate: ?{ raw: Object, formatted: ArchanovaTransactionEstimate },
   gettingDeploymentEstimate: boolean,
   isOnline: boolean,
   balances: Balances,
@@ -104,7 +104,7 @@ const SWActivationModal = ({
 
   const { smartWalletIcon } = images(theme);
 
-  const txFeeInfo = buildTxFeeInfo(deploymentEstimate?.formatted, false);
+  const txFeeInfo = buildArchanovaTxFeeInfo(deploymentEstimate?.formatted, false);
   const isEnoughETH = paidByPillar || (
     txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee })
   );

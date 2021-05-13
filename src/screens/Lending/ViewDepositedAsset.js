@@ -53,7 +53,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
 
 // selectors
-import { smartAccountHistorySelector } from 'selectors/history';
+import { archanovaAccountHistorySelector } from 'selectors/history';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -68,7 +68,7 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   accounts: Accounts,
-  smartAccountHistory: Object[],
+  archanovaAccountHistory: Object[],
   navigation: NavigationScreenProp<*>,
   badgesEvents: BadgeRewardEvent[],
 };
@@ -141,7 +141,7 @@ const ViewDepositedAsset = ({
   rates,
   baseFiatCurrency,
   accounts,
-  smartAccountHistory,
+  archanovaAccountHistory,
   depositedAssets,
   badgesEvents,
 }: Props) => {
@@ -161,7 +161,7 @@ const ViewDepositedAsset = ({
   const valueInFiat = parseFloat(currentBalance) * getRate(rates, assetSymbol, fiatCurrency);
   const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
   const aaveTransactions = mapTransactionsHistory(
-    smartAccountHistory.filter(({ tag }) => isAaveTransactionTag(tag)),
+    archanovaAccountHistory.filter(({ tag }) => isAaveTransactionTag(tag)),
     accounts,
     TRANSACTION_EVENT,
   );
@@ -282,7 +282,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  smartAccountHistory: smartAccountHistorySelector,
+  archanovaAccountHistory: archanovaAccountHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

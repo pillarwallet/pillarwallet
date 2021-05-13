@@ -49,7 +49,7 @@ import {
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
-import { getSmartWalletAddress } from 'utils/accounts';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 import { isOrderAmountTooLow } from 'utils/exchange';
@@ -73,7 +73,7 @@ import { getEnv } from 'configs/envConfig';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { AllowanceTransaction } from 'models/Transaction';
+import type { AllowanceTransaction, Transaction } from 'models/Transaction';
 import type {
   WBTCGatewayAddressParams, WBTCGatewayAddressResponse, PendingWBTCTransaction, FetchedWBTCTx,
 } from 'models/WBTC';
@@ -96,7 +96,7 @@ export const takeOfferAction = (
       accounts: { data: accounts },
     } = getState();
 
-    const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
+    const clientAddress = toChecksumAddress(getActiveAccountAddress(accounts));
 
     let order;
     if (provider === PROVIDER_UNISWAP) {
@@ -126,7 +126,7 @@ export const takeOfferAction = (
     const transactionData = {
       fromAsset,
       toAsset,
-      from: getSmartWalletAddress(accounts),
+      from: getActiveAccountAddress(accounts),
       payQuantity: fromAmount,
       amount: fromAmount,
       symbol: fromAsset.symbol,
@@ -185,7 +185,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       return;
     }
 
-    const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
+    const clientAddress = toChecksumAddress(getActiveAccountAddress(accounts));
 
     if (isSynthetixTx(fromAsset, toAsset)) {
       dispatch(estimateSynthetixTxAction(fromAsset, toAsset, fromAmount, clientAddress));
@@ -214,7 +214,7 @@ export const setTokenAllowanceAction = (
       accounts: { data: accounts },
     } = getState();
 
-    const clientAddress = getSmartWalletAddress(accounts);
+    const clientAddress = getActiveAccountAddress(accounts);
     let txData: ?AllowanceTransaction = null;
     if (provider === PROVIDER_UNISWAP) {
       txData = await createUniswapAllowanceTx(fromAssetAddress, clientAddress || '');
@@ -243,13 +243,17 @@ export const setTokenAllowanceAction = (
   };
 };
 
-export const addExchangeAllowanceAction = (
-  provider: string,
-  fromAssetCode: string,
-  toAssetCode: string,
-  transactionHash: string,
-) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+export const addExchangeAllowanceIfNeededAction = ({
+  hash: transactionHash,
+  extra,
+}: Transaction) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    // no need to add if not allowance tx or no tx hash
+    if (!extra?.allowance || !transactionHash) return;
+
+    // $FlowFixMe: ignore for now
+    const { provider, fromAssetCode, toAssetCode } = extra.allowance;
+
     const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
@@ -260,10 +264,11 @@ export const addExchangeAllowanceAction = (
     };
 
     // filter pending for current provider and asset match to override failed transactions
-    const allowances = _allowances
-      .filter(({ provider: _provider, fromAssetCode: _fromAssetCode, toAssetCode: _toAssetCode }) =>
-        fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider,
-      );
+    const allowances = _allowances.filter(({
+      provider: _provider,
+      fromAssetCode: _fromAssetCode,
+      toAssetCode: _toAssetCode,
+    }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider);
 
     allowances.push(allowance);
 
@@ -448,7 +453,7 @@ export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
 export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
   async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
     const { user: { data: user }, accounts: { data: accounts } } = getState();
-    const address = getSmartWalletAddress(accounts);
+    const address = getActiveAccountAddress(accounts);
     const walletId = user?.walletId;
     if (!walletId || !address) return null;
     const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId, address });
@@ -507,7 +512,7 @@ export const updateWBTCCafeTransactionsAction = () => async (dispatch: Dispatch,
     accounts: { data: accounts },
     exchange: { data: { settledWbtcTransactions } },
   } = getState();
-  const address = getSmartWalletAddress(accounts);
+  const address = getActiveAccountAddress(accounts);
   if (!address) return;
   const fetchedWbtcTxs = await fetchWBTCCafeTransactions(address);
 

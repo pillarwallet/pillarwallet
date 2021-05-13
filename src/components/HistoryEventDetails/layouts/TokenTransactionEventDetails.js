@@ -21,6 +21,10 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Row, Spacing } from 'components/modern/Layout';
@@ -39,7 +43,6 @@ import { useRootSelector } from 'selectors';
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
-import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -56,10 +59,13 @@ type Props = {|
 function TokenTransactionEventDetails({ event }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
+
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   const sendTokensToAddress = (address: string) => {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW, {
@@ -96,7 +102,7 @@ function TokenTransactionEventDetails({ event }: Props) {
           onPress={() => sendTokensToAddress(event.fromAddress)}
         />
         <Spacing h={spacing.small} />
-        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
       </BaseEventDetails>
     );
   }
@@ -123,7 +129,7 @@ function TokenTransactionEventDetails({ event }: Props) {
         <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
         <Spacing h={spacing.mediumLarge} />
 
-        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
       </BaseEventDetails>
     );
   }

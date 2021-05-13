@@ -58,9 +58,13 @@ import { fetchRinkebyETHBalance } from 'services/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type {
+  CollectibleTransactionPayload,
+  TransactionFeeInfo,
+  TransactionToEstimate,
+} from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetData, Balances } from 'models/Asset';
+import type { Balances } from 'models/Asset';
 
 
 type Props = {
@@ -72,7 +76,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (recipient: string, assetData: AssetData) => void,
+  estimateTransaction: (transaction: TransactionToEstimate) => void,
 };
 
 const WarningMessage = styled(Paragraph)`
@@ -105,7 +109,7 @@ const SendCollectibleConfirm = ({
     contractAddress,
   } = assetData;
 
-  const transactionPayload: $Shape<CollectibleTransactionPayload> = {
+  const transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
     receiverEnsName,
     name,
@@ -130,7 +134,7 @@ const SendCollectibleConfirm = ({
 
   useEffect(() => {
     resetEstimateTransaction();
-    estimateTransaction(receiver, assetData);
+    estimateTransaction({ to: receiver, value: 0, assetData });
     if (isKovanNetwork) fetchRinkebyEth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -267,10 +271,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    recipient: string,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, 0, null, assetData)),
+  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);

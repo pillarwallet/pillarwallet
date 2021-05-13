@@ -34,7 +34,6 @@ import AssetSearchScreen from 'screens/AssetSearch/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
-import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -51,7 +50,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectScreen from 'screens/WalletConnect';
-import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
+import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletConnectConnectorRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
@@ -63,11 +62,9 @@ import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
 import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
 import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
-import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
@@ -145,6 +142,7 @@ import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/Claim
 import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
+import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -165,7 +163,8 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
-import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
+import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
+import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
 
 // constants
 import {
@@ -177,7 +176,6 @@ import {
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
-  EXCHANGE_RECEIVE_EXPLAINED,
   HOME,
   HOME_FLOW,
   HOME_HISTORY,
@@ -200,7 +198,7 @@ import {
   SEND_COLLECTIBLE_CONFIRM,
   WALLETCONNECT_FLOW,
   WALLETCONNECT,
-  WALLETCONNECT_SESSION_REQUEST_SCREEN,
+  WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
   BADGE,
@@ -213,13 +211,11 @@ import {
   SETTLE_BALANCE,
   SETTLE_BALANCE_CONFIRM,
   MANAGE_WALLETS_FLOW,
-  MANAGE_DETAILS_SESSIONS,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
@@ -320,12 +316,11 @@ import {
   LIQUIDITY_POOLS_INFO,
   TUTORIAL,
   TUTORIAL_FLOW,
+  ENS_MIGRATION_CONFIRM,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
-
 // utils
-import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getThemeByType, getThemeColors } from 'utils/themes';
 
@@ -379,7 +374,6 @@ const assetsFlow = createStackNavigator(
 const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-  [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -408,7 +402,7 @@ const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
-    [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
+    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
@@ -423,7 +417,6 @@ const homeFlow = createStackNavigator({
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
-  [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
@@ -663,7 +656,6 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
-    [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
@@ -689,6 +681,7 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
+    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
   },
   modalTransition,
 );
@@ -725,7 +718,7 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
-  checkSmartWalletSession: () => void,
+  checkArchanovaSession: () => void,
 };
 
 type State = {
@@ -750,7 +743,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
-      checkSmartWalletSession,
+      checkArchanovaSession,
     } = this.props;
 
     /**
@@ -767,7 +760,7 @@ class AppFlow extends React.Component<Props, State> {
     addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
-      checkSmartWalletSession,
+      checkArchanovaSession,
       SMART_WALLET_SESSION_CHECK_INTERVAL,
     );
 
@@ -861,7 +854,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
-      checkSmartWalletSession,
+      checkArchanovaSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -878,7 +871,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkSmartWalletSession();
+      checkArchanovaSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -998,7 +991,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
-  initWalletConnect: () => dispatch(initWalletConnectSessions()),
+  initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
@@ -1007,7 +1000,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
+  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));
