@@ -34,7 +34,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Banner from 'components/Banner';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
-import WalletConnectCallRequestList from 'screens/WalletConnect/WalletConnectCallRequestList';
+import WalletConnectCallRequestList from 'screens/LegacyWalletConnect/WalletConnectCallRequestList';
 import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
