@@ -88,7 +88,7 @@ export const initAppAndRedirectAction = () => {
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 
-    storageData = await migrate('app_settings', storageData, dispatch, getState);
+    storageData = await migrate('app_settings', storageData, dispatch, getState, 'appSettings');
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
@@ -102,7 +102,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
-      storageData = await migrate('exchangeAllowances', storageData, dispatch, getState);
+      storageData = await migrate('exchangeAllowances', storageData, dispatch, getState, 'allowances');
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });

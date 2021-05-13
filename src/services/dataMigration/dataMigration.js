@@ -27,15 +27,19 @@ import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateAssets from './assets';
 import loadAndMigrateExchangeAllowances from './exchangeAllowances';
 
-export async function migrate(collection: string, storageData: Object, dispatch: Function, getState: Function) {
-  let key = collection;
+export async function migrate(
+  collection: string,
+  storageData: Object,
+  dispatch: Function,
+  getState: Function,
+  key: string = collection,
+) {
   let data;
 
   /* eslint-disable i18next/no-literal-string */
   switch (collection) {
     case 'app_settings':
       data = await loadAndMigrateAppSettings(storageData, dispatch);
-      key = 'appSettings';
       break;
 
     case 'accounts':

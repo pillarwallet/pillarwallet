@@ -341,11 +341,6 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
       history: {
         data: transactionsHistory,
       },
-      exchange: {
-        data: {
-          allowances: exchangeAllowances,
-        },
-      },
       assets: {
         supportedAssets,
       },
@@ -359,14 +354,17 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
       },
       [],
     );
-    Object.keys(exchangeAllowances).map((accountId) =>
-      exchangeAllowances[accountId]
+
+    const allowances = allAccountsExchangeAllowancesSelector(getState());
+    Object.keys(allowances).forEach((accountId) =>
+      allowances[accountId]
         .filter(({ enabled }) => !enabled)
         .forEach(({ transactionHash, fromAssetCode, toAssetCode }) => {
           const enabledAllowance = allHistory.find(
             // $FlowFixMe
             ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
           );
+          console.log('enabledAllowance: ', enabledAllowance)
           if (enabledAllowance) {
             const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
             const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);

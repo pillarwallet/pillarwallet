@@ -21,7 +21,7 @@
 import { getAccountId, isArchanovaAccount } from 'utils/accounts';
 
 export default function (storageData: Object) {
-  const accounts = storageData?.accounts?.accounts ?? [];
+  const accounts = storageData?.accounts?.data ?? [];
   const { allowances: currentAllowances } = storageData?.exchangeAllowances ?? {};
 
   if (!Array.isArray(currentAllowances)) return currentAllowances || {};
