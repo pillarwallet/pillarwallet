@@ -25,18 +25,28 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
+// Components
+import SWActivationModal from 'components/SWActivationModal';
+import Modal from 'components/Modal';
+
 // Constants
-import { ASSETS, SERVICES_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency } from 'selectors';
-import { useSupportedChains, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  activeAccountSelector,
+} from 'selectors';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import type { CategoryBalancesPerChain, CategoryBalances, CollectibleCountPerChain } from 'models/Home';
@@ -64,7 +74,12 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
-  const isDeployedOnEthereum = useRootSelector(isSmartWalletActivatedSelector);
+  const activeAccount = useRootSelector(activeAccountSelector);
+
+  // TODO: add actual Etherspot deployment state check later?
+  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
+  const isDeployedOnEthereum = isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
+
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
@@ -74,8 +89,9 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     navigation.navigate(ASSETS, { category, chain });
   };
 
-  const navigateToActivateSmartWallet = () => {
-    navigation.navigate(SMART_WALLET_INTRO);
+  const openSmartWalletActivationModal = () => {
+    // TODO: maybe restore Archanova intro screen?
+    Modal.open(() => <SWActivationModal navigation={navigation} />);
   };
 
   const toggleShowChains = (category: AssetCategory) => {
@@ -130,7 +146,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={title}
         value={formattedBalance}
         isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : navigateToActivateSmartWallet}
+        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : openSmartWalletActivationModal}
       />
     );
   };
@@ -163,7 +179,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
         isDeployed={isDeployed}
         onPress={
-          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : navigateToActivateSmartWallet
+          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : openSmartWalletActivationModal
         }
       />
     );

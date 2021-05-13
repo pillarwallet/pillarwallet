@@ -36,7 +36,7 @@ import { SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
-import { useSupportedChains } from 'selectors/smartWallet';
+import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { spacing } from 'utils/variables';

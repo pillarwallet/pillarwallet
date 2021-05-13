@@ -24,11 +24,26 @@ import t from 'translations/translate';
 // Components,
 import Toast from 'components/Toast';
 
-// Services
-import smartWalletService from 'services/smartWallet';
+// Utils
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
-export function viewOnBlockchain(hash: ?string) {
-  if (!hash) {
+// Services
+import archanovaService from 'services/archanova';
+import etherspotService from 'services/etherspot';
+
+// Types
+import type { Account } from 'models/Account';
+
+type ViewableTransaction = {
+  hash: ?string,
+  batchHash: ?string,
+  fromAccount: ?Account,
+};
+
+export async function viewTransactionOnBlockchain(transaction: ViewableTransaction) {
+  const { hash, batchHash, fromAccount } = transaction;
+
+  if (!hash && !batchHash) {
     Toast.show({
       message: t('toast.cannotFindTransactionHash'),
       emoji: 'woman-shrugging',
@@ -38,7 +53,16 @@ export function viewOnBlockchain(hash: ?string) {
     return;
   }
 
-  const explorerLink = smartWalletService.getConnectedAccountTransactionExplorerLink(hash);
+  let explorerLink;
+
+  if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
+    explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+  } else if (hash) {
+    explorerLink = isArchanovaAccount(fromAccount)
+      ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
+      : etherspotService.getTransactionExplorerLink(hash);
+  }
+
   if (!explorerLink) {
     Toast.show({
       message: t('toast.cannotGetBlockchainExplorerLink'),

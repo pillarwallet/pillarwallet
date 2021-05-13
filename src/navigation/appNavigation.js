@@ -320,10 +320,7 @@ import {
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
-
 // utils
-import { fontSizes } from 'utils/variables';
-import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getThemeByType, getThemeColors } from 'utils/themes';
 
@@ -977,6 +974,8 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
+  stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
+  startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),

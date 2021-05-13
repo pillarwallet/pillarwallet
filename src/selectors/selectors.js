@@ -32,6 +32,7 @@ import { getAccountAddress } from 'utils/accounts';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, AccountAllowances } from 'models/Offer';
 import type { Asset, AssetsByAccount } from 'models/Asset';
+import type { Account } from 'models/Account';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -119,3 +120,5 @@ export const activeAccountExchangeAllowancesSelector = createSelector(
     return [];
   },
 );
+
+export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);

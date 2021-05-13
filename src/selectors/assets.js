@@ -21,6 +21,8 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
+
+// utils
 import {
   findFirstArchanovaAccount,
   findFirstEtherspotAccount,
@@ -28,10 +30,14 @@ import {
   getEnabledAssets,
 } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+
+// constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 
-import type { Assets, Balance, Rates } from 'models/Asset';
+// types
+import type { Asset, Assets, Balance, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+
 
 import {
   assetsSelector,

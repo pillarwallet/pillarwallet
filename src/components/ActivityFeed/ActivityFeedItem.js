@@ -929,7 +929,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     } = event;
 
     const relevantAddress = this.getRelevantAddress(event);
-
     const usernameOrAddress = formatHexAddress(relevantAddress);
 
     const subtext = isReceived

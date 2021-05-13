@@ -20,6 +20,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Row, Spacing } from 'components/modern/Layout';
@@ -35,7 +39,6 @@ import { useRootSelector } from 'selectors';
 // Utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { formatHexAddress } from 'utils/format';
-import { viewOnBlockchain } from 'utils/blockchainExplorer';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -51,10 +54,13 @@ type Props = {|
 
 function CollectibleTransactionEventDetails({ event }: Props) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const colors = useThemeColors();
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
   const isPending = event.status === TRANSACTION_STATUS.PENDING;
+
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   if (event.type === EVENT_TYPE.COLLECTIBLE_RECEIVED) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);
@@ -75,7 +81,7 @@ function CollectibleTransactionEventDetails({ event }: Props) {
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
         <Spacing h={spacing.extraLarge} />
 
-        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
       </BaseEventDetails>
     );
   }
@@ -102,7 +108,7 @@ function CollectibleTransactionEventDetails({ event }: Props) {
         <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
         <Spacing h={spacing.mediumLarge} />
 
-        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={() => viewOnBlockchain(event.hash)} />
+        <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
       </BaseEventDetails>
     );
   }
