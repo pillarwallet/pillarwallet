@@ -77,6 +77,7 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
 import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
+import KnowledgeBaseWebView from 'screens/Menu/KnowledgeBaseWebView';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
@@ -315,6 +316,7 @@ import {
   TUTORIAL,
   TUTORIAL_FLOW,
   ENS_MIGRATION_CONFIRM,
+  KNOWLEDGE_BASE_WEB_VIEW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -689,6 +691,7 @@ const menuFlow = createStackNavigator({
   [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
   [APP_SETTINGS]: AppSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [KNOWLEDGE_BASE_WEB_VIEW]: KnowledgeBaseWebView,
 }, StackNavigatorConfig);
 
 const recoveryPortalSetupFlow = createStackNavigator({

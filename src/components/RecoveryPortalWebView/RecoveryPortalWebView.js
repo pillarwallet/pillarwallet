@@ -37,6 +37,7 @@ type Props = {
   webViewRef?: WebView,
   urlPath?: string,
   goBackDismiss?: boolean,
+  isKnowledgeBaseUrl?: boolean,
 };
 
 const renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
@@ -50,10 +51,13 @@ const RecoveryPortalWebView = ({
   onRef,
   urlPath = '',
   goBackDismiss,
+  isKnowledgeBaseUrl,
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
-  const uri = `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
+  // eslint-disable-next-line i18next/no-literal-string
+  const knowledgeBaseUrl = 'https://help.pillarproject.io/en/';
+  const uri = isKnowledgeBaseUrl ? knowledgeBaseUrl : `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {

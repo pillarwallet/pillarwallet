@@ -21,6 +21,7 @@
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
+import Instabug from 'instabug-reactnative';
 
 import { getRate, getBalance, sortAssets, getAssetOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
@@ -172,7 +173,7 @@ export const getHeaderRightItems = (
   navigation: NavigationScreenProp<*>,
   markNotificationAsSeen: () => void,
 ): Object[] => {
-  const rightItems = [{ label: t('button.support'), onPress: () => {} }];
+  const rightItems = [{ label: t('button.support'), onPress: () => Instabug.show(), key: 'getHelp' }];
   if (!isEmpty(exchangeAllowances)
     && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
     rightItems.push({

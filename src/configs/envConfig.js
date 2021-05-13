@@ -20,7 +20,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { Alert } from 'react-native';
-import Intercom from 'react-native-intercom';
 import AsyncStorage from '@react-native-community/async-storage';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
@@ -209,7 +208,6 @@ export const switchEnvironments = () => {
         onPress: async () => {
           const newEnv = storedEnv === PRODUCTION ? STAGING : PRODUCTION;
           await AsyncStorage.clear(); // removes storage and redux persist data
-          await Intercom.logout();
           await firebaseIid.delete()
             .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
           clearWebViewCookies();

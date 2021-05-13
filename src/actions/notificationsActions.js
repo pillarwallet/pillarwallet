@@ -38,7 +38,6 @@ import {
 // constants
 import {
   ADD_NOTIFICATION,
-
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
   BCX,

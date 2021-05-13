@@ -29,11 +29,6 @@ export type NotificationsReducerState = {
   showHomeUpdateIndicator: boolean,
 }
 
-// type UpdateIntercomNotificationsCountAction = {
-//   type: typeof UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-//   payload: number,
-// };
-
 type AddNotificationAction = {
   type: typeof ADD_NOTIFICATION,
   payload: Notification,

@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
+import Instabug from 'instabug-reactnative';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -205,8 +206,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title: t('walletConnectContent.title.manageSessionsScreen') }],
-          //Intercom.displayMessenger()
-          rightItems: [{ link: t('button.support'), onPress: () => {} }],
+          rightItems: [{ link: t('button.support'), onPress: () => Instabug.show() }],
           sideFlex: 2,
         }}
       >

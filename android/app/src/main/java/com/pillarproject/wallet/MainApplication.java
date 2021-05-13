@@ -54,12 +54,9 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
         com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
 
-        new RNInstabugReactnativePackage
+         new RNInstabugReactnativePackage
             .Builder(getString(R.string.instabug_token), MainApplication.this)
             .setInvocationEvent("shake")
-            .setPrimaryColor("#1D82DC")
-            .setFloatingEdge("left")
-            .setFloatingButtonOffsetFromTop(250)
             .build();
     }
 }
