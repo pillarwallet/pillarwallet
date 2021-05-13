@@ -42,7 +42,7 @@ export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnec
 }
 
 async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectCmsCategory[]> {
-  const data = await Prismic.queryDocumentsByType(TYPE_CATEGORIES, { pageSize: 100 });
+  const data = await Prismic.queryDocumentsByType<CategoryDto>(TYPE_CATEGORIES, { pageSize: 100 });
   const parseData = parse.arrayOrEmpty(data.results, parseCategory);
   return orderBy(parseData, 'title');
 }

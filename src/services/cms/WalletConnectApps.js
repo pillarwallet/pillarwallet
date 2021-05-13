@@ -43,7 +43,7 @@ export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectCmsAp
 }
 
 async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectCmsApp[]> {
-  const data = await Prismic.queryDocumentsByType(TYPE_APPS, { pageSize: 100 });
+  const data = await Prismic.queryDocumentsByType<AppDto>(TYPE_APPS, { pageSize: 100 });
   const parsedData = parse.arrayOrEmpty(data.results, parseApp);
   return orderBy(parsedData, 'title');
 }

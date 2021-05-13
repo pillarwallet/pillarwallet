@@ -26,22 +26,21 @@ export const DOCUMENT_TYPE = 'document.type';
 const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
 
 export default prismicClient;
-
 type QueryOptions = {|
   pageSize?: number,
 |};
 
-export function queryDocumentsByType<T>(type: string, options?: QueryOptions): T {
-  return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
+// Partial type def: https://prismic.io/docs/technologies/the-response-object-reactjs
+export type Response<T> = {
+  results: Document<T>[],
 }
 
-// Partial type def: https://prismic.io/docs/technologies/the-response-object-reactjs
-export type Response<T = any> = {|
-  results: Document<T>[],
-|}
-
 // Partial type def: https://prismic.io/docs/technologies/the-document-object-reactjs
-export type Document<T = any> = {|
+export type Document<T> = {
   id: string,
   data: T,
-|}
+}
+
+export function queryDocumentsByType<T>(type: string, options?: QueryOptions): Response<T> {
+  return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
+}
