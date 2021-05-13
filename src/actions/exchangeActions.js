@@ -254,6 +254,7 @@ export const addExchangeAllowanceIfNeededAction = (transaction: Transaction) => 
       hash: transactionHash,
       extra,
       from,
+      status,
     } = transaction;
 
     // no need to add if not allowance tx or no tx hash
@@ -262,12 +263,14 @@ export const addExchangeAllowanceIfNeededAction = (transaction: Transaction) => 
     // $FlowFixMe: ignore for now
     const { provider, fromAssetCode, toAssetCode } = extra.allowance;
 
+    const enabled = status === TX_CONFIRMED_STATUS;
+
     const allowance = {
       provider,
       fromAssetCode,
       toAssetCode,
       transactionHash,
-      enabled: false,
+      enabled,
     };
 
     const senderAccount = findAccountByAddress(from, accountsSelector(getState()));
@@ -327,7 +330,7 @@ export const enableExchangeAllowanceByHashAction = (transactionHash: string, sen
 
     const updatedAccountAllowances = accountAllowances
       .filter(({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash)
-      .concat(allowance);
+      .concat(updatedAllowance);
 
     const updatedAllowances = { ...allowances, [senderAccountId]: updatedAccountAllowances };
 
