@@ -16,12 +16,12 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, FlatList } from 'react-native';
+import { RefreshControl, FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import Instabug from 'instabug-reactnative';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import Instabug from 'instabug-reactnative';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
@@ -586,7 +586,6 @@ class HomeScreen extends React.Component<Props> {
     ];
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
-    const colors = getThemeColors(theme);
     const referralBannerText = isPillarRewardCampaignActive
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
@@ -609,7 +608,7 @@ class HomeScreen extends React.Component<Props> {
             rightItems: [
               {
                 link: t('button.support'),
-                onPress: () => { Instabug.show(); },
+                onPress: () => Instabug.show(),
               },
             ],
             sideFlex: '25px',

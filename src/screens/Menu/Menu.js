@@ -22,9 +22,9 @@ import React from 'react';
 import { FlatList, Alert, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
-import Instabug from 'instabug-reactnative';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
+import Instabug from 'instabug-reactnative';
 import Emoji from 'react-native-emoji';
 
 import t from 'translations/translate';
@@ -56,6 +56,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
+  KNOWLEDGE_BASE_WEB_VIEW,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -168,14 +169,14 @@ const Menu = ({
       title: t('settingsContent.settingsItem.support.title'),
       icon: 'help',
       iconColor: colors.helpIcon,
-      action: () => { Instabug.show(); },
+      action: () => Instabug.show(),
     },
     {
       key: 'knowledgeBase',
       title: t('settingsContent.settingsItem.faq.title'),
       icon: 'dictionary',
       iconColor: colors.positive,
-      action: () => { Instabug.show(); },
+      action: () => navigation.navigate(KNOWLEDGE_BASE_WEB_VIEW),
     },
     {
       key: 'storybook',

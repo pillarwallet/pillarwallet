@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import Instabug from 'instabug-reactnative';
 import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { getEnv } from 'configs/envConfig';
@@ -178,8 +179,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: t('exchangeContent.title.settingsScreen') }],
-          //Intercom.displayMessenger()
-          rightItems: [{ link: t('button.support'), onPress: () => {} }],
+          rightItems: [{ link: t('button.support'), onPress: () => Instabug.show() }],
           sideFlex: 2,
         }}
         inset={{ bottom: 'never' }}
