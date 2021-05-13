@@ -31,7 +31,7 @@ export default function (storageData: Object) {
   return accounts.reduce((updated, account) => {
     const accountId = getAccountId(account);
 
-    // migration happened afetr Etherspot account is added so existing allowances can be moved to Archanova
+    // migration happened after Etherspot account is added so existing allowances can be moved to Archanova
     const allowances = isArchanovaAccount(account) ? currentAllowances : [];
 
     return { ...updated, [accountId]: allowances };
