@@ -22,7 +22,7 @@ import { isArray } from 'lodash';
 import { getAccountId, isArchanovaAccount } from 'utils/accounts';
 
 export default function (storageData: Object) {
-  const { accounts = [] } = storageData?.accounts ?? {};
+  const accounts = storageData?.accounts?.accounts ?? [];
   const { allowances: currentAllowances } = storageData?.exchangeAllowances ?? {};
 
   if (!isArray(currentAllowances)) return currentAllowances || {};
