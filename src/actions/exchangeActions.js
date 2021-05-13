@@ -364,7 +364,6 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
             // $FlowFixMe
             ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
           );
-          console.log('enabledAllowance: ', enabledAllowance)
           if (enabledAllowance) {
             const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
             const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);
