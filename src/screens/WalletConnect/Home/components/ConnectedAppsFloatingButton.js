@@ -27,16 +27,16 @@ import Emoji from 'react-native-emoji';
 // Components
 import Text from 'components/modern/Text';
 
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
 // Utils
 import { spacing } from 'utils/variables';
 
-import { useWalletConnect } from '../utils';
-
 const ConnectedAppsFloatingButton = () => {
   const { activeConnectors } = useWalletConnect();
-  const activeConnectorsCount = activeConnectors.length;
 
-  if (activeConnectorsCount === 0) {
+  if (activeConnectors.length === 0) {
     return null;
   }
 
@@ -45,7 +45,7 @@ const ConnectedAppsFloatingButton = () => {
       <TouchableOpacity>
         <ItemContainer>
           <Text>
-            <Emoji name="zap" /> {activeConnectorsCount}
+            <Emoji name="zap" /> {activeConnectors.length}
           </Text>
         </ItemContainer>
       </TouchableOpacity>
