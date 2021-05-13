@@ -263,7 +263,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation project(':react-native-notifications')
     implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-notifications
-    implementation 'com.google.firebase:firebase-messaging:20.1.2' // react-native-notifications override for Intercom PN handler implementation
+    implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
 
     // branch.io
