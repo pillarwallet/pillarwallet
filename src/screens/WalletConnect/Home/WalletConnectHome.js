@@ -36,7 +36,7 @@ import Spinner from 'components/Spinner';
 import Stories from 'components/Stories';
 
 // Selectors
-import { useSupportedChains, useIsDeployedOnEthereum } from 'selectors/chains';
+import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 
 // Services
 import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
@@ -70,7 +70,7 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
-  const isDeployedOnEthereum = useIsDeployedOnEthereum();
+  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
 
   if (isFetching) {
     return (

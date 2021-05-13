@@ -19,7 +19,7 @@
 */
 
 // selectors
-import { useRootSelector, useActiveAccount } from 'selectors/selectors';
+import { useRootSelector, useActiveAccount } from 'selectors';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // utils
@@ -41,7 +41,9 @@ export const useSupportedChains = (): Chain[] => {
   return [CHAIN.ETHEREUM];
 };
 
-export const useIsDeployedOnEthereum = () => {
-  // TODO: support etherspot here
-  return useRootSelector(isArchanovaWalletActivatedSelector);
+export const useIsActiveAccountDeployedOnEthereum = () => {
+  // TODO: check etherspot for being deployed
+  const activeAccount = useActiveAccount();
+  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
+  return isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
 };

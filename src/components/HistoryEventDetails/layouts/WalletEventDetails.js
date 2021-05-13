@@ -41,14 +41,10 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 
 // Utils
-import {
-  getActiveAccount,
-  getActiveAccountAddress,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -67,9 +63,7 @@ function WalletEventDetails({ event }: Props) {
   const navigation = useNavigation();
 
   const accounts = useRootSelector((root) => root.accounts.data);
-  const activeAccount = getActiveAccount(accounts);
-  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
-  const isActivated = isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
+  const isDeployed = useIsActiveAccountDeployedOnEthereum();
   const dispatch = useDispatch();
 
   const colors = useThemeColors();
@@ -103,7 +97,7 @@ function WalletEventDetails({ event }: Props) {
         <Text variant="large">{t('label.created')}</Text>
         <Spacing h={spacing.extraLarge} />
 
-        {isActivated ? (
+        {isDeployed ? (
           <Button variant="secondary" title={t('button.topUp')} onPress={openTopUp} />
         ) : (
           <Button variant="secondary" title={t('button.activate')} onPress={openActivate} />

@@ -28,16 +28,20 @@ import Modal from 'components/Modal';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Toast from 'components/Toast';
 
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
 // Selectors
 import { useRootSelector } from 'selectors';
 
 // Actions
-import { requestSessionAction } from 'actions/walletConnectActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 
 function ConnectFloatingButton() {
   const { t } = useTranslation();
+
+  const { connectToConnector } = useWalletConnect();
 
   const dispatch = useDispatch();
   const isOnline = useRootSelector(root => root.session.data.isOnline);
@@ -60,7 +64,7 @@ function ConnectFloatingButton() {
 
   const handleUri = (uri: string) => {
     if (uri.startsWith('wc:')) {
-      dispatch(requestSessionAction(uri));
+      connectToConnector(uri);
     } else if (uri.startsWith('pillarwallet:')) {
       dispatch(executeDeepLinkAction(uri));
     }

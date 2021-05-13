@@ -19,8 +19,6 @@
 */
 
 import React, { useState } from 'react';
-import { Image } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import LinearGradient from 'react-native-linear-gradient';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -28,9 +26,6 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import Text from 'components/modern/Text';
 import Icon from 'components/Icon';
-
-// Constants
-import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 // Utils
 import { hitSlop20 } from 'utils/common';
@@ -48,13 +43,14 @@ type Props = {|
 
 const WhatIsWalletConnect = ({ style }: Props) => {
   const { t } = useTranslationWithPrefix('walletConnect.home');
-  const navigation = useNavigation();
 
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
 
-  const handlePress = () => navigation.navigate(SMART_WALLET_INTRO);
+  const handlePress = () => {
+    // TODO: navigate to what is wallet connect screen when available.
+  };
 
   return (
     <TouchableContainer onPress={handlePress} style={style}>
@@ -84,7 +80,7 @@ const BackgroundGradient = styled(LinearGradient)`
   border-radius: 20px;
 `;
 
-const BackgroundPattern = styled(Image)`
+const BackgroundPattern = styled.Image`
   position: absolute;
   right: 0;
 `;

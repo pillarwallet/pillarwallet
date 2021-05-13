@@ -33,20 +33,14 @@ import Modal from 'components/Modal';
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  activeAccountSelector,
-} from 'selectors';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
-import { useSupportedChains } from 'selectors/chains';
+import { useFiatCurrency } from 'selectors';
+import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
-import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import type { CategoryBalancesPerChain, CategoryBalances, CollectibleCountPerChain } from 'models/Home';
@@ -74,11 +68,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
-  const activeAccount = useRootSelector(activeAccountSelector);
-
-  // TODO: add actual Etherspot deployment state check later?
-  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
-  const isDeployedOnEthereum = isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
+  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
