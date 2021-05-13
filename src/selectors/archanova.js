@@ -31,7 +31,6 @@ import {
   findFirstArchanovaAccount,
   getAccountEnsName,
   isArchanovaAccount,
-  isEtherspotAccount,
 } from 'utils/accounts';
 import { getEnsPrefix } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
@@ -45,7 +44,6 @@ import { useActiveAccount, useRootSelector } from 'selectors';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
-import { type Chain, CHAIN } from 'models/Chain';
 
 // local
 import { accountsSelector } from './selectors';
@@ -103,20 +101,10 @@ export const isEnsMigrationNeededSelector = createSelector(
   },
 );
 
-export const useSmartWalletStatus = (): ArchanovaWalletStatus => {
+export const useArchanovaWalletStatus = (): ArchanovaWalletStatus => {
   const accounts = useRootSelector(root => root.accounts.data);
   const archanovaWalletState = useRootSelector((root) => root.smartWallet);
   return getArchanovaWalletStatus(accounts, archanovaWalletState);
-};
-
-export const useSupportedChains = (): Chain[] => {
-  const activeAccount = useActiveAccount();
-
-  if (isEtherspotAccount(activeAccount)) {
-    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
-  }
-
-  return [CHAIN.ETHEREUM];
 };
 
 export const useIsPillarPaySupported = () => {

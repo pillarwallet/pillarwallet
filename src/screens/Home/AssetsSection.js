@@ -38,7 +38,8 @@ import {
   useFiatCurrency,
   activeAccountSelector,
 } from 'selectors';
-import { useSupportedChains, isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
