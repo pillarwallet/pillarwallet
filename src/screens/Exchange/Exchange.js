@@ -62,7 +62,7 @@ import { noop } from 'utils/common';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { activeAccountSelector } from 'selectors';
+import { activeAccountExchangeAllowancesSelector, activeAccountSelector } from 'selectors';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
@@ -465,7 +465,6 @@ const mapStateToProps = ({
   exchange: {
     data: {
       searchRequest: exchangeSearchRequest,
-      allowances: exchangeAllowances,
       hasNotification: hasUnreadExchangeNotification,
       offers,
     },
@@ -481,7 +480,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   rates,
   exchangeSearchRequest,
-  exchangeAllowances,
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   accounts,
@@ -498,6 +496,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  exchangeAllowances: activeAccountExchangeAllowancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

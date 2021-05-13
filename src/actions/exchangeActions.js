@@ -32,8 +32,8 @@ import {
   SET_EXCHANGE_SEARCH_REQUEST,
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
-  ADD_EXCHANGE_ALLOWANCE,
-  UPDATE_EXCHANGE_ALLOWANCE,
+  ADD_ACCOUNT_EXCHANGE_ALLOWANCE,
+  UPDATE_ACCOUNT_EXCHANGE_ALLOWANCE,
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
@@ -49,7 +49,11 @@ import {
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
-import { getActiveAccountAddress } from 'utils/accounts';
+import {
+  findAccountByAddress,
+  getAccountId,
+  getActiveAccountAddress,
+} from 'utils/accounts';
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 import { isOrderAmountTooLow } from 'utils/exchange';
@@ -57,6 +61,7 @@ import httpRequest from 'utils/httpRequest';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountsSelector, allAccountsAllowancesSelector } from 'selectors';
 
 // services
 import {
@@ -243,18 +248,20 @@ export const setTokenAllowanceAction = (
   };
 };
 
-export const addExchangeAllowanceIfNeededAction = ({
-  hash: transactionHash,
-  extra,
-}: Transaction) => {
+export const addExchangeAllowanceIfNeededAction = (transaction: Transaction) => {
   return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      hash: transactionHash,
+      extra,
+      from,
+    } = transaction;
+
     // no need to add if not allowance tx or no tx hash
     if (!extra?.allowance || !transactionHash) return;
 
     // $FlowFixMe: ignore for now
     const { provider, fromAssetCode, toAssetCode } = extra.allowance;
 
-    const { exchange: { data: { allowances: _allowances = [] } } } = getState();
     const allowance = {
       provider,
       fromAssetCode,
@@ -263,49 +270,84 @@ export const addExchangeAllowanceIfNeededAction = ({
       enabled: false,
     };
 
-    // filter pending for current provider and asset match to override failed transactions
-    const allowances = _allowances.filter(({
-      provider: _provider,
-      fromAssetCode: _fromAssetCode,
-      toAssetCode: _toAssetCode,
-    }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider);
+    const senderAccount = findAccountByAddress(from, accountsSelector(getState()));
+    if (!senderAccount) {
+      reportErrorLog('addExchangeAllowanceIfNeededAction failed: no account found', { transaction });
+      return;
+    }
 
-    allowances.push(allowance);
+    const senderAccountId = getAccountId(senderAccount);
+    const allowances = allAccountsAllowancesSelector(getState());
+
+    // filter pending for current provider and asset match to override failed transactions
+    const updatedAllowances = Object.keys(allowances).reduce((updated, allowancesAccountId) => {
+      if (senderAccountId !== allowancesAccountId) return updated;
+
+      const accountAllowances = allowances[allowancesAccountId] || [];
+
+      const updatedAccountAllowances = accountAllowances
+        .filter(({
+          provider: _provider,
+          fromAssetCode: _fromAssetCode,
+          toAssetCode: _toAssetCode,
+        }) => fromAssetCode !== _fromAssetCode && toAssetCode !== _toAssetCode && provider !== _provider)
+        .concat(allowance);
+
+      return { ...updated, [allowancesAccountId]: updatedAccountAllowances };
+    }, {});
 
     dispatch({
-      type: ADD_EXCHANGE_ALLOWANCE,
-      payload: allowance,
+      type: ADD_ACCOUNT_EXCHANGE_ALLOWANCE,
+      payload: { allowance, accountId: senderAccountId },
     });
-    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
+
+    dispatch(saveDbAction('exchangeAllowances', { allowances: updatedAllowances }, true));
   };
 };
 
-export const enableExchangeAllowanceByHashAction = (transactionHash: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { exchange: { data: { allowances: _allowances = [] } } } = getState();
-    const allowance = _allowances.find(
+export const enableExchangeAllowanceByHashAction = (transactionHash: string, senderAccountId: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const allowances = allAccountsAllowancesSelector(getState());
+
+    const combinedAllowances = Object.keys(allowances).reduce((combined, accountId) => [
+      ...combined,
+      ...allowances[accountId],
+    ], []);
+
+    const allowance = combinedAllowances.find(
       ({ transactionHash: _transactionHash }) => _transactionHash === transactionHash,
     );
+
     if (!allowance) return;
+
     const updatedAllowance = {
       ...allowance,
       enabled: true,
     };
+
     dispatch({
-      type: UPDATE_EXCHANGE_ALLOWANCE,
-      payload: updatedAllowance,
+      type: UPDATE_ACCOUNT_EXCHANGE_ALLOWANCE,
+      payload: { accountId: senderAccountId, allowance: updatedAllowance },
     });
-    const allowances = _allowances
-      .filter(
-        ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
-      );
-    allowances.push(updatedAllowance);
-    dispatch(saveDbAction('exchangeAllowances', { allowances }, true));
+
+    const updatedAllowances = Object.keys(allowances).reduce((updated, allowancesAccountId) => {
+      if (senderAccountId !== allowancesAccountId) return updated;
+
+      const accountAllowances = allowances[allowancesAccountId] || [];
+
+      const updatedAccountAllowances = accountAllowances
+        .filter(({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash)
+        .concat(allowance);
+
+      return { ...updated, [allowancesAccountId]: updatedAccountAllowances };
+    }, {});
+
+    dispatch(saveDbAction('exchangeAllowances', { allowances: updatedAllowances }, true));
   };
 };
 
 export const checkEnableExchangeAllowanceTransactionsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const {
       history: {
         data: transactionsHistory,
@@ -328,29 +370,31 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
       },
       [],
     );
-    exchangeAllowances
-      .filter(({ enabled }) => !enabled)
-      .map(({ transactionHash, fromAssetCode, toAssetCode }) => {  // eslint-disable-line
-        const enabledAllowance = allHistory.find(
-          // $FlowFixMe
-          ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
-        );
-        if (enabledAllowance) {
-          const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
-          const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);
-          Toast.show({
-            message: t('toast.exchangeEnabled', {
-              fromAssetName: fromAssetData.name,
-              fromAssetSymbol: fromAssetData.symbol,
-              toAssetName: toAssetData.name,
-              toAssetSymbol: toAssetData.symbol,
-            }),
-            emoji: 'handshake',
-            autoClose: true,
-          });
-          dispatch(enableExchangeAllowanceByHashAction(transactionHash));
-        }
-      });
+    Object.keys(exchangeAllowances).map((accountId) =>
+      exchangeAllowances[accountId]
+        .filter(({ enabled }) => !enabled)
+        .map(({ transactionHash, fromAssetCode, toAssetCode }) => {  // eslint-disable-line
+          const enabledAllowance = allHistory.find(
+            // $FlowFixMe
+            ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
+          );
+          if (enabledAllowance) {
+            const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
+            const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);
+            Toast.show({
+              message: t('toast.exchangeEnabled', {
+                fromAssetName: fromAssetData.name,
+                fromAssetSymbol: fromAssetData.symbol,
+                toAssetName: toAssetData.name,
+                toAssetSymbol: toAssetData.symbol,
+              }),
+              emoji: 'handshake',
+              autoClose: true,
+            });
+            dispatch(enableExchangeAllowanceByHashAction(transactionHash, accountId));
+          }
+        }),
+    );
   };
 };
 

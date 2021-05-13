@@ -102,3 +102,14 @@ export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
 export const rariSelector = ({ rari }: RootReducerState) => rari;
 
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
+
+export const allAccountsAllowancesSelector = ({ exchange }: RootReducerState) => exchange.data.allowances;
+
+export const activeAccountExchangeAllowancesSelector = createSelector(
+  allAccountsAllowancesSelector,
+  activeAccountIdSelector,
+  (allAllowances, activeAccountId) => {
+    if (activeAccountId) return allAllowances[activeAccountId] ?? [];
+    return [];
+  },
+);

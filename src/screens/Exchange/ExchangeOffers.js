@@ -60,7 +60,7 @@ import type { Asset, Balances, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
 //  selectors
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountExchangeAllowancesSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
@@ -483,20 +483,13 @@ class ExchangeOffers extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  exchange: {
-    data: {
-      offers,
-      allowances: exchangeAllowances,
-    },
-    exchangeSupportedAssets,
-  },
+  exchange: { data: { offers }, exchangeSupportedAssets },
   rates: { data: rates },
   session: { data: session },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
-  exchangeAllowances,
   exchangeSupportedAssets,
   rates,
   session,
@@ -509,6 +502,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
   useGasToken: useGasTokenSelector,
+  exchangeAllowances: activeAccountExchangeAllowancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

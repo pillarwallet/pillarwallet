@@ -102,6 +102,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
+      storageData = await migrate('exchangeAllowances', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -158,7 +159,7 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
+      const { allowances = {} } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
       const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);

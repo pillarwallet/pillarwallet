@@ -26,7 +26,7 @@ type ExchangeOfferAsset = {
   decimals: string,
   address: string,
   symbol: string,
-}
+};
 
 export type Offer = {
   provider: string,
@@ -40,22 +40,14 @@ export type Offer = {
   allowanceSet: boolean,
   trackId?: string,
   extra?: Object,
-}
-
-export type OfferRequest = {
-  quantity: number,
-  provider: string,
-  fromAssetAddress: string,
-  toAssetAddress: string,
-  walletId: ?string,
-}
+};
 
 export type TokenAllowanceRequest = {
   fromAssetAddress: string,
   toAssetAddress: string,
   provider: string,
   walletId: ?string,
-}
+};
 
 export type OfferOrder = {
   _id: string,
@@ -70,13 +62,13 @@ export type OfferOrder = {
   setTokenAllowance?: boolean,
   provider?: string,
   transactionPayload: TransactionPayload,
-}
+};
 
 export type ExchangeSearchRequest = {
   fromAssetCode: string,
   toAssetCode: string,
   fromAmount: number,
-}
+};
 
 export type Allowance = {
   provider: string,
@@ -84,4 +76,8 @@ export type Allowance = {
   toAssetCode: string,
   transactionHash: string,
   enabled?: boolean,
-}
+};
+
+export type Allowances = {
+  [accountId: string]: Allowance[],
+};
