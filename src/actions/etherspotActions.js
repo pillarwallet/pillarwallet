@@ -62,7 +62,6 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   reportErrorLog,
-  reportLog,
 } from 'utils/common';
 import {
   findAccountById,
