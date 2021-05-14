@@ -377,7 +377,7 @@ class ServicesScreen extends React.Component<Props> {
       <ContainerWithHeader
         headerProps={{
           noBack: true,
-          rightItems: [{ link: t('button.support'), onPress: () => { Instabug.show(); } }],
+          rightItems: [{ link: t('button.support'), onPress: () => Instabug.show() }],
           leftItems: [{ title: t('servicesContent.title.servicesScreen') }],
         }}
         inset={{ bottom: 'never' }}

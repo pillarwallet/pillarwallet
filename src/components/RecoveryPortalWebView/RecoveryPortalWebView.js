@@ -26,6 +26,12 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
 
 type Props = {
   onWebViewMessage?: Function,
@@ -56,7 +62,7 @@ const RecoveryPortalWebView = ({
   let webViewRef;
   let canWebViewNavigateBack = false;
   // eslint-disable-next-line i18next/no-literal-string
-  const knowledgeBaseUrl = 'https://help.pillarproject.io/en/';
+  const knowledgeBaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
   const uri = isKnowledgeBaseUrl ? knowledgeBaseUrl : `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
