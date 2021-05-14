@@ -32,7 +32,6 @@ import HeaderBlock from 'components/HeaderBlock';
 import AppListItem from './AppListItem';
 import { type AppItem, useConnectedAppItems } from './selectors';
 
-
 function WalletConnectConnectedApps() {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const navigation = useNavigation();
