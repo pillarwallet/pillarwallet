@@ -27,29 +27,34 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import BottomModal from 'components/modern/BottomModal';
 import Text from 'components/modern/Text';
 
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
 // Utils
+import { mapNotNil } from 'utils/array';
 import { useChainsConfig } from 'utils/uiConfig';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
-import type { Chain } from 'models/Chain';
-import type { WalletConnectApp } from 'models/WalletConnect';
+import { type Chain, chainFromChainId, chainIdFromChain } from 'models/Chain';
+import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 type Props = {|
-  app: WalletConnectApp,
+  app: WalletConnectCmsApp,
 |};
 
 function AppDetailsModal({ app }: Props) {
-  const { t } = useTranslationWithPrefix('walletConnect.home');
+  const { t } = useTranslationWithPrefix('walletConnect.home.details');
   const configs = useChainsConfig();
 
-  const connectedChains = useConnectedChains();
+  const { activeConnectors, connectToConnector } = useWalletConnect();
+
+  const connectedChains = useConnectedChains(app);
   const availableChains = useAvailableChains(app);
 
   const connectOnChain = (chain: Chain) => {
-    // TODO: implement actual connect logic
-    // eslint-disable-next-line no-console, i18next/no-literal-string
-    console.log('Connect on', chain);
+    const chainId = chainIdFromChain[chain];
+    connectToConnector(app.peerId);
   };
 
   const renderConnectedItem = (chain: Chain) => {
@@ -89,14 +94,15 @@ function AppDetailsModal({ app }: Props) {
 
 export default AppDetailsModal;
 
-// TODO: replace with actual connected chains for given app
-const useConnectedChains = () => {
-  return [];
+const useConnectedChains = (app: WalletConnectCmsApp) => {
+  const { activeConnectors } = useWalletConnect();
+  const appConnectors = activeConnectors.filter(connector => connector.peerId === app.peerId);
+  return mapNotNil(appConnectors, (connector) => chainFromChainId[connector.chainId]);
 };
 
-// TODO: replace with actual avilable chains for given app
-const useAvailableChains = (app: WalletConnectApp) => {
-  return app.chains;
+const useAvailableChains = (app: WalletConnectCmsApp) => {
+  const connectedChains = useConnectedChains(app);
+  return app.chains.filter(chain => !connectedChains.includes(chain));
 };
 
 const Title = styled(Text)`

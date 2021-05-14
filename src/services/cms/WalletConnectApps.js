@@ -70,10 +70,12 @@ function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectCmsApp {
   const chains = parseChains(item);
   const description = parse.stringOrNull(item.data?.description?.[0]?.text);
   const disabled = parse.booleanOrNull(item.data?.disabled);
-  if (!id || !title || !categoryId || !chains.length || disabled) return null;
+  // TODO: replace with real data
+  const peerId = '747c55d5-e8b1-49a5-910f-183d3feb1e57'; // SushiSwap ID
+  if (!id || !title || !categoryId || !peerId || !chains.length || disabled) return null;
 
   const iconUrl = parse.stringOrNull(item.data?.logo?.url);
-  return { id, title, categoryId, iconUrl, chains, description };
+  return { id, title, categoryId, iconUrl, peerId, chains, description };
 }
 
 function parseChains(item: Prismic.Document<AppDto>): Chain[] {

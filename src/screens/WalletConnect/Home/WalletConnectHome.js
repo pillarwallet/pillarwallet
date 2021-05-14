@@ -72,7 +72,7 @@ function WalletConnectHome() {
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
 
-  const handlePress = (app: WalletConnectApp) => {
+  const handlePress = (app: WalletConnectCmsApp) => {
     Modal.open(() => <AppDetailsModal app={app} />);
   };
 

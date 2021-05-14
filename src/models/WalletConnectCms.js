@@ -30,6 +30,7 @@ export type WalletConnectCmsApp = {|
   categoryId: string,
   title: string,
   iconUrl: ?string,
+  peerId: string,
   chains: Chain[],
   description: ?string,
 |};
