@@ -62,7 +62,6 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   reportErrorLog,
-  reportLog,
 } from 'utils/common';
 import {
   findAccountById,
@@ -149,7 +148,6 @@ export const importEtherspotAccountsAction = () => {
     }
 
     const etherspotAccounts = await etherspotService.getAccounts();
-    reportLog('Fetched Etherspot Accounts', { etherspotAccounts });
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
       reportErrorLog('importEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
