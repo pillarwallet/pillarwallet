@@ -99,7 +99,9 @@ export const logBreadcrumb = (
   extra: Object,
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
-  Sentry.addBreadcrumb({ category, message, level, data: { extra } });
+  Sentry.addBreadcrumb({
+    category, message, level, data: { extra },
+  });
 };
 
 export const reportOrWarn = (
