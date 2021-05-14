@@ -55,12 +55,9 @@ function mapConnectorToItem(connector: WalletConnectConnector): ?AppItem {
 
 /**
  * Heuristic way of picking the best icon.
- * Sample cases:
- *  * ["https://app.aave.com/favicon32.ico", "https://app.aave.com/favicon.png", "https://app.aave.com/favicon32.png", "https://app.aave.com/favicon64.png"]
- *  * ["https://app.uniswap.org/./favicon.png", "https://app.uniswap.org/./images/192x192_App_Icon.png", "https://app.uniswap.org/./images/512x512_App_Icon.png"]
  *
  * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
- * Otherwise just pick whatever is there.
+ * Otherwise just pick whatever is there. See test file for sample cases.
  */
 export function mapConnectorIconsToIcon(connectorIcons: ?string[]): ?string {
   if (!connectorIcons?.length) return null;
