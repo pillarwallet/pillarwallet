@@ -52,7 +52,6 @@ import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
 import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
-import WalletConnectSessionRequest from 'screens/LegacyWalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';

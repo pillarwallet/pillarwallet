@@ -27,11 +27,10 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
 
 // Local
-import ConnectedAppListItem from './ConnectedAppListItem';
-import { type ConnectedAppItem, useConnectedAppItems } from './selectors';
+import AppListItem from './AppListItem';
+import { type AppItem, useConnectedAppItems } from './selectors';
 
 
 function WalletConnectConnectedApps() {
@@ -41,8 +40,8 @@ function WalletConnectConnectedApps() {
 
   const items = useConnectedAppItems();
 
-  const renderItem = ({ title, iconUrl, chain }: ConnectedAppItem) => {
-    return <ConnectedAppListItem title={title} iconUrl={iconUrl} chain={chain} />;
+  const renderItem = ({ title, iconUrl, chain }: AppItem) => {
+    return <AppListItem title={title} iconUrl={iconUrl} chain={chain} />;
   };
 
   return (
@@ -52,7 +51,6 @@ function WalletConnectConnectedApps() {
       <FlatList
         data={items}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => item.title}
         contentContainerStyle={{ paddingBottom: safeArea.bottom }}
       />
     </Container>

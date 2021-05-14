@@ -18,40 +18,57 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// Types
-import { type Chain, CHAIN } from 'models/Chain';
+import { orderBy } from 'lodash';
 
-export type ConnectedAppItem = {|
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+
+// Utils
+import { mapNotNil } from 'utils/array';
+
+// Types
+import { type Chain, chainFromChainId } from 'models/Chain';
+import type { WalletConnectConnector } from 'models/WalletConnect';
+
+export type AppItem = {|
+  key: string,
   title: string,
-  iconUrl: string,
   chain: Chain,
+  iconUrl: ?string,
 |};
 
-export function useConnectedAppItems(): ConnectedAppItem[] {
-  return [
-    {
-      title: 'SushiSwap',
-      iconUrl:
-        'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
-      chain: CHAIN.POLYGON,
-    },
-    {
-      title: '1inch',
-      iconUrl:
-        'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
-      chain: CHAIN.XDAI,
-    },
-    {
-      title: 'Rarible',
-      iconUrl:
-        'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
-      chain: CHAIN.ETHEREUM,
-    },
-    {
-      title: 'DYDX',
-      iconUrl:
-        'https://images.prismic.io/pillar-app/3c0d1f5a-58ea-402b-b001-04dcc508bafb_pticon.jpg?auto=compress,format',
-      chain: CHAIN.BINANCE,
-    },
-  ];
+export function useConnectedAppItems(): AppItem[] {
+  const { activeConnectors } = useWalletConnect();
+  return mapNotNil(activeConnectors, mapConnectorToItem);
+}
+
+function mapConnectorToItem(connector: WalletConnectConnector): ?AppItem {
+  const key = `${connector.peerId}-${connector.chainId}`;
+  const title = connector.peerMeta?.name;
+  const chain = chainFromChainId[connector.chainId];
+  if (!title || !chain) return null;
+
+  const iconUrl = mapConnectorIconsToIcon(connector.peerMeta?.icons);
+
+  return { key, title, chain, iconUrl };
+}
+
+/**
+ * Heuristic way of picking the best icon.
+ * Sample cases:
+ *  * ["https://app.aave.com/favicon32.ico", "https://app.aave.com/favicon.png", "https://app.aave.com/favicon32.png", "https://app.aave.com/favicon64.png"]
+ *  * ["https://app.uniswap.org/./favicon.png", "https://app.uniswap.org/./images/192x192_App_Icon.png", "https://app.uniswap.org/./images/512x512_App_Icon.png"]
+ *
+ * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
+ * Otherwise just pick whatever is there.
+ */
+export function mapConnectorIconsToIcon(connectorIcons: ?string[]): ?string {
+  if (!connectorIcons?.length) return null;
+  if (connectorIcons?.length === 1) return connectorIcons[0];
+
+  const pngUrls = connectorIcons.filter(url => url.endsWith('.png'));
+  if (!pngUrls.length) return connectorIcons[1];
+
+  const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
+  return sortedPngUrls[0];
 }
