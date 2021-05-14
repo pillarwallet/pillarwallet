@@ -36,12 +36,12 @@ import type { Chain } from 'models/Chain';
 
 type Props = {|
   title: string,
-  iconUrl: ?string,
   chain: Chain,
+  iconUrl: ?string,
   onPress?: () => mixed,
 |};
 
-function DepositListItem({ title, iconUrl, chain, onPress }: Props) {
+function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const colors = useThemeColors();
 
@@ -52,8 +52,8 @@ function DepositListItem({ title, iconUrl, chain, onPress }: Props) {
       <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
 
       <TitleContainer>
-        <Text variant="medium">{title}</Text>
-        <Text color={colors.secondaryText}>{config.title}</Text>
+        <Text variant="medium" numberOfLines={1}>{title}</Text>
+        <Text color={colors.secondaryText}>{config?.title}</Text>
       </TitleContainer>
 
       <RightAddOn>
@@ -65,7 +65,7 @@ function DepositListItem({ title, iconUrl, chain, onPress }: Props) {
   );
 }
 
-export default DepositListItem;
+export default AppListItem;
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

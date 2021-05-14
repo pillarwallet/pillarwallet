@@ -37,7 +37,15 @@ export type ChainRecord<T> = {|
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
   ETHEREUM: '1',
-  POLYGON: '137',
   BINANCE: '56',
   XDAI: '100',
+  POLYGON: '137',
+};
+
+/* eslint-disable quote-props */
+export const chainFromChainId = {
+  [CHAIN_ID.ETHEREUM]: CHAIN.ETHEREUM,
+  [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
+  [CHAIN_ID.XDAI]: CHAIN.XDAI,
+  [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
 };
