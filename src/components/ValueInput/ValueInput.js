@@ -148,13 +148,12 @@ export const ValueInputComponent = ({
 }: Props) => {
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
-  const [sendingBalancePercent, setSendingBalancePercent] = useState<?number>(null);
+  const [calculateBalanceSendPercent, setCalculateBalanceSendPercent] = useState<?number>(null);
 
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
   const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
-  const maxAmount = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken);
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -176,7 +175,7 @@ export const ValueInputComponent = ({
   }, [value]);
 
   React.useEffect(() => {
-    if (!sendingBalancePercent) return;
+    if (!calculateBalanceSendPercent) return;
 
     const maxValueNetFee = wrapBigNumber(calculateMaxAmount(
       assetSymbol,
@@ -185,14 +184,14 @@ export const ValueInputComponent = ({
       txFeeInfo?.gasToken,
     ));
 
-    const newValue = formatAmount(maxValueNetFee.multipliedBy(sendingBalancePercent).dividedBy(100));
-    onValueChange(newValue, sendingBalancePercent);
+    const newValue = formatAmount(maxValueNetFee.multipliedBy(calculateBalanceSendPercent).dividedBy(100));
+    onValueChange(newValue);
 
     const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
     setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
 
-    setSendingBalancePercent(null);
-  }, [txFeeInfo, sendingBalancePercent]);
+    setCalculateBalanceSendPercent(null);
+  }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {
     // ethers will crash with commas, TODO: we need a proper localisation
@@ -214,7 +213,7 @@ export const ValueInputComponent = ({
   };
 
   const handleUsePercent = async (percent: number) => {
-    setSendingBalancePercent(percent);
+    setCalculateBalanceSendPercent(percent);
     if (updateTxFee) updateTxFee(assetSymbol, percent / 100);
   };
 
@@ -272,7 +271,7 @@ export const ValueInputComponent = ({
   };
 
   const errorMessage = disabled ? null : getErrorMessage(
-    value, maxAmount, assetSymbol, displayFiatAmount ? valueInFiat : null,
+    value, balanceAvailable, assetSymbol, displayFiatAmount ? valueInFiat : null,
   );
 
   React.useEffect(() => {

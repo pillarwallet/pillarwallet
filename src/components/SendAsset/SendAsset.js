@@ -266,7 +266,7 @@ const SendAsset = ({
     enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
-      // $FlowFixMe: collecible does not have `deciamals`
+      // $FlowFixMe: collectible does not have `decimals`
       decimals: assetData.decimals,
       amount,
       symbol: token,
