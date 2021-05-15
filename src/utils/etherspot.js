@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
   type GatewayEstimatedBatch,
@@ -58,17 +59,20 @@ export const parseEtherspotTransactions = (
       hash,
       status: rawStatus,
       asset: assetPayload,
+      createdAt,
     } = etherspotTransaction;
 
-    let { value } = etherspotTransaction;
     let asset = ETH;
+    let value = EthersBigNumber.from(0);
 
     if (assetPayload) {
       const {
-        symbol,
         value: assetValue,
         contract: contractAddress,
       } = assetPayload;
+
+      value = assetValue;
+
       const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
 
       if (isEmpty(supportedAsset)) {
@@ -76,8 +80,7 @@ export const parseEtherspotTransactions = (
         return mappedHistoryTransactions;
       }
 
-      value = assetValue;
-      asset = symbol;
+      asset = supportedAsset.symbol;
     }
 
     // TODO: more status to map once Etherspot history back-end fully complete?
@@ -95,7 +98,7 @@ export const parseEtherspotTransactions = (
       value,
       asset,
       status,
-      // createdAt, // TODO: add timestamp when it's added to Etherspot back-end
+      createdAt,
     });
 
     return [...mappedHistoryTransactions, mappedTransaction];
