@@ -43,7 +43,7 @@ import { wrapBigNumber, truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/archanova';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 
@@ -75,6 +75,7 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate) => void,
+  preferredGasToken: string,
 };
 
 const renderFeeToggle = (
@@ -128,6 +129,7 @@ const SendAsset = ({
   estimateErrorMessage,
   estimateTransaction,
   resetEstimateTransaction,
+  preferredGasToken,
 }: Props) => {
   const defaultAssetData = navigation.getParam('assetData');
   const defaultAssetOption = defaultAssetData && {
@@ -145,7 +147,11 @@ const SendAsset = ({
   const currentValue = wrapBigNumber(amount || 0);
 
   const isValidAmount = currentValue.isFinite() && !currentValue.isZero();
-  const isAboveBalance = currentValue.gt(balance);
+
+  // cannot be greater or equal to gas token balance, otherwise only greater than sending asset
+  const isAboveBalance = token === preferredGasToken
+    ? currentValue.gte(balance)
+    : currentValue.gt(balance);
 
   const updateTxFee = () => {
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
@@ -327,6 +333,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   useGasToken: useGasTokenSelector,
+  preferredGasToken: preferredGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   contacts: contactsSelector,
 });

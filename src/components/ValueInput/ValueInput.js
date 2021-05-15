@@ -153,11 +153,11 @@ export const ValueInputComponent = ({
 
   const assetSymbol = assetData.symbol || '';
   const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
-  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken);
+  const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
+  const formattedBalanceAvailableInFiat = getFormattedBalanceInFiat(fiatCurrency, balanceAvailable, ratesWithCustomRates, assetSymbol);
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
   React.useEffect(() => {
@@ -236,7 +236,7 @@ export const ValueInputComponent = ({
       <ValueInputHeader
         asset={assetData}
         onAssetPress={openAssetSelector}
-        labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
+        labelText={hideMaxSend ? null : `${formatAmount(balanceAvailable, 2)} ${assetSymbol} (${formattedBalanceAvailableInFiat})`}
         onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
         disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
@@ -258,7 +258,7 @@ export const ValueInputComponent = ({
   };
 
   const errorMessage = disabled ? null : getErrorMessage(
-    value, maxValue, assetSymbol, displayFiatAmount ? valueInFiat : null,
+    value, balanceAvailable, assetSymbol, displayFiatAmount ? valueInFiat : null,
   );
 
   React.useEffect(() => {
