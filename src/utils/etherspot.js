@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
   type GatewayEstimatedBatch,
@@ -61,14 +61,17 @@ export const parseEtherspotTransactions = (
       createdAt,
     } = etherspotTransaction;
 
-    let { value } = etherspotTransaction;
     let asset = ETH;
+    let value = EthersBigNumber.from(0);
 
     if (assetPayload) {
       const {
         value: assetValue,
         contract: contractAddress,
       } = assetPayload;
+
+      value = assetValue;
+
       const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
 
       if (isEmpty(supportedAsset)) {
@@ -76,7 +79,6 @@ export const parseEtherspotTransactions = (
         return mappedHistoryTransactions;
       }
 
-      value = assetValue;
       asset = supportedAsset.symbol;
     }
 
