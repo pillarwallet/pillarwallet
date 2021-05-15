@@ -157,7 +157,12 @@ export const ValueInputComponent = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const formattedBalanceAvailableInFiat = getFormattedBalanceInFiat(fiatCurrency, balanceAvailable, ratesWithCustomRates, assetSymbol);
+  const formattedBalanceAvailableInFiat = getFormattedBalanceInFiat(
+    fiatCurrency,
+    balanceAvailable,
+    ratesWithCustomRates,
+    assetSymbol,
+  );
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
   React.useEffect(() => {
