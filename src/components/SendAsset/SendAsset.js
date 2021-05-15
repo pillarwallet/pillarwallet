@@ -145,6 +145,7 @@ const SendAsset = ({
   const currentValue = wrapBigNumber(amount || 0);
 
   const isValidAmount = currentValue.isFinite() && !currentValue.isZero();
+
   const isAboveBalance = currentValue.gt(balance);
 
   const updateTxFee = () => {
@@ -244,6 +245,7 @@ const SendAsset = ({
         assetData: mapToAssetDataType(assetData),
       });
     }
+
     return null;
   };
 
@@ -264,7 +266,7 @@ const SendAsset = ({
     enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
-      // $FlowFixMe: collecible does not have `deciamals`
+      // $FlowFixMe: collectible does not have `decimals`
       decimals: assetData.decimals,
       amount,
       symbol: token,
@@ -275,7 +277,8 @@ const SendAsset = ({
     ? t('label.notEnoughGas')
     : estimateErrorMessage;
 
-  const showNextButton = hasAllData;
+  // note: fee toggle component renders one more button on error message, no need to show disabled next button
+  const showNextButton = hasAllData && (!errorMessage || isEstimating);
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid || !isValidAmount;
 

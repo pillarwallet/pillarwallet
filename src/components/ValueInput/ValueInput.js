@@ -148,16 +148,22 @@ export const ValueInputComponent = ({
 }: Props) => {
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
+  const [calculateBalanceSendPercent, setCalculateBalanceSendPercent] = useState<?number>(null);
 
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
   const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
-  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken);
+  const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
+  const formattedBalanceAvailableInFiat = getFormattedBalanceInFiat(
+    fiatCurrency,
+    balanceAvailable,
+    ratesWithCustomRates,
+    assetSymbol,
+  );
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
   React.useEffect(() => {
@@ -167,6 +173,25 @@ export const ValueInputComponent = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  React.useEffect(() => {
+    if (!calculateBalanceSendPercent) return;
+
+    const maxValueNetFee = wrapBigNumber(calculateMaxAmount(
+      assetSymbol,
+      assetBalance,
+      txFeeInfo?.fee,
+      txFeeInfo?.gasToken,
+    ));
+
+    const newValue = formatAmount(maxValueNetFee.multipliedBy(calculateBalanceSendPercent).dividedBy(100));
+    onValueChange(newValue);
+
+    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
+    setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
+
+    setCalculateBalanceSendPercent(null);
+  }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {
     // ethers will crash with commas, TODO: we need a proper localisation
@@ -188,23 +213,8 @@ export const ValueInputComponent = ({
   };
 
   const handleUsePercent = async (percent: number) => {
-    let newTxFeeInfo = txFeeInfo;
-    if (updateTxFee) {
-      newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
-    }
-
-    const maxValueNetFee = wrapBigNumber(calculateMaxAmount(
-      assetSymbol,
-      assetBalance,
-      newTxFeeInfo?.fee,
-      newTxFeeInfo?.gasToken,
-    ));
-
-    const newValue = formatAmount(maxValueNetFee.multipliedBy(percent).dividedBy(100), assetData.decimals);
-    onValueChange(newValue, percent);
-
-    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
-    setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
+    setCalculateBalanceSendPercent(percent);
+    if (updateTxFee) updateTxFee(assetSymbol, percent / 100);
   };
 
   const onInputBlur = () => {
@@ -232,11 +242,14 @@ export const ValueInputComponent = ({
   };
 
   const getCustomLabel = () => {
+    const labelText = !hideMaxSend
+      ? `${formatAmount(balanceAvailable, 2)} ${assetSymbol} (${formattedBalanceAvailableInFiat})`
+      : null;
     return (
       <ValueInputHeader
         asset={assetData}
         onAssetPress={openAssetSelector}
-        labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
+        labelText={labelText}
         onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
         disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
@@ -258,7 +271,7 @@ export const ValueInputComponent = ({
   };
 
   const errorMessage = disabled ? null : getErrorMessage(
-    value, maxValue, assetSymbol, displayFiatAmount ? valueInFiat : null,
+    value, balanceAvailable, assetSymbol, displayFiatAmount ? valueInFiat : null,
   );
 
   React.useEffect(() => {

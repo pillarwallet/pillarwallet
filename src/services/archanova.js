@@ -365,12 +365,12 @@ class Archanova {
 
     // append params for multiple sequential transactions (ref – estimateAccountTransaction method params)
     transactions.forEach(({ to, value, data }) => {
-      estimateMethodParams = [...estimateMethodParams, to, value, data];
+      estimateMethodParams = [...estimateMethodParams, to, value.toHexString(), data];
     });
 
     const estimatedTransaction = await this.getSdk().estimateAccountTransaction(...estimateMethodParams);
 
-    const { hash } = await this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
+    const hash = await this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
 
     return { hash };
   }
@@ -474,7 +474,7 @@ class Archanova {
 
     // append params for multiple sequential transactions (ref – estimateAccountTransaction method params)
     transactions.forEach(({ to, value, data }) => {
-      estimateMethodParams = [...estimateMethodParams, to, value, data];
+      estimateMethodParams = [...estimateMethodParams, to, value.toHexString(), data];
     });
 
     estimateMethodParams = [...estimateMethodParams];
