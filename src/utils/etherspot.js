@@ -58,6 +58,7 @@ export const parseEtherspotTransactions = (
       hash,
       status: rawStatus,
       asset: assetPayload,
+      createdAt,
     } = etherspotTransaction;
 
     let { value } = etherspotTransaction;
@@ -94,7 +95,7 @@ export const parseEtherspotTransactions = (
       value,
       asset,
       status,
-      // createdAt, // TODO: add timestamp when it's added to Etherspot back-end
+      createdAt,
     });
 
     return [...mappedHistoryTransactions, mappedTransaction];

@@ -43,7 +43,7 @@ import { wrapBigNumber, truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
+import { useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 
@@ -75,7 +75,6 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate) => void,
-  preferredGasToken: string,
 };
 
 const renderFeeToggle = (
@@ -129,7 +128,6 @@ const SendAsset = ({
   estimateErrorMessage,
   estimateTransaction,
   resetEstimateTransaction,
-  preferredGasToken,
 }: Props) => {
   const defaultAssetData = navigation.getParam('assetData');
   const defaultAssetOption = defaultAssetData && {
@@ -148,10 +146,7 @@ const SendAsset = ({
 
   const isValidAmount = currentValue.isFinite() && !currentValue.isZero();
 
-  // cannot be greater or equal to gas token balance, otherwise only greater than sending asset
-  const isAboveBalance = token === preferredGasToken
-    ? currentValue.gte(balance)
-    : currentValue.gt(balance);
+  const isAboveBalance = currentValue.gt(balance);
 
   const updateTxFee = () => {
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
@@ -250,6 +245,7 @@ const SendAsset = ({
         assetData: mapToAssetDataType(assetData),
       });
     }
+
     return null;
   };
 
@@ -281,7 +277,8 @@ const SendAsset = ({
     ? t('label.notEnoughGas')
     : estimateErrorMessage;
 
-  const showNextButton = hasAllData;
+  // note: fee toggle component renders one more button on error message, no need to show disabled next button
+  const showNextButton = hasAllData && (!errorMessage || isEstimating);
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid || !isValidAmount;
 
@@ -333,7 +330,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   useGasToken: useGasTokenSelector,
-  preferredGasToken: preferredGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   contacts: contactsSelector,
 });
