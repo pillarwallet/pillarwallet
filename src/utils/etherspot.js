@@ -65,7 +65,6 @@ export const parseEtherspotTransactions = (
 
     if (assetPayload) {
       const {
-        symbol,
         value: assetValue,
         contract: contractAddress,
       } = assetPayload;
@@ -77,7 +76,7 @@ export const parseEtherspotTransactions = (
       }
 
       value = assetValue;
-      asset = symbol;
+      asset = supportedAsset.symbol;
     }
 
     // TODO: more status to map once Etherspot history back-end fully complete?
