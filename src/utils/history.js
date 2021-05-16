@@ -147,13 +147,17 @@ export const parseFeeWithGasToken = (
   return { feeInWei: wrapBigNumber(fee), gasToken };
 };
 
-export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash: string): ?Transaction => {
-  if (!txHash) return {};
-  txHash = txHash.toLowerCase();
-  const accountsHistory: Object[] = Object.values(history);
-  return accountsHistory
-    .map(accountHistory => accountHistory.find(tx => tx.hash.toLowerCase() === txHash))
-    .find(tx => tx);
+export const findTransactionAcrossAccounts = (
+  history: TransactionsStore,
+  hash: ?string,
+  batchHash: ?string,
+): ?Transaction => {
+  if (!hash && !batchHash) return {};
+
+  return Object.keys(history)
+    .flatMap((accountId) => history[accountId])
+    .find((transaction) => isCaseInsensitiveMatch(hash ?? '', transaction?.hash)
+      || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
 
 export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string) => {
