@@ -33,6 +33,7 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { getTrxInfo } from 'utils/history';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
@@ -263,7 +264,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     const accounts = Object.keys(collectiblesHistory);
     const updatedHistory = accounts.reduce((history, accountId) => {
       const accountHistory = collectiblesHistory[accountId].map(transaction => {
-        if (transaction.hash.toLowerCase() !== hash) {
+        if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
           return transaction;
         }
         return {
