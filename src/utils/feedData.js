@@ -38,9 +38,9 @@ import {
   getAccountAddress,
   getAccountTypeByAddress,
   isArchanovaAccount,
-} from 'utils/accounts';
-import { addressesEqual } from 'utils/assets';
-import { uniqBy } from './common';
+} from './accounts';
+import { addressesEqual } from './assets';
+import { isCaseInsensitiveMatch, uniqBy } from './common';
 
 
 export function mapTransactionsHistory(
@@ -129,7 +129,7 @@ export function mapOpenSeaAndBCXTransactionsHistory(
   const concatedCollectiblesHistory = openSeaHistory
     .map(({ hash, ...rest }) => {
       const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
-        return hash.toUpperCase() === bcxHash.toUpperCase();
+        return hash && isCaseInsensitiveMatch(hash, bcxHash);
       });
 
       return {

@@ -142,7 +142,7 @@ const ExchangeConfirmScreen = ({
     receiveQuantity,
     payQuantity,
     decimals,
-    amount,
+    amount, // transaction amount
     symbol,
     to,
     contractAddress,
@@ -241,7 +241,7 @@ const ExchangeConfirmScreen = ({
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
   const isEnoughForFee = !feeInfo || isEnoughBalanceForTransactionFee(balances, {
-    amount,
+    payQuantity,
     decimals,
     symbol,
     txFeeInWei: feeInfo.fee,

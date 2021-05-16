@@ -182,11 +182,12 @@ const RemoveLiquidityScreen = ({
     const customBalances: Balances = tokenSymbol
       ? {
         [tokenSymbol]: {
-          balance: tokenMaxWithdrawn,
+          balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
           symbol: tokenSymbol,
         },
       }
       : {};
+
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}

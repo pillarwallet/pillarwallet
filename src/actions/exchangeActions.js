@@ -47,6 +47,7 @@ import {
   ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // utils
 import {
@@ -125,17 +126,21 @@ export const takeOfferAction = (
       return;
     }
 
-    const { address: fromAssetAddress } = fromAsset;
+    const { address: fromAssetAddress, symbol: fromAssetSymbol } = fromAsset;
     const { decimals: fromAssetDecimals } = fromAsset;
+
+    const data = order.transactionObj?.data;
+    const isTokenTransferExchange = !!data && fromAssetSymbol !== ETH;
+    const contractAddress = fromAssetAddress || '';
 
     const transactionData = {
       fromAsset,
       toAsset,
       from: getActiveAccountAddress(accounts),
       payQuantity: fromAmount,
-      amount: fromAmount,
-      symbol: fromAsset.symbol,
-      contractAddress: fromAssetAddress || '',
+      amount: isTokenTransferExchange ? 0 : fromAmount,
+      symbol: isTokenTransferExchange ? ETH : fromAssetSymbol,
+      contractAddress: isTokenTransferExchange ? '' : contractAddress,
       decimals: parseInt(fromAssetDecimals, 10) || 18,
       ...order.transactionObj,
     };
