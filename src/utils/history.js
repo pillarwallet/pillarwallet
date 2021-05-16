@@ -156,8 +156,8 @@ export const findTransactionAcrossAccounts = (
 
   return Object.keys(history)
     .flatMap((accountId) => history[accountId])
-    .find((transaction) => isCaseInsensitiveMatch(hash || '', transaction?.hash)
-      || isCaseInsensitiveMatch(batchHash, transaction?.batchHash));
+    .find((transaction) => isCaseInsensitiveMatch(hash ?? '', transaction?.hash)
+      || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
 
 export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string) => {
