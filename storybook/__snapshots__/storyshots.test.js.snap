@@ -47821,6 +47821,12 @@ exports[`Storyshots TextInput default 1`] = `
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
                     rightLabel="Right label"
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -48054,6 +48060,12 @@ exports[`Storyshots TextInput multiline 1`] = `
                     placeholder="Placeholder"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -48338,6 +48350,12 @@ exports[`Storyshots TextInput numeric 1`] = `
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
                     rightLabel="Right label"
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -48591,6 +48609,12 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                     placeholder="0"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -49077,6 +49101,12 @@ exports[`Storyshots TextInput with button 1`] = `
                     placeholder="Placeholder"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -49441,6 +49471,12 @@ exports[`Storyshots TextInput with selector 1`] = `
                     placeholder="Placeholder"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     selectorValue={Object {}}
                     smallPadding={false}
                     style={
@@ -50598,6 +50634,42 @@ exports[`Storyshots Value Input default 1`] = `
                   onResponderTerminationRequest={[Function]}
                   onStartShouldSetResponder={[Function]}
                   style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "paddingLeft": 14,
+                      },
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "flexWrap": "wrap",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "maxWidth": 80,
+                          "textAlignVertical": "center",
+                        },
+                      ]
+                    }
+                  >
+                    £0
+                  </Text>
+                </View>
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
                     Object {
                       "flex": 1,
                     }
@@ -50654,7 +50726,12 @@ exports[`Storyshots Value Input default 1`] = `
                     placeholder="0"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
-                    selection={null}
+                    selection={
+                      Object {
+                        "end": 0,
+                        "start": 0,
+                      }
+                    }
                     smallPadding={true}
                     style={
                       Array [

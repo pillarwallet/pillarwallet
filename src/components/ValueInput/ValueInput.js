@@ -36,7 +36,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, wrapBigNumber, noop } from 'utils/common';
+import { formatAmount, isValidNumber, wrapBigNumber, noop, formatFiat } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -165,6 +165,7 @@ export const ValueInputComponent = ({
     assetSymbol,
   );
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+  const leftPositionValue = formattedValueInFiat === '' ? formatFiat('0', fiatCurrency) : formattedValueInFiat;
 
   React.useEffect(() => {
     if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
@@ -213,8 +214,26 @@ export const ValueInputComponent = ({
   };
 
   const handleUsePercent = async (percent: number) => {
+    Keyboard.dismiss();
     setCalculateBalanceSendPercent(percent);
     if (updateTxFee) updateTxFee(assetSymbol, percent / 100);
+    let newTxFeeInfo = txFeeInfo;
+    if (updateTxFee) {
+      newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
+    }
+
+    const maxValueNetFee = wrapBigNumber(calculateMaxAmount(
+      assetSymbol,
+      assetBalance,
+      newTxFeeInfo?.fee,
+      newTxFeeInfo?.gasToken,
+    ));
+
+    const newValue = formatAmount(maxValueNetFee.multipliedBy(percent).dividedBy(100), assetData.decimals);
+    onValueChange(newValue, percent);
+
+    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
+    setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
   };
 
   const onInputBlur = () => {
@@ -229,7 +248,6 @@ export const ValueInputComponent = ({
 
   const openAssetSelector = () => {
     Keyboard.dismiss();
-
     Modal.open(() => (
       <AssetSelectorOptions
         options={assetsOptions}
@@ -281,6 +299,14 @@ export const ValueInputComponent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
 
+  React.useEffect(() => {
+    if (value) {
+      onValueChange?.('0');
+      setValueInFiat('0');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetData.name]);
+
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
@@ -308,7 +334,7 @@ export const ValueInputComponent = ({
           onRightAddonPress={disableAssetChange ? noop : openAssetSelector}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
-            : formattedValueInFiat
+            : leftPositionValue
           }
           onLeftSideTextPress={toggleDisplayFiat}
           rightPlaceholder={displayFiatAmount ? fiatCurrency : assetSymbol}
