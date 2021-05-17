@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -43,10 +44,9 @@ import type { User } from 'models/User';
 
 type Props = {
   user: User,
-  profileImageWidth?: number,
 };
 
-const UserNameAndImage = ({ user, profileImageWidth = 24 }: Props) => {
+const UserNameAndImage = ({ user }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
@@ -57,14 +57,14 @@ const UserNameAndImage = ({ user, profileImageWidth = 24 }: Props) => {
 
   return (
     <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      <ProfileImage uri={userImageUri} userName={username} diameter={profileImageWidth} />
+      <ProfileImage uri={userImageUri} userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
       {accountCount > 1 && (
-        <TouchableIconWrapper onpress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
           <Icon name="select" color={colors.basic020} />
-        </TouchableIconWrapper>
+        </TouchableOpacity>
       )}
     </TouchableContainer>
   );
@@ -83,7 +83,4 @@ const UserName = styled(Text)`
   margin-left: ${spacing.small}px;
   flex-wrap: wrap;
   flex-shrink: 1;
-`;
-
-const TouchableIconWrapper = styled.TouchableOpacity`
 `;
