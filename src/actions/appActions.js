@@ -22,7 +22,6 @@ import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
-import Instabug from 'instabug-reactnative';
 
 // services
 import Storage from 'services/storage';
