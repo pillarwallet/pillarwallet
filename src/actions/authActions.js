@@ -24,6 +24,7 @@ import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+import { Replies } from 'instabug-reactnative';
 
 // constants
 import {
@@ -122,6 +123,7 @@ export const updateFcmTokenAction = (walletId: string) => {
 
       return null;
     });
+    Replies.setPushNotificationRegistrationTokenAndroid(fcmToken);
     if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     await api.updateFCMToken(walletId, fcmToken);

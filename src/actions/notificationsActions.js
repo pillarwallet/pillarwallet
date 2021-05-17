@@ -24,6 +24,7 @@ import { Alert } from 'react-native';
 import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
+import { Replies } from 'instabug-reactnative';
 
 // actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -177,6 +178,9 @@ export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     if (await hasFCMPermission()) {
       if (notificationsListener !== null) return;
+      firebaseMessaging.setBackgroundMessageHandler(async remoteMessage => {
+        Replies.showNotificationAndroid(remoteMessage.data);
+      });
       notificationsListener = firebaseMessaging.onMessage(debounce(message => {
         dispatch(onFirebaseMessageAction(message));
       }, 500));
