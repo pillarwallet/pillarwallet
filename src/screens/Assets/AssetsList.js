@@ -221,6 +221,7 @@ class AssetsList extends React.Component<Props, State> {
       icon: fullIconMonoUrl,
       wallpaper: fullIconWallpaperUrl,
       iconColor: fullIconUrl,
+      imageUrl: fullIconUrl,
       isListed,
       disclaimer,
       paymentNetworkBalance,
