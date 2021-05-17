@@ -19,56 +19,60 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Contants
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+
+// Selectors
+import { useAccounts } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
+import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
-
 
 type Props = {
   user: User,
-  userProps?: ProfileImageProps,
-  profileImageWidth?: number,
 };
 
-const UserNameAndImage = ({
-  user = {},
-  userProps = {},
-  profileImageWidth = 24,
-}: Props) => {
+const UserNameAndImage = ({ user }: Props) => {
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+
+  const accountCount = useAccounts().length;
+
   return (
-    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      <ProfileImage
-        {...userProps}
-        uri={userImageUri}
-        userName={username}
-        diameter={profileImageWidth}
-        noShadow
-      />
+    <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
+      <ProfileImage uri={userImageUri} userName={username} diameter={24} />
+
       {!!username && <UserName>{username}</UserName>}
-    </UserWrapper>
+
+      {accountCount > 1 && (
+        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+          <Icon name="select" color={colors.basic020} />
+        </TouchableOpacity>
+      )}
+    </TouchableContainer>
   );
 };
 
 export default UserNameAndImage;
 
-const UserWrapper = styled.TouchableOpacity`
+const TouchableContainer = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
