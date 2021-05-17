@@ -56,7 +56,7 @@ import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } fro
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
-import { getBalance, getRate } from 'utils/assets';
+import { getBalance, getRate, mapAssetDataToAssetOption } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -192,8 +192,21 @@ class AssetScreen extends React.Component<Props> {
     return !isEq;
   }
 
-  goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+  goToSendTokenFlow = () => {
+    const {
+      navigation,
+      balances,
+      rates,
+      baseFiatCurrency,
+    } = this.props;
+    const { assetData } = navigation.state.params;
+    const assetDataOption = mapAssetDataToAssetOption(assetData, balances, rates, baseFiatCurrency);
+
+    // it's mixed input in SendAsset component
+    // TODO: fix when this screen is refactored
+    const assetDataNavParam = { ...assetData, ...assetDataOption };
+
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData: assetDataNavParam });
   };
 
   goToExchangeFlow = (fromAssetCode: ?string, toAssetCode?: string) => {
@@ -345,7 +358,7 @@ class AssetScreen extends React.Component<Props> {
           <AssetCardWrapper>
             <AssetButtons
               onPressReceive={this.openAddFundsModal}
-              onPressSend={() => this.goToSendTokenFlow(assetData)}
+              onPressSend={this.goToSendTokenFlow}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
