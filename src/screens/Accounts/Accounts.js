@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { withTheme } from 'styled-components/native';
 import { FlatList } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
@@ -38,9 +38,10 @@ import { spacing } from 'utils/variables';
 import { getTotalBalanceInFiat } from 'utils/assets';
 import { images } from 'utils/images';
 import { responsiveSize } from 'utils/ui';
+import { useTheme } from 'utils/themes';
 
 // constants
-import { ASSETS, KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
+import { KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
@@ -57,12 +58,10 @@ import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { NavigationScreenProp } from 'react-navigation';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import type { Theme } from 'models/Theme';
 import type { RenderItemProps } from 'utils/types/react-native';
 
 const ITEM_TYPE = {
@@ -81,30 +80,29 @@ type ListItem = {|
 |};
 
 type Props = {|
-  navigation: NavigationScreenProp<*>,
   blockchainNetworks: BlockchainNetwork[],
   baseFiatCurrency: ?string,
   accounts: Accounts,
   switchAccount: (accountId: string) => void,
   balances: BalancesStore,
   rates: Rates,
-  theme: Theme,
   fetchAllAccountsBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
 |};
 
 const AccountsScreen = ({
   fetchAllAccountsBalances,
-  navigation,
   accounts,
   switchAccount,
   blockchainNetworks,
   balances,
   rates,
   baseFiatCurrency,
-  theme,
   keyBasedWalletHasPositiveBalance,
 }: Props) => {
+  const navigation = useNavigation();
+  const theme = useTheme();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsBalances(); }, []);
 
@@ -117,7 +115,7 @@ const AccountsScreen = ({
 
   const setAccountActive = async (wallet: Account) => {
     await switchAccount(wallet.id);
-    navigation.navigate(ASSETS);
+    navigation.goBack(null);
   };
 
   const renderListItem = ({ item }: RenderItemProps<ListItem>) => {
@@ -244,4 +242,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);
