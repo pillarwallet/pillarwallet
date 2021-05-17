@@ -110,6 +110,8 @@ export const rariSelector = ({ rari }: RootReducerState) => rari;
 
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
 
+export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
+
 export const allAccountsExchangeAllowancesSelector = ({ exchange }: RootReducerState) => exchange.data.allowances;
 
 export const activeAccountExchangeAllowancesSelector = createSelector(

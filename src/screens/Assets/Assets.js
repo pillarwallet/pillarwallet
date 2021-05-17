@@ -31,7 +31,7 @@ import TabView from 'components/modern/TabView';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import { ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
+import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './wallet/WalletTab';
@@ -56,7 +56,7 @@ function Assets() {
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
   ];
 
-  const { category: initialCategory } = navigation.state.params;
+  const initialCategory: ?AssetCategory = navigation.getParam('category');
 
   const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
   const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);
