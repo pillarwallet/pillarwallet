@@ -22,6 +22,7 @@ import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
+import Instabug from 'instabug-reactnative';
 
 // services
 import Storage from 'services/storage';
@@ -268,6 +269,10 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
         ethAddress: address,
       },
     });
+    // eslint-disable-next-line i18next/no-literal-string
+    Instabug.setUserAttribute('address', wallet.address);
+    if (wallet.provider._network.ensAddress) {
+      Instabug.setUserAttribute('ENS', wallet.provider._network.ensAddress);
+    }
   };
 };
-

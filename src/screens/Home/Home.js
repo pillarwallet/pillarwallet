@@ -542,7 +542,6 @@ class HomeScreen extends React.Component<Props> {
       accounts,
       userEvents,
       badgesEvents,
-      theme,
       hideBadges,
       toggleBadges,
       walletConnectCallRequests,

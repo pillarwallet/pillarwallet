@@ -23,7 +23,6 @@ import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import Instabug from 'instabug-reactnative';
 import t from 'translations/translate';
 
 // constants
@@ -163,11 +162,6 @@ export const loginAction = (
       const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
       if (pin && keychainLogin) {
         wallet = await getWalletFromPkByPin(pin);
-        // eslint-disable-next-line i18next/no-literal-string
-        Instabug.setUserAttribute('address', wallet.address);
-        if (wallet.provider._network.ensAddress) {
-          Instabug.setUserAttribute('ENS', wallet.provider._network.ensAddress);
-        }
       } else if (pin) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
