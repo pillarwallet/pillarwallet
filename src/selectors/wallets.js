@@ -24,7 +24,8 @@ import { createSelector } from 'reselect';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { isSmartWalletAccount } from 'utils/accounts';
+import { isArchanovaAccount, isEtherspotAccount, isSmartWalletAccount } from 'utils/accounts';
+import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -35,6 +36,7 @@ import {
   activeAccountSelector,
   activeBlockchainSelector,
 } from './selectors';
+import { isArchanovaWalletActivatedSelector } from './archanova';
 
 
 export const activeWalletSelector = createSelector(
@@ -74,3 +76,17 @@ export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
     (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
   ),
 );
+
+
+export const isActiveAccountDeployedSelector = (root: RootReducerState): boolean => {
+  const activeAccount = activeAccountSelector(root);
+  if (isEtherspotAccount(activeAccount)) {
+    return isEtherspotAccountDeployed(activeAccount);
+  }
+
+  if (isArchanovaAccount(activeAccount)) {
+    return isArchanovaWalletActivatedSelector(root);
+  }
+
+  return false;
+};

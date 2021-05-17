@@ -23,6 +23,8 @@ import isEmpty from 'lodash.isempty';
 import {
   type GatewayEstimatedBatch,
   type Transaction as EtherspotTransaction,
+  type Account as EtherspotAccount,
+  AccountStates,
   GatewayBatchStates,
 } from 'etherspot';
 
@@ -31,6 +33,7 @@ import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'consta
 import { ETH } from 'constants/assetsConstants';
 
 // utils
+import { isEtherspotAccount } from 'utils/accounts';
 import { getAssetDataByAddress } from 'utils/assets';
 import { buildHistoryTransaction } from 'utils/history';
 
@@ -41,6 +44,13 @@ import type { Asset } from 'models/Asset';
 
 const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   COMPLETED: 'Completed',
+};
+
+export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
+  if (!account || !isEtherspotAccount(account)) return false;
+
+  const typedExtra: EtherspotAccount = account.extra;
+  return typedExtra.status === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (
