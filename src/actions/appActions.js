@@ -270,9 +270,9 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
       },
     });
     // eslint-disable-next-line i18next/no-literal-string
-    Instabug.setUserAttribute('address', wallet.address);
-    if (wallet.provider._network.ensAddress) {
-      Instabug.setUserAttribute('ENS', wallet.provider._network.ensAddress);
+    Instabug.setUserAttribute('address', address);
+    if (username) {
+      Instabug.setUserAttribute('ENS', username);
     }
   };
 };
