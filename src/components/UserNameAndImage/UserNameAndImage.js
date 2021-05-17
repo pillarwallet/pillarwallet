@@ -27,48 +27,37 @@ import ProfileImage from 'components/ProfileImage';
 import Text from 'components/modern/Text';
 
 // Contants
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 
 // Types
-import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
-
 
 type Props = {
   user: User,
-  userProps?: ProfileImageProps,
   profileImageWidth?: number,
 };
 
-const UserNameAndImage = ({
-  user = {},
-  userProps = {},
-  profileImageWidth = 24,
-}: Props) => {
+const UserNameAndImage = ({ user, profileImageWidth = 24 }: Props) => {
   const navigation = useNavigation();
 
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+
   return (
-    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      <ProfileImage
-        {...userProps}
-        uri={userImageUri}
-        userName={username}
-        diameter={profileImageWidth}
-        noShadow
-      />
+    <TouchableContainer onPress={() => navigation.navigate(ACCOUNTS)}>
+      <ProfileImage uri={userImageUri} userName={username} diameter={profileImageWidth} />
+
       {!!username && <UserName>{username}</UserName>}
-    </UserWrapper>
+    </TouchableContainer>
   );
 };
 
 export default UserNameAndImage;
 
-const UserWrapper = styled.TouchableOpacity`
+const TouchableContainer = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
