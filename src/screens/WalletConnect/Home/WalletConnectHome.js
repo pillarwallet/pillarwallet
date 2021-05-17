@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { SectionList, Linking, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -97,6 +97,7 @@ function WalletConnectHome() {
         title={item.title}
         iconUrl={item.iconUrl}
         width={columnWidth}
+        onPress={() => Linking.openURL(item.url)}
         disabled={disabled}
       />
     );

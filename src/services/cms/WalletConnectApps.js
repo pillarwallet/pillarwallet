@@ -53,6 +53,7 @@ async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectCmsApp[]> {
  */
 type AppDto = {
   name?: [?{ text?: string }],
+  url?: { url?: string },
   category?: { id?: string },
   logo?: { url?: string },
   disabled?: boolean,
@@ -65,13 +66,14 @@ function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectCmsApp {
 
   const id = parse.stringOrNull(item.id);
   const title = parse.stringOrNull(item.data?.name?.[0]?.text);
+  const url = parse.stringOrNull(item.data?.url?.url);
   const categoryId = parse.stringOrNull(item.data?.category?.id);
   const chains = parseChains(item);
   const disabled = parse.booleanOrNull(item.data?.disabled);
-  if (!id || !title || !categoryId || !chains.length || disabled) return null;
+  if (!id || !title || !url || !categoryId || !chains.length || disabled) return null;
 
   const iconUrl = parse.stringOrNull(item.data?.logo?.url);
-  return { id, title, categoryId, iconUrl, chains };
+  return { id, title, url, categoryId, iconUrl, chains };
 }
 
 function parseChains(item: Prismic.Document<AppDto>): Chain[] {
