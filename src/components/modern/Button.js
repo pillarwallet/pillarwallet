@@ -31,7 +31,7 @@ import { fontStyles, spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-type Variant = 'primary' | 'secondary' | 'text';
+type Variant = 'primary' | 'secondary' | 'text' | 'text-destructive';
 
 type Props = {|
   title?: string,
@@ -41,13 +41,7 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
-function Button({
-  title,
-  onPress,
-  variant = 'primary',
-  compact,
-  style,
-}: Props) {
+function Button({ title, onPress, variant = 'primary', compact, style }: Props) {
   return (
     <TouchableContainer onPress={onPress} variant={variant} style={style} compact={compact}>
       <Title variant={variant}>{title}</Title>
@@ -65,8 +59,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   ${({ compact }) =>
     !compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}
   ${({ theme, variant }) => variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
-  ${({ theme, variant }) =>
-    variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
+  ${({ theme, variant }) => variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
 const Title = styled(Text)`
@@ -74,4 +67,5 @@ const Title = styled(Text)`
   ${({ theme, variant }) => (variant === 'primary' ? `color: ${theme.colors.buttonPrimaryTitle}` : '')};
   ${({ theme, variant }) => (variant === 'secondary' ? `color: ${theme.colors.buttonSecondaryTitle}` : '')};
   ${({ theme, variant }) => (variant === 'text' ? `color: ${theme.colors.buttonTextTitle}` : '')};
+  ${({ theme, variant }) => (variant === 'text-destructive' ? `color: ${theme.colors.negative}` : '')};
 `;

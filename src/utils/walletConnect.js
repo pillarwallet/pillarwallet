@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber as EthersBigNumber, Interface, utils } from 'ethers';
-import isEmpty from 'lodash.isempty';
+import { orderBy, isEmpty } from 'lodash';
 import t from 'translations/translate';
 
 // constants
@@ -36,6 +36,7 @@ import {
 // utils
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
+import { stripEmoji } from 'utils/strings';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -166,3 +167,54 @@ export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRe
       return REQUEST_TYPE.UNSUPPORTED;
   }
 };
+
+/**
+ * Heuristic way of parsing app name.
+ *
+ */
+export const parseWalletConnectAppName = (name: ?string): string => {
+  if (!name) return '';
+
+  let result = name;
+
+  // Remove text after hyphen
+  // eslint-disable-next-line prefer-destructuring
+  result = name.split('-')[0];
+
+  // Strip all emojis
+  result = stripEmoji(result);
+
+  // Final trim
+  result = result.trim();
+
+  // Fallback
+  if (result.length === 0) {
+    result = name;
+  }
+
+  // Limit length
+  if (result.length > 20) {
+    // eslint-disable-next-line i18next/no-literal-string
+    result = `${result.substring(0, 20)}…`;
+  }
+
+  return result;
+};
+
+/**
+ * Heuristic way of picking the best icon.
+ *
+ * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
+ * Otherwise just pick whatever is there. See test file for sample cases.
+ */
+export function parseWalletConnectAppIcon(icons: ?string[]): ?string {
+  if (!icons?.length) return null;
+  if (icons?.length === 1) return icons[0];
+
+  const pngUrls = icons.filter((url) => url.endsWith('.png'));
+  if (!pngUrls.length) return icons[1];
+
+  const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
+  return sortedPngUrls[0];
+}
+

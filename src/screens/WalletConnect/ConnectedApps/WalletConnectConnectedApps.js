@@ -27,6 +27,11 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
+import Modal from 'components/Modal';
+import WalletConnectDisconnectModal from 'screens/WalletConnect/DisconnectModal';
+
+// Types
+import type { WalletConnectConnector } from 'models/WalletConnect';
 
 // Local
 import AppListItem from './AppListItem';
@@ -39,8 +44,12 @@ function WalletConnectConnectedApps() {
 
   const items = useConnectedAppItems();
 
-  const renderItem = ({ title, iconUrl, chain }: AppItem) => {
-    return <AppListItem title={title} iconUrl={iconUrl} chain={chain} />;
+  const openDisconnectModal = (connector: WalletConnectConnector) => {
+    Modal.open(() => <WalletConnectDisconnectModal connector={connector} />);
+  };
+
+  const renderItem = ({ title, iconUrl, chain, connector }: AppItem) => {
+    return <AppListItem title={title} iconUrl={iconUrl} chain={chain} onPress={() => openDisconnectModal(connector)} />;
   };
 
   return (
