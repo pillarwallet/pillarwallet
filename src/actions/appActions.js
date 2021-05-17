@@ -269,10 +269,5 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
         ethAddress: address,
       },
     });
-    // eslint-disable-next-line i18next/no-literal-string
-    Instabug.setUserAttribute('address', address);
-    if (username) {
-      Instabug.setUserAttribute('ENS', username);
-    }
   };
 };
