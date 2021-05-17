@@ -178,7 +178,7 @@ android {
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
-        
+
         // branch.io
         resValue "string", "branch_io_app_link", "plr.test-app.link"
         resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
