@@ -45,7 +45,6 @@ import { ASSET } from 'constants/navigationConstants';
 import { hideAssetAction } from 'actions/userSettingsActions';
 
 // utils
-import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
@@ -176,7 +175,6 @@ class AssetsList extends React.Component<Props, State> {
   renderToken = ({ item: asset }) => {
     const { forceHideRemoval } = this.state;
     const {
-      activeAccount,
       baseFiatCurrency,
       navigation,
       scrollViewRef,
@@ -219,7 +217,6 @@ class AssetsList extends React.Component<Props, State> {
       amount: displayAmount,
       balance,
       balanceInFiat: formattedBalanceInFiat,
-      address: activeAccount && getAccountAddress(activeAccount),
       contractAddress: asset.address,
       icon: fullIconMonoUrl,
       wallpaper: fullIconWallpaperUrl,
@@ -267,7 +264,7 @@ class AssetsList extends React.Component<Props, State> {
               },
             );
           }}
-          address={props.address}
+          address={props.contractAddress}
           label={name}
           avatarUrl={fullIconUrl}
           balance={{

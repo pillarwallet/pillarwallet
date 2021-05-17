@@ -56,7 +56,7 @@ import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } fro
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
-import { getBalance, getRate, mapAssetDataToAssetOption } from 'utils/assets';
+import { getBalance, getRate } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -66,7 +66,7 @@ import { getTokenTransactionsFromHistory } from 'utils/history';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -97,6 +97,7 @@ type Props = {
   fetchReferralRewardsIssuerAddresses: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
+  activeAccountAddress: string,
 };
 
 const AssetCardWrapper = styled.View`
@@ -193,20 +194,9 @@ class AssetScreen extends React.Component<Props> {
   }
 
   goToSendTokenFlow = () => {
-    const {
-      navigation,
-      balances,
-      rates,
-      baseFiatCurrency,
-    } = this.props;
+    const { navigation } = this.props;
     const { assetData } = navigation.state.params;
-    const assetDataOption = mapAssetDataToAssetOption(assetData, balances, rates, baseFiatCurrency);
-
-    // it's mixed input in SendAsset component
-    // TODO: fix when this screen is refactored
-    const assetDataNavParam = { ...assetData, ...assetDataOption };
-
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData: assetDataNavParam });
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   goToExchangeFlow = (fromAssetCode: ?string, toAssetCode?: string) => {
@@ -214,13 +204,13 @@ class AssetScreen extends React.Component<Props> {
   };
 
   openAddFundsModal = () => {
-    const { navigation } = this.props;
-    const { assetData: { token, address } } = navigation.state.params;
+    const { navigation, activeAccountAddress } = this.props;
+    const { assetData: { token } } = navigation.state.params;
 
     Modal.open(() => (
       <AddFundsModal
         token={token}
-        receiveAddress={address}
+        receiveAddress={activeAccountAddress}
       />
     ));
   }
@@ -413,6 +403,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
