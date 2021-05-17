@@ -270,3 +270,4 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
     });
   };
 };
+
