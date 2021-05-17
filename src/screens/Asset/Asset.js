@@ -66,7 +66,7 @@ import { getTokenTransactionsFromHistory } from 'utils/history';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -97,6 +97,7 @@ type Props = {
   fetchReferralRewardsIssuerAddresses: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
+  activeAccountAddress: string,
 };
 
 const AssetCardWrapper = styled.View`
@@ -192,7 +193,9 @@ class AssetScreen extends React.Component<Props> {
     return !isEq;
   }
 
-  goToSendTokenFlow = (assetData: Object) => {
+  goToSendTokenFlow = () => {
+    const { navigation } = this.props;
+    const { assetData } = navigation.state.params;
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
@@ -201,13 +204,13 @@ class AssetScreen extends React.Component<Props> {
   };
 
   openAddFundsModal = () => {
-    const { navigation } = this.props;
-    const { assetData: { token, address } } = navigation.state.params;
+    const { navigation, activeAccountAddress } = this.props;
+    const { assetData: { token } } = navigation.state.params;
 
     Modal.open(() => (
       <AddFundsModal
         token={token}
-        receiveAddress={address}
+        receiveAddress={activeAccountAddress}
       />
     ));
   }
@@ -345,7 +348,7 @@ class AssetScreen extends React.Component<Props> {
           <AssetCardWrapper>
             <AssetButtons
               onPressReceive={this.openAddFundsModal}
-              onPressSend={() => this.goToSendTokenFlow(assetData)}
+              onPressSend={this.goToSendTokenFlow}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
@@ -400,6 +403,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
