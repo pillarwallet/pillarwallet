@@ -24,13 +24,19 @@ import { useNavigation } from 'react-navigation-hooks';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
+import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Contants
-import { ACCOUNTS } from 'constants/navigationConstants';
+import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+
+// Selectors
+import { useAccounts } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { User } from 'models/User';
@@ -42,15 +48,24 @@ type Props = {
 
 const UserNameAndImage = ({ user, profileImageWidth = 24 }: Props) => {
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
 
+  const accountCount = useAccounts().length;
+
   return (
-    <TouchableContainer onPress={() => navigation.navigate(ACCOUNTS)}>
+    <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
       <ProfileImage uri={userImageUri} userName={username} diameter={profileImageWidth} />
 
       {!!username && <UserName>{username}</UserName>}
+
+      {accountCount > 1 && (
+        <TouchableIconWrapper onpress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+          <Icon name="select" color={colors.basic020} />
+        </TouchableIconWrapper>
+      )}
     </TouchableContainer>
   );
 };
@@ -68,4 +83,7 @@ const UserName = styled(Text)`
   margin-left: ${spacing.small}px;
   flex-wrap: wrap;
   flex-shrink: 1;
+`;
+
+const TouchableIconWrapper = styled.TouchableOpacity`
 `;
