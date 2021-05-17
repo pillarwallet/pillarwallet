@@ -27,7 +27,6 @@ import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
-import { parseTokenAmount } from 'utils/common';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
