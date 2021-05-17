@@ -16,12 +16,12 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, FlatList } from 'react-native';
+import { RefreshControl, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import Intercom from 'react-native-intercom';
+import Instabug from 'instabug-reactnative';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
@@ -127,7 +127,6 @@ type Props = {
   fetchTransactionsHistory: Function,
   checkForMissedAssets: Function,
   hideHomeUpdateIndicator: () => void,
-  intercomNotificationsCount: number,
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
   history: Object[],
@@ -536,7 +535,6 @@ class HomeScreen extends React.Component<Props> {
 
   render() {
     const {
-      intercomNotificationsCount,
       navigation,
       history,
       openSeaTxHistory,
@@ -544,7 +542,6 @@ class HomeScreen extends React.Component<Props> {
       accounts,
       userEvents,
       badgesEvents,
-      theme,
       hideBadges,
       toggleBadges,
       walletConnectCallRequests,
@@ -587,10 +584,7 @@ class HomeScreen extends React.Component<Props> {
       ...sablierEvents,
     ];
 
-    const hasIntercomNotifications = !!intercomNotificationsCount;
-
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
-    const colors = getThemeColors(theme);
     const referralBannerText = isPillarRewardCampaignActive
       ? t('referralsContent.label.referAndGetRewards')
       : t('referralsContent.label.inviteFriends');
@@ -613,19 +607,7 @@ class HomeScreen extends React.Component<Props> {
             rightItems: [
               {
                 link: t('button.support'),
-                onPress: () => Intercom.displayMessenger(),
-                addon: hasIntercomNotifications && (
-                  <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      backgroundColor: colors.indicator,
-                      borderRadius: 4,
-                      marginLeft: 4,
-                      marginRight: -6,
-                    }}
-                  />
-                ),
+                onPress: () => Instabug.show(),
               },
             ],
             sideFlex: '25px',
@@ -721,7 +703,6 @@ class HomeScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   user: { data: user },
-  notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
@@ -746,7 +727,6 @@ const mapStateToProps = ({
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   user,
-  intercomNotificationsCount,
   badges,
   badgesEvents,
   accounts,

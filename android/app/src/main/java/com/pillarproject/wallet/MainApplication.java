@@ -5,7 +5,6 @@ import androidx.multidex.MultiDexApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import io.branch.rnbranch.RNBranchModule;
-import io.intercom.android.sdk.Intercom;
 import nativeShadow.NativeShadowPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -50,11 +49,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     public void onCreate() {
         super.onCreate();
         RNBranchModule.getAutoInstance(this);
-        if (BuildConfig.DEBUG) {
-            Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
-        } else {
-            Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
-        }
         SoLoader.init(this, /* native exopackage */ false);
 
         // react-native-async-storage custom max storage

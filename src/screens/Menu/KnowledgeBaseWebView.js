@@ -17,18 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const ADD_NOTIFICATION: 'ADD_NOTIFICATION' = 'ADD_NOTIFICATION';
-export const SHOW_HOME_UPDATE_INDICATOR: 'SHOW_HOME_UPDATE_INDICATOR' = 'SHOW_HOME_UPDATE_INDICATOR';
-export const HIDE_HOME_UPDATE_INDICATOR: 'HIDE_HOME_UPDATE_INDICATOR' = 'HIDE_HOME_UPDATE_INDICATOR';
 
-export const COLLECTIBLE = 'COLLECTIBLE';
-export const CONNECTION = 'CONNECTION';
-export const BCX = 'BCX';
-export const BADGE = 'badge';
+import React from 'react';
+import RecoveryPortalWebView from 'components/RecoveryPortalWebView';
+import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
-export const FCM_DATA_TYPE = {
-  BCX: 'BCX',
-  COLLECTIBLE: 'collectible',
-  PPN: 'ppn',
-  SMART_WALLET: 'smartWallet',
+type Props = {
+    navigation: NavigationScreenProp<mixed>
 };
+
+const KnowledgeBaseWebView = ({
+  navigation,
+}: Props) => {
+  return (
+    <RecoveryPortalWebView
+      title={t('settingsContent.settingsItem.faq.title')}
+      navigation={navigation}
+      goBackDismiss
+      isKnowledgeBaseUrl
+    />
+  );
+};
+
+export default KnowledgeBaseWebView;

@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import Intercom from 'react-native-intercom';
+import Instabug from 'instabug-reactnative';
 import Emoji from 'react-native-emoji';
 
 import t from 'translations/translate';
@@ -56,6 +56,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
+  KNOWLEDGE_BASE_WEB_VIEW,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -168,14 +169,14 @@ const Menu = ({
       title: t('settingsContent.settingsItem.support.title'),
       icon: 'help',
       iconColor: colors.helpIcon,
-      action: () => Intercom.displayMessenger(),
+      action: () => Instabug.show(),
     },
     {
       key: 'knowledgeBase',
       title: t('settingsContent.settingsItem.faq.title'),
       icon: 'dictionary',
       iconColor: colors.positive,
-      action: () => Intercom.displayHelpCenter(),
+      action: () => navigation.navigate(KNOWLEDGE_BASE_WEB_VIEW),
     },
     {
       key: 'storybook',

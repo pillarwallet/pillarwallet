@@ -19,7 +19,6 @@
 */
 
 import {
-  UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   ADD_NOTIFICATION,
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
@@ -29,19 +28,8 @@ import reducer from '../notificationsReducer';
 describe('Notifications reducer', () => {
   const initialState = {
     data: [],
-    intercomNotificationsCount: 0,
     showHomeUpdateIndicator: false,
   };
-
-  it('handles UPDATE_INTERCOM_NOTIFICATIONS_COUNT', () => {
-    const action = {
-      type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-      payload: 3,
-    };
-    const expected = { intercomNotificationsCount: 3 };
-
-    expect(reducer(initialState, action)).toMatchObject(expected);
-  });
 
   it('handles ADD_NOTIFICATION', () => {
     const prevNotifications = [{

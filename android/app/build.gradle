@@ -185,7 +185,7 @@ android {
         resValue "string", "branch_io_key_live", ""
         resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
 
-        resValue "string", "instabug_token", ""
+        resValue "string", "instabug_token", "32deec0471648f969b7ec913a7b0a1d0"
     }
 
     splits {
@@ -260,12 +260,11 @@ dependencies {
 
     // Custom deps
 
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation project(':react-native-notifications')
     implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-notifications
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
-    implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
-    implementation 'io.intercom.android:intercom-sdk-fcm:5.+' // react-native-intercom
 
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching

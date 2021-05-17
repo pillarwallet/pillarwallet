@@ -23,7 +23,6 @@ import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 // constants
@@ -125,12 +124,6 @@ export const updateFcmTokenAction = (walletId: string) => {
     });
     if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-    Intercom.sendTokenToIntercom(fcmToken).catch(e => {
-      // Unable to send the FCM token to Intercom
-      reportLog(`Unable to send FCM token to Intercom: ${e.message}`, e);
-
-      return null;
-    });
     await api.updateFCMToken(walletId, fcmToken);
   };
 };
@@ -484,9 +477,6 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 
 export const resetAppServicesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // reset intercom user
-    Intercom.logout().catch(() => null);
-
     // reset firebase fcm
     await firebaseIid
       .delete()

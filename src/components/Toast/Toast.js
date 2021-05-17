@@ -21,7 +21,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components/native';
 import { StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import Intercom from 'react-native-intercom';
+import Instabug from 'instabug-reactnative';
 import t from 'translations/translate';
 
 import { noop } from 'utils/common';
@@ -61,7 +61,7 @@ type Instance = {
 type ListUpdate = ToastItem[] | ((prev: ToastItem[]) => ToastItem[]);
 
 const AUTOCLOSE_DELAY = 2000;
-const goToSupport = () => Intercom.displayMessenger();
+const goToSupport = () => Instabug.show();
 
 export default class Toast {
   static _toastInstances: Instance[] = [];
