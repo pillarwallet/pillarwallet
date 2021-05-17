@@ -1152,7 +1152,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
-  initWalletConnect: () => dispatch(initWalletConnectSessions()),
+  initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
