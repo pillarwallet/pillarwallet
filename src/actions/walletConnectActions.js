@@ -162,7 +162,8 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
       return;
     }
 
-    if (!isActiveAccountDeployedOnEthereumSelector(getState())) {
+    const requiresSmartWalletDeployment = !isActiveAccountDeployedOnEthereumSelector(getState());
+    if (requiresSmartWalletDeployment) {
       Toast.show({
         message: t('toast.walletConnectSmartWalletNotActive'),
         emoji: 'point_up',

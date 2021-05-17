@@ -49,8 +49,8 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
 export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
   if (!account || !isEtherspotAccount(account)) return false;
 
-  const typedExtra: EtherspotAccount = account.extra;
-  return typedExtra.status === AccountStates.Deployed;
+  const etherspotAccount: EtherspotAccount = account.extra;
+  return etherspotAccount.status === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (
