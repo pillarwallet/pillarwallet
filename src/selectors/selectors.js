@@ -124,3 +124,4 @@ export const activeAccountExchangeAllowancesSelector = createSelector(
 );
 
 export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);
+

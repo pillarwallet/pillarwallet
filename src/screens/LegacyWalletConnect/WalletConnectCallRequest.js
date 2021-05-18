@@ -127,6 +127,7 @@ const WalletConnectCallRequestScreen = ({
   useEffect(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return;
     estimateCallRequestTransaction(callRequest);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const colors = useThemeColors();

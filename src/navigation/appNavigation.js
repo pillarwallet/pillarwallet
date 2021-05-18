@@ -49,10 +49,10 @@ import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
-import WalletConnectScreen from 'screens/WalletConnect';
-import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletConnectConnectorRequest';
-import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
-import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
+import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
+import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
+import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
+import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
@@ -400,7 +400,7 @@ const walletConnectCallRequestFlow = createStackNavigator(
 // WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
-    [WALLETCONNECT]: WalletConnectScreen,
+    [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
     [EXPLORE_APPS]: ExploreAppsScreen,

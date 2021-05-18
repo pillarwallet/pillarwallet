@@ -90,6 +90,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
     disconnectSessionByUrl,
     connectToConnector,
     estimateCallRequestTransaction,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     activeConnectors,
     callRequests,

@@ -91,6 +91,21 @@ export const ColumnRight: React.ComponentType<ViewProps> = styled.View`
   align-items: flex-end;
 `;
 
+type CenterProps = {|
+  children: React.Node,
+  flex?: number,
+  height?: string | number,
+  weight?: string | number,
+|};
+
+export const Center: React.ComponentType<CenterProps> = styled.View`
+  ${({ flex }) => flex != null && `flex: ${flex};`};
+  ${({ height }) => height != null && `height: ${height}px;`}
+  ${({ width }) => width != null && `width: ${width}px;`}
+  justify-content: center;
+  align-items: center;
+`;
+
 type SpacingProps = {|
   h?: number,
   w?: number,
