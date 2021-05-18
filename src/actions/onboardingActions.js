@@ -515,6 +515,10 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
 
 export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    // reset if back was pressed and new mnemonic entered
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
+    dispatch({ type: SET_ONBOARDING_USER, payload: null });
+
     logBreadcrumb(
       'onboarding',
       'onboardingAction.js: Dispatching action: importWalletFromMnemonicAction ${SET_IMPORTING_WALLET}',
