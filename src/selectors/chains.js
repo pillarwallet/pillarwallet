@@ -18,21 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// selectors
-import { useRootSelector, useActiveAccount } from 'selectors';
+// Selectors
+import { activeAccountSelector, useRootSelector } from 'selectors';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // utils
-import { isEtherspotAccount } from 'utils/accounts';
-
-// constants
-import { CHAIN } from 'models/Chain';
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // types
-import type { Chain } from 'models/Chain';
+import { type Chain, CHAIN } from 'models/Chain';
+import type { RootReducerState } from 'reducers/rootReducer';
 
-export const useSupportedChains = (): Chain[] => {
-  const activeAccount = useActiveAccount();
+export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
+  const activeAccount = activeAccountSelector(root);
 
   if (isEtherspotAccount(activeAccount)) {
     return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
@@ -41,9 +40,20 @@ export const useSupportedChains = (): Chain[] => {
   return [CHAIN.ETHEREUM];
 };
 
-export const useIsActiveAccountDeployedOnEthereum = () => {
-  // TODO: check etherspot for being deployed
-  const activeAccount = useActiveAccount();
-  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
-  return isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
+export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);
+
+export const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): boolean => {
+  const activeAccount = activeAccountSelector(root);
+  if (isEtherspotAccount(activeAccount)) {
+    return isEtherspotAccountDeployed(activeAccount);
+  }
+
+  if (isArchanovaAccount(activeAccount)) {
+    return isArchanovaWalletActivatedSelector(root);
+  }
+
+  return false;
 };
+
+export const useIsActiveAccountDeployedOnEthereum = (): boolean =>
+  useRootSelector(isActiveAccountDeployedOnEthereumSelector);
