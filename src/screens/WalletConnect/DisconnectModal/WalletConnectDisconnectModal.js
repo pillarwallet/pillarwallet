@@ -52,8 +52,6 @@ function WalletConnectDisconnectModal({ connector }: Props) {
 
   const { disconnectSessionByUrl } = useWalletConnect();
 
-  const { app, chain, iconUrl } = getViewData(connector);
-
   const disconnect = () => {
     const sessionUrl = connector.peerMeta?.url;
     if (!sessionUrl) {
@@ -74,6 +72,7 @@ function WalletConnectDisconnectModal({ connector }: Props) {
     ref.current?.close();
   };
 
+  const { app, chain, iconUrl } = getViewData(connector);
   const config = configs[chain];
 
   return (
