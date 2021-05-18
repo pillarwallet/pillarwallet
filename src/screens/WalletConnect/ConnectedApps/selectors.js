@@ -18,13 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { orderBy } from 'lodash';
-
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { mapNotNil } from 'utils/array';
+import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
 import { type Chain, chainFromChainId } from 'models/Chain';
@@ -35,6 +34,7 @@ export type AppItem = {|
   title: string,
   chain: Chain,
   iconUrl: ?string,
+  connector: WalletConnectConnector,
 |};
 
 export function useConnectedAppItems(): AppItem[] {
@@ -44,28 +44,11 @@ export function useConnectedAppItems(): AppItem[] {
 
 function mapConnectorToItem(connector: WalletConnectConnector): ?AppItem {
   const key = `${connector.peerId}-${connector.chainId}`;
-  const title = connector.peerMeta?.name;
+  const title = parsePeerName(connector.peerMeta?.name);
   const chain = chainFromChainId[connector.chainId];
   if (!title || !chain) return null;
 
-  const iconUrl = mapConnectorIconsToIcon(connector.peerMeta?.icons);
+  const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
 
-  return { key, title, chain, iconUrl };
-}
-
-/**
- * Heuristic way of picking the best icon.
- *
- * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
- * Otherwise just pick whatever is there. See test file for sample cases.
- */
-export function mapConnectorIconsToIcon(connectorIcons: ?string[]): ?string {
-  if (!connectorIcons?.length) return null;
-  if (connectorIcons?.length === 1) return connectorIcons[0];
-
-  const pngUrls = connectorIcons.filter(url => url.endsWith('.png'));
-  if (!pngUrls.length) return connectorIcons[1];
-
-  const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
-  return sortedPngUrls[0];
+  return { key, title, chain, iconUrl, connector };
 }
