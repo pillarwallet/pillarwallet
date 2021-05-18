@@ -172,7 +172,7 @@ export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRe
  * Heuristic way of parsing app name.
  *
  */
-export const parseWalletConnectAppName = (name: ?string): string => {
+export const parsePeerName = (name: ?string): string => {
   if (!name) return '';
 
   let result = name;
@@ -207,7 +207,7 @@ export const parseWalletConnectAppName = (name: ?string): string => {
  * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
  * Otherwise just pick whatever is there. See test file for sample cases.
  */
-export function parseWalletConnectAppIcon(icons: ?string[]): ?string {
+export function pickPeerIcon(icons: ?string[]): ?string {
   if (!icons?.length) return null;
   if (icons?.length === 1) return icons[0];
 

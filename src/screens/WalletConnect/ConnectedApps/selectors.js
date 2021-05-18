@@ -23,7 +23,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { parseWalletConnectAppName, parseWalletConnectAppIcon } from 'utils/walletConnect';
+import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
 import { type Chain, chainFromChainId } from 'models/Chain';
@@ -44,11 +44,11 @@ export function useConnectedAppItems(): AppItem[] {
 
 function mapConnectorToItem(connector: WalletConnectConnector): ?AppItem {
   const key = `${connector.peerId}-${connector.chainId}`;
-  const title = parseWalletConnectAppName(connector.peerMeta?.name);
+  const title = parsePeerName(connector.peerMeta?.name);
   const chain = chainFromChainId[connector.chainId];
   if (!title || !chain) return null;
 
-  const iconUrl = parseWalletConnectAppIcon(connector.peerMeta?.icons);
+  const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
 
   return { key, title, chain, iconUrl, connector };
 }

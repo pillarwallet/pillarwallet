@@ -18,22 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { parseWalletConnectAppName } from '../walletConnect';
+import { parsePeerName } from '../walletConnect';
 
-describe('parseWalletConnectAppName', () => {
+describe('parsePeerName', () => {
   it('handles PancakeSwap name', () => {
     // eslint-disable-next-line max-len
-    const result = parseWalletConnectAppName('🥞 PancakeSwap - A next evolution DeFi exchange on Binance Smart Chain (BSC)');
+    const result = parsePeerName('🥞 PancakeSwap - A next evolution DeFi exchange on Binance Smart Chain (BSC)');
     expect(result).toEqual('PancakeSwap');
   });
 
   it('handles Aave name', () => {
-    const result = parseWalletConnectAppName('Aave - Open Source Liquidity Protocol');
+    const result = parsePeerName('Aave - Open Source Liquidity Protocol');
     expect(result).toEqual('Aave');
   });
 
   it('handles long names of Iceland vulcanoes', () => {
-    const result = parseWalletConnectAppName('Eyjafjallajökull Brennisteinsfjöll Loki-Fögrufjöll');
+    const result = parsePeerName('Eyjafjallajökull Brennisteinsfjöll Loki-Fögrufjöll');
     expect(result).toEqual('Eyjafjallajökull Bre…');
   });
 });

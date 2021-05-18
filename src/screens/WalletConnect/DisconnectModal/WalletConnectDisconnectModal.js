@@ -31,7 +31,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { parseWalletConnectAppName, parseWalletConnectAppIcon } from 'utils/walletConnect';
+import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
 import { chainFromChainId } from 'models/Chain';
@@ -52,7 +52,7 @@ function WalletConnectDisconnectModal({ connector }: Props) {
   const { app, chain, iconUrl } = getViewData(connector);
 
   const disconnect = () => {
-    const sessionUrl = '';//connector.peerMeta?.url;
+    const sessionUrl = connector.peerMeta?.url;
     if (!sessionUrl) {
       Toast.show({
         message: t('toast.missingSessionUrl'),
@@ -92,9 +92,9 @@ function WalletConnectDisconnectModal({ connector }: Props) {
 export default WalletConnectDisconnectModal;
 
 const getViewData = (connector: WalletConnectConnector) => {
-  const app = parseWalletConnectAppName(connector.peerMeta?.name);
+  const app = parsePeerName(connector.peerMeta?.name);
   const chain = chainFromChainId[connector.chainId];
-  const iconUrl = parseWalletConnectAppIcon(connector.peerMeta?.icons);
+  const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
   return { app, chain, iconUrl };
 };
 
