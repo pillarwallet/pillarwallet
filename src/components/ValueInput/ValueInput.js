@@ -36,7 +36,14 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, wrapBigNumber, noop, formatFiat } from 'utils/common';
+import {
+  formatAmount,
+  isValidNumber,
+  wrapBigNumber,
+  hasTooMuchDecimals,
+  noop,
+  formatFiat,
+} from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -198,18 +205,18 @@ export const ValueInputComponent = ({
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
-      const split = newValue.split('.');
-      // only allow 2 decimals in fiat mode
-      if (split.length <= 2 && !(split[1] && split[1].length > 2)) {
-        setValueInFiat(newValue);
-        const convertedValue =
-        getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
-        onValueChange(convertedValue);
-      }
+      if (hasTooMuchDecimals(newValue, 2)) return;
+
+      const tokenValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      const truncatedTokenValue = formatAmount(tokenValue, assetData.decimals);
+      onValueChange(truncatedTokenValue);
+      setValueInFiat(newValue);
     } else {
+      if (hasTooMuchDecimals(newValue, assetData.decimals)) return;
+
+      onValueChange(newValue);
       const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
-      onValueChange(newValue);
     }
   };
 
