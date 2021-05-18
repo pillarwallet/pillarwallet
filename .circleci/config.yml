@@ -755,6 +755,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/sentry-instabug-deps-upgrade
 
       - appcenter_ios:
           requires:
@@ -763,6 +764,8 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/sentry-instabug-deps-upgrade
+
 
       - appcenter_android:
           context: docker-hub-creds
@@ -772,6 +775,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/sentry-instabug-deps-upgrade
 
   build_and_deploy_production:
     jobs:
