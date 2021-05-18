@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { parsePeerName } from '../walletConnect';
+import { parsePeerName, pickPeerIcon } from '../walletConnect';
 
 describe('parsePeerName', () => {
   it('handles PancakeSwap name', () => {
@@ -35,5 +35,39 @@ describe('parsePeerName', () => {
   it('handles long names of Iceland vulcanoes', () => {
     const result = parsePeerName('Eyjafjallajökull Brennisteinsfjöll Loki-Fögrufjöll');
     expect(result).toEqual('Eyjafjallajökull Bre…');
+  });
+});
+
+describe('pickPeerIcon', () => {
+  it('handles Aave icons', () => {
+    const icons = [
+      'https://app.aave.com/favicon32.ico',
+      'https://app.aave.com/favicon.png',
+      'https://app.aave.com/favicon32.png',
+      'https://app.aave.com/favicon64.png',
+    ];
+    const result = pickPeerIcon(icons);
+    expect(result).toEqual('https://app.aave.com/favicon64.png');
+  });
+
+  it('handles Uniswap icons', () => {
+    const icons = [
+      'https://app.uniswap.org/./favicon.png',
+      'https://app.uniswap.org/./images/192x192_App_Icon.png',
+      'https://app.uniswap.org/./images/512x512_App_Icon.png',
+    ];
+    const result = pickPeerIcon(icons);
+    expect(result).toEqual('https://app.uniswap.org/./images/512x512_App_Icon.png');
+  });
+
+  it('handles SushiSwap icons', () => {
+    const icons = [
+      'https://app.sushi.com/images/favicon-32x32.png',
+      'https://app.sushi.com/images/apple-touch-icon.png',
+      'https://app.sushi.com/images/favicon-32x32.png',
+      'https://app.sushi.com/images/favicon-16x16.png',
+    ];
+    const result = pickPeerIcon(icons);
+    expect(result).toEqual('https://app.sushi.com/images/apple-touch-icon.png');
   });
 });
