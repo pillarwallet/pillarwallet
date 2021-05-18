@@ -26,6 +26,7 @@ export const DOCUMENT_TYPE = 'document.type';
 const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
 
 export default prismicClient;
+
 type QueryOptions = {|
   pageSize?: number,
 |};

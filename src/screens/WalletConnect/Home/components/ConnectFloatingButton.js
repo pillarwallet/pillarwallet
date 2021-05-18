@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 
 // Components
@@ -34,16 +33,11 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Selectors
 import { useRootSelector } from 'selectors';
 
-// Actions
-import { executeDeepLinkAction } from 'actions/deepLinkActions';
-
-
 function ConnectFloatingButton() {
   const { t } = useTranslation();
 
   const { connectToConnector } = useWalletConnect();
 
-  const dispatch = useDispatch();
   const isOnline = useRootSelector(root => root.session.data.isOnline);
 
   const showScannerModal = () => {
@@ -59,15 +53,13 @@ function ConnectFloatingButton() {
   };
 
   const validateUri = (uri: string): boolean => {
-    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
+    return uri.startsWith('wc:');
   };
 
   const handleUri = (uri: string) => {
-    if (uri.startsWith('wc:')) {
-      connectToConnector(uri);
-    } else if (uri.startsWith('pillarwallet:')) {
-      dispatch(executeDeepLinkAction(uri));
-    }
+    if (!uri.startsWith('wc:')) return;
+
+    connectToConnector(uri);
   };
 
   const buttons = [

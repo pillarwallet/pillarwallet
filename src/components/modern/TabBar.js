@@ -43,24 +43,30 @@ type Props<Key: ?string> = {
 };
 
 const TabBar = <Key: ?string>({ items, activeTab, onActiveTabChange, style }: Props<Key>) => {
+  const renderItem = ({ key, title }: TabItem<Key>) => {
+    if (activeTab === key) {
+      return (
+        <TouchableWithoutFeedback key={key} onPress={() => onActiveTabChange(key)}>
+          <TabContainer>
+            <ActiveTabTitle>{title}</ActiveTabTitle>
+            <Underline />
+          </TabContainer>
+        </TouchableWithoutFeedback>
+      );
+    }
+
+    return (
+      <TouchableWithoutFeedback key={key} onPress={() => onActiveTabChange(key)}>
+        <TabContainer>
+          <TabTitle>{title}</TabTitle>
+        </TabContainer>
+      </TouchableWithoutFeedback>
+    );
+  };
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.scrollView, style]}>
-      {items.map(({ key, title }) => {
-        return activeTab === key ? (
-          <TouchableWithoutFeedback key={key} onPress={() => onActiveTabChange(key)}>
-            <TabContainer>
-              <ActiveTabTitle>{title}</ActiveTabTitle>
-              <Underline />
-            </TabContainer>
-          </TouchableWithoutFeedback>
-        ) : (
-          <TouchableWithoutFeedback key={key} onPress={() => onActiveTabChange(key)}>
-            <TabContainer>
-              <TabTitle>{title}</TabTitle>
-            </TabContainer>
-          </TouchableWithoutFeedback>
-        );
-      })}
+      {items.map(renderItem)}
     </ScrollView>
   );
 };

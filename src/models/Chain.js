@@ -36,8 +36,8 @@ export type ChainRecord<T> = {|
 
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
-  ETHEREUM: '1',
-  POLYGON: '137',
-  BINANCE: '56',
-  XDAI: '100',
+  ETHEREUM: 1,
+  POLYGON: 137,
+  BINANCE: 56,
+  XDAI: 100,
 };

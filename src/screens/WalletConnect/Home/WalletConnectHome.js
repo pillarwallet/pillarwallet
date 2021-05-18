@@ -85,11 +85,7 @@ function WalletConnectHome() {
   };
 
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
-  const renderListRow = (items: WalletConnectCmsApp[]) => {
-    return (
-      <ListRow>{items.map(renderItem)}</ListRow>
-    );
-  };
+  const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
   const renderItem = (item: WalletConnectCmsApp) => {
     const isEthereumOnly = activeChain === CHAIN.ETHEREUM || isEqual(item.chains.length, [CHAIN.ETHEREUM]);

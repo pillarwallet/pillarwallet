@@ -81,10 +81,10 @@ function parseChains(item: Prismic.Document<AppDto>): Chain[] {
   const chainIds = parse.arrayOrEmpty(item.data?.supportedchains, (chain) => parse.stringOrNull(chain.chainid));
 
   const result = [];
-  if (chainIds.includes(CHAIN_ID.POLYGON)) result.push(CHAIN.POLYGON);
-  if (chainIds.includes(CHAIN_ID.BINANCE)) result.push(CHAIN.BINANCE);
-  if (chainIds.includes(CHAIN_ID.XDAI)) result.push(CHAIN.XDAI);
-  if (chainIds.includes(CHAIN_ID.ETHEREUM)) result.push(CHAIN.ETHEREUM);
+  if (chainIds.includes(CHAIN_ID.POLYGON.toString())) result.push(CHAIN.POLYGON);
+  if (chainIds.includes(CHAIN_ID.BINANCE.toString())) result.push(CHAIN.BINANCE);
+  if (chainIds.includes(CHAIN_ID.XDAI.toString())) result.push(CHAIN.XDAI);
+  if (chainIds.includes(CHAIN_ID.ETHEREUM.toString())) result.push(CHAIN.ETHEREUM);
 
   return result;
 }
