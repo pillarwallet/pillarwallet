@@ -251,6 +251,20 @@ export const truncateAmount = (amount: Value, precision: ?number): string => {
     : amountBN.toString();
 };
 
+/**
+ * Checks if given value has too much decimal places for available precission.
+ * It also rejects NaNs & infinite values.
+ */
+export const hasTooMuchDecimals = (value: Value, decimals: ?number): boolean => {
+  const valueBN = wrapBigNumber(value);
+
+  if (!valueBN.isFinite()) return false;
+
+  if (decimals == null) return true;
+
+  return valueBN.decimalPlaces() > decimals;
+};
+
 export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
