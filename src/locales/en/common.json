@@ -635,7 +635,10 @@
     "disconnectModal": {
       "title": "Disconnect",
       "body": "Are you sure you would like to disconnect from {{app}} on {{chain}}?",
-      "disconnect": "Yes, disconnect"
+      "disconnect": "Yes, disconnect",
+      "toast": {
+        "missingSessionUrl": "Unable to disconnect the app because session URL is missing."
+      }
     }
   },
 

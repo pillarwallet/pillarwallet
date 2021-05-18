@@ -21,8 +21,12 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import BottomModal from 'components/modern/BottomModal';
 import Button from 'components/modern/Button';
-import Text from 'components/modern/Text';
 import Image from 'components/Image';
+import Toast from 'components/Toast';
+import Text from 'components/modern/Text';
+
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -41,36 +45,46 @@ function WalletConnectDisconnectModal({ connector }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('walletConnect.disconnectModal');
   const configs = useChainsConfig();
 
-  console.log("Disconnect", connector);
-
   const ref = React.useRef();
+
+  const { disconnectSessionByUrl } = useWalletConnect();
 
   const { app, chain, iconUrl } = getViewData(connector);
 
+  const disconnect = () => {
+    const sessionUrl = '';//connector.peerMeta?.url;
+    if (!sessionUrl) {
+      Toast.show({
+        message: t('toast.missingSessionUrl'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    disconnectSessionByUrl(sessionUrl);
+    ref.current?.close();
+  };
+
+  const close = () => {
+    ref.current?.close();
+  };
+
   const config = configs[chain];
 
-  const confirmRequest = () => {
-    // TODO: perform actual confirmation
-    ref.current?.close();
-  };
-
-  const rejectRequest = () => {
-    // TODO: perform actual rejection
-    ref.current?.close();
-  };
-
   return (
-    <BottomModal ref={ref} title={t('title')}>
+    <BottomModal ref={ref} title={t('title')} variant="destructive">
       <Text color={config.color} style={styles.summary}>
         {app} {tRoot('label.dotSeparator')} {config.titleShort}
       </Text>
 
       <Image source={{ uri: iconUrl }} style={styles.icon} />
 
-      <Text style={styles.body}>{t('body', { app, chain: config.titleShort })}</Text>
+      <Text style={styles.body}>{t('body', { app, chain: config.title })}</Text>
 
-      <Button title={t('disconnect')} onPress={confirmRequest} style={styles.button} />
-      <Button title={tRoot('button.reject')} onPress={rejectRequest} variant="text" style={styles.button} />
+      <Button title={t('disconnect')} onPress={disconnect} style={styles.button} variant="primary-destructive" />
+      <Button title={tRoot('button.cancel')} onPress={close} variant="text" style={styles.button} />
     </BottomModal>
   );
 }
