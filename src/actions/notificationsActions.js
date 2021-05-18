@@ -181,6 +181,7 @@ export const subscribeToPushNotificationsAction = () => {
       firebaseMessaging.setBackgroundMessageHandler(async remoteMessage => {
         Replies.showNotificationAndroid(remoteMessage.data);
       });
+
       notificationsListener = firebaseMessaging.onMessage(debounce(message => {
         dispatch(onFirebaseMessageAction(message));
       }, 500));
