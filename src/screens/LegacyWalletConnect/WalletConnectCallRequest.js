@@ -59,7 +59,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountDeployedSelector } from 'selectors/wallets';
+import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
@@ -73,7 +73,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  isActiveAccountDeployed: boolean,
+  isActiveAccountDeployedOnEthereum: boolean,
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
@@ -112,7 +112,7 @@ const WalletConnectCallRequestScreen = ({
   balances,
   feeInfo,
   estimateErrorMessage,
-  isActiveAccountDeployed,
+  isActiveAccountDeployedOnEthereum,
   accountAssets,
   supportedAssets,
 }: Props) => {
@@ -125,7 +125,7 @@ const WalletConnectCallRequestScreen = ({
   useEffect(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return;
     estimateCallRequestTransaction(callRequest);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const colors = useThemeColors();
@@ -141,7 +141,7 @@ const WalletConnectCallRequestScreen = ({
       return t('walletConnectContent.error.unsupportedRequestCallRequestType');
     }
 
-    if (!isActiveAccountDeployed) {
+    if (!isActiveAccountDeployedOnEthereum) {
       return t('walletConnectContent.error.smartWalletNeedToBeActivated');
     }
 
@@ -171,7 +171,7 @@ const WalletConnectCallRequestScreen = ({
     return null;
   }, [
     requestType,
-    isActiveAccountDeployed,
+    isActiveAccountDeployedOnEthereum,
     transactionPayload,
     isEstimating,
     estimateErrorMessage,
@@ -243,9 +243,7 @@ const WalletConnectCallRequestScreen = ({
         {!estimateErrorMessage && (
           <LabeledRow>
             <Label>{t('transactions.label.transactionFee')}</Label>
-            <LabelSub>
-              {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
-            </LabelSub>
+            <LabelSub>{t('walletConnectContent.paragraph.finalFeeMightBeHigher')}</LabelSub>
             {!!isEstimating && <Spinner style={{ marginTop: 15, alignSelf: 'flex-start' }} size={20} trackWidth={2} />}
             {!isEstimating && <Value>{feeDisplayValue}</Value>}
           </LabeledRow>
@@ -276,12 +274,14 @@ const WalletConnectCallRequestScreen = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{
-          title: t([
-            `walletConnectContent.title.requestType.${requestType}`,
-            'walletConnectContent.title.requestType.default',
-          ]),
-        }],
+        centerItems: [
+          {
+            title: t([
+              `walletConnectContent.title.requestType.${requestType}`,
+              'walletConnectContent.title.requestType.default',
+            ]),
+          },
+        ],
       }}
     >
       {requestType !== REQUEST_TYPE.UNSUPPORTED && (
@@ -297,20 +297,13 @@ const WalletConnectCallRequestScreen = ({
             <OptionButton
               onPress={onApprovePress}
               disabled={isSubmitDisabled}
-              title={
-                t([
-                  `walletConnectContent.button.approveType.${requestType}`,
-                  'walletConnectContent.button.approveType.default',
-                ])
-              }
+              title={t([
+                `walletConnectContent.button.approveType.${requestType}`,
+                'walletConnectContent.button.approveType.default',
+              ])}
             />
           )}
-          <OptionButton
-            danger
-            transparent
-            onPress={onRejectPress}
-            title={t('button.reject')}
-          />
+          <OptionButton danger transparent onPress={onRejectPress} title={t('button.reject')} />
         </FooterWrapper>
       </Footer>
     </ContainerWithHeader>
@@ -327,7 +320,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  isActiveAccountDeployed: isActiveAccountDeployedSelector,
+  isActiveAccountDeployedOnEthereum: isActiveAccountDeployedOnEthereumSelector,
   activeAccount: activeAccountSelector,
   supportedAssets: supportedAssetsSelector,
   accountAssets: accountAssetsSelector,
