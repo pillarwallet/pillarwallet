@@ -216,7 +216,7 @@ const NewProfile = ({
             color: iconColor,
           }}
           inputProps={{
-            value: usernameValue,
+            value: usernameValue || '',
             autoCapitalize: 'none',
             disabled: !!existingUser,
             autoFocus: true,
