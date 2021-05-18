@@ -1,0 +1,6 @@
+{
+  "name": "WalletConnectConnectedApps",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./WalletConnectConnectedApps.js"
+}

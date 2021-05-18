@@ -41,3 +41,10 @@ export const CHAIN_ID = {
   BINANCE: 56,
   XDAI: 100,
 };
+
+export const chainFromChainId = {
+  [CHAIN_ID.ETHEREUM]: CHAIN.ETHEREUM,
+  [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
+  [CHAIN_ID.XDAI]: CHAIN.XDAI,
+  [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
+};
