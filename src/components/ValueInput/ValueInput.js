@@ -199,6 +199,7 @@ export const ValueInputComponent = ({
     setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
 
     setCalculateBalanceSendPercent(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {

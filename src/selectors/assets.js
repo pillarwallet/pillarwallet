@@ -21,7 +21,8 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
-import type { Assets, Balance, Rates } from 'models/Asset';
+
+// utils
 import {
   findFirstArchanovaAccount,
   findFirstEtherspotAccount,
@@ -29,7 +30,15 @@ import {
   getEnabledAssets,
 } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+
+// constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
+
+// types
+import type { Asset, Assets, Balance, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
+
+
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -116,8 +125,17 @@ export const allAccountsAssetsSelector = createSelector(
   },
 );
 
+/**
+ * Returns array of assets to be used for asset data lookup.
+ */
+export const assetRegistrySelector: (RootReducerState) => Asset[] = createSelector(
+  allAccountsAssetsSelector,
+  supportedAssetsSelector,
+  (assets, supportedAssets) => [...getAssetsAsList(assets), ...supportedAssets],
+);
+
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
-  assetsSelector,
+  allAccountsAssetsSelector,
   supportedAssetsSelector,
   assetSelector,
   (assets, supportedAssets, asset) => {

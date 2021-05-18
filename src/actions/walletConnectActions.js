@@ -42,7 +42,7 @@ import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConsta
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress, isArchanovaAccount } from 'utils/accounts';
+import { getAccountAddress } from 'utils/accounts';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
 import { getAssetsAsList } from 'utils/assets';
@@ -57,9 +57,9 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 import Toast from 'components/Toast';
 
 // selectors
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
@@ -162,8 +162,7 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
       return;
     }
 
-    const requiresSmartWalletDeployment = isArchanovaAccount(activeAccount)
-      && !isArchanovaWalletActivatedSelector(getState());
+    const requiresSmartWalletDeployment = !isActiveAccountDeployedOnEthereumSelector(getState());
     if (requiresSmartWalletDeployment) {
       Toast.show({
         message: t('toast.walletConnectSmartWalletNotActive'),

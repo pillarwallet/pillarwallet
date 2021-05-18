@@ -25,11 +25,12 @@
   "negativeValue": "- {{value}}",
   "positiveTokenValue": "+ {{value}} {{token}}",
   "negativeTokenValue": "- {{value}} {{token}}",
-  "positivePercentValue": "+ {{value}} %",
-  "negativePercentValue": "- {{value}} %",
+  "fiatValue": "{{symbol}}{{value}}",
+  "percentValue": "{{value}}%",
+  "positivePercentValue": "+{{value}}%",
+  "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
-  "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
@@ -43,9 +44,9 @@
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
-  "inTimeDaysHoursMinutes":"In {{days}}d {{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
+  "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+  "inTimeDaysHoursMinutes": "In {{days}}d {{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutesLayout": "{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
   "hour": "{{count}} hour",
@@ -55,11 +56,45 @@
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 
-  "navigationTabs": {
-    "home": "Home",
-    "assets": "Assets",
-    "connect": "Connect",
-    "services": "Services"
+  "units": {
+    "1e3": "{{value}}K",
+    "1e6": "{{value}}M",
+    "1e9": "{{value}}B",
+    "1e12": "{{value}}T"
+  },
+
+  "chains": {
+    "ethereum": "Ethereum Mainnet",
+    "binance": "Binance Smart Chain",
+    "xdai": "xDai Network",
+    "polygon": "Polygon"
+  },
+
+  "chainsShort": {
+    "ethereum": "Mainnet",
+    "binance": "BSC",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+
+  "assetCategories": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
+    "liquidityPools": "Liquidity pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles"
+  },
+
+  "assetCategoriesShort": {
+    "wallet": "Wallet",
+    "deposits": "Deposits",
+    "investments": "Investments",
+    "liquidityPools": "Pools",
+    "rewards": "Rewards",
+    "datasets": "Datasets",
+    "collectibles": "Collectibles"
   },
 
   "title": {
@@ -100,6 +135,7 @@
     "activated": "Activated",
     "added": "Added",
     "adding": "Adding",
+    "all": "All",
     "backedUp": "Backup secured",
     "badge": "Badge",
     "canceled": "Canceled",
@@ -107,6 +143,7 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
+    "currentApyFormat": "Current APY: {{value}}",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -143,6 +180,7 @@
     "sending": "Sending",
     "sent": "Sent",
     "settle": "Settle",
+    "settlement": "Settlement",
     "smartWalletAccountDevice": "Smart Wallet account device",
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
@@ -153,6 +191,7 @@
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
     "toSmartWallet": "to Smart Wallet",
+    "wallet": "Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
     "yesterday": "Yesterday",
@@ -214,13 +253,17 @@
     "fromWalletToRari": "Wallet → Rari Capital",
     "rewardsClaimed": "Rewards claimed",
     "keyFacts": "Key facts",
-    "multiple": "Multiple"
+    "multiple": "Multiple",
+    "walletToPillarPay": "Wallet → Pillar Pay",
+    "pillarPayToWallet": "Pillar Pay → Wallet",
+    "fromToFormat": "{{from}} → {{to}}"
   },
 
   "button": {
     "activate": "Activate",
     "activatePPN": "Activate Pillar Network",
     "add": "Add",
+    "addCash": "Add cash",
     "addContact": "Add contact",
     "addContacts": "Add contacts",
     "addDetails": "Add details",
@@ -237,8 +280,10 @@
     "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
+    "deploy": "Deploy",
     "explore": "Explore",
     "exchange": "Exchange",
+    "exchangeMore": "Exchange more",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
     "inviteFriend": "Invite friend",
@@ -265,6 +310,7 @@
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
+    "swap": "Swap",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -533,6 +579,60 @@
     }
   },
 
+  "home": {
+    "balance": {
+      "lastWeek": "Last week"
+    },
+    "assets": {
+      "contacts": "Contacts",
+      "services": "Services"
+    },
+    "actions": {
+      "receive": "Receive",
+      "send": "Send",
+      "swap": "Swap",
+      "connect": "Connect"
+    }
+  },
+
+  "history": {
+    "title": "Transactions history"
+  },
+
+  "assets": {
+    "wallet": {
+      "pillarPay": {
+        "title": "Pillar Pay",
+        "topUp": "Top up",
+        "hint": "Transfer any token for free from your PLR balance."
+      }
+    },
+    "deposits": {
+      "deposit": "Deposit"
+    },
+    "investments": {
+      "invest": "Invest"
+    },
+    "liquidityPools": {
+      "addLiquidity": "Add liquidity"
+    },
+    "rewards": {
+      "availableToClaim": "Available to claim"
+    }
+  },
+
+  "walletConnect": {
+    "home": {
+      "title": "Wallet Connect",
+      "headerStories": "New and Noteworthy",
+      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
+    },
+    "connectedApps": {
+      "title": "Connected dapps",
+      "connected": "Connected"
+    }
+  },
+
   "badgeText": {
     "new": "NEW"
   },
@@ -559,6 +659,7 @@
       }
     },
     "title": {
+      "home": "Pillar Payment Network",
       "settleTransactionsScreen": "Settle transactions",
       "fundTankScreen": "Fund PLR tank",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
@@ -1489,6 +1590,7 @@
     "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
+    "cannotGetWalletAddress": "Cannot get wallet address.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
@@ -1505,8 +1607,8 @@
     "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
     "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
     "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
-    "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
-    "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
+    "rariWithdraw": "{{amount}} {{token}} withdrawn from Rari Capital.",
+    "rariTransfer": "{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
     "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
     "rariNotEnoughLiquidity": "Not enough liquidity to exchange this token. Please select another token.",
@@ -1637,7 +1739,7 @@
       "subtitle": {
         "whatIsRari": "What is Rari?",
         "howDoesRariEarn": "How does Rari Earn Yield?",
-        "rariPools":"Rari Pools",
+        "rariPools": "Rari Pools",
         "deposits": "Deposits",
         "withdrawals": "Withdrawals",
         "RGT": "$RGT (Rari Governance Token)",

@@ -21,10 +21,11 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
+import { orderBy } from 'lodash';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -38,6 +39,8 @@ import type {
   AssetBalance,
   Balance,
   Balances,
+  MixedBalance,
+  MixedBalances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
@@ -216,8 +219,8 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: Balances, rates: Rates): number => {
-  const balanceValues: Balance[] = Object.keys(balances).map(key => balances[key]);
+export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): number => {
+  const balanceValues: MixedBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;
@@ -233,19 +236,13 @@ export const balanceInEth = (balances: Balances, rates: Rates): number => {
   }, 0);
 };
 
-export const calculateBalanceInFiat = (
-  rates: Rates,
-  balances: Balances,
-  currency: string,
-) => {
+export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
   }
 
-  const totalEth = balanceInEth(balances, rates);
-
-  return get(ethRates, currency, 0) * totalEth;
+  return get(ethRates, currency, 0) * balanceInEth(balances, rates);
 };
 
 export const getPPNTokenAddress = (token: string, assets: Assets): ?string => {
@@ -296,6 +293,10 @@ export const getAssetDataByAddress = (
   return userAssets.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || supportedAssetsData.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || {};
+};
+
+export const getAssetFromRegistry = (assetRegistry: Asset[], symbol: string): ?Asset => {
+  return assetRegistry.find((asset) => asset.symbol === symbol);
 };
 
 export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
@@ -430,4 +431,27 @@ export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency:
     return 0;
   }
   return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};
+
+/**
+ * Sort asset options with default priority
+ */
+export const defaultSortAssetOptions = (options: AssetOption[]): AssetOption[] => {
+  return orderBy(
+    options,
+    [
+      (option: AssetOption) => getAssetOptionSortPriority(option),
+      (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
+      (option: AssetOption) => option.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
+
+export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetOption) => {
+  if (balance?.balance && symbol === ETH) return 4;
+  if (balance?.balance && symbol === PLR) return 3;
+  if (balance?.balance) return 2;
+  if (imageUrl) return 1;
+  return 0;
 };

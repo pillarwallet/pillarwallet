@@ -25,13 +25,14 @@ import { PLR, USD } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
+import { getTotalBalanceInFiat } from 'utils/assets';
 import { getStreamBalance } from 'utils/sablier';
-import { formatUnits } from 'utils/common';
+import { BigNumber, formatUnits } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { MixedBalance } from 'models/Asset';
+import type { Rates, Balances, MixedBalance, MixedBalances } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { SablierReducerState } from 'reducers/sablierReducer';
@@ -41,6 +42,8 @@ import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer'
 // selectors
 import {
   balancesSelector,
+  fiatCurrencySelector,
+  ratesSelector,
   activeAccountIdSelector,
   lendingSelector,
   poolTogetherStatsSelector,
@@ -76,7 +79,7 @@ export const allBalancesSelector = createSelector(
 
     return balancesWithPPN.reduce((memo, { balance, symbol }) => {
       if (!balance || !symbol) return memo;
-      const assetInfo = memo[symbol] || { symbol, balance: 0 };
+      const assetInfo = memo[symbol] || { symbol, balance: '0' };
       const newBalance = parseFloat(assetInfo.balance) + parseFloat(balance);
       assetInfo.balance = newBalance.toString();
       memo[symbol] = assetInfo;
@@ -84,6 +87,7 @@ export const allBalancesSelector = createSelector(
     }, {});
   },
 );
+
 
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
@@ -152,3 +156,75 @@ export const servicesBalanceListSelector = createSelector(
   liquidityPoolsBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
+
+export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  allBalancesSelector,
+  servicesBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): BigNumber => {
+    return BigNumber(
+      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
+        getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency),
+    );
+  },
+);
+
+export const walletBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  allBalancesSelector,
+  sablierBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, assetBalances: Balances, sablierBalances: Balances): BigNumber => {
+    return BigNumber(
+      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
+        getTotalBalanceInFiat(sablierBalances, rates, fiatCurrency),
+    );
+  },
+);
+
+export const paymentNetworkBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  availableStakeSelector,
+  ratesSelector,
+  fiatCurrencySelector,
+  (ppnBalance: number, rates: Rates, currency: string) => {
+    const balances: Balances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
+  },
+);
+
+export const depositsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  aaveBalanceListSelector,
+  rariBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, aaveBalances: Balances, rariBalances: Balances): BigNumber => {
+    return BigNumber(
+      getTotalBalanceInFiat(aaveBalances, rates, fiatCurrency) +
+        getTotalBalanceInFiat(rariBalances, rates, fiatCurrency),
+    );
+  },
+);
+
+export const investmentsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  poolTogetherBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, poolTogetherBalances: Balances): BigNumber => {
+    return BigNumber(getTotalBalanceInFiat(poolTogetherBalances, rates, fiatCurrency));
+  },
+);
+
+
+export const liquidityPoolsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  fiatCurrencySelector,
+  ratesSelector,
+  liquidityPoolsBalanceListSelector,
+  (fiatCurrency: string, rates: Rates, liquidityPoolsBalances: Balances): BigNumber => {
+    return BigNumber(getTotalBalanceInFiat(liquidityPoolsBalances, rates, fiatCurrency));
+  },
+);
+
+export const rewardsBalanceSelector: (RootReducerState) => BigNumber = () => {
+  return BigNumber(0);
+};

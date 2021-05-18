@@ -37,6 +37,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';
+import HistoryList from 'components/HistoryList';
 import SlideModal from 'components/Modals/SlideModal';
 import Modal from 'components/Modal';
 
@@ -63,6 +64,15 @@ type Props = {
   accounts: Accounts,
   theme: Theme,
 };
+
+export type CollectibleNavigationParams = {|
+  assetData: {
+    id: string,
+    name: string,
+    description: ?string,
+    image: ?string, // Image URL
+  },
+|};
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -119,7 +129,7 @@ class CollectibleScreen extends React.Component<Props> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
-  openCollectibleImage(collectible: Collectible) {
+  openCollectibleImage(collectible: { image: ?string }) {
     const { image } = collectible;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
@@ -163,7 +173,7 @@ class CollectibleScreen extends React.Component<Props> {
       accounts,
       theme,
     } = this.props;
-    const { assetData } = navigation.state.params;
+    const { assetData }: CollectibleNavigationParams = navigation.state.params;
     const {
       id,
       name,
@@ -186,6 +196,9 @@ class CollectibleScreen extends React.Component<Props> {
     const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
     const { towellie: genericCollectible } = images(theme);
+
+    // TODO: Here provide Etherspot transactions history.
+    const historyItems = [];
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
@@ -215,15 +228,19 @@ class CollectibleScreen extends React.Component<Props> {
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
-          {!!relatedCollectibleTransactions.length &&
-          <ActivityFeed
-            navigation={navigation}
-            feedData={relatedCollectibleTransactions}
-            showArrowsOnly
-            contentContainerStyle={{ paddingTop: 10 }}
-            invertAddon
-            feedTitle={t('title.transactions')}
-          />}
+
+          {!!relatedCollectibleTransactions.length && (
+            <ActivityFeed
+              navigation={navigation}
+              feedData={relatedCollectibleTransactions}
+              showArrowsOnly
+              contentContainerStyle={{ paddingTop: 10 }}
+              invertAddon
+              feedTitle={t('title.transactions')}
+            />
+          )}
+
+          {!!historyItems.length && <HistoryList items={historyItems} />}
         </ScrollWrapper>
       </ContainerWithHeader>
     );

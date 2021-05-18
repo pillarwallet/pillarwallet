@@ -20,6 +20,22 @@
 
 import { LayoutAnimation } from 'react-native';
 
+export const LIST_ITEMS_APPEARANCE = {
+  duration: 150,
+  create: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+  },
+  update: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+  },
+  delete: {
+    property: LayoutAnimation.Properties.opacity,
+    type: LayoutAnimation.Types.linear,
+  },
+};
+
 export const SIDE_BUTTON_APPEARANCE = {
   duration: 150,
   create: {

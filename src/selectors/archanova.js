@@ -27,12 +27,15 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getArchanovaWalletStatus } from 'utils/archanova';
-import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountEnsName, isArchanovaAccount } from 'utils/accounts';
 import { getEnsPrefix } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
+
+// selectors
+import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -42,12 +45,7 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import { accountsSelector } from './selectors';
 import { archanovaAccountHistorySelector } from './history';
 
-
-export const isArchanovaWalletActivatedSelector = ({
-  accounts: { data: accounts },
-  smartWallet,
-}: RootReducerState,
-) => {
+export const isArchanovaWalletActivatedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
   return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
@@ -56,7 +54,11 @@ export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } 
   return accountHasGasTokenSupport(connectedAccount);
 };
 
-export const preferredGasTokenSelector = ({ appSettings: { data: { preferredGasToken } } }: RootReducerState) => {
+export const preferredGasTokenSelector = ({
+  appSettings: {
+    data: { preferredGasToken },
+  },
+}: RootReducerState) => {
   if (!firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR)) return ETH;
   return preferredGasToken || ETH;
 };
@@ -83,13 +85,24 @@ export const isEnsMigrationNeededSelector = createSelector(
 
     const archanovaAccount = findFirstArchanovaAccount(accounts);
 
-    const isEnsMigrationNeeded = archanovaAccount
-      && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
+    const isEnsMigrationNeeded =
+      archanovaAccount && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
 
-    const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(({
-      extra,
-    }) => extra?.isENSMigrationToEtherspot);
+    const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(
+      ({ extra }) => extra?.isENSMigrationToEtherspot,
+    );
 
     return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;
   },
 );
+
+export const useArchanovaWalletStatus = (): ArchanovaWalletStatus => {
+  const accounts = useRootSelector((root) => root.accounts.data);
+  const archanovaWalletState = useRootSelector((root) => root.smartWallet);
+  return getArchanovaWalletStatus(accounts, archanovaWalletState);
+};
+
+export const useIsPillarPaySupported = () => {
+  const activeAccount = useActiveAccount();
+  return isArchanovaAccount(activeAccount);
+};
