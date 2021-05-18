@@ -977,8 +977,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
-  stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
-  startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),

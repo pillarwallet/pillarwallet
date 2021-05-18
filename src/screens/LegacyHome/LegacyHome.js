@@ -21,7 +21,6 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import Intercom from 'react-native-intercom';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
@@ -613,7 +612,6 @@ class HomeScreen extends React.Component<Props> {
             rightItems: [
               {
                 link: t('button.support'),
-                onPress: () => Intercom.displayMessenger(),
                 addon: hasIntercomNotifications && (
                   <View
                     style={{
@@ -721,7 +719,6 @@ class HomeScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   user: { data: user },
-  notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
@@ -746,7 +743,6 @@ const mapStateToProps = ({
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   user,
-  intercomNotificationsCount,
   badges,
   badgesEvents,
   accounts,
