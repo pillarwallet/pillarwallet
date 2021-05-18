@@ -475,4 +475,9 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
   updatedAt: new Date(),
 };
 
-jest.setMock('instabug-reactnative', {});
+jest.setMock('instabug-reactnative', {
+  Replies: {
+    setPushNotificationRegistrationTokenAndroid: () => Promise.resolve('12x2342x212'),
+    showNotificationAndroid: jest.fn(),
+  },
+});

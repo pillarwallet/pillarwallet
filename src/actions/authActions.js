@@ -123,8 +123,8 @@ export const updateFcmTokenAction = (walletId: string) => {
 
       return null;
     });
-    Replies.setPushNotificationRegistrationTokenAndroid(fcmToken);
     if (!fcmToken) return;
+    Replies.setPushNotificationRegistrationTokenAndroid(fcmToken);
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     await api.updateFCMToken(walletId, fcmToken);
   };
