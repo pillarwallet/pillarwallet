@@ -68,6 +68,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
+
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
 
   const chainsConfig = useChainsConfig();

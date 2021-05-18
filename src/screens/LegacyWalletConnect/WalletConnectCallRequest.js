@@ -51,16 +51,15 @@ import {
   mapCallRequestToTransactionPayload,
   parseMessageSignParamsFromCallRequest,
 } from 'utils/walletConnect';
-import { isArchanovaAccount } from 'utils/accounts';
 
 // hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
@@ -74,7 +73,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  isArchanovaWalletActivated: boolean,
+  isActiveAccountDeployedOnEthereum: boolean,
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
@@ -113,8 +112,7 @@ const WalletConnectCallRequestScreen = ({
   balances,
   feeInfo,
   estimateErrorMessage,
-  isArchanovaWalletActivated,
-  activeAccount,
+  isActiveAccountDeployedOnEthereum,
   accountAssets,
   supportedAssets,
 }: Props) => {
@@ -127,7 +125,7 @@ const WalletConnectCallRequestScreen = ({
   useEffect(() => {
     if (requestType !== REQUEST_TYPE.TRANSACTION) return;
     estimateCallRequestTransaction(callRequest);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const colors = useThemeColors();
@@ -143,7 +141,7 @@ const WalletConnectCallRequestScreen = ({
       return t('walletConnectContent.error.unsupportedRequestCallRequestType');
     }
 
-    if (isArchanovaAccount(activeAccount) && !isArchanovaWalletActivated) {
+    if (!isActiveAccountDeployedOnEthereum) {
       return t('walletConnectContent.error.smartWalletNeedToBeActivated');
     }
 
@@ -151,20 +149,21 @@ const WalletConnectCallRequestScreen = ({
       return estimateErrorMessage;
     }
 
-
     if (requestType === REQUEST_TYPE.TRANSACTION && !isEstimating && !transactionPayload) {
       return t('walletConnectContent.error.unableToShowTransaction');
     }
 
     if (requestType === REQUEST_TYPE.TRANSACTION && transactionPayload && feeInfo) {
       const { amount, symbol, decimals } = transactionPayload;
-      if (!isEnoughBalanceForTransactionFee(balances, {
-        amount,
-        symbol,
-        decimals,
-        txFeeInWei: feeInfo?.fee,
-        gasToken: feeInfo?.gasToken,
-      })) {
+      if (
+        !isEnoughBalanceForTransactionFee(balances, {
+          amount,
+          symbol,
+          decimals,
+          txFeeInWei: feeInfo?.fee,
+          gasToken: feeInfo?.gasToken,
+        })
+      ) {
         return t('error.notEnoughTokenForFee', { token: feeInfo.gasToken || ETH });
       }
     }
@@ -172,8 +171,7 @@ const WalletConnectCallRequestScreen = ({
     return null;
   }, [
     requestType,
-    activeAccount,
-    isArchanovaWalletActivated,
+    isActiveAccountDeployedOnEthereum,
     transactionPayload,
     isEstimating,
     estimateErrorMessage,
@@ -245,9 +243,7 @@ const WalletConnectCallRequestScreen = ({
         {!estimateErrorMessage && (
           <LabeledRow>
             <Label>{t('transactions.label.transactionFee')}</Label>
-            <LabelSub>
-              {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
-            </LabelSub>
+            <LabelSub>{t('walletConnectContent.paragraph.finalFeeMightBeHigher')}</LabelSub>
             {!!isEstimating && <Spinner style={{ marginTop: 15, alignSelf: 'flex-start' }} size={20} trackWidth={2} />}
             {!isEstimating && <Value>{feeDisplayValue}</Value>}
           </LabeledRow>
@@ -278,12 +274,14 @@ const WalletConnectCallRequestScreen = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{
-          title: t([
-            `walletConnectContent.title.requestType.${requestType}`,
-            'walletConnectContent.title.requestType.default',
-          ]),
-        }],
+        centerItems: [
+          {
+            title: t([
+              `walletConnectContent.title.requestType.${requestType}`,
+              'walletConnectContent.title.requestType.default',
+            ]),
+          },
+        ],
       }}
     >
       {requestType !== REQUEST_TYPE.UNSUPPORTED && (
@@ -299,20 +297,13 @@ const WalletConnectCallRequestScreen = ({
             <OptionButton
               onPress={onApprovePress}
               disabled={isSubmitDisabled}
-              title={
-                t([
-                  `walletConnectContent.button.approveType.${requestType}`,
-                  'walletConnectContent.button.approveType.default',
-                ])
-              }
+              title={t([
+                `walletConnectContent.button.approveType.${requestType}`,
+                'walletConnectContent.button.approveType.default',
+              ])}
             />
           )}
-          <OptionButton
-            danger
-            transparent
-            onPress={onRejectPress}
-            title={t('button.reject')}
-          />
+          <OptionButton danger transparent onPress={onRejectPress} title={t('button.reject')} />
         </FooterWrapper>
       </Footer>
     </ContainerWithHeader>
@@ -329,7 +320,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
+  isActiveAccountDeployedOnEthereum: isActiveAccountDeployedOnEthereumSelector,
   activeAccount: activeAccountSelector,
   supportedAssets: supportedAssetsSelector,
   accountAssets: accountAssetsSelector,
