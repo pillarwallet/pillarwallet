@@ -189,7 +189,6 @@ export const parsePeerName = (name: ?string): string => {
     result = name;
   }
 
-  // Final trim
   result = result.trim();
 
   // Limit length
@@ -198,7 +197,7 @@ export const parsePeerName = (name: ?string): string => {
     result = `${result.substring(0, 20)}…`;
   }
 
-  return result;
+  return result.trim();
 };
 
 /**
