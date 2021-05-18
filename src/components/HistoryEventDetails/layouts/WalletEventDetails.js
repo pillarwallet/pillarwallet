@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 
@@ -29,7 +28,6 @@ import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import SWActivationModal from 'components/SWActivationModal';
 import Text from 'components/modern/Text';
 import Toast from 'components/Toast';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
@@ -40,15 +38,10 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useRootSelector } from 'selectors';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { useAccounts } from 'selectors';
 
 // Utils
-import {
-  getActiveAccount,
-  getActiveAccountAddress,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import { getActiveAccountAddress } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -64,19 +57,11 @@ type Props = {|
 
 function WalletEventDetails({ event }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
-  const accounts = useRootSelector((root) => root.accounts.data);
-  const activeAccount = getActiveAccount(accounts);
-  const isArchanovaWalletActivated = useRootSelector(isArchanovaWalletActivatedSelector);
-  const isActivated = isEtherspotAccount(activeAccount) || isArchanovaWalletActivated;
+  const accounts = useAccounts();
   const dispatch = useDispatch();
 
   const colors = useThemeColors();
-
-  const openActivate = () => {
-    Modal.open(() => <SWActivationModal navigation={navigation} />);
-  };
 
   const openTopUp = () => {
     const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -103,11 +88,8 @@ function WalletEventDetails({ event }: Props) {
         <Text variant="large">{t('label.created')}</Text>
         <Spacing h={spacing.extraLarge} />
 
-        {isActivated ? (
-          <Button variant="secondary" title={t('button.topUp')} onPress={openTopUp} />
-        ) : (
-          <Button variant="secondary" title={t('button.activate')} onPress={openActivate} />
-        )}
+        <Button variant="secondary" title={t('button.topUp')} onPress={openTopUp} />
+
         <Spacing h={spacing.small} />
         <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
       </BaseEventDetails>

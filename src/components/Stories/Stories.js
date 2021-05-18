@@ -18,19 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import * as React from 'react';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
 import { useDispatch } from 'react-redux';
 
-import { getEnv } from 'configs/envConfig';
-import { spacing } from 'utils/variables';
-import { reportOrWarn } from 'utils/common';
+// Actions
 import { logEventAction } from 'actions/analyticsActions';
 
-const Stories = () => {
+// Utils
+import { spacing } from 'utils/variables';
+import { reportOrWarn } from 'utils/common';
+
+// Configs
+import { getEnv } from 'configs/envConfig';
+
+type Props = {|
+  renderHeader?: () => React.Node,
+|};
+
+const Stories = ({ renderHeader }: Props) => {
   const dispatch = useDispatch();
-  const [storyGroupCount, setStoryGroupCount] = useState(0);
+  const [storyGroupCount, setStoryGroupCount] = React.useState(0);
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -40,21 +49,27 @@ const Stories = () => {
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
 
   return (
-    <StorylyWthSpacing
-      storylyId={getEnv().STORYLY_TOKEN}
-      onLoad={handleLoad}
-      onFail={logStorylyError}
-      onStoryOpen={logStoryOpen}
-      $hide={storyGroupCount === 0}
-    />
+    <Container $hide={storyGroupCount === 0}>
+      {!!renderHeader && renderHeader()}
+
+      <StorylyWithSpacing
+        storylyId={getEnv().STORYLY_TOKEN}
+        onLoad={handleLoad}
+        onFail={logStorylyError}
+        onStoryOpen={logStoryOpen}
+      />
+    </Container>
   );
 };
 
-const StorylyWthSpacing = styled(Storyly)`
-  height: 140px;
+export default Stories;
+
+const Container = styled.View`
   ${({ $hide }) => $hide && 'display: none;'}
+`;
+
+const StorylyWithSpacing = styled(Storyly)`
+  height: 140px;
   overflow: hidden;
   margin-left: ${spacing.layoutSides}px;
 `;
-
-export default Stories;

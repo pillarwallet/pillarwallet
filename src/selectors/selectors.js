@@ -112,3 +112,4 @@ export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => 
 export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
 
 export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);
+
