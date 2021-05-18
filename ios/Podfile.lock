@@ -145,7 +145,6 @@ PODS:
   - GTMSessionFetcher/Core (1.5.0)
   - instabug-reactnative (10.0.0):
     - React
-  - Intercom (5.5.2)
   - libwebp (1.2.0):
     - libwebp/demux (= 1.2.0)
     - libwebp/mux (= 1.2.0)
@@ -360,9 +359,6 @@ PODS:
     - React
   - react-native-date-picker (3.0.2):
     - React
-  - react-native-intercom (13.2.0):
-    - Intercom (~> 5.5.1)
-    - React
   - react-native-netinfo (5.9.2):
     - React
   - react-native-notifications (3.2.2):
@@ -574,7 +570,6 @@ DEPENDENCIES:
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
-  - react-native-intercom (from `../node_modules/react-native-intercom`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -649,7 +644,6 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - GoogleUtilities
     - GTMSessionFetcher
-    - Intercom
     - libwebp
     - nanopb
     - PromisesObjC
@@ -721,8 +715,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-cookies/ios"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
-  react-native-intercom:
-    :path: "../node_modules/react-native-intercom"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-notifications:
@@ -852,7 +844,6 @@ SPEC CHECKSUMS:
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   instabug-reactnative: acf00941006b656bb811d819f13c5dd6584f0203
-  Intercom: 1151a15e5e7931d8e401671a4357239d44325159
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
   lottie-react-native: a664f59f1f298c2696dd0ae07b15cbdfc433cb02
@@ -880,7 +871,6 @@ SPEC CHECKSUMS:
   react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: aec68ba9b276beddd2cf941bd7cebf459ac9d301
-  react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f
   react-native-netinfo: cb74e17062b2af5a16a4b137f32495f241df1a8e
   react-native-notifications: 3d1c66c8a3eb1857577f283f9f6e9aa505f16346
   react-native-pager-view: c60a26be051a4b88427f2475e173b5c112e98d17

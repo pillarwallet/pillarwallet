@@ -16041,10 +16041,6 @@ react-native-indicators@^0.17.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-intercom@^13.1.0:
-  version "13.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-intercom/-/react-native-intercom-13.2.0.tgz#22181547d26bcd008bc184cab15f18db6d413b4b"
-
 react-native-iphone-x-helper@^1.0.3:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
