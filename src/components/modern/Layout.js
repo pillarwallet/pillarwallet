@@ -99,7 +99,7 @@ type CenterProps = {|
 |};
 
 export const Center: React.ComponentType<CenterProps> = styled.View`
-  ${({ flex }) => (flex != null ? `flex: ${flex}` : '')};
+  ${({ flex }) => flex != null && `flex: ${flex};`};
   ${({ height }) => height != null && `height: ${height}px;`}
   ${({ width }) => width != null && `width: ${width}px;`}
   justify-content: center;
