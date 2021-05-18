@@ -184,13 +184,13 @@ export const parsePeerName = (name: ?string): string => {
   // Strip all emojis
   result = stripEmoji(result);
 
-  // Final trim
-  result = result.trim();
-
-  // Fallback
+  // Fallback if there is nothing left
   if (result.length === 0) {
     result = name;
   }
+
+  // Final trim
+  result = result.trim();
 
   // Limit length
   if (result.length > 20) {
