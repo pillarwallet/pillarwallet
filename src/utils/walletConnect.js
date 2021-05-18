@@ -211,6 +211,7 @@ export function pickPeerIcon(icons: ?string[]): ?string {
   if (icons?.length === 1) return icons[0];
 
   const pngUrls = icons.filter((url) => url.endsWith('.png'));
+  // Experimentally the first icon is usually the lowest quality, so here we're picking the 2nd one.
   if (!pngUrls.length) return icons[1];
 
   const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
