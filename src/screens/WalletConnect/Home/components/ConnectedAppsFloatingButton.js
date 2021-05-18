@@ -20,8 +20,9 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
+import { useNavigation } from 'react-navigation-hooks';
 import SafeAreaView from 'react-native-safe-area-view';
+import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 
 // Components
@@ -30,19 +31,28 @@ import Text from 'components/modern/Text';
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
+// Constants
+import { WALLETCONNECT_CONNECTED_APPS } from 'constants/navigationConstants';
+
 // Utils
 import { spacing } from 'utils/variables';
 
 const ConnectedAppsFloatingButton = () => {
+  const navigation = useNavigation();
+
   const { activeConnectors } = useWalletConnect();
 
   if (activeConnectors.length === 0) {
     return null;
   }
 
+  const navigateToConnectedApps = () => {
+    navigation.navigate(WALLETCONNECT_CONNECTED_APPS);
+  };
+
   return (
     <FloatingContainer forceInset={{ bottom: 'always' }}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={navigateToConnectedApps}>
         <ItemContainer>
           <Text>
             <Emoji name="zap" /> {activeConnectors.length}
