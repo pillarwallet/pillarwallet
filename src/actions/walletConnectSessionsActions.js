@@ -146,7 +146,7 @@ export const updateWalletConnectSessionsByActiveAccount = () => {
     activeConnectors.forEach((connector) => {
       const sessionData = {
         accounts: [accountAddress],
-        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+        chainId: connector.chainId,
       };
       connector.updateSession(sessionData);
     });
