@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 import Modal from 'components/Modal';
-import WalletConnectRequestModal from 'screens/WalletConnect/RequestModal';
+import WalletConnectRequestModal from 'screens/WalletConnect/CallRequest';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';

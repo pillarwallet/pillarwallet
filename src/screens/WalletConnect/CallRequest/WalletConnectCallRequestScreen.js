@@ -25,9 +25,13 @@ import { useNavigation } from 'react-navigation-hooks';
 import Modal from 'components/Modal';
 
 // Local
-import WalletConnectRequestModal from './WalletConnectRequestModal';
+import WalletConnectRequestModal from './WalletConnectCallRequestModal';
 
-export function WalletConnectRequestModalScreen() {
+/**
+ * Pseudo-screen to support showing modal using navigation infrastructure.
+ * Used primarily because of code delaying deep links after logging in.
+ */
+function WalletConnectCallRequestScreen() {
   const navigation = useNavigation();
   const request = navigation.getParam('callRequest');
 
@@ -40,3 +44,5 @@ export function WalletConnectRequestModalScreen() {
 
   return null;
 }
+
+export default WalletConnectCallRequestScreen;

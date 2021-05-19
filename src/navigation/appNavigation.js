@@ -51,7 +51,7 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
-import { WalletConnectRequestModalScreen } from 'screens/WalletConnect/RequestModal';
+import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/WalletConnectCallRequestScreen';
 import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
 import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
@@ -683,7 +683,7 @@ const AppFlowNavigation = createStackNavigator(
     [TUTORIAL_FLOW]: tutorialFlow,
     [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
     [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectRequestModalScreen,
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequestScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
   },
   modalTransition,

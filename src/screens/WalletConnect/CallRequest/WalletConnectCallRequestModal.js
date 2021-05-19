@@ -20,12 +20,10 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
-import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
 import BottomModal from 'components/modern/BottomModal';
-import Modal from 'components/Modal';
 import Toast from 'components/Toast';
 
 // Constants
@@ -50,7 +48,7 @@ type Props = {|
   request: WalletConnectCallRequest,
 |};
 
-function WalletConnectRequestModal({ request }: Props) {
+function WalletConnectCallRequestModal({ request }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -107,4 +105,4 @@ function WalletConnectRequestModal({ request }: Props) {
   );
 }
 
-export default WalletConnectRequestModal;
+export default WalletConnectCallRequestModal;

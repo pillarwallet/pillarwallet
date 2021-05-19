@@ -1,6 +1,6 @@
 {
-  "name": "WalletConnectRequestModal",
+  "name": "WalletConnectCallRequestModal",
   "version": "0.0.0",
   "private": true,
-  "main": "./WalletConnectRequestModal.js"
+  "main": "./WalletConnectCallRequestModal.js"
 }
