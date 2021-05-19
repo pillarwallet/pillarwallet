@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
-import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
@@ -38,14 +37,12 @@ import {
 } from 'constants/navigationConstants';
 import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
-// services, utils
+// components
+import Toast from 'components/Toast';
+
+// services
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
-import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress } from 'utils/accounts';
-import { isSupportedDappUrl, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
-import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList } from 'utils/assets';
 
 // actions
 import { disconnectWalletConnectSessionByPeerIdAction } from 'actions/walletConnectSessionsActions';
@@ -53,18 +50,23 @@ import { logEventAction } from 'actions/analyticsActions';
 import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
-// components
-import Toast from 'components/Toast';
-
 // selectors
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
 
+// utils
+import { isNavigationAllowed } from 'utils/navigation';
+import { getAccountAddress } from 'utils/accounts';
+import { chainFromChainId } from 'utils/chains';
+import { isSupportedDappUrl, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
+import { reportErrorLog } from 'utils/common';
+import { getAssetsAsList } from 'utils/assets';
+
 // models, types
+import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
 
 const setWalletConnectErrorAction = (message: string) => {
   return (dispatch: Dispatch) => {
@@ -162,7 +164,10 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
       return;
     }
 
-    const requiresSmartWalletDeployment = !isActiveAccountDeployedOnEthereumSelector(getState());
+    const chain = chainFromChainId[chainId];
+    const requiresSmartWalletDeployment =
+      chain === CHAIN.ETHEREUM && !isActiveAccountDeployedOnEthereumSelector(getState());
+
     if (requiresSmartWalletDeployment) {
       Toast.show({
         message: t('toast.walletConnectSmartWalletNotActive'),

@@ -24,7 +24,7 @@ import { isProdEnv } from 'utils/environment';
 // Models
 import { type Chain, CHAIN, CHAIN_ID } from 'models/Chain';
 
-export const chainFromChainId = {
+export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ETHEREUM_MAINNET]: CHAIN.ETHEREUM,
   [CHAIN_ID.ETHEREUM_KOVAN]: CHAIN.ETHEREUM,
   [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
