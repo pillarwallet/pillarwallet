@@ -43,7 +43,7 @@ import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/Wa
 type UseWalletConnectResult = {|
   activeConnectors: WalletConnectConnector[],
   callRequests: WalletConnectCallRequest[],
-  approveConnectorRequest: (peerId: string) => void,
+  approveConnectorRequest: (peerId: string, chainId: number) => void,
   rejectConnectorRequest: (peerId: string) => void,
   approveCallRequest: (callRequest: WalletConnectCallRequest, result: string) => void,
   rejectCallRequest: (callRequest: WalletConnectCallRequest, rejectReasonMessage?: string) => void,
