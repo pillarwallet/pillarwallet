@@ -69,33 +69,26 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const configs = useChainsConfig();
 
   const { estimateCallRequestTransaction } = useWalletConnect();
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
-  const accountAssets = useRootSelector(accountAssetsSelector);
-
-  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
-  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
-  const estimateErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   const balances = useRootSelector(accountBalancesSelector);
+  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsSelector);
   const isActiveAccountDeployedOnEthereum = useRootSelector(isActiveAccountDeployedOnEthereumSelector);
+  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
+  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
+  const estimateErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   React.useEffect(() => {
     estimateCallRequestTransaction(request);
     console.log('EFFECT', request);
   }, [request, estimateCallRequestTransaction]);
 
-  const transactionPayload: TransactionPayload | null = React.useMemo(
+  const transactionPayload = React.useMemo(
     () => mapCallRequestToTransactionPayload(request, getAssetsAsList(accountAssets), supportedAssets),
     [request, accountAssets, supportedAssets],
   );
 
-  const handleConfirm = () => {
-    if (!transactionPayload) return;
-
-    onConfirm(transactionPayload);
-  };
-
-  const errorMessage: string | null = React.useMemo(() => {
+  const getErrorMessage = () => {
     if (!isActiveAccountDeployedOnEthereum) {
       return t('walletConnectContent.error.smartWalletNeedToBeActivated');
     }
@@ -104,47 +97,39 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       return estimateErrorMessage;
     }
 
-    if (!isEstimating && !transactionPayload) {
+    if (!transactionPayload && !isEstimating) {
       return t('walletConnectContent.error.unableToShowTransaction');
     }
 
-    if (transactionPayload && feeInfo) {
-      const { amount, symbol, decimals } = transactionPayload;
-      if (
-        !isEnoughBalanceForTransactionFee(balances, {
-          amount,
-          symbol,
-          decimals,
-          txFeeInWei: feeInfo?.fee,
-          gasToken: feeInfo?.gasToken,
-        })
-      ) {
-        return t('error.notEnoughTokenForFee', { token: feeInfo.gasToken || ETH });
-      }
-    }
-
     return null;
-  }, [
-    isActiveAccountDeployedOnEthereum,
-    transactionPayload,
-    isEstimating,
-    estimateErrorMessage,
-    feeInfo,
-    balances,
-    t,
-  ]);
+  };
+
+  const handleConfirm = () => {
+    if (!transactionPayload) return;
+    onConfirm(transactionPayload);
+  };
+
+  const { amount, symbol, decimals } = transactionPayload ?? {};
+  const hasNotEnoughtGas = !isEnoughBalanceForTransactionFee(balances, {
+    amount,
+    symbol,
+    decimals,
+    txFeeInWei: feeInfo?.fee,
+    gasToken: feeInfo?.gasToken,
+  });
+
+  const errorMessage = getErrorMessage();
 
   const { title, iconUrl, chain } = getViewData(request);
   const config = configs[chain];
 
-  const isSubmitDisabled = !!errorMessage || isEstimating;
-
-  const { amount, symbol } = transactionPayload ?? {};
-
-  const feeSymbol = feeInfo?.gasToken?.symbol || ETH;
   const feeValue = BigNumber(getFormattedTransactionFeeValue(feeInfo?.fee ?? '', feeInfo?.gasToken)) || null;
+  const feeSymbol = feeInfo?.gasToken?.symbol || ETH;
 
   console.log("FEE", feeInfo);
+
+  const confirmTitle = !hasNotEnoughtGas ? t('button.confirm') : t('button.notEnoughGas');
+  const isConfirmDisabled = isEstimating || hasNotEnoughtGas || !!errorMessage;
 
   return (
     <>
@@ -162,7 +147,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
 
-      <Button title={t('button.confirm')} onPress={handleConfirm} disabled={isSubmitDisabled} style={styles.button} />
+      <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
       <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
     </>
   );
@@ -171,7 +156,6 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 export default TransactionRequestContent;
 
 const getViewData = (request: WalletConnectCallRequest) => {
-  console.log('CALL REQUEST', request);
   const title = parsePeerName(request.name);
   const iconUrl = request.icon;
   const chain = CHAIN.ETHEREUM;
