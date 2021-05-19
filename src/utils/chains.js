@@ -33,7 +33,7 @@ export const chainFromChainId = {
 };
 
 /**
- * Maps chain value to chain id, supporting testnet for test env.
+ * Maps chain value to chain id, supporting testnet(s) for test env.
  */
 export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.ETHEREUM) return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
@@ -41,6 +41,6 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
 
-  // Default to ethereum; Should not happen as above check is exhaustive.
+  // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
 }
