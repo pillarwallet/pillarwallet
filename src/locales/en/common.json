@@ -628,6 +628,10 @@
       "headerStories": "New and Noteworthy",
       "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
     },
+    "requests": {
+      "messageRequest": "Signature request",
+      "transactionRequest": "Transaction request"
+    },
     "connectedApps": {
       "title": "Connected dapps",
       "connected": "Connected"

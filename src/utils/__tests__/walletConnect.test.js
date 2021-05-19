@@ -32,9 +32,14 @@ describe('parsePeerName', () => {
     expect(result).toEqual('Aave');
   });
 
+  it('handles OpenSea name', () => {
+    const result = parsePeerName('OpenSea: Buy NFTs, Crypto...');
+    expect(result).toEqual('OpenSea');
+  });
+
   it('handles long names of Iceland vulcanoes', () => {
     const result = parsePeerName('Eyjafjallajökull Brennisteinsfjöll Loki-Fögrufjöll');
-    expect(result).toEqual('Eyjafjallajökull Bre…');
+    expect(result).toEqual('Eyjafjallajökull Brenn…');
   });
 });
 
