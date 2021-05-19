@@ -108,17 +108,3 @@ function WalletConnectRequestModal({ request }: Props) {
 }
 
 export default WalletConnectRequestModal;
-
-export function WalletConnectRequestModalScreen() {
-  const navigation = useNavigation();
-  const request = navigation.getParam('callRequest');
-
-  React.useLayoutEffect(() => {
-    navigation.goBack(null);
-
-    if (!request) return;
-    Modal.open(() => <WalletConnectRequestModal request={request} />);
-  }, [request, navigation]);
-
-  return null;
-}
