@@ -143,7 +143,7 @@ PODS:
   - GoogleUtilities/UserDefaults (6.7.2):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.5.0)
-  - instabug-reactnative (10.0.0):
+  - instabug-reactnative (10.4.0):
     - React
   - libwebp (1.2.0):
     - libwebp/demux (= 1.2.0)
@@ -508,9 +508,9 @@ PODS:
     - React-Core
   - RNScrypt (1.1.2):
     - React
-  - RNSentry (1.7.1):
-    - React
-    - Sentry (~> 5.2.0)
+  - RNSentry (2.4.3):
+    - React-Core
+    - Sentry (= 6.1.4)
   - RNShare (1.2.1):
     - React
   - RNSVG (12.1.0):
@@ -524,9 +524,9 @@ PODS:
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
-  - Sentry (5.2.2):
-    - Sentry/Core (= 5.2.2)
-  - Sentry/Core (5.2.2)
+  - Sentry (6.1.4):
+    - Sentry/Core (= 6.1.4)
+  - Sentry/Core (6.1.4)
   - Storyly (1.10.0):
     - SDWebImage (= 5.10.0)
   - storyly-react-native (1.10.0):
@@ -843,7 +843,7 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 471e0c05d39506e50e6398f46fa9a12ae0efeff9
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
-  instabug-reactnative: acf00941006b656bb811d819f13c5dd6584f0203
+  instabug-reactnative: b7dc930d9532b5dd4a70a679751e12e0b3c803e6
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
   lottie-react-native: a664f59f1f298c2696dd0ae07b15cbdfc433cb02
@@ -914,14 +914,14 @@ SPEC CHECKSUMS:
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: 8aca37f78a2c5d8b50e400612618d00c03695a8c
   RNScrypt: dd5e6b7daa3b84e2f21e2342efda2f183856ea90
-  RNSentry: 2bae4ffee2e66376ef42cb845a494c3bde17bc56
+  RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   RNShare: 48cf88cadf9ca2143cdaa557c1ec7f8808040ffc
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RSKImageCropper: 1ac71e9a82e3f41eea3eedfff8eacb0d3821c9ec
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
-  Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
+  Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   Storyly: 86fc3288f6b3603b2de885447576e9ea6bb30726
   storyly-react-native: e7dba6eacb3a2b913913e3147cd4e30129318242
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
