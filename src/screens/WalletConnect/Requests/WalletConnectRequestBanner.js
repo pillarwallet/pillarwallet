@@ -19,13 +19,15 @@
 */
 
 import * as React from 'react';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
 // Components
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
-import Modal from 'components/Modal';
-import WalletConnectRequestModal from 'screens/WalletConnect/RequestModal';
+
+// constants
+import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -34,18 +36,19 @@ import { formatRequestType } from 'utils/walletConnect';
 // Local
 import { type RequestItem } from './selectors';
 
-
 type Props = {|
   request: RequestItem,
 |};
 
 function WalletConnectRequestBanner({ request }: Props) {
-  const showRequestModal = () => {
-    Modal.open(() => <WalletConnectRequestModal request={request.callRequest} />);
+  const navigation = useNavigation();
+
+  const navigateToRequestDetails = () => {
+    navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callRequest: request });
   };
 
   return (
-    <TouchableContainer onPress={showRequestModal}>
+    <TouchableContainer onPress={navigateToRequestDetails}>
       <IconImage source={{ uri: request.iconUrl }} />
 
       <Column>
