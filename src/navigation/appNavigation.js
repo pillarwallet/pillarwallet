@@ -51,8 +51,8 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
+import { WalletConnectRequestModalScreen } from 'screens/WalletConnect/RequestModal';
 import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
-import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
@@ -392,7 +392,6 @@ const servicesFlow = createStackNavigator({
 // WALLET CONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
   {
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
@@ -404,9 +403,6 @@ const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
-    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
-    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
-    [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
 );
@@ -686,6 +682,9 @@ const AppFlowNavigation = createStackNavigator(
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
     [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
+    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectRequestModalScreen,
+    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
   },
   modalTransition,
 );

@@ -20,10 +20,12 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
+import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
 import BottomModal from 'components/modern/BottomModal';
+import Modal from 'components/Modal';
 import Toast from 'components/Toast';
 
 // Constants
@@ -106,3 +108,17 @@ function WalletConnectRequestModal({ request }: Props) {
 }
 
 export default WalletConnectRequestModal;
+
+export function WalletConnectRequestModalScreen() {
+  const navigation = useNavigation();
+  const request = navigation.getParam('callRequest');
+
+  React.useLayoutEffect(() => {
+    navigation.goBack(null);
+
+    if (!request) return;
+    Modal.open(() => <WalletConnectRequestModal request={request} />);
+  }, [request, navigation]);
+
+  return null;
+}
