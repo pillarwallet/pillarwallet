@@ -24,9 +24,6 @@ import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// Configs
-import { getEnv } from 'configs/envConfig';
-
 // Components
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
@@ -39,13 +36,14 @@ import Title from 'components/Title';
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
+import { chainFromChainId, mapChainToChainId } from 'utils/chains';
 import { useThemedImages } from 'utils/images';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
-import { chainFromChainId } from 'models/Chain';
+import { CHAIN } from 'models/Chain';
 
 const WalletConnectConnectorRequestScreen = () => {
   const navigation = useNavigation();
@@ -56,10 +54,11 @@ const WalletConnectConnectorRequestScreen = () => {
   const peerMeta = navigation.getParam('peerMeta', {});
   const peerId = navigation.getParam('peerId');
 
-  const defaultChainId = getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1;
-  const chainId = navigation.getParam('chainId') ?? defaultChainId;
+  const initialChainId = navigation.getParam('chainId');
+  const chain = chainFromChainId[initialChainId] ?? CHAIN.ETHEREUM;
 
-  const chain = chainFromChainId[chainId];
+  // Note: this will map chain id to testnet in test env.
+  const chainId = mapChainToChainId(chain);
   const chainConfig = useChainsConfig()[chain];
 
   const onApprovePress = () => {

@@ -175,11 +175,9 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
     }
 
     const accountAddress = getAccountAddress(activeAccount);
-    const defaultChainId = getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1;
-
     const sessionData = {
       accounts: [accountAddress],
-      chainId: chainId ?? defaultChainId,
+      chainId,
     };
 
     try {

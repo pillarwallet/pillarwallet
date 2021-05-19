@@ -28,11 +28,22 @@ export function stringOrNull(input: ?any): ?string {
   return typeof input === 'string' ? input : null;
 }
 
+export function numberOrNull(input: ?any): ?number {
+  if (typeof input === 'number') return input;
+
+  if (typeof input === 'string') {
+    const value = parseFloat(input);
+    return !Number.isNaN(value) ? value : null;
+  }
+
+  return null;
+}
+
 export function booleanOrNull(input: ?any): ?boolean {
   return typeof input === 'boolean' ? input : null;
 }
 
-export function arrayOrEmpty<T>(input: ?any, parseItem?: (any) => ?T): T[] {
+export function mapArrayOrEmpty<Input, Value>(input: ?Input[], parseItem: (Input) => ?Value): Value[] {
   if (!input || !Array.isArray(input)) return [];
-  return parseItem ? mapNotNil(input, parseItem) : input;
+  return mapNotNil(input, parseItem);
 }

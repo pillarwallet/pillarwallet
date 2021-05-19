@@ -36,15 +36,9 @@ export type ChainRecord<T> = {|
 
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
-  ETHEREUM: 1,
+  ETHEREUM_MAINNET: 1,
+  ETHEREUM_KOVAN: 42,
   POLYGON: 137,
   BINANCE: 56,
   XDAI: 100,
-};
-
-export const chainFromChainId = {
-  [CHAIN_ID.ETHEREUM]: CHAIN.ETHEREUM,
-  [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
-  [CHAIN_ID.XDAI]: CHAIN.XDAI,
-  [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
 };
