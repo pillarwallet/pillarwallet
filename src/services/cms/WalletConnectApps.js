@@ -27,10 +27,11 @@ import * as Prismic from 'services/prismic';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
-import { type Chain, CHAIN, CHAIN_ID } from 'models/Chain';
+import { type Chain, CHAIN } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Utils
+import { chainFromChainId } from 'utils/chains';
 import * as parse from 'utils/parse';
 
 const TYPE_APPS = 'dapp_showcase';
@@ -44,7 +45,7 @@ export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectCmsAp
 
 async function fetchWalletConnectAppsApiCall(): Promise<WalletConnectCmsApp[]> {
   const data = await Prismic.queryDocumentsByType<AppDto>(TYPE_APPS, { pageSize: 100 });
-  const parsedData = parse.arrayOrEmpty(data.results, parseApp);
+  const parsedData = parse.mapArrayOrEmpty(data.results, parseApp);
   return orderBy(parsedData, 'title');
 }
 
@@ -58,7 +59,11 @@ type AppDto = {
   logo?: { url?: string },
   disabled?: boolean,
   chainagnostic?: boolean,
-  supportedchains?: [?{ chainid?: string }]
+  supportedchains: ?ChainDto[],
+};
+
+type ChainDto = {
+  chainid: ?string
 };
 
 function parseApp(item: ?Prismic.Document<AppDto>): ?WalletConnectCmsApp {
@@ -80,13 +85,8 @@ function parseChains(item: Prismic.Document<AppDto>): Chain[] {
   const isChainAgnostic = parse.booleanOrNull(item.data?.chainagnostic);
   if (isChainAgnostic) return Object.keys(CHAIN).map((key) => CHAIN[key]);
 
-  const chainIds = parse.arrayOrEmpty(item.data?.supportedchains, (chain) => parse.stringOrNull(chain.chainid));
-
-  const result = [];
-  if (chainIds.includes(CHAIN_ID.POLYGON.toString())) result.push(CHAIN.POLYGON);
-  if (chainIds.includes(CHAIN_ID.BINANCE.toString())) result.push(CHAIN.BINANCE);
-  if (chainIds.includes(CHAIN_ID.XDAI.toString())) result.push(CHAIN.XDAI);
-  if (chainIds.includes(CHAIN_ID.ETHEREUM.toString())) result.push(CHAIN.ETHEREUM);
-
-  return result;
+  return parse.mapArrayOrEmpty(item.data?.supportedchains, (data) => {
+    const chainId = parse.numberOrNull(data.chainid);
+    return chainId ? chainFromChainId[chainId] : null;
+  });
 }

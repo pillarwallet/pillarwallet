@@ -43,7 +43,7 @@ import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/Wa
 type UseWalletConnectResult = {|
   activeConnectors: WalletConnectConnector[],
   callRequests: WalletConnectCallRequest[],
-  approveConnectorRequest: (peerId: string) => void,
+  approveConnectorRequest: (peerId: string, chainId: number) => void,
   rejectConnectorRequest: (peerId: string) => void,
   approveCallRequest: (callRequest: WalletConnectCallRequest, result: string) => void,
   rejectCallRequest: (callRequest: WalletConnectCallRequest, rejectReasonMessage?: string) => void,
@@ -63,7 +63,8 @@ const useWalletConnect = (): UseWalletConnectResult => {
   const connectToConnector = (uri: string) => dispatch(connectToWalletConnectConnectorAction(uri));
   const disconnectSessionByUrl = (url: string) => dispatch(disconnectWalletConnectSessionByUrlAction(url));
 
-  const approveConnectorRequest = (peerId: string) => dispatch(approveWalletConnectConnectorRequestAction(peerId));
+  const approveConnectorRequest = (peerId: string, chainId: number) =>
+    dispatch(approveWalletConnectConnectorRequestAction(peerId, chainId));
   const rejectConnectorRequest = (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId));
 
   const approveCallRequest = (

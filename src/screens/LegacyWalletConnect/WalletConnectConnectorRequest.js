@@ -19,69 +19,51 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
-import t from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
+import styled from 'styled-components/native';
+import t from 'translations/translate';
 
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Image from 'components/Image';
+// Components
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
-import Title from 'components/Title';
 import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
+import Title from 'components/Title';
 
-// utils
-import { spacing, fontSizes } from 'utils/variables';
-import { images } from 'utils/images';
-
-// hooks
+// Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
-// types
-import type { Theme } from 'models/Theme';
+// Utils
+import { chainFromChainId, mapChainToChainId } from 'utils/chains';
+import { useThemedImages } from 'utils/images';
+import { useChainsConfig } from 'utils/uiConfig';
+import { spacing, fontSizes } from 'utils/variables';
+import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
+// Types
+import { CHAIN } from 'models/Chain';
 
-type Props = {
-  theme: Theme,
-};
-
-
-const FooterWrapper = styled.View`
-  flex-direction: column;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
-
-const OptionButton = styled(Button)`
-  margin-top: 4px;
-  flex-grow: 1;
-`;
-
-
-const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
+const WalletConnectConnectorRequestScreen = () => {
   const navigation = useNavigation();
+  const { genericToken } = useThemedImages();
+
   const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
 
-  const {
-    description,
-    url,
-    icons,
-    name,
-  } = navigation.getParam('peerMeta', {});
+  const peerMeta = navigation.getParam('peerMeta', {});
   const peerId = navigation.getParam('peerId');
+
+  const initialChainId = navigation.getParam('chainId');
+  const chain = chainFromChainId[initialChainId] ?? CHAIN.ETHEREUM;
+
+  // Note: this will map chain id to testnet in test env.
+  const chainId = mapChainToChainId(chain);
+  const chainConfig = useChainsConfig()[chain];
 
   const onApprovePress = () => {
     Keyboard.dismiss();
-    approveConnectorRequest(peerId);
+    approveConnectorRequest(peerId, chainId);
     navigation.goBack(null);
   };
 
@@ -91,8 +73,9 @@ const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
     navigation.goBack(null);
   };
 
-  const icon = icons && icons.length ? icons[0] : null;
-  const { genericToken } = images(theme);
+  const name = parsePeerName(peerMeta.name);
+  const icon = pickPeerIcon(peerMeta.icons);
+  const { description, url } = peerMeta;
 
   return (
     <ContainerWithHeader
@@ -103,6 +86,7 @@ const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
     >
       <ScrollWrapper regularPadding>
         <Title subtitle title={t('walletConnectContent.title.walletConnectRequests')} />
+
         {!!icon && (
           <Image
             key={name}
@@ -116,16 +100,24 @@ const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
             resizeMode="contain"
           />
         )}
+
         <LabeledRow>
           <Label>{t('walletConnectContent.label.name')}</Label>
           <Value>{name || t('walletConnectContent.label.unknownRequestName')}</Value>
         </LabeledRow>
+
+        <LabeledRow>
+          <Label>{t('walletConnectContent.label.chain')}</Label>
+          <Value>{chainConfig?.title}</Value>
+        </LabeledRow>
+
         {!!description && (
           <LabeledRow>
             <Label>{t('walletConnectContent.label.requestDescription')}</Label>
             <Value>{description}</Value>
           </LabeledRow>
         )}
+
         {!!url && (
           <LabeledRow>
             <Label>{t('walletConnectContent.label.requestLink')}</Label>
@@ -133,22 +125,32 @@ const WalletConnectConnectorRequestScreen = ({ theme }: Props) => {
           </LabeledRow>
         )}
       </ScrollWrapper>
+
       <Footer keyboardVerticalOffset={40}>
         <FooterWrapper>
-          <OptionButton
-            onPress={onApprovePress}
-            title={t('button.approve')}
-          />
-          <OptionButton
-            transparent
-            danger
-            onPress={onRejectPress}
-            title={t('button.reject')}
-          />
+          <OptionButton onPress={onApprovePress} title={t('button.approve')} />
+          <OptionButton transparent danger onPress={onRejectPress} title={t('button.reject')} />
         </FooterWrapper>
       </Footer>
     </ContainerWithHeader>
   );
 };
 
-export default withTheme(WalletConnectConnectorRequestScreen);
+export default WalletConnectConnectorRequestScreen;
+
+const LabeledRow = styled.View`
+  margin: 10px 0;
+`;
+
+const Value = styled(MediumText)`
+  font-size: ${fontSizes.big}px;
+`;
+
+const FooterWrapper = styled.View`
+  flex-direction: column;
+  width: 100%;
+`;
+
+const OptionButton = styled(Button)`
+  flex-grow: 1;
+`;

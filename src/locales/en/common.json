@@ -1331,7 +1331,8 @@
       "requestDescription": "Description",
       "requestLink": "Url",
       "upcomingApp": "Coming soon",
-      "name": "Name"
+      "name": "Name",
+      "chain": "Chain"
     },
     "banner": {
       "promo": {
