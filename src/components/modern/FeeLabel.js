@@ -68,7 +68,7 @@ function FeeLabel({
   const colors = useThemeColors();
 
   if (isLoading) {
-    return <Spinner size={20} trackWidth={2} />;
+    return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
   const valueInFiat = BigNumber(getBalanceInFiat(currency, value, rates, symbol));

@@ -29,7 +29,6 @@ import Text from 'components/modern/Text';
 import Image from 'components/Image';
 import LargeTokenValueView from 'components/modern/LargeTokenValueView';
 import FeeLabel from 'components/modern/FeeLabel';
-import { Paragraph } from 'components/Typography';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
@@ -45,8 +44,8 @@ import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { getFormattedTransactionFeeValue } from 'utils/common';
-import { themedColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
@@ -66,86 +65,38 @@ type Props = {|
 
 function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
-  const configs = useChainsConfig();
+  const chainConfigs = useChainsConfig();
 
-  const { estimateCallRequestTransaction } = useWalletConnect();
-
-  const balances = useRootSelector(accountBalancesSelector);
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
-  const accountAssets = useRootSelector(accountAssetsSelector);
-  const isActiveAccountDeployedOnEthereum = useRootSelector(isActiveAccountDeployedOnEthereumSelector);
-  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
-  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
-  const estimateErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
-
-  React.useEffect(() => {
-    estimateCallRequestTransaction(request);
-    console.log('EFFECT', request);
-  }, [request, estimateCallRequestTransaction]);
-
-  const transactionPayload = React.useMemo(
-    () => mapCallRequestToTransactionPayload(request, getAssetsAsList(accountAssets), supportedAssets),
-    [request, accountAssets, supportedAssets],
-  );
-
-  const getErrorMessage = () => {
-    if (!isActiveAccountDeployedOnEthereum) {
-      return t('walletConnectContent.error.smartWalletNeedToBeActivated');
-    }
-
-    if (estimateErrorMessage) {
-      return estimateErrorMessage;
-    }
-
-    if (!transactionPayload && !isEstimating) {
-      return t('walletConnectContent.error.unableToShowTransaction');
-    }
-
-    return null;
-  };
+  const { title, iconUrl, chain, errorMessage } = useViewData(request);
+  const { fee, gasSymbol, hasNotEnoughtGas, isEstimating, estimationErrorMessage } = useTransactionFee(request);
+  const transactionPayload = useTransactionPayload(request);
 
   const handleConfirm = () => {
     if (!transactionPayload) return;
     onConfirm(transactionPayload);
   };
 
-  const { amount, symbol, decimals } = transactionPayload ?? {};
-  const hasNotEnoughtGas = !isEnoughBalanceForTransactionFee(balances, {
-    amount,
-    symbol,
-    decimals,
-    txFeeInWei: feeInfo?.fee,
-    gasToken: feeInfo?.gasToken,
-  });
-
-  const errorMessage = getErrorMessage();
-
-  const { title, iconUrl, chain } = getViewData(request);
-  const config = configs[chain];
-
-  const feeValue = BigNumber(getFormattedTransactionFeeValue(feeInfo?.fee ?? '', feeInfo?.gasToken)) || null;
-  const feeSymbol = feeInfo?.gasToken?.symbol || ETH;
-
-  console.log("FEE", feeInfo);
-
-  const confirmTitle = !hasNotEnoughtGas ? t('button.confirm') : t('button.notEnoughGas');
+  const chainConfig = chainConfigs[chain];
+  const value = wrapBigNumberOrNil(transactionPayload?.amount);
+  const symbol = transactionPayload?.symbol;
+  const confirmTitle = !hasNotEnoughtGas ? t('button.confirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughtGas || !!errorMessage;
 
   return (
     <>
-      <Text color={config.color}>
-        {title} {t('label.dotSeparator')} {config.titleShort}
+      <Text color={chainConfig.color}>
+        {title} {t('label.dotSeparator')} {chainConfig.titleShort}
       </Text>
 
       <Image source={{ uri: iconUrl }} style={styles.icon} />
 
-      <LargeTokenValueView value={BigNumber(amount)} symbol={symbol} style={styles.tokenValue} />
+      <LargeTokenValueView value={value} symbol={symbol} style={styles.tokenValue} />
 
-      {!estimateErrorMessage && (
-        <FeeLabel value={feeValue} symbol={feeSymbol} style={styles.fee} isLoading={isEstimating} />
+      {!estimationErrorMessage && (
+        <FeeLabel value={fee} symbol={gasSymbol} isLoading={isEstimating} style={styles.fee} />
       )}
 
-      {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+      {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
       <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
       <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
@@ -155,34 +106,88 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
 export default TransactionRequestContent;
 
-const getViewData = (request: WalletConnectCallRequest) => {
+const useTransactionPayload = (request: WalletConnectCallRequest) => {
+  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsSelector);
+
+  const transactionPayload = React.useMemo(
+    () => mapCallRequestToTransactionPayload(request, getAssetsAsList(accountAssets), supportedAssets),
+    [request, accountAssets, supportedAssets],
+  );
+
+  return transactionPayload;
+};
+
+const useTransactionFee = (request: WalletConnectCallRequest) => {
+  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
+  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
+  const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
+
+  const feeInWei = feeInfo?.fee;
+  const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
+  const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
+
+  const balances = useRootSelector(accountBalancesSelector);
+  const { amount, symbol, decimals } = useTransactionPayload(request);
+  const hasNotEnoughtGas = !isEnoughBalanceForTransactionFee(balances, {
+    amount,
+    symbol,
+    decimals,
+    txFeeInWei: feeInWei,
+    gasToken: feeInfo?.gasToken,
+  });
+
+  const { estimateCallRequestTransaction } = useWalletConnect();
+
+  React.useEffect(() => {
+    console.log('ESTIMATE EFFECT', request);
+    estimateCallRequestTransaction(request);
+  }, [request, estimateCallRequestTransaction]);
+
+  return { fee, feeInWei, gasSymbol, hasNotEnoughtGas, isEstimating, estimationErrorMessage };
+};
+
+const useViewData = (request: WalletConnectCallRequest) => {
+  const { t } = useTranslation();
+
+  const isActiveAccountDeployedOnEthereum = useRootSelector(isActiveAccountDeployedOnEthereumSelector);
+  const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
+
+  let errorMessage = null;
+  if (!isActiveAccountDeployedOnEthereum) {
+    errorMessage = t('walletConnectContent.error.smartWalletNeedToBeActivated');
+  } else if (estimationErrorMessage) {
+    errorMessage = estimationErrorMessage;
+  }
+
   const title = parsePeerName(request.name);
   const iconUrl = request.icon;
   const chain = CHAIN.ETHEREUM;
 
-  return { title, iconUrl, chain };
+  return { title, iconUrl, chain, errorMessage };
 };
 
 const styles = {
   icon: {
     width: 64,
     height: 64,
-    marginVertical: spacing.largePlus,
+    marginTop: spacing.largePlus,
+    marginBottom: spacing.mediumLarge,
     borderRadius: 32,
   },
   tokenValue: {
     marginBottom: spacing.largePlus,
   },
   fee: {
-    marginBottom: spacing.medium,
+    marginBottom: spacing.mediumLarge,
   },
   button: {
     marginVertical: spacing.small / 2,
   },
 };
 
-const WarningMessage = styled(Paragraph)`
+const ErrorMessage = styled(Text)`
+  margin: ${spacing.extraSmall}px 0 ${spacing.mediumLarge}px;
   text-align: center;
-  color: ${themedColors.negative};
-  padding-bottom: ${spacing.rhythm}px;
+  color: ${({ theme }) => theme.colors.negative};
 `;
