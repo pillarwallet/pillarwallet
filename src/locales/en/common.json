@@ -630,7 +630,8 @@
     },
     "requests": {
       "messageRequest": "Signature request",
-      "transactionRequest": "Transaction request"
+      "transactionRequest": "Transaction request",
+      "unsupportedRequest": "Unsupported request"
     },
     "connectedApps": {
       "title": "Connected dapps",
