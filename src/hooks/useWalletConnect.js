@@ -63,7 +63,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
   const connectToConnector = (uri: string) => dispatch(connectToWalletConnectConnectorAction(uri));
   const disconnectSessionByUrl = (url: string) => dispatch(disconnectWalletConnectSessionByUrlAction(url));
 
-  const approveConnectorRequest = (peerId: string) => dispatch(approveWalletConnectConnectorRequestAction(peerId));
+  const approveConnectorRequest = (peerId: string, chainId: number) => dispatch(approveWalletConnectConnectorRequestAction(peerId, chainId));
   const rejectConnectorRequest = (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId));
 
   const approveCallRequest = (

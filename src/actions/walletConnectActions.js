@@ -138,7 +138,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
   };
 };
 
-export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
+export const approveWalletConnectConnectorRequestAction = (peerId: string, chainId: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectorRequest } } = getState();
     if (!connectorRequest) {
@@ -175,10 +175,11 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
     }
 
     const accountAddress = getAccountAddress(activeAccount);
+    const defaultChainId = getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1;
 
     const sessionData = {
       accounts: [accountAddress],
-      chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+      chainId: chainId ?? defaultChainId,
     };
 
     try {
