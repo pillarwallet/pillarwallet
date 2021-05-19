@@ -44,7 +44,7 @@ function WalletConnectRequestBanner({ request }: Props) {
   const navigation = useNavigation();
 
   const navigateToRequestDetails = () => {
-    navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callRequest: request });
+    navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callRequest: request.callRequest });
   };
 
   return (
