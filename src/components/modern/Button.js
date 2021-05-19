@@ -38,12 +38,13 @@ type Props = {|
   onPress: () => mixed,
   variant?: Variant,
   compact?: boolean,
+  disabled?: boolean,
   style?: ViewStyleProp,
 |};
 
-function Button({ title, onPress, variant = 'primary', compact, style }: Props) {
+function Button({ title, onPress, variant = 'primary', compact, disabled, style }: Props) {
   return (
-    <TouchableContainer onPress={onPress} $variant={variant} style={style} $compact={compact}>
+    <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $compact={compact}>
       <Title $variant={variant}>{title}</Title>
     </TouchableContainer>
   );
@@ -55,6 +56,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 6px;
+  ${({ disabled }) => disabled && 'opacity: 0.7;'}
   ${({ $compact }) => !$compact && 'width: 100%;'}
   ${({ $compact }) =>
     !$compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}
