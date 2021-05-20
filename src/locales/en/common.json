@@ -647,6 +647,12 @@
     }
   },
 
+  "etherspot": {
+    "deploymentInterjection": {
+      "title": "Smart Wallet deployment"
+    }
+  },
+
   "badgeText": {
     "new": "NEW"
   },
