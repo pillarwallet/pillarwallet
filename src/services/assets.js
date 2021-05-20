@@ -173,7 +173,8 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   } else if (contractHasMethod(code, transferFromHash)) {
     return 'transferFrom';
   }
-  return '';
+
+  return 'transferFrom';
 }
 /* eslint-enable i18next/no-literal-string */
 
