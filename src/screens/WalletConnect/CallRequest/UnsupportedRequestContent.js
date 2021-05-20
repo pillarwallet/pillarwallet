@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
@@ -38,11 +39,10 @@ import type { WalletConnectCallRequest } from 'models/WalletConnect';
 
 type Props = {|
   request: WalletConnectCallRequest,
-  onConfirm: () => mixed;
-  onReject: () => mixed;
+  onReject: () => mixed,
 |};
 
-function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
+function UnsupportedRequestContent({ request, onReject }: Props) {
   const { t } = useTranslation();
   const configs = useChainsConfig();
 
@@ -57,13 +57,14 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
       <Image source={{ uri: iconUrl }} style={styles.icon} />
 
-      <Button title={t('button.confirm')} onPress={onConfirm} style={styles.button} />
-      <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
+      <ErrorMessage>{t('walletConnectContent.error.unsupportedRequestCallRequestType')}</ErrorMessage>
+
+      <Button title={t('button.reject')} onPress={onReject} variant="primary-destructive" style={styles.button} />
     </>
   );
 }
 
-export default SignatureRequestContent;
+export default UnsupportedRequestContent;
 
 const getViewData = (request: WalletConnectCallRequest) => {
   const title = parsePeerName(request.name);
@@ -84,3 +85,9 @@ const styles = {
     marginVertical: spacing.small / 2,
   },
 };
+
+const ErrorMessage = styled(Text)`
+  margin: ${spacing.extraSmall}px 0 ${spacing.mediumLarge}px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
+`;

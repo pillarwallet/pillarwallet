@@ -45,6 +45,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { chainFromChainId } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
@@ -167,7 +168,7 @@ const useViewData = (request: WalletConnectCallRequest) => {
 
   const title = parsePeerName(request.name);
   const iconUrl = request.icon;
-  const chain = CHAIN.ETHEREUM;
+  const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
 
   return { title, iconUrl, chain, errorMessage };
 };

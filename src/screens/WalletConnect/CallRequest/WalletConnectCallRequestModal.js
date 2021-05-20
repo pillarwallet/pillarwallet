@@ -43,6 +43,7 @@ import type { TransactionPayload } from 'models/Transaction';
 // Local
 import SignatureRequestContent from './SignatureRequestContent';
 import TransactionRequestContent from './TransactionRequestContent';
+import UnsupportedRequestContent from './UnsupportedRequestContent';
 
 type Props = {|
   request: WalletConnectCallRequest,
@@ -99,6 +100,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
       {type === REQUEST_TYPE.TRANSACTION && (
         <TransactionRequestContent request={request} onConfirm={handleConfirm} onReject={handleReject} />
       )}
+      {type === REQUEST_TYPE.UNSUPPORTED && <UnsupportedRequestContent request={request} onReject={handleReject} />}
     </BottomModal>
   );
 }

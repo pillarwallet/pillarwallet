@@ -59,7 +59,7 @@ import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
 import { isNavigationAllowed } from 'utils/navigation';
 import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
-import { isSupportedDappUrl, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
+import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
 import { getAssetsAsList } from 'utils/assets';
 
@@ -290,7 +290,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
-      const { peerId, peerMeta } = connector;
+      const { peerId, peerMeta, chainId } = connector;
       if (!peerId || !peerMeta) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
         return;
@@ -308,11 +308,11 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         name,
         url,
         peerId,
+        chainId,
         callId,
         method,
         params,
-        // TODO: use pickPeerIcon
-        icon: icons?.[0] || null,
+        icon: pickPeerIcon(icons),
       };
 
       dispatch({
