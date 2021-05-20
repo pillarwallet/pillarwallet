@@ -143,6 +143,7 @@ const supportedProtocols = [
   ...walletProtocols,
   ...investmentProtocols,
   ...depositProtocols,
+  ...liquidityPoolProtocols,
   ...rewardProtocols,
 ];
 
