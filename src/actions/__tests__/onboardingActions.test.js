@@ -36,7 +36,7 @@ import {
   UPDATE_ASSETS,
   UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
+import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 
@@ -305,6 +305,15 @@ describe('Onboarding actions', () => {
         },
       },
 
+      {
+        type: SET_FETCHING_HISTORY,
+        payload: true,
+      },
+      {
+        type: SET_FETCHING_HISTORY,
+        payload: false,
+      },
+
       // TODO: etherspot history update tba with separate PR
     ];
 
@@ -369,7 +378,16 @@ describe('Onboarding actions', () => {
         },
       },
 
+      {
+        type: SET_FETCHING_HISTORY,
+        payload: true,
+      },
       { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: [] } },
+      {
+        type: SET_FETCHING_HISTORY,
+        payload: false,
+      },
+
 
       // TODO: etherspot history update tba with separate PR
     ];

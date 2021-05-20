@@ -58,12 +58,14 @@ const mapZapperNetworkIdToChain = (network: string): ?Chain => {
   }
 };
 
+
 const walletProtocols = [
   PROTOCOLS.TOKENS,
   PROTOCOLS.BITCOIN,
   PROTOCOLS.UNIT, // Generic?
-  PROTOCOLS.NFT,
+  // PROTOCOLS.NFT, // we don't display NFT prices
 ];
+
 const investmentProtocols = [
   PROTOCOLS.AUTO_FARM,
   PROTOCOLS.AAVE,
@@ -101,6 +103,7 @@ const investmentProtocols = [
   PROTOCOLS.YAXIS,
   PROTOCOLS.YEARN,
 ];
+
 const liquidityPoolProtocols = [
   PROTOCOLS.BALANCER,
   PROTOCOLS.BANCOR,
@@ -124,6 +127,7 @@ const liquidityPoolProtocols = [
   PROTOCOLS.UNISWAP_V3,
   PROTOCOLS.XSIGMA,
 ];
+
 const depositProtocols = [
   PROTOCOLS.BELLA,
   PROTOCOLS.COVER, // Not sure about this one...
@@ -137,6 +141,7 @@ const depositProtocols = [
   PROTOCOLS.TOKENSETS,
   PROTOCOLS.VESPER,
 ];
+
 const rewardProtocols = [];
 
 const supportedProtocols = [

@@ -123,7 +123,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   };
 
   const renderChainWithBalance = (category: $Keys<CategoryBalances>, chain: Chain) => {
-    const balance = categoryBalancesPerChain[chain]?.[category] ?? BigNumber(0);
+    const balance = categoryBalancesPerChain?.[chain]?.[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title } = chainsConfig[chain];

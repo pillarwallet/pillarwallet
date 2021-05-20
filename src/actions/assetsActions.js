@@ -463,7 +463,7 @@ export const fetchAllAccountsTotalsAction = () => {
     dispatch(saveDbAction('totalBalances', { balances: accountsTotalBalances }, true));
   };
 };
-//
+
 // export const fetchAccountTotalsAction = (account: Account) => {
 //   return async (dispatch: Dispatch, getState: GetState) => {
 //     const accountAddress = getAccountAddress(account);
