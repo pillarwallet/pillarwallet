@@ -46,7 +46,7 @@ function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const navigation = useNavigation();
 
-  const chain: Chain = CHAIN.BINANCE;// navigation.getParam('chain') ?? CHAIN.BINANCE;
+  const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
 
   const chainConfig = useChainsConfig()[chain];
 
