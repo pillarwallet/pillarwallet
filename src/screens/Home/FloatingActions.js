@@ -36,7 +36,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector, useActiveAccount } from 'selectors';
-import { walletBalanceSelector } from 'selectors/balances';
+import { walletTotalBalanceSelector } from 'selectors/balances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
@@ -80,7 +80,7 @@ function FloatingActions() {
 }
 
 const useEnabledActions = () => {
-  const walletTotalBalance = useRootSelector(walletBalanceSelector);
+  const walletTotalBalance = useRootSelector(walletTotalBalanceSelector);
   const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 

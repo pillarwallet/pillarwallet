@@ -21,19 +21,19 @@
 // constants
 import {
   SET_FETCHING_TOTALS,
-  SET_TOTALS,
-  SET_ACCOUNT_TOTALS,
+  SET_TOTAL_BALANCES,
+  SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
 } from 'constants/totalsConstants';
 
+// utils
+import { BigNumber } from 'utils/common';
+
 // types
-import type {
-  AccountsTotals,
-  CategoryBalancesPerChain,
-} from 'models/Home';
+import type { AccountsTotalBalances } from 'models/Home';
 
 
 export type TotalsReducerState = {
-  data: AccountsTotals,
+  balances: AccountsTotalBalances,
   isFetching: boolean,
 };
 
@@ -42,22 +42,27 @@ export type SetFetchingTotalsAction = {|
   payload: boolean,
 |};
 
-export type SetTotalsAction = {|
-  type: typeof SET_TOTALS,
-  payload: AccountsTotals,
+export type SetTotalBalancesAction = {|
+  type: typeof SET_TOTAL_BALANCES,
+  payload: AccountsTotalBalances,
 |};
 
-export type SetAccountTotalsAction = {|
-  type: typeof SET_ACCOUNT_TOTALS,
-  payload: { accountId: string, totals: CategoryBalancesPerChain }
+export type SetAccountTotalChainBalancesAction = {|
+  type: typeof SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+  payload: {
+    accountId: string,
+    chain: string,
+    category: string,
+    balance: BigNumber,
+  }
 |};
 
 export type TotalsReducerAction = SetFetchingTotalsAction
-  | SetTotalsAction
-  | SetAccountTotalsAction;
+  | SetTotalBalancesAction
+  | SetAccountTotalChainBalancesAction;
 
 export const initialState = {
-  data: {},
+  balances: {},
   isFetching: false,
 };
 
@@ -69,12 +74,31 @@ export default function totalsReducer(
     case SET_FETCHING_TOTALS:
       return { ...state, isFetching: action.payload };
 
-    case SET_TOTALS:
-      return { ...state, data: action.payload };
+    case SET_TOTAL_BALANCES:
+      return { ...state, balances: action.payload };
 
-    case SET_ACCOUNT_TOTALS:
-      const { accountId, totals: accountTotals } = action.payload;
-      return { ...state, data: { ...state.data, [accountId]: accountTotals } };
+    case SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE:
+      const {
+        accountId,
+        chain,
+        category,
+        balance: accountChainCategoryBalance,
+      } = action.payload;
+      const accountChainBalances = state.balances?.[accountId]?.[chain] || {};
+      const accountBalances = state.balances?.[accountId] || {};
+      return {
+        ...state,
+        balances: {
+          ...state.balances,
+          [accountId]: {
+            ...accountBalances,
+            [chain]: {
+              ...accountChainBalances,
+              [category]: accountChainCategoryBalance,
+            },
+          },
+        },
+      };
 
     default:
       return state;

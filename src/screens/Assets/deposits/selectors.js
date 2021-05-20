@@ -22,19 +22,20 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { depositsBalanceSelector } from 'selectors/balances';
+import { depositsTotalBalanceSelector, depositsTotalBalanceByChainsSelector } from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useDepositsBalance(): FiatBalance {
-  const value = useRootSelector(depositsBalanceSelector);
+  const value = useRootSelector(depositsTotalBalanceSelector);
   return { value };
 }
 
-export function useDepositsChainBalances(): ChainRecord<BigNumber> {
-  return { ethereum: BigNumber(10) };
+export function useDepositsChainBalances(): ChainBalances {
+  return useRootSelector(depositsTotalBalanceByChainsSelector);
 }
 
 export type DepositItem = {|

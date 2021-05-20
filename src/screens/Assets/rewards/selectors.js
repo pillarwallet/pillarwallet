@@ -22,20 +22,21 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { rewardsBalanceSelector } from 'selectors/balances';
+import { rewardsTotalBalanceByChainsSelector, rewardsTotalBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { getImageUrl } from 'utils/images';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
+import type { ChainBalances } from 'models/Home';
 
 export function useRewardsBalance(): BigNumber {
-  return useRootSelector(rewardsBalanceSelector);
+  return useRootSelector(rewardsTotalBalanceSelector);
 }
 
-export function useRewardsChainBalances(): ChainRecord<BigNumber> {
-  return { polygon: BigNumber(100), xdai: BigNumber(200) };
+export function useRewardsChainBalances(): ChainBalances {
+  return useRootSelector(rewardsTotalBalanceByChainsSelector);
 }
 
 export type RewardItem = {|

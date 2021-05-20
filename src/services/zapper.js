@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
 
 // utils
 import httpRequest from 'utils/httpRequest';
 import { reportErrorLog } from 'utils/common';
-import { mapNotNil } from 'utils/array';
 
 // constants
 import { CHAIN } from 'models/Chain';
@@ -57,13 +57,20 @@ const mapZapperNetworkIdToChain = (network: string): ?Chain => {
   }
 };
 
-export const mapZapperProtocolIdToBalanceCategory = (protocol: string): string => {
-  const walletProtocols = ['tokens'];
-  const investmentProtocols = [];
-  const liquidityPoolProtocols = [];
-  const depositProtocols = ['aave'];
-  const rewardProtocols = [];
+const walletProtocols = ['tokens'];
+const investmentProtocols = [];
+const liquidityPoolProtocols = ['uniswap', 'uniswap-v2', 'uniswap-v3'];
+const depositProtocols = ['aave', 'aave-v2'];
+const rewardProtocols = [];
 
+const supportedProtocols = [
+  ...walletProtocols,
+  ...investmentProtocols,
+  ...depositProtocols,
+  ...rewardProtocols,
+];
+
+export const mapZapperProtocolIdToBalanceCategory = (protocol: string): ?string => {
   if (walletProtocols.includes(protocol)) return 'wallet';
   if (investmentProtocols.includes(protocol)) return 'investments';
   if (liquidityPoolProtocols.includes(protocol)) return 'liquidityPools';
@@ -78,6 +85,8 @@ export const getZapperProtocolBalanceOnNetwork = async (
   protocol: string,
   network: string,
 ) => {
+  if (!supportedProtocols.includes(protocol)) return null;
+
   try {
     const result = await httpRequest.get(
       `${ZAPPER_CONFIG.API_URL}/protocols/${protocol}/balances`
@@ -97,9 +106,17 @@ export const getZapperProtocolBalanceOnNetwork = async (
     reportErrorLog('getZapperProtocolBalanceOnNetwork: API request error', { error });
     return null;
   }
-}
+};
 
-export const getZapperAvailableChainProtocols = async (addresses: string[]) => {
+type AvailableChainProtocol = {
+  chain: string,
+  zapperNetworkId: string,
+  zapperProtocolIds: string[],
+};
+
+export const getZapperAvailableChainProtocols = async (
+  addresses: string[],
+): Promise<?AvailableChainProtocol[]> => {
   try {
     const result = await httpRequest.get(
       `${ZAPPER_CONFIG.API_URL}/balances/supported`
@@ -115,16 +132,15 @@ export const getZapperAvailableChainProtocols = async (addresses: string[]) => {
 
     const { data } = result;
 
-    return Promise.all(mapNotNil(data, async (supported) => {
-      const { network: zapperNetworkId, protocols } = supported;
+    const mappedData = data.map((supported) => {
+      const { network: zapperNetworkId, protocols: zapperProtocolIds } = supported;
+      const chain = mapZapperNetworkIdToChain(zapperNetworkId);
+      return { chain, zapperNetworkId, zapperProtocolIds };
+    });
 
-      const chain: Chain = mapZapperNetworkIdToChain(zapperNetworkId);
-      if (![CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM].includes(chain)) return null;
-
-      return { chain, zapperNetworkId, protocols };
-    }));
+    return mappedData.filter(({ chain }) => [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM].includes(chain));
   } catch (error) {
     reportErrorLog('getZapperAvailableData: API request error', { error });
     return null;
   }
-}
+};

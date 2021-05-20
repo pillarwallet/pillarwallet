@@ -71,7 +71,7 @@ import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_RARI_USER_DATA } from 'constants/rariConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
-import { SET_TOTALS } from 'constants/totalsConstants';
+import { SET_TOTAL_BALANCES } from 'constants/totalsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -195,8 +195,8 @@ export const initAppAndRedirectAction = () => {
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
 
-      const { totals = {} } = get(storageData, 'totals', {});
-      dispatch({ type: SET_TOTALS, payload: totals });
+      const { balances: totalBalances = {} } = get(storageData, 'totalBalances', {});
+      dispatch({ type: SET_TOTAL_BALANCES, payload: totalBalances });
 
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;

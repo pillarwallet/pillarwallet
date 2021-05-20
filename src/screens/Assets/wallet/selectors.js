@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
-import { walletBalanceSelector } from 'selectors/balances';
+import { walletTotalBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { defaultSortAssetOptions } from 'utils/assets';
@@ -33,7 +33,7 @@ import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
 
 export function useWalletBalance(): FiatBalance {
-  const value = useRootSelector(walletBalanceSelector);
+  const value = useRootSelector(walletTotalBalanceSelector);
   return { value };
 }
 

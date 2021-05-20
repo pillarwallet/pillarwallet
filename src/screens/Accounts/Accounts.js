@@ -51,7 +51,7 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { fetchAllAccountsTotalsAction } from 'actions/assetsActions';
 
 // selectors
-import { accountsTotalsSelector, keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+import { accountsTotalBalancesSelector, keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { useFiatCurrency } from 'selectors';
 
 // services
@@ -62,7 +62,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { RenderItemProps } from 'utils/types/react-native';
-import type { AccountsTotals } from 'models/Home';
+import type { AccountsTotalBalances } from 'models/Home';
 
 
 const ITEM_TYPE = {
@@ -86,7 +86,7 @@ type Props = {|
   switchAccount: (accountId: string) => void,
   fetchAllAccountsTotals: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
-  accountsTotals: AccountsTotals,
+  accountsTotals: AccountsTotalBalances,
 |};
 
 const AccountsScreen = ({
@@ -220,7 +220,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   keyBasedWalletHasPositiveBalance: keyBasedWalletHasPositiveBalanceSelector,
-  accountsTotals: accountsTotalsSelector,
+  accountsTotals: accountsTotalBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

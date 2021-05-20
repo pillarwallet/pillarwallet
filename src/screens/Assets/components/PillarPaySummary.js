@@ -36,7 +36,7 @@ import { PPN_HOME, FUND_TANK } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
-import { paymentNetworkBalanceSelector } from 'selectors/balances';
+import { paymentNetworkTotalBalanceSelector } from 'selectors/balances';
 
 // Utils
 import { hitSlop20 } from 'utils/common';
@@ -57,7 +57,7 @@ function PillarPaySummary({ style }: Props) {
 
   const [showTooltip, setShowTooltip] = React.useState(false);
 
-  const balance = useRootSelector(paymentNetworkBalanceSelector);
+  const balance = useRootSelector(paymentNetworkTotalBalanceSelector);
   const currency = useFiatCurrency();
 
   const navigateToPillarPay = () => {

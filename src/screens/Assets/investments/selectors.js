@@ -22,19 +22,23 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { investmentsBalanceSelector } from 'selectors/balances';
+import {
+  investmentsTotalBalanceByChainsSelector,
+  investmentsTotalBalanceSelector,
+} from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useInvestmentsBalance(): FiatBalance {
-  const value = useRootSelector(investmentsBalanceSelector);
+  const value = useRootSelector(investmentsTotalBalanceSelector);
   return { value };
 }
 
-export function useInvestmentsChainBalances(): ChainRecord<BigNumber> {
-  return { ethereum: BigNumber(10) };
+export function useInvestmentsChainBalances(): ChainBalances {
+  return useRootSelector(investmentsTotalBalanceByChainsSelector);
 }
 
 /** Note: items are groupped by service. */

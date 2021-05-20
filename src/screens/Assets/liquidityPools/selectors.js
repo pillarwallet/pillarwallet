@@ -22,20 +22,25 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { liquidityPoolsBalanceSelector } from 'selectors/balances';
+import {
+  liquidityPoolsTotalBalanceByChainsSelector,
+  liquidityPoolsTotalBalanceSelector,
+} from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useLiquidityPoolsBalance(): FiatBalance {
-  const value = useRootSelector(liquidityPoolsBalanceSelector);
+  const value = useRootSelector(liquidityPoolsTotalBalanceSelector);
   return { value };
 }
 
-export function useLiquidityPoolsChainBalances(): ChainRecord<BigNumber> {
-  return { polygon: BigNumber(761.5), xdai: BigNumber(120.2) };
+export function useLiquidityPoolsChainBalances(): ChainBalances {
+  return useRootSelector(liquidityPoolsTotalBalanceByChainsSelector);
 }
+
 export type LiquidityPoolItem = {|
   key: string,
   service: string,

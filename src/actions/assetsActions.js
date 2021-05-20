@@ -40,15 +40,12 @@ import {
   COLLECTIBLES,
   PLR,
   BTC,
-  defaultFiatCurrency,
 } from 'constants/assetsConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
-import { SET_ACCOUNT_TOTALS } from 'constants/totalsConstants';
-import { CHAIN } from 'models/Chain';
+import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, SET_FETCHING_TOTALS } from 'constants/totalsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -56,6 +53,11 @@ import Toast from 'components/Toast';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import {
+  getZapperAvailableChainProtocols,
+  getZapperProtocolBalanceOnNetwork,
+  mapZapperProtocolIdToBalanceCategory,
+} from 'services/zapper';
 
 // utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
@@ -75,17 +77,15 @@ import {
   isArchanovaAccount,
   isEtherspotAccount,
   getAccountType,
+  findAccountByAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+import { sum } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
-import {
-  accountsSelector,
-  balancesSelector,
-  baseFiatCurrencySelector,
-} from 'selectors';
-import { accountsTotalsSelector } from 'selectors/balances';
+import { accountsSelector, balancesSelector } from 'selectors';
+import { accountsTotalBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
@@ -103,9 +103,6 @@ import { addExchangeAllowanceIfNeededAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
-import { fetchLiquidityPoolsDataAction } from './liquidityPoolsActions';
-import { fetchRariDataAction } from './rariActions';
-import { fetchUserStreamsAction } from './sablierActions';
 
 
 export const sendAssetAction = (
@@ -390,49 +387,120 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
 
 export const fetchAllAccountsTotalsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    if (getState().totals.isFetching) return;
+
+    dispatch({ type: SET_FETCHING_TOTALS, payload: true });
+
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
 
-    smartWalletAccounts.forEach((account) => dispatch(fetchAccountTotalsAction(account)));
-  };
-};
+    smartWalletAccounts.forEach((account) => dispatch(fetchCollectiblesAction(account)));
 
-export const fetchAccountTotalsAction = (account: Account) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAddress = getAccountAddress(account);
-
-    const accountId = getAccountId(account);
-    if (!accountAddress || !accountId) return;
-
-    const baseFiatCurrency = baseFiatCurrencySelector(getState()) || defaultFiatCurrency;
-    const periodInDays = 7;
-    const dashboardData = await etherspotService.getDashboardData(accountAddress, baseFiatCurrency, periodInDays);
-    if (!dashboardData) {
-      reportErrorLog('fetchAccountTotalsAction failed', { accountAddress, baseFiatCurrency, periodInDays });
+    const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
+    const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
+    if (!availableChainProtocols) {
+      reportErrorLog('fetchAllAccountsTotalsAction failed: no availableChainProtocols', { accountsAddresses });
       return;
     }
 
-    // TODO: replace once available from SDK
-    dispatch(fetchCollectiblesAction(account));
-    if (isArchanovaAccount(account)) {
-      dispatch(fetchLiquidityPoolsDataAction(LIQUIDITY_POOLS()));
-      dispatch(fetchRariDataAction());
-      dispatch(fetchUserStreamsAction());
+    try {
+      await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
+        const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
+          const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
+            accountsAddresses,
+            zapperProtocolId,
+            zapperNetworkId,
+          );
+
+          const balanceCategory = mapZapperProtocolIdToBalanceCategory(zapperProtocolId);
+          if (!protocolBalancesByAccounts || !balanceCategory) return null;
+
+          return { category: balanceCategory, balances: protocolBalancesByAccounts };
+        }));
+
+        // filter ones that are null (no protocol>category map found or no balances)
+        const availableChainProtocolsBalances = chainProtocolsBalances.filter(Boolean);
+
+        availableChainProtocolsBalances.forEach(({
+          balances: protocolBalancesByAccounts,
+          category: balanceCategory,
+        }) => {
+          Object.keys(protocolBalancesByAccounts).forEach((accountAddress) => {
+            const account = findAccountByAddress(accountAddress, accounts);
+            const accountProtocolBalances = protocolBalancesByAccounts[accountAddress]?.products;
+
+            // no need to add anything no matching account found or empty balances
+            if (!account || isEmpty(accountProtocolBalances)) return;
+
+            const accountCategoryBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
+              const protocolBalances = balances?.assets;
+              if (isEmpty(protocolBalances)) return categoryBalance;
+
+              const protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+
+              return sum([categoryBalance, ...protocolBalanceValues]);
+            }, wrapBigNumber(0));
+
+            dispatch({
+              type: SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+              payload: {
+                accountId: getAccountId(account),
+                chain,
+                category: balanceCategory,
+                balance: accountCategoryBalance,
+              },
+            });
+          });
+        });
+      }));
+    } catch (error) {
+      reportErrorLog('fetchAllAccountsTotalsAction failed', { error });
     }
 
-    const { wallet: { balance } } = dashboardData;
-    const totals = {
-      [CHAIN.ETHEREUM]: {
-        wallet: wrapBigNumber(balance || 0),
-      },
-    };
+    dispatch({ type: SET_FETCHING_TOTALS, payload: false });
 
-    dispatch({ type: SET_ACCOUNT_TOTALS, payload: { accountId, totals } });
-
-    const accountsTotals = accountsTotalsSelector(getState());
-    dispatch(saveDbAction('totals', { totals: accountsTotals }, true));
+    const accountsTotalBalances = accountsTotalBalancesSelector(getState());
+    dispatch(saveDbAction('totalBalances', { balances: accountsTotalBalances }, true));
   };
 };
+//
+// export const fetchAccountTotalsAction = (account: Account) => {
+//   return async (dispatch: Dispatch, getState: GetState) => {
+//     const accountAddress = getAccountAddress(account);
+//
+//     const accountId = getAccountId(account);
+//     if (!accountAddress || !accountId) return;
+//
+//     const baseFiatCurrency = baseFiatCurrencySelector(getState()) || defaultFiatCurrency;
+//     const periodInDays = 7;
+//     const dashboardData = await etherspotService.getDashboardData(accountAddress, baseFiatCurrency, periodInDays);
+//     if (!dashboardData) {
+//       reportErrorLog('fetchAccountTotalsAction failed', { accountAddress, baseFiatCurrency, periodInDays });
+//       return;
+//     }
+//
+//
+//     // TODO: replace once available from SDK
+//     dispatch(fetchCollectiblesAction(account));
+//     if (isArchanovaAccount(account)) {
+//       dispatch(fetchLiquidityPoolsDataAction(LIQUIDITY_POOLS()));
+//       dispatch(fetchRariDataAction());
+//       dispatch(fetchUserStreamsAction());
+//     }
+//
+//     const { wallet: { balance } } = dashboardData;
+//     const totals = {
+//       [CHAIN.ETHEREUM]: {
+//         wallet: wrapBigNumber(balance || 0),
+//       },
+//     };
+//
+//     dispatch({ type: SET_ACCOUNT_TOTALS, payload: { accountId, totals } });
+//
+//     const accountsTotals = accountsTotalsSelector(getState());
+//     dispatch(saveDbAction('totals', { totals: accountsTotals }, true));
+//   };
+// };
 
 export const fetchAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
