@@ -31,14 +31,10 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import type { Asset } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 
-type AssetDetailsContext = {|
-  accountAddress: ?string,
-|};
-
 /**
  * Extracted from AssetList.js. Asset screen expects specific but untyped format of data as navigation param.
  */
-export function buildAssetDataNavigationParam(asset: Asset, { accountAddress }: AssetDetailsContext) {
+export function buildAssetDataNavigationParam(asset: Asset) {
   const { symbol, name, iconUrl, decimals, iconMonoUrl, patternUrl, wallpaperUrl } = asset;
 
   const fullIconMonoUrl = iconMonoUrl ? `${getEnv().SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
@@ -50,11 +46,11 @@ export function buildAssetDataNavigationParam(asset: Asset, { accountAddress }: 
     id: symbol,
     name: name || symbol,
     token: symbol,
-    address: accountAddress,
     contractAddress: asset.address,
     icon: fullIconMonoUrl,
     wallpaper: fullIconWallpaperUrl,
     iconColor: fullIconUrl,
+    imageUrl: fullIconUrl,
     patternIcon,
     description: asset.description,
     decimals,

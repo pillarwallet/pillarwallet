@@ -87,7 +87,7 @@ function WalletTab() {
     const asset = getAssetFromRegistry(assetRegistry, item.symbol);
     if (!asset) return;
 
-    const assetData = buildAssetDataNavigationParam(asset, { accountAddress });
+    const assetData = buildAssetDataNavigationParam(asset);
     navigation.navigate(ASSET, { assetData });
   };
 
