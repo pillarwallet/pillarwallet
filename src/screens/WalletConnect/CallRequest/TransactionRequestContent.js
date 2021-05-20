@@ -146,7 +146,6 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const { estimateCallRequestTransaction } = useWalletConnect();
 
   React.useEffect(() => {
-    console.log('ESTIMATE EFFECT', request);
     estimateCallRequestTransaction(request);
   }, [request, estimateCallRequestTransaction]);
 

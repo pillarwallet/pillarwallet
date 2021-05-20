@@ -59,8 +59,6 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const type = getWalletConnectCallRequestType(request);
   const title = formatRequestType(type);
 
-  console.log("REQUEST MODAL", type, request);
-
   const handleConfirm = (transactionPayload?: TransactionPayload) => {
     if (!request) {
       Toast.show({
