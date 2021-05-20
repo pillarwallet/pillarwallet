@@ -42,7 +42,7 @@ export function useCollectibleCountPerChain(): CollectibleCountPerChain {
 }
 
 export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalances {
-  const chainBalances = Object.keys(chains).map((key) => chains[key]);
+  const chainBalances = Object.keys(chains ?? {}).map((key) => chains[key]);
 
   return {
     wallet: sum(chainBalances.map((chain) => chain?.wallet)),
