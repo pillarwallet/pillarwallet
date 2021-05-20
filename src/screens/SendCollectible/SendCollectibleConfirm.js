@@ -116,6 +116,7 @@ const SendCollectibleConfirm = ({
     contractAddress,
     tokenType,
     tokenId,
+    amount: 0,
   };
 
   /**

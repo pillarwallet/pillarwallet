@@ -70,7 +70,11 @@ export type CollectibleNavigationParams = {|
     id: string,
     name: string,
     description: ?string,
-    image: ?string, // Image URL
+    tokenType: string,
+    contractAddress: string,
+    tokenId: string,
+    iconUrl: ?string, // Icon URL
+    imageUrl: ?string, // Image URL
   },
 |};
 
@@ -129,18 +133,18 @@ class CollectibleScreen extends React.Component<Props> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
-  openCollectibleImage(collectible: { image: ?string }) {
-    const { image } = collectible;
+  openCollectibleImage(collectible: { imageUrl: ?string }) {
+    const { imageUrl } = collectible;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
 
     const imageViewImage = {
-      url: image,
+      url: imageUrl,
       width: null,
       height: null,
     };
 
-    if (isSvgImage(image)) {
+    if (isSvgImage(imageUrl)) {
       imageViewImage.width = getDeviceWidth();
       imageViewImage.height = getDeviceHeight();
     }
@@ -178,7 +182,7 @@ class CollectibleScreen extends React.Component<Props> {
       id,
       name,
       description,
-      image,
+      imageUrl,
     } = assetData;
 
     const isOwned = collectibles.find(collectible => {
@@ -197,7 +201,7 @@ class CollectibleScreen extends React.Component<Props> {
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
     const { towellie: genericCollectible } = images(theme);
 
-    // TODO: Here provide Etherspot transactions history.
+    // TODO: Here provide Etherspot COLLECTIBLES transactions history once it's available
     const historyItems = [];
 
     return (
@@ -206,7 +210,7 @@ class CollectibleScreen extends React.Component<Props> {
           <TouchableOpacity onPress={() => this.openCollectibleImage(assetData)}>
             <StyledCollectibleImage
               key={id.toString()}
-              source={{ uri: image }}
+              source={{ uri: imageUrl }}
               fallbackSource={genericCollectible}
               resizeMode="contain"
               width={180}

@@ -144,13 +144,13 @@ const SendAsset = ({
   const balance = getBalanceBN(balances, token);
   const currentValue = wrapBigNumber(amount || 0);
 
-  const isValidAmount = currentValue.isFinite() && !currentValue.isZero();
+  const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
+
+  const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
 
   const isAboveBalance = currentValue.gt(balance);
 
   const updateTxFee = () => {
-    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
-
     // specified amount is always valid and not necessarily matches input amount
     if ((!isCollectible && (!isValidAmount || isAboveBalance)) || !assetData || !selectedContact) {
       return;
@@ -252,9 +252,7 @@ const SendAsset = ({
   const hasAllFeeData = !isEstimating && !!selectedContact;
 
   const showFeeForAsset = !isAboveBalance && hasAllFeeData && isValidAmount;
-  const showFeeForCollectible = hasAllFeeData;
-  const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
-  const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
+  const showFee = isCollectible ? hasAllFeeData : showFeeForAsset;
 
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)

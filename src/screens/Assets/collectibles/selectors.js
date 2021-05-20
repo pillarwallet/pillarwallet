@@ -31,6 +31,9 @@ export type CollectibleItem = {|
   title: string,
   description: ?string,
   iconUrl: ?string,
+  imageUrl: ?string,
+  contractAddress: string,
+  tokenId: string,
 |};
 
 export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
@@ -39,15 +42,19 @@ export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
   const collectiblesMapped = collectibles.map(({
     id,
     contractAddress,
-    icon: iconUrl,
-    name: title,
     description,
+    icon: iconUrl,
+    image: imageUrl,
+    name: title,
   }) => ({
     key: `${contractAddress}-${id}`,
     id,
     title,
     description,
     iconUrl,
+    imageUrl,
+    contractAddress,
+    tokenId: id,
   }));
 
   return { ethereum: collectiblesMapped };

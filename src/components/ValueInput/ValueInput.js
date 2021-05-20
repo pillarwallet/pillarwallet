@@ -353,7 +353,8 @@ export const ValueInputComponent = ({
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>{assetData.name}
+          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>
+            {assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />
