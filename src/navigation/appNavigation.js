@@ -81,7 +81,6 @@ import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import KnowledgeBaseWebView from 'screens/Menu/KnowledgeBaseWebView';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
-import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
 import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
