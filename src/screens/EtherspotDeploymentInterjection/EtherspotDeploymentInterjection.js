@@ -29,6 +29,9 @@ import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
+// Constants
+import { SERVICES } from 'constants/navigationConstants';
+
 // Utils
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
@@ -43,12 +46,13 @@ function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const navigation = useNavigation();
 
-  const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
+  const chain: Chain = CHAIN.BINANCE;// navigation.getParam('chain') ?? CHAIN.BINANCE;
 
   const chainConfig = useChainsConfig()[chain];
 
   const navigateToBuy = () => {
-    // TODO: implement
+    // TODO: implement proper navigation when available
+    navigation.navigate(SERVICES);
   };
 
   return (
