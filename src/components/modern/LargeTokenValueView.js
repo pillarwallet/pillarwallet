@@ -19,10 +19,12 @@
 */
 
 import * as React from 'react';
+import { Text as RNText } from 'react-native';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
+import { Spacing } from 'components/modern/Layout';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -47,8 +49,12 @@ function LargeTokenValueView({ value, symbol, style }: Props) {
 
   return (
     <Container style={style}>
-      <TokenValue>{formatTokenValueWithoutSymbol(value, symbol, { stripTrailingZeros: true })}</TokenValue>
-      <TokenSymbol>{symbol}</TokenSymbol>
+      {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
+      <RNText>
+        <TokenValue>{formatTokenValueWithoutSymbol(value, symbol, { stripTrailingZeros: true })}</TokenValue>
+        <Spacing w={spacing.extraSmall} />
+        <TokenSymbol>{symbol}</TokenSymbol>
+      </RNText>
     </Container>
   );
 }
@@ -66,7 +72,6 @@ const TokenValue = styled(Text)`
 `;
 
 const TokenSymbol = styled(Text)`
-  margin-left: ${spacing.extraSmall}px;
   font-family: ${appFont.medium};
   font-size: 20px;
   color: ${({ theme }) => theme.colors.secondaryText};
