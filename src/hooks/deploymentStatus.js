@@ -36,16 +36,17 @@ import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Types
-import type {} from 'react-navigation';
+import { type Chain } from 'models/Chain';
+
 
 export function useDeploymentStatus() {
   const navigation = useNavigation();
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
   const activeAccount = useActiveAccount();
 
-  const showDeploymentInterjection = React.useCallback(() => {
+  const showDeploymentInterjection = React.useCallback((chain: Chain) => {
     if (isEtherspotAccount(activeAccount)) {
-      navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION);
+      navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
     } else if (isArchanovaAccount(activeAccount)) {
       Modal.open(() => <SWActivationModal navigation={navigation} />);
     }

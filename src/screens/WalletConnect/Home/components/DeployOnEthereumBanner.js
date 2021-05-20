@@ -36,6 +36,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import { CHAIN } from 'models/Chain';
 
 type Props = {|
   style?: ViewStyleProp,
@@ -50,8 +51,12 @@ const DeployEthereumBanner = ({ style }: Props) => {
 
   if (!isVisible) return null;
 
+  const handlePress = () => {
+    showDeploymentInterjection(CHAIN.ETHEREUM);
+  };
+
   return (
-    <TouchableContainer onPress={showDeploymentInterjection} style={style}>
+    <TouchableContainer onPress={handlePress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.25]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 6 }}>
         <Text color="#fcfdff">{t('deployOnEthereum')}</Text>
       </BackgroundGradient>

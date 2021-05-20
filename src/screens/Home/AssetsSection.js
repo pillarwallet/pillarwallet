@@ -131,7 +131,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={title}
         value={formattedBalance}
         isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : showDeploymentInterjection}
+        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : () => showDeploymentInterjection(chain)}
       />
     );
   };
@@ -164,7 +164,9 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
         isDeployed={isDeployed}
         onPress={
-          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : showDeploymentInterjection
+          isDeployed
+            ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)
+            : () => showDeploymentInterjection(chain)
         }
       />
     );
