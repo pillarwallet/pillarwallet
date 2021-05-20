@@ -56,7 +56,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  ${({ disabled }) => disabled && 'opacity: 0.7;'}
+  ${({ disabled }) => disabled && 'opacity: 0.5;'}
   ${({ $compact }) => !$compact && 'width: 100%;'}
   ${({ $compact }) =>
     !$compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}

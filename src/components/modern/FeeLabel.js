@@ -40,24 +40,18 @@ import { spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-
-type Mode = "actual" | "estimate";
+type Mode = 'actual' | 'estimate';
 
 type Props = {
   value: ?BigNumber,
   symbol: string,
   mode?: Mode,
   isLoading?: boolean,
+  isNotEnough?: boolean,
   style?: ViewStyleProp,
 };
 
-function FeeLabel({
-  value,
-  symbol,
-  mode,
-  isLoading,
-  style,
-}: Props) {
+function FeeLabel({ value, symbol, mode, isLoading, isNotEnough, style }: Props) {
   const { t } = useTranslation();
 
   const [showFiatValue, setShowFiatValue] = React.useState(true);
@@ -80,7 +74,7 @@ function FeeLabel({
 
       <Spacing w={8} />
 
-      <FeePill onPress={() => setShowFiatValue(!showFiatValue)}>
+      <FeePill onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
         <Text variant="small" color="#ffffff">
           {labelValue}
         </Text>
@@ -100,5 +94,5 @@ const FeePill = styled.TouchableOpacity`
   justify-content: center;
   padding: 0 ${spacing.small}px;
   border-radius: 12px;
-  ${({ theme }) => `background-color: ${theme.colors.labelTertiary};`}
+  background-color: ${({ theme, $isNotEnough }) => ($isNotEnough ? theme.colors.negative : theme.colors.labelTertiary)};
 `;

@@ -20,15 +20,15 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
-import Text from 'components/modern/Text';
+import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
 import LargeTokenValueView from 'components/modern/LargeTokenValueView';
-import FeeLabel from 'components/modern/FeeLabel';
+import Text from 'components/modern/Text';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
@@ -37,7 +37,7 @@ import { ETH } from 'constants/assetsConstants';
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountBalancesSelector } from 'selectors/balances';
-import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
+import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -93,7 +93,13 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       <LargeTokenValueView value={value} symbol={symbol} style={styles.tokenValue} />
 
       {!estimationErrorMessage && (
-        <FeeLabel value={fee} symbol={gasSymbol} isLoading={isEstimating} style={styles.fee} />
+        <FeeLabel
+          value={fee}
+          symbol={gasSymbol}
+          isLoading={isEstimating}
+          isNotEnough={hasNotEnoughtGas}
+          style={styles.fee}
+        />
       )}
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
@@ -150,7 +156,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
 
-  const isActiveAccountDeployedOnEthereum = useRootSelector(isActiveAccountDeployedOnEthereumSelector);
+  const isActiveAccountDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   let errorMessage = null;
