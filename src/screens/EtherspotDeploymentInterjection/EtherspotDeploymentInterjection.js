@@ -29,7 +29,7 @@ import HeaderBlock from 'components/HeaderBlock';
 /**
  * Interjection screen used when Etherspot smart wallet is not yet deployed.
  */
-function DeploymentInterjection() {
+function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const navigation = useNavigation();
 
@@ -40,4 +40,4 @@ function DeploymentInterjection() {
   );
 }
 
-export default DeploymentInterjection;
+export default EtherspotDeploymentInterjection;
