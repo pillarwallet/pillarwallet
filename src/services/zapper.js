@@ -25,6 +25,7 @@ import { reportErrorLog } from 'utils/common';
 
 // constants
 import { CHAIN } from 'models/Chain';
+import { PROTOCOLS } from 'constants/zapperServiceConstants';
 
 // types
 import type { Chain } from 'models/Chain';
@@ -57,10 +58,85 @@ const mapZapperNetworkIdToChain = (network: string): ?Chain => {
   }
 };
 
-const walletProtocols = ['tokens'];
-const investmentProtocols = [];
-const liquidityPoolProtocols = ['uniswap', 'uniswap-v2', 'uniswap-v3'];
-const depositProtocols = ['aave', 'aave-v2'];
+const walletProtocols = [
+  PROTOCOLS.TOKENS,
+  PROTOCOLS.BITCOIN,
+  PROTOCOLS.UNIT, // Generic?
+  PROTOCOLS.NFT,
+];
+const investmentProtocols = [
+  PROTOCOLS.AUTO_FARM,
+  PROTOCOLS.AAVE,
+  PROTOCOLS.AAVE_AMM,
+  PROTOCOLS.AAVE_V2,
+  PROTOCOLS.ALCHEMIX,
+  PROTOCOLS.ALPHA,
+  PROTOCOLS.BADGER,
+  PROTOCOLS.BARNBRIDGE,
+  PROTOCOLS.BEEFY,
+  PROTOCOLS.BZX,
+  PROTOCOLS.COMPOUND,
+  PROTOCOLS.CREAM,
+  PROTOCOLS.CURVE,
+  PROTOCOLS.DEFISAVER,
+  PROTOCOLS.DEVERSIFI,
+  PROTOCOLS.DHEDGE,
+  PROTOCOLS.DFORCE,
+  PROTOCOLS.ELLIPSIS,
+  PROTOCOLS.IDLE,
+  PROTOCOLS.HARVEST,
+  PROTOCOLS.HEGIC,
+  PROTOCOLS.KEEPER_DAO,
+  PROTOCOLS.MUSHROOM,
+  PROTOCOLS.PANCAKESWAP,
+  PROTOCOLS.PICKLE,
+  PROTOCOLS.RARI,
+  PROTOCOLS.REALT,
+  PROTOCOLS.RIBBON,
+  PROTOCOLS.SADDLE,
+  PROTOCOLS.SHELL,
+  PROTOCOLS.SMOOTHY,
+  PROTOCOLS.VALUE,
+  PROTOCOLS.VENUS,
+  PROTOCOLS.YAXIS,
+  PROTOCOLS.YEARN,
+];
+const liquidityPoolProtocols = [
+  PROTOCOLS.BALANCER,
+  PROTOCOLS.BANCOR,
+  PROTOCOLS.DODO,
+  PROTOCOLS.DYDX,
+  PROTOCOLS.FUTURESWAP,
+  PROTOCOLS.LINKSWAP,
+  PROTOCOLS.LOOPRING,
+  PROTOCOLS.LIQUITY,
+  PROTOCOLS.MOONISWAP,
+  PROTOCOLS.ONEINCH,
+  PROTOCOLS.QUICKSWAP,
+  PROTOCOLS.SFINANCE,
+  PROTOCOLS.SNOWSWAP,
+  PROTOCOLS.SPOOKYSWAP,
+  PROTOCOLS.SUSHISWAP,
+  PROTOCOLS.SWERVE,
+  PROTOCOLS.SYNTHETIX,
+  PROTOCOLS.UNISWAP,
+  PROTOCOLS.UNISWAP_V2,
+  PROTOCOLS.UNISWAP_V3,
+  PROTOCOLS.XSIGMA,
+];
+const depositProtocols = [
+  PROTOCOLS.BELLA,
+  PROTOCOLS.COVER, // Not sure about this one...
+  PROTOCOLS.DEFIVADEX, // Not sure... insurance mining?
+  PROTOCOLS.DSD, // Just a token
+  PROTOCOLS.ESD, // Another token
+  PROTOCOLS.MAKER, // DAI
+  PROTOCOLS.OTHER, // Optional?
+  PROTOCOLS.POOLTOGETHER,
+  PROTOCOLS.REFLEXER,
+  PROTOCOLS.TOKENSETS,
+  PROTOCOLS.VESPER,
+];
 const rewardProtocols = [];
 
 const supportedProtocols = [
