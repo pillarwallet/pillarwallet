@@ -48,20 +48,10 @@ export type DepositItem = {|
 |};
 
 
-// TODO: provide real assets data
 export function useDepositsAssets(): ChainRecord<DepositItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'aave-1',
-      service: 'Aave',
-      title: 'DAI',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-      currentApy: BigNumber(0.235),
-    },
-  ];
-  return { ethereum };
+  // TODO: replace once available from Etherspot SDK
+  const deposits = [];
+
+  return { ethereum: deposits };
 }
 

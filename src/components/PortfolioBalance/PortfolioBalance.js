@@ -19,29 +19,25 @@
 */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import type { ViewStyleProp } from 'utils/types/react-native';
 
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { Balances, Rates, MixedBalance } from 'models/Asset';
-
+// components
 import BalanceView from 'components/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { balanceInEth } from 'utils/assets';
+
+// selectors
+import { useRootSelector } from 'selectors';
+import { totalBalanceSelector } from 'selectors/balances';
+
+// utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { allBalancesSelector, servicesBalanceListSelector } from 'selectors/balances';
-import { ETH } from 'constants/assetsConstants';
 
 
 type Props = {
-  rates: Rates,
-  balances: Balances,
-  serviceBalances: MixedBalance[],
-  fiatCurrency: string,
-  style: Object,
+  style?: ViewStyleProp,
   showBalance: boolean,
   toggleBalanceVisibility: () => void,
 };
@@ -79,77 +75,34 @@ const LabelText = styled(BaseText)`
   margin-bottom: 8px;
 `;
 
-export const getTotalInEth = (values: MixedBalance[], rates: Rates) => {
-  return values.map<number>(({ symbol, balance }) => {
-    const rate = rates[symbol]?.[ETH]
-      ?? (!!rates[ETH]?.[symbol] && 1 / rates[ETH]?.[symbol])
-      ?? 0;
-    const amount = typeof balance === 'number' ? balance : parseFloat(balance);
-    return rate * amount;
-  })
-    .map(ethBalance => Number.isNaN(ethBalance) ? 0 : ethBalance)
-    .reduce((a, b) => a + b, 0);
+const PortfolioBalance = ({
+  style,
+  showBalance,
+  toggleBalanceVisibility,
+}: Props) => {
+  const totalBalance = useRootSelector(totalBalanceSelector);
+
+  return (
+    <BalanceWrapper>
+      <LabelText secondary>{t('title.totalBalance')}</LabelText>
+      <BalanceButton onPress={toggleBalanceVisibility}>
+        <ContentWrapper>
+          {!showBalance && <BalanceText secondary>{t('button.viewBalance')}</BalanceText>}
+          {!!showBalance && (
+            <>
+              <BalanceView
+                style={style}
+                balance={totalBalance}
+              />
+              {/* different icon name will be passed when !showBalance */}
+              <ToggleIcon name="hidden" />
+            </>
+            )}
+        </ContentWrapper>
+      </BalanceButton>
+    </BalanceWrapper>
+  );
 };
 
-const getCombinedBalances = (props: Props): number => {
-  const {
-    balances,
-    serviceBalances,
-    fiatCurrency,
-    rates,
-  } = props;
 
-  const ethRate = rates[ETH]?.[fiatCurrency] ?? 0;
-  return ethRate * (balanceInEth(balances, rates) + getTotalInEth(serviceBalances, rates));
-};
-
-class PortfolioBalance extends React.PureComponent<Props> {
-  render() {
-    const {
-      style,
-      showBalance,
-      toggleBalanceVisibility,
-    } = this.props;
-
-    const combinedBalance = getCombinedBalances(this.props);
-
-    return (
-      <BalanceWrapper>
-        <LabelText secondary>{t('title.totalBalance')}</LabelText>
-        <BalanceButton onPress={toggleBalanceVisibility}>
-          <ContentWrapper>
-            {!showBalance
-              ? <BalanceText secondary>{t('button.viewBalance')}</BalanceText>
-              : (
-                <BalanceView
-                  style={style}
-                  balance={combinedBalance}
-                />)
-            }
-            {showBalance &&
-              <ToggleIcon name="hidden" /> // different icon name will be passed when !showBalance
-            }
-          </ContentWrapper>
-        </BalanceButton>
-      </BalanceWrapper>
-    );
-  }
-}
-
-const mapStateToProps = ({
-  rates: { data: rates },
-}: RootReducerState): $Shape<Props> => ({
-  rates,
-});
-
-const structuredSelector = createStructuredSelector({
-  balances: allBalancesSelector,
-  serviceBalances: servicesBalanceListSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default connect(combinedMapStateToProps)(PortfolioBalance);
+export default PortfolioBalance;

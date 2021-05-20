@@ -43,6 +43,7 @@ export type WalletItem = {|
   iconUrl: ?string,
   value: BigNumber,
   symbol: string,
+  change?: BigNumber,
 |};
 
 export const useWalletAssets = (): ChainRecord<WalletItem[]> => {

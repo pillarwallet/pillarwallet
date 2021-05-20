@@ -40,11 +40,15 @@ import {
   COLLECTIBLES,
   PLR,
   BTC,
+  defaultFiatCurrency,
 } from 'constants/assetsConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+import { SET_ACCOUNT_TOTALS } from 'constants/totalsConstants';
+import { CHAIN } from 'models/Chain';
 
 // components
 import Toast from 'components/Toast';
@@ -55,7 +59,12 @@ import archanovaService from 'services/archanova';
 
 // utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import { parseTokenAmount, reportErrorLog, uniqBy } from 'utils/common';
+import {
+  parseTokenAmount,
+  reportErrorLog,
+  uniqBy,
+  wrapBigNumber,
+} from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccount,
@@ -71,7 +80,12 @@ import { catchTransactionError } from 'utils/wallet';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
-import { balancesSelector } from 'selectors';
+import {
+  accountsSelector,
+  balancesSelector,
+  baseFiatCurrencySelector,
+} from 'selectors';
+import { accountsTotalsSelector } from 'selectors/balances';
 
 // types
 import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
@@ -89,6 +103,9 @@ import { addExchangeAllowanceIfNeededAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+import { fetchLiquidityPoolsDataAction } from './liquidityPoolsActions';
+import { fetchRariDataAction } from './rariActions';
+import { fetchUserStreamsAction } from './sablierActions';
 
 
 export const sendAssetAction = (
@@ -368,6 +385,52 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
     }
+  };
+};
+
+export const fetchAllAccountsTotalsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+    const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
+
+    smartWalletAccounts.forEach((account) => dispatch(fetchAccountTotalsAction(account)));
+  };
+};
+
+export const fetchAccountTotalsAction = (account: Account) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accountAddress = getAccountAddress(account);
+
+    const accountId = getAccountId(account);
+    if (!accountAddress || !accountId) return;
+
+    const baseFiatCurrency = baseFiatCurrencySelector(getState()) || defaultFiatCurrency;
+    const periodInDays = 7;
+    const dashboardData = await etherspotService.getDashboardData(accountAddress, baseFiatCurrency, periodInDays);
+    if (!dashboardData) {
+      reportErrorLog('fetchAccountTotalsAction failed', { accountAddress, baseFiatCurrency, periodInDays });
+      return;
+    }
+
+    // TODO: replace once available from SDK
+    dispatch(fetchCollectiblesAction(account));
+    if (isArchanovaAccount(account)) {
+      dispatch(fetchLiquidityPoolsDataAction(LIQUIDITY_POOLS()));
+      dispatch(fetchRariDataAction());
+      dispatch(fetchUserStreamsAction());
+    }
+
+    const { wallet: { balance } } = dashboardData;
+    const totals = {
+      [CHAIN.ETHEREUM]: {
+        wallet: wrapBigNumber(balance || 0),
+      },
+    };
+
+    dispatch({ type: SET_ACCOUNT_TOTALS, payload: { accountId, totals } });
+
+    const accountsTotals = accountsTotalsSelector(getState());
+    dispatch(saveDbAction('totals', { totals: accountsTotals }, true));
   };
 };
 

@@ -29,15 +29,19 @@ import { getTotalBalanceInFiat } from 'utils/assets';
 import { getStreamBalance } from 'utils/sablier';
 import { BigNumber, formatUnits } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
+import { sum } from 'utils/bigNumber';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances, MixedBalance, MixedBalances } from 'models/Asset';
+import type { Rates, Balances, MixedBalance } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { SablierReducerState } from 'reducers/sablierReducer';
 import type { RariReducerState } from 'reducers/rariReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { Account } from 'models/Account';
+import type { AccountsTotals, CategoryBalancesPerChain } from 'models/Home';
 
 // selectors
 import {
@@ -50,6 +54,7 @@ import {
   sablierSelector,
   rariSelector,
   liquidityPoolsSelector,
+  activeAccountSelector,
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -111,7 +116,7 @@ const poolTogetherBalanceListSelector = createSelector(
 
 const sablierBalanceListSelector = createSelector(
   sablierSelector,
-  ({ incomingStreams }: SablierReducerState): MixedBalance[] => incomingStreams
+  ({ outgoingStreams }: SablierReducerState): MixedBalance[] => outgoingStreams
     .map<?MixedBalance>(stream => {
       const { symbol, decimals } = stream.token;
       if (!symbol || !decimals) return null;
@@ -148,81 +153,149 @@ const liquidityPoolsBalanceListSelector = createSelector(
   }).filter(Boolean),
 );
 
-export const servicesBalanceListSelector = createSelector(
-  aaveBalanceListSelector,
-  poolTogetherBalanceListSelector,
-  sablierBalanceListSelector,
-  rariBalanceListSelector,
-  liquidityPoolsBalanceListSelector,
-  (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
-);
+export const accountsTotalsSelector = ({ totals }: RootReducerState): AccountsTotals => totals.data;
 
-export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  fiatCurrencySelector,
-  ratesSelector,
-  allBalancesSelector,
-  servicesBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, assetBalances: Balances, servicesBalances: MixedBalances): BigNumber => {
-    return BigNumber(
-      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
-        getTotalBalanceInFiat(servicesBalances, rates, fiatCurrency),
-    );
-  },
-);
-
-export const walletBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  fiatCurrencySelector,
-  ratesSelector,
-  allBalancesSelector,
-  sablierBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, assetBalances: Balances, sablierBalances: Balances): BigNumber => {
-    return BigNumber(
-      getTotalBalanceInFiat(assetBalances, rates, fiatCurrency) +
-        getTotalBalanceInFiat(sablierBalances, rates, fiatCurrency),
-    );
-  },
+export const activeAccountTotalsSelector: (RootReducerState) => CategoryBalancesPerChain = createSelector(
+  activeAccountIdSelector,
+  accountsTotalsSelector,
+  (
+    activeAccountId: string,
+    accountsTotals: AccountsTotals,
+  ): CategoryBalancesPerChain => accountsTotals[activeAccountId],
 );
 
 export const paymentNetworkBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
   availableStakeSelector,
   ratesSelector,
   fiatCurrencySelector,
-  (ppnBalance: number, rates: Rates, currency: string) => {
+  (activeAccount: Account, ppnBalance: number, rates: Rates, currency: string) => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
     const balances: Balances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
     return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
   },
 );
 
+export const walletBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountTotalsSelector,
+  paymentNetworkBalanceSelector,
+  (
+    accountTotals: ?CategoryBalancesPerChain,
+    paymentNetworkBalance: BigNumber,
+  ): BigNumber => {
+    const balancesOnChains = (Object.values(accountTotals || {}): any);
+
+    const walletBalancesOnChains = balancesOnChains.map((chainTotals) => {
+      return chainTotals?.wallet || BigNumber(0);
+    });
+
+    return sum([...walletBalancesOnChains, paymentNetworkBalance]);
+  },
+);
+
+export const sablierBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
+  sablierBalanceListSelector,
+  ratesSelector,
+  fiatCurrencySelector,
+  (
+    activeAccount: Account,
+    sablierBalances: Balances,
+    rates: Rates,
+    fiatCurrency: string,
+  ) => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
+    return BigNumber(getTotalBalanceInFiat(sablierBalances, rates, fiatCurrency));
+  },
+);
+
+// TODO: replace from totals when added to SDK
 export const depositsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
   fiatCurrencySelector,
   ratesSelector,
   aaveBalanceListSelector,
   rariBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, aaveBalances: Balances, rariBalances: Balances): BigNumber => {
-    return BigNumber(
-      getTotalBalanceInFiat(aaveBalances, rates, fiatCurrency) +
-        getTotalBalanceInFiat(rariBalances, rates, fiatCurrency),
-    );
+  sablierBalanceSelector,
+  (
+    activeAccount: Account,
+    fiatCurrency: string,
+    rates: Rates,
+    aaveBalancesList: Balances,
+    rariBalancesList: Balances,
+    sablierBalance: BigNumber,
+  ): BigNumber => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
+    return sum([
+      BigNumber(getTotalBalanceInFiat(aaveBalancesList, rates, fiatCurrency)),
+      BigNumber(getTotalBalanceInFiat(rariBalancesList, rates, fiatCurrency)),
+      sablierBalance,
+    ]);
   },
 );
 
+// TODO: replace from totals when added to SDK
 export const investmentsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
   fiatCurrencySelector,
   ratesSelector,
   poolTogetherBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, poolTogetherBalances: Balances): BigNumber => {
+  (
+    activeAccount: Account,
+    fiatCurrency: string,
+    rates: Rates,
+    poolTogetherBalances: Balances,
+  ): BigNumber => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
     return BigNumber(getTotalBalanceInFiat(poolTogetherBalances, rates, fiatCurrency));
   },
 );
 
-
+// TODO: replace from totals when added to SDK
 export const liquidityPoolsBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
   fiatCurrencySelector,
   ratesSelector,
   liquidityPoolsBalanceListSelector,
-  (fiatCurrency: string, rates: Rates, liquidityPoolsBalances: Balances): BigNumber => {
+  (
+    activeAccount: Account,
+    fiatCurrency: string,
+    rates: Rates,
+    liquidityPoolsBalances: Balances,
+  ): BigNumber => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
     return BigNumber(getTotalBalanceInFiat(liquidityPoolsBalances, rates, fiatCurrency));
   },
+);
+
+export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  walletBalanceSelector,
+  investmentsBalanceSelector,
+  depositsBalanceSelector,
+  liquidityPoolsBalanceSelector,
+  // TODO: include rewards
+  // TODO: include collectibles pricing?
+  (
+    walletBalance: BigNumber,
+    investmentsBalance: BigNumber,
+    depositsBalance: BigNumber,
+    liquidityPoolsBalance: BigNumber,
+  ): BigNumber => sum([
+    walletBalance,
+    investmentsBalance,
+    depositsBalance,
+    liquidityPoolsBalance,
+  ]),
 );
 
 export const rewardsBalanceSelector: (RootReducerState) => BigNumber = () => {

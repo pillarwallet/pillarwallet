@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,37 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// Types
-import type { ChainRecord } from 'models/Chain';
+export const SET_FETCHING_TOTALS = 'SET_FETCHING_TOTALS';
+export const SET_TOTALS = 'SET_TOTALS';
+export const SET_ACCOUNT_TOTALS = 'SET_ACCOUNT_TOTALS';
 
-// Selectors
-import { useRootSelector } from 'selectors';
-import { accountCollectiblesSelector } from 'selectors/collectibles';
-
-export type CollectibleItem = {|
-  key: string,
-  id: string,
-  title: string,
-  description: ?string,
-  iconUrl: ?string,
-|};
-
-export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
-  const collectibles = useRootSelector(accountCollectiblesSelector);
-
-  const collectiblesMapped = collectibles.map(({
-    id,
-    contractAddress,
-    icon: iconUrl,
-    name: title,
-    description,
-  }) => ({
-    key: `${contractAddress}-${id}`,
-    id,
-    title,
-    description,
-    iconUrl,
-  }));
-
-  return { ethereum: collectiblesMapped };
-}

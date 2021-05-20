@@ -47,19 +47,9 @@ export type InvestmentItem = {|
   change?: BigNumber,
 |};
 
-// TODO: provide real assets data
 export function useInvestmentAssets(): ChainRecord<InvestmentItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'rari-1',
-      title: 'Stable pool',
-      service: 'Pool Together',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-    },
-  ];
+  // TODO: replace once available from Etherspot SDK
+  const investments = [];
 
-  return { ethereum };
+  return { ethereum: investments };
 }

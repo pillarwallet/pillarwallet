@@ -28,7 +28,6 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import Stories from 'components/Stories';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
@@ -47,7 +46,6 @@ import ActionButtons from './ActionButtons';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
   hideBalance: boolean,
   toggleBalance: () => void,
   rewardActive?: boolean,
@@ -60,7 +58,6 @@ const Wrapper = styled.View`
 `;
 
 const WalletsPart = ({
-  baseFiatCurrency,
   toggleBalance,
   hideBalance,
   rewardActive,
@@ -72,7 +69,6 @@ const WalletsPart = ({
     <Wrapper>
       {areStoriesEnabled && <Stories />}
       <PortfolioBalance
-        fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
         showBalance={!hideBalance}
         toggleBalanceVisibility={toggleBalance}
         sessionLanguageCode={sessionLanguageCode}
@@ -83,10 +79,9 @@ const WalletsPart = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency, hideBalance } },
+  appSettings: { data: { hideBalance } },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
   hideBalance,
   sessionLanguageCode,
 });

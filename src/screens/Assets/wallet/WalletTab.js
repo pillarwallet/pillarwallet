@@ -115,7 +115,7 @@ function WalletTab() {
         title={item.title}
         iconUrl={item.iconUrl}
         value={item.value}
-        change={BigNumber(0.01)}
+        change={item.change}
         symbol={item.symbol}
         onPress={() => navigateToAssetDetails(item)}
       />

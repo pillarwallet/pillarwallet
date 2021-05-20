@@ -45,35 +45,9 @@ export type LiquidityPoolItem = {|
   change?: BigNumber,
 |};
 
-// TODO: provide real assets data
 export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'uniswap-1',
-      title: 'Uniswap v2 ETH/PLR',
-      service: 'Uniswap v2',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/ethplruniColor.png?size=3',
-      value: BigNumber(480.2),
-      change: BigNumber(3.32),
-    },
-    {
-      key: 'uniswap-2',
-      title: 'Uniswap v2 DAI/PLR',
-      service: 'Uniswap v2',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/daiplrColor.png?size=3',
-      value: BigNumber(281.3),
-      change: BigNumber(2.12),
-    },
-    {
-      key: 'balancer-1',
-      title: 'Balancer Dough',
-      service: 'Balancer',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(120.2),
-      change: BigNumber(12.3),
-    },
-  ];
+  // TODO: replace once available from Etherspot SDK
+  const liquidityPools = [];
 
-  return { ethereum };
+  return { ethereum: liquidityPools };
 }

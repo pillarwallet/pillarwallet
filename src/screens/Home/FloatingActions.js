@@ -31,9 +31,12 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 // Constants
 import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
+// Utils
+import { isArchanovaAccount } from 'utils/accounts';
+
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
-import { totalBalanceSelector } from 'selectors/balances';
+import { useRootSelector, activeAccountAddressSelector, useActiveAccount } from 'selectors';
+import { walletBalanceSelector } from 'selectors/balances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
@@ -77,10 +80,13 @@ function FloatingActions() {
 }
 
 const useEnabledActions = () => {
-  const totalBalance = useRootSelector(totalBalanceSelector);
+  const walletTotalBalance = useRootSelector(walletBalanceSelector);
+  const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 
-  const isEnabled = totalBalance.gt(0) && isEmpty(smartWalletState.sendingBlockedMessage);
+
+  const isEnabled = walletTotalBalance.gt(0)
+    && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
 
   return {
     isSendEnabled: isEnabled,

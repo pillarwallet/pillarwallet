@@ -38,7 +38,7 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useAccounts } from 'selectors';
+import { useSmartWalletAccounts } from 'selectors';
 
 // Utils
 import { getActiveAccountAddress } from 'utils/accounts';
@@ -58,7 +58,7 @@ type Props = {|
 function WalletEventDetails({ event }: Props) {
   const { t } = useTranslation();
 
-  const accounts = useAccounts();
+  const accounts = useSmartWalletAccounts();
   const dispatch = useDispatch();
 
   const colors = useThemeColors();

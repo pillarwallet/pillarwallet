@@ -51,7 +51,7 @@ export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
   if (!account || !isEtherspotAccount(account)) return false;
 
   const etherspotAccount: EtherspotAccount = account.extra;
-  return etherspotAccount.status === AccountStates.Deployed;
+  return etherspotAccount.state === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (

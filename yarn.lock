@@ -8361,10 +8361,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.6.tgz#681b6827ebc3da2078a81b45fcedaca4be103a26"
-  integrity sha512-1Q2yeWf5qe8uRKL8boU3jv3XvjjSjPi8Ao9rN/C0TMjDownNlR7GOaGgbdFMtC40CPUyaxT5zrdjnMAdeYjDMQ==
+etherspot@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.2.8.tgz#1a1e1b9cf5fa61ea0e7c7c28c39885449c31f5a5"
+  integrity sha512-DuU72F4TcbEKt5XTxqS+ofd+iYY8CNaHPJbgcm7U7wjHjXiutZOygW6q2VLtOW9WnJOEZbPKKszaIuCGFmBMjA==
   dependencies:
     "@apollo/client" "3.3.11"
     "@etherspot/contracts" "1.2.1"

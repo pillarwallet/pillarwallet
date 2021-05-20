@@ -26,7 +26,7 @@ import get from 'lodash.get';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { getAccountAddress } from 'utils/accounts';
+import { getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -111,6 +111,8 @@ export const rariSelector = ({ rari }: RootReducerState) => rari;
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
 
 export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
+
+export const useSmartWalletAccounts = (): Account[] => useAccounts().filter(isNotKeyBasedType);
 
 export const allAccountsExchangeAllowancesSelector = ({ exchange }: RootReducerState) => exchange.data.allowances;
 

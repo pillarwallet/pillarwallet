@@ -120,6 +120,7 @@ export type KeyBasedAssetTransfer = {|
   signedTransaction?: Object,
   status?: string,
 |};
+
 export type AssetOption = {
   // Core props
   address?: string,
