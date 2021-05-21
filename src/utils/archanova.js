@@ -78,7 +78,7 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
-import { isCaseInsensitiveMatch } from './common';
+import { isCaseInsensitiveMatch, reportErrorLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
@@ -451,5 +451,21 @@ export const buildEnsMigrationRawTransactions = async (
 
   return migrator
     .encodeTransactionRequests(archanovaAccountDeviceSignature)
-    .map(({ data }) => data);
+    .map(({ data, to }) => {
+      if (!addressesEqual(to, migratorAddress)) return data;
+
+      // Jegor's provided fix
+      try {
+        const { account } = archanovaService.getSdk().contract;
+        return account.encodeMethodInput('executeTransaction', to, 0, data);
+      } catch (error) {
+        reportErrorLog('buildEnsMigrationRawTransactions -> encodeMethodInput failed', {
+          error,
+          encodedTransactionRequest: { to, data },
+          migratorAddress,
+          archanovaAccount,
+          etherspotAccount,
+        });
+      }
+    });
 };
