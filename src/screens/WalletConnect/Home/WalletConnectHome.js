@@ -37,7 +37,10 @@ import Stories from 'components/Stories';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
-import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useSupportedChains } from 'selectors/chains';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Services
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
@@ -69,10 +72,10 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+  const { isDeployedOnChain } = useDeploymentStatus();
 
   const renderListHeader = () => {
-    const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
+    const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
 
     return (
       <ListHeader>
@@ -82,7 +85,7 @@ function WalletConnectHome() {
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
 
-        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.banner} />}
+        {showDeployBanner && <DeployOnEthereumBanner style={styles.banner} />}
       </ListHeader>
     );
   };
@@ -91,8 +94,7 @@ function WalletConnectHome() {
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
   const renderItem = (item: WalletConnectCmsApp) => {
-    const isEthereumOnly = activeChain === CHAIN.ETHEREUM || isEqual(item.chains.length, [CHAIN.ETHEREUM]);
-    const disabled = isEthereumOnly && !isDeployedOnEthereum;
+    const disabled = activeChain != null && !isDeployedOnChain[activeChain];
 
     return (
       <WalletConnectListItem
