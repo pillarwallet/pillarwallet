@@ -29,11 +29,11 @@ import {
 import { BigNumber } from 'utils/common';
 
 // types
-import type { AccountsTotalBalances } from 'models/Home';
+import type { ChainBalancesPerAccount } from 'models/Home';
 
 
 export type TotalsReducerState = {
-  balances: AccountsTotalBalances,
+  balances: ChainBalancesPerAccount,
   isFetching: boolean,
 };
 
@@ -44,7 +44,7 @@ export type SetFetchingTotalsAction = {|
 
 export type SetTotalBalancesAction = {|
   type: typeof SET_TOTAL_BALANCES,
-  payload: AccountsTotalBalances,
+  payload: ChainBalancesPerAccount,
 |};
 
 export type SetAccountTotalChainBalancesAction = {|

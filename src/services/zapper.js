@@ -28,8 +28,38 @@ import { reportErrorLog } from 'utils/common';
 import { CHAIN } from 'models/Chain';
 import { PROTOCOLS } from 'constants/zapperServiceConstants';
 
-// types
-import type { Chain } from 'models/Chain';
+// for more detailed schema – https://api.zapper.fi/api/static/index.html
+type ZapperAsset = {
+  address: string,
+  symbol: string,
+  decimals: number,
+  price: number,
+  tokenAddress: string,
+  label?: string,
+  img?: string,
+  reserve?: number,
+  balance: number,
+  balanceUSD: number,
+};
+
+type ZapperMeta = {
+  label: string,
+  value: string | number,
+  type: string
+};
+
+type ZapperProduct = {
+  label: string,
+  assets: ZapperAsset[],
+  meta: ZapperMeta[],
+};
+
+type ZapperProtocolBalances = {
+  [address: string]: {
+    products: ZapperProduct[],
+    meta: ZapperMeta[],
+  }
+};
 
 // does not change between envs
 const ZAPPER_CONFIG = {
@@ -48,16 +78,12 @@ const buildAddressesQuery = (
   addresses: string[],
 ) => `addresses[]=${addresses.map((address) => `${address}`).join('&addresses[]=')}`;
 
-const mapZapperNetworkIdToChain = (network: string): ?Chain => {
-  switch (network) {
-    case 'ethereum': return CHAIN.ETHEREUM;
-    case 'polygon': return CHAIN.POLYGON;
-    case 'binance-smart-chain': return CHAIN.BINANCE;
-    case 'xdai': return CHAIN.XDAI;
-    default: return null;
-  }
+const zapperNetworkIdToChain = {
+  ethereum: CHAIN.ETHEREUM,
+  polygon: CHAIN.POLYGON,
+  'binance-smart-chain': CHAIN.BINANCE,
+  xdai: CHAIN.XDAI,
 };
-
 
 const walletProtocols = [
   PROTOCOLS.TOKENS,
@@ -166,7 +192,7 @@ export const getZapperProtocolBalanceOnNetwork = async (
   addresses: string[],
   protocol: string,
   network: string,
-) => {
+): Promise<?ZapperProtocolBalances> => {
   if (!supportedProtocols.includes(protocol)) return null;
 
   try {
@@ -190,7 +216,7 @@ export const getZapperProtocolBalanceOnNetwork = async (
   }
 };
 
-type AvailableChainProtocol = {
+type ZapperNetworkWithProtocols = {
   chain: string,
   zapperNetworkId: string,
   zapperProtocolIds: string[],
@@ -198,7 +224,7 @@ type AvailableChainProtocol = {
 
 export const getZapperAvailableChainProtocols = async (
   addresses: string[],
-): Promise<?AvailableChainProtocol[]> => {
+): Promise<?ZapperNetworkWithProtocols[]> => {
   try {
     const result = await httpRequest.get(
       `${ZAPPER_CONFIG.API_URL}/balances/supported`
@@ -216,7 +242,7 @@ export const getZapperAvailableChainProtocols = async (
 
     const mappedData = data.map((supported) => {
       const { network: zapperNetworkId, protocols: zapperProtocolIds } = supported;
-      const chain = mapZapperNetworkIdToChain(zapperNetworkId);
+      const chain = zapperNetworkIdToChain[zapperNetworkId];
       return { chain, zapperNetworkId, zapperProtocolIds };
     });
 

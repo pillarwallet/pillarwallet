@@ -35,6 +35,6 @@ export type ChainBalances = ChainRecord<BigNumber>;
 
 export type CollectibleCountPerChain = ChainRecord<number>;
 
-export type AccountsTotalBalances = {
+export type ChainBalancesPerAccount = {
   [accountId: string]: CategoryBalancesPerChain,
 };

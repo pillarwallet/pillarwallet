@@ -26,7 +26,7 @@ import { activeAccountTotalBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // Utils
-import { BigNumber } from 'utils/common';
+import { getTotalBalance } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 
 // Types
@@ -55,11 +55,6 @@ export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): Cate
 
 export function getTotalChainBalances(chains: CategoryBalancesPerChain): ChainBalances {
   return mapValues(chains, (balances) => getTotalBalance(balances));
-}
-
-export function getTotalBalance(entries: { [key: string]: BigNumber}): BigNumber {
-  const balances = Object.keys(entries).map((key) => entries[key]);
-  return sum(balances);
 }
 
 export function getTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {

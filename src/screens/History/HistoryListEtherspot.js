@@ -60,9 +60,13 @@ function parseFee(
   gasPrice: ?number,
 ): ?TokenValue {
   if (feeWithGasToken?.feeInWei) {
+    const {
+      feeInWei,
+      gasToken: { decimals, symbol },
+    } = feeWithGasToken;
     return {
-      value: feeWithGasToken.feeInWei,
-      symbol: feeWithGasToken.gasToken.symbol,
+      value: wrapBigNumber(formatUnits(feeInWei, decimals)),
+      symbol,
     };
   }
 

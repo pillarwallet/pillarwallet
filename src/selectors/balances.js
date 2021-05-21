@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { createSelector } from 'reselect';
-import isEmpty from 'lodash.isempty';
+import { isEmpty } from 'lodash';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -28,12 +28,13 @@ import { getTotalBalanceInFiat } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 import { isEtherspotAccount } from 'utils/accounts';
+import { getChainBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
-import type { AccountsTotalBalances, CategoryBalancesPerChain, ChainBalances } from 'models/Home';
+import type { ChainBalancesPerAccount, CategoryBalancesPerChain, ChainBalances } from 'models/Home';
 
 // selectors
 import {
@@ -45,29 +46,6 @@ import {
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
-
-const sumBalancesPerChainChain = (
-  accountTotals: ?CategoryBalancesPerChain,
-  category: string,
-): ChainBalances => {
-  const chains = (Object.keys(accountTotals || {}): any);
-
-  return chains.reduce((balancesByChain, chain) => ({
-    ...balancesByChain,
-    [chain]: accountTotals?.[chain]?.[category] || BigNumber(0),
-  }), {});
-};
-
-const sumTotalBalance = (
-  accountTotals: ?CategoryBalancesPerChain,
-  category: string,
-): BigNumber => {
-  const balancesOnChains = (Object.values(accountTotals || {}): any);
-
-  return sum(balancesOnChains.map((chainTotals) => {
-    return chainTotals?.[category] || BigNumber(0);
-  }));
-};
 
 export const accountBalancesSelector = createSelector(
   balancesSelector,
@@ -109,14 +87,14 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   (hasPositiveBalance) => !!hasPositiveBalance,
 );
 
-export const accountsTotalBalancesSelector = ({ totals }: RootReducerState): AccountsTotalBalances => totals.balances;
+export const accountsTotalBalancesSelector = ({ totals }: RootReducerState): ChainBalancesPerAccount => totals.balances;
 
 export const activeAccountTotalBalancesSelector: (RootReducerState) => CategoryBalancesPerChain = createSelector(
   activeAccountIdSelector,
   accountsTotalBalancesSelector,
   (
     activeAccountId: string,
-    accountsTotals: AccountsTotalBalances,
+    accountsTotals: ChainBalancesPerAccount,
   ): CategoryBalancesPerChain => accountsTotals[activeAccountId],
 );
 
@@ -156,7 +134,7 @@ export const depositsTotalBalanceByChainsSelector: (RootReducerState) => ChainBa
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): ChainBalances => sumBalancesPerChainChain(accountTotals, 'deposits'),
+  ): ChainBalances => getChainBalancesForCategory(accountTotals, 'deposits'),
 );
 
 export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => ChainBalances = createSelector(
@@ -164,7 +142,7 @@ export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => Chai
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): ChainBalances => sumBalancesPerChainChain(accountTotals, 'investments'),
+  ): ChainBalances => getChainBalancesForCategory(accountTotals, 'investments'),
 );
 
 export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => ChainBalances = createSelector(
@@ -172,7 +150,7 @@ export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => C
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): ChainBalances => sumBalancesPerChainChain(accountTotals, 'liquidityPools'),
+  ): ChainBalances => getChainBalancesForCategory(accountTotals, 'liquidityPools'),
 );
 
 export const rewardsTotalBalanceByChainsSelector: (RootReducerState) => ChainBalances = createSelector(
@@ -180,7 +158,7 @@ export const rewardsTotalBalanceByChainsSelector: (RootReducerState) => ChainBal
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): ChainBalances => sumBalancesPerChainChain(accountTotals, 'rewards'),
+  ): ChainBalances => getChainBalancesForCategory(accountTotals, 'rewards'),
 );
 
 export const depositsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
@@ -188,7 +166,7 @@ export const depositsTotalBalanceSelector: (RootReducerState) => BigNumber = cre
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): BigNumber => sumTotalBalance(accountTotals, 'deposits'),
+  ): BigNumber => getTotalCategoryBalance(accountTotals, 'deposits'),
 );
 
 export const investmentsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
@@ -196,7 +174,7 @@ export const investmentsTotalBalanceSelector: (RootReducerState) => BigNumber = 
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): BigNumber => sumTotalBalance(accountTotals, 'investments'),
+  ): BigNumber => getTotalCategoryBalance(accountTotals, 'investments'),
 );
 
 export const liquidityPoolsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
@@ -204,7 +182,7 @@ export const liquidityPoolsTotalBalanceSelector: (RootReducerState) => BigNumber
   (
     accountTotals: ?CategoryBalancesPerChain,
     // eslint-disable-next-line i18next/no-literal-string
-  ): BigNumber => sumTotalBalance(accountTotals, 'liquidityPools'),
+  ): BigNumber => getTotalCategoryBalance(accountTotals, 'liquidityPools'),
 );
 
 // TODO: add once ready

@@ -37,8 +37,9 @@ import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { responsiveSize } from 'utils/ui';
 import { useTheme } from 'utils/themes';
-import { getTotalBalance, getTotalCategoryBalances } from 'screens/Home/utils';
+import { getTotalCategoryBalances } from 'screens/Home/utils';
 import { formatFiat } from 'utils/common';
+import { getTotalBalance } from 'utils/balances';
 
 // constants
 import { KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
@@ -62,7 +63,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { RenderItemProps } from 'utils/types/react-native';
-import type { AccountsTotalBalances } from 'models/Home';
+import type { ChainBalancesPerAccount } from 'models/Home';
 
 
 const ITEM_TYPE = {
@@ -86,7 +87,7 @@ type Props = {|
   switchAccount: (accountId: string) => void,
   fetchAllAccountsTotals: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
-  accountsTotals: AccountsTotalBalances,
+  accountsTotals: ChainBalancesPerAccount,
 |};
 
 const AccountsScreen = ({

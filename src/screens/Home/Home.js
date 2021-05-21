@@ -43,6 +43,7 @@ import { useRootSelector } from 'selectors';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { getTotalBalance } from 'utils/balances';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -54,7 +55,6 @@ import {
   useCategoryBalancesPerChain,
   getTotalCategoryBalances,
   getTotalChainBalances,
-  getTotalBalance,
 } from './utils';
 
 function Home() {
