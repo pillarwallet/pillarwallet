@@ -67,6 +67,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { User } from 'models/User';
 import type SDKWrapper from 'services/api';
+import { ADD_CASH } from '../../constants/navigationConstants';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
