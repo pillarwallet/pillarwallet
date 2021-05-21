@@ -319,6 +319,7 @@ import {
   TUTORIAL_FLOW,
   ENS_MIGRATION_CONFIRM,
   KNOWLEDGE_BASE_WEB_VIEW,
+  ENS_MIGRATION_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -607,6 +608,12 @@ const rariFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
+
+const ensMigrationFlow = createStackNavigator({
+  [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
 const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
   [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
@@ -681,11 +688,11 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
-    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
     [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequestScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
+    [ENS_MIGRATION_FLOW]: ensMigrationFlow,
   },
   modalTransition,
 );

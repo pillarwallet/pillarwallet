@@ -26,3 +26,5 @@ export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerSt
   useSelector((root: RootReducerState) => selector(root.appSettings));
 
 export const useBaseFiatCurrency = () => useAppSettingsSelector(state => state.data.baseFiatCurrency);
+
+export const useBiometricsSelector = () => useAppSettingsSelector(state => state.data.useBiometrics);

@@ -2805,10 +2805,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@smartwallet/sdk/-/sdk-2.4.0.tgz#72bbc58aa6781039959f05bd8047e1cd347a9cff"
-  integrity sha512-j55v7QJGz20Bz3nbkNKuOHC12zXoh4skTsuIyfzjR6C2vCcsHH1Nj+MMdeXtFMWyRKnY732N1nG2mts/RSStgw==
+"@smartwallet/sdk@2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@smartwallet/sdk/-/sdk-2.5.0.tgz#98954c02a699a7613ab99a607d85b7d2f143fd49"
+  integrity sha512-6mwCGBfKzWhos33nyWrp3Sq37d42hHlmgRmyHCPsoY1V0BpT6WVArJCAsLxfSmQKBHQYTS8sW+yyRmULlWA20g==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"
