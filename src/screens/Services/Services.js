@@ -256,7 +256,6 @@ class ServicesScreen extends React.Component<Props> {
           navigation.navigate(ADD_CASH, {
             onSubmit: (values: AddCashParam) => {
               const { fiatCurrency, fiatValue } = values;
-              console.log('url', rampWidgetUrl(address, email, fiatCurrency, fiatValue));
               this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
             },
           });
