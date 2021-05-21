@@ -47,6 +47,7 @@ const mockRequest = (callId: number): WalletConnectCallRequest => {
   return {
     callId,
     peerId: `peer-${callId}`,
+    chainId: 1,
     name: `peer-${callId}`,
     url: `http://requests.com/peer-${callId}`,
     icon: '',

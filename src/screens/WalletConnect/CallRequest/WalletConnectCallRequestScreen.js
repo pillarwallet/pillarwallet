@@ -19,35 +19,30 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import { useNavigation } from 'react-navigation-hooks';
 
-// Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+// Components
+import Modal from 'components/Modal';
 
 // Local
-import WalletConnectRequestBanner from './WalletConnectRequestBanner';
-import { useRequestItems } from './selectors';
+import WalletConnectRequestModal from './WalletConnectCallRequestModal';
 
-type Props = {|
-  style?: ViewStyleProp,
-|};
+/**
+ * Pseudo-screen to support showing modal using navigation infrastructure.
+ * Used primarily because of code delaying deep links after logging in.
+ */
+function WalletConnectCallRequestScreen() {
+  const navigation = useNavigation();
+  const request = navigation.getParam('callRequest');
 
-function WalletConnectRequests({ style }: Props) {
-  const requests = useRequestItems();
+  React.useLayoutEffect(() => {
+    navigation.goBack(null);
 
-  if (!requests.length) return null;
+    if (!request) return;
+    Modal.open(() => <WalletConnectRequestModal request={request} />);
+  }, [request, navigation]);
 
-  return (
-    <Container style={style}>
-      {requests.map((request) => (
-        <WalletConnectRequestBanner key={request.id} request={request} />
-      ))}
-    </Container>
-  );
+  return null;
 }
 
-export default WalletConnectRequests;
-
-const Container = styled.View`
-  margin: 14px 0;
-`;
+export default WalletConnectCallRequestScreen;

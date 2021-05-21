@@ -20,6 +20,15 @@
 
 import { BigNumber } from 'bignumber.js';
 
+export const wrapBigNumber = (value: BigNumber | number | string): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
+export const wrapBigNumberOrNil = (value: ?BigNumber | number | string): ?BigNumber => {
+  return value != null ? wrapBigNumber(value) : null;
+};
+
 /**
  * Returns sum of nullable BigNumbers.
  *

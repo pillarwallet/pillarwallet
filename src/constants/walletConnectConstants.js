@@ -44,7 +44,6 @@ export const ETH_SIGN_TX = 'eth_signTransaction';
 export const ETH_SIGN_TYPED_DATA = 'eth_signTypedData';
 
 export const REQUEST_TYPE = {
-  CALL: ('call': 'call'),
   MESSAGE: ('message': 'message'),
   TRANSACTION: ('transaction': 'transaction'),
   UNSUPPORTED: ('unsupported': 'unsupported'),

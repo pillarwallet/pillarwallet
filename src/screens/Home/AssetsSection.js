@@ -25,16 +25,15 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
-// Components
-import SWActivationModal from 'components/SWActivationModal';
-import Modal from 'components/Modal';
-
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
-import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useSupportedChains } from 'selectors/chains';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -69,7 +68,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
 
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+  const { isDeployedOnEthereum, showDeploymentInterjection } = useDeploymentStatus();
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
@@ -78,11 +77,6 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
     navigation.navigate(ASSETS, { category, chain });
-  };
-
-  const openSmartWalletActivationModal = () => {
-    // TODO: maybe restore Archanova intro screen?
-    Modal.open(() => <SWActivationModal navigation={navigation} />);
   };
 
   const toggleShowChains = (category: AssetCategory) => {
@@ -137,7 +131,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={title}
         value={formattedBalance}
         isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : openSmartWalletActivationModal}
+        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : () => showDeploymentInterjection(chain)}
       />
     );
   };
@@ -170,7 +164,9 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
         isDeployed={isDeployed}
         onPress={
-          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : openSmartWalletActivationModal
+          isDeployed
+            ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)
+            : () => showDeploymentInterjection(chain)
         }
       />
     );
