@@ -151,8 +151,8 @@ export const darkThemeColorsOld = {
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
-  pagerActive: lightThemeColors.basic010,
-  pagerInactive: '#818eb3',
+  pagerActive: darkThemeColors.basic010,
+  pagerInactive: '#4D4D4D',
 };
 
 export const themedColors = {
