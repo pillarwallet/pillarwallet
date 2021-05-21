@@ -122,6 +122,11 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
   return re.test(phone);
 }
 
+export function isValidCash(s) {
+  var rgx = /^[0-9]*\.?[0-9]*$/;
+  return s.match(rgx);
+}
+
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
 

@@ -145,6 +145,7 @@ import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
+import AddCashScreen from 'screens/AddCash/AddCash';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -320,6 +321,7 @@ import {
   ENS_MIGRATION_CONFIRM,
   KNOWLEDGE_BASE_WEB_VIEW,
   ENS_MIGRATION_FLOW,
+  ADD_CASH,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -386,6 +388,7 @@ const exchangeFlow = createStackNavigator({
 // SERVICES FLOW
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
+  [ADD_CASH]: AddCashScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
   [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);

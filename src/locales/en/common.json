@@ -1433,6 +1433,10 @@
         "actionNonPlr": "Other tokens",
         "actionPlr": "PLR tokens"
       },
+      "addCash": {
+        "title": "Buy Crypto",
+        "subTitle": "You pay with card"
+      },
       "title": "Buy with Ramp.Network",
       "description": "Buy Now"
     },
