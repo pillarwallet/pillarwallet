@@ -29,8 +29,8 @@ import SWActivationModal from 'components/SWActivationModal';
 import { ETHERSPOT_DEPLOYMENT_INTERJECTION } from 'constants/navigationConstants';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
-import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useRootSelector, useActiveAccount } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
@@ -38,25 +38,25 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 // Types
 import { type Chain } from 'models/Chain';
 
-
 export function useDeploymentStatus() {
   const navigation = useNavigation();
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
   const activeAccount = useActiveAccount();
 
-  const showDeploymentInterjection = React.useCallback((chain: Chain) => {
-    if (isEtherspotAccount(activeAccount)) {
-      navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
-    } else if (isArchanovaAccount(activeAccount)) {
-      Modal.open(() => <SWActivationModal navigation={navigation} />);
-    }
-  }, [navigation, activeAccount]);
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
 
-  return React.useMemo(
-    () => ({
-      isDeployedOnEthereum,
-      showDeploymentInterjection,
-    }),
-    [isDeployedOnEthereum, showDeploymentInterjection],
+  const showDeploymentInterjection = React.useCallback(
+    (chain: Chain) => {
+      if (isEtherspotAccount(activeAccount)) {
+        navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
+      } else if (isArchanovaAccount(activeAccount)) {
+        Modal.open(() => <SWActivationModal navigation={navigation} />);
+      }
+    },
+    [navigation, activeAccount],
   );
+
+  return {
+    isDeployedOnChain,
+    showDeploymentInterjection,
+  };
 }
