@@ -32,12 +32,12 @@ import Text from 'components/modern/Text';
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
+import { chainFromChainId } from 'utils/chains';
 import { spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
-import { chainFromChainId } from 'models/Chain';
 import type { WalletConnectConnector } from 'models/WalletConnect';
 
 type Props = {|

@@ -18,27 +18,36 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const CHAIN = {
-  ETHEREUM: ('ethereum': 'ethereum'),
-  POLYGON: ('polygon': 'polygon'),
-  BINANCE: ('binance': 'binance'),
-  XDAI: ('xdai': 'xdai'),
-};
+import * as React from 'react';
+import styled from 'styled-components/native';
 
-export type Chain = $Values<typeof CHAIN>;
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
-export type ChainRecord<T> = {|
-  polygon?: T,
-  binance?: T,
-  xdai?: T,
-  ethereum?: T,
+// Local
+import WalletConnectRequestBanner from './WalletConnectRequestBanner';
+import { useRequestItems } from './selectors';
+
+type Props = {|
+  style?: ViewStyleProp,
 |};
 
-// Based on: https://chainid.network/
-export const CHAIN_ID = {
-  ETHEREUM_MAINNET: 1,
-  ETHEREUM_KOVAN: 42,
-  POLYGON: 137,
-  BINANCE: 56,
-  XDAI: 100,
-};
+function WalletConnectRequests({ style }: Props) {
+  const requests = useRequestItems();
+
+  if (!requests.length) return null;
+
+  return (
+    <Container style={style}>
+      {requests.map((request) => (
+        <WalletConnectRequestBanner request={request} />
+      ))}
+    </Container>
+  );
+}
+
+export default WalletConnectRequests;
+
+const Container = styled.View`
+  margin: 14px 0;
+`;

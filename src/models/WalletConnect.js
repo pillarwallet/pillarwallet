@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { REQUEST_TYPE } from 'constants/walletConnectConstants';
+
 export type WalletConnectConnector = {|
   bridge: string,
   key: string,
@@ -146,3 +148,5 @@ type WalletConnectRequestReject = {|
   id: number,
   error?: Error,
 |};
+
+export type WalletConnectCallRequestType = $Values<typeof REQUEST_TYPE>;

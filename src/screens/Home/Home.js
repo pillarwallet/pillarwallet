@@ -32,6 +32,7 @@ import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
+import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Constants
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
@@ -95,6 +96,8 @@ function Home() {
         <Stories />
 
         <BalanceSection balanceInFiat={totalBalance} />
+
+        <WalletConnectRequests />
 
         <ChartsSection categoryBalances={categoryBalances} chainBalances={chainBalances} />
 

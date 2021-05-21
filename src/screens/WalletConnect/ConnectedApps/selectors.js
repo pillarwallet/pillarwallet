@@ -23,10 +23,11 @@ import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { mapNotNil } from 'utils/array';
+import { chainFromChainId } from 'utils/chains';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
 // Types
-import { type Chain, chainFromChainId } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 import type { WalletConnectConnector } from 'models/WalletConnect';
 
 export type AppItem = {|

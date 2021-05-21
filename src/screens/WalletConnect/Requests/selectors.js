@@ -18,27 +18,30 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const CHAIN = {
-  ETHEREUM: ('ethereum': 'ethereum'),
-  POLYGON: ('polygon': 'polygon'),
-  BINANCE: ('binance': 'binance'),
-  XDAI: ('xdai': 'xdai'),
-};
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
 
-export type Chain = $Values<typeof CHAIN>;
+// Utils
+import { mapNotNil } from 'utils/array';
+import { getWalletConnectCallRequestType, parsePeerName } from 'utils/walletConnect';
 
-export type ChainRecord<T> = {|
-  polygon?: T,
-  binance?: T,
-  xdai?: T,
-  ethereum?: T,
+// Types
+import type { WalletConnectCallRequestType, WalletConnectCallRequest } from 'models/WalletConnect';
+
+export type RequestItem = {|
+  title: string,
+  iconUrl: ?string,
+  type: WalletConnectCallRequestType,
+  callRequest: WalletConnectCallRequest,
 |};
 
-// Based on: https://chainid.network/
-export const CHAIN_ID = {
-  ETHEREUM_MAINNET: 1,
-  ETHEREUM_KOVAN: 42,
-  POLYGON: 137,
-  BINANCE: 56,
-  XDAI: 100,
-};
+export function useRequestItems(): RequestItem[] {
+  const { callRequests } = useWalletConnect();
+
+  return mapNotNil(callRequests, (callRequest) => {
+    const title = parsePeerName(callRequest.name);
+    const type = getWalletConnectCallRequestType(callRequest);
+    const iconUrl = callRequest.icon;
+    return { title, type, iconUrl, callRequest };
+  });
+}
