@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 /* eslint-disable i18next/no-literal-string */
+import { getEnv } from 'configs/envConfig';
 
 // utils
 import httpRequest from 'utils/httpRequest';
@@ -33,11 +34,10 @@ import type { Chain } from 'models/Chain';
 // does not change between envs
 const ZAPPER_CONFIG = {
   API_URL: 'https://api.zapper.fi/v1',
-  API_KEY: '96e0cc51-a62e-42ca-acee-910ea7d2a241', // public
+  API_KEY: getEnv().ZAPPER_API_KEY,
 };
 
 const requestConfig = {
-  timeout: 10000,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
