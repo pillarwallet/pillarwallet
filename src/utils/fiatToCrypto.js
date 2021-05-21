@@ -25,13 +25,19 @@ import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/
 import type SDKWrapper from 'services/api';
 import { RAMP_CURRENCY_TOKENS } from '../constants/assetsConstants';
 
-export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean, fiatCurrency: string, fiatValue: string) {
-  const values = RAMP_CURRENCY_TOKENS.join(',')
+const PILLAR = 'Pillar';
+
+export function rampWidgetUrl(
+  address: string,
+  email?: string,
+  fiatCurrency: string,
+  fiatValue: string,
+) {
+  const values = RAMP_CURRENCY_TOKENS.join(',');
   const params = {
-    hostAppName: "Pillar",
-    fiatCurrency: fiatCurrency,
-    fiatValue: fiatValue,
-    swapAsset: plrMode ? 'PLR' : null, // This turns on the ability to purchase PLR
+    hostAppName: PILLAR,
+    fiatCurrency,
+    fiatValue,
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
@@ -41,8 +47,7 @@ export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;
 }
 
-export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>
-  api.getSendwyreWidgetURL(params);
+export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) => api.getSendwyreWidgetURL(params);
 
 type Rate = $Values<SendwyreRates>;
 type CurrencyPair = [string, string];
@@ -53,8 +58,7 @@ function rateToCurrencyPair([joint, split]: [string, Rate]): CurrencyPair {
 }
 
 export const getSendwyreCurrencyPairs = (rates: SendwyreRates): CurrencyPair[] =>
-  ((Object.entries(rates): any): [string, Rate][])
-    .map(rateToCurrencyPair);
+  ((Object.entries(rates): any): [string, Rate][]).map(rateToCurrencyPair);
 
 export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
   api.generateAltalixTransactionUrl(params);
