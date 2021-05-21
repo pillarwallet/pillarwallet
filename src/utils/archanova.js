@@ -52,7 +52,7 @@ import { ETH } from 'constants/assetsConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
 // services
-import { parseEstimatePayload } from 'services/archanova';
+import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -80,7 +80,6 @@ import {
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
-import { signMessage } from './wallet';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
@@ -432,14 +431,21 @@ export const buildEnsMigrationRawTransactions = async (
     etherspotAccount: getAccountAddress(etherspotAccount),
   });
 
-  migrator = migrator.addAccountDevice();
+  const { migratorAddress } = migrator;
+  const connectedAccountDevices = await archanovaService.getConnectedAccountDevices();
+
+  const isMigratorDeviceAdded = connectedAccountDevices.some(({
+    device,
+  }) => addressesEqual(device?.address, migratorAddress));
+
+  if (!isMigratorDeviceAdded) migrator = migrator.addAccountDevice();
 
   // we cannot test ENS migration so let's just add simple transaction
   migrator = isKovan
     ? migrator.transferBalance(utils.parseEther('0.001'))
     : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
 
-  const archanovaAccountDeviceSignature = await signMessage(migrator.migrationMessage, wallet);
+  const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
 
   if (!archanovaAccountDeviceSignature) return null;
 

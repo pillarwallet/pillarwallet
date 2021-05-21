@@ -63,7 +63,7 @@ const Title = styled(MediumText)`
 `;
 
 const FeesWrapper = styled.View`
-  justify-content: center;
+  align-items: center;
   margin-bottom: ${spacing.largePlus}px;
 `;
 
@@ -94,7 +94,8 @@ const EnsMigrationConfirm = () => {
   }, [wallet]);
 
   useEffect(() => {
-    if (rawTransactions) dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction(rawTransactions));
+    if (!rawTransactions) return;
+    dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction(rawTransactions));
   }, [rawTransactions]);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
@@ -115,10 +116,9 @@ const EnsMigrationConfirm = () => {
   }
 
   const migrationTransactionStatusCallback = (transactionStatus: TransactionStatus) => {
-    navigation.dismiss();
+    setIsSubmitting(false);
     navigation.navigate(SEND_TOKEN_TRANSACTION, {
       ...transactionStatus,
-      noRetry: true,
       transactionPayload: {},
     });
   };
@@ -136,7 +136,7 @@ const EnsMigrationConfirm = () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    dispatch(migrateEnsFromArchanovaToEtherspotAction(migrationTransactionStatusCallback));
+    dispatch(migrateEnsFromArchanovaToEtherspotAction(rawTransactions, migrationTransactionStatusCallback));
   };
 
   const submitDisabled = !!estimateErrorMessage || isEstimating || isSubmitting;

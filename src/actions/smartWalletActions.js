@@ -21,11 +21,7 @@
 import { sdkConstants, sdkModules } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import {
-  utils,
-  BigNumber as EthersBigNumber,
-  Wallet,
-} from 'ethers';
+import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -100,7 +96,6 @@ import {
   accountsSelector,
   activeAccountAddressSelector,
   activeAccountIdSelector,
-  supportedAssetsSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -139,7 +134,6 @@ import {
   isConnectedToArchanovaSmartAccount,
   isHiddenUnsettledTransaction,
   isArchanovaDeviceDeployed,
-  buildEnsMigrationRawTransactions,
   buildArchanovaTxFeeInfo,
 } from 'utils/archanova';
 import {
@@ -177,7 +171,6 @@ import {
   fetchAssetsBalancesAction,
   fetchInitialAssetsAction,
   getAllOwnedAssets,
-  sendAssetAction,
 } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
@@ -195,7 +188,6 @@ import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTra
 import { fetchUserStreamsAction } from './sablierActions';
 import { lockScreenAction } from './authActions';
 import {
-  estimateTransactionsAction,
   setEstimatingTransactionAction,
   setTransactionsEstimateErrorAction,
   setTransactionsEstimateFeeAction,
@@ -1769,7 +1761,7 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
     let errorMessage;
     let estimated;
     try {
-      estimated = await archanovaService.estimateAccountRawTransactions(rawTransactions)
+      estimated = await archanovaService.estimateAccountRawTransactions(rawTransactions);
     } catch (error) {
       errorMessage = error?.message;
     }
@@ -1785,8 +1777,8 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
 };
 
 export const migrateEnsFromArchanovaToEtherspotAction = (
+  rawTransactions: ?string[],
   statusCallback: (status: TransactionStatus) => void,
-  rawTransactions: string[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
@@ -1795,7 +1787,7 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     const { transactionEstimate: { feeInfo } } = getState();
 
-    if (!rawTransactions || !activeAccount || !archanovaAccount) {
+    if (!rawTransactions || !activeAccount || !archanovaAccount || !feeInfo) {
       Toast.show({
         message: t('toast.ensMigrationCannotProceed'),
         emoji: 'hushed',
@@ -1809,38 +1801,45 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
       await dispatch(switchAccountAction(getAccountId(archanovaAccount)));
     }
 
-    const accountAssets = accountAssetsSelector(getState());
-    const supportedAssets = supportedAssetsSelector(getState());
-    const ethAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, ETH);
+    let hash;
+    try {
+      hash = await archanovaService.sendRawTransactions(rawTransactions);
+    } catch (error) {
+      reportErrorLog('migrateEnsFromArchanovaToEtherspotAction failed', {
+        error,
+        archanovaAccount,
+        activeAccount,
+        rawTransactions,
+      });
+    }
 
-    // const completeTransactionPayload = migratorRawTransactions
-    //   .map(({ data, to }) => ({
-    //     to,
-    //     data,
-    //     amount: 0,
-    //     symbol: ethAsset.symbol,
-    //     decimals: ethAsset.decimals,
-    //     contractAddress: ethAsset.address,
-    //     txFeeInWei: feeInfo?.fee,
-    //     gasToken: feeInfo?.gasToken,
-    //   }))
-    //   .reduce((transactionPayload, transaction, index) => {
-    //     if (index === 0) {
-    //       return {
-    //         ...transaction,
-    //         sequentialTransactions: [],
-    //         extra: { isENSMigrationToEtherspot: true },
-    //       };
-    //     }
-    //
-    //     const { sequentialTransactions } = transactionPayload;
-    //
-    //     return {
-    //       ...transactionPayload,
-    //       sequentialTransactions: [...sequentialTransactions, transaction],
-    //     };
-    //   }, {});
-    //
-    // dispatch(sendAssetAction(completeTransactionPayload, statusCallback));
+    if (!hash) {
+      statusCallback({
+        isSuccess: false,
+        noRetry: true,
+        error: t('toast.ensMigrationFailed'),
+      });
+      return;
+    }
+
+    // archanova
+    const accountAddress = getAccountAddress(activeAccount);
+    const accountId = getAccountAddress(activeAccount);
+
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      to: accountAddress, // TODO: self?
+      hash,
+      asset: ETH,
+      value: 0,
+      extra: { isEnsMigrationToEtherspot: true },
+    });
+
+    dispatch({
+      type: ADD_TRANSACTION,
+      payload: { accountId, historyTx },
+    });
+
+    statusCallback({ isSuccess: true, hash, error: null });
   };
 };

@@ -421,6 +421,12 @@ class Archanova {
     return { hash };
   }
 
+  async sendRawTransactions(rawTransactions: string[]): Promise<?string> {
+    const estimated = await this.getSdk().estimateAccountRawTransactions(rawTransactions);
+
+    return this.getSdk().submitAccountTransaction(estimated);
+  }
+
   getConnectedAccountTransaction(txHash: string) {
     return this.getSdk().getConnectedAccountTransaction(txHash);
   }
