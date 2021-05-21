@@ -122,9 +122,9 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
   return re.test(phone);
 }
 
-export function isValidCash(s) {
-  const rgx = /^[0-9]*\.?[0-9]*$/;
-  return s.match(rgx);
+export function isValidFiatValue(value: string) {
+  const regex = /^\d+\.?\d{0,2}$/;
+  return regex.test(value);
 }
 
 export const MIN_USERNAME_LENGTH = 4;

@@ -44,3 +44,4 @@ export type SendwyreTrxParams = SendwyreTrxValues & {
     walletId: string,
     address: string,
 }
+

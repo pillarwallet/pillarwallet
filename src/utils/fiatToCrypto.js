@@ -33,7 +33,7 @@ export function rampWidgetUrl(
   fiatCurrency: string,
   fiatValue: string,
 ) {
-  const values = RAMP_CURRENCY_TOKENS.join(',');
+  const swapAssetValues = RAMP_CURRENCY_TOKENS.join(',');
   const params = {
     hostAppName: PILLAR,
     fiatCurrency,
@@ -41,7 +41,7 @@ export function rampWidgetUrl(
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
-    swapAsset: values,
+    swapAsset: swapAssetValues,
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;

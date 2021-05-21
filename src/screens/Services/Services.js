@@ -64,7 +64,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { User } from 'models/User';
-import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 import { ADD_CASH } from '../../constants/navigationConstants';
 
@@ -99,6 +98,11 @@ type Service = {|
   action: () => any,
   disabled?: boolean,
 |};
+
+type AddCashParam = {
+  fiatCurrency: string,
+  fiatValue: string
+}
 
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
@@ -248,8 +252,10 @@ class ServicesScreen extends React.Component<Props> {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           navigation.navigate(ADD_CASH, {
-            onSubmit: (values) => {
+            onSubmit: (values: AddCashParam) => {
+              console.log('values: ', JSON.stringify(values));
               const { fiatCurrency, fiatValue } = values;
+              console.log('url', rampWidgetUrl(address, email, fiatCurrency, fiatValue));
               this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
             },
           });
@@ -266,7 +272,7 @@ class ServicesScreen extends React.Component<Props> {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           this.props.navigation.navigate(SENDWYRE_INPUT, {
-            onSubmit: async (values: SendwyreTrxValues) => {
+            onSubmit: async (values: {}) => {
               const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
               await this.tryOpenCryptoPurchaseUrl(url);
             },

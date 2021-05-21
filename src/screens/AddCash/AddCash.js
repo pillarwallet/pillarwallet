@@ -19,82 +19,93 @@
 */
 
 import React from 'react';
-import { View } from 'react-native';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import { fontSizes, spacing, appFont } from 'utils/variables';
-import Button from 'components/Button';
-import TextInput from 'components/TextInput';
-import { BaseText } from 'components/Typography/Typography';
-import { isValidCash } from 'utils/validators';
-import { useFiatCurrency } from 'selectors';
+import { useNavigation } from 'react-navigation-hooks';
+
+// utils
+import { fontSizes, appFont } from 'utils/variables';
+import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol } from 'utils/common';
 
-const FooterWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.basic070};
-  margin-bottom: 30;
-`;
+// compomnents
+import { Footer } from '../../components/Layout/Layout';
+import { Container } from 'components/modern/Layout';
+import Button from 'components/Button';
+import TextInput from 'components/TextInput';
+import HeaderBlock from 'components/HeaderBlock';
+import Text from 'components/modern/Text';
 
-const AddCash = ({ navigation }) => {
-  const [cash, setCash] = React.useState('');
+// selectors
+import { useFiatCurrency } from 'selectors';
+
+const AddCash = () => {
+  const navigation = useNavigation();
+  const [cash, setCash] = React.useState<BigNumber>(0);
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const onSubmitCallback: (values: SendwyreTrxValues) => void = navigation.getParam('onSubmit', () => {});
 
   return (
-    <ContainerWithHeader
-      inset={{ bottom: 'never' }}
-      headerProps={{
-        centerItems: [{ title: t('servicesContent.ramp.addCash.title') }],
-        leftItems: [{ close: true, dismiss: true }],
-      }}
-      footer={
-        <FooterWrapper>
-          <Button
-            onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: cash })}
-            title={t('button.next')}
-            disabled={!isValidCash(cash)}
-          />
-        </FooterWrapper>
-      }
-    >
-      <View style={{ alignItems: 'center', width: '100%', flex: 1, justifyContent: 'center' }}>
-        <BaseText medium>{t('servicesContent.ramp.addCash.subTitle')}</BaseText>
+    <Container>
+      <HeaderBlock
+        centerItems={[{ title: t('servicesContent.ramp.addCash.title') }]}
+        leftItems={[{ close: true, dismiss: true }]}
+        navigation={navigation}
+      />
+      <AddCashView>
+        <Text medium>{t('servicesContent.ramp.addCash.subTitle')}</Text>
         <TextInput
           inputProps={{
-            value: `${currencySymbol}${cash}` || '',
+            value: `${currencySymbol}${cash}`,
             autoCapitalize: 'none',
             disabled: false,
-            onChangeText: (value) => {
-              const cashValue = value.substring(1);
-              setCash(cashValue);
+            onChangeText: (text) => {
+              const value = text.substring(1);
+              setCash(value);
             },
             placeholder: '$0',
             keyboardType: 'numeric',
           }}
-          inputWrapperStyle={{
-            marginTop: spacing.mediumLarge,
-            backgroundColor: 'transparent',
-            zIndex: 10,
-            width: '80%',
-          }}
-          itemHolderStyle={{ borderWidth: 0, backgroundColor: 'transparent' }}
-          placeholderTextColor={colos}
-          additionalStyle={{
-            fontSize: fontSizes.giant,
-            fontFamily: appFont.medium,
-            textAlign: 'center',
-          }}
-          errorMessage={!isValidCash(cash) && t('error.invalid.email')}
+          inputWrapperStyle={styles.inputWrapperStyles}
+          itemHolderStyle={styles.itemHolderStyles}
+          additionalStyle={styles.additionalStyle}
+          errorMessage={!isValidFiatValue(cash) && t('error.invalid.email')}
         />
-      </View>
-    </ContainerWithHeader>
+      </AddCashView>
+      <Footer>
+        <Button
+          onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: cash })}
+          title={t('button.next')}
+          disabled={!isValidFiatValue(cash)}
+        />
+      </Footer>
+    </Container>
   );
 };
+
+const styles = {
+  inputWrapperStyles: {
+    backgroundColor: 'transparent',
+    zIndex: 10,
+    width: '80%',
+  },
+  itemHolderStyles: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+  },
+  additionalStyle: {
+    fontSize: fontSizes.giant,
+    fontFamily: appFont.medium,
+    textAlign: 'center',
+  },
+};
+
+const AddCashView = styled.View`
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  margin-top: 70px;
+`;
 
 export default AddCash;
