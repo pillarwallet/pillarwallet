@@ -144,7 +144,7 @@ const SendAsset = ({
   const balance = getBalanceBN(balances, token);
   const currentValue = wrapBigNumber(amount || 0);
 
-  const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
+  const isCollectible = assetData?.tokenType === COLLECTIBLES;
 
   const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
 
