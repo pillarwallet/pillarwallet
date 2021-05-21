@@ -75,7 +75,12 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-  const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
+  const navigateToAssetDetails = (category: AssetCategory, chain: Chain) => {
+    if (!isDeployedOnChain[chain]) {
+      showDeploymentInterjection(chain);
+      return;
+    }
+
     navigation.navigate(ASSETS, { category, chain });
   };
 
@@ -128,11 +133,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={title}
         value={formattedBalance}
         isDeployed={isDeployedOnChain[chain]}
-        onPress={
-          isDeployedOnChain[chain]
-            ? () => navigateToAssetDetails(category, chain)
-            : () => showDeploymentInterjection(chain)
-        }
+        onPress={() => navigateToAssetDetails(category, chain)}
       />
     );
   };
@@ -161,11 +162,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
         isDeployed={isDeployedOnChain[chain]}
-        onPress={
-          isDeployedOnChain[chain]
-            ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)
-            : () => showDeploymentInterjection(chain)
-        }
+        onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
       />
     );
   };
