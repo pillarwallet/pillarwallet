@@ -452,20 +452,23 @@ export const buildEnsMigrationRawTransactions = async (
   return migrator
     .encodeTransactionRequests(archanovaAccountDeviceSignature)
     .map(({ data, to }) => {
-      if (!addressesEqual(to, migratorAddress)) return data;
-
-      // Jegor's provided fix
-      try {
-        const { account } = archanovaService.getSdk().contract;
-        return account.encodeMethodInput('executeTransaction', to, 0, data);
-      } catch (error) {
-        reportErrorLog('buildEnsMigrationRawTransactions -> encodeMethodInput failed', {
-          error,
-          encodedTransactionRequest: { to, data },
-          migratorAddress,
-          archanovaAccount,
-          etherspotAccount,
-        });
+      if (addressesEqual(to, migratorAddress)) {
+        // Jegor's provided fix
+        try {
+          const { account } = archanovaService.getSdk().contract;
+          // eslint-disable-next-line i18next/no-literal-string
+          return account.encodeMethodInput('executeTransaction', to, 0, data);
+        } catch (error) {
+          reportErrorLog('buildEnsMigrationRawTransactions -> encodeMethodInput failed', {
+            error,
+            encodedTransactionRequest: { to, data },
+            migratorAddress,
+            archanovaAccount,
+            etherspotAccount,
+          });
+        }
       }
+
+      return data;
     });
 };
