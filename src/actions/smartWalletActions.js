@@ -1771,7 +1771,7 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
       reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
         errorMessage,
         archanovaAccount,
-      })
+      });
       dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
       return;
     }
