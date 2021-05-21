@@ -195,7 +195,7 @@ export const initAppAndRedirectAction = () => {
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
 
-      const totalBalances = storageData?.totalBalances?.balances ?? {}
+      const totalBalances = storageData?.totalBalances?.balances ?? {};
       dispatch({ type: SET_TOTAL_BALANCES, payload: totalBalances });
 
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
