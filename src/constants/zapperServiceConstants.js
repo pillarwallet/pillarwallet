@@ -84,7 +84,7 @@ export const PROTOCOLS = {
   UNISWAP_V2: 'uniswap-v2',
   UNISWAP_V3: 'uniswap-v3',
   UNIT: 'unit',
-  VALUE: 'VALUE',
+  VALUE: 'value',
   VENUS: 'venus',
   VESPER: 'vesper',
   XSIGMA: 'xsigma',
