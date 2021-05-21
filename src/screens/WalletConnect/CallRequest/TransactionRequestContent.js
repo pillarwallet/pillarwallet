@@ -146,9 +146,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   const { estimateCallRequestTransaction } = useWalletConnect();
 
-  React.useEffect(() => {
-    estimateCallRequestTransaction(request);
-  }, [request, estimateCallRequestTransaction]);
+  React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
 
   return { fee, feeInWei, gasSymbol, hasNotEnoughtGas, isEstimating, estimationErrorMessage };
 };
