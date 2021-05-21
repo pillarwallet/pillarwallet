@@ -38,25 +38,35 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 // Types
 import { type Chain } from 'models/Chain';
 
-
 export function useDeploymentStatus() {
   const navigation = useNavigation();
   const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
   const activeAccount = useActiveAccount();
 
-  const showDeploymentInterjection = React.useCallback((chain: Chain) => {
-    if (isEtherspotAccount(activeAccount)) {
-      navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
-    } else if (isArchanovaAccount(activeAccount)) {
-      Modal.open(() => <SWActivationModal navigation={navigation} />);
-    }
-  }, [navigation, activeAccount]);
-
-  return React.useMemo(
+  // TODO: handle BSC when available
+  const isDeployedOnChain = React.useMemo(
     () => ({
-      isDeployedOnEthereum,
-      showDeploymentInterjection,
+      ethereum: isDeployedOnEthereum,
+      polygon: true,
+      binance: true,
+      xdai: true,
     }),
-    [isDeployedOnEthereum, showDeploymentInterjection],
+    [isDeployedOnEthereum],
   );
+
+  const showDeploymentInterjection = React.useCallback(
+    (chain: Chain) => {
+      if (isEtherspotAccount(activeAccount)) {
+        navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
+      } else if (isArchanovaAccount(activeAccount)) {
+        Modal.open(() => <SWActivationModal navigation={navigation} />);
+      }
+    },
+    [navigation, activeAccount],
+  );
+
+  return {
+    isDeployedOnChain,
+    showDeploymentInterjection,
+  };
 }
