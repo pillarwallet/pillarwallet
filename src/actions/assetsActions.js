@@ -464,44 +464,6 @@ export const fetchAllAccountsTotalsAction = () => {
   };
 };
 
-// export const fetchAccountTotalsAction = (account: Account) => {
-//   return async (dispatch: Dispatch, getState: GetState) => {
-//     const accountAddress = getAccountAddress(account);
-//
-//     const accountId = getAccountId(account);
-//     if (!accountAddress || !accountId) return;
-//
-//     const baseFiatCurrency = baseFiatCurrencySelector(getState()) || defaultFiatCurrency;
-//     const periodInDays = 7;
-//     const dashboardData = await etherspotService.getDashboardData(accountAddress, baseFiatCurrency, periodInDays);
-//     if (!dashboardData) {
-//       reportErrorLog('fetchAccountTotalsAction failed', { accountAddress, baseFiatCurrency, periodInDays });
-//       return;
-//     }
-//
-//
-//     // TODO: replace once available from SDK
-//     dispatch(fetchCollectiblesAction(account));
-//     if (isArchanovaAccount(account)) {
-//       dispatch(fetchLiquidityPoolsDataAction(LIQUIDITY_POOLS()));
-//       dispatch(fetchRariDataAction());
-//       dispatch(fetchUserStreamsAction());
-//     }
-//
-//     const { wallet: { balance } } = dashboardData;
-//     const totals = {
-//       [CHAIN.ETHEREUM]: {
-//         wallet: wrapBigNumber(balance || 0),
-//       },
-//     };
-//
-//     dispatch({ type: SET_ACCOUNT_TOTALS, payload: { accountId, totals } });
-//
-//     const accountsTotals = accountsTotalsSelector(getState());
-//     dispatch(saveDbAction('totals', { totals: accountsTotals }, true));
-//   };
-// };
-
 export const fetchAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
