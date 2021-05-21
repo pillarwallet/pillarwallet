@@ -27,10 +27,12 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
+import Modal from 'components/Modal';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/modern/Text';
 
-// Constants
-import { SERVICES } from 'constants/navigationConstants';
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { useChainsConfig } from 'utils/uiConfig';
@@ -48,11 +50,11 @@ function EtherspotDeploymentInterjection() {
 
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
 
+  const address = useRootSelector(activeAccountAddressSelector);
   const chainConfig = useChainsConfig()[chain];
 
-  const navigateToBuy = () => {
-    // TODO: implement proper navigation when available
-    navigation.navigate(SERVICES);
+  const showReceiveModal = () => {
+    Modal.open(() => <ReceiveModal address={address} />);
   };
 
   return (
@@ -66,8 +68,8 @@ function EtherspotDeploymentInterjection() {
 
       <ButtonContainer>
         <Button
-          title={t('buyFormat', { chain: chainConfig.titleShort, symbol: chainConfig.gasSymbol })}
-          onPress={navigateToBuy}
+          title={t('depositFormat', { chain: chainConfig.titleShort, symbol: chainConfig.gasSymbol })}
+          onPress={showReceiveModal}
         />
       </ButtonContainer>
     </Container>
