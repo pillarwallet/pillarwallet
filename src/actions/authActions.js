@@ -23,7 +23,6 @@ import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 // constants
@@ -38,7 +37,7 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  HOME,
+  MAIN_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
@@ -125,12 +124,6 @@ export const updateFcmTokenAction = (walletId: string) => {
     });
     if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-    Intercom.sendTokenToIntercom(fcmToken).catch(e => {
-      // Unable to send the FCM token to Intercom
-      reportLog(`Unable to send FCM token to Intercom: ${e.message}`, e);
-
-      return null;
-    });
     await api.updateFCMToken(walletId, fcmToken);
   };
 };
@@ -333,7 +326,7 @@ export const loginAction = (
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || HOME,
+        routeName: lastActiveScreen || MAIN_FLOW,
         params: lastActiveScreenParams,
       });
       if (!hasSeenTutorial) await dispatch(getTutorialDataAction());
@@ -484,9 +477,6 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 
 export const resetAppServicesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // reset intercom user
-    Intercom.logout().catch(() => null);
-
     // reset firebase fcm
     await firebaseIid
       .delete()

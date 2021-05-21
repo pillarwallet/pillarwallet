@@ -20,7 +20,6 @@
 import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import React, { Suspense } from 'react';
-import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking, View, UIManager } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
@@ -151,11 +150,6 @@ class App extends React.Component<Props, *> {
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
-    Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
-  }
-
   componentWillUnmount() {
     const { stopListeningOnOpenNotification, stopReferralsListener } = this.props;
     stopReferralsListener();

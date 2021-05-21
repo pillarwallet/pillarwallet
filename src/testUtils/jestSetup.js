@@ -203,17 +203,6 @@ jest.setMock('react-native-device-info', {
   getVersion: () => '',
 });
 
-jest.setMock('react-native-intercom', {
-  addListener: () => { },
-  removeListener: () => { },
-  registerIdentifiedUser: () => { },
-  Notifications: { UNREAD_COUNT: 'UNREAD_COUNT' },
-  reset: () => { },
-  setInAppMessageVisibility: () => { },
-  sendTokenToIntercom: () => Promise.resolve(),
-  logout: jest.fn(),
-});
-
 const mockCameraView = mockView;
 
 // ouch

@@ -19,23 +19,36 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
-import { useTheme } from 'styled-components/native';
+import { useTheme as useThemeSC } from 'styled-components/native';
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme, ColorsByThemeProps } from 'models/Theme';
 import lightThemeColors from './themes/lightTheme';
 import darkThemeColors from './themes/darkTheme';
 
+const commonColors = {
+  ethereum: '#62688F',
+  binance: '#f3ba2f',
+  xdai: '#62a7a5',
+  polygon: '#8247e5',
+};
+
 // will be removed after transition
 export const lightThemeColorsOld = {
+  ...commonColors,
   text: '#0A1427',
   accent: '#818EB3',
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
   secondaryText: '#8B939E',
+  background: lightThemeColors.basic070,
   border: '#EDEDED',
   positive: '#2AA057',
+  positiveWeak: '#18e65b4c',
   negative: '#BD573A',
+  negativeWeak: '#f1987e4c',
+  neutral: '#818eb3',
+  neutralWeak: '#ebf0f6',
   card: '#FFFFFF',
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
@@ -55,7 +68,6 @@ export const lightThemeColorsOld = {
   notice: '#ea480e',
   activeTabBarIcon: '#007AFF',
   inactiveTabBarIcon: '#D4D9DB',
-  buttonSecondaryBackground: '#e6f1f9',
   synthetic: '#2329d6',
   transactionReceivedIcon: '#497391',
   iconBackground: '#ebf0f5',
@@ -70,18 +82,34 @@ export const lightThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: lightThemeColors.primaryAccent130,
   checkBoxField: '#e0eeff',
+  pieChartCenter: lightThemeColors.basic070,
+  pieChartEmpty: '#f2f2f2',
+  homeEnsNameIcon: lightThemeColors.basic000,
+  buttonPrimaryBackground: lightThemeColors.basic000,
+  buttonPrimaryTitle: lightThemeColors.basic050,
+  buttonSecondaryBackground: lightThemeColors.basic060,
+  buttonSecondaryTitle: lightThemeColors.basic000,
+  buttonTextTitle: lightThemeColors.basic000,
+  pagerActive: '#000000',
+  pagerInactive: '#d4d9db',
 };
 
 // will be removed after transition
 export const darkThemeColorsOld = {
-  text: '#B1BBD9',
+  ...commonColors,
+  text: darkThemeColors.basic010,
   accent: '#818EB3',
   primary: '#007AFF',
   secondaryAccent: '#EBF0F5',
-  secondaryText: '#8B939E',
+  secondaryText: darkThemeColors.basic030,
+  background: darkThemeColors.basic070,
   border: '#181F30',
   positive: '#00E097',
+  positiveWeak: '#80ff924c',
   negative: '#FF367F',
+  negativeWeak: '#ff80aa4c',
+  neutral: darkThemeColors.basic020,
+  neutralWeak: '#9999994c',
   card: '#32426B',
   tertiary: '#171F31',
   control: '#FCFDFF',
@@ -101,7 +129,6 @@ export const darkThemeColorsOld = {
   notice: '#ea480e',
   activeTabBarIcon: '#FFFFFF',
   inactiveTabBarIcon: '#818eb3',
-  buttonSecondaryBackground: '#102132',
   synthetic: '#9396ff',
   transactionReceivedIcon: '#00E097',
   iconBackground: '#222c46',
@@ -116,6 +143,16 @@ export const darkThemeColorsOld = {
   graphPrimaryColor: '#a945ff',
   checkMark: darkThemeColors.primaryAccent140,
   checkBoxField: darkThemeColors.basic090,
+  pieChartCenter: darkThemeColors.basic050,
+  pieChartEmpty: darkThemeColors.basic060,
+  homeEnsNameIcon: darkThemeColors.basic010,
+  buttonPrimaryBackground: darkThemeColors.primaryAccent130,
+  buttonPrimaryTitle: darkThemeColors.basic090,
+  buttonSecondaryBackground: darkThemeColors.basic020,
+  buttonSecondaryTitle: darkThemeColors.basic090,
+  buttonTextTitle: darkThemeColors.basic000,
+  pagerActive: lightThemeColors.basic010,
+  pagerInactive: '#818eb3',
 };
 
 export const themedColors = {
@@ -282,6 +319,10 @@ export function getThemeByType(themeType?: string) {
     default:
       return defaultTheme;
   }
+}
+
+export function useTheme(): Theme {
+  return useThemeSC();
 }
 
 export function getThemeColors(currentTheme: Theme = defaultTheme) {

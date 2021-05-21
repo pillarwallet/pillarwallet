@@ -24,8 +24,8 @@ import {
   SET_EXECUTING_TRANSACTION,
   SET_DISMISS_TRANSACTION,
   SET_EXCHANGE_ALLOWANCES,
-  ADD_EXCHANGE_ALLOWANCE,
-  UPDATE_EXCHANGE_ALLOWANCE,
+  ADD_ACCOUNT_EXCHANGE_ALLOWANCE,
+  UPDATE_ACCOUNT_EXCHANGE_ALLOWANCE,
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
@@ -37,7 +37,7 @@ import {
   SET_WBTC_SETTLED_TRANSACTIONS,
   ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, AccountAllowances } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
@@ -47,7 +47,7 @@ export type ExchangeReducerState = {
     offers: Offer[],
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
-    allowances: Allowance[],
+    allowances: AccountAllowances,
     hasNotification: boolean,
     pendingWbtcTransactions: PendingWBTCTransaction[],
     settledWbtcTransactions: Transaction[],
@@ -73,7 +73,7 @@ export const initialState = {
   data: {
     offers: [],
     executingTransaction: false,
-    allowances: [],
+    allowances: {},
     hasNotification: false,
     pendingWbtcTransactions: [],
     settledWbtcTransactions: [],
@@ -85,10 +85,19 @@ export const initialState = {
   uniswapTokensGraphQueryFailed: false,
 };
 
+const updateAllowance = (allowances, allowance) => [
+  ...allowances.filter(({ transactionHash }) => transactionHash !== allowance.transactionHash),
+  allowance,
+];
+
 export default function exchangeReducer(
   state: ExchangeReducerState = initialState,
   action: ExchangeReducerAction,
 ): ExchangeReducerState {
+  let accountId;
+  let allowance;
+  let accountAllowances;
+
   switch (action.type) {
     case RESET_OFFERS:
       return {
@@ -141,32 +150,31 @@ export default function exchangeReducer(
           allowances: action.payload,
         },
       };
-    case ADD_EXCHANGE_ALLOWANCE:
+    case ADD_ACCOUNT_EXCHANGE_ALLOWANCE:
+      ({ accountId, allowance } = action.payload);
+      accountAllowances = state.data.allowances?.[accountId] || [];
       return {
         ...state,
         data: {
           ...state.data,
-          allowances: [
+          allowances: {
             ...state.data.allowances,
-            action.payload,
-          ],
+            [accountId]: [...accountAllowances, allowance],
+          },
           hasNotification: true,
         },
       };
-    case UPDATE_EXCHANGE_ALLOWANCE:
-      const {
-        transactionHash,
-      } = action.payload || {};
+    case UPDATE_ACCOUNT_EXCHANGE_ALLOWANCE:
+      ({ accountId, allowance } = action.payload);
+      accountAllowances = state.data.allowances?.[accountId] || [];
       return {
         ...state,
         data: {
           ...state.data,
-          allowances: [
-            ...state.data.allowances.filter(
-              ({ transactionHash: _transactionHash }) => _transactionHash !== transactionHash,
-            ),
-            action.payload,
-          ],
+          allowances: {
+            ...state.data.allowances,
+            [accountId]: updateAllowance(accountAllowances, allowance),
+          },
           hasNotification: true,
         },
       };

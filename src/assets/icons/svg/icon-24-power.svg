@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>F6508ECB-DB98-423F-AB06-2E1AD28E8B40</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icons/3" transform="translate(-253.000000, -97.000000)">
+            <g id="Row" transform="translate(0.000000, 87.726562)">
+                <g id="Icons/24/power-circle/new" transform="translate(253.000000, 10.000000)">
+                    <circle id="Circle" fill="#000" cx="12" cy="12" r="12"></circle>
+                    <path d="M7,6 C4.51403596,8.09914968 3.60393642,11.5275794 4.721503,14.5833103 C5.83906958,17.6390412 8.74631799,19.6713596 12,19.6713596 C15.253682,19.6713596 18.1609304,17.6390412 19.278497,14.5833103 C20.3960636,11.5275794 19.485964,8.09914968 17,6 M12,4 L12,12" id="Combined-Shape" stroke="#FCFDFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

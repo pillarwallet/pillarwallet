@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>47A1D8F1-614D-4F56-92D9-238A68CA407D</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Icons/Arrows" transform="translate(-253.000000, -449.000000)" stroke="#000" stroke-width="1.5">
+            <g id="Row" transform="translate(0.500000, 439.726562)">
+                <g id="Icons/24/arrows/minimize/new" transform="translate(253.000000, 10.000000)">
+                    <g id="Icon" transform="translate(3.000000, 3.000000)">
+                        <path d="M0,0 L6,6 M0,18 L6,12 M12,6 L18,0 M12,12 L18,18" id="Combined-Shape"></path>
+                        <polyline id="Path" points="2 12 6 12 6 16"></polyline>
+                        <polyline id="Path" points="16 6 12 6 12 2"></polyline>
+                        <polyline id="Path" points="16 12 12 12 12 16"></polyline>
+                        <polyline id="Path" points="2 6 6 6 6 2"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

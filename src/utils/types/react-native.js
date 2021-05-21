@@ -29,12 +29,17 @@
  */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
+import { TouchableOpacity, ScrollView } from 'react-native';
 
 // Props
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
 export type { TextProps } from 'react-native/Libraries/Text/TextProps';
 export type { Props as TextInputProps } from 'react-native/Libraries/Components/TextInput/TextInput';
+export type { ImageProps } from 'react-native/Libraries/Image/ImageProps';
+
+export type TouchableOpacityProps = React.ElementConfig<typeof TouchableOpacity>;
+
+export type { Props as SectionListProps, SectionBase } from 'react-native/Libraries/Lists/SectionList';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 

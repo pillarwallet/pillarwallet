@@ -26,6 +26,12 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
 
 type Props = {
   onWebViewMessage?: Function,
@@ -37,6 +43,7 @@ type Props = {
   webViewRef?: WebView,
   urlPath?: string,
   goBackDismiss?: boolean,
+  isKnowledgeBaseUrl?: boolean,
 };
 
 const renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
@@ -50,10 +57,13 @@ const RecoveryPortalWebView = ({
   onRef,
   urlPath = '',
   goBackDismiss,
+  isKnowledgeBaseUrl,
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
-  const uri = `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
+  // eslint-disable-next-line i18next/no-literal-string
+  const knowledgeBaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
+  const uri = isKnowledgeBaseUrl ? knowledgeBaseUrl : `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {

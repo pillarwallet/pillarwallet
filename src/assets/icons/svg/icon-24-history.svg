@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Home-Dashboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="011-Dashboard-Chart" transform="translate(-331.000000, -58.000000)" stroke="#000" stroke-width="1.5">
+            <g id="Icons/24/history" transform="translate(331.000000, 58.000000)">
+                <polyline id="Path" points="12 8 12 12 14 14"></polyline>
+                <path d="M3.05,11.0879678 C3.51393705,6.53341749 7.32305859,3.05288362 11.9008782,3.00059623 C16.4786977,2.94830883 20.3663238,6.34093122 20.9341694,10.8836966 C21.5020151,15.426462 18.5691154,19.6716501 14.1192811,20.7478194 C9.66944673,21.8239888 5.12078214,19.3881782 3.55,15.0879678 M3.05,20.0879678 L3.05,15.0879678 L8.05,15.0879678" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

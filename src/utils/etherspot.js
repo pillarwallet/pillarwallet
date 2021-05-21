@@ -19,10 +19,13 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
   type GatewayEstimatedBatch,
   type Transaction as EtherspotTransaction,
+  type Account as EtherspotAccount,
+  AccountStates,
   GatewayBatchStates,
 } from 'etherspot';
 
@@ -31,6 +34,7 @@ import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'consta
 import { ETH } from 'constants/assetsConstants';
 
 // utils
+import { isEtherspotAccount } from 'utils/accounts';
 import { getAssetDataByAddress } from 'utils/assets';
 import { buildHistoryTransaction } from 'utils/history';
 
@@ -41,6 +45,13 @@ import type { Asset } from 'models/Asset';
 
 const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   COMPLETED: 'Completed',
+};
+
+export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
+  if (!account || !isEtherspotAccount(account)) return false;
+
+  const etherspotAccount: EtherspotAccount = account.extra;
+  return etherspotAccount.status === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (
@@ -58,17 +69,20 @@ export const parseEtherspotTransactions = (
       hash,
       status: rawStatus,
       asset: assetPayload,
+      createdAt,
     } = etherspotTransaction;
 
-    let { value } = etherspotTransaction;
     let asset = ETH;
+    let value = EthersBigNumber.from(0);
 
     if (assetPayload) {
       const {
-        symbol,
         value: assetValue,
         contract: contractAddress,
       } = assetPayload;
+
+      value = assetValue;
+
       const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
 
       if (isEmpty(supportedAsset)) {
@@ -76,8 +90,7 @@ export const parseEtherspotTransactions = (
         return mappedHistoryTransactions;
       }
 
-      value = assetValue;
-      asset = symbol;
+      asset = supportedAsset.symbol;
     }
 
     // TODO: more status to map once Etherspot history back-end fully complete?
@@ -95,7 +108,7 @@ export const parseEtherspotTransactions = (
       value,
       asset,
       status,
-      // createdAt, // TODO: add timestamp when it's added to Etherspot back-end
+      createdAt,
     });
 
     return [...mappedHistoryTransactions, mappedTransaction];

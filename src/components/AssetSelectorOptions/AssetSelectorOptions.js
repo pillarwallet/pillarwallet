@@ -34,9 +34,10 @@ import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
 // Constants
-import { TOKENS, COLLECTIBLES, ETH, PLR } from 'constants/assetsConstants';
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 // Utils
+import { defaultSortAssetOptions } from 'utils/assets';
 import { caseInsensitiveIncludes } from 'utils/strings';
 import { useThemeColors } from 'utils/themes';
 
@@ -179,15 +180,7 @@ export default AssetSelectorOptions;
 
 const getAssets = (options: AssetOption[] = [], query: ?string): AssetOption[] => {
   const filteredOptions = options.filter((option) => isMatchingAsset(option, query));
-  return orderBy(
-    filteredOptions,
-    [
-      (option: AssetOption) => getOptionSortPriority(option),
-      (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
-      (option: AssetOption) => option.name?.trim().toLowerCase(),
-    ],
-    ['desc', 'desc', 'asc'],
-  );
+  return defaultSortAssetOptions(filteredOptions);
 };
 
 const getCollectibles = (collectibles: Collectible[] = [], query: ?string): Collectible[] => {
@@ -200,14 +193,6 @@ const isMatchingAsset = (option: AssetOption, query: ?string) =>
 
 const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
   caseInsensitiveIncludes(collectible.name, query);
-
-const getOptionSortPriority = ({ symbol, balance, imageUrl }: AssetOption) => {
-  if (balance?.balance && symbol === ETH) return 4;
-  if (balance?.balance && symbol === PLR) return 3;
-  if (balance?.balance) return 2;
-  if (imageUrl) return 1;
-  return 0;
-};
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;

@@ -41,3 +41,12 @@ export const getFormattedValue = (tokenValue: string, token: string, options: ?F
 
 export const caseInsensitiveIncludes = (baseString: ?string, stringToFind: ?string) =>
   !!baseString && baseString.toUpperCase().includes(stringToFind?.toUpperCase() ?? '');
+
+// Source: https://stackoverflow.com/a/41543705
+export const stripEmoji = (text: string): string => {
+  return text.replace(
+    // eslint-disable-next-line max-len
+    /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+    '',
+  );
+};

@@ -122,7 +122,6 @@ class CheckAuthWrapperModal extends React.Component<Props, *> {
           leftItems={[]}
           centerItems={[{ title }]}
           rightItems={[{ close: true }]}
-          noBottomBorder
           noPaddingTop
           onClose={this.hideModal}
           wrapperStyle={{ backgroundColor: 'transparent' }}

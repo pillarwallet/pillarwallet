@@ -25,7 +25,7 @@ import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   isOn?: boolean,
-  onToggle: ?() => void,
+  onToggle: ?(boolean) => mixed,
   disabled?: boolean,
 };
 
@@ -104,7 +104,7 @@ class Switcher extends React.Component<Props, State> {
     return (
       <SwitcherTouchable
         activeOpacity={1}
-        onPress={onToggle}
+        onPress={() => onToggle?.(!isOn)}
         disabled={disabled}
         isOn={isOn}
       >

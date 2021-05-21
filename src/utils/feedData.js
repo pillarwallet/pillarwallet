@@ -21,7 +21,6 @@
 import { BigNumber } from 'bignumber.js';
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
-import t from 'translations/translate';
 
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
@@ -38,9 +37,9 @@ import {
   getAccountAddress,
   getAccountTypeByAddress,
   isArchanovaAccount,
-} from 'utils/accounts';
-import { addressesEqual } from 'utils/assets';
-import { uniqBy } from './common';
+} from './accounts';
+import { addressesEqual } from './assets';
+import { isCaseInsensitiveMatch, uniqBy } from './common';
 
 
 export function mapTransactionsHistory(
@@ -129,7 +128,7 @@ export function mapOpenSeaAndBCXTransactionsHistory(
   const concatedCollectiblesHistory = openSeaHistory
     .map(({ hash, ...rest }) => {
       const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
-        return hash.toUpperCase() === bcxHash.toUpperCase();
+        return hash && isCaseInsensitiveMatch(hash, bcxHash);
       });
 
       return {
@@ -171,10 +170,6 @@ export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGro
   return (Object.values(transactionsByAsset): any);
 }
 
-export const elipsizeAddress = (address: string) => {
-  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
-};
-
 export const isPendingTransaction = ({ status }: Object) => {
   return status === TX_PENDING_STATUS;
 };
@@ -195,8 +190,4 @@ export const isArchanovaAccountAddress = (address: string, accounts: Accounts) =
 export const isSmartWalletAccountAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
   return (!!account && isSmartWalletAccount(account));
-};
-
-export const getElipsizeAddress = (address: string) => {
-  return elipsizeAddress(address);
 };

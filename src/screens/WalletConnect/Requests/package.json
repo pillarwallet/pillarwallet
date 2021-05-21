@@ -1,0 +1,6 @@
+{
+  "name": "WalletConnectRequests",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./WalletConnectRequests.js"
+}

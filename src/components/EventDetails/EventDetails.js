@@ -55,6 +55,7 @@ import {
   formatTransactionFee,
   findEnsNameCaseInsensitive,
   getDecimalPlaces,
+  isCaseInsensitiveMatch,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -409,10 +410,11 @@ export class EventDetail extends React.Component<Props> {
     const { collectiblesHistory, history, event } = this.props;
 
     if (isCollectible) {
-      return collectiblesHistory.find(({ hash }) => hash === event.hash);
+      return collectiblesHistory.find(({ hash, batchHash }) => isCaseInsensitiveMatch(hash ?? '', event?.hash)
+        || isCaseInsensitiveMatch(batchHash ?? '', event?.batchHash));
     }
 
-    return findTransactionAcrossAccounts(history, event.hash);
+    return findTransactionAcrossAccounts(history, event?.hash, event?.batchHash);
   };
 
   syncEnsRegistry = (txInfo: Transaction | CollectibleTrx) => {
@@ -693,7 +695,7 @@ export class EventDetail extends React.Component<Props> {
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
             </BaseText>
           </Row>
-              ))}
+        ))}
         <Spacing h={16} />
         <Divider />
         <Spacing h={16} />
@@ -1691,8 +1693,8 @@ export class EventDetail extends React.Component<Props> {
     let eventData = this.getEventData(event);
 
     if (!eventData) return null;
-    const { hash, isPPNTransaction } = event;
-    const allowViewOnBlockchain = !!hash && !isPPNTransaction;
+    const { hash, isPPNTransaction, batchHash } = event;
+    const allowViewOnBlockchain = (!!hash || !!batchHash) && !isPPNTransaction;
 
     if (allowViewOnBlockchain) {
       const currentModalButtons = eventData?.buttons || [];

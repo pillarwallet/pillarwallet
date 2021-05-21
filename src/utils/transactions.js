@@ -20,14 +20,13 @@
 
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber } from 'ethers';
+import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
 import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
-import { parseTokenAmount } from 'utils/common';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -84,7 +83,7 @@ export const buildEthereumTransaction = async (
   let value;
 
   if (tokenType !== COLLECTIBLES) {
-    value = EthersBigNumber.from(parseTokenAmount(amount, decimals).toString());
+    value = utils.parseUnits(amount, decimals);
     if (symbol !== ETH && !data && contractAddress) {
       data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
       to = contractAddress;

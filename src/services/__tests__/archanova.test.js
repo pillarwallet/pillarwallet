@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'ethers';
+import { ethToWei } from '@netgum/utils';
 
 // services
 import archanovaService from 'services/archanova';
@@ -28,7 +30,7 @@ import type { EthereumTransaction } from 'models/Transaction';
 describe('Archanova service', () => {
   const accountTransaction: EthereumTransaction = {
     to: '0x0',
-    value: 1,
+    value: BigNumber.from(ethToWei(1).toString()),
   };
 
   it('account transaction estimate fee should be equal 350000000000000', async () => {

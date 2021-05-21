@@ -43,6 +43,8 @@ export const REMOTE_CONFIG = {
   LEGAL_HTML_ENDPOINT_PREFIX: 'app_legal_html_endpoint_prefix',
   RECOVERY_PORTAL_DISABLED: 'recovery_portal_disabled',
   FEATURE_ONBOARDING: 'feature_onboarding',
+  ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
+  KNOWLEDGE_BASE_URL: 'knowlegebase_url',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -67,4 +69,6 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
   [REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED]: false,
   [REMOTE_CONFIG.FEATURE_ONBOARDING]: false,
+  [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
+  [REMOTE_CONFIG.KNOWLEDGE_BASE_URL]: 'https://help.pillarproject.io/',
 };

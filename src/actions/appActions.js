@@ -22,6 +22,7 @@ import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
+import Instabug from 'instabug-reactnative';
 
 // services
 import Storage from 'services/storage';
@@ -88,7 +89,7 @@ export const initAppAndRedirectAction = () => {
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 
-    storageData = await migrate('app_settings', storageData, dispatch, getState);
+    storageData = await migrate('app_settings', storageData, dispatch, getState, 'appSettings');
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
@@ -102,6 +103,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
+      storageData = await migrate('exchangeAllowances', storageData, dispatch, getState, 'allowances');
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -158,7 +160,7 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
+      const { allowances = {} } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
       const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);
@@ -267,5 +269,10 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
         ethAddress: address,
       },
     });
+    // eslint-disable-next-line i18next/no-literal-string
+    Instabug.setUserAttribute('address', address);
+    if (username) {
+      Instabug.setUserAttribute('ENS', username);
+    }
   };
 };

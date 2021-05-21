@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import Intercom from 'react-native-intercom';
+import Instabug from 'instabug-reactnative';
 import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { getEnv } from 'configs/envConfig';
@@ -50,10 +50,11 @@ import { getProviderInfo } from 'utils/exchange';
 // models, types
 import type { Assets } from 'models/Asset';
 import type { Allowance } from 'models/Offer';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
+import { activeAccountExchangeAllowancesSelector } from 'selectors';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -178,7 +179,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: t('exchangeContent.title.settingsScreen') }],
-          rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ link: t('button.support'), onPress: () => Instabug.show() }],
           sideFlex: 2,
         }}
         inset={{ bottom: 'never' }}
@@ -210,23 +211,13 @@ class ExchangeInfo extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  exchange: { data: { allowances: exchangeAllowances } },
-}: RootReducerState): $Shape<Props> => ({
-  exchangeAllowances,
-});
-
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
+  exchangeAllowances: activeAccountExchangeAllowancesSelector,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeInfo);
+export default connect(structuredSelector, mapDispatchToProps)(ExchangeInfo);

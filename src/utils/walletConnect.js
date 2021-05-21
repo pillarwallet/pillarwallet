@@ -18,10 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber as EthersBigNumber, Interface, utils } from 'ethers';
-import isEmpty from 'lodash.isempty';
+import { orderBy, isEmpty } from 'lodash';
 import t from 'translations/translate';
 
-// constants
+// Constants
 import { ETH } from 'constants/assetsConstants';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import {
@@ -36,12 +36,17 @@ import {
 // utils
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
+import { stripEmoji } from 'utils/strings';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-// types
-import type { WalletConnectCallRequest, WalletConnectSession } from 'models/WalletConnect';
+// Types
+import type {
+  WalletConnectCallRequest,
+  WalletConnectCallRequestType,
+  WalletConnectSession,
+} from 'models/WalletConnect';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
@@ -153,7 +158,9 @@ export const mapCallRequestToTransactionPayload = (
   };
 };
 
-export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRequest): string => {
+export const getWalletConnectCallRequestType = (
+  callRequest: WalletConnectCallRequest,
+): WalletConnectCallRequestType => {
   switch (callRequest?.method) {
     case ETH_SEND_TX:
     case ETH_SIGN_TX:
@@ -166,3 +173,67 @@ export const getWalletConnectCallRequestType = (callRequest: WalletConnectCallRe
       return REQUEST_TYPE.UNSUPPORTED;
   }
 };
+
+export function formatRequestType(type: WalletConnectCallRequestType) {
+  switch (type) {
+    case REQUEST_TYPE.MESSAGE:
+      return t('walletConnect.requests.messageRequest');
+    case REQUEST_TYPE.TRANSACTION:
+      return t('walletConnect.requests.transactionRequest');
+    default:
+      return null;
+  }
+}
+
+/**
+ * Heuristic way of parsing app name.
+ *
+ */
+export const parsePeerName = (name: ?string): string => {
+  if (!name) return '';
+
+  let result = name;
+
+  // Remove text after hyphen
+  // eslint-disable-next-line prefer-destructuring
+  result = result.split('-')[0];
+
+  // eslint-disable-next-line prefer-destructuring
+  result = result.split(':')[0];
+
+  // Strip all emojis
+  result = stripEmoji(result);
+
+  // Fallback if there is nothing left
+  if (result.length === 0) {
+    result = name;
+  }
+
+  result = result.trim();
+
+  // Limit length
+  if (result.length > 22) {
+    // eslint-disable-next-line i18next/no-literal-string
+    result = `${result.substring(0, 22)}…`;
+  }
+
+  return result.trim();
+};
+
+/**
+ * Heuristic way of picking the best icon.
+ *
+ * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
+ * Otherwise just pick whatever is there. See test file for sample cases.
+ */
+export function pickPeerIcon(icons: ?string[]): ?string {
+  if (!icons?.length) return null;
+  if (icons?.length === 1) return icons[0];
+
+  const pngUrls = icons.filter((url) => url.endsWith('.png'));
+  // Experimentally the first icon is usually the lowest quality, so here we're picking the 2nd one.
+  if (!pngUrls.length) return icons[1];
+
+  const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
+  return sortedPngUrls[0];
+}

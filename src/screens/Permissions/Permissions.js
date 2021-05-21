@@ -178,11 +178,11 @@ const Permissions = ({
           }),
         },
         {
-          key: 'INTERCOM',
-          title: t('auth:permissions.title.intercom'),
-          paragraph: t('auth:permissions.withLink.intercom', {
-            linkedText: 'https://www.intercom.com/terms-and-policies#privacy',
-            onPress: () => handleUrlPress('https://www.intercom.com/terms-and-policies#privacy'),
+          key: 'INSTABUG',
+          title: t('auth:permissions.title.instabug'),
+          paragraph: t('auth:permissions.withLink.instabug', {
+            linkedText: 'https://instabug.com/privacy',
+            onPress: () => handleUrlPress('https://instabug.com/privacy'),
           }),
         },
         {

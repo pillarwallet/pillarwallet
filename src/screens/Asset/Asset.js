@@ -34,6 +34,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Image from 'components/Image';
+import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
@@ -66,7 +67,7 @@ import { getTokenTransactionsFromHistory } from 'utils/history';
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
@@ -97,6 +98,7 @@ type Props = {
   fetchReferralRewardsIssuerAddresses: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
+  activeAccountAddress: string,
 };
 
 const AssetCardWrapper = styled.View`
@@ -192,7 +194,9 @@ class AssetScreen extends React.Component<Props> {
     return !isEq;
   }
 
-  goToSendTokenFlow = (assetData: Object) => {
+  goToSendTokenFlow = () => {
+    const { navigation } = this.props;
+    const { assetData } = navigation.state.params;
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
@@ -201,13 +205,13 @@ class AssetScreen extends React.Component<Props> {
   };
 
   openAddFundsModal = () => {
-    const { navigation } = this.props;
-    const { assetData: { token, address } } = navigation.state.params;
+    const { navigation, activeAccountAddress } = this.props;
+    const { assetData: { token } } = navigation.state.params;
 
     Modal.open(() => (
       <AddFundsModal
         token={token}
-        receiveAddress={address}
+        receiveAddress={activeAccountAddress}
       />
     ));
   }
@@ -289,6 +293,9 @@ class AssetScreen extends React.Component<Props> {
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
+    // TODO: Here provide Etherspot transactions history.
+    const historyItems = [];
+
     return (
       <ContainerWithHeader
         navigation={navigation}
@@ -345,7 +352,7 @@ class AssetScreen extends React.Component<Props> {
           <AssetCardWrapper>
             <AssetButtons
               onPressReceive={this.openAddFundsModal}
-              onPressSend={() => this.goToSendTokenFlow(assetData)}
+              onPressSend={this.goToSendTokenFlow}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
@@ -354,13 +361,19 @@ class AssetScreen extends React.Component<Props> {
             />
             {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
-          {!!relatedTransactions.length &&
-          <ActivityFeed
-            feedTitle={t('title.transactions')}
-            navigation={navigation}
-            feedData={relatedTransactions}
-            isAssetView
-          />}
+
+          {!!relatedTransactions.length && (
+            <ActivityFeed
+              feedTitle={t('title.transactions')}
+              navigation={navigation}
+              feedData={relatedTransactions}
+              isAssetView
+            />
+          )}
+
+          {!!historyItems.length && (
+            <HistoryList items={historyItems} />
+          )}
         </ScrollWrapper>
         <RetryGraphQueryBox
           message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
@@ -400,6 +413,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

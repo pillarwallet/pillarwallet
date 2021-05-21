@@ -21,7 +21,6 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import Intercom from 'react-native-intercom';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
@@ -145,11 +144,6 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
         reportErrorLog('firebaseMessaging.getToken failed', { error });
         return null;
       });
-
-      if (fcmToken) {
-        logBreadcrumb('onboarding', 'onboardingAction.js: fcmToken recieved.. sending Token to intercom');
-        await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-      }
 
       logBreadcrumb('onboarding', 'onboardingAction.js: setupUserAction.. registering for auth server');
       const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
@@ -521,6 +515,10 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
 
 export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    // reset if back was pressed and new mnemonic entered
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
+    dispatch({ type: SET_ONBOARDING_USER, payload: null });
+
     logBreadcrumb(
       'onboarding',
       'onboardingAction.js: Dispatching action: importWalletFromMnemonicAction ${SET_IMPORTING_WALLET}',

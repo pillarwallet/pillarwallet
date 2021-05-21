@@ -179,13 +179,13 @@ android {
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
 
+        resValue "string", "instabug_token", "32deec0471648f969b7ec913a7b0a1d0"
+
         // branch.io
         resValue "string", "branch_io_app_link", "plr.test-app.link"
         resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
         resValue "string", "branch_io_key_live", ""
         resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
-
-        resValue "string", "instabug_token", ""
     }
 
     splits {
@@ -210,6 +210,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             matchingFallbacks = ['release']
+            // set Instabug token for staging
+            resValue "string", "instabug_token", System.getenv("INSTABUG_APPCENTER_TOKEN") ? System.getenv("INSTABUG_APPCENTER_TOKEN") : ""
         }
         release {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
@@ -218,8 +220,8 @@ android {
             resValue "string", "branch_io_app_link", "plr.app.link"
             resValue "string", "branch_io_app_link_alternate", "plr-alternate.app.link"
             resValue "string", "branch_io_key_live", System.getenv("BRANCH_IO_KEY_LIVE") ? System.getenv("BRANCH_IO_KEY_LIVE") : ""
-
-            resValue "string", "instabug_token", System.getenv("INSTABUG_TOKEN") ? System.getenv("INSTABUG_TOKEN") : ""
+            // set Instabug token for production
+            resValue "string", "instabug_token", System.getenv("INSTABUG_PROD_TOKEN") ? System.getenv("INSTABUG_PROD_TOKEN") : ""
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -260,12 +262,11 @@ dependencies {
 
     // Custom deps
 
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation project(':react-native-notifications')
     implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-notifications
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
-    implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
-    implementation 'io.intercom.android:intercom-sdk-fcm:5.+' // react-native-intercom
 
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
