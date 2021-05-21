@@ -101,8 +101,8 @@ type Service = {|
 
 type AddCashParam = {
   fiatCurrency: string,
-  fiatValue: string
-}
+  fiatValue: string,
+};
 
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
@@ -253,9 +253,7 @@ class ServicesScreen extends React.Component<Props> {
           if (address === null) return;
           navigation.navigate(ADD_CASH, {
             onSubmit: (values: AddCashParam) => {
-              console.log('values: ', JSON.stringify(values));
               const { fiatCurrency, fiatValue } = values;
-              console.log('url', rampWidgetUrl(address, email, fiatCurrency, fiatValue));
               this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
             },
           });
