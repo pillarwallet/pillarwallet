@@ -438,7 +438,10 @@ export const buildEnsMigrationRawTransactions = async (
     device,
   }) => addressesEqual(device?.address, migratorAddress));
 
-  if (!isMigratorDeviceAdded) migrator = migrator.addAccountDevice();
+  if (!isMigratorDeviceAdded) {
+    await archanovaService.addAccountDevice(migratorAddress);
+    migrator = migrator.addAccountDevice();
+  }
 
   // we cannot test ENS migration so let's just add simple transaction
   migrator = isKovan
