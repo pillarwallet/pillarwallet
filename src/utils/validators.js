@@ -123,7 +123,7 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
 }
 
 export function isValidCash(s) {
-  var rgx = /^[0-9]*\.?[0-9]*$/;
+  const rgx = /^[0-9]*\.?[0-9]*$/;
   return s.match(rgx);
 }
 

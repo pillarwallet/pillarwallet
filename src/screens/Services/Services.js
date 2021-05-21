@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList } from 'react-native';
 import Instabug from 'instabug-reactnative';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -249,8 +249,8 @@ class ServicesScreen extends React.Component<Props> {
           if (address === null) return;
           navigation.navigate(ADD_CASH, {
             onSubmit: (values) => {
-              const {fiatCurrency, fiatValue} = values
-              this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, true, fiatCurrency, fiatValue));
+              const { fiatCurrency, fiatValue } = values;
+              this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
             },
           });
         },
