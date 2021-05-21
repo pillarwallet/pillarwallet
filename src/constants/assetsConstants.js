@@ -79,6 +79,11 @@ const tBTC = 'tBTC';
 const OBTC = 'OBTC';
 const wBTC = 'wBTC'; // testnet
 const testBTC = 'testBTC'; // testnet
+const MATIC = 'MATIC'
+const MATIC_DAI = 'MATIC_DAI'
+const MATIC_USDC = 'MATIC_USDC'
+const XDAI = 'XDAI'
+
 
 export const TOKENS = ('TOKENS': 'TOKENS');
 export const COLLECTIBLES = ('COLLECTIBLES': 'COLLECTIBLES');
@@ -95,12 +100,27 @@ export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
 export const VISIBLE_NUMBER_DECIMALS = 18;
 
 export const POPULAR_EXCHANGE_TOKENS = [
-  ETH, PLR, LINK, BAT, PPT, AE, DAI, KNC, MKR, USDT, VERI, BNT, OMG, WAX, ZIL, ZRX,
+  ETH,
+  PLR,
+  LINK,
+  BAT,
+  PPT,
+  AE,
+  DAI,
+  KNC,
+  MKR,
+  USDT,
+  VERI,
+  BNT,
+  OMG,
+  WAX,
+  ZIL,
+  ZRX,
 ];
 
-export const HIGH_VALUE_TOKENS = [
-  YFI, WBTC, sBTC, BTC, iBTC, renBTC, tBTC, OBTC, wBTC, testBTC,
-];
+export const HIGH_VALUE_TOKENS = [YFI, WBTC, sBTC, BTC, iBTC, renBTC, tBTC, OBTC, wBTC, testBTC];
+
+export const RAMP_CURRENCY_TOKENS = [ETH, DAI, PLR, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI];
 
 export const SPEED_TYPES = {
   SLOW: 'min',
