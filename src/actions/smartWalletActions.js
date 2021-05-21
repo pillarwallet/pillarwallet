@@ -1768,6 +1768,10 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
 
     const feeInfo = buildArchanovaTxFeeInfo(estimated, false);
     if (!feeInfo || errorMessage) {
+      reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
+        errorMessage,
+        archanovaAccount,
+      })
       dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
       return;
     }
