@@ -121,9 +121,10 @@ type WalletConnectUpdateChain = {|
 
 export type WalletConnectCallRequest = {|
   peerId: string,
+  chainId: number,
   callId: number,
   method: string,
-  icon: string | null,
+  icon: ?string,
   name: string,
   url: string,
   params: any[],

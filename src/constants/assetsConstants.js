@@ -41,6 +41,11 @@ export const USD = 'USD';
 // token symbols
 export const ETH = 'ETH';
 export const PLR = 'PLR';
+
+export const MATIC = 'MATIC';
+export const BNB = 'BNB';
+export const XDAI = 'xDAI';
+
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
 export const SNX = 'SNX';

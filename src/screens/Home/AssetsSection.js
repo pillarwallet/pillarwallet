@@ -25,16 +25,15 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
-// Components
-import SWActivationModal from 'components/SWActivationModal';
-import Modal from 'components/Modal';
-
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
-import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useSupportedChains } from 'selectors/chains';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -69,20 +68,20 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
 
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
   const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-  const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
-    navigation.navigate(ASSETS, { category, chain });
-  };
+  const navigateToAssetDetails = (category: AssetCategory, chain: Chain) => {
+    if (!isDeployedOnChain[chain]) {
+      showDeploymentInterjection(chain);
+      return;
+    }
 
-  const openSmartWalletActivationModal = () => {
-    // TODO: maybe restore Archanova intro screen?
-    Modal.open(() => <SWActivationModal navigation={navigation} />);
+    navigation.navigate(ASSETS, { category, chain });
   };
 
   const toggleShowChains = (category: AssetCategory) => {
@@ -128,16 +127,13 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
     const { title } = chainsConfig[chain];
 
-    // Show deploy only for Ethereum (if not deployed).
-    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
-
     return (
       <ChainListItem
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : openSmartWalletActivationModal}
+        isDeployed={isDeployedOnChain[chain]}
+        onPress={() => navigateToAssetDetails(category, chain)}
       />
     );
   };
@@ -160,18 +156,13 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   };
 
   const renderChainCollectibleCount = (chain: Chain) => {
-    // Show deploy only for Ethereum (if not deployed).
-    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
-
     return (
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
-        isDeployed={isDeployed}
-        onPress={
-          isDeployed ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain) : openSmartWalletActivationModal
-        }
+        isDeployed={isDeployedOnChain[chain]}
+        onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
       />
     );
   };

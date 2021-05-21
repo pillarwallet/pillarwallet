@@ -176,8 +176,8 @@ const getLabelTopMargin = (props) => {
   return getButtonFontSize(props) * 0.18;
 };
 
-const getButtonOpacity = ({ disabled, isLoading, theme }) => {
-  if (disabled && !isLoading) {
+const getButtonOpacity = ({ disabled, theme }) => {
+  if (disabled) {
     if (theme.current === DARK_THEME) return 0.3;
     return 0.5;
   }

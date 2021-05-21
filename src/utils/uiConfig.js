@@ -20,6 +20,9 @@
 
 import { useTranslation } from 'translations/translate';
 
+// Constants
+import { ETH, MATIC, BNB, XDAI } from 'constants/assetsConstants';
+
 // Utils
 import { useThemeColors } from 'utils/themes';
 
@@ -34,6 +37,7 @@ type ChainConfig = {|
   titleShort: string,
   iconName: IconName,
   color: string,
+  gasSymbol: string,
 |};
 
 /**
@@ -49,24 +53,28 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       titleShort: t('chainsShort.polygon'),
       iconName: 'polygon',
       color: colors.polygon,
+      gasSymbol: MATIC,
     },
     [CHAIN.BINANCE]: {
       title: t('chains.binance'),
       titleShort: t('chainsShort.binance'),
       iconName: 'binance',
       color: colors.binance,
+      gasSymbol: BNB,
     },
     [CHAIN.XDAI]: {
       title: t('chains.xdai'),
       titleShort: t('chainsShort.xdai'),
       iconName: 'xdai',
       color: colors.xdai,
+      gasSymbol: XDAI,
     },
     [CHAIN.ETHEREUM]: {
       title: t('chains.ethereum'),
       titleShort: t('chainsShort.ethereum'),
       iconName: 'ethereum',
       color: colors.ethereum,
+      gasSymbol: ETH,
     },
   };
 }

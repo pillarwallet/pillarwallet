@@ -40,7 +40,7 @@ function WalletConnectRequests({ style }: Props) {
   return (
     <Container style={style}>
       {requests.map((request) => (
-        <WalletConnectRequestBanner request={request} />
+        <WalletConnectRequestBanner key={request.id} request={request} />
       ))}
     </Container>
   );

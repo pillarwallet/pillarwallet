@@ -18,13 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useSelector } from 'react-redux';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
+import * as React from 'react';
+import { useNavigation } from 'react-navigation-hooks';
 
-export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerState) => T): T =>
-  useSelector((root: RootReducerState) => selector(root.appSettings));
+// Components
+import Modal from 'components/Modal';
 
-export const useBaseFiatCurrency = () => useAppSettingsSelector(state => state.data.baseFiatCurrency);
+// Local
+import WalletConnectRequestModal from './WalletConnectCallRequestModal';
 
-export const useBiometricsSelector = () => useAppSettingsSelector(state => state.data.useBiometrics);
+/**
+ * Pseudo-screen to support showing modal using navigation infrastructure.
+ * Used primarily because of code delaying deep links after logging in.
+ */
+function WalletConnectCallRequestScreen() {
+  const navigation = useNavigation();
+  const request = navigation.getParam('callRequest');
+
+  React.useLayoutEffect(() => {
+    navigation.goBack(null);
+
+    if (!request) return;
+    Modal.open(() => <WalletConnectRequestModal request={request} />);
+  }, [request, navigation]);
+
+  return null;
+}
+
+export default WalletConnectCallRequestScreen;

@@ -89,7 +89,7 @@ export const isEnsMigrationNeededSelector = createSelector(
       archanovaAccount && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
 
     const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(
-      ({ extra }) => extra?.isENSMigrationToEtherspot,
+      ({ extra }) => extra?.isEnsMigrationToEtherspot,
     );
 
     return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;

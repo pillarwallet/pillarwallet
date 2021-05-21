@@ -19,40 +19,49 @@
 */
 
 import React, { useState } from 'react';
-import LinearGradient from 'react-native-linear-gradient';
 import styled from 'styled-components/native';
+import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
 import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { hitSlop20 } from 'utils/common';
+import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
+  chain: Chain,
   style?: ViewStyleProp,
 |};
 
-const DeployEthereumBanner = ({ style }: Props) => {
+const DeployBanner = ({ chain, style }: Props) => {
   const { t } = useTranslationWithPrefix('walletConnect.home');
 
   const [isVisible, setIsVisible] = useState(true);
 
+  const { showDeploymentInterjection } = useDeploymentStatus();
+  const chainConfig = useChainsConfig()[chain];
+
   if (!isVisible) return null;
 
   const handlePress = () => {
-    // TODO: navigate to deploy screen when available.
+    showDeploymentInterjection(chain);
   };
 
   return (
     <TouchableContainer onPress={handlePress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.25]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 6 }}>
-        <Text color="#fcfdff">{t('deployOnEthereum')}</Text>
+        <Text color="#fcfdff">{t('deployOnChainFormat', { chain: chainConfig.title })}</Text>
       </BackgroundGradient>
 
       <CloseButton onPress={() => setIsVisible(false)} hitSlop={hitSlop20}>
@@ -62,7 +71,7 @@ const DeployEthereumBanner = ({ style }: Props) => {
   );
 };
 
-export default DeployEthereumBanner;
+export default DeployBanner;
 
 const GRADIENT_COLORS = ['#008606', '#000100'];
 

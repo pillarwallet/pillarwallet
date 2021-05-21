@@ -51,9 +51,10 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
-import WalletConnectConnectorRequestScreen from 'screens/LegacyWalletConnect/WalletConnectConnectorRequest';
-import WalletConnectCallRequest from 'screens/LegacyWalletConnect/WalletConnectCallRequest';
-import WalletConnectPinConfirm from 'screens/LegacyWalletConnect/WalletConnectPinConfirm';
+import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletConnectConnectorRequest';
+import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/WalletConnectCallRequestScreen';
+import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
+import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
@@ -81,7 +82,6 @@ import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import KnowledgeBaseWebView from 'screens/Menu/KnowledgeBaseWebView';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
-import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
 import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
@@ -179,6 +179,7 @@ import {
   HOME,
   HOME_FLOW,
   HOME_HISTORY,
+  ETHERSPOT_DEPLOYMENT_INTERJECTION,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -239,7 +240,6 @@ import {
   CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
-  EXPLORE_APPS,
   WALLET_ACTIVATED,
   REFERRAL_SENT,
   RECOVERY_PORTAL_SETUP_FLOW,
@@ -319,6 +319,7 @@ import {
   TUTORIAL_FLOW,
   ENS_MIGRATION_CONFIRM,
   KNOWLEDGE_BASE_WEB_VIEW,
+  ENS_MIGRATION_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -392,7 +393,6 @@ const servicesFlow = createStackNavigator({
 // WALLET CONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
   {
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
@@ -404,9 +404,6 @@ const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
-    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
-    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
-    [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
 );
@@ -611,6 +608,12 @@ const rariFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
+
+const ensMigrationFlow = createStackNavigator({
+  [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
 const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
   [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
@@ -685,7 +688,11 @@ const AppFlowNavigation = createStackNavigator(
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
-    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
+    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequestScreen,
+    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
+    [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
+    [ENS_MIGRATION_FLOW]: ensMigrationFlow,
   },
   modalTransition,
 );
