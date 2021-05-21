@@ -626,7 +626,7 @@
     "home": {
       "title": "Wallet Connect",
       "headerStories": "New and Noteworthy",
-      "deployOnEthereum": "Deploy this wallet to take full advantage of using Ethereum Mainnet."
+      "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}."
     },
     "requests": {
       "messageRequest": "Signature request",

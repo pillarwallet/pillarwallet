@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
-import { isEqual, chunk } from 'lodash';
+import { chunk } from 'lodash';
 
 // Components
 import { Container, Center } from 'components/modern/Layout';
@@ -37,7 +37,10 @@ import Stories from 'components/Stories';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
-import { useSupportedChains, useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useSupportedChains } from 'selectors/chains';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Services
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
@@ -50,14 +53,14 @@ import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
-import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
+import DeployBanner from './components/DeployBanner';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -69,11 +72,11 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+  const { isDeployedOnChain } = useDeploymentStatus();
+
+  const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
 
   const renderListHeader = () => {
-    const showDeployOnEthereumBanner = !isDeployedOnEthereum && activeChain === CHAIN.ETHEREUM;
-
     return (
       <ListHeader>
         <WalletConnectRequests />
@@ -82,7 +85,7 @@ function WalletConnectHome() {
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
 
-        {showDeployOnEthereumBanner && <DeployOnEthereumBanner style={styles.banner} />}
+        {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
       </ListHeader>
     );
   };
@@ -91,8 +94,7 @@ function WalletConnectHome() {
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
   const renderItem = (item: WalletConnectCmsApp) => {
-    const isEthereumOnly = activeChain === CHAIN.ETHEREUM || isEqual(item.chains.length, [CHAIN.ETHEREUM]);
-    const disabled = isEthereumOnly && !isDeployedOnEthereum;
+    const disabled = activeChain != null && !isDeployedOnChain[activeChain];
 
     return (
       <WalletConnectListItem

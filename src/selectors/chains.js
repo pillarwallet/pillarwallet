@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { createSelector } from 'reselect';
+
 // Selectors
 import { activeAccountSelector, useRootSelector } from 'selectors';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -26,9 +28,9 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
-// types
-import { type Chain, CHAIN } from 'models/Chain';
-import type { RootReducerState } from 'reducers/rootReducer';
+// Types
+import { type Chain, type ChainRecord, CHAIN } from 'models/Chain';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
 
 export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
   const activeAccount = activeAccountSelector(root);
@@ -42,18 +44,23 @@ export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
 
 export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);
 
-export const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): boolean => {
+const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): boolean => {
   const activeAccount = activeAccountSelector(root);
-  if (isEtherspotAccount(activeAccount)) {
-    return isEtherspotAccountDeployed(activeAccount);
-  }
-
-  if (isArchanovaAccount(activeAccount)) {
-    return isArchanovaWalletActivatedSelector(root);
-  }
-
+  if (isEtherspotAccount(activeAccount)) return isEtherspotAccountDeployed(activeAccount);
+  if (isArchanovaAccount(activeAccount)) return isArchanovaWalletActivatedSelector(root);
   return false;
 };
 
-export const useIsActiveAccountDeployedOnEthereum = (): boolean =>
-  useRootSelector(isActiveAccountDeployedOnEthereumSelector);
+// Note: createSelector is used to memoize the result
+export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
+  isActiveAccountDeployedOnEthereumSelector,
+  (isDeployedOnEthereum) => {
+    return {
+      ethereum: isDeployedOnEthereum,
+      polygon: true,
+      // TODO: handle BSC when available
+      binance: true,
+      xdai: true,
+    };
+  },
+);

@@ -68,14 +68,19 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
 
-  const { isDeployedOnEthereum, showDeploymentInterjection } = useDeploymentStatus();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
   const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
 
-  const navigateToAssetDetails = (category: AssetCategory, chain?: Chain) => {
+  const navigateToAssetDetails = (category: AssetCategory, chain: Chain) => {
+    if (!isDeployedOnChain[chain]) {
+      showDeploymentInterjection(chain);
+      return;
+    }
+
     navigation.navigate(ASSETS, { category, chain });
   };
 
@@ -122,16 +127,13 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
     const { title } = chainsConfig[chain];
 
-    // Show deploy only for Ethereum (if not deployed).
-    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
-
     return (
       <ChainListItem
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        isDeployed={isDeployed}
-        onPress={isDeployed ? () => navigateToAssetDetails(category, chain) : () => showDeploymentInterjection(chain)}
+        isDeployed={isDeployedOnChain[chain]}
+        onPress={() => navigateToAssetDetails(category, chain)}
       />
     );
   };
@@ -154,20 +156,13 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   };
 
   const renderChainCollectibleCount = (chain: Chain) => {
-    // Show deploy only for Ethereum (if not deployed).
-    const isDeployed = chain !== CHAIN.ETHEREUM || isDeployedOnEthereum;
-
     return (
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(collectibleCountPerChain[chain] ?? 0)}
-        isDeployed={isDeployed}
-        onPress={
-          isDeployed
-            ? () => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)
-            : () => showDeploymentInterjection(chain)
-        }
+        isDeployed={isDeployedOnChain[chain]}
+        onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
       />
     );
   };

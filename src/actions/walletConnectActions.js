@@ -53,7 +53,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // selectors
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountDeployedOnEthereumSelector } from 'selectors/chains';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
@@ -64,7 +64,6 @@ import { reportErrorLog } from 'utils/common';
 import { getAssetsAsList } from 'utils/assets';
 
 // models, types
-import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -165,8 +164,7 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
     }
 
     const chain = chainFromChainId[chainId];
-    const requiresSmartWalletDeployment =
-      chain === CHAIN.ETHEREUM && !isActiveAccountDeployedOnEthereumSelector(getState());
+    const requiresSmartWalletDeployment = !isDeployedOnChainSelector(getState())[chain];
 
     if (requiresSmartWalletDeployment) {
       Toast.show({
