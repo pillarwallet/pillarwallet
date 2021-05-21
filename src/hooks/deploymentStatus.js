@@ -29,8 +29,8 @@ import SWActivationModal from 'components/SWActivationModal';
 import { ETHERSPOT_DEPLOYMENT_INTERJECTION } from 'constants/navigationConstants';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
-import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { useRootSelector, useActiveAccount } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
@@ -40,19 +40,9 @@ import { type Chain } from 'models/Chain';
 
 export function useDeploymentStatus() {
   const navigation = useNavigation();
-  const isDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
   const activeAccount = useActiveAccount();
 
-  // TODO: handle BSC when available
-  const isDeployedOnChain = React.useMemo(
-    () => ({
-      ethereum: isDeployedOnEthereum,
-      polygon: true,
-      binance: true,
-      xdai: true,
-    }),
-    [isDeployedOnEthereum],
-  );
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
 
   const showDeploymentInterjection = React.useCallback(
     (chain: Chain) => {

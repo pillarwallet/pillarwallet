@@ -37,7 +37,7 @@ import { ETH } from 'constants/assetsConstants';
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountBalancesSelector } from 'selectors/balances';
-import { useIsActiveAccountDeployedOnEthereum } from 'selectors/chains';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -154,11 +154,13 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
 
-  const isActiveAccountDeployedOnEthereum = useIsActiveAccountDeployedOnEthereum();
+  const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
+
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   let errorMessage = null;
-  if (!isActiveAccountDeployedOnEthereum) {
+  if (!isDeployedOnChain[chain]) {
     errorMessage = t('walletConnectContent.error.smartWalletNeedToBeActivated');
   } else if (estimationErrorMessage) {
     errorMessage = estimationErrorMessage;
@@ -166,7 +168,6 @@ const useViewData = (request: WalletConnectCallRequest) => {
 
   const title = parsePeerName(request.name);
   const iconUrl = request.icon;
-  const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
 
   return { title, iconUrl, chain, errorMessage };
 };

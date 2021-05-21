@@ -206,6 +206,10 @@ export type Dispatch = (
   action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
 ) => void;
 
+// Note: this intended as temporary solution for typing reselect selectors
+// real solution would be apply reselect flow typing.
+export type Selector<T> = (state: RootReducerState) => T
+
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
   wallet: walletReducer,

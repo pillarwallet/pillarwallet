@@ -53,14 +53,14 @@ import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
-import DeployOnEthereumBanner from './components/DeployOnEthereumBanner';
+import DeployBanner from './components/DeployBanner';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -74,9 +74,9 @@ function WalletConnectHome() {
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
   const { isDeployedOnChain } = useDeploymentStatus();
 
-  const renderListHeader = () => {
-    const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
+  const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
 
+  const renderListHeader = () => {
     return (
       <ListHeader>
         <WalletConnectRequests />
@@ -85,7 +85,7 @@ function WalletConnectHome() {
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
 
-        {showDeployBanner && <DeployOnEthereumBanner style={styles.banner} />}
+        {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
       </ListHeader>
     );
   };
