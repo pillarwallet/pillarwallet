@@ -256,6 +256,7 @@ class ServicesScreen extends React.Component<Props> {
           navigation.navigate(ADD_CASH, {
             onSubmit: (values: AddCashParam) => {
               const { fiatCurrency, fiatValue } = values;
+              console.log('url', rampWidgetUrl(address, email, fiatCurrency, fiatValue));
               this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
             },
           });
@@ -272,7 +273,7 @@ class ServicesScreen extends React.Component<Props> {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           this.props.navigation.navigate(SENDWYRE_INPUT, {
-            onSubmit: async (values: SendwyreTrxValues) => {
+            onSubmit: async (values: {}) => {
               const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
               await this.tryOpenCryptoPurchaseUrl(url);
             },
