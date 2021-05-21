@@ -29,6 +29,7 @@ import { getWalletConnectCallRequestType, parsePeerName } from 'utils/walletConn
 import type { WalletConnectCallRequestType, WalletConnectCallRequest } from 'models/WalletConnect';
 
 export type RequestItem = {|
+  id: string,
   title: string,
   iconUrl: ?string,
   type: WalletConnectCallRequestType,
@@ -38,10 +39,11 @@ export type RequestItem = {|
 export function useRequestItems(): RequestItem[] {
   const { callRequests } = useWalletConnect();
 
-  return mapNotNil(callRequests, (callRequest) => {
-    const title = parsePeerName(callRequest.name);
-    const type = getWalletConnectCallRequestType(callRequest);
-    const iconUrl = callRequest.icon;
-    return { title, type, iconUrl, callRequest };
+  return mapNotNil(callRequests, (request) => {
+    const id = `${request.peerId}-${request.callId}`;
+    const title = parsePeerName(request.name);
+    const type = getWalletConnectCallRequestType(request);
+    const iconUrl = request.icon;
+    return { id, title, type, iconUrl, callRequest: request };
   });
 }
