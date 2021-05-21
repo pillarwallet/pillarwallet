@@ -23,10 +23,11 @@ import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
+
 // utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
-import { getCurrencySymbol } from 'utils/common';
+import { getCurrencySymbol, BigNumber } from 'utils/common';
 
 // compomnents
 import { Footer } from '../../components/Layout/Layout';
@@ -39,12 +40,17 @@ import Text from 'components/modern/Text';
 // selectors
 import { useFiatCurrency } from 'selectors';
 
+type AddCashParam = {
+  fiatCurrency: string,
+  fiatValue: string,
+};
+
 const AddCash = () => {
   const navigation = useNavigation();
   const [cash, setCash] = React.useState<BigNumber>(0);
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  const onSubmitCallback: (values: SendwyreTrxValues) => void = navigation.getParam('onSubmit', () => {});
+  const onSubmitCallback: (values: AddCashParam) => void = navigation.getParam('onSubmit', () => {});
 
   return (
     <Container>
@@ -52,6 +58,7 @@ const AddCash = () => {
         centerItems={[{ title: t('servicesContent.ramp.addCash.title') }]}
         leftItems={[{ close: true, dismiss: true }]}
         navigation={navigation}
+        dismiss={true}
       />
       <AddCashView>
         <Text medium>{t('servicesContent.ramp.addCash.subTitle')}</Text>
