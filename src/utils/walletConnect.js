@@ -181,7 +181,7 @@ export function formatRequestType(type: WalletConnectCallRequestType) {
     case REQUEST_TYPE.TRANSACTION:
       return t('walletConnect.requests.transactionRequest');
     default:
-      return null;
+      return t('walletConnect.requests.unsupportedRequest');
   }
 }
 

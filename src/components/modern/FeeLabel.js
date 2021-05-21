@@ -37,21 +37,21 @@ import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-type Mode = "actual" | "estimate";
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
+type Mode = 'actual' | 'estimate';
 
 type Props = {
   value: ?BigNumber,
   symbol: string,
   mode?: Mode,
   isLoading?: boolean,
+  isNotEnough?: boolean,
+  style?: ViewStyleProp,
 };
 
-function FeeLabel({
-  value,
-  symbol,
-  mode,
-  isLoading,
-}: Props) {
+function FeeLabel({ value, symbol, mode, isLoading, isNotEnough, style }: Props) {
   const { t } = useTranslation();
 
   const [showFiatValue, setShowFiatValue] = React.useState(true);
@@ -62,19 +62,19 @@ function FeeLabel({
   const colors = useThemeColors();
 
   if (isLoading) {
-    return <Spinner size={20} trackWidth={2} />;
+    return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
   const valueInFiat = BigNumber(getBalanceInFiat(currency, value, rates, symbol));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, symbol);
 
   return (
-    <LabelWrapper>
+    <LabelWrapper style={style}>
       <Text color={colors.basic030}>{mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}</Text>
 
       <Spacing w={8} />
 
-      <FeePill onPress={() => setShowFiatValue(!showFiatValue)}>
+      <FeePill onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
         <Text variant="small" color="#ffffff">
           {labelValue}
         </Text>
@@ -94,5 +94,5 @@ const FeePill = styled.TouchableOpacity`
   justify-content: center;
   padding: 0 ${spacing.small}px;
   border-radius: 12px;
-  ${({ theme }) => `background-color: ${theme.colors.labelTertiary};`}
+  background-color: ${({ theme, $isNotEnough }) => ($isNotEnough ? theme.colors.negative : theme.colors.labelTertiary)};
 `;
