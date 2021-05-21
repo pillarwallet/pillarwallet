@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Dimensions } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import { TabView as RNTabView, TabBar } from 'react-native-tab-view';
 import styled from 'styled-components/native';
 
@@ -59,14 +59,14 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
   const { width } = Dimensions.get('window');
 
   const renderTabBar = (props: mixed) => {
-    const tabBarStyle = { backgroundColor: colors.background, shadowColor: 'transparent' };
-    const tabStyle = [scrollEnabled && styles.tabStyleScrollEnabled];
+    const tabBarStyle = { backgroundColor: colors.background };
+    const tabStyle = [scrollEnabled && styles.tabScrollEnabled];
 
     return (
       <TabBar
         {...props}
         scrollEnabled={scrollEnabled}
-        style={tabBarStyle}
+        style={[styles.tabBar, tabBarStyle]}
         tabStyle={tabStyle}
         renderLabel={({ route, focused }) => (
           <TabLabelWrapper>
@@ -96,7 +96,11 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
 export default TabView;
 
 const styles = {
-  tabStyleScrollEnabled: {
+  tabBar: {
+    shadowColor: 'transparent',
+    elevation: 0,
+  },
+  tabScrollEnabled: {
     width: 'auto',
   },
 };
@@ -107,7 +111,7 @@ const TabLabelWrapper = styled.View`
 
 const TabIndicator = styled.View`
   margin-top: 3px;
-  border-top-width: 6px;
+  border-top-width: ${Platform.OS === 'android' ? '3px' : '6px'};
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   border-color: ${({ theme }) => theme.colors.primaryAccent130};
