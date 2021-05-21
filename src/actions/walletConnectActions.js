@@ -64,7 +64,6 @@ import { reportErrorLog } from 'utils/common';
 import { getAssetsAsList } from 'utils/assets';
 
 // models, types
-import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 

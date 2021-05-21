@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
-import { isEqual, chunk } from 'lodash';
+import { chunk } from 'lodash';
 
 // Components
 import { Container, Center } from 'components/modern/Layout';

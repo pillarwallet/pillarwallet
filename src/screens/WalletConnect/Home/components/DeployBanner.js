@@ -37,7 +37,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import { type Chain, CHAIN } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   chain: Chain,
