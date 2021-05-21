@@ -23,9 +23,10 @@ import { getEnv } from 'configs/envConfig';
 
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
-import { POPULAR_EXCHANGE_TOKENS } from '../constants/assetsConstants';
+import { RAMP_CURRENCY_TOKENS } from '../constants/assetsConstants';
 
 export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean, fiatCurrency: string, fiatValue: string) {
+  const values = RAMP_CURRENCY_TOKENS.join(',')
   const params = {
     hostAppName: "Pillar",
     fiatCurrency: fiatCurrency,
@@ -34,10 +35,10 @@ export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
-    swapAsset: POPULAR_EXCHANGE_TOKENS
+    swapAsset: values,
   };
 
-  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;
 }
 
 export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>
