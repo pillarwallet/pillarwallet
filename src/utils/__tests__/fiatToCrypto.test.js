@@ -28,8 +28,8 @@ describe('The fiatToCrypto.js utility module', () => {
     it('successfully returns a RAMP url with for PLR tokens', () => {
       const fakeEthAddress = '0x123';
       const fakeUserEmail = 'support@pillarproject.io';
-      const fakeFiatCurrency: '$',
-      const fakeFiatValue: 0.1,
+      const fakeFiatCurrency: '$';
+      const fakeFiatValue: 0.1;
 
       const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, fakeFiatCurrency, fakeFiatValue);
 
