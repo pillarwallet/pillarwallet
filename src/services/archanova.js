@@ -165,7 +165,6 @@ const parseEstimateError = (error: Error, logExtras: Object = {}) => {
   throw new Error(errorMessage);
 };
 
-
 class Archanova {
   sdk: Sdk = null;
   sdkInitialized: boolean;
