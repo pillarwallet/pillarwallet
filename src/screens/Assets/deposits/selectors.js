@@ -22,19 +22,20 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { depositsBalanceSelector } from 'selectors/balances';
+import { depositsTotalBalanceSelector, depositsTotalBalanceByChainsSelector } from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useDepositsBalance(): FiatBalance {
-  const value = useRootSelector(depositsBalanceSelector);
+  const value = useRootSelector(depositsTotalBalanceSelector);
   return { value };
 }
 
-export function useDepositsChainBalances(): ChainRecord<BigNumber> {
-  return { ethereum: BigNumber(10) };
+export function useDepositsChainBalances(): ChainBalances {
+  return useRootSelector(depositsTotalBalanceByChainsSelector);
 }
 
 export type DepositItem = {|
@@ -48,20 +49,10 @@ export type DepositItem = {|
 |};
 
 
-// TODO: provide real assets data
 export function useDepositsAssets(): ChainRecord<DepositItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'aave-1',
-      service: 'Aave',
-      title: 'DAI',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-      currentApy: BigNumber(0.235),
-    },
-  ];
-  return { ethereum };
+  // TODO: replace once available from Etherspot SDK
+  const deposits = [];
+
+  return { ethereum: deposits };
 }
 

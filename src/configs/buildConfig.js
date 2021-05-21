@@ -31,6 +31,7 @@ export const buildEnvironment = {
   INFURA_PROJECT_ID: '_infura_project_id_',
   ETHPLORER_API_KEY: '_ethplorer_api_key_',
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
+  ZAPPER_API_KEY: '96e0cc51-a62e-42ca-acee-910ea7d2a241', // public
   INSTABUG_TOKEN: '_instabug_token_',
   PRISMIC_TOKEN: '_prismic_token_',
   STORYLY_TOKEN: '_storyly_token_',

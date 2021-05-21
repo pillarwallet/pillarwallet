@@ -18,16 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
+import { COLLECTIBLES } from 'constants/assetsConstants';
+
+// types
 import type { CollectibleNavigationParams } from 'screens/Collectible';
 import type { CollectibleItem } from './selectors';
 
-export function buildCollectibleNavigationParams(item: CollectibleItem): CollectibleNavigationParams {
+export function buildCollectibleNavigationParams({
+  id,
+  title: name,
+  description,
+  imageUrl,
+  iconUrl,
+  contractAddress,
+  tokenId,
+}: CollectibleItem): CollectibleNavigationParams {
   return {
     assetData: {
-      id: item.id,
-      name: item.title,
-      description: item.description,
-      image: item.iconUrl,
+      id,
+      name,
+      description,
+      imageUrl,
+      iconUrl,
+      contractAddress,
+      tokenId,
+      tokenType: COLLECTIBLES,
     },
   };
 }

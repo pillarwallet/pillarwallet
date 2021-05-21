@@ -87,7 +87,7 @@ function WalletTab() {
     const asset = getAssetFromRegistry(assetRegistry, item.symbol);
     if (!asset) return;
 
-    const assetData = buildAssetDataNavigationParam(asset, { accountAddress });
+    const assetData = buildAssetDataNavigationParam(asset);
     navigation.navigate(ASSET, { assetData });
   };
 
@@ -115,7 +115,7 @@ function WalletTab() {
         title={item.title}
         iconUrl={item.iconUrl}
         value={item.value}
-        change={BigNumber(0.01)}
+        change={item.change}
         symbol={item.symbol}
         onPress={() => navigateToAssetDetails(item)}
       />

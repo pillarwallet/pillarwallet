@@ -22,20 +22,18 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { rewardsBalanceSelector } from 'selectors/balances';
-
-// Utils
-import { getImageUrl } from 'utils/images';
+import { rewardsTotalBalanceByChainsSelector, rewardsTotalBalanceSelector } from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
+import type { ChainBalances } from 'models/Home';
 
 export function useRewardsBalance(): BigNumber {
-  return useRootSelector(rewardsBalanceSelector);
+  return useRootSelector(rewardsTotalBalanceSelector);
 }
 
-export function useRewardsChainBalances(): ChainRecord<BigNumber> {
-  return { polygon: BigNumber(100), xdai: BigNumber(200) };
+export function useRewardsChainBalances(): ChainBalances {
+  return useRootSelector(rewardsTotalBalanceByChainsSelector);
 }
 
 export type RewardItem = {|
@@ -47,35 +45,9 @@ export type RewardItem = {|
   symbol: string,
 |};
 
-// TODO: provide real assets data
 export function useRewardsAssets(): ChainRecord<RewardItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const polygon = [
-    {
-      key: 'pillar-1',
-      service: 'Uniswap v2 ETH/PLR',
-      title: 'Pillar',
-      iconUrl: getImageUrl('asset/images/tokens/icons/plrColor.png', 3),
-      value: BigNumber(10000),
-      symbol: 'PLR',
-    },
-  ];
+  // TODO: replace once available from Etherspot SDK
+  const rewards = [];
 
-  const xdai = [
-    {
-      key: 'ocean-1',
-      service: 'Ocean Market',
-      title: 'Ocean Protocol',
-      value: BigNumber(67),
-      symbol: 'OCEAN',
-    },
-    {
-      key: 'rari-1',
-      service: 'Rari Capital',
-      title: 'Rari Governance Token',
-      value: BigNumber(254),
-      symbol: 'RGT',
-    },
-  ];
-  return { polygon, xdai };
+  return { ethereum: rewards };
 }

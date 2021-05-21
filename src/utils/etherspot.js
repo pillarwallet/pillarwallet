@@ -30,8 +30,13 @@ import {
 } from 'etherspot';
 
 // constants
-import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import {
+  TX_CONFIRMED_STATUS,
+  TX_FAILED_STATUS,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 import { ETH } from 'constants/assetsConstants';
+import { TRANSACTION_STATUS } from 'models/History';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -45,13 +50,15 @@ import type { Asset } from 'models/Asset';
 
 const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   COMPLETED: 'Completed',
+  PENDING: 'Pending',
+  REVERTED: 'Reverted',
 };
 
 export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
   if (!account || !isEtherspotAccount(account)) return false;
 
   const etherspotAccount: EtherspotAccount = account.extra;
-  return etherspotAccount.status === AccountStates.Deployed;
+  return etherspotAccount.state === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (
@@ -79,24 +86,36 @@ export const parseEtherspotTransactions = (
       const {
         value: assetValue,
         contract: contractAddress,
+        name: assetName,
       } = assetPayload;
 
       value = assetValue;
 
-      const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
+      if (assetName !== ETH) {
+        const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
+        if (isEmpty(supportedAsset)) {
+          // asset not supported
+          return mappedHistoryTransactions;
+        }
 
-      if (isEmpty(supportedAsset)) {
-        // asset not supported
-        return mappedHistoryTransactions;
+        asset = supportedAsset.symbol;
       }
-
-      asset = supportedAsset.symbol;
     }
 
-    // TODO: more status to map once Etherspot history back-end fully complete?
-    const status = rawStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED
-      ? TX_CONFIRMED_STATUS
-      : TX_PENDING_STATUS;
+    let status;
+    switch (rawStatus) {
+      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED:
+        status = TRANSACTION_STATUS.CONFIRMED;
+        break;
+      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.PENDING:
+        status = TRANSACTION_STATUS.PENDING;
+        break;
+      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.REVERTED:
+        status = TRANSACTION_STATUS.FAILED;
+        break;
+      default:
+        status = TRANSACTION_STATUS.PENDING;
+    }
 
     const mappedTransaction = buildHistoryTransaction({
       from,

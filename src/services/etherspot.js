@@ -32,6 +32,7 @@ import {
   NotificationTypes,
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
+  type AccountDashboard,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -311,6 +312,18 @@ class EtherspotService {
       .then(({ items }) => items)
       .catch((error) => {
         reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, error });
+        return null;
+      });
+  }
+
+  getDashboardData(accountAddress: string, currencySymbol: string, periodInDays: number): Promise<AccountDashboard> {
+    return this.sdk.getAccountDashboard({
+      account: accountAddress,
+      currency: currencySymbol.toLowerCase(),
+      days: periodInDays,
+    })
+      .catch((error) => {
+        reportErrorLog('EtherspotService getDashboardData failed', { error });
         return null;
       });
   }

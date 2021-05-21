@@ -93,7 +93,7 @@ function TokenExchangeEventDetails({ event }: Props) {
       <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
       <Spacing h={spacing.extraLarge} />
 
-      <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />
+      {!!event?.fee && <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />}
       <Spacing h={spacing.mediumLarge} />
 
       <Button variant="secondary" title={t('button.exchangeMore')} onPress={navigateToExchange} />

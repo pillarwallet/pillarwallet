@@ -42,7 +42,7 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const CollectibleReviewSummary = ({ collectible, text }: Props) => {
   return (
     <Container>
-      <StyledCollectibleImage source={{ uri: collectible.icon }} />
+      <StyledCollectibleImage source={{ uri: collectible.imageUrl }} />
       <Spacing h={16} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={16} />

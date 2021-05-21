@@ -19,9 +19,13 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { RefreshControl, SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { fetchEtherspotTransactionsHistoryAction } from 'actions/historyActions';
 
 // Components
 import HistoryEventDetails from 'components/HistoryEventDetails';
@@ -31,6 +35,9 @@ import Text from 'components/modern/Text';
 // Utils
 import { humanizeDateString } from 'utils/date';
 import { appFont, spacing } from 'utils/variables';
+
+// Selectors
+import { useRootSelector } from 'selectors';
 
 // Types
 import { EVENT_TYPE, type Event } from 'models/History';
@@ -51,6 +58,7 @@ type Props = {|
 
 function HistoryList({ items }: Props) {
   const safeArea = useSafeAreaInsets();
+  const dispatch = useDispatch();
 
   const sections = mapEventsToSections(items ?? []);
 
@@ -61,6 +69,9 @@ function HistoryList({ items }: Props) {
   const renderSectionHeader = (section: HistorySection) => {
     return <SectionHeader>{humanizeDateString(section.date)}</SectionHeader>;
   };
+
+  const isRefreshing = useRootSelector(({ history }) => history.isFetching);
+  const onRefresh = () => dispatch(fetchEtherspotTransactionsHistoryAction());
 
   const renderEvent = (event: Event) => {
     switch (event.type) {
@@ -93,6 +104,12 @@ function HistoryList({ items }: Props) {
       keyExtractor={(item) => item.id}
       renderSectionHeader={({ section }) => renderSectionHeader(section)}
       renderItem={({ item }) => renderEvent(item)}
+      refreshControl={(
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+        />
+      )}
     />
   );
 }

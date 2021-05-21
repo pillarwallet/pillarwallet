@@ -42164,6 +42164,12 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
       onScroll={[Function]}
       onScrollBeginDrag={[Function]}
       onScrollEndDrag={[Function]}
+      refreshControl={
+        <RefreshControlMock
+          onRefresh={[Function]}
+          refreshing={false}
+        />
+      }
       renderItem={[Function]}
       scrollEventThrottle={50}
       stickyHeaderIndices={
@@ -42174,6 +42180,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
       updateCellsBatchingPeriod={50}
       windowSize={21}
     >
+      <RCTRefreshControl />
       <View>
         <View
           onLayout={[Function]}

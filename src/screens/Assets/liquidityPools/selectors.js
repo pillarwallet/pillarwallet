@@ -22,20 +22,25 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { liquidityPoolsBalanceSelector } from 'selectors/balances';
+import {
+  liquidityPoolsTotalBalanceByChainsSelector,
+  liquidityPoolsTotalBalanceSelector,
+} from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useLiquidityPoolsBalance(): FiatBalance {
-  const value = useRootSelector(liquidityPoolsBalanceSelector);
+  const value = useRootSelector(liquidityPoolsTotalBalanceSelector);
   return { value };
 }
 
-export function useLiquidityPoolsChainBalances(): ChainRecord<BigNumber> {
-  return { polygon: BigNumber(761.5), xdai: BigNumber(120.2) };
+export function useLiquidityPoolsChainBalances(): ChainBalances {
+  return useRootSelector(liquidityPoolsTotalBalanceByChainsSelector);
 }
+
 export type LiquidityPoolItem = {|
   key: string,
   service: string,
@@ -45,35 +50,9 @@ export type LiquidityPoolItem = {|
   change?: BigNumber,
 |};
 
-// TODO: provide real assets data
 export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'uniswap-1',
-      title: 'Uniswap v2 ETH/PLR',
-      service: 'Uniswap v2',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/ethplruniColor.png?size=3',
-      value: BigNumber(480.2),
-      change: BigNumber(3.32),
-    },
-    {
-      key: 'uniswap-2',
-      title: 'Uniswap v2 DAI/PLR',
-      service: 'Uniswap v2',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/daiplrColor.png?size=3',
-      value: BigNumber(281.3),
-      change: BigNumber(2.12),
-    },
-    {
-      key: 'balancer-1',
-      title: 'Balancer Dough',
-      service: 'Balancer',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(120.2),
-      change: BigNumber(12.3),
-    },
-  ];
+  // TODO: replace once available from Etherspot SDK
+  const liquidityPools = [];
 
-  return { ethereum };
+  return { ethereum: liquidityPools };
 }

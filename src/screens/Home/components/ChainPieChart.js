@@ -30,12 +30,10 @@ import { formatPercentValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
+import { getTotalBalance } from 'utils/balances';
 
 // Types
 import type { ChainBalances } from 'models/Home';
-
-// Local
-import { getTotalBalance } from '../utils';
 
 type Props = {|
   chainBalances: ChainBalances,

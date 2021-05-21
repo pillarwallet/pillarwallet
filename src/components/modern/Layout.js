@@ -42,6 +42,7 @@ type ContentProps = {|
   paddingHorizontal?: number,
   paddingVertical?: number,
   contentContainerStyle?: ViewStyleProp,
+  refreshControl?: React.Element<any>,
 |};
 
 /**
@@ -54,6 +55,7 @@ export function Content({
   paddingHorizontal = spacing.layoutSides,
   paddingVertical = spacing.layoutSides,
   contentContainerStyle,
+  refreshControl,
 }: ContentProps) {
   const styles = [
     contentStyles.safeArea,
@@ -61,7 +63,10 @@ export function Content({
   ];
 
   return (
-    <ScrollView contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}>
+    <ScrollView
+      refreshControl={refreshControl}
+      contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
+    >
       <SafeAreaView style={styles}>{children}</SafeAreaView>
     </ScrollView>
   );

@@ -22,37 +22,18 @@ import { mapValues } from 'lodash';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import {
-  walletBalanceSelector,
-  depositsBalanceSelector,
-  investmentsBalanceSelector,
-  liquidityPoolsBalanceSelector,
-} from 'selectors/balances';
+import { activeAccountTotalBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // Utils
-import { BigNumber } from 'utils/common';
+import { getTotalBalance } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 
 // Types
 import type { CategoryBalances, ChainBalances, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
 
 export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
-  const wallet = useRootSelector(walletBalanceSelector);
-  const deposits = useRootSelector(depositsBalanceSelector);
-  const investments = useRootSelector(investmentsBalanceSelector);
-  const liquidityPools = useRootSelector(liquidityPoolsBalanceSelector);
-  const rewards = BigNumber(0);
-
-  const ethereum = {
-    wallet,
-    deposits,
-    investments,
-    liquidityPools,
-    rewards,
-  };
-
-  return { ethereum };
+  return useRootSelector(activeAccountTotalBalancesSelector);
 }
 
 export function useCollectibleCountPerChain(): CollectibleCountPerChain {
@@ -61,7 +42,8 @@ export function useCollectibleCountPerChain(): CollectibleCountPerChain {
 }
 
 export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalances {
-  const chainBalances = Object.keys(chains).map((key) => chains[key]);
+  const chainBalances = Object.keys(chains ?? {}).map((key) => chains[key]);
+
   return {
     wallet: sum(chainBalances.map((chain) => chain?.wallet)),
     deposits: sum(chainBalances.map((chain) => chain?.deposits)),
@@ -73,11 +55,6 @@ export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): Cate
 
 export function getTotalChainBalances(chains: CategoryBalancesPerChain): ChainBalances {
   return mapValues(chains, (balances) => getTotalBalance(balances));
-}
-
-export function getTotalBalance(entries: { [key: string]: BigNumber}): BigNumber {
-  const balances = Object.keys(entries).map((key) => entries[key]);
-  return sum(balances);
 }
 
 export function getTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {

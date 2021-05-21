@@ -22,19 +22,23 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { investmentsBalanceSelector } from 'selectors/balances';
+import {
+  investmentsTotalBalanceByChainsSelector,
+  investmentsTotalBalanceSelector,
+} from 'selectors/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
+import type { ChainBalances } from 'models/Home';
 
 export function useInvestmentsBalance(): FiatBalance {
-  const value = useRootSelector(investmentsBalanceSelector);
+  const value = useRootSelector(investmentsTotalBalanceSelector);
   return { value };
 }
 
-export function useInvestmentsChainBalances(): ChainRecord<BigNumber> {
-  return { ethereum: BigNumber(10) };
+export function useInvestmentsChainBalances(): ChainBalances {
+  return useRootSelector(investmentsTotalBalanceByChainsSelector);
 }
 
 /** Note: items are groupped by service. */
@@ -47,19 +51,9 @@ export type InvestmentItem = {|
   change?: BigNumber,
 |};
 
-// TODO: provide real assets data
 export function useInvestmentAssets(): ChainRecord<InvestmentItem[]> {
-  /* eslint-disable i18next/no-literal-string */
-  const ethereum = [
-    {
-      key: 'rari-1',
-      title: 'Stable pool',
-      service: 'Pool Together',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/balColor.png?size=3',
-      value: BigNumber(10),
-      change: BigNumber(1.2),
-    },
-  ];
+  // TODO: replace once available from Etherspot SDK
+  const investments = [];
 
-  return { ethereum };
+  return { ethereum: investments };
 }

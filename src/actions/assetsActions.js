@@ -45,6 +45,7 @@ import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constan
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, SET_FETCHING_TOTALS } from 'constants/totalsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -52,10 +53,20 @@ import Toast from 'components/Toast';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import {
+  getZapperAvailableChainProtocols,
+  getZapperProtocolBalanceOnNetwork,
+  mapZapperProtocolIdToBalanceCategory,
+} from 'services/zapper';
 
 // utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import { parseTokenAmount, reportErrorLog, uniqBy } from 'utils/common';
+import {
+  parseTokenAmount,
+  reportErrorLog,
+  uniqBy,
+  wrapBigNumber,
+} from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccount,
@@ -66,12 +77,15 @@ import {
   isArchanovaAccount,
   isEtherspotAccount,
   getAccountType,
+  findAccountByAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+import { sum } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
-import { balancesSelector } from 'selectors';
+import { accountsSelector, balancesSelector } from 'selectors';
+import { accountsTotalBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
@@ -368,6 +382,85 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
     }
+  };
+};
+
+export const fetchAllAccountsTotalsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (getState().totals.isFetching) return;
+
+    dispatch({ type: SET_FETCHING_TOTALS, payload: true });
+
+    const accounts = accountsSelector(getState());
+    const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
+
+    smartWalletAccounts.forEach((account) => dispatch(fetchCollectiblesAction(account)));
+
+    const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
+    const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
+    if (!availableChainProtocols) {
+      reportErrorLog('fetchAllAccountsTotalsAction failed: no availableChainProtocols', { accountsAddresses });
+      return;
+    }
+
+    try {
+      await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
+        const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
+          const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
+            accountsAddresses,
+            zapperProtocolId,
+            zapperNetworkId,
+          );
+
+          const balanceCategory = mapZapperProtocolIdToBalanceCategory(zapperProtocolId);
+          if (!protocolBalancesByAccounts || !balanceCategory) return null;
+
+          return { category: balanceCategory, balances: protocolBalancesByAccounts };
+        }));
+
+        // filter ones that are null (no protocol>category map found or no balances)
+        const availableChainProtocolsBalances = chainProtocolsBalances.filter(Boolean);
+
+        availableChainProtocolsBalances.forEach(({
+          balances: protocolBalancesByAccounts,
+          category: balanceCategory,
+        }) => {
+          Object.keys(protocolBalancesByAccounts).forEach((accountAddress) => {
+            const account = findAccountByAddress(accountAddress, accounts);
+            const accountProtocolBalances = protocolBalancesByAccounts[accountAddress]?.products;
+
+            // no need to add anything no matching account found or empty balances
+            if (!account || isEmpty(accountProtocolBalances)) return;
+
+            const accountCategoryBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
+              const protocolBalances = balances?.assets;
+              if (isEmpty(protocolBalances)) return categoryBalance;
+
+              const protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+
+              return sum([categoryBalance, ...protocolBalanceValues]);
+            }, wrapBigNumber(0));
+
+            dispatch({
+              type: SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+              payload: {
+                accountId: getAccountId(account),
+                chain,
+                category: balanceCategory,
+                balance: accountCategoryBalance,
+              },
+            });
+          });
+        });
+      }));
+    } catch (error) {
+      reportErrorLog('fetchAllAccountsTotalsAction failed', { error });
+    }
+
+    dispatch({ type: SET_FETCHING_TOTALS, payload: false });
+
+    const accountsTotalBalances = accountsTotalBalancesSelector(getState());
+    dispatch(saveDbAction('totalBalances', { balances: accountsTotalBalances }, true));
   };
 };
 

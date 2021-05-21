@@ -32,7 +32,7 @@ import Text from 'components/modern/Text';
 import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useAccounts } from 'selectors';
+import { useSmartWalletAccounts } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -53,7 +53,7 @@ const UserNameAndImage = ({ user }: Props) => {
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
 
-  const accountCount = useAccounts().length;
+  const accountCount = useSmartWalletAccounts().length;
 
   return (
     <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>

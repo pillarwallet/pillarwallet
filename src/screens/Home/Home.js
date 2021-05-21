@@ -20,6 +20,11 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
+import { RefreshControl } from 'react-native';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { fetchAllAccountsTotalsAction } from 'actions/assetsActions';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -34,9 +39,11 @@ import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
 import { useUser } from 'selectors/user';
+import { useRootSelector } from 'selectors';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { getTotalBalance } from 'utils/balances';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -48,7 +55,6 @@ import {
   useCategoryBalancesPerChain,
   getTotalCategoryBalances,
   getTotalChainBalances,
-  getTotalBalance,
 } from './utils';
 
 function Home() {
@@ -58,10 +64,14 @@ function Home() {
   const categoryBalancesPerChain = useCategoryBalancesPerChain();
   const collectibleCountPerChain = useCollectibleCountPerChain();
   const user = useUser();
+  const dispatch = useDispatch();
 
   const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
   const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
   const totalBalance = getTotalBalance(categoryBalances);
+
+  const isRefreshing = useRootSelector(({ totals }) => !!totals.isFetching);
+  const onRefresh = () => dispatch(fetchAllAccountsTotalsAction());
 
   return (
     <Container>
@@ -76,6 +86,12 @@ function Home() {
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
+        refreshControl={(
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+          />
+        )}
       >
         <Stories />
 

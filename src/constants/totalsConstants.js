@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,23 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
-import type { ChainRecord } from 'models/Chain';
+export const SET_FETCHING_TOTALS = 'SET_FETCHING_TOTALS';
+export const SET_TOTAL_BALANCES = 'SET_TOTAL_BALANCES';
+export const SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE = 'SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE';
 
-export type CategoryBalancesPerChain = ChainRecord<CategoryBalances>;
-
-export type CategoryBalances = {|
-  wallet?: BigNumber,
-  deposits?: BigNumber,
-  investments?: BigNumber,
-  liquidityPools?: BigNumber,
-  rewards?: BigNumber,
-|};
-
-export type ChainBalances = ChainRecord<BigNumber>;
-
-export type CollectibleCountPerChain = ChainRecord<number>;
-
-export type ChainBalancesPerAccount = {
-  [accountId: string]: CategoryBalancesPerChain,
-};
