@@ -54,6 +54,7 @@ import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApp
 import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletConnectConnectorRequest';
 import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/WalletConnectCallRequestScreen';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
+import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
@@ -178,6 +179,7 @@ import {
   HOME,
   HOME_FLOW,
   HOME_HISTORY,
+  ETHERSPOT_DEPLOYMENT_INTERJECTION,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -683,6 +685,7 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequestScreen,
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
+    [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
   },
   modalTransition,
 );

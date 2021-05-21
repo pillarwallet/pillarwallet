@@ -19,13 +19,16 @@
 */
 
 import React, { useState } from 'react';
-import LinearGradient from 'react-native-linear-gradient';
 import styled from 'styled-components/native';
+import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
 import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { hitSlop20 } from 'utils/common';
@@ -33,6 +36,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import { CHAIN } from 'models/Chain';
 
 type Props = {|
   style?: ViewStyleProp,
@@ -43,10 +47,12 @@ const DeployEthereumBanner = ({ style }: Props) => {
 
   const [isVisible, setIsVisible] = useState(true);
 
+  const { showDeploymentInterjection } = useDeploymentStatus();
+
   if (!isVisible) return null;
 
   const handlePress = () => {
-    // TODO: navigate to deploy screen when available.
+    showDeploymentInterjection(CHAIN.ETHEREUM);
   };
 
   return (
