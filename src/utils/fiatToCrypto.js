@@ -23,13 +23,18 @@ import { getEnv } from 'configs/envConfig';
 
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
+import { POPULAR_EXCHANGE_TOKENS } from '../constants/assetsConstants';
 
-export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean) {
+export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean, fiatCurrency: string, fiatValue: string) {
   const params = {
+    hostAppName: "Pillar",
+    fiatCurrency: fiatCurrency,
+    fiatValue: fiatValue,
     swapAsset: plrMode ? 'PLR' : null, // This turns on the ability to purchase PLR
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
+    swapAsset: POPULAR_EXCHANGE_TOKENS
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
