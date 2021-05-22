@@ -504,7 +504,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
 
               if (currency !== USD) {
-                const rate = zapperUSDBasedRates?.[currency];
+                const rate = zapperUSDBasedRates?.[currency.toUpperCase()];
                 protocolBalanceValues = protocolBalanceValues.map((value) => value.times(wrapBigNumber(rate ?? 0)));
               }
 
