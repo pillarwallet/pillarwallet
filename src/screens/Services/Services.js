@@ -45,6 +45,7 @@ import {
   WBTC_CAFE,
   RARI_DEPOSIT,
   LIQUIDITY_POOLS,
+  ADD_CASH,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -61,11 +62,11 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
+import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { User } from 'models/User';
 import type SDKWrapper from 'services/api';
-import { ADD_CASH } from '../../constants/navigationConstants';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -270,7 +271,7 @@ class ServicesScreen extends React.Component<Props> {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           this.props.navigation.navigate(SENDWYRE_INPUT, {
-            onSubmit: async (values: {}) => {
+            onSubmit: async (values: SendwyreTrxValues) => {
               const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
               await this.tryOpenCryptoPurchaseUrl(url);
             },

@@ -19,19 +19,19 @@
 */
 
 import React from 'react';
+import { ScrollView, Keyboard } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
-
 // utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
-import { getCurrencySymbol, BigNumber } from 'utils/common';
+import { getCurrencySymbol } from 'utils/common';
 
 // compomnents
-import { Footer } from '../../components/Layout/Layout';
 import { Container } from 'components/modern/Layout';
+import { Footer } from 'components/Layout/Layout';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
@@ -47,44 +47,44 @@ type AddCashParam = {
 
 const AddCash = () => {
   const navigation = useNavigation();
-  const [cash, setCash] = React.useState<BigNumber>(0);
+  const [cash, setCash] = React.useState<string>('0');
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const onSubmitCallback: (values: AddCashParam) => void = navigation.getParam('onSubmit', () => {});
-
   return (
     <Container>
       <HeaderBlock
         centerItems={[{ title: t('servicesContent.ramp.addCash.title') }]}
-        leftItems={[{ close: true, dismiss: true }]}
+        leftItems={[{ close: true }]}
         navigation={navigation}
-        dismiss={true}
       />
-      <AddCashView>
-        <Text medium>{t('servicesContent.ramp.addCash.subTitle')}</Text>
-        <TextInput
-          inputProps={{
-            value: `${currencySymbol}${cash}`,
-            autoCapitalize: 'none',
-            disabled: false,
-            onChangeText: (text) => {
-              const value = text.substring(1);
-              setCash(value);
-            },
-            placeholder: '$0',
-            keyboardType: 'numeric',
-          }}
-          inputWrapperStyle={styles.inputWrapperStyles}
-          itemHolderStyle={styles.itemHolderStyles}
-          additionalStyle={styles.additionalStyle}
-          errorMessage={!isValidFiatValue(cash) && t('error.invalid.email')}
-        />
-      </AddCashView>
+      <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
+        <AddCashView>
+          <Text variant="medium">{t('servicesContent.ramp.addCash.subTitle')}</Text>
+          <TextInput
+            inputProps={{
+              value: `${currencySymbol}${cash}`,
+              autoCapitalize: 'none',
+              disabled: false,
+              onChangeText: (text) => {
+                const value = text.replace(currencySymbol, '');
+                setCash(value);
+              },
+              placeholder: '$0',
+              keyboardType: 'numeric',
+            }}
+            inputWrapperStyle={styles.inputWrapperStyles}
+            itemHolderStyle={styles.itemHolderStyles}
+            additionalStyle={styles.additionalStyle}
+            errorMessage={!isValidFiatValue(cash) && t('error.invalid.email')}
+          />
+        </AddCashView>
+      </ScrollView>
       <Footer>
         <Button
           onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: cash })}
           title={t('button.next')}
-          disabled={!isValidFiatValue(cash)}
+          disabled={cash === '0' || !isValidFiatValue(cash)}
         />
       </Footer>
     </Container>
@@ -96,6 +96,7 @@ const styles = {
     backgroundColor: 'transparent',
     zIndex: 10,
     width: '80%',
+    marginTop: 20,
   },
   itemHolderStyles: {
     borderWidth: 0,
