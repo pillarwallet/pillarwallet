@@ -79,10 +79,8 @@ const tBTC = 'tBTC';
 const OBTC = 'OBTC';
 const wBTC = 'wBTC'; // testnet
 const testBTC = 'testBTC'; // testnet
-const MATIC = 'MATIC';
 const MATIC_DAI = 'MATIC_DAI';
 const MATIC_USDC = 'MATIC_USDC';
-const XDAI = 'XDAI';
 
 
 export const TOKENS = ('TOKENS': 'TOKENS');
