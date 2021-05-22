@@ -60,7 +60,7 @@ import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
-  instances: Array = [];
+  instances: Array<EtherspotSdk> = [];
 
   async init(privateKey: string): Promise<void> {
     const etherspotComputeContractPromises = [];
