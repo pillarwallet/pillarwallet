@@ -46,6 +46,7 @@ import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, SET_FETCHING_TOTALS } from 'constants/totalsConstants';
+import { NetworkNames } from 'etherspot';
 
 // components
 import Toast from 'components/Toast';
@@ -390,6 +391,7 @@ export const fetchAllAccountsTotalsAction = () => {
     if (getState().totals.isFetching) return;
 
     dispatch({ type: SET_FETCHING_TOTALS, payload: true });
+    dispatch(fetchAllCrosschainBalances());
 
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
@@ -792,5 +794,26 @@ export const checkForMissedAssetsAction = () => {
       dispatch(fetchAssetsBalancesAction());
       dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
     }
+  };
+};
+
+export const fetchAllCrosschainBalances = () => {
+  return async () => {
+    // eslint-disable-next-line no-unused-vars
+    const { Mainnet, Matic, Bsc, Xdai } = NetworkNames;
+
+    const mainnetBalance = await etherspotService.instances[NetworkNames.Mainnet].getAccountBalances();
+    const maticBalance = await etherspotService.instances[NetworkNames.Matic].getAccountBalances();
+    const bscBalance = await etherspotService.instances[NetworkNames.Bsc].getAccountBalances();
+    const xdaiBalance = await etherspotService.instances[NetworkNames.Xdai].getAccountBalances();
+
+    const balances = {
+      Mainnet: mainnetBalance,
+      Matic: maticBalance,
+      Bsc: bscBalance,
+      Xdai: xdaiBalance,
+    };
+
+    return balances;
   };
 };
