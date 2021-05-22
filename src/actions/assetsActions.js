@@ -39,6 +39,7 @@ import {
   COLLECTIBLES,
   PLR,
   BTC,
+  USD,
 } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_BALANCES,
@@ -66,6 +67,7 @@ import archanovaService from 'services/archanova';
 import {
   getZapperAvailableChainProtocols,
   getZapperProtocolBalanceOnNetwork,
+  getZapperUSDBasedFiatRates,
   mapZapperProtocolIdToBalanceCategory,
 } from 'services/zapper';
 
@@ -453,7 +455,16 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
     const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
     if (!availableChainProtocols) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
       reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no availableChainProtocols', { accountsAddresses });
+      return;
+    }
+
+    const currency = fiatCurrencySelector(getState());
+    const zapperUSDBasedRates = await getZapperUSDBasedFiatRates();
+    if (currency !== USD && !zapperUSDBasedRates) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
       return;
     }
 
@@ -490,7 +501,12 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               const protocolBalances = balances?.assets;
               if (isEmpty(protocolBalances)) return categoryBalance;
 
-              const protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+
+              if (currency !== USD) {
+                const rate = zapperUSDBasedRates?.[currency];
+                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(wrapBigNumber(rate ?? 0)));
+              }
 
               return sum([categoryBalance, ...protocolBalanceValues]);
             }, wrapBigNumber(0));
