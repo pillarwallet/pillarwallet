@@ -33,7 +33,6 @@ export function rampWidgetUrl(
   fiatCurrency: string,
   fiatValue: string,
 ) {
-  const swapAssetValues = RAMP_CURRENCY_TOKENS.join(',');
   const params = {
     hostAppName: PILLAR,
     fiatCurrency,
@@ -41,10 +40,10 @@ export function rampWidgetUrl(
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
-    swapAsset: swapAssetValues,
+    swapAsset: RAMP_CURRENCY_TOKENS,
   };
 
-  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;
+  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
 export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) => api.getSendwyreWidgetURL(params);
