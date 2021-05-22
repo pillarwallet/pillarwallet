@@ -43,7 +43,7 @@ export function rampWidgetUrl(
     swapAsset: RAMP_CURRENCY_TOKENS,
   };
 
-  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;
+  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
 export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) => api.getSendwyreWidgetURL(params);
