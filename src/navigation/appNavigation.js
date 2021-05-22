@@ -686,110 +686,6 @@ const liquidityPoolsFlow = createStackNavigator({
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
-const poolTogetherFlow = createStackNavigator(
-  {
-    [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
-    [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-    [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
-    [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-    [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const lendingAddDepositsFlow = createStackNavigator(
-  {
-    [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
-    [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const lendingWithdrawDepositsFlow = createStackNavigator(
-  {
-    [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
-    [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const keyBasedAssetTransferFlow = createStackNavigator(
-  {
-    [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
-    [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
-    [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
-    [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
-    [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const contactsFlow = createStackNavigator(
-  {
-    [CONTACTS_LIST]: ContactsListScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const sablierFlow = createStackNavigator(
-  {
-    [SABLIER_STREAMS]: SablierStreamsScreen,
-    [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
-    [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
-    [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-    [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
-    [SABLIER_WITHDRAW]: SablierWithdrawScreen,
-    [SABLIER_WITHDRAW_REVIEW]: SablierWithdrawReviewScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const rariFlow = createStackNavigator(
-  {
-    [RARI_DEPOSIT]: RariDepositScreen,
-    [RARI_INFO]: RariInfoScreen,
-    [RARI_ADD_DEPOSIT]: RariAddDepositScreen,
-    [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
-    [RARI_WITHDRAW]: RariWithdrawScreen,
-    [RARI_WITHDRAW_REVIEW]: RariWithdrawReviewScreen,
-    [RARI_TRANSFER]: RariTransferScreen,
-    [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
-    [RARI_CLAIM_RGT]: RariClaimRgtScreen,
-    [RARI_CLAIM_RGT_REVIEW]: RariClaimRgtReviewScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
-
-const liquidityPoolsFlow = createStackNavigator(
-  {
-    [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
-    [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
-    [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
-    [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
-    [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
-    [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
-    [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
-    [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
-    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
-    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
-    [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
-    [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
 
 const MainStack = createStackNavigator(
   {
@@ -853,7 +749,6 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
-    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
     [ADD_CASH]: addCashFlow,
   },
   modalTransition,
