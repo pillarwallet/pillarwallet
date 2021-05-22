@@ -30,14 +30,14 @@ import {
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { ChainBalances } from 'models/Home';
+import type { TotalBalancesPerChain } from 'models/Balances';
 
 export function useLiquidityPoolsBalance(): FiatBalance {
   const value = useRootSelector(liquidityPoolsTotalBalanceSelector);
   return { value };
 }
 
-export function useLiquidityPoolsChainBalances(): ChainBalances {
+export function useLiquidityPoolsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(liquidityPoolsTotalBalanceByChainsSelector);
 }
 

@@ -27,8 +27,9 @@ import {
   SET_KEY_BASED_ASSETS_TO_TRANSFER,
   SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE,
 } from 'constants/keyBasedAssetTransferConstants';
-import type { Balances, KeyBasedAssetTransfer } from 'models/Asset';
+import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
+import type { Balances } from 'models/Balances';
 
 
 export type KeyBasedAssetTransferReducerState = {|

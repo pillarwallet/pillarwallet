@@ -98,7 +98,7 @@ import {
   activeAccountIdSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // types
 import type {
@@ -439,7 +439,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     });
 
     // process pending balances
-    const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
+    const accountPaymentNetworkBalances = pendingBalances.reduce((memo, tokenBalance) => {
       const symbol = get(tokenBalance, 'token.symbol', ETH);
       const { decimals: assetDecimals = 18 } = accountAssets[symbol] || {};
       const balance = get(tokenBalance, 'incoming', new BigNumber(0));
@@ -455,7 +455,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     const { paymentNetwork: { balances } } = getState();
     const updatedBalances = {
       ...balances,
-      [accountId]: accountBalances,
+      [accountId]: accountPaymentNetworkBalances,
     };
     dispatch(saveDbAction('paymentNetworkBalances', { paymentNetworkBalances: updatedBalances }, true));
 
@@ -463,7 +463,7 @@ export const fetchVirtualAccountBalanceAction = () => {
       type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
       payload: {
         accountId,
-        balances: accountBalances,
+        balances: accountPaymentNetworkBalances,
       },
     });
   };
@@ -952,7 +952,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
-    const balances = accountBalancesSelector(getState());
+    const balances = accountEthereumWalletBalancesSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);

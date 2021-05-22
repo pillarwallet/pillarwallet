@@ -19,11 +19,21 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+
+// constants
+import { CHAIN } from 'models/Chain';
+
+// types
 import type { ChainRecord } from 'models/Chain';
+
+
+export type Chain = $Values<typeof CHAIN>;
+
+export type CategoryTotalBalancesPerChain = ChainRecord<CategoryTotalBalances>;
 
 export type CategoryBalancesPerChain = ChainRecord<CategoryBalances>;
 
-export type CategoryBalances = {|
+export type CategoryTotalBalances = {|
   wallet?: BigNumber,
   deposits?: BigNumber,
   investments?: BigNumber,
@@ -31,10 +41,44 @@ export type CategoryBalances = {|
   rewards?: BigNumber,
 |};
 
-export type ChainBalances = ChainRecord<BigNumber>;
+export type CategoryBalances = {|
+  wallet?: Balances,
+  deposits?: Balances,
+  investments?: Balances,
+  liquidityPools?: Balances,
+  rewards?: Balances,
+|};
 
-export type CollectibleCountPerChain = ChainRecord<number>;
+export type ChainTotalBalancesPerAccount = {
+  [accountId: string]: CategoryTotalBalancesPerChain,
+};
 
 export type ChainBalancesPerAccount = {
   [accountId: string]: CategoryBalancesPerChain,
+};
+
+export type TotalBalancesPerChain = ChainRecord<BigNumber>;
+
+export type CollectibleCountPerChain = ChainRecord<number>;
+
+export type Balance = {
+  balance: string,
+  symbol: string,
+};
+
+export type Balances = {
+  [symbol: string]: Balance,
+};
+
+export type MixedBalance = {
+  balance: number | string,
+  symbol: string,
+};
+
+export type MixedBalances = {
+  [symbol: string]: MixedBalance,
+};
+
+export type BalancesStore = {
+  [accountId: string]: Balances,
 };

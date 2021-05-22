@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,29 +17,93 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_BALANCES } from 'constants/assetsConstants';
-import type { BalancesStore } from 'models/Asset';
+
+// constants
+import {
+  RESET_ACCOUNT_BALANCES,
+  SET_ACCOUNT_CHAIN_CATEGORY_BALANCES,
+  SET_BALANCES,
+  SET_FETCHING_BALANCES,
+} from 'constants/balancesConstants';
+
+// types
+import type { Balances, ChainBalancesPerAccount } from 'models/Balances';
+
+
+export type SetFetchingBalancesAction = {|
+  type: typeof SET_FETCHING_BALANCES,
+  payload: boolean,
+|};
+
+export type SetBalancesAction = {|
+  type: typeof SET_BALANCES,
+  payload: ChainBalancesPerAccount,
+|};
+
+export type SetAccountChainCategoryBalanceAction = {|
+  type: typeof SET_ACCOUNT_CHAIN_CATEGORY_BALANCES,
+  payload: {
+    accountId: string,
+    chain: string,
+    category: string,
+    balances: Balances,
+  }
+|};
+
+export type ResetAccountBalancesAction = {|
+  type: typeof RESET_ACCOUNT_BALANCES,
+  payload: string,
+|};
+
+export type BalancesReducerAction = SetFetchingBalancesAction
+  | SetAccountChainCategoryBalanceAction
+  | SetBalancesAction
+  | ResetAccountBalancesAction;
 
 export type BalancesReducerState = {
-  data: BalancesStore,
-};
-
-export type BalancesAction = {
-  type: string,
-  payload: any,
+  data: ChainBalancesPerAccount,
+  isFetching: boolean,
 };
 
 export const initialState = {
   data: {},
+  isFetching: false,
 };
+
+const setNewCategoryBalances = (balancesState, accountId, chain, category, newBalances) => ({
+  ...balancesState,
+  [accountId]: {
+    ...(balancesState?.[accountId] ?? {}),
+    [chain]: {
+      ...(balancesState?.[accountId]?.[chain] ?? {}),
+      [category]: newBalances,
+    },
+  },
+});
 
 export default function balancesReducer(
   state: BalancesReducerState = initialState,
-  action: BalancesAction,
+  action: BalancesReducerAction,
 ): BalancesReducerState {
   switch (action.type) {
-    case UPDATE_BALANCES:
+    case SET_FETCHING_BALANCES:
+      return { ...state, isFetching: action.payload };
+
+    case SET_BALANCES:
       return { ...state, data: action.payload };
+
+    case RESET_ACCOUNT_BALANCES:
+      return { ...state, data: { ...state.data, [action.payload]: {} } };
+
+    case SET_ACCOUNT_CHAIN_CATEGORY_BALANCES:
+      const {
+        accountId,
+        chain,
+        category,
+        balances,
+      } = action.payload;
+      return { ...state, data: setNewCategoryBalances(state.data, accountId, chain, category, balances) };
+
     default:
       return state;
   }

@@ -51,15 +51,15 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import archanovaService from 'services/archanova';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
-import type { Balances } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Balances';
 
 
 type Props = {
@@ -246,7 +246,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   useGasToken: useGasTokenSelector,
 });
 

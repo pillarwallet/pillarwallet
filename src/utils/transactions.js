@@ -37,7 +37,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 // types
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
-import type { Balances } from 'models/Asset';
+import type { Balances } from 'models/Balances';
 
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {

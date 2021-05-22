@@ -33,12 +33,13 @@ import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Rates, Asset, Assets, AssetOption, Balances } from 'models/Asset';
+import type { Rates, Asset, Assets, AssetOption } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
+import type { Balances } from 'models/Balances';
 
 /* eslint-disable i18next/no-literal-string */
 

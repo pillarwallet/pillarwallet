@@ -27,24 +27,32 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Button from 'components/Button';
 
+// utils
 import { getRate } from 'utils/assets';
 import { formatTokenAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { SETTLE_BALANCE } from 'constants/navigationConstants';
+
+// selectors
 import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-import type { Assets, Balances } from 'models/Asset';
+// types
+import type { Assets } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import Button from 'components/Button';
-import { SETTLE_BALANCE } from 'constants/navigationConstants';
+import type { Balances } from 'models/Balances';
+
 
 type Props = {
   baseFiatCurrency: string,

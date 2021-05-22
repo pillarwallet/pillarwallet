@@ -20,34 +20,35 @@
 
 // constants
 import {
-  SET_FETCHING_TOTALS,
+  SET_FETCHING_TOTAL_BALANCES,
   SET_TOTAL_BALANCES,
   SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
-} from 'constants/totalsConstants';
+  RESET_ACCOUNT_TOTAL_BALANCES,
+} from 'constants/totalsBalancesConstants';
 
 // utils
 import { BigNumber } from 'utils/common';
 
 // types
-import type { ChainBalancesPerAccount } from 'models/Home';
+import type { ChainTotalBalancesPerAccount } from 'models/Balances';
 
 
-export type TotalsReducerState = {
-  balances: ChainBalancesPerAccount,
+export type TotalBalancesReducerState = {
+  data: ChainTotalBalancesPerAccount,
   isFetching: boolean,
 };
 
-export type SetFetchingTotalsAction = {|
-  type: typeof SET_FETCHING_TOTALS,
+export type SetFetchingTotalBalancesAction = {|
+  type: typeof SET_FETCHING_TOTAL_BALANCES,
   payload: boolean,
 |};
 
 export type SetTotalBalancesAction = {|
   type: typeof SET_TOTAL_BALANCES,
-  payload: ChainBalancesPerAccount,
+  payload: ChainTotalBalancesPerAccount,
 |};
 
-export type SetAccountTotalChainBalancesAction = {|
+export type SetAccountTotalChainCategoryBalanceAction = {|
   type: typeof SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
   payload: {
     accountId: string,
@@ -57,47 +58,57 @@ export type SetAccountTotalChainBalancesAction = {|
   }
 |};
 
-export type TotalsReducerAction = SetFetchingTotalsAction
+export type ResetAccountTotalBalancesAction = {|
+  type: typeof RESET_ACCOUNT_TOTAL_BALANCES,
+  payload: string,
+|};
+
+export type TotalBalancesReducerAction = SetFetchingTotalBalancesAction
   | SetTotalBalancesAction
-  | SetAccountTotalChainBalancesAction;
+  | SetAccountTotalChainCategoryBalanceAction
+  | ResetAccountTotalBalancesAction;
 
 export const initialState = {
-  balances: {},
+  data: {},
   isFetching: false,
 };
 
-export default function totalsReducer(
-  state: TotalsReducerState = initialState,
-  action: TotalsReducerAction,
-): TotalsReducerState {
+const setNewBalance = (balancesState, accountId, chain, category, newBalance) => ({
+  ...balancesState,
+  [accountId]: {
+    ...(balancesState?.[accountId] ?? {}),
+    [chain]: {
+      ...(balancesState?.[accountId]?.[chain] ?? {}),
+      [category]: newBalance,
+    },
+  },
+});
+
+
+export default function totalBalancesReducer(
+  state: TotalBalancesReducerState = initialState,
+  action: TotalBalancesReducerAction,
+): TotalBalancesReducerState {
   switch (action.type) {
-    case SET_FETCHING_TOTALS:
+    case SET_FETCHING_TOTAL_BALANCES:
       return { ...state, isFetching: action.payload };
 
     case SET_TOTAL_BALANCES:
-      return { ...state, balances: action.payload };
+      return { ...state, data: action.payload };
+
+    case RESET_ACCOUNT_TOTAL_BALANCES:
+      return { ...state, data: { ...state.data, [action.payload]: {} } };
 
     case SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE:
       const {
         accountId,
         chain,
         category,
-        balance: accountChainCategoryBalance,
+        balance,
       } = action.payload;
-      const accountChainBalances = state.balances?.[accountId]?.[chain] || {};
-      const accountBalances = state.balances?.[accountId] || {};
       return {
         ...state,
-        balances: {
-          ...state.balances,
-          [accountId]: {
-            ...accountBalances,
-            [chain]: {
-              ...accountChainBalances,
-              [category]: accountChainCategoryBalance,
-            },
-          },
-        },
+        data: setNewBalance(state.data, accountId, chain, category, balance),
       };
 
     default:

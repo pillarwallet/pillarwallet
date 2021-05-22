@@ -64,9 +64,10 @@ import { COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 
 // Types
-import type { Asset, AssetData, Balances, KeyBasedAssetTransfer, Rates } from 'models/Asset';
+import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Balances } from 'models/Balances';
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,

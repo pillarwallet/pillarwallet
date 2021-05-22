@@ -49,15 +49,16 @@ import { RARI_POOLS } from 'constants/rariConstants';
 
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 import { NotEnoughLiquidityError } from 'services/0x';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetOption, Balances, Assets } from 'models/Asset';
+import type { Asset, AssetOption, Assets } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
+import type { Balances } from 'models/Balances';
 
 type Props = {
   assets: Assets,
@@ -294,7 +295,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

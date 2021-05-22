@@ -52,13 +52,13 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { Balances } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaTransactionEstimate } from 'services/archanova';
+import type { Balances } from 'models/Balances';
 
 type StateProps = {|
   deploymentEstimate: ?{ raw: Object, formatted: ArchanovaTransactionEstimate },
@@ -176,7 +176,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): StateProps => ({

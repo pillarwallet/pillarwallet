@@ -55,7 +55,7 @@ import { reportErrorLog } from 'utils/common';
 import { fetchRinkebyETHBalance } from 'services/assets';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // types
 import type {
@@ -64,7 +64,7 @@ import type {
   TransactionToEstimate,
 } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Asset';
+import type { Balances } from 'models/Balances';
 
 
 type Props = {
@@ -262,7 +262,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

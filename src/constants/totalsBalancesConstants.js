@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_FETCHING_TOTALS = 'SET_FETCHING_TOTALS';
+export const SET_FETCHING_TOTAL_BALANCES = 'SET_FETCHING_TOTAL_BALANCES';
 export const SET_TOTAL_BALANCES = 'SET_TOTAL_BALANCES';
 export const SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE = 'SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE';
+export const RESET_ACCOUNT_TOTAL_BALANCES = 'RESET_ACCOUNT_TOTAL_BALANCES';
 

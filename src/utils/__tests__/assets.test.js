@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+// utils
 import {
   getTotalBalanceInFiat,
   getBalance,
@@ -25,8 +27,12 @@ import {
   isSynthetixTx,
   convertUSDToFiat,
 } from 'utils/assets';
-import type { Rates, Balances } from 'models/Asset';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
+
+// types
+import type { Rates } from 'models/Asset';
+import type { Balances } from 'models/Balances';
+
 
 describe('Assets utils', () => {
   const ETH_GBP = 10;

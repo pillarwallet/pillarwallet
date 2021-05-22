@@ -21,13 +21,13 @@ import { mapValues } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 
 // types
-import type { CategoryBalancesPerChain, ChainBalances } from 'models/Home';
+import type { CategoryTotalBalancesPerChain, TotalBalancesPerChain } from 'models/Balances';
 import { sum } from 'utils/bigNumber';
 
 export const getChainBalancesForCategory = (
-  accountTotals: ?CategoryBalancesPerChain,
+  accountTotals: ?CategoryTotalBalancesPerChain,
   category: string,
-): ChainBalances => mapValues(
+): TotalBalancesPerChain => mapValues(
   accountTotals ?? {},
   (categoryBalances, chain) => accountTotals?.[chain]?.[category] || BigNumber(0),
 );
@@ -38,7 +38,7 @@ export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber
 };
 
 export const getTotalCategoryBalance = (
-  accountTotals: ?CategoryBalancesPerChain,
+  accountTotals: ?CategoryTotalBalancesPerChain,
   category: string,
 ): BigNumber => {
   const balancesOnChains = (Object.values(accountTotals || {}): any);

@@ -36,10 +36,11 @@ import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
-import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
+import type { Balances } from 'models/Balances';
 
 // selectors
 import {

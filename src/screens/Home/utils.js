@@ -30,9 +30,14 @@ import { getTotalBalance } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 
 // Types
-import type { CategoryBalances, ChainBalances, CategoryBalancesPerChain, CollectibleCountPerChain } from 'models/Home';
+import type {
+  CategoryTotalBalances,
+  TotalBalancesPerChain,
+  CategoryTotalBalancesPerChain,
+  CollectibleCountPerChain,
+} from 'models/Balances';
 
-export function useCategoryBalancesPerChain(): CategoryBalancesPerChain {
+export function useCategoryBalancesPerChain(): CategoryTotalBalancesPerChain {
   return useRootSelector(activeAccountTotalBalancesSelector);
 }
 
@@ -41,7 +46,7 @@ export function useCollectibleCountPerChain(): CollectibleCountPerChain {
   return { ethereum };
 }
 
-export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): CategoryBalances {
+export function getTotalCategoryBalances(chains: CategoryTotalBalancesPerChain): CategoryTotalBalances {
   const chainBalances = Object.keys(chains ?? {}).map((key) => chains[key]);
 
   return {
@@ -53,7 +58,7 @@ export function getTotalCategoryBalances(chains: CategoryBalancesPerChain): Cate
   };
 }
 
-export function getTotalChainBalances(chains: CategoryBalancesPerChain): ChainBalances {
+export function getTotalChainBalances(chains: CategoryTotalBalancesPerChain): TotalBalancesPerChain {
   return mapValues(chains, (balances) => getTotalBalance(balances));
 }
 

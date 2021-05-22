@@ -35,10 +35,11 @@ import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } 
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 
 // types
-import type { Asset, Assets, Balance, Rates } from 'models/Asset';
+import type { Asset, Assets, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Balances } from 'models/Balances';
 
-
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -46,7 +47,6 @@ import {
   supportedAssetsSelector,
   accountsSelector,
   ratesSelector,
-  balancesSelector,
   baseFiatCurrencySelector,
 } from './selectors';
 
@@ -146,17 +146,16 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
 
 export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  balancesSelector,
+  accountEthereumWalletBalancesSelector,
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: Balance, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
+  (activeAccountId: string, balances: Balances, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
     if (!activeAccountId || !balances || !assets) return {};
-    const activeAccountBalance = balances[activeAccountId] || {};
 
     return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
       const relatedAsset = assets[symbol];
-      const assetBalance = getBalance(activeAccountBalance, symbol);
+      const assetBalance = getBalance(balances, symbol);
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';

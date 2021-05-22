@@ -53,9 +53,10 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { ETH } from 'constants/assetsConstants';
 
 // types
-import type { Asset, Balance } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
+import type { Balance } from 'models/Balances';
 
 
 class EtherspotService {

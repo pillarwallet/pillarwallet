@@ -54,11 +54,12 @@ import type {
   TransactionFeeInfo,
   TransactionToEstimate,
 } from 'models/Transaction';
-import type { Balances, AssetData, AssetOption } from 'models/Asset';
+import type { AssetData, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
+import type { Balances } from 'models/Balances';
 
 
 type Props = {

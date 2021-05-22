@@ -49,10 +49,10 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
-import { fetchAllAccountsTotalsAction } from 'actions/assetsActions';
+import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 
 // selectors
-import { accountsTotalBalancesSelector, keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+import { totalBalancesSelector, keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { useFiatCurrency } from 'selectors';
 
 // services
@@ -63,7 +63,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { RenderItemProps } from 'utils/types/react-native';
-import type { ChainBalancesPerAccount } from 'models/Home';
+import type { ChainTotalBalancesPerAccount } from 'models/Balances';
 
 
 const ITEM_TYPE = {
@@ -85,25 +85,25 @@ type Props = {|
   blockchainNetworks: BlockchainNetwork[],
   accounts: Accounts,
   switchAccount: (accountId: string) => void,
-  fetchAllAccountsTotals: () => void,
+  fetchAllAccountsTotalBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
-  accountsTotals: ChainBalancesPerAccount,
+  totalBalances: ChainTotalBalancesPerAccount,
 |};
 
 const AccountsScreen = ({
-  fetchAllAccountsTotals,
+  fetchAllAccountsTotalBalances,
   accounts,
   switchAccount,
   blockchainNetworks,
   keyBasedWalletHasPositiveBalance,
-  accountsTotals,
+  totalBalances,
 }: Props) => {
   const navigation = useNavigation();
   const theme = useTheme();
   const fiatCurrency = useFiatCurrency();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchAllAccountsTotals(); }, []);
+  useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
 
   const [switchingToWalletId, setSwitchingToWalletId] = useState(false);
 
@@ -164,7 +164,7 @@ const AccountsScreen = ({
       const { id, isActive, type } = account;
       const isActiveWallet = !!isActive && isEthereumActive;
 
-      const totalCategoryBalances = getTotalCategoryBalances(accountsTotals[id] ?? {});
+      const totalCategoryBalances = getTotalCategoryBalances(totalBalances[id] ?? {});
       const totalBalance = getTotalBalance(totalCategoryBalances);
       const totalBalanceFormatted = formatFiat(totalBalance, fiatCurrency);
 
@@ -221,7 +221,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   keyBasedWalletHasPositiveBalance: keyBasedWalletHasPositiveBalanceSelector,
-  accountsTotals: accountsTotalBalancesSelector,
+  totalBalances: totalBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -231,7 +231,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  fetchAllAccountsTotals: () => dispatch(fetchAllAccountsTotalsAction()),
+  fetchAllAccountsTotalBalances: () => dispatch(fetchAllAccountsTotalBalancesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);

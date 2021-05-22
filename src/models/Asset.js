@@ -19,7 +19,9 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
+// constants
+import { COLLECTIBLES, TOKENS } from 'constants/assetsConstants';
 
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
@@ -60,30 +62,6 @@ export type AssetsByAccount = {
 
 export type AssetsStore = {
   [accountId: string]: Asset[],
-};
-
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type MixedBalance = {
-  balance: number | string,
-  symbol: string,
-};
-
-
-export type MixedBalances = {
-  [symbol: string]: MixedBalance,
-};
-
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
 };
 
 export type Rates = {

@@ -42,16 +42,16 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-// models
+// types
 import type { Accounts } from 'models/Account';
-import type { Balances } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { Balances } from 'models/Balances';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -344,7 +344,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

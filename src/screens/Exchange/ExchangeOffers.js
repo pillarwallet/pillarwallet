@@ -56,12 +56,13 @@ import type {
   TransactionFeeInfo,
   TransactionToEstimate,
 } from 'models/Transaction';
-import type { Asset, Balances, Rates } from 'models/Asset';
+import type { Asset, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
+import type { Balances } from 'models/Balances';
 
 //  selectors
 import { activeAccountAddressSelector, activeAccountExchangeAllowancesSelector } from 'selectors';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // utils
@@ -499,7 +500,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
   useGasToken: useGasTokenSelector,
   exchangeAllowances: activeAccountExchangeAllowancesSelector,

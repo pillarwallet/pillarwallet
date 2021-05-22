@@ -43,7 +43,7 @@ import { ETH } from 'constants/assetsConstants';
 import { LENDING_DEPOSIT_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // utils
 import { formatAmountDisplay } from 'utils/common';
@@ -52,8 +52,9 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetToDeposit, Balances } from 'models/Asset';
+import type { AssetToDeposit } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Balances';
 
 
 type Props = {
@@ -233,7 +234,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -49,7 +49,8 @@ import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { Balances, Rates, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Rates, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Balances } from 'models/Balances';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');

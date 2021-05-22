@@ -37,15 +37,17 @@ import type {
   Assets,
   AssetOption,
   AssetBalance,
-  Balance,
-  Balances,
-  MixedBalance,
-  MixedBalances,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
+import type {
+  Balance,
+  Balances,
+  MixedBalance,
+  MixedBalances,
+} from 'models/Balances';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {

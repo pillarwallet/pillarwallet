@@ -47,11 +47,12 @@ import { findSupportedAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
-import type { Asset, Balances } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { Balances } from 'models/Balances';
 
 
 type Props = {

@@ -85,13 +85,6 @@ const zapperNetworkIdToChain = {
   xdai: CHAIN.XDAI,
 };
 
-const walletProtocols = [
-  PROTOCOLS.TOKENS,
-  PROTOCOLS.BITCOIN,
-  PROTOCOLS.UNIT, // Generic?
-  // PROTOCOLS.NFT, // we don't display NFT prices
-];
-
 const investmentProtocols = [
   PROTOCOLS.AUTO_FARM,
   PROTOCOLS.AAVE,
@@ -171,7 +164,6 @@ const depositProtocols = [
 const rewardProtocols = [];
 
 const supportedProtocols = [
-  ...walletProtocols,
   ...investmentProtocols,
   ...depositProtocols,
   ...liquidityPoolProtocols,
@@ -179,7 +171,6 @@ const supportedProtocols = [
 ];
 
 export const mapZapperProtocolIdToBalanceCategory = (protocol: string): ?string => {
-  if (walletProtocols.includes(protocol)) return 'wallet';
   if (investmentProtocols.includes(protocol)) return 'investments';
   if (liquidityPoolProtocols.includes(protocol)) return 'liquidityPools';
   if (depositProtocols.includes(protocol)) return 'deposits';
