@@ -46,7 +46,6 @@ import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, SET_FETCHING_TOTALS } from 'constants/totalsConstants';
-import { NetworkNames } from 'etherspot';
 
 // components
 import Toast from 'components/Toast';
@@ -391,7 +390,7 @@ export const fetchAllAccountsTotalsAction = () => {
     if (getState().totals.isFetching) return;
 
     dispatch({ type: SET_FETCHING_TOTALS, payload: true });
-    dispatch(fetchAllCrosschainBalances());
+    dispatch(fetchAllChainBalancesAction());
 
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
@@ -797,23 +796,21 @@ export const checkForMissedAssetsAction = () => {
   };
 };
 
-export const fetchAllCrosschainBalances = () => {
+export const fetchAllChainBalancesAction = () => {
   return async () => {
-    // eslint-disable-next-line no-unused-vars
-    const { Mainnet, Matic, Bsc, Xdai } = NetworkNames;
+    const networkBalancePromises = [];
+    const networkBalances = {};
 
-    const mainnetBalance = await etherspotService.instances[NetworkNames.Mainnet].getAccountBalances();
-    const maticBalance = await etherspotService.instances[NetworkNames.Matic].getAccountBalances();
-    const bscBalance = await etherspotService.instances[NetworkNames.Bsc].getAccountBalances();
-    const xdaiBalance = await etherspotService.instances[NetworkNames.Xdai].getAccountBalances();
+    etherspotService.supportedNetworks.forEach((network) => {
+      networkBalancePromises.push(etherspotService.instances[network].getAccountBalances());
+    });
 
-    const balances = {
-      Mainnet: mainnetBalance,
-      Matic: maticBalance,
-      Bsc: bscBalance,
-      Xdai: xdaiBalance,
-    };
+    const resolvedBalances = await Promise.all(networkBalancePromises);
 
-    return balances;
+    resolvedBalances.forEach((balance, idx) => {
+      networkBalances[etherspotService.supportedNetworks[idx]] = balance;
+    });
+
+    return networkBalances;
   };
 };

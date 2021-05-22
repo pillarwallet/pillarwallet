@@ -110,7 +110,7 @@ import {
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
-import { fetchAllAccountsTotalsAction, fetchAllCrosschainBalances } from './assetsActions';
+import { fetchAllAccountsTotalsAction, fetchAllChainBalancesAction } from './assetsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -280,7 +280,7 @@ export const loginAction = (
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
         dispatch(fetchAllAccountsTotalsAction());
-        dispatch(fetchAllCrosschainBalances());
+        dispatch(fetchAllChainBalancesAction());
       }
 
       dispatch(checkForWalletBackupToastAction());
