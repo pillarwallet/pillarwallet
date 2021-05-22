@@ -61,22 +61,17 @@ class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
   instances: Array<EtherspotSdk> = [];
+  supportedNetworks: Array<NetworkNames> = [
+    NetworkNames.Mainnet,
+    NetworkNames.Kovan,
+    NetworkNames.Bsc,
+    NetworkNames.Matic,
+    NetworkNames.Xdai,
+  ];
 
   async init(privateKey: string): Promise<void> {
     const etherspotComputeContractPromises = [];
     const isMainnet = isProdEnv();
-
-    /**
-     * Defined list of supported
-     * networks that Pillar support
-     */
-    const supportedNetworks = [
-      NetworkNames.Mainnet,
-      NetworkNames.Kovan,
-      NetworkNames.Bsc,
-      NetworkNames.Matic,
-      NetworkNames.Xdai,
-    ];
 
     const networkName = isMainnet
       ? NetworkNames.Mainnet
@@ -90,7 +85,7 @@ class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    supportedNetworks.forEach((currentNetworkName) => {
+    this.supportedNetworks.forEach((currentNetworkName) => {
       // Instantiate
       this.instances[currentNetworkName] = new EtherspotSdk(privateKey, { env: envName, currentNetworkName });
 
