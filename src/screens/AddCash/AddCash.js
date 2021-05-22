@@ -76,7 +76,7 @@ const AddCash = () => {
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
-            errorMessage={!isValidFiatValue(cash) && t('error.invalid.email')}
+            errorMessage={!isValidFiatValue(cash) && t('error.invalid.fiatValue')}
           />
         </AddCashView>
       </ScrollView>
