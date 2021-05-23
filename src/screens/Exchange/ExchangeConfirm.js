@@ -55,7 +55,7 @@ import { isProdEnv } from 'utils/environment';
 import { isWethConvertedTx } from 'utils/uniswap';
 
 // types
-import type { Asset, Assets, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
 import type {
   TransactionPayload,
@@ -65,10 +65,11 @@ import type {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
+import type { AssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
@@ -81,7 +82,7 @@ type Props = {
   rates: Rates,
   baseFiatCurrency: ?string,
   exchangeSupportedAssets: Asset[],
-  balances: Balances,
+  balances: AssetsBalances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
   theme: Theme,
@@ -332,7 +333,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   accountAssets: accountAssetsSelector,
 });
 

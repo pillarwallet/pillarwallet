@@ -26,20 +26,21 @@ import SendAsset from 'components/SendAsset';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Balances, Assets } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Transaction } from 'models/Transaction';
+import type { AssetsBalances } from 'models/Balances';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  balances: Balances,
+  balances: AssetsBalances,
   session: SessionData,
   accountAssets: Assets,
   accountHistory: Transaction[],
@@ -77,7 +78,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
 });

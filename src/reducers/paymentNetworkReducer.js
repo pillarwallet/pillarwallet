@@ -36,11 +36,11 @@ import {
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
-import type { Balances } from 'models/Asset';
+import type { AssetsBalances } from 'models/Balances';
 
 export type PaymentNetworkReducerState = {
   availableStake: string,
-  balances: Balances,
+  balances: AssetsBalances,
   topUpFee: TopUpFee,
   withdrawalFee: TopUpFee,
   settleTxFee: SettleTxFee,

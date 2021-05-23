@@ -31,7 +31,6 @@ export const UPDATE_ASSETS_SEARCH_RESULT = 'UPDATE_ASSETS_SEARCH_RESULT';
 export const RESET_ASSETS_SEARCH_RESULT = 'RESET_ASSETS_SEARCH_RESULT';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
-export const UPDATE_BALANCES = 'UPDATE_BALANCES';
 
 // fiat
 export const EUR = 'EUR';
@@ -119,4 +118,13 @@ export const CURRENCY_SYMBOLS = {
   USD: '$',
   GBP: '£',
   EUR: '€',
+};
+
+export const ASSET_CATEGORY = {
+  WALLET: ('wallet': 'wallet'),
+  DEPOSITS: ('deposits': 'deposits'),
+  INVESTMENTS: ('investments': 'investments'),
+  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
+  COLLECTIBLES: ('collectibles': 'collectibles'),
+  REWARDS: ('rewards': 'rewards'),
 };

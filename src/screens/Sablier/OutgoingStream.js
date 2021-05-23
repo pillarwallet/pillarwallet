@@ -56,13 +56,14 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { isSablierTransactionTag } from 'utils/sablier';
 
 // types
-import type { Asset, Balances } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Stream } from 'models/Sablier';
 import type { Accounts } from 'models/Account';
+import type { AssetsBalances } from 'models/Balances';
 
 // local
 import SablierCancellationModal from './SablierCancellationModal';
@@ -72,7 +73,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
-  balances: Balances,
+  balances: AssetsBalances,
   history: Object[],
   sablierEvents: Object[],
   accounts: Accounts,

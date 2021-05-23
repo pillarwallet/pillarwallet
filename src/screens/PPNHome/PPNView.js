@@ -70,7 +70,8 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { Balances, BalancesStore, Rates } from 'models/Asset';
+import type { Rates } from 'models/Asset';
+import type { AssetsBalances } from 'models/Balances';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
@@ -79,7 +80,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { getArchanovaWalletStatus, isDeployingArchanovaWallet, isHiddenUnsettledTransaction } from 'utils/archanova';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
+import { findFirstArchanovaAccount } from 'utils/accounts';
 
 // selectors
 import {
@@ -89,6 +90,8 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -105,7 +108,7 @@ type Props = {
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
-  balances: BalancesStore,
+  balances: AssetsBalances,
 };
 
 type State = {
@@ -200,9 +203,7 @@ class PPNView extends React.Component<Props, State> {
     const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
     if (archanovaAccount && archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-      const archanovaAccountId = getAccountId(archanovaAccount);
-      const accountBalances: Balances = balances[archanovaAccountId];
-      const hasPLRInArchanovaWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
+      const hasPLRInArchanovaWallet = parseInt(balances?.[PLR]?.balance ?? 0, 10) > 0;
 
       if (!availableStake) {
         const insightProps = {};
@@ -465,13 +466,11 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  balances: { data: balances },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  balances,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -480,6 +479,7 @@ const structuredSelector = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

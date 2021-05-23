@@ -52,22 +52,23 @@ import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assets
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances, AssetOption } from 'models/Asset';
+import type { Rates, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { AssetsBalances } from 'models/Balances';
 
 import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {|
   disabled?: boolean,
   customAssets?: AssetOption[],
-  customBalances?: Balances,
+  customBalances?: AssetsBalances,
   selectorOptionsTitle?: string,
   assetData: AssetOption | Collectible,
   // Called when selected asset is AssetOption
@@ -89,7 +90,7 @@ export type ExternalProps = {|
 
 type InnerProps = {|
   assets: AssetOption[],
-  balances: Balances,
+  balances: AssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   collectibles: Collectible[],
@@ -380,7 +381,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   assets: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });

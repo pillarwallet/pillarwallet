@@ -32,6 +32,9 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Image from 'components/Image';
 import Title from 'components/Title';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
@@ -42,8 +45,6 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
-// Types
-import { CHAIN } from 'models/Chain';
 
 const WalletConnectConnectorRequestScreen = () => {
   const navigation = useNavigation();

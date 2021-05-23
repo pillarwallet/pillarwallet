@@ -37,12 +37,12 @@ import Toast from 'components/Toast';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
-import type { Balance, Balances } from 'models/Asset';
 import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
+import type { AssetBalance, AssetsBalances } from 'models/Balances';
 
 // utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -55,7 +55,7 @@ type Props = {
   session: Object,
   settleTransactions: Function,
   settleTxFee: SettleTxFee,
-  balances: Balances,
+  balances: AssetsBalances,
   estimateSettleBalance: Function,
   useGasToken: boolean,
 };
@@ -105,7 +105,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     // add unsettled amounts to balances
     const combinedBalances = Object.keys(balances)
       .reduce((memo, assetName) => {
-        const balanceData: Balance = balances[assetName];
+        const balanceData: AssetBalance = balances[assetName];
         let balance = new BigNumber(balanceData.balance);
         this.txToSettle.forEach(asset => { balance = balance.plus(asset.value); });
         return {
@@ -192,7 +192,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   useGasToken: useGasTokenSelector,
 });
 

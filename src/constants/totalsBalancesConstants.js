@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,30 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_BALANCES } from 'constants/assetsConstants';
-import type { BalancesStore } from 'models/Asset';
 
-export type BalancesReducerState = {
-  data: BalancesStore,
-};
+export const SET_FETCHING_TOTAL_BALANCES = 'SET_FETCHING_TOTAL_BALANCES';
+export const SET_TOTAL_BALANCES = 'SET_TOTAL_BALANCES';
+export const SET_ACCOUNT_TOTAL_BALANCE = 'SET_ACCOUNT_TOTAL_BALANCE';
+export const RESET_ACCOUNT_TOTAL_BALANCES = 'RESET_ACCOUNT_TOTAL_BALANCES';
 
-export type BalancesAction = {
-  type: string,
-  payload: any,
-};
-
-export const initialState = {
-  data: {},
-};
-
-export default function balancesReducer(
-  state: BalancesReducerState = initialState,
-  action: BalancesAction,
-): BalancesReducerState {
-  switch (action.type) {
-    case UPDATE_BALANCES:
-      return { ...state, data: action.payload };
-    default:
-      return state;
-  }
-}

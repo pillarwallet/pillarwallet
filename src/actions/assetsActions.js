@@ -21,6 +21,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -31,21 +32,31 @@ import {
   UPDATE_ASSETS_SEARCH_RESULT,
   RESET_ASSETS_SEARCH_RESULT,
   SET_INITIAL_ASSETS,
-  FETCHING,
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
   ETH,
-  UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
   PLR,
   BTC,
+  USD,
+  ASSET_CATEGORY,
 } from 'constants/assetsConstants';
+import {
+  RESET_ACCOUNT_ASSETS_BALANCES,
+  SET_ACCOUNT_ASSETS_BALANCES,
+  SET_FETCHING_ASSETS_BALANCES,
+} from 'constants/assetsBalancesConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
-import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, SET_FETCHING_TOTALS } from 'constants/totalsConstants';
+import {
+  SET_ACCOUNT_TOTAL_BALANCE,
+  SET_FETCHING_TOTAL_BALANCES,
+  RESET_ACCOUNT_TOTAL_BALANCES,
+} from 'constants/totalsBalancesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -56,11 +67,16 @@ import archanovaService from 'services/archanova';
 import {
   getZapperAvailableChainProtocols,
   getZapperProtocolBalanceOnNetwork,
+  getZapperFiatRates,
   mapZapperProtocolIdToBalanceCategory,
 } from 'services/zapper';
 
 // utils
-import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
+import {
+  getAssetsAsList,
+  getRate,
+  transformBalancesToObject,
+} from 'utils/assets';
 import {
   parseTokenAmount,
   reportErrorLog,
@@ -78,21 +94,29 @@ import {
   isEtherspotAccount,
   getAccountType,
   findAccountByAddress,
+  isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { sum } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
-import { accountsSelector, balancesSelector } from 'selectors';
-import { accountsTotalBalancesSelector } from 'selectors/balances';
+import {
+  accountsSelector,
+  balancesSelector,
+  fiatCurrencySelector,
+  ratesSelector,
+} from 'selectors';
+import { totalBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
+import type { Asset, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
+import type { AssetsBalances } from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 // actions
 import { logEventAction } from './analyticsActions';
@@ -342,23 +366,28 @@ export const sendAssetAction = (
   };
 };
 
-export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const allBalances = getState().balances.data;
-    const currentAccountBalances = allBalances[accountId] || {};
-    const updatedBalances = {
-      ...allBalances,
-      [accountId]: { ...currentAccountBalances, ...balances },
-    };
-    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+export const updateAccountWalletAssetsBalancesForChainAction = (
+  accountId: string,
+  balances: AssetsBalances,
+  chain: Chain,
+) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     dispatch({
-      type: UPDATE_BALANCES,
-      payload: updatedBalances,
+      type: SET_ACCOUNT_ASSETS_BALANCES,
+      payload: {
+        accountId,
+        balances,
+        chain,
+        category: ASSET_CATEGORY.WALLET,
+      },
     });
+
+    const updatedBalances = getState().assetsBalances.data;
+    dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
   };
 };
 
-export const fetchAccountAssetsBalancesAction = (account: Account) => {
+export const fetchAccountWalletBalancesAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletAddress = getAccountAddress(account);
 
@@ -367,10 +396,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
 
     const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
 
-    dispatch({
-      type: UPDATE_ASSETS_STATE,
-      payload: FETCHING,
-    });
+    // TODO: add multi chain balances fetching from Etherspot
 
     const newBalances = isEtherspotAccount(account)
       ? await etherspotService.getBalances(walletAddress, getAssetsAsList(accountAssets))
@@ -379,18 +405,47 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
         assets: getAssetsAsList(accountAssets),
       });
 
-    if (!isEmpty(newBalances)) {
-      await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
-    }
+    if (isEmpty(newBalances)) return;
+
+    await dispatch(updateAccountWalletAssetsBalancesForChainAction(
+      accountId,
+      transformBalancesToObject(newBalances),
+      CHAIN.ETHEREUM,
+    ));
+
+    const rates = ratesSelector(getState());
+    const currency = fiatCurrencySelector(getState());
+
+    const assetsFiatBalances = newBalances.map((asset) => {
+      if (!asset?.balance) return BigNumber(0);
+
+      const { balance, symbol } = asset;
+
+      return wrapBigNumber(balance).times(getRate(rates, symbol, currency));
+    });
+
+    const totalBalance = sum(assetsFiatBalances);
+
+    dispatch({
+      type: SET_ACCOUNT_TOTAL_BALANCE,
+      payload: {
+        accountId,
+        chain: CHAIN.ETHEREUM,
+        category: ASSET_CATEGORY.WALLET,
+        balance: totalBalance,
+      },
+    });
+
+    const accountsTotalBalances = totalBalancesSelector(getState());
+    dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
   };
 };
 
-export const fetchAllAccountsTotalsAction = () => {
+export const fetchAllAccountsTotalBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    if (getState().totals.isFetching) return;
+    if (getState().totalBalances.isFetching) return;
 
-    dispatch({ type: SET_FETCHING_TOTALS, payload: true });
-    dispatch(fetchAllChainBalancesAction());
+    dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: true });
 
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
@@ -400,15 +455,29 @@ export const fetchAllAccountsTotalsAction = () => {
     const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
     const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
     if (!availableChainProtocols) {
-      reportErrorLog('fetchAllAccountsTotalsAction failed: no availableChainProtocols', { accountsAddresses });
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no availableChainProtocols', { accountsAddresses });
+      return;
+    }
+
+    const currency = fiatCurrencySelector(getState());
+    const zapperUSDBasedRates = await getZapperFiatRates();
+    if (currency !== USD && !zapperUSDBasedRates) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
       return;
     }
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
+        // we don't need to pull multi chain balances for Archanova account, only Ethereum
+        const requestForAddresses = chain !== CHAIN.ETHEREUM
+          ? accountsAddresses.filter((address) => !isArchanovaAccountAddress(address, accounts))
+          : accountsAddresses;
+
         const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
           const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
-            accountsAddresses,
+            requestForAddresses,
             zapperProtocolId,
             zapperNetworkId,
           );
@@ -437,13 +506,18 @@ export const fetchAllAccountsTotalsAction = () => {
               const protocolBalances = balances?.assets;
               if (isEmpty(protocolBalances)) return categoryBalance;
 
-              const protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => BigNumber(balanceUSD ?? 0));
+
+              if (currency !== USD) {
+                const rate = zapperUSDBasedRates?.[currency.toUpperCase()];
+                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(rate ?? 0));
+              }
 
               return sum([categoryBalance, ...protocolBalanceValues]);
             }, wrapBigNumber(0));
 
             dispatch({
-              type: SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+              type: SET_ACCOUNT_TOTAL_BALANCE,
               payload: {
                 accountId: getAccountId(account),
                 chain,
@@ -455,13 +529,13 @@ export const fetchAllAccountsTotalsAction = () => {
         });
       }));
     } catch (error) {
-      reportErrorLog('fetchAllAccountsTotalsAction failed', { error });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed', { error });
     }
 
-    dispatch({ type: SET_FETCHING_TOTALS, payload: false });
+    dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 
-    const accountsTotalBalances = accountsTotalBalancesSelector(getState());
-    dispatch(saveDbAction('totalBalances', { balances: accountsTotalBalances }, true));
+    const accountsTotalBalances = totalBalancesSelector(getState());
+    dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
   };
 };
 
@@ -472,34 +546,33 @@ export const fetchAssetsBalancesAction = () => {
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
-    await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
+    dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
+
+    await dispatch(fetchAccountWalletBalancesAction(activeAccount));
     dispatch(fetchAccountAssetsRatesAction());
 
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
+
+    dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: false });
   };
 };
 
-export const resetAccountBalancesAction = (accountId: string) => {
+export const resetAccountAssetsBalancesAction = (accountId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const allBalances = balancesSelector(getState());
-    if (isEmpty(allBalances[accountId])) return; // already empty
-    const updatedBalances = Object.keys(allBalances).reduce((updated, balancesAccountId) => {
-      if (accountId !== balancesAccountId) {
-        updated[balancesAccountId] = allBalances[balancesAccountId];
-      }
-      return updated;
-    }, {});
-    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
-    dispatch({
-      type: UPDATE_BALANCES,
-      payload: updatedBalances,
-    });
+    dispatch({ type: RESET_ACCOUNT_ASSETS_BALANCES, payload: accountId });
+    dispatch({ type: RESET_ACCOUNT_TOTAL_BALANCES, payload: accountId });
+
+    const updatedBalances = balancesSelector(getState());
+    dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
+
+    const updatedTotalBalances = totalBalancesSelector(getState());
+    dispatch(saveDbAction('totalBalances', { data: updatedTotalBalances }, true));
   };
 };
 
-export const fetchAllAccountsBalancesAction = () => {
+export const fetchAllAccountsAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
 
@@ -508,16 +581,16 @@ export const fetchAllAccountsBalancesAction = () => {
 
     const promises = accounts
       .filter(isNotKeyBasedType)
-      .map((account) => dispatch(fetchAccountAssetsBalancesAction(account)));
+      .map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
     await Promise
       .all(promises)
-      .catch((error) => reportErrorLog('fetchAllAccountsBalancesAction failed', { error }));
+      .catch((error) => reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }));
 
-    // migration for key based balances to remove existing
+    // migration for key based blances to remove existing
     const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
     if (keyBasedAccount) {
-      dispatch(resetAccountBalancesAction(getAccountId(keyBasedAccount)));
+      dispatch(resetAccountAssetsBalancesAction(getAccountId(keyBasedAccount)));
     }
 
     dispatch(fetchAllAccountsAssetsRatesAction());

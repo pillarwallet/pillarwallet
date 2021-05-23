@@ -24,7 +24,7 @@ import { RefreshControl } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 // Actions
-import { fetchAllAccountsTotalsAction } from 'actions/assetsActions';
+import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -70,8 +70,8 @@ function Home() {
   const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
   const totalBalance = getTotalBalance(categoryBalances);
 
-  const isRefreshing = useRootSelector(({ totals }) => !!totals.isFetching);
-  const onRefresh = () => dispatch(fetchAllAccountsTotalsAction());
+  const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
+  const onRefresh = () => dispatch(fetchAllAccountsTotalBalancesAction());
 
   return (
     <Container>

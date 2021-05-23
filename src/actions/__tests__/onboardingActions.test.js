@@ -279,7 +279,7 @@ describe('Onboarding actions', () => {
         data: {},
       },
       history: { data: {} },
-      balances: { data: {} },
+      assetsBalances: { data: {} },
       rates: { data: {} },
       badges: { data: [] },
     });
@@ -341,7 +341,7 @@ describe('Onboarding actions', () => {
         data: {},
       },
       history: { data: {} },
-      balances: { data: {} },
+      assetsBalances: { data: {} },
       rates: { data: {} },
       badges: { data: [] },
     });

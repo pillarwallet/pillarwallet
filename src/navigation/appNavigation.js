@@ -156,7 +156,7 @@ import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
 } from 'actions/notificationsActions';
-import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
+import { checkForMissedAssetsAction, fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
@@ -703,7 +703,7 @@ type Props = {
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
   initWalletConnect: Function,
-  fetchAllAccountsBalances: () => Function,
+  fetchAllAccountsAssetsBalances: () => Function,
   checkForMissedAssets: Function,
   notifications: Notification[],
   showHomeUpdateIndicator: boolean,
@@ -745,7 +745,7 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       checkForMissedAssets,
-      fetchAllAccountsBalances,
+      fetchAllAccountsAssetsBalances,
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
@@ -776,7 +776,7 @@ class AppFlow extends React.Component<Props, State> {
     }
 
     // the following actions are useless if user is not yet registered on back-end
-    fetchAllAccountsBalances();
+    fetchAllAccountsAssetsBalances();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
@@ -985,7 +985,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
-  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
+  fetchAllAccountsAssetsBalances: () => dispatch(fetchAllAccountsAssetsBalancesAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),

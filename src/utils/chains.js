@@ -21,8 +21,11 @@
 // Utils
 import { isProdEnv } from 'utils/environment';
 
+// Constants
+import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
+
 // Models
-import { type Chain, CHAIN, CHAIN_ID } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 
 export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ETHEREUM_MAINNET]: CHAIN.ETHEREUM,

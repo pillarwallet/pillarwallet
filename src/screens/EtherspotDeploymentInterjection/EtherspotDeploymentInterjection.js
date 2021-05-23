@@ -31,6 +31,9 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/modern/Text';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
@@ -39,7 +42,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
-import { type Chain, CHAIN } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 
 /**
  * Interjection screen used when Etherspot smart wallet is not yet deployed on given chain.

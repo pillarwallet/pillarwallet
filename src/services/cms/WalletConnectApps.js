@@ -25,9 +25,12 @@ import { orderBy } from 'lodash';
 // Services
 import * as Prismic from 'services/prismic';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Types
 import type { QueryResult } from 'utils/types/react-query';
-import { type Chain, CHAIN } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
 // Utils

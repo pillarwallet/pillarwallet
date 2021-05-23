@@ -28,7 +28,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from 'services/localisation/testing';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
-import { initialState as balancesState } from 'reducers/balancesReducer';
+import { initialState as assetsBalancesState } from 'reducers/assetsBalancesReducer';
 import { initialState as paymentNetworkState } from 'reducers/paymentNetworkReducer';
 import { initialState as userState } from 'reducers/userReducer';
 import { initialState as historyState } from 'reducers/historyReducer';
@@ -48,7 +48,7 @@ const mockStore = configureMockStore([thunk]);
 const initialStore = mockStore({
   user: userState,
   smartWallet: smartWalletState,
-  balances: balancesState,
+  assetsBalances: assetsBalancesState,
   paymentNetwork: paymentNetworkState,
   history: historyState,
   assets: assetsState,

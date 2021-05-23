@@ -45,18 +45,19 @@ import { fontSizes } from 'utils/variables';
 import { getBalance } from 'utils/assets';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances, AssetToDeposit } from 'models/Asset';
+import type { AssetToDeposit } from 'models/Asset';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
   assetsToDeposit: AssetToDeposit[],
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
-  balances: Balances,
+  balances: AssetsBalances,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -139,7 +140,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -27,6 +27,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -42,9 +44,9 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { CategoryBalancesPerChain, CategoryBalances, CollectibleCountPerChain } from 'models/Home';
-import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
-import { type Chain, CHAIN } from 'models/Chain';
+import type { CategoryTotalBalancesPerChain, CategoryTotalBalances, CollectibleCountPerChain } from 'models/Balances';
+import type { AssetCategory } from 'models/AssetCategory';
+import type { Chain } from 'models/Chain';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -52,8 +54,8 @@ import ChainListItem from './components/ChainListItem';
 import { getTotalCollectibleCount } from './utils';
 
 type Props = {|
-  categoryBalances: CategoryBalances,
-  categoryBalancesPerChain: CategoryBalancesPerChain,
+  categoryBalances: CategoryTotalBalances,
+  categoryBalancesPerChain: CategoryTotalBalancesPerChain,
   collectibleCountPerChain: CollectibleCountPerChain,
 |};
 
@@ -100,7 +102,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     navigateToAssetDetails(category, CHAIN.ETHEREUM);
   };
 
-  const renderCategoryWithBalance = (category: $Keys<CategoryBalances>) => {
+  const renderCategoryWithBalance = (category: $Keys<CategoryTotalBalances>) => {
     const balance = categoryBalances[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
@@ -121,7 +123,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     );
   };
 
-  const renderChainWithBalance = (category: $Keys<CategoryBalances>, chain: Chain) => {
+  const renderChainWithBalance = (category: $Keys<CategoryTotalBalances>, chain: Chain) => {
     const balance = categoryBalancesPerChain?.[chain]?.[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 

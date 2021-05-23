@@ -33,10 +33,10 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { getTotalBalance } from 'utils/balances';
 
 // Types
-import type { CategoryBalances } from 'models/Home';
+import type { CategoryTotalBalances } from 'models/Balances';
 
 type Props = {|
-  categoryBalances: CategoryBalances,
+  categoryBalances: CategoryTotalBalances,
 |};
 
 function AssetPieChart({ categoryBalances }: Props) {
@@ -91,7 +91,7 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: CategoryBalances) => {
+const useChartProps = (balances: CategoryTotalBalances) => {
   const config = useAssetCategoriesConfig();
   const colors = useThemeColors();
 

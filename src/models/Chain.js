@@ -18,12 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const CHAIN = {
-  ETHEREUM: ('ethereum': 'ethereum'),
-  POLYGON: ('polygon': 'polygon'),
-  BINANCE: ('binance': 'binance'),
-  XDAI: ('xdai': 'xdai'),
-};
+// constants
+import { CHAIN } from 'constants/chainConstants';
 
 export type Chain = $Values<typeof CHAIN>;
 
@@ -34,11 +30,3 @@ export type ChainRecord<T> = {|
   ethereum?: T,
 |};
 
-// Based on: https://chainid.network/
-export const CHAIN_ID = {
-  ETHEREUM_MAINNET: 1,
-  ETHEREUM_KOVAN: 42,
-  POLYGON: 137,
-  BINANCE: 56,
-  XDAI: 100,
-};

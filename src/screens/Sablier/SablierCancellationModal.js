@@ -44,14 +44,14 @@ import { spacing } from 'utils/variables';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 
 // types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Asset';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type StateProps = {|
@@ -59,7 +59,7 @@ type StateProps = {|
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  balances: Balances,
+  balances: AssetsBalances,
 |};
 
 type OwnProps = {|
@@ -185,7 +185,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

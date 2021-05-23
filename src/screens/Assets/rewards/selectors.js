@@ -26,13 +26,13 @@ import { rewardsTotalBalanceByChainsSelector, rewardsTotalBalanceSelector } from
 
 // Types
 import type { ChainRecord } from 'models/Chain';
-import type { ChainBalances } from 'models/Home';
+import type { TotalBalancesPerChain } from 'models/Balances';
 
 export function useRewardsBalance(): BigNumber {
   return useRootSelector(rewardsTotalBalanceSelector);
 }
 
-export function useRewardsChainBalances(): ChainBalances {
+export function useRewardsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(rewardsTotalBalanceByChainsSelector);
 }
 

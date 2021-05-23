@@ -18,7 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// constants
-import { ASSET_CATEGORY } from 'constants/assetsConstants';
+export const CHAIN = {
+  ETHEREUM: ('ethereum': 'ethereum'),
+  POLYGON: ('polygon': 'polygon'),
+  BINANCE: ('binance': 'binance'),
+  XDAI: ('xdai': 'xdai'),
+};
 
-export type AssetCategory = $Values<typeof ASSET_CATEGORY>;
+// Based on: https://chainid.network/
+export const CHAIN_ID = {
+  ETHEREUM_MAINNET: 1,
+  ETHEREUM_KOVAN: 42,
+  POLYGON: 137,
+  BINANCE: 56,
+  XDAI: 100,
+};

@@ -60,18 +60,19 @@ import { isArchanovaAccount } from 'utils/accounts';
 import { noop } from 'utils/common';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountExchangeAllowancesSelector, activeAccountSelector } from 'selectors';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
-import type { Asset, Assets, AssetOption, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, AssetOption, Rates } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
+import type { AssetsBalances } from 'models/Balances';
 
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
@@ -96,7 +97,7 @@ type Props = {
   user: Object,
   assets: Assets,
   searchOffers: (string, string, string) => void,
-  balances: Balances,
+  balances: AssetsBalances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
   exchangeAllowances: Allowance[],
@@ -493,7 +494,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletBalancesSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   exchangeAllowances: activeAccountExchangeAllowancesSelector,

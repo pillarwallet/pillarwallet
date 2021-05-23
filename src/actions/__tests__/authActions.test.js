@@ -116,7 +116,7 @@ describe('Auth actions', () => {
       onboarding: { tutorialData: null },
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
-      balances: { data: {} },
+      assetsBalances: { data: {} },
       user: { data: { walletId: 'test-wallet-id' } },
     });
   });
