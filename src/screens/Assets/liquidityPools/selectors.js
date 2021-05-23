@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
-
 // Selectors
 import { useRootSelector } from 'selectors';
 import {
+  accountAssetsBalancesSelector,
   liquidityPoolsTotalBalanceByChainsSelector,
   liquidityPoolsTotalBalanceSelector,
 } from 'selectors/balances';
@@ -30,7 +29,12 @@ import {
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { TotalBalancesPerChain } from 'models/Balances';
+import type {
+  LiquidityPoolAssetBalance,
+  TotalBalancesPerChain,
+} from 'models/Balances';
+import { getChainBalancesForCategory } from 'utils/balances';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export function useLiquidityPoolsBalance(): FiatBalance {
   const value = useRootSelector(liquidityPoolsTotalBalanceSelector);
@@ -41,18 +45,7 @@ export function useLiquidityPoolsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(liquidityPoolsTotalBalanceByChainsSelector);
 }
 
-export type LiquidityPoolItem = {|
-  key: string,
-  service: string,
-  title: string,
-  iconUrl: string,
-  value: BigNumber,
-  change?: BigNumber,
-|};
-
-export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolItem[]> {
-  // TODO: replace once available from Etherspot SDK
-  const liquidityPools = [];
-
-  return { ethereum: liquidityPools };
+export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolAssetBalance[]> {
+  const assetsBalances = useRootSelector(accountAssetsBalancesSelector);
+  return getChainBalancesForCategory(assetsBalances, ASSET_CATEGORY.LIQUIDITY_POOLS);
 }

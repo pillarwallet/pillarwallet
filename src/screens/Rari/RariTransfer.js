@@ -39,7 +39,7 @@ import { ETH, supportedFiatCurrencies, USD } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConstants';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
 import { useGasTokenSelector } from 'selectors/archanova';
 
@@ -285,7 +285,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   contacts: contactsSelector,
   useGasToken: useGasTokenSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

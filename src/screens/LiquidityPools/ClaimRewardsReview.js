@@ -39,7 +39,7 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { calculateClaimRewardsTransactionEstimateAction } from 'actions/liquidityPoolsActions';
@@ -192,7 +192,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   accountAddress: activeAccountAddressSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

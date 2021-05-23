@@ -43,7 +43,7 @@ import { images } from 'utils/images';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -182,7 +182,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

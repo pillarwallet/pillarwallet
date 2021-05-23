@@ -45,6 +45,7 @@ import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
+import type { InvestmentAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -52,7 +53,6 @@ import ChainListHeader from '../components/ChainListHeader';
 import ChainListFooter from '../components/ChainListFooter';
 import ServiceListHeader from '../components/ServiceListHeader';
 import {
-  type InvestmentItem,
   useInvestmentsBalance,
   useInvestmentsChainBalances,
   useInvestmentAssets,
@@ -92,7 +92,7 @@ function InvestmentsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<InvestmentItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<InvestmentAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
@@ -120,7 +120,7 @@ function InvestmentsTab() {
 export default InvestmentsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<InvestmentItem>>,
+  ...SectionBase<HeaderListItem<InvestmentAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

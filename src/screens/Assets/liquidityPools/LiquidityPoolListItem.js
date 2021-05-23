@@ -34,16 +34,20 @@ import { useFiatCurrency } from 'selectors';
 // Utils
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 type Props = {|
   title: ?string,
+  subtitle: ?string,
   iconUrl: ?string,
   value: BigNumber,
   change?: BigNumber,
+  share?: BigNumber,
   onPress?: () => mixed,
 |};
 
-function LiquidityPoolListItem({ title, iconUrl, value, change, onPress }: Props) {
+function LiquidityPoolListItem({ title, subtitle, iconUrl, value, change, onPress }: Props) {
+  const colors = useThemeColors();
   const currency = useFiatCurrency();
 
   const { genericToken } = useThemedImages();
@@ -58,6 +62,7 @@ function LiquidityPoolListItem({ title, iconUrl, value, change, onPress }: Props
         <Text variant="medium" numberOfLines={1}>
           {title}
         </Text>
+        {!!subtitle && <Text color={colors.secondaryText}>{subtitle}</Text>}
       </TitleContainer>
 
       <RightAddOn>

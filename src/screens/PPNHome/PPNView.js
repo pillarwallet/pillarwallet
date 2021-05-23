@@ -90,7 +90,7 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 
 type Props = {
@@ -479,7 +479,7 @@ const structuredSelector = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

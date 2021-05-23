@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
-
 // Selectors
 import { useRootSelector } from 'selectors';
 import {
+  accountAssetsBalancesSelector,
   investmentsTotalBalanceByChainsSelector,
   investmentsTotalBalanceSelector,
 } from 'selectors/balances';
@@ -30,7 +29,12 @@ import {
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { TotalBalancesPerChain } from 'models/Balances';
+import type {
+  InvestmentAssetBalance,
+  TotalBalancesPerChain,
+} from 'models/Balances';
+import { getChainBalancesForCategory } from 'utils/balances';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export function useInvestmentsBalance(): FiatBalance {
   const value = useRootSelector(investmentsTotalBalanceSelector);
@@ -41,19 +45,7 @@ export function useInvestmentsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(investmentsTotalBalanceByChainsSelector);
 }
 
-/** Note: items are groupped by service. */
-export type InvestmentItem = {|
-  key: string,
-  service: string,
-  title: string,
-  iconUrl: ?string,
-  value: BigNumber,
-  change?: BigNumber,
-|};
-
-export function useInvestmentAssets(): ChainRecord<InvestmentItem[]> {
-  // TODO: replace once available from Etherspot SDK
-  const investments = [];
-
-  return { ethereum: investments };
+export function useInvestmentAssets(): ChainRecord<InvestmentAssetBalance[]> {
+  const assetsBalances = useRootSelector(accountAssetsBalancesSelector);
+  return getChainBalancesForCategory(assetsBalances, ASSET_CATEGORY.INVESTMENTS);
 }

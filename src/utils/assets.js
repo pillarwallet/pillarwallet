@@ -43,7 +43,7 @@ import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type {
-  AssetBalance,
+  WalletAssetBalance,
   AssetsBalances,
 } from 'models/Balances';
 
@@ -63,7 +63,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
-export const transformBalancesToObject = (balancesArray: AssetBalance[] = []): AssetsBalances => {
+export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): AssetsBalances => {
   return balancesArray.reduce((memo, balance) => {
     memo[balance.symbol] = balance;
     return memo;
@@ -220,7 +220,7 @@ export const isEnoughBalanceForTransactionFee = (
 };
 
 export const balanceInEth = (balances: AssetsBalances, rates: Rates): number => {
-  const balanceValues: AssetBalance[] = (Object.values(balances): any);
+  const balanceValues: WalletAssetBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;

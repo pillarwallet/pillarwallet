@@ -52,7 +52,7 @@ import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assets
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
@@ -381,7 +381,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });

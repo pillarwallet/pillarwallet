@@ -39,7 +39,7 @@ import type { Asset, Assets, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetsBalances } from 'models/Balances';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -146,7 +146,7 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
 
 export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  accountEthereumWalletBalancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,

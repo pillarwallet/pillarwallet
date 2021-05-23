@@ -68,7 +68,7 @@ import assetsConfig from 'configs/assetsConfig';
 
 // selectors
 import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -408,7 +408,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,

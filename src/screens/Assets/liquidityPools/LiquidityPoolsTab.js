@@ -45,6 +45,7 @@ import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
+import type { LiquidityPoolAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -52,7 +53,6 @@ import ChainListHeader from '../components/ChainListHeader';
 import ChainListFooter from '../components/ChainListFooter';
 import ServiceListHeader from '../components/ServiceListHeader';
 import {
-  type LiquidityPoolItem,
   useLiquidityPoolsBalance,
   useLiquidityPoolsChainBalances,
   useLiquidityPoolAssets,
@@ -92,13 +92,21 @@ function LiquidityPoolsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<LiquidityPoolItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<LiquidityPoolAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change } = headerListItem.item;
-    return <LiquidityPoolListItem title={title} iconUrl={iconUrl} value={value} change={change} />;
+    const { title, iconUrl, value, change, share } = headerListItem.item;
+    return (
+      <LiquidityPoolListItem
+        title={title}
+        subtitle={share ? t('poolShare', { share }) : null}
+        iconUrl={iconUrl}
+        value={value}
+        change={change}
+      />
+    );
   };
 
   return (
@@ -120,7 +128,7 @@ function LiquidityPoolsTab() {
 export default LiquidityPoolsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<LiquidityPoolItem>>,
+  ...SectionBase<HeaderListItem<LiquidityPoolAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

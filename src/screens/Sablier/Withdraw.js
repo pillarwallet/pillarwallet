@@ -45,7 +45,7 @@ import { spacing } from 'utils/variables';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // actions
 import { calculateSablierWithdrawTransactionEstimateAction } from 'actions/sablierActions';
@@ -228,7 +228,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

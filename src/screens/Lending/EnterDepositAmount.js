@@ -43,7 +43,7 @@ import { ETH } from 'constants/assetsConstants';
 import { LENDING_DEPOSIT_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // utils
 import { formatAmountDisplay } from 'utils/common';
@@ -234,7 +234,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

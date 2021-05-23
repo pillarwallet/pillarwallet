@@ -69,7 +69,7 @@ import type { AssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
@@ -333,7 +333,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   accountAssets: accountAssetsSelector,
 });
 

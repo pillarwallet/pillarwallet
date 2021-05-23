@@ -37,12 +37,12 @@ import Toast from 'components/Toast';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
 import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
-import type { AssetBalance, AssetsBalances } from 'models/Balances';
+import type { AssetsBalances, AssetBalance } from 'models/Balances';
 
 // utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -192,7 +192,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   useGasToken: useGasTokenSelector,
 });
 

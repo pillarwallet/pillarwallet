@@ -58,7 +58,7 @@ import { themedColors } from 'utils/themes';
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Assets, Asset } from 'models/Asset';
@@ -277,7 +277,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

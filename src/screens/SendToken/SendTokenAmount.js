@@ -33,7 +33,7 @@ import type { Transaction } from 'models/Transaction';
 import type { AssetsBalances } from 'models/Balances';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -78,7 +78,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
 });

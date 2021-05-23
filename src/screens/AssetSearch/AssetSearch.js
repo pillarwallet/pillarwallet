@@ -43,7 +43,7 @@ import Spinner from 'components/Spinner';
 import { getBalance } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { FETCHING, ETH, PLR } from 'constants/assetsConstants';
 
@@ -388,7 +388,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
 });
 

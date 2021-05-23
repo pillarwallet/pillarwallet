@@ -44,7 +44,7 @@ import { spacing } from 'utils/variables';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -185,7 +185,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

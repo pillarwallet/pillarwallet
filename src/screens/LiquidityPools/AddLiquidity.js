@@ -45,7 +45,7 @@ import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/asse
 import { getPoolStats, calculateProportionalAssetValues, getShareOfPool } from 'utils/liquidityPools';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -292,7 +292,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

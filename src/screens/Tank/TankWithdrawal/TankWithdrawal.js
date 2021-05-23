@@ -60,7 +60,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -312,7 +312,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
   availableStake: availableStakeSelector,
   useGasToken: useGasTokenSelector,

@@ -60,7 +60,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 import { noop } from 'utils/common';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountExchangeAllowancesSelector, activeAccountSelector } from 'selectors';
 
@@ -494,7 +494,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   exchangeAllowances: activeAccountExchangeAllowancesSelector,

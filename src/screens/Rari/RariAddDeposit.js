@@ -51,7 +51,7 @@ import {
   visibleActiveAccountAssetsWithBalanceSelector,
 } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 import { NotEnoughLiquidityError } from 'services/0x';
 import { usePoolCurrentApy } from 'services/rariSdk';
@@ -280,7 +280,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   visibleAssets: visibleActiveAccountAssetsWithBalanceSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

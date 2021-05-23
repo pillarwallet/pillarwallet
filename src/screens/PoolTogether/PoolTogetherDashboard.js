@@ -51,7 +51,7 @@ import type { AssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -344,7 +344,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

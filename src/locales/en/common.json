@@ -615,7 +615,8 @@
       "invest": "Invest"
     },
     "liquidityPools": {
-      "addLiquidity": "Add liquidity"
+      "addLiquidity": "Add liquidity",
+      "poolShare": "Pool share {{share}}%"
     },
     "rewards": {
       "availableToClaim": "Available to claim"

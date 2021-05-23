@@ -103,7 +103,7 @@ import { sum } from 'utils/bigNumber';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import {
   accountsSelector,
-  balancesSelector,
+  assetsBalancesSelector,
   fiatCurrencySelector,
   ratesSelector,
 } from 'selectors';
@@ -441,6 +441,12 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
   };
 };
 
+/**
+ * Note: Per current moment of implementation it's not needed to
+ * separate this per single account action because we would even
+ * need to double the requests from Zapper as they allow to query
+ * for multiple addresses and response time does not increase significantly.
+ */
 export const fetchAllAccountsTotalBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (getState().totalBalances.isFetching) return;
@@ -461,12 +467,15 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     }
 
     const currency = fiatCurrencySelector(getState());
-    const zapperUSDBasedRates = await getZapperFiatRates();
-    if (currency !== USD && !zapperUSDBasedRates) {
+
+    const zapperUsdBasedRates = await getZapperFiatRates();
+    if (!zapperUsdBasedRates) {
       dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
       reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
       return;
     }
+
+    const usdRate = zapperUsdBasedRates[currency.toUpperCase()] ?? 1;
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
@@ -502,18 +511,48 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             // no need to add anything no matching account found or empty balances
             if (!account || isEmpty(accountProtocolBalances)) return;
 
-            const accountCategoryBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
-              const protocolBalances = balances?.assets;
-              if (isEmpty(protocolBalances)) return categoryBalance;
+            let categoryAssetsBalances = [];
 
-              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => BigNumber(balanceUSD ?? 0));
+            const categoryTotalBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
+              const protocolAssetsBalances = balances?.assets;
+              if (isEmpty(protocolAssetsBalances)) return categoryBalance;
 
-              if (currency !== USD) {
-                const rate = zapperUSDBasedRates?.[currency.toUpperCase()];
-                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(rate ?? 0));
-              }
+              const assetsBalances = protocolAssetsBalances.map((asset) => {
+                const {
+                  protocol,
+                  symbol,
+                  label,
+                  balanceUSD,
+                  img,
+                  share: tokensShare,
+                  supply: tokensSupply,
+                } = asset;
 
-              return sum([categoryBalance, ...protocolBalanceValues]);
+                const balanceUsdBN = BigNumber(balanceUSD);
+                const value = currency === USD
+                  ? balanceUsdBN
+                  : balanceUsdBN.times(usdRate ?? 0);
+
+                // TODO: do we need to fix exponential for very small values or hide small share at all?
+                const share = tokensShare && tokensSupply
+                  ? BigNumber(tokensShare).dividedBy(tokensSupply).times(100)
+                  : null;
+
+                return {
+                  key: `${protocol}-${symbol}`,
+                  service: balances.label,
+                  title: label,
+                  iconUrl: img ? `https://zapper.fi/images/${img}` : null,
+                  share,
+                  value,
+                };
+              });
+
+              categoryAssetsBalances = [...categoryAssetsBalances, ...assetsBalances];
+
+              const balancesValues = assetsBalances.map(({ value }) => value);
+
+              return sum([categoryBalance, ...balancesValues]);
             }, wrapBigNumber(0));
 
             dispatch({
@@ -522,7 +561,17 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                 accountId: getAccountId(account),
                 chain,
                 category: balanceCategory,
-                balance: accountCategoryBalance,
+                balance: categoryTotalBalance,
+              },
+            });
+
+            dispatch({
+              type: SET_ACCOUNT_ASSETS_BALANCES,
+              payload: {
+                accountId: getAccountId(account),
+                chain,
+                category: balanceCategory,
+                balances: categoryAssetsBalances,
               },
             });
           });
@@ -536,6 +585,9 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     const accountsTotalBalances = totalBalancesSelector(getState());
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
+
+    const accountsAssetsBalances = assetsBalancesSelector(getState());
+    dispatch(saveDbAction('assetsBalances', { data: accountsAssetsBalances }, true));
   };
 };
 
@@ -564,7 +616,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     dispatch({ type: RESET_ACCOUNT_ASSETS_BALANCES, payload: accountId });
     dispatch({ type: RESET_ACCOUNT_TOTAL_BALANCES, payload: accountId });
 
-    const updatedBalances = balancesSelector(getState());
+    const updatedBalances = assetsBalancesSelector(getState());
     dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
 
     const updatedTotalBalances = totalBalancesSelector(getState());

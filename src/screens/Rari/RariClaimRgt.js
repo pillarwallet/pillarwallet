@@ -41,7 +41,7 @@ import { ETH } from 'constants/assetsConstants';
 import { RARI_CLAIM_RGT_REVIEW } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -186,7 +186,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
