@@ -258,7 +258,8 @@ export const getZapperAvailableChainProtocols = async (
   }
 };
 
-export const getZapperUSDBasedFiatRates = async (): Promise<?ZapperFiatRates> => {
+// returns rates based on USD
+export const getZapperFiatRates = async (): Promise<?ZapperFiatRates> => {
   try {
     const result = await httpRequest.get(
       `${ZAPPER_CONFIG.API_URL}/fiat-rates`

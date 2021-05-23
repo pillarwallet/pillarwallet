@@ -67,13 +67,12 @@ import archanovaService from 'services/archanova';
 import {
   getZapperAvailableChainProtocols,
   getZapperProtocolBalanceOnNetwork,
-  getZapperUSDBasedFiatRates,
+  getZapperFiatRates,
   mapZapperProtocolIdToBalanceCategory,
 } from 'services/zapper';
 
 // utils
 import {
-  addressesEqual,
   getAssetsAsList,
   getRate,
   transformBalancesToObject,
@@ -463,7 +462,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     }
 
     const currency = fiatCurrencySelector(getState());
-    const zapperUSDBasedRates = await getZapperUSDBasedFiatRates();
+    const zapperUSDBasedRates = await getZapperFiatRates();
     if (currency !== USD && !zapperUSDBasedRates) {
       dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
       reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
@@ -508,11 +507,11 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               const protocolBalances = balances?.assets;
               if (isEmpty(protocolBalances)) return categoryBalance;
 
-              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => BigNumber(balanceUSD ?? 0));
 
               if (currency !== USD) {
                 const rate = zapperUSDBasedRates?.[currency.toUpperCase()];
-                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(wrapBigNumber(rate ?? 0)));
+                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(rate ?? 0));
               }
 
               return sum([categoryBalance, ...protocolBalanceValues]);
