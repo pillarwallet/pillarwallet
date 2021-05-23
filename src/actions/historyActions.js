@@ -28,6 +28,7 @@ import {
   ADD_TRANSACTION,
   UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
+  SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -44,6 +45,7 @@ import {
   findFirstArchanovaAccount,
   isArchanovaAccount,
   findFirstEtherspotAccount,
+  findAccountByAddress,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -59,6 +61,7 @@ import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import { parseEtherspotTransactions } from 'utils/etherspot';
+import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
 
 // services
 import archanovaService from 'services/archanova';
@@ -70,6 +73,7 @@ import {
   etherspotAccountAssetsSelector,
 } from 'selectors/assets';
 import {
+  accountsSelector,
   activeAccountSelector,
   historySelector,
   supportedAssetsSelector,
@@ -79,6 +83,7 @@ import {
 import type { Transaction } from 'models/Transaction';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Event } from 'models/History';
 
 // actions
 import { fetchAssetsBalancesAction } from './assetsActions';
@@ -86,6 +91,7 @@ import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { fetchCollectiblesHistoryAction } from './collectiblesActions';
 
 
 export const afterHistoryUpdatedAction = () => {
@@ -121,12 +127,56 @@ export const syncAccountHistoryAction = (
   };
 };
 
+export const setFetchingHistoryAction = (fetching: boolean) => ({
+  type: SET_FETCHING_HISTORY,
+  payload: fetching,
+});
+
+export const fetchEtherspotTransactionsHistoryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+    const { isOnline } = getState().session.data;
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount || !isOnline) return;
+
+    dispatch(setFetchingHistoryAction(true));
+
+    const accountAddress = getAccountAddress(etherspotAccount);
+    const accountAssets = etherspotAccountAssetsSelector(getState());
+    const accountId = getAccountId(etherspotAccount);
+    const supportedAssets = supportedAssetsSelector(getState());
+
+    const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
+    if (!etherspotTransactions?.length) {
+      dispatch(setFetchingHistoryAction(false));
+      return;
+    }
+
+    const etherspotTransactionsHistory = parseEtherspotTransactions(
+      etherspotTransactions,
+      getAssetsAsList(accountAssets),
+      supportedAssets,
+    );
+
+    dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId));
+    dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
+
+    await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
+
+    dispatch(setFetchingHistoryAction(false));
+  };
+};
+
 export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       session: { data: { isOnline } },
       history: { historyLastSyncIds },
+      smartWallet: {
+        lastSyncedTransactionId: lastSyncedArchanovaTransactionId,
+        connectedAccount,
+      },
     } = getState();
 
     // key based history migration: clean existing
@@ -143,24 +193,14 @@ export const fetchTransactionsHistoryAction = () => {
 
     if (!isOnline) return;
 
+    dispatch(setFetchingHistoryAction(true));
+
     let newHistoryTransactions = [];
     const supportedAssets = supportedAssetsSelector(getState());
 
     // archanova history
     const achanovaAccount = findFirstArchanovaAccount(accounts);
-    if (achanovaAccount) {
-      const {
-        smartWallet: {
-          lastSyncedTransactionId: lastSyncedArchanovaTransactionId,
-          connectedAccount,
-        },
-      } = getState();
-
-      if (!connectedAccount) {
-        reportLog('fetchTransactionsHistoryAction failed, no connected account');
-        return;
-      }
-
+    if (achanovaAccount && connectedAccount) {
       const devices = connectedAccount?.devices || [];
 
       await dispatch(syncVirtualAccountTransactionsAction());
@@ -197,26 +237,9 @@ export const fetchTransactionsHistoryAction = () => {
       }
     }
 
-    // etherspot history
-    const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (etherspotAccount) {
-      const accountAddress = getAccountAddress(etherspotAccount);
-      const accountAssets = etherspotAccountAssetsSelector(getState());
-      const accountId = getAccountId(etherspotAccount);
+    await dispatch(fetchEtherspotTransactionsHistoryAction());
 
-      const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
-
-      if (etherspotTransactions?.length) {
-        const etherspotTransactionsHistory = parseEtherspotTransactions(
-          etherspotTransactions,
-          getAssetsAsList(accountAssets),
-          supportedAssets,
-        );
-
-        newHistoryTransactions = [...newHistoryTransactions, ...etherspotTransactionsHistory];
-        dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId));
-      }
-    }
+    dispatch(setFetchingHistoryAction(false));
 
     dispatch(extractEnsInfoFromTransactionsAction(newHistoryTransactions));
   };
@@ -369,5 +392,16 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
 
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
+  };
+};
+
+export const viewTransactionOnBlockchainAction = (event: Event) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { hash = null, batchHash = null, fromAddress = null } = event;
+
+    const accounts = accountsSelector(getState());
+    const fromAccount = fromAddress ? findAccountByAddress(fromAddress, accounts) : null;
+
+    viewTransactionOnBlockchain({ hash, batchHash, fromAccount });
   };
 };

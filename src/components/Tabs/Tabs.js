@@ -83,4 +83,3 @@ const Tabs = ({ tabs, activeTab, wrapperStyle }: Props) => {
 };
 
 export default Tabs;
-

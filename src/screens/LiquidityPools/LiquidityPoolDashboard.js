@@ -61,15 +61,18 @@ import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances, Rates, Asset } from 'models/Asset';
+import type { Rates, Asset } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
+import type { WalletAssetsBalances } from 'models/Balances';
 
+// local
 import StakingEnabledModal from './StakingEnabledModal';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   poolDataGraphQueryFailed: boolean,

@@ -45,7 +45,7 @@ import collectiblesReducer from './collectiblesReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
-import balancesReducer from './balancesReducer';
+import assetsBalancesReducer from './assetsBalancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
@@ -68,6 +68,7 @@ import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
 import rariReducer from './rariReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
+import totalBalancesReducer from './totalBalancesReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -91,7 +92,7 @@ import type { CollectiblesReducerState, CollectiblesAction } from './collectible
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
-import type { BalancesReducerState, BalancesAction } from './balancesReducer';
+import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './assetsBalancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
@@ -117,6 +118,7 @@ import type { OnboardingReducerAction, OnboardingReducerState } from './onboardi
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
 import type { RariReducerAction, RariReducerState } from './rariReducer';
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
+import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -137,7 +139,7 @@ export type RootReducerState = {|
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
-  balances: BalancesReducerState,
+  assetsBalances: AssetsBalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
@@ -160,13 +162,14 @@ export type RootReducerState = {|
   transactionEstimate: TransactionEstimateReducerState,
   rari: RariReducerState,
   liquidityPools: LiquidityPoolsReducerState,
+  totalBalances: TotalBalancesReducerState,
 |};
 
 type RootReducerAction =
   | AccountsAction
   | AppSettingsReducerAction
   | BadgesReducerAction
-  | BalancesAction
+  | AssetsBalancesReducerAction
   | BlockchainNetworkAction
   | CollectiblesAction
   | ExchangeReducerAction
@@ -194,7 +197,8 @@ type RootReducerAction =
   | CacheAction
   | TransactionEstimateReducerAction
   | RariReducerAction
-  | LiquidityPoolsReducerAction;
+  | LiquidityPoolsReducerAction
+  | TotalBalancesReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -205,6 +209,10 @@ export type ThunkAction = (
 export type Dispatch = (
   action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
 ) => void;
+
+// Note: this intended as temporary solution for typing reselect selectors
+// real solution would be apply reselect flow typing.
+export type Selector<T> = (state: RootReducerState) => T;
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -225,7 +233,7 @@ const appReducer = combineReducers({
   badges: badgesReducer,
   exchange: exchangeReducer,
   accounts: accountsReducer,
-  balances: balancesReducer,
+  assetsBalances: assetsBalancesReducer,
   paymentNetwork: paymentNetworkReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
@@ -248,6 +256,7 @@ const appReducer = combineReducers({
   transactionEstimate: transactionEstimateReducer,
   rari: rariReducer,
   liquidityPools: liquidityPoolsReducer,
+  totalBalances: totalBalancesReducer,
 });
 
 export const initialState = appReducer(undefined, {});

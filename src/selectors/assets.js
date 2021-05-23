@@ -21,7 +21,8 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
-import type { Assets, Balance, Rates } from 'models/Asset';
+
+// utils
 import {
   findFirstArchanovaAccount,
   findFirstEtherspotAccount,
@@ -29,7 +30,16 @@ import {
   getEnabledAssets,
 } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+
+// constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
+
+// types
+import type { Asset, Assets, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
+
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -37,7 +47,6 @@ import {
   supportedAssetsSelector,
   accountsSelector,
   ratesSelector,
-  balancesSelector,
   baseFiatCurrencySelector,
 } from './selectors';
 
@@ -116,8 +125,17 @@ export const allAccountsAssetsSelector = createSelector(
   },
 );
 
+/**
+ * Returns array of assets to be used for asset data lookup.
+ */
+export const assetRegistrySelector: (RootReducerState) => Asset[] = createSelector(
+  allAccountsAssetsSelector,
+  supportedAssetsSelector,
+  (assets, supportedAssets) => [...getAssetsAsList(assets), ...supportedAssets],
+);
+
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
-  assetsSelector,
+  allAccountsAssetsSelector,
   supportedAssetsSelector,
   assetSelector,
   (assets, supportedAssets, asset) => {
@@ -128,17 +146,22 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
 
 export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  balancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: Balance, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
+  (
+    activeAccountId: string,
+    balances: WalletAssetsBalances,
+    rates: Rates,
+    baseFiatCurrency: ?string,
+    assets: Assets,
+  ) => {
     if (!activeAccountId || !balances || !assets) return {};
-    const activeAccountBalance = balances[activeAccountId] || {};
 
     return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
       const relatedAsset = assets[symbol];
-      const assetBalance = getBalance(activeAccountBalance, symbol);
+      const assetBalance = getBalance(balances, symbol);
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';

@@ -11,9 +11,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
   <View
     style={
       Object {
-        "backgroundColor": "rgba(255, 255, 255, 1)",
-        "borderBottomWidth": 1,
-        "borderColor": "rgba(237, 237, 237, 1)",
+        "backgroundColor": "#FAFAFA",
         "width": "100%",
       }
     }

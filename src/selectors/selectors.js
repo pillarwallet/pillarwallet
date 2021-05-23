@@ -26,11 +26,13 @@ import get from 'lodash.get';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { getAccountAddress } from 'utils/accounts';
+import { getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, AccountAllowances } from 'models/Offer';
+import type { Asset, AssetsByAccount } from 'models/Asset';
+import type { Account } from 'models/Account';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -38,16 +40,17 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
   useSelector((root: RootReducerState) => selector(root));
 
 // Most commonly used selectors
-export const useFiatCurrency = () =>
-  useRootSelector((root) => root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency);
-
-export const useRates = () => useRootSelector((root) => root.rates.data);
+export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
+export const useRates = () => useRootSelector(ratesSelector);
 
 //
 // Global selectors here
 //
 
-export const balancesSelector = ({ balances }: RootReducerState) => balances.data;
+export const fiatCurrencySelector = (root: RootReducerState) =>
+  root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
+
+export const assetsBalancesSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 export const collectiblesSelector = ({ collectibles }: RootReducerState) => collectibles.data;
 export const collectiblesHistorySelector =
   ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
@@ -76,14 +79,14 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
+export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
-export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
+export const supportedAssetsSelector = ({ assets }: RootReducerState): Asset[] =>
   get(assets, 'supportedAssets', []);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
@@ -107,6 +110,10 @@ export const rariSelector = ({ rari }: RootReducerState) => rari;
 
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
 
+export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
+
+export const useSmartWalletAccounts = (): Account[] => useAccounts().filter(isNotKeyBasedType);
+
 export const allAccountsExchangeAllowancesSelector = ({ exchange }: RootReducerState) => exchange.data.allowances;
 
 export const activeAccountExchangeAllowancesSelector = createSelector(
@@ -117,3 +124,5 @@ export const activeAccountExchangeAllowancesSelector = createSelector(
     return [];
   },
 );
+
+export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);

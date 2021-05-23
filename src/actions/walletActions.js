@@ -134,7 +134,7 @@ export const checkForWalletBackupToastAction = () => {
     const {
       wallet: { backupStatus: { isImported, isBackedUp } },
       accounts: { data: accounts },
-      balances: { data: balances },
+      assetsBalances: { data: balances },
     } = getState();
 
     const keyBasedAccount = findKeyBasedAccount(accounts);

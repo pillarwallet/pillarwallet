@@ -49,6 +49,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Asset, Assets } from 'models/Asset';
+import type { WalletAssetBalance } from 'models/Balances';
 
 
 type Address = string;
@@ -88,12 +89,6 @@ type ETHTransferOptions = {
   signOnly?: ?boolean,
   data?: string,
 };
-
-type FetchBalancesResponse = Array<{
-  balance: string,
-  symbol: string,
-}>;
-
 
 export const encodeContractMethod = (
   contractAbi: string | Object[],
@@ -163,17 +158,22 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   // first 4 bytes of the encoded signature for a lookup in the contract code
   // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
   const transferHash = 'a9059cbb'; // transfer(address,uint256)
-  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
   const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
+
 
   if (!isReceiverContractAddress && contractHasMethod(code, safeTransferFromHash)) {
     return 'safeTransferFrom';
   } else if (contractHasMethod(code, transferHash)) {
     return 'transfer';
-  } else if (contractHasMethod(code, transferFromHash)) {
-    return 'transferFrom';
   }
-  return '';
+
+  /**
+   * sometimes code contains proxy contract code on which one of the methods can be found,
+   * let's fallback to transferFrom which belongs to EIP 721/1155 standard
+   */
+  // const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
+
+  return 'transferFrom';
 }
 /* eslint-enable i18next/no-literal-string */
 
@@ -309,7 +309,7 @@ export function fetchERC20Balance(
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
+export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<WalletAssetBalance[]> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
@@ -328,7 +328,7 @@ export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string
 export async function fetchAddressBalancesFromProxyContract(
   assets: Asset[],
   accountAddress: string,
-): Promise<FetchBalancesResponse> {
+): Promise<WalletAssetBalance[]> {
   if (!['homestead', 'kovan'].includes(getEnv().NETWORK_PROVIDER)) return [];
 
   const tokens = assets.map(({ address }) => address);

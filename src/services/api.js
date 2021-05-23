@@ -47,6 +47,7 @@ import type { ClaimTokenAction } from 'actions/referralsActions';
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
 import type { AxiosXHR } from 'axios';
+import type { WalletAssetBalance } from 'models/Balances';
 
 // services
 import {
@@ -563,7 +564,7 @@ class SDKWrapper {
     return fetchLastBlockNumber(network);
   }
 
-  async fetchBalances({ address, assets }: BalancePayload) {
+  async fetchBalances({ address, assets }: BalancePayload): Promise<WalletAssetBalance[]> {
     // try to get all the balances in one call (mainnet and kovan only)
     const balances = await fetchAddressBalancesFromProxyContract(assets, address);
     if (!isEmpty(balances)) return balances;

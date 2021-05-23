@@ -53,6 +53,7 @@ const TutorialScreen = ({ hasSeenTutorial, tutorialData }: Props) => {
     if (!tutorialData) {
       navigation.navigate(routeName);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFinish = () => {

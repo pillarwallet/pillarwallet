@@ -41,7 +41,7 @@ import { ETH } from 'constants/assetsConstants';
 import { LENDING_WITHDRAW_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // utils
 import { spacing } from 'utils/variables';
@@ -49,8 +49,9 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances, DepositedAsset } from 'models/Asset';
+import type { DepositedAsset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -59,7 +60,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   calculateLendingWithdrawTransactionEstimate: (amount: string, asset: DepositedAsset) => void,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
 };
@@ -135,7 +136,7 @@ const EnterWithdrawAmount = ({
     { amount: depositAmount, asset: depositedAsset },
   );
 
-  const depositedAssetsBalances: Balances = depositedAssets.reduce(
+  const depositedAssetsBalances: WalletAssetsBalances = depositedAssets.reduce(
     (balancesObj, { currentBalance: balance, symbol }) => ({ ...balancesObj, [symbol]: { symbol, balance } }),
     {},
   );
@@ -203,7 +204,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

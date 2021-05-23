@@ -19,64 +19,68 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { withNavigation } from 'react-navigation';
+import { useNavigation } from 'react-navigation-hooks';
 
+// Components
 import ProfileImage from 'components/ProfileImage';
-import { MediumText } from 'components/Typography';
+import Icon from 'components/modern/Icon';
+import Text from 'components/modern/Text';
 
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+// Contants
+import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
-import { spacing } from 'utils/variables';
+// Selectors
+import { useSmartWalletAccounts } from 'selectors';
 
-import type { NavigationScreenProp } from 'react-navigation';
-import type { ProfileImageProps } from 'components/ProfileImage';
+// Utils
+import { fontStyles, spacing } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
+import { useThemeColors } from 'utils/themes';
+
+// Types
 import type { User } from 'models/User';
-
 
 type Props = {
   user: User,
-  navigation: NavigationScreenProp<*>,
-  userProps: ProfileImageProps,
-  profileImageWidth?: number,
 };
 
+const UserNameAndImage = ({ user }: Props) => {
+  const navigation = useNavigation();
+  const colors = useThemeColors();
 
-const UserWrapper = styled.TouchableOpacity`
+  const { profileImage, lastUpdateTime, username } = user;
+  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+
+  const accountCount = useSmartWalletAccounts().length;
+
+  return (
+    <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
+      <ProfileImage uri={userImageUri} userName={username} diameter={24} />
+
+      {!!username && <UserName>{username}</UserName>}
+
+      {accountCount > 1 && (
+        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+          <Icon name="select" color={colors.basic020} />
+        </TouchableOpacity>
+      )}
+    </TouchableContainer>
+  );
+};
+
+export default UserNameAndImage;
+
+const TouchableContainer = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
 `;
 
-const UserName = styled(MediumText)`
-  margin-left: 10px;
+const UserName = styled(Text)`
+  ${fontStyles.medium};
+  margin-left: ${spacing.small}px;
   flex-wrap: wrap;
   flex-shrink: 1;
 `;
-
-
-const UserNameAndImage = (props: Props) => {
-  const {
-    user = {},
-    navigation,
-    userProps = {},
-    profileImageWidth = 24,
-  } = props;
-  const { profileImage, lastUpdateTime, username } = user;
-  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
-  return (
-    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      {/* $FlowFixMe: flow update to 0.122 */}
-      <ProfileImage
-        uri={userImageUri}
-        userName={username}
-        diameter={profileImageWidth}
-        noShadow
-        {...userProps}
-      />
-      {!!username && <UserName>{username}</UserName>}
-    </UserWrapper>
-  );
-};
-
-export default withNavigation(UserNameAndImage);

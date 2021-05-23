@@ -239,7 +239,6 @@ class SlideModal extends React.Component<Props, State> {
             leftItems={leftItems}
             centerItems={centerItems}
             rightItems={rightItems}
-            noBottomBorder
             noPaddingTop
             onClose={this.handleDismiss}
             wrapperStyle={{ backgroundColor: 'transparent' }}

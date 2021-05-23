@@ -39,23 +39,23 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { calculateClaimRewardsTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Balances } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   resetEstimateTransaction: () => void,
   calculateClaimRewardsTransactionEstimate: (pool: UnipoolLiquidityPool, amountToClaim: number) => void,
   isEstimating: boolean,
@@ -192,7 +192,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   accountAddress: activeAccountAddressSelector,
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

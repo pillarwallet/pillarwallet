@@ -40,16 +40,16 @@ import {
 // services
 import { createConnector, loadLegacyWalletConnectSessions } from 'services/walletConnect';
 
+// selectors
+import { activeAccountSelector } from 'selectors';
+
 // utils
+import { getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { hasKeyBasedWalletConnectSession } from 'utils/walletConnect';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { activeAccountSelector } from 'selectors';
-import { getAccountAddress } from 'utils/accounts';
-import { getEnv } from 'configs/envConfig';
-
 
 export const initWalletConnectSessionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -146,7 +146,7 @@ export const updateWalletConnectSessionsByActiveAccount = () => {
     activeConnectors.forEach((connector) => {
       const sessionData = {
         accounts: [accountAddress],
-        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+        chainId: connector.chainId,
       };
       connector.updateSession(sessionData);
     });

@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
-import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
@@ -33,19 +32,17 @@ import {
 } from 'constants/walletConnectConstants';
 import {
   ASSETS,
-  WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+  WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
 import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
-// services, utils
+// components
+import Toast from 'components/Toast';
+
+// services
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
-import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress, isArchanovaAccount } from 'utils/accounts';
-import { isSupportedDappUrl, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
-import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList } from 'utils/assets';
 
 // actions
 import { disconnectWalletConnectSessionByPeerIdAction } from 'actions/walletConnectSessionsActions';
@@ -53,18 +50,22 @@ import { logEventAction } from 'actions/analyticsActions';
 import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
-// components
-import Toast from 'components/Toast';
-
 // selectors
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isDeployedOnChainSelector } from 'selectors/chains';
+
+// utils
+import { isNavigationAllowed } from 'utils/navigation';
+import { getAccountAddress } from 'utils/accounts';
+import { chainFromChainId } from 'utils/chains';
+import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
+import { reportErrorLog } from 'utils/common';
+import { getAssetsAsList } from 'utils/assets';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
 
 const setWalletConnectErrorAction = (message: string) => {
   return (dispatch: Dispatch) => {
@@ -113,7 +114,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         return;
       }
 
-      const { peerId, peerMeta } = payload?.params?.[0] || {};
+      const { peerId, peerMeta, chainId } = payload?.params?.[0] || {};
 
       if (!peerId || !peerMeta) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
@@ -132,13 +133,13 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
       navigate(NavigationActions.navigate({
         routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-        params: { peerId, peerMeta },
+        params: { peerId, peerMeta, chainId },
       }));
     });
   };
 };
 
-export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
+export const approveWalletConnectConnectorRequestAction = (peerId: string, chainId: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectorRequest } } = getState();
     if (!connectorRequest) {
@@ -162,8 +163,9 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
       return;
     }
 
-    const requiresSmartWalletDeployment = isArchanovaAccount(activeAccount)
-      && !isArchanovaWalletActivatedSelector(getState());
+    const chain = chainFromChainId[chainId];
+    const requiresSmartWalletDeployment = !isDeployedOnChainSelector(getState())[chain];
+
     if (requiresSmartWalletDeployment) {
       Toast.show({
         message: t('toast.walletConnectSmartWalletNotActive'),
@@ -176,10 +178,9 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string) => {
     }
 
     const accountAddress = getAccountAddress(activeAccount);
-
     const sessionData = {
       accounts: [accountAddress],
-      chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+      chainId,
     };
 
     try {
@@ -287,7 +288,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
-      const { peerId, peerMeta } = connector;
+      const { peerId, peerMeta, chainId } = connector;
       if (!peerId || !peerMeta) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
         return;
@@ -305,10 +306,11 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         name,
         url,
         peerId,
+        chainId,
         callId,
         method,
         params,
-        icon: icons?.[0] || null,
+        icon: pickPeerIcon(icons),
       };
 
       dispatch({

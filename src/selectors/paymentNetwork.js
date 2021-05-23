@@ -36,10 +36,11 @@ import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
-import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // selectors
 import {
@@ -57,7 +58,9 @@ const ppnTrxTags = [
   PAYMENT_NETWORK_TX_SETTLEMENT,
 ];
 
-export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
+export const paymentNetworkAccountBalancesSelector: ((
+  state: RootReducerState,
+) => WalletAssetsBalances) = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -91,7 +94,9 @@ export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Tran
   },
 );
 
-export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: ((
+  state: RootReducerState,
+) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
   accountHistorySelector,
   supportedAssetsSelector,

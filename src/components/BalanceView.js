@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
@@ -28,52 +29,26 @@ import Text from 'components/modern/Text';
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { getCurrencySymbol, formatFiatValue } from 'utils/common';
-import { appFont, fontStyles } from 'utils/variables';
+import { formatFiatValue } from 'utils/format';
 
 // Types
-import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
-
+import type { TextStyleProp } from 'utils/types/react-native';
 
 type Props = {
-  balance: number,
-  style?: ViewStyleProp,
-  currencyTextStyle?: TextStyleProp,
-  balanceTextStyle?: TextStyleProp,
+  balance: BigNumber | number,
+  style?: TextStyleProp,
 };
 
-function BalanceView({
-  balance,
-  style,
-  currencyTextStyle,
-  balanceTextStyle,
-}: Props) {
-  const fiatCurrency = useFiatCurrency();
+function BalanceView({ balance, style }: Props) {
+  const currency = useFiatCurrency();
 
-  return (
-    <Container style={style}>
-      <CurrencySymbol style={currencyTextStyle}>{getCurrencySymbol(fiatCurrency)}</CurrencySymbol>
-      <Balance style={balanceTextStyle}>{formatFiatValue(balance)}</Balance>
-    </Container>
-  );
+  return <Balance style={style}>{formatFiatValue(balance, currency)}</Balance>;
 }
 
 export default BalanceView;
 
-const Container = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-`;
-
-const CurrencySymbol = styled(Text)`
-  font-family: '${appFont.archiaMedium}';
-  ${fontStyles.big};
-  margin-top: 6px;
-`;
-
 const Balance = styled(Text)`
-  font-family: '${appFont.archiaMedium}';
+  text-align: center;
   font-size: 30px;
-  line-height: 46px;
+  font-variant: tabular-nums;
 `;

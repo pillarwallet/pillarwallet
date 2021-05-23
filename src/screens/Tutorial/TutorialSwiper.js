@@ -81,6 +81,7 @@ export default ({ onButtonPress, data, onFinish }: Props) => {
 
   useEffect(() => {
     !userHasScrolled && scrollIndex && setUserHasScrolled(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollIndex]);
 
   const scrollToIdx = (idx: number) => scrollViewRef?.current?.scrollTo({ x: idx * DEVICE_WIDTH });

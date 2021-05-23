@@ -18,71 +18,52 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { createSelector } from 'reselect';
-import isEmpty from 'lodash.isempty';
 
 // constants
-import { PLR, USD } from 'constants/assetsConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+import { ASSET_CATEGORY, PLR } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { getStreamBalance } from 'utils/sablier';
-import { formatUnits } from 'utils/common';
-import { getPoolStats } from 'utils/liquidityPools';
+import { getTotalBalanceInFiat } from 'utils/assets';
+import { BigNumber } from 'utils/common';
+import { sum } from 'utils/bigNumber';
+import { isEtherspotAccount } from 'utils/accounts';
+import { getChainTotalBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { MixedBalance } from 'models/Asset';
-import type { LendingReducerState } from 'reducers/lendingReducer';
-import type { PoolPrizeInfo } from 'models/PoolTogether';
-import type { SablierReducerState } from 'reducers/sablierReducer';
-import type { RariReducerState } from 'reducers/rariReducer';
-import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { Rates } from 'models/Asset';
+import type { Account } from 'models/Account';
+import type {
+  ChainTotalBalancesPerAccount,
+  CategoryTotalBalancesPerChain,
+  TotalBalancesPerChain,
+  WalletAssetsBalances,
+  CategoryBalancesPerChain,
+  AssetBalancesPerAccount,
+} from 'models/Balances';
 
 // selectors
 import {
-  balancesSelector,
+  assetsBalancesSelector,
+  fiatCurrencySelector,
+  ratesSelector,
   activeAccountIdSelector,
-  lendingSelector,
-  poolTogetherStatsSelector,
-  sablierSelector,
-  rariSelector,
-  liquidityPoolsSelector,
+  activeAccountSelector,
 } from './selectors';
-import { availableStakeSelector } from './paymentNetwork';
 
-
-export const accountBalancesSelector = createSelector(
-  balancesSelector,
+export const accountAssetsBalancesSelector = createSelector(
+  assetsBalancesSelector,
   activeAccountIdSelector,
-  (balances, activeAccountId) => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain | {} => {
     if (!activeAccountId) return {};
-    return balances[activeAccountId] || {};
+    return balances?.[activeAccountId] ?? {};
   },
 );
 
-export const allBalancesSelector = createSelector(
-  balancesSelector,
-  availableStakeSelector,
-  (balances, ppnBalance) => {
-    const allBalances = Object.keys(balances).reduce((memo, account) => {
-      if (!isEmpty(balances[account])) {
-        const accountsBalances: Object[] = Object.values(balances[account]);
-        return [...memo, ...accountsBalances];
-      }
-      return memo;
-    }, []);
-
-    const balancesWithPPN = [...allBalances, { symbol: PLR, balance: ppnBalance }];
-
-    return balancesWithPPN.reduce((memo, { balance, symbol }) => {
-      if (!balance || !symbol) return memo;
-      const assetInfo = memo[symbol] || { symbol, balance: 0 };
-      const newBalance = parseFloat(assetInfo.balance) + parseFloat(balance);
-      assetInfo.balance = newBalance.toString();
-      memo[symbol] = assetInfo;
-      return memo;
-    }, {});
-  },
+export const accountEthereumWalletAssetsBalancesSelector = createSelector(
+  accountAssetsBalancesSelector,
+  (accountBalances): WalletAssetsBalances => accountBalances?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {},
 );
 
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
@@ -90,65 +71,121 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   (hasPositiveBalance) => !!hasPositiveBalance,
 );
 
-const aaveBalanceListSelector = createSelector(
-  lendingSelector,
-  (lending: LendingReducerState): MixedBalance[] =>
-    lending.depositedAssets.map(({ currentBalance: balance, symbol }) => ({ symbol, balance })),
+export const totalBalancesSelector = ({
+  totalBalances,
+}: RootReducerState): ChainTotalBalancesPerAccount => totalBalances.data;
+
+export const activeAccountTotalBalancesSelector: (RootReducerState) => CategoryTotalBalancesPerChain = createSelector(
+  activeAccountIdSelector,
+  totalBalancesSelector,
+  (
+    activeAccountId: string,
+    totalBalances: ChainTotalBalancesPerAccount,
+  ): CategoryTotalBalancesPerChain => totalBalances[activeAccountId],
 );
 
-const poolTogetherBalanceListSelector = createSelector(
-  poolTogetherStatsSelector,
-  (poolTogetherStats: PoolPrizeInfo): MixedBalance[] => Object.keys(poolTogetherStats)
-    .map(symbol => ({
-      symbol,
-      balance: poolTogetherStats[symbol].userInfo?.ticketBalance ?? 0,
-    })),
+export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountSelector,
+  ({ paymentNetwork }) => paymentNetwork.availableStake,
+  ratesSelector,
+  fiatCurrencySelector,
+  (activeAccount: Account, ppnBalance: number, rates: Rates, currency: string) => {
+    // currently not supported by Etherspot
+    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
+
+    const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
+  },
 );
 
-const sablierBalanceListSelector = createSelector(
-  sablierSelector,
-  ({ incomingStreams }: SablierReducerState): MixedBalance[] => incomingStreams
-    .map<?MixedBalance>(stream => {
-      const { symbol, decimals } = stream.token;
-      if (!symbol || !decimals) return null;
+export const walletTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountTotalBalancesSelector,
+  paymentNetworkTotalBalanceSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+    paymentNetworkBalance: BigNumber,
+  ): BigNumber => {
+    const balancesOnChains = (Object.values(accountTotalBalances || {}): any);
 
-      return {
-        symbol,
-        balance: formatUnits(getStreamBalance(stream), parseInt(decimals, 10)),
-      };
-    })
-    .filter(Boolean),
+    const totalWalletBalancesOnChains = balancesOnChains.map((chainTotalBalances) => {
+      return chainTotalBalances?.wallet || BigNumber(0);
+    });
+
+    return sum([...totalWalletBalancesOnChains, paymentNetworkBalance]);
+  },
 );
 
-const rariBalanceListSelector = createSelector(
-  rariSelector,
-  ({ userDepositInUSD }: RariReducerState): MixedBalance[] => Object.keys(userDepositInUSD)
-    .map(pool => ({ balance: userDepositInUSD[pool], symbol: USD })),
+export const depositsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
 );
 
-const liquidityPoolsBalanceListSelector = createSelector(
-  liquidityPoolsSelector,
-  (liquidityPoolsState: LiquidityPoolsReducerState): MixedBalance[] => LIQUIDITY_POOLS().map(pool => {
-    const {
-      currentPrice,
-      userLiquidityTokenBalance,
-      stakedAmount,
-    } = getPoolStats(pool, liquidityPoolsState) ?? {};
-
-    if (currentPrice == null || !userLiquidityTokenBalance || !stakedAmount) return null;
-
-    return {
-      balance: (userLiquidityTokenBalance.toNumber() + stakedAmount.toNumber()) * currentPrice,
-      symbol: USD,
-    };
-  }).filter(Boolean),
+export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
 );
 
-export const servicesBalanceListSelector = createSelector(
-  aaveBalanceListSelector,
-  poolTogetherBalanceListSelector,
-  sablierBalanceListSelector,
-  rariBalanceListSelector,
-  liquidityPoolsBalanceListSelector,
-  (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
+export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
+);
+
+export const rewardsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.REWARDS),
+);
+
+export const depositsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
+);
+
+export const investmentsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
+);
+
+export const liquidityPoolsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  activeAccountTotalBalancesSelector,
+  (
+    accountTotalBalances: ?CategoryTotalBalancesPerChain,
+  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
+);
+
+// TODO: add once ready
+export const rewardsTotalBalanceSelector: (RootReducerState) => BigNumber = () => {
+  return BigNumber(0);
+};
+
+export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
+  walletTotalBalanceSelector,
+  investmentsTotalBalanceSelector,
+  depositsTotalBalanceSelector,
+  liquidityPoolsTotalBalanceSelector,
+  rewardsTotalBalanceSelector,
+  (
+    walletBalance: BigNumber,
+    investmentsBalance: BigNumber,
+    depositsBalance: BigNumber,
+    liquidityPoolsBalance: BigNumber,
+    rewardsBalance: BigNumber,
+  ): BigNumber => sum([
+    walletBalance,
+    investmentsBalance,
+    depositsBalance,
+    liquidityPoolsBalance,
+    rewardsBalance,
+  ]),
 );

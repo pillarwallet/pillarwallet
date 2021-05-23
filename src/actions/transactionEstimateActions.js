@@ -106,22 +106,32 @@ export const estimateTransactionsAction = (transactionsToEstimate: TransactionTo
 
     const activeAccountAddress = getAccountAddress(activeAccount);
 
-    const transactions = await Promise.all(transactionsToEstimate.map(({
-      to,
-      data,
-      value,
-      assetData,
-    }) => buildEthereumTransaction(
-      to,
-      activeAccountAddress,
-      data,
-      Number(value).toString(),
-      assetData?.token,
-      assetData?.decimals,
-      assetData?.tokenType,
-      assetData?.contractAddress,
-      assetData?.id,
-    )));
+    let transactions;
+    try {
+      transactions = await Promise.all(transactionsToEstimate.map(({
+        to,
+        data,
+        value,
+        assetData,
+      }) => buildEthereumTransaction(
+        to,
+        activeAccountAddress,
+        data,
+        Number(value).toString(),
+        assetData?.token,
+        assetData?.decimals,
+        assetData?.tokenType,
+        assetData?.contractAddress,
+        assetData?.id,
+      )));
+    } catch (error) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+      reportErrorLog('estimateTransactionsAction failed: failed building transactions', {
+        transactionsToEstimate,
+        error,
+      });
+      return;
+    }
 
     const useGasToken = useGasTokenSelector(getState());
     const accountAssets = accountAssetsSelector(getState());

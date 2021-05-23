@@ -41,12 +41,12 @@ import { ETH } from 'constants/assetsConstants';
 import { RARI_CLAIM_RGT_REVIEW } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances } from 'models/Asset';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -54,7 +54,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   userUnclaimedRgt: number,
   calculateRariClaimTransactionEstimate: (amount: number) => void,
   resetEstimateTransaction: () => void,
@@ -186,7 +186,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

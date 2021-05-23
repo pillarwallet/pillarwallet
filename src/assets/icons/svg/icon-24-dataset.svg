@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+    <g id="Icons/2" transform="translate(-253.000000, -493.000000)" stroke="#000" stroke-width="1.425">
+      <g id="Row" transform="translate(0.000000, 483.726562)">
+        <g id="Icons/24/notes/new" transform="translate(253.000000, 10.000000)">
+          <path d="M8.56,3 L15.44,3 C17.9584185,3 20,5.04158154 20,7.56 L20,16.44 C20,18.9584185 17.9584185,21 15.44,21 L8.56,21 C6.04158154,21 4,18.9584185 4,16.44 L4,7.56 C4,5.04158154 6.04158154,3 8.56,3 Z M8.57142857,7.5 L15.4285714,7.5 M8.57142857,12 L15.4285714,12 M8.57142857,16.5 L13.1428571,16.5" id="Combined-Shape"></path>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
