@@ -56,7 +56,7 @@ export const accountEthereumWalletBalancesSelector = createSelector(
   activeAccountIdSelector,
   (balances, activeAccountId): AssetsBalances => {
     if (!activeAccountId) return {};
-    return balances?.[activeAccountId]?.[CHAIN.ETHEREUM] ?.[ASSET_CATEGORY.WALLET] || {};
+    return balances?.[activeAccountId]?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {};
   },
 );
 
