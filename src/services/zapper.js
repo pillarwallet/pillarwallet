@@ -61,6 +61,10 @@ type ZapperProtocolBalances = {
   }
 };
 
+type ZapperFiatRates = {
+  [currencySymbol: string]: number
+};
+
 // does not change between envs
 const ZAPPER_CONFIG = {
   API_URL: 'https://api.zapper.fi/v1',
@@ -196,13 +200,23 @@ export const getZapperProtocolBalanceOnNetwork = async (
     );
 
     if (!result?.data) {
-      reportErrorLog('getZapperProtocolBalanceOnNetwork failed: unexpected response', { response: result });
+      reportErrorLog('getZapperProtocolBalanceOnNetwork failed: unexpected response', {
+        addresses,
+        protocol,
+        network,
+        response: result,
+      });
       return null;
     }
 
     return result.data;
   } catch (error) {
-    reportErrorLog('getZapperProtocolBalanceOnNetwork: API request error', { error });
+    reportErrorLog('getZapperProtocolBalanceOnNetwork: API request error', {
+      addresses,
+      protocol,
+      network,
+      error,
+    });
     return null;
   }
 };
@@ -225,7 +239,7 @@ export const getZapperAvailableChainProtocols = async (
     );
 
     if (!result?.data) {
-      reportErrorLog('getZapperAvailableData failed: unexpected response', { response: result });
+      reportErrorLog('getZapperAvailableData failed: unexpected response', { response: result, addresses });
       return null;
     }
 
@@ -239,7 +253,28 @@ export const getZapperAvailableChainProtocols = async (
 
     return mappedData.filter(({ chain }) => [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM].includes(chain));
   } catch (error) {
-    reportErrorLog('getZapperAvailableData: API request error', { error });
+    reportErrorLog('getZapperAvailableData: API request error', { error, addresses });
+    return null;
+  }
+};
+
+// returns rates based on USD
+export const getZapperFiatRates = async (): Promise<?ZapperFiatRates> => {
+  try {
+    const result = await httpRequest.get(
+      `${ZAPPER_CONFIG.API_URL}/fiat-rates`
+      + `?api_key=${ZAPPER_CONFIG.API_KEY}`,
+      requestConfig,
+    );
+
+    if (!result?.data) {
+      reportErrorLog('getZapperFiatRatesFromUSD failed: unexpected response', { response: result });
+      return null;
+    }
+
+    return result.data;
+  } catch (error) {
+    reportErrorLog('getZapperFiatRatesFromUSD: API request error', { error });
     return null;
   }
 };

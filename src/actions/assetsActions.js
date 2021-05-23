@@ -39,6 +39,7 @@ import {
   COLLECTIBLES,
   PLR,
   BTC,
+  USD,
 } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_BALANCES,
@@ -66,6 +67,7 @@ import archanovaService from 'services/archanova';
 import {
   getZapperAvailableChainProtocols,
   getZapperProtocolBalanceOnNetwork,
+  getZapperFiatRates,
   mapZapperProtocolIdToBalanceCategory,
 } from 'services/zapper';
 
@@ -92,6 +94,7 @@ import {
   isEtherspotAccount,
   getAccountType,
   findAccountByAddress,
+  isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { sum } from 'utils/bigNumber';
@@ -453,15 +456,29 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
     const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
     if (!availableChainProtocols) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
       reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no availableChainProtocols', { accountsAddresses });
+      return;
+    }
+
+    const currency = fiatCurrencySelector(getState());
+    const zapperUSDBasedRates = await getZapperFiatRates();
+    if (currency !== USD && !zapperUSDBasedRates) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
       return;
     }
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
+        // we don't need to pull multi chain balances for Archanova account, only Ethereum
+        const requestForAddresses = chain !== CHAIN.ETHEREUM
+          ? accountsAddresses.filter((address) => !isArchanovaAccountAddress(address, accounts))
+          : accountsAddresses;
+
         const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
           const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
-            accountsAddresses,
+            requestForAddresses,
             zapperProtocolId,
             zapperNetworkId,
           );
@@ -490,7 +507,12 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               const protocolBalances = balances?.assets;
               if (isEmpty(protocolBalances)) return categoryBalance;
 
-              const protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => wrapBigNumber(balanceUSD ?? 0));
+              let protocolBalanceValues = protocolBalances.map(({ balanceUSD }) => BigNumber(balanceUSD ?? 0));
+
+              if (currency !== USD) {
+                const rate = zapperUSDBasedRates?.[currency.toUpperCase()];
+                protocolBalanceValues = protocolBalanceValues.map((value) => value.times(rate ?? 0));
+              }
 
               return sum([categoryBalance, ...protocolBalanceValues]);
             }, wrapBigNumber(0));
