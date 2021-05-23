@@ -27,7 +27,7 @@ import {
 } from 'constants/assetsBalancesConstants';
 
 // types
-import type { AssetsBalances, ChainBalancesPerAccount } from 'models/Balances';
+import type { WalletAssetsBalances, ChainBalancesPerAccount } from 'models/Balances';
 
 
 export type SetFetchingAssetsBalancesAction = {|
@@ -46,7 +46,7 @@ export type SeAccountAssetsBalancesAction = {|
     accountId: string,
     chain: string,
     category: string,
-    balances: AssetsBalances,
+    balances: WalletAssetsBalances,
   }
 |};
 

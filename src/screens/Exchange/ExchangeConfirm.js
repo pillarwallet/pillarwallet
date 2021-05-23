@@ -65,7 +65,7 @@ import type {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -82,7 +82,7 @@ type Props = {
   rates: Rates,
   baseFiatCurrency: ?string,
   exchangeSupportedAssets: Asset[],
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
   theme: Theme,

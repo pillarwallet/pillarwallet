@@ -54,12 +54,12 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { AssetToDeposit } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   assetsToDeposit: AssetToDeposit[],
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,

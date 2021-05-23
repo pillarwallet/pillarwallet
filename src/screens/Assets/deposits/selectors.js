@@ -50,4 +50,3 @@ export function useDepositsAssets(): ChainRecord<DepositAssetBalance[]> {
   const assetsBalances = useRootSelector(accountAssetsBalancesSelector);
   return getChainBalancesForCategory(assetsBalances, ASSET_CATEGORY.DEPOSITS);
 }
-

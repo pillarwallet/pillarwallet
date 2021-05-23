@@ -115,7 +115,7 @@ import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
 // actions
@@ -368,7 +368,7 @@ export const sendAssetAction = (
 
 export const updateAccountWalletAssetsBalancesForChainAction = (
   accountId: string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   chain: Chain,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {

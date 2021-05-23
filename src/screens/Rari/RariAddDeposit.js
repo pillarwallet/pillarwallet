@@ -61,7 +61,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates, Asset, Assets, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   assets: Assets,
@@ -76,7 +76,7 @@ type Props = {
   activeAccountAddress: string,
   rates: Rates,
   setEstimatingTransaction: (boolean) => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
 };
 
 const FooterWrapper = styled.View`

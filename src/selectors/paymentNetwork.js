@@ -40,7 +40,7 @@ import type { Asset, Assets } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // selectors
 import {
@@ -58,7 +58,7 @@ const ppnTrxTags = [
   PAYMENT_NETWORK_TX_SETTLEMENT,
 ];
 
-export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => AssetsBalances) = createSelector(
+export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => WalletAssetsBalances) = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -92,7 +92,7 @@ export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Tran
   },
 );
 
-export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => AssetsBalances) = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
   accountHistorySelector,
   supportedAssetsSelector,

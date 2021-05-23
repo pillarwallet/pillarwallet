@@ -44,7 +44,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type {
   WalletAssetBalance,
-  AssetsBalances,
+  WalletAssetsBalances,
 } from 'models/Balances';
 
 
@@ -63,7 +63,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
-export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): AssetsBalances => {
+export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): WalletAssetsBalances => {
   return balancesArray.reduce((memo, balance) => {
     memo[balance.symbol] = balance;
     return memo;
@@ -80,7 +80,7 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
-export const getBalanceBN = (balances: ?AssetsBalances, asset: ?string): BigNumber => {
+export const getBalanceBN = (balances: ?WalletAssetsBalances, asset: ?string): BigNumber => {
   if (!balances || !asset) return BigNumber('0');
   return BigNumber(balances[asset]?.balance ?? '0');
 };
@@ -88,7 +88,7 @@ export const getBalanceBN = (balances: ?AssetsBalances, asset: ?string): BigNumb
 /**
  * @deprecated: do not use because of rounding issues
  */
-export const getBalance = (balances: ?AssetsBalances, asset: string): number => {
+export const getBalance = (balances: ?WalletAssetsBalances, asset: string): number => {
   if (!balances) return 0;
 
   const assetBalance = get(balances, asset);
@@ -177,7 +177,7 @@ export const calculateMaxAmount = (
 };
 
 export const isEnoughBalanceForTransactionFee = (
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   transaction: {
     txFeeInWei: ?Value,
     gasToken?: ?GasToken,
@@ -219,7 +219,7 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: AssetsBalances, rates: Rates): number => {
+export const balanceInEth = (balances: WalletAssetsBalances, rates: Rates): number => {
   const balanceValues: WalletAssetBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
@@ -236,7 +236,7 @@ export const balanceInEth = (balances: AssetsBalances, rates: Rates): number => 
   }, 0);
 };
 
-export const getTotalBalanceInFiat = (balances: AssetsBalances, rates: Rates, currency: string): number => {
+export const getTotalBalanceInFiat = (balances: WalletAssetsBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
@@ -373,7 +373,7 @@ export const getFormattedBalanceInFiat = (
 
 const getAssetOptionBalance = (
   symbol: string,
-  balances: ?AssetsBalances,
+  balances: ?WalletAssetsBalances,
   rates: ?Rates,
   fiatCurrency: ?string,
 ): ?AssetOptionBalance => {
@@ -393,7 +393,7 @@ const getAssetOptionBalance = (
 
 export const getAssetOption = (
   asset: Asset,
-  balances: ?AssetsBalances,
+  balances: ?WalletAssetsBalances,
   rates: ?Rates,
   baseFiatCurrency: ?string,
 ): AssetOption => {
@@ -415,7 +415,7 @@ export const getAssetOption = (
 
 export const mapAssetDataToAssetOption = (
   assetData: AssetData,
-  balances?: ?AssetsBalances,
+  balances?: ?WalletAssetsBalances,
   rates?: ?Rates,
   fiatCurrency?: ?string,
 ): AssetOption => {

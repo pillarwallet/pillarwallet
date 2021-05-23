@@ -46,7 +46,7 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -54,7 +54,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   userUnclaimedRgt: number,
   calculateRariClaimTransactionEstimate: (amount: number) => void,
   resetEstimateTransaction: () => void,

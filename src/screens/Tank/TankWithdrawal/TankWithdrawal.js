@@ -50,7 +50,7 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WithdrawalFee } from 'models/PaymentNetwork';
 import type { Assets, Rates } from 'models/Asset';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // constants
 import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
@@ -103,7 +103,7 @@ const FormWrapper = styled.View`
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   availableStake: number,
   session: Object,
   estimateWithdrawFromVirtualAccount: Function,

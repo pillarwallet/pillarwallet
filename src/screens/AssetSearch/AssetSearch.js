@@ -57,14 +57,14 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 
 import type { Asset, Assets } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   assetsSearchState: ?string,
   assetsSearchResults: Asset[],
   supportedAssets: Asset[],
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   assets: Assets,
   addAsset: (asset: Asset) => void,
   hideAsset: (asset: Asset) => void,

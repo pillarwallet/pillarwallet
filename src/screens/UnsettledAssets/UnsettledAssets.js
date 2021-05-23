@@ -51,14 +51,14 @@ import { accountAssetsSelector } from 'selectors/assets';
 // types
 import type { Assets } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   baseFiatCurrency: string,
   assets: Assets,
   rates: Object,
-  paymentNetworkBalances: AssetsBalances,
+  paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object,
 }

@@ -67,14 +67,14 @@ import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT 
 import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
   fetchAvailableCollectiblesToTransfer: () => void,
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
-  availableBalances: AssetsBalances,
+  availableBalances: WalletAssetsBalances,
   availableCollectibles: Collectibles,
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,

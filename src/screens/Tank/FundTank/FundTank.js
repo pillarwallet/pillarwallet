@@ -51,7 +51,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
 import type { Assets, Rates } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
@@ -103,7 +103,7 @@ const FormWrapper = styled.View`
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   session: Object,
   estimateTopUpVirtualAccount: () => void,
   topUpFee: TopUpFee,

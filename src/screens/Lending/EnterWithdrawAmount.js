@@ -51,7 +51,7 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -60,7 +60,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   calculateLendingWithdrawTransactionEstimate: (amount: string, asset: DepositedAsset) => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
 };
@@ -136,7 +136,7 @@ const EnterWithdrawAmount = ({
     { amount: depositAmount, asset: depositedAsset },
   );
 
-  const depositedAssetsBalances: AssetsBalances = depositedAssets.reduce(
+  const depositedAssetsBalances: WalletAssetsBalances = depositedAssets.reduce(
     (balancesObj, { currentBalance: balance, symbol }) => ({ ...balancesObj, [symbol]: { symbol, balance } }),
     {},
   );

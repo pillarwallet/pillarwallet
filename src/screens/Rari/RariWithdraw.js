@@ -58,7 +58,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, AssetOption, Assets } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   assets: Assets,
@@ -67,7 +67,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   setEstimatingTransaction: (boolean) => void,
   calculateRariWithdrawTransactionEstimate: Object => void,
   activeAccountAddress: string,

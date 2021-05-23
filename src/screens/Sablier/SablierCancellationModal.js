@@ -51,7 +51,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type StateProps = {|
@@ -59,7 +59,7 @@ type StateProps = {|
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
 |};
 
 type OwnProps = {|

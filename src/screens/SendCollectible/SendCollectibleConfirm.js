@@ -64,13 +64,13 @@ import type {
   TransactionToEstimate,
 } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   keyBasedWalletAddress: string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   isOnline: boolean,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,

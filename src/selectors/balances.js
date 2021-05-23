@@ -38,7 +38,7 @@ import type {
   ChainTotalBalancesPerAccount,
   CategoryTotalBalancesPerChain,
   TotalBalancesPerChain,
-  AssetsBalances,
+  WalletAssetsBalances,
   CategoryBalancesPerChain,
 } from 'models/Balances';
 
@@ -62,7 +62,7 @@ export const accountAssetsBalancesSelector = createSelector(
 
 export const accountEthereumWalletAssetsBalancesSelector = createSelector(
   accountAssetsBalancesSelector,
-  (accountBalances): AssetsBalances => accountBalances?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {},
+  (accountBalances): WalletAssetsBalances => accountBalances?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {},
 );
 
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
@@ -92,7 +92,7 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
     // currently not supported by Etherspot
     if (isEtherspotAccount(activeAccount)) return BigNumber(0);
 
-    const balances: AssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
     return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
   },
 );

@@ -50,14 +50,14 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { AssetToDeposit } from 'models/Asset';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   assetsToDeposit: AssetToDeposit[],
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
 };
 

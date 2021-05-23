@@ -38,24 +38,19 @@ export type ChainTotalBalancesPerAccount = {
 };
 
 export type CategoryAssetsBalances = {|
-  wallet?: AssetsBalances,
+  wallet?: WalletAssetsBalances,
   deposits?: DepositAssetBalance[],
   investments?: InvestmentAssetBalance[],
   liquidityPools?: LiquidityPoolAssetBalance[],
-  rewards?: AssetsBalances,
-|};
-
-export type WalletAssetBalance = {|
-  balance: string,
-  symbol: string,
+  rewards?: WalletAssetsBalances,
 |};
 
 export type LiquidityPoolAssetBalance = {|
   key: string,
   service: string,
   title: string,
-  iconUrl: string,
   value: BigNumber,
+  iconUrl: ?string,
   share?: BigNumber,
   change?: BigNumber,
 |};
@@ -73,20 +68,25 @@ export type DepositAssetBalance = {|
   key: string,
   service: string,
   title: string,
-  iconUrl: ?string,
   value: BigNumber,
+  iconUrl: ?string,
   change?: BigNumber,
   currentApy?: BigNumber,
 |};
 
-export type AssetBalance = WalletAssetBalance
-  | LiquidityPoolAssetBalance
-  | InvestmentAssetBalance
-  | DepositAssetBalance;
+export type WalletAssetBalance = {|
+  balance: string,
+  symbol: string,
+|};
 
-export type AssetsBalances = {
-  [symbol: string]: AssetBalance,
+export type WalletAssetsBalances = {
+  [symbol: string]: WalletAssetBalance,
 };
+
+export type AssetsBalances = WalletAssetsBalances
+  | LiquidityPoolAssetBalance[]
+  | InvestmentAssetBalance[]
+  | DepositAssetBalance[];
 
 export type AssetBalancesPerAccount = {
   [accountId: string]: AssetsBalances,

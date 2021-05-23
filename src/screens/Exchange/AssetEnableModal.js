@@ -49,7 +49,7 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // local
 import type { EnableData } from './ExchangeOffers';
@@ -59,7 +59,7 @@ type StateProps = {|
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
 |};
 
 type OwnProps = {|

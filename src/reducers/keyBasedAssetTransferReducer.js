@@ -29,12 +29,12 @@ import {
 } from 'constants/keyBasedAssetTransferConstants';
 import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 export type KeyBasedAssetTransferReducerState = {|
   data: KeyBasedAssetTransfer[],
-  availableBalances: AssetsBalances,
+  availableBalances: WalletAssetsBalances,
   availableCollectibles: Collectibles,
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,

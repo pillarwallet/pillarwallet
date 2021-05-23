@@ -20,14 +20,16 @@
 import { mapValues } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 
+// utils
+import { sum } from 'utils/bigNumber';
+
 // types
 import type {
   CategoryBalancesPerChain,
   CategoryTotalBalancesPerChain,
   TotalBalancesPerChain,
 } from 'models/Balances';
-import { sum } from 'utils/bigNumber';
-import { AssetsBalancesPerChain } from 'models/Balances';
+import type { AssetsBalancesPerChain } from 'models/Balances';
 
 export const getChainTotalBalancesForCategory = (
   accountTotalBalances: ?CategoryTotalBalancesPerChain,
