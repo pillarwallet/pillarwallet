@@ -55,7 +55,7 @@ import {
 export const accountAssetsBalancesSelector = createSelector(
   assetsBalancesSelector,
   activeAccountIdSelector,
-  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain | {} => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },

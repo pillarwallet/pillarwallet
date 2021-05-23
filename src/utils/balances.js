@@ -36,7 +36,7 @@ export const getChainTotalBalancesForCategory = (
   category: string,
 ): TotalBalancesPerChain => mapValues(
   accountTotalBalances ?? {},
-  (categoryBalances, chain) => accountTotalBalances?.[chain]?.[category] || BigNumber(0),
+  (categoryBalances) => categoryBalances?.[category] || BigNumber(0),
 );
 
 export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber => {
@@ -60,5 +60,5 @@ export const getChainAssetsBalancesForCategory = (
   category: string,
 ): AssetsBalancesPerChain => mapValues(
   accountAssetsBalances ?? {},
-  (categoryBalances, chain) => accountAssetsBalances?.[chain]?.[category],
+  (categoryBalances) => categoryBalances?.[category],
 );
