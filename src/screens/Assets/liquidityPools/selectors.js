@@ -33,7 +33,7 @@ import type {
   LiquidityPoolAssetBalance,
   TotalBalancesPerChain,
 } from 'models/Balances';
-import { getChainBalancesForCategory } from 'utils/balances';
+import { getChainAssetsBalancesForCategory } from 'utils/balances';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export function useLiquidityPoolsBalance(): FiatBalance {
@@ -47,5 +47,5 @@ export function useLiquidityPoolsChainBalances(): TotalBalancesPerChain {
 
 export function useLiquidityPoolAssets(): ChainRecord<LiquidityPoolAssetBalance[]> {
   const assetsBalances = useRootSelector(accountAssetsBalancesSelector);
-  return getChainBalancesForCategory(assetsBalances, ASSET_CATEGORY.LIQUIDITY_POOLS);
+  return getChainAssetsBalancesForCategory(assetsBalances, ASSET_CATEGORY.LIQUIDITY_POOLS);
 }

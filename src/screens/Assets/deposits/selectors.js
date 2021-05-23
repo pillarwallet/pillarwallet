@@ -33,7 +33,7 @@ import type {
   DepositAssetBalance,
   TotalBalancesPerChain,
 } from 'models/Balances';
-import { getChainBalancesForCategory } from 'utils/balances';
+import { getChainAssetsBalancesForCategory } from 'utils/balances';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export function useDepositsBalance(): FiatBalance {
@@ -45,8 +45,7 @@ export function useDepositsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(depositsTotalBalanceByChainsSelector);
 }
 
-
 export function useDepositsAssets(): ChainRecord<DepositAssetBalance[]> {
   const assetsBalances = useRootSelector(accountAssetsBalancesSelector);
-  return getChainBalancesForCategory(assetsBalances, ASSET_CATEGORY.DEPOSITS);
+  return getChainAssetsBalancesForCategory(assetsBalances, ASSET_CATEGORY.DEPOSITS);
 }

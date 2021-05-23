@@ -55,7 +55,7 @@ export const getTotalCategoryBalance = (
   }));
 };
 
-export const getChainBalancesForCategory = (
+export const getChainAssetsBalancesForCategory = (
   accountAssetsBalances: ?CategoryBalancesPerChain,
   category: string,
 ): AssetsBalancesPerChain => mapValues(
