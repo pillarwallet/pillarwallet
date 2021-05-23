@@ -37,7 +37,6 @@ type ZapperAsset = {
   tokenAddress: string,
   label?: string,
   img?: string,
-  noImage?: boolean,
   reserve?: number,
   balance: number,
   balanceUSD: number,

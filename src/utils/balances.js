@@ -29,7 +29,6 @@ import type {
   CategoryTotalBalancesPerChain,
   TotalBalancesPerChain,
 } from 'models/Balances';
-import type { AssetsBalancesPerChain } from 'models/Balances';
 
 export const getChainTotalBalancesForCategory = (
   accountTotalBalances: ?CategoryTotalBalancesPerChain,
@@ -55,10 +54,11 @@ export const getTotalCategoryBalance = (
   }));
 };
 
+// TODO: add return AssetsBalancesPerChain later and fix Flow
 export const getChainAssetsBalancesForCategory = (
   accountAssetsBalances: ?CategoryBalancesPerChain,
   category: string,
-): AssetsBalancesPerChain => mapValues(
+) => mapValues(
   accountAssetsBalances ?? {},
   (categoryBalances) => categoryBalances?.[category],
 );

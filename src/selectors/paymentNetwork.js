@@ -58,7 +58,9 @@ const ppnTrxTags = [
   PAYMENT_NETWORK_TX_SETTLEMENT,
 ];
 
-export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => WalletAssetsBalances) = createSelector(
+export const paymentNetworkAccountBalancesSelector: ((
+  state: RootReducerState,
+) => WalletAssetsBalances) = createSelector(
   paymentNetworkBalancesSelector,
   activeAccountIdSelector,
   (balances, activeAccountId) => {
@@ -92,7 +94,9 @@ export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Tran
   },
 );
 
-export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => WalletAssetsBalances) = createSelector(
+export const paymentNetworkNonZeroBalancesSelector: ((
+  state: RootReducerState,
+) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
   accountHistorySelector,
   supportedAssetsSelector,

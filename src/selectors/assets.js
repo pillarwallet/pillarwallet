@@ -150,7 +150,13 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: WalletAssetsBalances, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
+  (
+    activeAccountId: string,
+    balances: WalletAssetsBalances,
+    rates: Rates,
+    baseFiatCurrency: ?string,
+    assets: Assets,
+  ) => {
     if (!activeAccountId || !balances || !assets) return {};
 
     return Object.keys(assets).reduce((assetsWithBalance, symbol) => {

@@ -40,8 +40,8 @@ import type {
   TotalBalancesPerChain,
   WalletAssetsBalances,
   CategoryBalancesPerChain,
+  AssetBalancesPerAccount,
 } from 'models/Balances';
-import type { AssetBalancesPerAccount } from 'models/Balances';
 
 // selectors
 import {

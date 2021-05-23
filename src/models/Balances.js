@@ -45,33 +45,27 @@ export type CategoryAssetsBalances = {|
   rewards?: WalletAssetsBalances,
 |};
 
-export type LiquidityPoolAssetBalance = {|
+export type ServiceAssetBalance = {|
   key: string,
   service: string,
   title: string,
   value: BigNumber,
   iconUrl: ?string,
-  share?: BigNumber,
   change?: BigNumber,
+|};
+
+export type LiquidityPoolAssetBalance = {|
+  ...ServiceAssetBalance,
+  share: ?BigNumber,
 |};
 
 export type InvestmentAssetBalance = {|
-  key: string,
-  service: string,
-  title: string,
-  iconUrl: ?string,
-  value: BigNumber,
-  change?: BigNumber,
+  ...ServiceAssetBalance,
 |};
 
 export type DepositAssetBalance = {|
-  key: string,
-  service: string,
-  title: string,
-  value: BigNumber,
-  iconUrl: ?string,
-  change?: BigNumber,
-  currentApy?: BigNumber,
+  ...ServiceAssetBalance,
+  currentApy: ?BigNumber,
 |};
 
 export type WalletAssetBalance = {|

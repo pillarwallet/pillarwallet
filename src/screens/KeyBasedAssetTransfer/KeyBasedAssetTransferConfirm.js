@@ -166,7 +166,11 @@ const KeyBasedAssetTransferConfirm = () => {
 
 export default KeyBasedAssetTransferConfirm;
 
-const getRemainingBalance = (balances: WalletAssetsBalances, assetTransfers: KeyBasedAssetTransfer[], token: string) => {
+const getRemainingBalance = (
+  balances: WalletAssetsBalances,
+  assetTransfers: KeyBasedAssetTransfer[],
+  token: string,
+) => {
   const balance = getBalanceBN(balances, token);
   const transfer = assetTransfers.find(({ assetData }) => assetData?.token === ETH);
 
