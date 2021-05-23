@@ -39,7 +39,7 @@ import { ETH, supportedFiatCurrencies, USD } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConstants';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
 import { useGasTokenSelector } from 'selectors/archanova';
 
@@ -49,7 +49,7 @@ import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transacti
 import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Contact } from 'models/Contact';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -61,7 +61,7 @@ type Props = {
   contacts: Contact[],
   estimateTransaction: (transaction: TransactionToEstimate) => void,
   useGasToken: boolean,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   resetEstimateTransaction: () => void,
   rariFundBalance: {[RariPool]: number},
   rariTotalSupply: {[RariPool]: number},
@@ -285,7 +285,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   contacts: contactsSelector,
   useGasToken: useGasTokenSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

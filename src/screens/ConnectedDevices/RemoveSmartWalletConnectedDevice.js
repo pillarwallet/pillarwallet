@@ -51,7 +51,7 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import archanovaService from 'services/archanova';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
@@ -59,13 +59,13 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAssetsBalances: () => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   isOnline: boolean,
@@ -246,7 +246,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   useGasToken: useGasTokenSelector,
 });
 

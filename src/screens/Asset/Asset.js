@@ -68,7 +68,7 @@ import assetsConfig from 'configs/assetsConfig';
 
 // selectors
 import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -78,12 +78,12 @@ import type { Assets, Asset } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
@@ -91,7 +91,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   activeAccount: ?Account,
-  paymentNetworkBalances: AssetsBalances,
+  paymentNetworkBalances: WalletAssetsBalances,
   history: Object[],
   availableStake: number,
   getExchangeSupportedAssets: () => void,
@@ -408,7 +408,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,

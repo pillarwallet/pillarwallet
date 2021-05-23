@@ -43,7 +43,7 @@ import Spinner from 'components/Spinner';
 import { getBalance } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { FETCHING, ETH, PLR } from 'constants/assetsConstants';
 
@@ -57,14 +57,14 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 
 import type { Asset, Assets } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   assetsSearchState: ?string,
   assetsSearchResults: Asset[],
   supportedAssets: Asset[],
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   assets: Assets,
   addAsset: (asset: Asset) => void,
   hideAsset: (asset: Asset) => void,
@@ -388,7 +388,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
 });
 

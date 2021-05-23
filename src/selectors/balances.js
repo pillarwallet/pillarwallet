@@ -28,7 +28,7 @@ import { getTotalBalanceInFiat } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 import { isEtherspotAccount } from 'utils/accounts';
-import { getChainBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
+import { getChainTotalBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -38,26 +38,32 @@ import type {
   ChainTotalBalancesPerAccount,
   CategoryTotalBalancesPerChain,
   TotalBalancesPerChain,
-  AssetsBalances,
+  WalletAssetsBalances,
+  CategoryBalancesPerChain,
+  AssetBalancesPerAccount,
 } from 'models/Balances';
 
 // selectors
 import {
-  balancesSelector,
+  assetsBalancesSelector,
   fiatCurrencySelector,
   ratesSelector,
   activeAccountIdSelector,
   activeAccountSelector,
 } from './selectors';
 
-
-export const accountEthereumWalletBalancesSelector = createSelector(
-  balancesSelector,
+export const accountAssetsBalancesSelector = createSelector(
+  assetsBalancesSelector,
   activeAccountIdSelector,
-  (balances, activeAccountId): AssetsBalances => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain | {} => {
     if (!activeAccountId) return {};
-    return balances?.[activeAccountId]?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {};
+    return balances?.[activeAccountId] ?? {};
   },
+);
+
+export const accountEthereumWalletAssetsBalancesSelector = createSelector(
+  accountAssetsBalancesSelector,
+  (accountBalances): WalletAssetsBalances => accountBalances?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {},
 );
 
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
@@ -87,7 +93,7 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
     // currently not supported by Etherspot
     if (isEtherspotAccount(activeAccount)) return BigNumber(0);
 
-    const balances: AssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
     return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
   },
 );
@@ -113,28 +119,28 @@ export const depositsTotalBalanceByChainsSelector: (RootReducerState) => TotalBa
   activeAccountTotalBalancesSelector,
   (
     accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
 );
 
 export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
   activeAccountTotalBalancesSelector,
   (
     accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
 );
 
 export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
   activeAccountTotalBalancesSelector,
   (
     accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
 );
 
 export const rewardsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
   activeAccountTotalBalancesSelector,
   (
     accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.REWARDS),
+  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.REWARDS),
 );
 
 export const depositsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(

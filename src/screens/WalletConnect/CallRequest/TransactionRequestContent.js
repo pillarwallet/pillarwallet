@@ -37,7 +37,7 @@ import { CHAIN } from 'constants/chainConstants';
 // Selectors
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Hooks
@@ -132,7 +132,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
   const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
 
-  const balances = useRootSelector(accountEthereumWalletBalancesSelector);
+  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
   const { amount, symbol, decimals } = useTransactionPayload(request);
   const hasNotEnoughtGas = !isEnoughBalanceForTransactionFee(balances, {
     amount,

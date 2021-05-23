@@ -18,16 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
+// Constants
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { depositsTotalBalanceSelector, depositsTotalBalanceByChainsSelector } from 'selectors/balances';
+import {
+  accountAssetsBalancesSelector,
+  depositsTotalBalanceByChainsSelector,
+  depositsTotalBalanceSelector,
+} from 'selectors/balances';
+
+// Utils
+import { getChainAssetsBalancesForCategory } from 'utils/balances';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { TotalBalancesPerChain } from 'models/Balances';
+import type { DepositAssetBalance, TotalBalancesPerChain } from 'models/Balances';
 
 export function useDepositsBalance(): FiatBalance {
   const value = useRootSelector(depositsTotalBalanceSelector);
@@ -38,21 +46,9 @@ export function useDepositsChainBalances(): TotalBalancesPerChain {
   return useRootSelector(depositsTotalBalanceByChainsSelector);
 }
 
-export type DepositItem = {|
-  key: string,
-  service: string,
-  title: string,
-  iconUrl: ?string,
-  value: BigNumber,
-  change?: BigNumber,
-  currentApy?: BigNumber,
-|};
-
-
-export function useDepositsAssets(): ChainRecord<DepositItem[]> {
-  // TODO: replace once available from Etherspot SDK
-  const deposits = [];
-
-  return { ethereum: deposits };
+export function useDepositsAssets(): ChainRecord<DepositAssetBalance[]> {
+  return getChainAssetsBalancesForCategory(
+    useRootSelector(accountAssetsBalancesSelector),
+    ASSET_CATEGORY.DEPOSITS,
+  );
 }
-

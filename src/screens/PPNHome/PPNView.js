@@ -71,7 +71,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Rates } from 'models/Asset';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
@@ -90,7 +90,7 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 
 type Props = {
@@ -108,7 +108,7 @@ type Props = {
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
 };
 
 type State = {
@@ -479,7 +479,7 @@ const structuredSelector = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

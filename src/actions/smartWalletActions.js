@@ -98,7 +98,7 @@ import {
   activeAccountIdSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
 import type {
@@ -952,7 +952,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
-    const balances = accountEthereumWalletBalancesSelector(getState());
+    const balances = accountEthereumWalletAssetsBalancesSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);

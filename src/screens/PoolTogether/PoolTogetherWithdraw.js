@@ -51,7 +51,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
@@ -64,7 +64,7 @@ import { getWithdrawTicketTransaction } from 'services/poolTogether';
 
 // types
 import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 const ContentWrapper = styled.View`
@@ -92,7 +92,7 @@ type Props = {
   session: Object,
   smartWallet: Object,
   accounts: Accounts,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
@@ -313,7 +313,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
 });
 

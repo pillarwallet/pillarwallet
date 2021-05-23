@@ -20,16 +20,22 @@
 import { mapValues } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 
-// types
-import type { CategoryTotalBalancesPerChain, TotalBalancesPerChain } from 'models/Balances';
+// utils
 import { sum } from 'utils/bigNumber';
 
-export const getChainBalancesForCategory = (
-  accountTotals: ?CategoryTotalBalancesPerChain,
+// types
+import type {
+  CategoryBalancesPerChain,
+  CategoryTotalBalancesPerChain,
+  TotalBalancesPerChain,
+} from 'models/Balances';
+
+export const getChainTotalBalancesForCategory = (
+  accountTotalBalances: ?CategoryTotalBalancesPerChain,
   category: string,
 ): TotalBalancesPerChain => mapValues(
-  accountTotals ?? {},
-  (categoryBalances, chain) => accountTotals?.[chain]?.[category] || BigNumber(0),
+  accountTotalBalances ?? {},
+  (categoryBalances) => categoryBalances?.[category] || BigNumber(0),
 );
 
 export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber => {
@@ -38,12 +44,21 @@ export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber
 };
 
 export const getTotalCategoryBalance = (
-  accountTotals: ?CategoryTotalBalancesPerChain,
+  accountTotalBalances: ?CategoryTotalBalancesPerChain,
   category: string,
 ): BigNumber => {
-  const balancesOnChains = (Object.values(accountTotals || {}): any);
+  const balancesOnChains = (Object.values(accountTotalBalances || {}): any);
 
   return sum(balancesOnChains.map((chainTotals) => {
     return chainTotals?.[category] || BigNumber(0);
   }));
 };
+
+// TODO: add return AssetsBalancesPerChain later and fix Flow
+export const getChainAssetsBalancesForCategory = (
+  accountAssetsBalances: ?CategoryBalancesPerChain,
+  category: string,
+) => mapValues(
+  accountAssetsBalances ?? {},
+  (categoryBalances) => categoryBalances?.[category],
+);

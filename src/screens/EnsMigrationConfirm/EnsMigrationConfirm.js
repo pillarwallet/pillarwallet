@@ -51,7 +51,7 @@ import { buildEnsMigrationRawTransactions } from 'utils/archanova';
 
 // selectors
 import { accountsSelector, useRootSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useBiometricsSelector } from 'selectors/appSettings';
 
 // types
@@ -75,7 +75,7 @@ const EnsMigrationConfirm = () => {
   const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('migrateENSContent.details');
   const accounts = useRootSelector(accountsSelector);
-  const balances = useRootSelector(accountEthereumWalletBalancesSelector);
+  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
   const useBiometrics = useRootSelector(useBiometricsSelector);
   const {
     feeInfo,

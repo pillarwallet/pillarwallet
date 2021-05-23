@@ -46,6 +46,7 @@ import { formatPercentValue } from 'utils/format';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
+import type { DepositAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -53,7 +54,7 @@ import ChainListHeader from '../components/ChainListHeader';
 import ChainListFooter from '../components/ChainListFooter';
 import ServiceListHeader from '../components/ServiceListHeader';
 import DepositListItem from './DepositListItem';
-import { type DepositItem, useDepositsBalance, useDepositsChainBalances, useDepositsAssets } from './selectors';
+import { useDepositsBalance, useDepositsChainBalances, useDepositsAssets } from './selectors';
 
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
@@ -88,7 +89,7 @@ function DepositsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<DepositItem>) => {
+  const renderItem = (headerListItem: HeaderListItem<DepositAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
@@ -119,7 +120,7 @@ function DepositsTab() {
 export default DepositsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<DepositItem>>,
+  ...SectionBase<HeaderListItem<DepositAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

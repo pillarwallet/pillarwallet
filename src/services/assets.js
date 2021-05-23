@@ -49,6 +49,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Asset, Assets } from 'models/Asset';
+import type { WalletAssetBalance } from 'models/Balances';
 
 
 type Address = string;
@@ -88,12 +89,6 @@ type ETHTransferOptions = {
   signOnly?: ?boolean,
   data?: string,
 };
-
-type FetchBalancesResponse = Array<{
-  balance: string,
-  symbol: string,
-}>;
-
 
 export const encodeContractMethod = (
   contractAbi: string | Object[],
@@ -314,7 +309,7 @@ export function fetchERC20Balance(
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
+export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<WalletAssetBalance[]> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
@@ -333,7 +328,7 @@ export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string
 export async function fetchAddressBalancesFromProxyContract(
   assets: Asset[],
   accountAddress: string,
-): Promise<FetchBalancesResponse> {
+): Promise<WalletAssetBalance[]> {
   if (!['homestead', 'kovan'].includes(getEnv().NETWORK_PROVIDER)) return [];
 
   const tokens = assets.map(({ address }) => address);

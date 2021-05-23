@@ -40,6 +40,9 @@ type ZapperAsset = {
   reserve?: number,
   balance: number,
   balanceUSD: number,
+  protocol: string,
+  share?: number,
+  supply?: number,
 };
 
 type ZapperMeta = {

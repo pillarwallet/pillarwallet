@@ -37,7 +37,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 // types
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
@@ -53,7 +53,7 @@ export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken 
 // note: returns negative if total balance is lower
 export const calculateETHTransactionAmountAfterFee = (
   ethAmount: BigNumber,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   totalFeeInEth: BigNumber,
 ): BigNumber => {
   const ethBalance = new BigNumber(getBalance(balances, ETH));

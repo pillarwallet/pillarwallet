@@ -58,11 +58,11 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 //  selectors
 import { activeAccountAddressSelector, activeAccountExchangeAllowancesSelector } from 'selectors';
-import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 // utils
@@ -111,7 +111,7 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   setDismissTransaction: () => void,
-  balances: AssetsBalances,
+  balances: WalletAssetsBalances,
   session: SessionData,
   activeAccountAddress: string,
   useGasToken: boolean,
@@ -500,7 +500,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
   useGasToken: useGasTokenSelector,
   exchangeAllowances: activeAccountExchangeAllowancesSelector,

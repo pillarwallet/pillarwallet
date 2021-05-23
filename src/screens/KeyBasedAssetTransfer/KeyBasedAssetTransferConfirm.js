@@ -50,7 +50,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { Rates, KeyBasedAssetTransfer } from 'models/Asset';
-import type { AssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
@@ -166,7 +166,11 @@ const KeyBasedAssetTransferConfirm = () => {
 
 export default KeyBasedAssetTransferConfirm;
 
-const getRemainingBalance = (balances: AssetsBalances, assetTransfers: KeyBasedAssetTransfer[], token: string) => {
+const getRemainingBalance = (
+  balances: WalletAssetsBalances,
+  assetTransfers: KeyBasedAssetTransfer[],
+  token: string,
+) => {
   const balance = getBalanceBN(balances, token);
   const transfer = assetTransfers.find(({ assetData }) => assetData?.token === ETH);
 
