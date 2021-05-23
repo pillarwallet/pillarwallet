@@ -110,7 +110,7 @@ import {
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
-import { fetchAllAccountsTotalsAction } from './assetsActions';
+import { fetchAllAccountsTotalsAction, fetchAllChainBalancesAction } from './assetsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -269,7 +269,6 @@ export const loginAction = (
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
-
         // create etherspot account if does not exist, this also applies as migration from old key based wallets
         const etherspotAccount = findFirstEtherspotAccount(accounts);
         if (!etherspotAccount) {
@@ -281,6 +280,7 @@ export const loginAction = (
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
         dispatch(fetchAllAccountsTotalsAction());
+        dispatch(fetchAllChainBalancesAction());
       }
 
       dispatch(checkForWalletBackupToastAction());

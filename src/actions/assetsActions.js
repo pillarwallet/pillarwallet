@@ -390,6 +390,7 @@ export const fetchAllAccountsTotalsAction = () => {
     if (getState().totals.isFetching) return;
 
     dispatch({ type: SET_FETCHING_TOTALS, payload: true });
+    dispatch(fetchAllChainBalancesAction());
 
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
@@ -792,5 +793,21 @@ export const checkForMissedAssetsAction = () => {
       dispatch(fetchAssetsBalancesAction());
       dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
     }
+  };
+};
+
+export const fetchAllChainBalancesAction = () => {
+  return async () => {
+    const networkBalances = {};
+
+    const resolvedBalances = await Promise.all(
+      etherspotService.supportedNetworks.map((network) => etherspotService.instances[network].getAccountBalances()),
+    );
+
+    resolvedBalances.forEach((balance, idx) => {
+      networkBalances[etherspotService.supportedNetworks[idx]] = balance;
+    });
+
+    return networkBalances;
   };
 };

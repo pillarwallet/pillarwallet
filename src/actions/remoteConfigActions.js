@@ -20,14 +20,23 @@
 
 import DeviceInfo from 'react-native-device-info';
 
+// services
 import { firebaseRemoteConfig, firebaseAnalytics } from 'services/firebase';
+
+// utils
 import { reportLog } from 'utils/common';
 import { log } from 'utils/logger';
 import { isTest } from 'utils/environment';
 import { getAccountEnsName, getActiveAccount } from 'utils/accounts';
+
+// config
 import { getEnv } from 'configs/envConfig';
 
+// reducers
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+
+// consts
+import { IS_APP_VERSION_V3 } from '../constants/appConstants';
 
 export const loadRemoteConfigAction = () => {
   return () => {
@@ -58,6 +67,7 @@ export const setUserPropertiesAction = () => (
     network: getEnv().NETWORK_PROVIDER,
     buildNumber: DeviceInfo.getBuildNumber(),
     appVersion: DeviceInfo.getVersion(),
+    [IS_APP_VERSION_V3]: true,
   };
 
   const accountEnsName = getAccountEnsName(getActiveAccount(accounts));

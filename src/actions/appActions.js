@@ -30,6 +30,7 @@ import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
 
 // constants
+import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
@@ -271,10 +272,12 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
       extra: {
         walletId,
         ethAddress: address,
+        [IS_APP_VERSION_V3]: true,
       },
     });
     // eslint-disable-next-line i18next/no-literal-string
     Instabug.setUserAttribute('address', address);
+    Instabug.setUserAttribute(IS_APP_VERSION_V3, true);
     if (username) {
       Instabug.setUserAttribute('ENS', username);
     }
