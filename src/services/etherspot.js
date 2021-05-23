@@ -61,16 +61,25 @@ class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
   instances: Array<EtherspotSdk> = [];
-  supportedNetworks: Array<NetworkNames> = [
-    (isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan),
-    NetworkNames.Bsc,
-    NetworkNames.Matic,
-    NetworkNames.Xdai,
-  ];
+  supportedNetworks: Array<NetworkNames> = [];
 
   async init(privateKey: string): Promise<void> {
     const etherspotComputeContractPromises = [];
     const isMainnet = isProdEnv();
+
+    /**
+     * Note: This property is assigned here because
+     * it requires the value of `isProdEnv` which,
+     * if assigned at class method level - crashes
+     * the app due to non-instantiation of the getEnv
+     * function which is called from envConfig.js
+     */
+    this.supportedNetworks = [
+      (isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan),
+      NetworkNames.Bsc,
+      NetworkNames.Matic,
+      NetworkNames.Xdai,
+    ];
 
     const primaryNetworkName = isMainnet
       ? NetworkNames.Mainnet
