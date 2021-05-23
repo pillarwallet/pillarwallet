@@ -89,14 +89,10 @@ export type AssetsBalances = WalletAssetsBalances
   | DepositAssetBalance[];
 
 export type AssetBalancesPerAccount = {
-  [accountId: string]: AssetsBalances,
+  [accountId: string]: CategoryBalancesPerChain,
 };
 
 export type CategoryBalancesPerChain = ChainRecord<CategoryAssetsBalances>;
-
-export type ChainBalancesPerAccount = {
-  [accountId: string]: CategoryBalancesPerChain,
-};
 
 export type TotalBalancesPerChain = ChainRecord<BigNumber>;
 

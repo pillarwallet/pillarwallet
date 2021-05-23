@@ -27,7 +27,7 @@ import {
 } from 'constants/assetsBalancesConstants';
 
 // types
-import type { WalletAssetsBalances, ChainBalancesPerAccount } from 'models/Balances';
+import type { WalletAssetsBalances, AssetBalancesPerAccount } from 'models/Balances';
 
 
 export type SetFetchingAssetsBalancesAction = {|
@@ -37,7 +37,7 @@ export type SetFetchingAssetsBalancesAction = {|
 
 export type SetAssetsBalancesAction = {|
   type: typeof SET_ASSETS_BALANCES,
-  payload: ChainBalancesPerAccount,
+  payload: AssetBalancesPerAccount,
 |};
 
 export type SeAccountAssetsBalancesAction = {|
@@ -61,7 +61,7 @@ export type AssetsBalancesReducerAction = SetFetchingAssetsBalancesAction
   | ResetAccountBalancesAction;
 
 export type AssetsBalancesReducerState = {
-  data: ChainBalancesPerAccount,
+  data: AssetBalancesPerAccount,
   isFetching: boolean,
 };
 

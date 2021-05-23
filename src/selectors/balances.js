@@ -41,6 +41,7 @@ import type {
   WalletAssetsBalances,
   CategoryBalancesPerChain,
 } from 'models/Balances';
+import type { AssetBalancesPerAccount } from 'models/Balances';
 
 // selectors
 import {
@@ -54,7 +55,7 @@ import {
 export const accountAssetsBalancesSelector = createSelector(
   assetsBalancesSelector,
   activeAccountIdSelector,
-  (balances, activeAccountId): CategoryBalancesPerChain => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },
