@@ -200,13 +200,23 @@ export const getZapperProtocolBalanceOnNetwork = async (
     );
 
     if (!result?.data) {
-      reportErrorLog('getZapperProtocolBalanceOnNetwork failed: unexpected response', { response: result });
+      reportErrorLog('getZapperProtocolBalanceOnNetwork failed: unexpected response', {
+        addresses,
+        protocol,
+        network,
+        response: result,
+      });
       return null;
     }
 
     return result.data;
   } catch (error) {
-    reportErrorLog('getZapperProtocolBalanceOnNetwork: API request error', { error });
+    reportErrorLog('getZapperProtocolBalanceOnNetwork: API request error', {
+      addresses,
+      protocol,
+      network,
+      error,
+    });
     return null;
   }
 };
@@ -229,7 +239,7 @@ export const getZapperAvailableChainProtocols = async (
     );
 
     if (!result?.data) {
-      reportErrorLog('getZapperAvailableData failed: unexpected response', { response: result });
+      reportErrorLog('getZapperAvailableData failed: unexpected response', { response: result, addresses });
       return null;
     }
 
@@ -243,7 +253,7 @@ export const getZapperAvailableChainProtocols = async (
 
     return mappedData.filter(({ chain }) => [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM].includes(chain));
   } catch (error) {
-    reportErrorLog('getZapperAvailableData: API request error', { error });
+    reportErrorLog('getZapperAvailableData: API request error', { error, addresses });
     return null;
   }
 };

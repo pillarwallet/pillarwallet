@@ -73,6 +73,7 @@ import {
 
 // utils
 import {
+  addressesEqual,
   getAssetsAsList,
   getRate,
   transformBalancesToObject,
@@ -94,6 +95,7 @@ import {
   isEtherspotAccount,
   getAccountType,
   findAccountByAddress,
+  isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { sum } from 'utils/bigNumber';
@@ -470,9 +472,14 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
+        // we don't need to pull multi chain balances for Archanova account, only Ethereum
+        const requestForAddresses = chain !== CHAIN.ETHEREUM
+          ? accountsAddresses.filter((address) => !isArchanovaAccountAddress(address, accounts))
+          : accountsAddresses;
+
         const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
           const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
-            accountsAddresses,
+            requestForAddresses,
             zapperProtocolId,
             zapperNetworkId,
           );

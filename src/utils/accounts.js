@@ -22,11 +22,15 @@ import isEmpty from 'lodash.isempty';
 import omit from 'lodash.omit';
 import t from 'translations/translate';
 
+// constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// types
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { Assets } from 'models/Asset';
 import type { TranslatedString } from 'models/Translations';
 
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+// local
 import { addressesEqual } from './assets';
 
 
@@ -183,3 +187,8 @@ export const getInitials = (fullName: string = '') => {
 };
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
+
+export const isArchanovaAccountAddress = (
+  address: string,
+  accounts: Accounts,
+): boolean => getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
