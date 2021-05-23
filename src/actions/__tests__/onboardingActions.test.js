@@ -108,7 +108,7 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
     return [];
   }),
   fetchBalances: jest.fn(({ address, assets }) => {
-    // mock positive assetsBalances for mocked archanova account
+    // mock positive balances for mocked archanova account
     if (address === mockArchanovaAccount.extra.address) {
       return assets.map(({ symbol }) => ({ symbol, balance: 1 }));
     }

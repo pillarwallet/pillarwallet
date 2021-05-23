@@ -102,7 +102,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const payForGasWithToken = !!gasToken;
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
-    // add unsettled amounts to assetsBalances
+    // add unsettled amounts to balances
     const combinedBalances = Object.keys(balances)
       .reduce((memo, assetName) => {
         const balanceData: AssetBalance = balances[assetName];

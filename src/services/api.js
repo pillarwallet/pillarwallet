@@ -564,11 +564,11 @@ class SDKWrapper {
   }
 
   async fetchBalances({ address, assets }: BalancePayload) {
-    // try to get all the assetsBalances in one call (mainnet and kovan only)
+    // try to get all the balances in one call (mainnet and kovan only)
     const balances = await fetchAddressBalancesFromProxyContract(assets, address);
     if (!isEmpty(balances)) return balances;
 
-    // if we fail to get the assetsBalances in one call, let's use the fallback method
+    // if we fail to get the balances in one call, let's use the fallback method
     return fetchAssetBalancesOnChain(assets, address);
   }
 

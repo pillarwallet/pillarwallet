@@ -198,7 +198,7 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
     balance = contract.interface.decodeFunctionResult('balance', result);
     supplyRatePerBlock = await contract.supplyRatePerBlock();
   } catch (e) {
-    reportErrorLog('Error getting PoolTogether assetsBalances', {
+    reportErrorLog('Error getting PoolTogether balances', {
       address,
       contractAddress,
       message: e.message,

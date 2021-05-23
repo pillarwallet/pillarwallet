@@ -438,7 +438,7 @@ export const fetchVirtualAccountBalanceAction = () => {
       payload: stakedAmountFormatted,
     });
 
-    // process pending assetsBalances
+    // process pending balances
     const accountPaymentNetworkBalances = pendingBalances.reduce((memo, tokenBalance) => {
       const symbol = get(tokenBalance, 'token.symbol', ETH);
       const { decimals: assetDecimals = 18 } = accountAssets[symbol] || {};
@@ -1378,7 +1378,7 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     if (isEmpty(archanovaAccounts)) return;
 
 
-    // check assetsBalances of existing archanova accounts
+    // check balances of existing archanova accounts
     const supportedAssets = await api.fetchSupportedAssets(walletId);
     const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(async ({ address }) => {
       const ownedAssets = await getAllOwnedAssets(api, address, supportedAssets);

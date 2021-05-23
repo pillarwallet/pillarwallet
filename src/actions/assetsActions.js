@@ -396,7 +396,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
 
     const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
 
-    // TODO: add multi chain assetsBalances fetching from Etherspot
+    // TODO: add multi chain balances fetching from Etherspot
 
     const newBalances = isEtherspotAccount(account)
       ? await etherspotService.getBalances(walletAddress, getAssetsAsList(accountAssets))
@@ -470,7 +470,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
-        // we don't need to pull multi chain assetsBalances for Archanova account, only Ethereum
+        // we don't need to pull multi chain balances for Archanova account, only Ethereum
         const requestForAddresses = chain !== CHAIN.ETHEREUM
           ? accountsAddresses.filter((address) => !isArchanovaAccountAddress(address, accounts))
           : accountsAddresses;
@@ -488,7 +488,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
           return { category: balanceCategory, balances: protocolBalancesByAccounts };
         }));
 
-        // filter ones that are null (no protocol>category map found or no assetsBalances)
+        // filter ones that are null (no protocol>category map found or no balances)
         const availableChainProtocolsBalances = chainProtocolsBalances.filter(Boolean);
 
         availableChainProtocolsBalances.forEach(({
@@ -499,7 +499,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             const account = findAccountByAddress(accountAddress, accounts);
             const accountProtocolBalances = protocolBalancesByAccounts[accountAddress]?.products;
 
-            // no need to add anything no matching account found or empty assetsBalances
+            // no need to add anything no matching account found or empty balances
             if (!account || isEmpty(accountProtocolBalances)) return;
 
             const accountCategoryBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
@@ -587,7 +587,7 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
       .all(promises)
       .catch((error) => reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }));
 
-    // migration for key based assetsBalances to remove existing
+    // migration for key based blances to remove existing
     const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
     if (keyBasedAccount) {
       dispatch(resetAccountAssetsBalancesAction(getAccountId(keyBasedAccount)));

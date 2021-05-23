@@ -127,7 +127,7 @@ class EtherspotService {
       };
     }
 
-    // gets assetsBalances by provided token (asset) address and ETH balance regardless
+    // gets balances by provided token (asset) address and ETH balance regardless
     const accountBalances = await this.sdk
       .getAccountBalances(balancesRequestPayload)
       .catch((error) => {
@@ -136,7 +136,7 @@ class EtherspotService {
       });
 
     if (!accountBalances?.items) {
-      return []; // logged above, no assetsBalances
+      return []; // logged above, no balances
     }
 
     // map to our AssetBalance type

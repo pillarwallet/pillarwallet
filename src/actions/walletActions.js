@@ -127,7 +127,7 @@ export const encryptAndSaveWalletAction = (
 
 /**
  * wallet backup toast not needed if wallet is imported, backed up,
- * no key based account or key based account assetsBalances are 0
+ * no key based account or key based account balances are 0
  */
 export const checkForWalletBackupToastAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {

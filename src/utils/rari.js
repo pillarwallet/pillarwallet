@@ -320,7 +320,7 @@ const getRariFundBalancesAndPrices = (rariPool: RariPool) => {
 
   return rariContract.callStatic.getRawFundBalancesAndPrices()
     .catch((error) => {
-      reportErrorLog("Rari service failed: Can't get fund assetsBalances and prices", { error });
+      reportErrorLog("Rari service failed: Can't get fund balances and prices", { error });
       return null;
     });
 };
