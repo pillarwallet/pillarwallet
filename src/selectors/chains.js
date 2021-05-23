@@ -20,6 +20,9 @@
 
 import { createSelector } from 'reselect';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Selectors
 import { activeAccountSelector, useRootSelector } from 'selectors';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -29,7 +32,7 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Types
-import { type Chain, type ChainRecord, CHAIN } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 
 export const supportedChainsSelector = (root: RootReducerState): Chain[] => {

@@ -27,6 +27,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -43,8 +45,8 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { CategoryTotalBalancesPerChain, CategoryTotalBalances, CollectibleCountPerChain } from 'models/Balances';
-import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
-import { type Chain, CHAIN } from 'models/Chain';
+import type { AssetCategory } from 'models/AssetCategory';
+import type { Chain } from 'models/Chain';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';

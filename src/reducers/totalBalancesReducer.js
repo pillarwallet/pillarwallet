@@ -22,7 +22,7 @@
 import {
   SET_FETCHING_TOTAL_BALANCES,
   SET_TOTAL_BALANCES,
-  SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+  SET_ACCOUNT_TOTAL_BALANCE,
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 
@@ -49,7 +49,7 @@ export type SetTotalBalancesAction = {|
 |};
 
 export type SetAccountTotalChainCategoryBalanceAction = {|
-  type: typeof SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE,
+  type: typeof SET_ACCOUNT_TOTAL_BALANCE,
   payload: {
     accountId: string,
     chain: string,
@@ -99,7 +99,7 @@ export default function totalBalancesReducer(
     case RESET_ACCOUNT_TOTAL_BALANCES:
       return { ...state, data: { ...state.data, [action.payload]: {} } };
 
-    case SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE:
+    case SET_ACCOUNT_TOTAL_BALANCE:
       const {
         accountId,
         chain,

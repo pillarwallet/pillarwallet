@@ -59,13 +59,13 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAssetsBalances: () => void,
-  balances: Balances,
+  balances: AssetsBalances,
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   isOnline: boolean,

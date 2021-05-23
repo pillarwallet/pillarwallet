@@ -27,11 +27,14 @@ import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import TabView from 'components/modern/TabView';
 
+// Constants
+import { ASSET_CATEGORY as CATEGORY } from 'constants/assetsConstants';
+
 // Utils
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
-import { type AssetCategory, ASSET_CATEGORY as CATEGORY } from 'models/AssetCategory';
+import type { AssetCategory } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './wallet/WalletTab';

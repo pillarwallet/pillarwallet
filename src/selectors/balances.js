@@ -20,9 +20,8 @@
 import { createSelector } from 'reselect';
 
 // constants
-import { PLR } from 'constants/assetsConstants';
-import { ASSET_CATEGORY } from 'models/AssetCategory';
-import { CHAIN } from 'models/Chain';
+import { ASSET_CATEGORY, PLR } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getTotalBalanceInFiat } from 'utils/assets';
@@ -39,7 +38,7 @@ import type {
   ChainTotalBalancesPerAccount,
   CategoryTotalBalancesPerChain,
   TotalBalancesPerChain,
-  Balances,
+  AssetsBalances,
 } from 'models/Balances';
 
 // selectors
@@ -55,7 +54,7 @@ import {
 export const accountEthereumWalletBalancesSelector = createSelector(
   balancesSelector,
   activeAccountIdSelector,
-  (balances, activeAccountId): Balances => {
+  (balances, activeAccountId): AssetsBalances => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId]?.[CHAIN.ETHEREUM] ?.[ASSET_CATEGORY.WALLET] || {};
   },
@@ -88,7 +87,7 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
     // currently not supported by Etherspot
     if (isEtherspotAccount(activeAccount)) return BigNumber(0);
 
-    const balances: Balances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    const balances: AssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
     return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
   },
 );

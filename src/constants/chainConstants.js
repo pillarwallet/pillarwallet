@@ -18,8 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_FETCHING_TOTAL_BALANCES = 'SET_FETCHING_TOTAL_BALANCES';
-export const SET_TOTAL_BALANCES = 'SET_TOTAL_BALANCES';
-export const SET_ACCOUNT_TOTAL_BALANCE = 'SET_ACCOUNT_TOTAL_BALANCE';
-export const RESET_ACCOUNT_TOTAL_BALANCES = 'RESET_ACCOUNT_TOTAL_BALANCES';
+export const CHAIN = {
+  ETHEREUM: ('ethereum': 'ethereum'),
+  POLYGON: ('polygon': 'polygon'),
+  BINANCE: ('binance': 'binance'),
+  XDAI: ('xdai': 'xdai'),
+};
 
+// Based on: https://chainid.network/
+export const CHAIN_ID = {
+  ETHEREUM_MAINNET: 1,
+  ETHEREUM_KOVAN: 42,
+  POLYGON: 137,
+  BINANCE: 56,
+  XDAI: 100,
+};

@@ -58,13 +58,13 @@ import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaTransactionEstimate } from 'services/archanova';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 type StateProps = {|
   deploymentEstimate: ?{ raw: Object, formatted: ArchanovaTransactionEstimate },
   gettingDeploymentEstimate: boolean,
   isOnline: boolean,
-  balances: Balances,
+  balances: AssetsBalances,
 |};
 
 type OwnProps = {|

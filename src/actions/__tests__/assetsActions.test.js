@@ -33,15 +33,15 @@ import {
   FETCHING,
   ETH,
   PLR,
+  ASSET_CATEGORY,
 } from 'constants/assetsConstants';
 import {
-  SET_ACCOUNT_CHAIN_CATEGORY_BALANCES,
-  SET_FETCHING_BALANCES,
-} from 'constants/balancesConstants';
+  SET_ACCOUNT_ASSETS_BALANCES,
+  SET_FETCHING_ASSETS_BALANCES,
+} from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { CHAIN } from 'models/Chain';
-import { ASSET_CATEGORY } from 'models/AssetCategory';
-import { SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE } from 'constants/totalsBalancesConstants';
+import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // services
 import PillarSdk from 'services/api';
@@ -134,7 +134,7 @@ const initialState = {
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
-  balances: { data: {} },
+  assetsBalances: { data: {} },
   featureFlags: { data: INITIAL_REMOTE_CONFIG },
   rates: { data: {} },
   appSettings: { data: {} },
@@ -175,10 +175,10 @@ describe('Assets actions', () => {
       balance: BigNumber(0),
     };
     const expectedActions = [
-      { type: SET_FETCHING_BALANCES, payload: true },
-      { type: SET_ACCOUNT_CHAIN_CATEGORY_BALANCES, payload: updateBalancesPayload },
-      { type: SET_TOTAL_ACCOUNT_CHAIN_CATEGORY_BALANCE, payload: updateTotalBalancePayload },
-      { type: SET_FETCHING_BALANCES, payload: false },
+      { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
+      { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
+      { type: SET_ACCOUNT_TOTAL_BALANCE, payload: updateTotalBalancePayload },
+      { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
     return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {

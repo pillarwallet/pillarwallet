@@ -41,7 +41,7 @@ import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
-import type { AssetBalance } from 'models/Asset';
+import type { AssetOptionBalance } from 'models/Asset';
 import type { Theme, ThemeColors } from 'models/Theme';
 
 
@@ -80,7 +80,7 @@ type Props = {
   customAddonAlignLeft?: boolean,
   customImage?: React.Node,
   imageDiameter?: number,
-  balance?: AssetBalance,
+  balance?: AssetOptionBalance,
   innerWrapperHorizontalAlign?: string,
   itemImageSource?: string,
   wrapperOpacity?: number,
@@ -116,7 +116,7 @@ type AddonProps = {
   secondaryButton?: boolean,
   actionLabel?: ?string,
   actionLabelColor?: ?string,
-  balance?: AssetBalance,
+  balance?: AssetOptionBalance,
   colors: ThemeColors,
   statusIconColor?: string,
 };

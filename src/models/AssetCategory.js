@@ -18,13 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const ASSET_CATEGORY = {
-  WALLET: ('wallet': 'wallet'),
-  DEPOSITS: ('deposits': 'deposits'),
-  INVESTMENTS: ('investments': 'investments'),
-  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
-  COLLECTIBLES: ('collectibles': 'collectibles'),
-  REWARDS: ('rewards': 'rewards'),
-};
+// constants
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export type AssetCategory = $Values<typeof ASSET_CATEGORY>;

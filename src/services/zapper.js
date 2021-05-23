@@ -25,8 +25,8 @@ import httpRequest from 'utils/httpRequest';
 import { reportErrorLog } from 'utils/common';
 
 // constants
-import { CHAIN } from 'models/Chain';
 import { PROTOCOLS } from 'constants/zapperServiceConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // for more detailed schema – https://api.zapper.fi/api/static/index.html
 type ZapperAsset = {

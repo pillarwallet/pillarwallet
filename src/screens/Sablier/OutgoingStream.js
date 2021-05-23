@@ -63,7 +63,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Stream } from 'models/Sablier';
 import type { Accounts } from 'models/Account';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // local
 import SablierCancellationModal from './SablierCancellationModal';
@@ -73,7 +73,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
-  balances: Balances,
+  balances: AssetsBalances,
   history: Object[],
   sablierEvents: Object[],
   accounts: Accounts,

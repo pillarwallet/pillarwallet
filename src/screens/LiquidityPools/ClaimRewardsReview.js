@@ -48,14 +48,14 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
-  balances: Balances,
+  balances: AssetsBalances,
   resetEstimateTransaction: () => void,
   calculateClaimRewardsTransactionEstimate: (pool: UnipoolLiquidityPool, amountToClaim: number) => void,
   isEstimating: boolean,

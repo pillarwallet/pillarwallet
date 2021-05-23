@@ -78,12 +78,12 @@ import type { Assets, Asset } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
-  balances: Balances,
+  balances: AssetsBalances,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
@@ -91,7 +91,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   activeAccount: ?Account,
-  paymentNetworkBalances: Balances,
+  paymentNetworkBalances: AssetsBalances,
   history: Object[],
   availableStake: number,
   getExchangeSupportedAssets: () => void,

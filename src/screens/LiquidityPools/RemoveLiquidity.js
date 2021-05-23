@@ -56,7 +56,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -73,7 +73,7 @@ type Props = {
     tokensAssets: Asset[],
     obtainedAssetsValues: string[],
   ) => void,
-  balances: Balances,
+  balances: AssetsBalances,
   liquidityPoolsState: LiquidityPoolsReducerState,
 };
 
@@ -180,7 +180,7 @@ const RemoveLiquidityScreen = ({
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
     const tokenSymbol = tokensData[tokenIndex]?.symbol;
-    const customBalances: Balances = tokenSymbol
+    const customBalances: AssetsBalances = tokenSymbol
       ? {
         [tokenSymbol]: {
           balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),

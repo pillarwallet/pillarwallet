@@ -37,7 +37,7 @@ import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 // types
 import type { Asset, Assets, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
 import {
@@ -150,7 +150,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsSelector,
-  (activeAccountId: string, balances: Balances, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
+  (activeAccountId: string, balances: AssetsBalances, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
     if (!activeAccountId || !balances || !assets) return {};
 
     return Object.keys(assets).reduce((assetsWithBalance, symbol) => {

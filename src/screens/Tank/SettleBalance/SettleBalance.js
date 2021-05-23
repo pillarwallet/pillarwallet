@@ -48,7 +48,7 @@ import type { Assets, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // utils
 import {
@@ -66,7 +66,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
-  paymentNetworkBalances: Balances,
+  paymentNetworkBalances: AssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   assets: Assets,

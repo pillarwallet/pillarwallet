@@ -66,7 +66,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -75,7 +75,7 @@ type Props = {
   assets: Assets,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
-  balances: Balances,
+  balances: AssetsBalances,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,

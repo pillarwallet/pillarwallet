@@ -49,7 +49,7 @@ import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transacti
 import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Contact } from 'models/Contact';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -61,7 +61,7 @@ type Props = {
   contacts: Contact[],
   estimateTransaction: (transaction: TransactionToEstimate) => void,
   useGasToken: boolean,
-  balances: Balances,
+  balances: AssetsBalances,
   resetEstimateTransaction: () => void,
   rariFundBalance: {[RariPool]: number},
   rariTotalSupply: {[RariPool]: number},

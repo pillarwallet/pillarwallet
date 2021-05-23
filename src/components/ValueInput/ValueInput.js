@@ -61,14 +61,14 @@ import type { Rates, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {|
   disabled?: boolean,
   customAssets?: AssetOption[],
-  customBalances?: Balances,
+  customBalances?: AssetsBalances,
   selectorOptionsTitle?: string,
   assetData: AssetOption | Collectible,
   // Called when selected asset is AssetOption
@@ -90,7 +90,7 @@ export type ExternalProps = {|
 
 type InnerProps = {|
   assets: AssetOption[],
-  balances: Balances,
+  balances: AssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   collectibles: Collectible[],

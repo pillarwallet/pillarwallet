@@ -57,7 +57,7 @@ export type GetTokenHistoryParams = {
 };
 
 export type GetAddressInfoParams = {
-  token?: string,           // show balances for specified token address only
+  token?: string,           // show assetsBalances for specified token address only
   showETHTotals?: 0 | 1,    // request total incoming and outcoming ETH values
 };
 
@@ -104,7 +104,7 @@ export type GetAddressInfoResponse = {
     timestamp: number,        // contract creation timestamp
   },
   tokenInfo: TokenInfo,    // exists if specified address is a token contract address (same format as token info),
-  tokens: Array<{          // exists if specified address has any token balances
+  tokens: Array<{          // exists if specified address has any token assetsBalances
     tokenInfo: TokenInfo,  // token data (same format as token info),
     balance: number,       // token balance (as is, not reduced to a floating point value),
     totalIn: number,       // total incoming token value

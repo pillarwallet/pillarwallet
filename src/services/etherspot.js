@@ -56,7 +56,7 @@ import { ETH } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
-import type { Balance } from 'models/Balances';
+import type { AssetBalance } from 'models/Balances';
 
 
 class EtherspotService {
@@ -110,7 +110,7 @@ class EtherspotService {
       });
   }
 
-  async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
+  async getBalances(accountAddress: string, assets: Asset[]): Promise<AssetBalance[]> {
     const assetAddresses = assets
       // 0x0...0 is default ETH address in our assets, but it's not a token
       .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
@@ -127,7 +127,7 @@ class EtherspotService {
       };
     }
 
-    // gets balances by provided token (asset) address and ETH balance regardless
+    // gets assetsBalances by provided token (asset) address and ETH balance regardless
     const accountBalances = await this.sdk
       .getAccountBalances(balancesRequestPayload)
       .catch((error) => {
@@ -136,10 +136,10 @@ class EtherspotService {
       });
 
     if (!accountBalances?.items) {
-      return []; // logged above, no balances
+      return []; // logged above, no assetsBalances
     }
 
-    // map to our Balance type
+    // map to our AssetBalance type
     return accountBalances.items.reduce((balances, { balance, token }) => {
       // if SDK returned token value is null then it's ETH
       const asset = assets.find(({

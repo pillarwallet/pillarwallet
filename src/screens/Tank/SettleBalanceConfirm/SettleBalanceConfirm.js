@@ -42,7 +42,7 @@ import { useGasTokenSelector } from 'selectors/archanova';
 
 // types
 import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
-import type { Balance, Balances } from 'models/Balances';
+import type { AssetBalance, AssetsBalances } from 'models/Balances';
 
 // utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -55,7 +55,7 @@ type Props = {
   session: Object,
   settleTransactions: Function,
   settleTxFee: SettleTxFee,
-  balances: Balances,
+  balances: AssetsBalances,
   estimateSettleBalance: Function,
   useGasToken: boolean,
 };
@@ -102,10 +102,10 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const payForGasWithToken = !!gasToken;
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
-    // add unsettled amounts to balances
+    // add unsettled amounts to assetsBalances
     const combinedBalances = Object.keys(balances)
       .reduce((memo, assetName) => {
-        const balanceData: Balance = balances[assetName];
+        const balanceData: AssetBalance = balances[assetName];
         let balance = new BigNumber(balanceData.balance);
         this.txToSettle.forEach(asset => { balance = balance.plus(asset.value); });
         return {

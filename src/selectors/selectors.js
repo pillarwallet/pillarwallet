@@ -50,7 +50,7 @@ export const useRates = () => useRootSelector(ratesSelector);
 export const fiatCurrencySelector = (root: RootReducerState) =>
   root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
 
-export const balancesSelector = ({ balances }: RootReducerState) => balances.data;
+export const balancesSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 export const collectiblesSelector = ({ collectibles }: RootReducerState) => collectibles.data;
 export const collectiblesHistorySelector =
   ({ collectibles }: RootReducerState) => collectibles.transactionHistory;

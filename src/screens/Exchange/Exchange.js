@@ -72,7 +72,7 @@ import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
@@ -97,7 +97,7 @@ type Props = {
   user: Object,
   assets: Assets,
   searchOffers: (string, string, string) => void,
-  balances: Balances,
+  balances: AssetsBalances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
   exchangeAllowances: Allowance[],

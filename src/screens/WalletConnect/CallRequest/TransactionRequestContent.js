@@ -32,6 +32,7 @@ import Text from 'components/modern/Text';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
@@ -52,10 +53,7 @@ import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 
 // Types
-import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
-
-// types
 import type { TransactionPayload } from 'models/Transaction';
 
 type Props = {|

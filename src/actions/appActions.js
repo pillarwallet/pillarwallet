@@ -33,7 +33,7 @@ import { migrate } from 'services/dataMigration';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
-import { SET_BALANCES } from 'constants/balancesConstants';
+import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -121,8 +121,8 @@ export const initAppAndRedirectAction = () => {
       const { fiatExchangeSupportedAssets = [] } = get(storageData, 'fiatExchangeSupportedAssets', {});
       dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
-      const allBalances = storageData?.balances?.data ?? {};
-      dispatch({ type: SET_BALANCES, payload: allBalances });
+      const assetsBalances = storageData?.assetsBalances?.data ?? {};
+      dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
 
       const { rates = {} } = get(storageData, 'rates', {});
       dispatch({ type: UPDATE_RATES, payload: rates });

@@ -64,7 +64,7 @@ import { getWithdrawTicketTransaction } from 'services/poolTogether';
 
 // types
 import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 const ContentWrapper = styled.View`
@@ -92,7 +92,7 @@ type Props = {
   session: Object,
   smartWallet: Object,
   accounts: Accounts,
-  balances: Balances,
+  balances: AssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,

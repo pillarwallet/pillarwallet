@@ -59,7 +59,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -69,7 +69,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
-  balances: Balances,
+  balances: AssetsBalances,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
 };
@@ -149,7 +149,7 @@ const Withdraw = (props: Props) => {
 
   const assetOptions = [assetData];
 
-  const streamedAssetBalance: Balances = {
+  const streamedAssetBalance: AssetsBalances = {
     [assetData.symbol]: { symbol: assetData.symbol, balance: formatUnits(maxWithdraw, assetData.decimals) },
   };
 

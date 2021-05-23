@@ -47,7 +47,7 @@ import type { Accounts } from 'models/Account';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -87,7 +87,7 @@ type Props = {
   session: Object,
   smartWallet: Object,
   accounts: Accounts,
-  balances: Balances,
+  balances: AssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
   isFetchingPoolStats: boolean,

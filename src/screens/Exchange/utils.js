@@ -39,7 +39,7 @@ import type { Accounts } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 /* eslint-disable i18next/no-literal-string */
 
@@ -112,7 +112,7 @@ const getBtcOption = (): AssetOption => {
 const getExchangeFromAssetOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
-  balances: Balances,
+  balances: AssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
 ): AssetOption[] => {
@@ -127,7 +127,7 @@ const getExchangeFromAssetOptions = (
 
 const getExchangeToAssetOptions = (
   exchangeSupportedAssets: Asset[],
-  balances: Balances,
+  balances: AssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
 ): AssetOption[] => {
@@ -140,7 +140,7 @@ const getExchangeToAssetOptions = (
 export const provideOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
-  balances: Balances,
+  balances: AssetsBalances,
   rates: Rates,
   baseFiatCurrency: ?string,
   isWbtcCafeActive?: boolean,

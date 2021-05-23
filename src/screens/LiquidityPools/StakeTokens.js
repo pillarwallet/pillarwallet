@@ -52,7 +52,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -139,7 +139,7 @@ const StakeTokensScreen = ({
     { amount: assetValue, poolToken: assetData, pool },
   );
 
-  const poolTokenCustomBalances: Balances =
+  const poolTokenCustomBalances: AssetsBalances =
     assetData != null
       ? {
         [assetData.symbol]: {

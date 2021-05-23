@@ -45,7 +45,7 @@ import collectiblesReducer from './collectiblesReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
-import balancesReducer from './balancesReducer';
+import assetsBalancesReducer from './assetsBalancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
@@ -92,7 +92,7 @@ import type { CollectiblesReducerState, CollectiblesAction } from './collectible
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
-import type { BalancesReducerState, BalancesReducerAction } from './balancesReducer';
+import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './assetsBalancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
@@ -139,7 +139,7 @@ export type RootReducerState = {|
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
-  balances: BalancesReducerState,
+  assetsBalances: AssetsBalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
@@ -169,7 +169,7 @@ type RootReducerAction =
   | AccountsAction
   | AppSettingsReducerAction
   | BadgesReducerAction
-  | BalancesReducerAction
+  | AssetsBalancesReducerAction
   | BlockchainNetworkAction
   | CollectiblesAction
   | ExchangeReducerAction
@@ -233,7 +233,7 @@ const appReducer = combineReducers({
   badges: badgesReducer,
   exchange: exchangeReducer,
   accounts: accountsReducer,
-  balances: balancesReducer,
+  assetsBalances: assetsBalancesReducer,
   paymentNetwork: paymentNetworkReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,

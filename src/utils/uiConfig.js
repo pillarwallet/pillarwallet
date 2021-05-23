@@ -21,15 +21,22 @@
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import { ETH, MATIC, BNB, XDAI } from 'constants/assetsConstants';
+import {
+  ETH,
+  MATIC,
+  BNB,
+  XDAI,
+  ASSET_CATEGORY,
+} from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { IconName } from 'components/modern/Icon';
-import { type AssetCategory, ASSET_CATEGORY } from 'models/AssetCategory';
-import { type Chain, CHAIN } from 'models/Chain';
+import type { AssetCategory } from 'models/AssetCategory';
+import type { Chain } from 'models/Chain';
 
 
 type ChainConfig = {|

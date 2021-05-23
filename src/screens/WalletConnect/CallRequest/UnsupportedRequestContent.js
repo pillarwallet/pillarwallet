@@ -33,8 +33,10 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Types
-import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
 
 type Props = {|

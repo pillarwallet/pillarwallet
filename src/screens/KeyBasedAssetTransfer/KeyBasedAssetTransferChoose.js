@@ -67,14 +67,14 @@ import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT 
 import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
   fetchAvailableCollectiblesToTransfer: () => void,
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
-  availableBalances: Balances,
+  availableBalances: AssetsBalances,
   availableCollectibles: Collectibles,
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
@@ -131,7 +131,7 @@ const KeyBasedAssetTransferChoose = ({
 
   const prepareSectionsData = () => {
     const assets = Object.keys(availableBalances)
-      // filter out extremely low balances that are shown as 0 in app anyway
+      // filter out extremely low assetsBalances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
       .map((symbol) => getAssetData(supportedAssets, [], symbol))
       .filter((assetData) => !isEmpty(assetData))

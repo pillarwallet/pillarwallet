@@ -71,7 +71,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Rates } from 'models/Asset';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
@@ -108,7 +108,7 @@ type Props = {
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
-  balances: Balances,
+  balances: AssetsBalances,
 };
 
 type State = {

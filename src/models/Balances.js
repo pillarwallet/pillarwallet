@@ -20,18 +20,8 @@
 
 import { BigNumber } from 'bignumber.js';
 
-// constants
-import { CHAIN } from 'models/Chain';
-
 // types
 import type { ChainRecord } from 'models/Chain';
-
-
-export type Chain = $Values<typeof CHAIN>;
-
-export type CategoryTotalBalancesPerChain = ChainRecord<CategoryTotalBalances>;
-
-export type CategoryBalancesPerChain = ChainRecord<CategoryBalances>;
 
 export type CategoryTotalBalances = {|
   wallet?: BigNumber,
@@ -41,17 +31,34 @@ export type CategoryTotalBalances = {|
   rewards?: BigNumber,
 |};
 
-export type CategoryBalances = {|
-  wallet?: Balances,
-  deposits?: Balances,
-  investments?: Balances,
-  liquidityPools?: Balances,
-  rewards?: Balances,
-|};
+export type CategoryTotalBalancesPerChain = ChainRecord<CategoryTotalBalances>;
 
 export type ChainTotalBalancesPerAccount = {
   [accountId: string]: CategoryTotalBalancesPerChain,
 };
+
+export type CategoryAssetsBalances = {|
+  wallet?: AssetsBalances,
+  deposits?: AssetsBalances,
+  investments?: AssetsBalances,
+  liquidityPools?: AssetsBalances,
+  rewards?: AssetsBalances,
+|};
+
+export type AssetBalance = {
+  balance: string,
+  symbol: string,
+};
+
+export type AssetsBalances = {
+  [symbol: string]: AssetBalance,
+};
+
+export type AssetBalancesPerAccount = {
+  [accountId: string]: AssetsBalances,
+};
+
+export type CategoryBalancesPerChain = ChainRecord<CategoryAssetsBalances>;
 
 export type ChainBalancesPerAccount = {
   [accountId: string]: CategoryBalancesPerChain,
@@ -60,25 +67,3 @@ export type ChainBalancesPerAccount = {
 export type TotalBalancesPerChain = ChainRecord<BigNumber>;
 
 export type CollectibleCountPerChain = ChainRecord<number>;
-
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type MixedBalance = {
-  balance: number | string,
-  symbol: string,
-};
-
-export type MixedBalances = {
-  [symbol: string]: MixedBalance,
-};
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
-};

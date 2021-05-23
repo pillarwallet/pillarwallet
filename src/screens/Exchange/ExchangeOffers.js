@@ -58,7 +58,7 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 //  selectors
 import { activeAccountAddressSelector, activeAccountExchangeAllowancesSelector } from 'selectors';
@@ -111,7 +111,7 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   setDismissTransaction: () => void,
-  balances: Balances,
+  balances: AssetsBalances,
   session: SessionData,
   activeAccountAddress: string,
   useGasToken: boolean,

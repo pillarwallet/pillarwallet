@@ -26,6 +26,9 @@ import Button from 'components/modern/Button';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Utils
 import { chainFromChainId } from 'utils/chains';
 import { useChainsConfig } from 'utils/uiConfig';
@@ -33,7 +36,6 @@ import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 
 // Types
-import { CHAIN } from 'models/Chain';
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
 
 type Props = {|

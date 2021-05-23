@@ -36,17 +36,15 @@ import type {
   AssetData,
   Assets,
   AssetOption,
-  AssetBalance,
+  AssetOptionBalance,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type {
-  Balance,
-  Balances,
-  MixedBalance,
-  MixedBalances,
+  AssetBalance,
+  AssetsBalances,
 } from 'models/Balances';
 
 
@@ -65,7 +63,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
-export const transformBalancesToObject = (balancesArray: Balance[] = []): Balances => {
+export const transformBalancesToObject = (balancesArray: AssetBalance[] = []): AssetsBalances => {
   return balancesArray.reduce((memo, balance) => {
     memo[balance.symbol] = balance;
     return memo;
@@ -82,7 +80,7 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
-export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => {
+export const getBalanceBN = (balances: ?AssetsBalances, asset: ?string): BigNumber => {
   if (!balances || !asset) return BigNumber('0');
   return BigNumber(balances[asset]?.balance ?? '0');
 };
@@ -90,7 +88,7 @@ export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => 
 /**
  * @deprecated: do not use because of rounding issues
  */
-export const getBalance = (balances: ?Balances, asset: string): number => {
+export const getBalance = (balances: ?AssetsBalances, asset: string): number => {
   if (!balances) return 0;
 
   const assetBalance = get(balances, asset);
@@ -179,7 +177,7 @@ export const calculateMaxAmount = (
 };
 
 export const isEnoughBalanceForTransactionFee = (
-  balances: Balances,
+  balances: AssetsBalances,
   transaction: {
     txFeeInWei: ?Value,
     gasToken?: ?GasToken,
@@ -221,8 +219,8 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): number => {
-  const balanceValues: MixedBalance[] = (Object.values(balances): any);
+export const balanceInEth = (balances: AssetsBalances, rates: Rates): number => {
+  const balanceValues: AssetBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;
@@ -238,7 +236,7 @@ export const balanceInEth = (balances: Balances | MixedBalances, rates: Rates): 
   }, 0);
 };
 
-export const getTotalBalanceInFiat = (balances: Balances | MixedBalances, rates: Rates, currency: string): number => {
+export const getTotalBalanceInFiat = (balances: AssetsBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
@@ -373,7 +371,12 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
-const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fiatCurrency: ?string): ?AssetBalance => {
+const getAssetOptionBalance = (
+  symbol: string,
+  balances: ?AssetsBalances,
+  rates: ?Rates,
+  fiatCurrency: ?string,
+): ?AssetOptionBalance => {
   if (!balances) return null;
 
   const balance = getBalance(balances, symbol);
@@ -390,7 +393,7 @@ const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fia
 
 export const getAssetOption = (
   asset: Asset,
-  balances: ?Balances,
+  balances: ?AssetsBalances,
   rates: ?Rates,
   baseFiatCurrency: ?string,
 ): AssetOption => {
@@ -406,13 +409,13 @@ export const getAssetOption = (
     formattedBalanceInFiat,
     icon: iconUrl,
     assetBalance: formattedAssetBalance,
-    balance: getAssetBalance(symbol, balances, rates, baseFiatCurrency),
+    balance: getAssetOptionBalance(symbol, balances, rates, baseFiatCurrency),
   };
 };
 
 export const mapAssetDataToAssetOption = (
   assetData: AssetData,
-  balances?: ?Balances,
+  balances?: ?AssetsBalances,
   rates?: ?Rates,
   fiatCurrency?: ?string,
 ): AssetOption => {
@@ -423,7 +426,7 @@ export const mapAssetDataToAssetOption = (
     name: assetData.name ?? '',
     imageUrl: assetData.icon,
     tokenType: assetData.tokenType ?? TOKENS,
-    balance: getAssetBalance(assetData.token, balances, rates, fiatCurrency),
+    balance: getAssetOptionBalance(assetData.token, balances, rates, fiatCurrency),
   };
 };
 

@@ -20,47 +20,47 @@
 
 // constants
 import {
-  RESET_ACCOUNT_BALANCES,
-  SET_ACCOUNT_CHAIN_CATEGORY_BALANCES,
-  SET_BALANCES,
-  SET_FETCHING_BALANCES,
-} from 'constants/balancesConstants';
+  RESET_ACCOUNT_ASSETS_BALANCES,
+  SET_ACCOUNT_ASSETS_BALANCES,
+  SET_ASSETS_BALANCES,
+  SET_FETCHING_ASSETS_BALANCES,
+} from 'constants/assetsBalancesConstants';
 
 // types
-import type { Balances, ChainBalancesPerAccount } from 'models/Balances';
+import type { AssetsBalances, ChainBalancesPerAccount } from 'models/Balances';
 
 
-export type SetFetchingBalancesAction = {|
-  type: typeof SET_FETCHING_BALANCES,
+export type SetFetchingAssetsBalancesAction = {|
+  type: typeof SET_FETCHING_ASSETS_BALANCES,
   payload: boolean,
 |};
 
-export type SetBalancesAction = {|
-  type: typeof SET_BALANCES,
+export type SetAssetsBalancesAction = {|
+  type: typeof SET_ASSETS_BALANCES,
   payload: ChainBalancesPerAccount,
 |};
 
-export type SetAccountChainCategoryBalanceAction = {|
-  type: typeof SET_ACCOUNT_CHAIN_CATEGORY_BALANCES,
+export type SeAccountAssetsBalancesAction = {|
+  type: typeof SET_ACCOUNT_ASSETS_BALANCES,
   payload: {
     accountId: string,
     chain: string,
     category: string,
-    balances: Balances,
+    balances: AssetsBalances,
   }
 |};
 
 export type ResetAccountBalancesAction = {|
-  type: typeof RESET_ACCOUNT_BALANCES,
+  type: typeof RESET_ACCOUNT_ASSETS_BALANCES,
   payload: string,
 |};
 
-export type BalancesReducerAction = SetFetchingBalancesAction
-  | SetAccountChainCategoryBalanceAction
-  | SetBalancesAction
+export type AssetsBalancesReducerAction = SetFetchingAssetsBalancesAction
+  | SeAccountAssetsBalancesAction
+  | SetAssetsBalancesAction
   | ResetAccountBalancesAction;
 
-export type BalancesReducerState = {
+export type AssetsBalancesReducerState = {
   data: ChainBalancesPerAccount,
   isFetching: boolean,
 };
@@ -70,7 +70,7 @@ export const initialState = {
   isFetching: false,
 };
 
-const setNewCategoryBalances = (balancesState, accountId, chain, category, newBalances) => ({
+const setNewAssetsBalances = (balancesState, accountId, chain, category, newBalances) => ({
   ...balancesState,
   [accountId]: {
     ...(balancesState?.[accountId] ?? {}),
@@ -81,28 +81,28 @@ const setNewCategoryBalances = (balancesState, accountId, chain, category, newBa
   },
 });
 
-export default function balancesReducer(
-  state: BalancesReducerState = initialState,
-  action: BalancesReducerAction,
-): BalancesReducerState {
+export default function assetsBalancesReducer(
+  state: AssetsBalancesReducerState = initialState,
+  action: AssetsBalancesReducerAction,
+): AssetsBalancesReducerState {
   switch (action.type) {
-    case SET_FETCHING_BALANCES:
+    case SET_FETCHING_ASSETS_BALANCES:
       return { ...state, isFetching: action.payload };
 
-    case SET_BALANCES:
+    case SET_ASSETS_BALANCES:
       return { ...state, data: action.payload };
 
-    case RESET_ACCOUNT_BALANCES:
+    case RESET_ACCOUNT_ASSETS_BALANCES:
       return { ...state, data: { ...state.data, [action.payload]: {} } };
 
-    case SET_ACCOUNT_CHAIN_CATEGORY_BALANCES:
+    case SET_ACCOUNT_ASSETS_BALANCES:
       const {
         accountId,
         chain,
         category,
         balances,
       } = action.payload;
-      return { ...state, data: setNewCategoryBalances(state.data, accountId, chain, category, balances) };
+      return { ...state, data: setNewAssetsBalances(state.data, accountId, chain, category, balances) };
 
     default:
       return state;

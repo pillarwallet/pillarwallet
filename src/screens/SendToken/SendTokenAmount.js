@@ -30,7 +30,7 @@ import type { Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Transaction } from 'models/Transaction';
-import type { Balances } from 'models/Balances';
+import type { AssetsBalances } from 'models/Balances';
 
 // selectors
 import { accountEthereumWalletBalancesSelector } from 'selectors/balances';
@@ -40,7 +40,7 @@ import { accountHistorySelector } from 'selectors/history';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  balances: Balances,
+  balances: AssetsBalances,
   session: SessionData,
   accountAssets: Assets,
   accountHistory: Transaction[],
