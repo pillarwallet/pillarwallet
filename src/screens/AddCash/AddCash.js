@@ -48,7 +48,7 @@ type AddCashParam = {
 
 const AddCash = () => {
   const navigation = useNavigation();
-  const [cash, setCash] = React.useState<string>('0');
+  const [value, setValue] = React.useState('0');
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const onSubmitCallback: (values: AddCashParam) => void = navigation.getParam('onSubmit', () => {});
@@ -64,13 +64,13 @@ const AddCash = () => {
           <Text variant="medium">{t('servicesContent.ramp.addCash.subTitle')}</Text>
           <TextInput
             inputProps={{
-              value: `${currencySymbol}${cash}`,
+              value: `${currencySymbol}${value}`,
               autoCapitalize: 'none',
               disabled: false,
               onChangeText: (text) => {
-                const value = text.replace(currencySymbol, '');
-                const updatedValue = value.replace(/^0+/, '');
-                setCash(updatedValue);
+                const amount = text.replace(currencySymbol, '');
+                const updatedAmount = amount.replace(/^0+/, '');
+                setValue(updatedAmount);
               },
               placeholder: '$0',
               keyboardType: 'numeric',
@@ -78,15 +78,15 @@ const AddCash = () => {
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
-            errorMessage={!isValidFiatValue(cash) && t('error.invalid.fiatValue')}
+            errorMessage={!isValidFiatValue(value) && t('error.invalid.fiatValue')}
           />
         </AddCashView>
       </ScrollView>
       <Footer>
         <Button
-          onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: cash })}
+          onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: value })}
           title={t('button.next')}
-          disabled={cash === '0' || !isValidFiatValue(cash)}
+          disabled={value === '0' || !isValidFiatValue(value)}
         />
       </Footer>
     </Container>
