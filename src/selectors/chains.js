@@ -58,8 +58,8 @@ const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): bool
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
   activeAccountSelector,
-  isActiveAccountDeployedOnEthereumSelector,
-  (account: ?Account, isDeployedOnEthereum): ChainRecord<boolean> => {
+  isArchanovaWalletActivatedSelector,
+  (account: ?Account, isArchanovaDeployed): ChainRecord<boolean> => {
     if (isEtherspotAccount(account)) {
       return {
         ethereum: isEtherspotAccountDeployed(account, CHAIN.ETHEREUM),
@@ -69,8 +69,12 @@ export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createS
       };
     }
 
-    return {
-      ethereum: isDeployedOnEthereum,
-    };
+    if (isArchanovaAccount(account)) {
+      return {
+        ethereum: isArchanovaDeployed,
+      };
+    }
+
+    return { ethereum: false };
   },
 );
