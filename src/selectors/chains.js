@@ -56,9 +56,10 @@ export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createS
     if (isEtherspotAccount(account)) {
       return {
         ethereum: isEtherspotAccountDeployed(account, CHAIN.ETHEREUM),
-        polygon: isEtherspotAccountDeployed(account, CHAIN.POLYGON),
         binance: isEtherspotAccountDeployed(account, CHAIN.BINANCE),
-        xdai: isEtherspotAccountDeployed(account, CHAIN.XDAI),
+        // Note: hardcoded due to business requirements
+        polygon: true,
+        xdai: true,
       };
     }
 
