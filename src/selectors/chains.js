@@ -48,13 +48,6 @@ export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
 
 export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);
 
-const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): boolean => {
-  const account = activeAccountSelector(root);
-  if (isEtherspotAccount(account)) return isEtherspotAccountDeployed(account, CHAIN.ETHEREUM);
-  if (isArchanovaAccount(account)) return isArchanovaWalletActivatedSelector(root);
-  return false;
-};
-
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
   activeAccountSelector,
