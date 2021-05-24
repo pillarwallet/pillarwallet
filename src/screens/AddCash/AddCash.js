@@ -28,7 +28,7 @@ import { useNavigation } from 'react-navigation-hooks';
 // utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
-import { getCurrencySymbol, BigNumber } from 'utils/common';
+import { getCurrencySymbol } from 'utils/common';
 
 // compomnents
 import { Container } from 'components/modern/Layout';
@@ -58,7 +58,6 @@ const AddCash = () => {
         centerItems={[{ title: t('servicesContent.ramp.addCash.title') }]}
         leftItems={[{ close: true }]}
         navigation={navigation}
-        dismiss={true}
       />
       <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
         <AddCashView>
