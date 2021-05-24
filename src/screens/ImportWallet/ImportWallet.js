@@ -190,6 +190,7 @@ class ImportWallet extends React.Component<Props, State> {
           getInputRef={(ref) => { this.devPhraseInput = ref; }}
           inputProps={{
             ...inputProps,
+            multiline: true,
             numberOfLines: 2,
           }}
           errorMessage={errorMessage}
