@@ -85,17 +85,13 @@ class EtherspotService {
       ? NetworkNames.Mainnet
       : NetworkNames.Kovan;
 
-    const envName = isMainnet
-      ? EnvNames.MainNets
-      : EnvNames.TestNets;
-
     /**
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
     this.supportedNetworks.forEach((networkName) => {
-      // Instantiate
-      this.instances[networkName] = new EtherspotSdk(privateKey, { env: envName, networkName });
+      const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
+      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
       // Schedule exection of computeContractAccount's
       etherspotComputeContractPromises.push(this.instances[networkName].computeContractAccount({ sync: true }));
