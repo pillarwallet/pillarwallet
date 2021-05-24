@@ -53,7 +53,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { spacing } from 'utils/variables';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isArchanovaAccount } from 'utils/accounts';
-import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
+import { wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -99,11 +99,6 @@ type Service = {|
   action: () => any,
   disabled?: boolean,
 |};
-
-type AddCashParam = {
-  fiatCurrency: string,
-  fiatValue: string,
-};
 
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
@@ -252,12 +247,7 @@ class ServicesScreen extends React.Component<Props> {
           const email = user?.email;
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
-          navigation.navigate(ADD_CASH, {
-            onSubmit: (values: AddCashParam) => {
-              const { fiatCurrency, fiatValue } = values;
-              this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, fiatValue));
-            },
-          });
+          navigation.navigate(ADD_CASH, { address, email });
         },
       });
     }
