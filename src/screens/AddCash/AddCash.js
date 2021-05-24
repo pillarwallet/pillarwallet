@@ -69,7 +69,8 @@ const AddCash = () => {
               disabled: false,
               onChangeText: (text) => {
                 const value = text.replace(currencySymbol, '');
-                setCash(value);
+                const updatedValue = value.replace(/^0+/, '');
+                setCash(updatedValue);
               },
               placeholder: '$0',
               keyboardType: 'numeric',
