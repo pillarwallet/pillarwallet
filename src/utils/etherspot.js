@@ -36,7 +36,6 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { ETH } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
 import { TRANSACTION_STATUS } from 'models/History';
 
 // utils
