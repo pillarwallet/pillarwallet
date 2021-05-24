@@ -123,7 +123,7 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
 }
 
 export function isValidFiatValue(value: string) {
-  const regex = /^\d+\.?\d{0,2}$/;
+  const regex = /^(\d+(\.\d{0,2})?|\.?\d{1,2})$/;
   return regex.test(value);
 }
 

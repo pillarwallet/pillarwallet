@@ -29,6 +29,8 @@ import { useNavigation } from 'react-navigation-hooks';
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol } from 'utils/common';
+import { openInAppBrowser } from 'utils/inAppBrowser';
+import { rampWidgetUrl } from 'utils/fiatToCrypto';
 
 // compomnents
 import { Container } from 'components/modern/Layout';
@@ -37,21 +39,36 @@ import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
+import Toast from 'components/Toast';
 
 // selectors
 import { useFiatCurrency } from 'selectors';
 
-type AddCashParam = {
-  fiatCurrency: string,
-  fiatValue: string,
-};
 
 const AddCash = () => {
   const navigation = useNavigation();
   const [value, setValue] = React.useState('0');
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  const onSubmitCallback: (values: AddCashParam) => void = navigation.getParam('onSubmit', () => {});
+  const address = navigation.getParam('address');
+  const email = navigation.getParam('email');
+
+  const tryOpenCryptoPurchaseUrl = async (url: string | null) => {
+    if (url) {
+      await openInAppBrowser(url).catch(showServiceLaunchError);
+    } else {
+      showServiceLaunchError();
+    }
+  };
+
+  const showServiceLaunchError = () => {
+    Toast.show({
+      message: t('toast.cryptoPurchaseLaunchFailed'),
+      emoji: 'hushed',
+      supportLink: true,
+    });
+  };
+
   return (
     <Container>
       <HeaderBlock
@@ -84,7 +101,7 @@ const AddCash = () => {
       </ScrollView>
       <Footer>
         <Button
-          onPress={() => onSubmitCallback({ fiatCurrency, fiatValue: value })}
+          onPress={() => tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, value))}
           title={t('button.next')}
           disabled={value === '0' || !isValidFiatValue(value)}
         />
