@@ -57,16 +57,11 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   REVERTED: 'Reverted',
 };
 
-export const isEtherspotAccountDeployed = (account: ?Account) => {
-  return isEtherspotAccountDeployedOnChain(account, CHAIN.ETHEREUM);
-};
-
-export const isEtherspotAccountDeployedOnChain = (account: ?Account, chain: Chain) => {
+export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
   if (!account || !isEtherspotAccount(account)) return false;
 
-  // $FlowFixMe: missing typing
-  const etherspotAccount: EtherspotAccount = account.extra[chain];
-  return etherspotAccount.state === AccountStates.Deployed;
+  const etherspotAccount: ?EtherspotAccount = account.extra?.[chain];
+  return etherspotAccount?.state === AccountStates.Deployed;
 };
 
 export const parseEtherspotTransactions = (
