@@ -236,7 +236,7 @@ export const getZapperAvailableChainProtocols = async (
 ): Promise<?ZapperNetworkWithProtocols[]> => {
   try {
     const result = await httpRequest.get(
-      `${ZAPPER_CONFIG.API_URL}/balances/supported`
+      `${ZAPPER_CONFIG.API_URL}/protocols/balances/supported`
       + `?api_key=${ZAPPER_CONFIG.API_KEY}`
       + `&${buildAddressesQuery(addresses)}`,
       requestConfig,
@@ -250,9 +250,10 @@ export const getZapperAvailableChainProtocols = async (
     const { data } = result;
 
     const mappedData = data.map((supported) => {
-      const { network: zapperNetworkId, protocols: zapperProtocolIds } = supported;
+      const { network: zapperNetworkId, protocols } = supported;
       const chain = zapperNetworkIdToChain[zapperNetworkId];
-      return { chain, zapperNetworkId, zapperProtocolIds };
+      const protocolsMapped = protocols.map(({ protocol }) => protocol);
+      return { chain, zapperNetworkId, zapperProtocolIds: protocolsMapped };
     });
 
     return mappedData.filter(({ chain }) => [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM].includes(chain));
