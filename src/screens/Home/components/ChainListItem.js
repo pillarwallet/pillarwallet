@@ -35,9 +35,10 @@ export type Props = {|
   onPress: ?() => mixed,
   value?: ?string,
   isDeployed?: boolean,
+  onPressDeploy: () => mixed,
 |};
 
-function CategoryListItem({ title, onPress, value, isDeployed = true }: Props) {
+function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -46,16 +47,14 @@ function CategoryListItem({ title, onPress, value, isDeployed = true }: Props) {
       <Title>{title}</Title>
 
       {isDeployed && !!value && (
-        <ValueContainer>
-          <Value>{value}</Value>
-        </ValueContainer>
+        <Value>{value}</Value>
       )}
 
       {!isDeployed && (
-        <ValueContainer>
+        <DeployContainer onPress={onPressDeploy}>
           <DeployValue>{t('button.deploy')}</DeployValue>
           <Icon name="question" width={14} height={14} color={colors.labelTertiary} />
-        </ValueContainer>
+        </DeployContainer>
       )}
     </Container>
   );
@@ -75,14 +74,14 @@ const Title = styled(Text)`
   ${fontStyles.medium};
 `;
 
-const ValueContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
 const Value = styled(Text)`
   ${fontStyles.medium};
   font-variant: tabular-nums;
+`;
+
+const DeployContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const DeployValue = styled(Text)`
