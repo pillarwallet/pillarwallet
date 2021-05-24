@@ -77,13 +77,14 @@ class EtherspotService {
      * the app due to non-instantiation of the getEnv
      * function which is called from envConfig.js
      */
-    this.supportedNetworks = isMainnet
-      ? [NetworkNames.Mainnet, NetworkNames.Bsc, NetworkNames.Matic, NetworkNames.Xdai]
-      : [NetworkNames.Kovan];
+    this.supportedNetworks = [
+      isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
+      NetworkNames.Bsc,
+      NetworkNames.Matic,
+      NetworkNames.Xdai,
+    ];
 
-    const primaryNetworkName = isMainnet
-      ? NetworkNames.Mainnet
-      : NetworkNames.Kovan;
+    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
 
     /**
      * Cycle through the supported networks and build an
@@ -124,6 +125,8 @@ class EtherspotService {
       return undefined;
     }
 
+    console.log("NETWROR", network);
+
     const sdk = this.instances[network];
     if (!sdk) {
       reportErrorLog('EtherspotService getSdkForChain failed', { chain, network });
@@ -135,6 +138,7 @@ class EtherspotService {
 
   getAccount(chain: Chain, accountAddress: string): Promise<?EtherspotAccount> {
     const sdk = this.getSdkForChain(chain);
+    console.log("SDK", chain, sdk)
     if (!sdk) return Promise.resolve(null);
 
     return sdk.getAccount({ address: accountAddress }).catch((error) => {
