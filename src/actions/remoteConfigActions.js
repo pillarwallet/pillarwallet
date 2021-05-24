@@ -63,11 +63,12 @@ export const setUserPropertiesAction = () => (
 ) => {
   const { accounts: { data: accounts } } = getState();
 
+  // https://firebase.google.com/docs/remote-config/parameters#condition_rule_types
   let properties = {
     network: getEnv().NETWORK_PROVIDER,
     buildNumber: DeviceInfo.getBuildNumber(),
     appVersion: DeviceInfo.getVersion(),
-    [IS_APP_VERSION_V3]: true,
+    [IS_APP_VERSION_V3]: true.toString(), // <- turns out, user properties must be a string! See link above.
   };
 
   const accountEnsName = getAccountEnsName(getActiveAccount(accounts));

@@ -475,7 +475,16 @@ export const fetchAllAccountsTotalBalancesAction = () => {
       return;
     }
 
-    const usdRate = zapperUsdBasedRates[currency.toUpperCase()] ?? 1;
+    const usdRate = zapperUsdBasedRates[currency.toUpperCase()];
+    if (currency !== USD && !usdRate) {
+      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
+      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no USD rate for app currency', {
+        accountsAddresses,
+        zapperUsdBasedRates,
+        currency,
+      });
+      return;
+    }
 
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
@@ -511,11 +520,13 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             // no need to add anything no matching account found or empty balances
             if (!account || isEmpty(accountProtocolBalances)) return;
 
-            let categoryAssetsBalances = [];
+            let categoryTotalBalance = BigNumber(0);
 
-            const categoryTotalBalance = accountProtocolBalances.reduce((categoryBalance, balances) => {
+            const categoryAssetsBalances = accountProtocolBalances.reduce((combinedBalances, balances) => {
               const protocolAssetsBalances = balances?.assets;
-              if (isEmpty(protocolAssetsBalances)) return categoryBalance;
+
+              // useless to proceed if no assets for provided protocol
+              if (isEmpty(protocolAssetsBalances)) return combinedBalances;
 
               const assetsBalances = protocolAssetsBalances.map((asset) => {
                 const {
@@ -548,12 +559,12 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                 };
               });
 
-              categoryAssetsBalances = [...categoryAssetsBalances, ...assetsBalances];
-
+              // add to total balance
               const balancesValues = assetsBalances.map(({ value }) => value);
+              categoryTotalBalance = sum([categoryTotalBalance, ...balancesValues]);
 
-              return sum([categoryBalance, ...balancesValues]);
-            }, wrapBigNumber(0));
+              return [...combinedBalances, ...assetsBalances];
+            }, []);
 
             dispatch({
               type: SET_ACCOUNT_TOTAL_BALANCE,
