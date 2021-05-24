@@ -23,7 +23,7 @@ import { getEnv } from 'configs/envConfig';
 
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
-import { RAMP_CURRENCY_TOKENS } from '../constants/assetsConstants';
+import { RAMP_CURRENCY_TOKENS } from '../configs/rampConfig';
 
 const PILLAR = 'Pillar';
 
