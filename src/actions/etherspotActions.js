@@ -26,6 +26,7 @@ import Toast from 'components/Toast';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
   SET_HISTORY,
@@ -88,7 +89,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const etherspotAccount = await etherspotService.getAccount(accountAddress);
+    const etherspotAccount = await etherspotService.getAccount(CHAIN.ETHEREUM, accountAddress);
 
     if (!etherspotAccount) {
       reportErrorLog('connectEtherspotAccountAction failed: no etherspotAccount', { accountId, account });

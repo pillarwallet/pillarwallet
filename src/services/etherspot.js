@@ -51,9 +51,11 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Asset } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { WalletAssetBalance } from 'models/Balances';
@@ -61,8 +63,8 @@ import type { WalletAssetBalance } from 'models/Balances';
 class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
-  instances: Array<EtherspotSdk> = [];
-  supportedNetworks: Array<NetworkNames> = [];
+  instances: { [network: string]: EtherspotSdk } = {};
+  supportedNetworks: Array<string> = [];
 
   async init(privateKey: string): Promise<void> {
     const etherspotComputeContractPromises = [];
@@ -124,8 +126,27 @@ class EtherspotService {
     this.subscription.unsubscribe();
   }
 
-  getAccount(accountAddress: string): Promise<?EtherspotAccount> {
-    return this.sdk.getAccount({ address: accountAddress }).catch((error) => {
+  getSdkForChain(chain: Chain): ?EtherspotSdk {
+    const network = networkNameFromChain(chain);
+    if (!network) {
+      reportErrorLog('EtherspotService getSdkForChain failed', { chain });
+      return undefined;
+    }
+
+    const sdk = this.instances[network];
+    if (!sdk) {
+      reportErrorLog('EtherspotService getSdkForChain failed', { chain, network });
+      return undefined;
+    }
+
+    return sdk;
+  }
+
+  getAccount(chain: Chain, accountAddress: string): Promise<?EtherspotAccount> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return Promise.resolve(null);
+
+    return sdk.getAccount({ address: accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
     });
@@ -370,3 +391,18 @@ class EtherspotService {
 const etherspot = new EtherspotService();
 
 export default etherspot;
+
+function networkNameFromChain(chain: Chain): ?string {
+  switch (chain) {
+    case CHAIN.ETHEREUM:
+      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan;
+    case CHAIN.BINANCE:
+      return NetworkNames.Bsc;
+    case CHAIN.POLYGON:
+      return NetworkNames.Matic;
+    case CHAIN.XDAI:
+      return NetworkNames.Xdai;
+    default:
+      return null;
+  }
+}
