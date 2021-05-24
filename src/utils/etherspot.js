@@ -36,6 +36,7 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { TRANSACTION_STATUS } from 'models/History';
 
 // utils
@@ -46,6 +47,8 @@ import { buildHistoryTransaction } from 'utils/history';
 // types
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import type { Account } from 'models/Account';
+import type { Chain } from 'models/Chain';
 
 
 const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
@@ -54,10 +57,15 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   REVERTED: 'Reverted',
 };
 
-export const isEtherspotAccountDeployed = (account: EtherspotAccount) => {
+export const isEtherspotAccountDeployed = (account: ?Account) => {
+  return isEtherspotAccountDeployedOnChain(account, CHAIN.ETHEREUM);
+};
+
+export const isEtherspotAccountDeployedOnChain = (account: ?Account, chain: Chain) => {
   if (!account || !isEtherspotAccount(account)) return false;
 
-  const etherspotAccount: EtherspotAccount = account.extra;
+  // $FlowFixMe: missing typing
+  const etherspotAccount: EtherspotAccount = account.extra[chain];
   return etherspotAccount.state === AccountStates.Deployed;
 };
 

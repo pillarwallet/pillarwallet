@@ -89,15 +89,20 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const etherspotAccount = await etherspotService.getAccount(CHAIN.ETHEREUM, accountAddress);
+    const ethereum = await etherspotService.getAccount(CHAIN.ETHEREUM, accountAddress);
+    const binance = await etherspotService.getAccount(CHAIN.BINANCE, accountAddress);
+    const polygon = await etherspotService.getAccount(CHAIN.POLYGON, accountAddress);
+    const xdai = await etherspotService.getAccount(CHAIN.XDAI, accountAddress);
 
-    if (!etherspotAccount) {
-      reportErrorLog('connectEtherspotAccountAction failed: no etherspotAccount', { accountId, account });
+    const extra = { ethereum, binance, polygon, xdai };
+
+    if (!ethereum) {
+      reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
       return;
     }
 
     // update account extras
-    dispatch(updateAccountExtraIfNeededAction(accountId, etherspotAccount));
+    dispatch(updateAccountExtraIfNeededAction(accountId, extra));
   };
 };
 

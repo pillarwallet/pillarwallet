@@ -96,14 +96,12 @@ class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    this.supportedNetworks.forEach((currentNetworkName) => {
+    this.supportedNetworks.forEach((networkName) => {
       // Instantiate
-      this.instances[currentNetworkName] = new EtherspotSdk(privateKey, { env: envName, currentNetworkName });
+      this.instances[networkName] = new EtherspotSdk(privateKey, { env: envName, networkName });
 
       // Schedule exection of computeContractAccount's
-      etherspotComputeContractPromises.push(
-        this.instances[currentNetworkName].computeContractAccount({ sync: true }),
-      );
+      etherspotComputeContractPromises.push(this.instances[networkName].computeContractAccount({ sync: true }));
     });
 
     // Assign the primary instance of the default networkName to `sdk`

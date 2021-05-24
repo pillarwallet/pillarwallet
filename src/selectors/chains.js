@@ -29,9 +29,10 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // utils
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
-import { isEtherspotAccountDeployed } from 'utils/etherspot';
+import { isEtherspotAccountDeployed, isEtherspotAccountDeployedOnChain } from 'utils/etherspot';
 
 // Types
+import type { Account } from 'models/Account';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 
@@ -56,14 +57,20 @@ const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): bool
 
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
+  activeAccountSelector,
   isActiveAccountDeployedOnEthereumSelector,
-  (isDeployedOnEthereum) => {
+  (account: ?Account, isDeployedOnEthereum) => {
+    if (isEtherspotAccount(account)) {
+      return {
+        ethereum: isEtherspotAccountDeployedOnChain(account, CHAIN.ETHEREUM),
+        polygon: isEtherspotAccountDeployedOnChain(account, CHAIN.POLYGON),
+        binance: isEtherspotAccountDeployedOnChain(account, CHAIN.BINANCE),
+        xdai: isEtherspotAccountDeployedOnChain(account, CHAIN.XDAI),
+      };
+    }
+
     return {
       ethereum: isDeployedOnEthereum,
-      polygon: true,
-      // TODO: handle BSC when available
-      binance: true,
-      xdai: true,
     };
   },
 );
