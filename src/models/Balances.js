@@ -42,7 +42,7 @@ export type CategoryAssetsBalances = {|
   deposits?: DepositAssetBalance[],
   investments?: InvestmentAssetBalance[],
   liquidityPools?: LiquidityPoolAssetBalance[],
-  rewards?: WalletAssetsBalances,
+  rewards?: RewardAssetBalance[],
 |};
 
 export type ServiceAssetBalance = {|
@@ -68,6 +68,10 @@ export type DepositAssetBalance = {|
   currentApy: ?BigNumber,
 |};
 
+export type RewardAssetBalance = {|
+  ...ServiceAssetBalance,
+|};
+
 export type WalletAssetBalance = {|
   balance: string,
   symbol: string,
@@ -77,11 +81,6 @@ export type WalletAssetsBalances = {
   [symbol: string]: WalletAssetBalance,
 };
 
-export type AssetsBalances = WalletAssetsBalances
-  | LiquidityPoolAssetBalance[]
-  | InvestmentAssetBalance[]
-  | DepositAssetBalance[];
-
 export type AssetBalancesPerAccount = {
   [accountId: string]: CategoryBalancesPerChain,
 };
@@ -89,7 +88,5 @@ export type AssetBalancesPerAccount = {
 export type CategoryBalancesPerChain = ChainRecord<CategoryAssetsBalances>;
 
 export type TotalBalancesPerChain = ChainRecord<BigNumber>;
-
-export type AssetsBalancesPerChain = ChainRecord<AssetsBalances>;
 
 export type CollectibleCountPerChain = ChainRecord<number>;

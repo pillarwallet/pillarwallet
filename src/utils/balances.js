@@ -20,6 +20,9 @@
 import { mapValues } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 
+// constants
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
+
 // utils
 import { sum } from 'utils/bigNumber';
 
@@ -27,8 +30,13 @@ import { sum } from 'utils/bigNumber';
 import type {
   CategoryBalancesPerChain,
   CategoryTotalBalancesPerChain,
+  InvestmentAssetBalance,
+  LiquidityPoolAssetBalance,
   TotalBalancesPerChain,
+  WalletAssetsBalances,
+  DepositAssetBalance,
 } from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
 
 export const getChainTotalBalancesForCategory = (
   accountTotalBalances: ?CategoryTotalBalancesPerChain,
@@ -54,11 +62,30 @@ export const getTotalCategoryBalance = (
   }));
 };
 
-// TODO: add return AssetsBalancesPerChain later and fix Flow
-export const getChainAssetsBalancesForCategory = (
+export const getChainDepositAssetsBalances = (
   accountAssetsBalances: ?CategoryBalancesPerChain,
-  category: string,
-) => mapValues(
+): ChainRecord<DepositAssetBalance[]> => mapValues(
   accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[category],
+  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.DEPOSITS],
+);
+
+export const getChainLiquidityPoolAssetsBalances = (
+  accountAssetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<LiquidityPoolAssetBalance[]> => mapValues(
+  accountAssetsBalances ?? {},
+  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.LIQUIDITY_POOLS],
+);
+
+export const getChainInvestmentAssetsBalances = (
+  accountAssetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<InvestmentAssetBalance[]> => mapValues(
+  accountAssetsBalances ?? {},
+  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.INVESTMENTS],
+);
+
+export const getChainWalletAssetsBalances = (
+  accountAssetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<WalletAssetsBalances> => mapValues(
+  accountAssetsBalances ?? {},
+  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET],
 );
