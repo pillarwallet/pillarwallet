@@ -39,6 +39,7 @@ type ZapperAsset = {
   img?: string,
   reserve?: number,
   balance: number,
+  balanceRaw: string,
   balanceUSD: number,
   protocol: string,
   share?: number,
