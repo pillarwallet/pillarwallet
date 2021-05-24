@@ -59,7 +59,7 @@ const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): bool
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
   activeAccountSelector,
   isActiveAccountDeployedOnEthereumSelector,
-  (account: ?Account, isDeployedOnEthereum) => {
+  (account: ?Account, isDeployedOnEthereum): ChainRecord<boolean> => {
     if (isEtherspotAccount(account)) {
       return {
         ethereum: isEtherspotAccountDeployed(account, CHAIN.ETHEREUM),
