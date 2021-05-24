@@ -77,12 +77,9 @@ class EtherspotService {
      * the app due to non-instantiation of the getEnv
      * function which is called from envConfig.js
      */
-    this.supportedNetworks = [
-      (isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan),
-      NetworkNames.Bsc,
-      NetworkNames.Matic,
-      NetworkNames.Xdai,
-    ];
+    this.supportedNetworks = isMainnet
+      ? [NetworkNames.Mainnet, NetworkNames.Bsc, NetworkNames.Matic, NetworkNames.Xdai]
+      : [NetworkNames.Kovan];
 
     const primaryNetworkName = isMainnet
       ? NetworkNames.Mainnet
