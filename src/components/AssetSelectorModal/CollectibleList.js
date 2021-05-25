@@ -18,10 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React from 'react';
+import { FlatList } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 // Components
-import AppCollectiblesList from 'components/CollectiblesList';
+import { BaseText } from 'components/Typography';
+import CollectibleImage from 'components/CollectibleImage';
+import Button from 'components/Button';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
+import { Spacing } from 'components/Layout';
+import Modal from 'components/Modal';
+
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+
+// Utils
+import { smallScreen, getDeviceWidth } from 'utils/common';
+import { fontStyles } from 'utils/variables';
+import { images } from 'utils/images';
 
 // Types
 import type { Collectible } from 'models/Collectible';
@@ -32,8 +49,96 @@ type Props = {|
   isSearching: boolean,
 |};
 
-const CollectibleList = ({ items, onSelectItem, isSearching }: Props) => {
-  return <AppCollectiblesList collectibles={items} onCollectiblePress={onSelectItem} isSearching={isSearching} />;
+const screenWidth = getDeviceWidth();
+const collectibleMargins = 60;
+
+const CollectiblesList = ({ items, onSelectItem, isSearching }: Props) => {
+  const theme = useTheme();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+
+  const openReceiveModal = () => Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
+
+  const renderItem = (item: Collectible) => {
+    const { name, image: icon } = item;
+    const { genericToken } = images(theme);
+
+    const collectibleSize = (screenWidth / 2) - collectibleMargins;
+
+    return (
+      <CardWrapper>
+        <Card onPress={() => onSelectItem(item)}>
+          <CollectibleImage
+            width={collectibleSize}
+            height={collectibleSize}
+            source={{ uri: icon }}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+          />
+          <Spacing h={10} />
+          <Name center numberOfLines={1} ellipsizeMode="tail" smallScreen={smallScreen()}>
+            {name}
+          </Name>
+        </Card>
+      </CardWrapper>
+    );
+  };
+
+  const emptyStateInfo = {
+    title: t('collectiblesList.emptyState.noCollectibles.title'),
+    bodyText: t('collectiblesList.emptyState.noCollectibles.paragraph'),
+  };
+
+  if (isSearching) {
+    emptyStateInfo.title = t('collectiblesList.emptyState.noneFound.title');
+    emptyStateInfo.bodyText = t('collectiblesList.emptyState.noneFound.paragraph');
+  }
+
+  return (
+    <FlatList
+      data={items}
+      keyExtractor={(it) => `${it.assetContract}${it.id}`}
+      renderItem={({ item }) => renderItem(item)}
+      numColumns={2}
+      style={{ flexGrow: 1 }}
+      contentContainerStyle={{
+        paddingTop: 20,
+        paddingHorizontal: 12,
+      }}
+      ListEmptyComponent={
+        <EmptyStateWrapper>
+          <EmptyStateParagraph {...emptyStateInfo} />
+          <Button title={t('button.receive')} marginTop={40} secondary onPress={openReceiveModal} />
+        </EmptyStateWrapper>
+      }
+      removeClippedSubviews
+      keyboardShouldPersistTaps="always"
+    />
+  );
 };
 
-export default CollectibleList;
+export default CollectiblesList;
+
+const EmptyStateWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  flex-grow: 1;
+`;
+
+const Name = styled(BaseText)`
+  ${fontStyles.small};
+  width: 100%;
+  text-align: center;
+`;
+
+const Card = styled.TouchableOpacity`
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: 10px;
+  padding: 16px;
+  align-items: center;
+  margin: 3px 8px;
+`;
+
+const CardWrapper = styled.View`
+  width: 50%;
+`;
