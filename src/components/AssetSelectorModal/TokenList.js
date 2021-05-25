@@ -19,23 +19,38 @@
 */
 
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { SectionList } from 'react-native';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
 // Components
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
+// Utils
+import { wrapBigNumberOrNil, sumOrNull } from 'utils/bigNumber';
+
 // Types
+import type { SectionBase } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
-  items?: AssetOption[],
+  items: AssetOption[],
   onSelectItem: (AssetOption) => mixed,
 |};
 
 function TokenList({ items, onSelectItem }: Props) {
+  const renderSectionHeader = ({ chain, balance }: Section) => {
+    return <ChainListHeader chain={chain} balance={balance} />;
+  };
+
   const renderItem = (item: AssetOption) => {
     if (!item) return null;
 
@@ -58,9 +73,13 @@ function TokenList({ items, onSelectItem }: Props) {
     );
   };
 
+  const sections = getSectionData(items);
+
   return (
-    <FlatList
-      data={items}
+    <SectionList
+      sections={sections}
+      renderSectionHeader={({ section }) => renderSectionHeader(section)}
+      renderSectionFooter={() => <ChainListFooter />}
       renderItem={({ item }) => renderItem(item)}
       keyExtractor={(option) => option.symbol}
       keyboardShouldPersistTaps="always"
@@ -71,6 +90,23 @@ function TokenList({ items, onSelectItem }: Props) {
 }
 
 export default TokenList;
+
+type Section = {
+  ...SectionBase<AssetOption>,
+  chain: Chain,
+  balance: ?BigNumber,
+};
+
+const getSectionData = (options: AssetOption[]): Section[] => {
+  return [
+    {
+      key: CHAIN.ETHEREUM,
+      chain: CHAIN.ETHEREUM,
+      balance: sumOrNull(options.map((option) => wrapBigNumberOrNil(option.balance?.balanceInFiat))),
+      data: options,
+    },
+  ];
+};
 
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;

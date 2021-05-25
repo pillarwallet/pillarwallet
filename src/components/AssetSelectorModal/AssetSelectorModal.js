@@ -117,7 +117,7 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
           iconProps={{ persistIconOnFocus: true }}
         />
 
-        {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22 }} />}
+        {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22, paddingBottom: 12 }} />}
 
         {activeTabId === TOKENS && <TokenList items={getAssets(options, query)} onSelectItem={selectOption} />}
 
