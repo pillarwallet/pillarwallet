@@ -75,6 +75,7 @@ const AddCash = () => {
         centerItems={[{ title: t('servicesContent.ramp.addCash.title') }]}
         leftItems={[{ close: true }]}
         navigation={navigation}
+        noPaddingTop
       />
       <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
         <AddCashView>
@@ -131,6 +132,7 @@ const styles = {
 const AddCashView = styled.View`
   align-items: center;
   width: 100%;
+  min-height: 220px;
   flex: 1;
   margin-top: 70px;
 `;
