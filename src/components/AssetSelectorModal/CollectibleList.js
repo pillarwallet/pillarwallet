@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,10 +29,14 @@ import ChainListHeader from 'components/modern/ChainListHeader';
 import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
+import { mapNotNil } from 'utils/array';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -120,10 +124,20 @@ type Section = {
 const useSectionData = (items: Collectible[], numberOfColumns: number): Section[] => {
   const chains = useSupportedChains();
 
-  return chains.map((chain) => {
-    const data = chunk(items, numberOfColumns);
+  return mapNotNil(chains, (chain) => {
+    const chainItems = items.filter((item) => isMatchingChain(item, chain));
+    if (!chainItems.length) return null;
+
+    const data = chunk(chainItems, numberOfColumns);
     return { key: chain, chain, data };
   });
+};
+
+const isMatchingChain = (item: Collectible, chain: Chain) => {
+  // Note: temporary compatibility measure for older code
+  if (item.chain == null && chain === CHAIN.ETHEREUM) return true;
+
+  return item.chain === chain;
 };
 
 const ListRow = styled.View`
@@ -133,8 +147,7 @@ const ListRow = styled.View`
 `;
 
 const EmptyStateWrapper = styled.View`
+  padding-top: 90px;
+  padding-bottom: 90px;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  flex-grow: 1;
 `;

@@ -33,7 +33,11 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 
+// Selectors
+import { useSupportedChains } from 'selectors/chains';
+
 // Utils
+import { mapNotNil } from 'utils/array';
 import { wrapBigNumberOrNil, sumOrNull } from 'utils/bigNumber';
 
 // Types
@@ -47,6 +51,8 @@ type Props = {|
 |};
 
 function TokenList({ items, onSelectItem }: Props) {
+  const sections = useSectionData(items);
+
   const renderSectionHeader = ({ chain, balance }: Section) => {
     return <ChainListHeader chain={chain} balance={balance} />;
   };
@@ -73,8 +79,6 @@ function TokenList({ items, onSelectItem }: Props) {
     );
   };
 
-  const sections = getSectionData(items);
-
   return (
     <SectionList
       sections={sections}
@@ -97,15 +101,23 @@ type Section = {
   balance: ?BigNumber,
 };
 
-const getSectionData = (options: AssetOption[]): Section[] => {
-  return [
-    {
-      key: CHAIN.ETHEREUM,
-      chain: CHAIN.ETHEREUM,
-      balance: sumOrNull(options.map((option) => wrapBigNumberOrNil(option.balance?.balanceInFiat))),
-      data: options,
-    },
-  ];
+const useSectionData = (items: AssetOption[]): Section[] => {
+  const chains = useSupportedChains();
+
+  return mapNotNil(chains, (chain) => {
+    const data = items.filter((item) => isMatchingChain(item, chain));
+    const balance = sumOrNull(data.map((option) => wrapBigNumberOrNil(option.balance?.balanceInFiat)));
+    if (!data.length) return null;
+
+    return { key: chain, chain, balance, data };
+  });
+};
+
+const isMatchingChain = (item: AssetOption, chain: Chain) => {
+  // Note: temporary compatibility measure for older code
+  if (!item.chain && chain === CHAIN.ETHEREUM) return true;
+
+  return item.chain === chain;
 };
 
 const EmptyStateWrapper = styled.View`
