@@ -61,7 +61,7 @@ export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
   accountExtra?: any,
-  backendAccounts: Object[] = [],
+  backendAccounts: any[] = [],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -73,10 +73,11 @@ export const addAccountAction = (
       walletId: '',
     };
 
-    const existingAccount = accounts.find(account => account.id.toLowerCase() === accountAddress.toLowerCase());
-    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
-    const backendAccount = backendAccounts.find(({ ethAddress }) =>
-      ethAddress.toLowerCase() === accountAddress.toLowerCase());
+    const existingAccount = accounts.find((account) => account.id.toLowerCase() === accountAddress.toLowerCase());
+    const updatedAccounts = accounts.filter((account) => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    const backendAccount = backendAccounts.find(
+      ({ ethAddress }) => ethAddress.toLowerCase() === accountAddress.toLowerCase(),
+    );
 
     if (backendAccount) {
       smartWalletAccount.walletId = backendAccount.id;
@@ -87,8 +88,10 @@ export const addAccountAction = (
     }
 
     if (existingAccount) {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
     } else {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push(smartWalletAccount);
     }
 

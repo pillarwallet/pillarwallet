@@ -57,7 +57,7 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
 };
 
 export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
-  if (!account || !isEtherspotAccount(account)) return false;
+  if (!isEtherspotAccount(account)) return false;
 
   const etherspotAccount: ?EtherspotAccount = account.extra?.[chain];
   return etherspotAccount?.state === AccountStates.Deployed;

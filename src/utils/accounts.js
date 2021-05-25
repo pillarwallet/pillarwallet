@@ -115,15 +115,15 @@ export const isSmartWalletAccount = (account: ?Account): boolean => [
   ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 ].includes(account?.type);
 
-export const isAccountType = (account: ?Account, type: string): boolean => account?.type === type;
+export const isAccountType = (account: ?Account, type: AccountTypes): boolean %checks =>
+  // Note: null checks has to be done separately or flow predicate function is not working correctly.
+  account != null && account.type === type;
 
-export const isArchanovaAccount = (
-  account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
+export const isArchanovaAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
-export const isEtherspotAccount = (
-  account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
+export const isEtherspotAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
@@ -164,11 +164,13 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 };
 
 export const getAccountEnsName = (account: ?Account): ?string => {
-  switch (account?.type) {
+  if (!account) return null;
+
+  switch (account.type) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-      return account?.extra?.ensNode?.name;
+      return account.extra?.ethereum?.ensNode?.name;
     case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-      return account?.extra?.ensName;
+      return account.extra?.ensName;
     default:
       return null;
   }
