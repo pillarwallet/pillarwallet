@@ -28,6 +28,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import FloatingButtons from 'components/FloatingButtons';
 import Text from 'components/modern/Text';
 
@@ -44,8 +46,6 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import ChainListHeader from 'components/modern/ChainListHeader';
-import ChainListFooter from 'components/modern/ChainListFooter';
 import { type RewardItem, useRewardsBalance, useRewardsChainBalances, useRewardsAssets } from './selectors';
 import RewardListItem from './RewardListItem';
 

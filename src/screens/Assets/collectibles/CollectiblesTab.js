@@ -27,6 +27,8 @@ import { chunk } from 'lodash';
 import { useTranslation } from 'translations/translate';
 
 // Components
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
@@ -47,8 +49,6 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import ChainListHeader from 'components/modern/ChainListHeader';
-import ChainListFooter from 'components/modern/ChainListFooter';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
 import { buildCollectibleNavigationParams } from './utils';
 import CollectibleListItem from './CollectibleListItem';
