@@ -60,7 +60,7 @@ function ChainListHeader({ chain, onPress, balance }: Props) {
 
   return (
     <Container>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} disabled={!onPress}>
         <Title color={color}>{titleSegments.join(t('label.dotSeparator'))}</Title>
       </TouchableOpacity>
 
