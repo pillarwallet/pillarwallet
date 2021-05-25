@@ -30,9 +30,6 @@ import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
 

@@ -29,9 +29,6 @@ import ChainListHeader from 'components/modern/ChainListHeader';
 import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
 
