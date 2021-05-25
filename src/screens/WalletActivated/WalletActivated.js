@@ -34,13 +34,13 @@ import { images } from 'utils/images';
 import { switchAccountAction } from 'actions/accountsActions';
 import { getActiveAccountType, findFirstArchanovaAccount } from 'utils/accounts';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   theme: Theme,
   navigation: NavigationScreenProp<*>,
-  accounts: Accounts,
+  accounts: Account[],
   isChanging: boolean,
   switchAccount: (id: string) => void,
 }

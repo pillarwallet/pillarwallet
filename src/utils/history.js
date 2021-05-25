@@ -41,7 +41,7 @@ import type {
   TransactionEthers,
   TransactionsStore,
 } from 'models/Transaction';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Value } from 'utils/common';
 
 // utils
@@ -177,19 +177,16 @@ export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string
   };
 };
 
-export const getTransactionsFromHistory = (history: Transaction[], accounts: Accounts) => {
+export const getTransactionsFromHistory = (history: Transaction[], accounts: Account[]) => {
   const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-  return mapTransactionsHistory(
-    tokenTxHistory,
-    accounts,
-    TRANSACTION_EVENT,
-  );
+  return mapTransactionsHistory(tokenTxHistory, accounts, TRANSACTION_EVENT);
 };
 
-export const getTokenTransactionsFromHistory =
-  (history: Transaction[], accounts: Accounts, token: string): Transaction[] => {
-    const mappedTransactions = getTransactionsFromHistory(history, accounts);
-    return mappedTransactions
-      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
-      || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-  };
+export const getTokenTransactionsFromHistory = (history: Transaction[], accounts: Account[], token: string): Transaction[] => {
+  const mappedTransactions = getTransactionsFromHistory(history, accounts);
+  return mappedTransactions.filter(
+    ({ asset, tag = '', extra = [] }) =>
+      (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) ||
+      (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)),
+  );
+};

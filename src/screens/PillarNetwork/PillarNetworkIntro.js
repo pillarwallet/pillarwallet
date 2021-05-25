@@ -47,7 +47,7 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
 type Props = {
@@ -56,7 +56,7 @@ type Props = {
   addNetwork: Function,
   ensureArchanovaAccountConnected: Function,
   switchAccount: Function,
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: Object,
   setPLRTankAsInit: Function,
   setActiveBlockchainNetwork: Function,

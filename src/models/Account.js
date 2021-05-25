@@ -73,5 +73,3 @@ export type KeyBasedAccount = {|
 export type KeyBasedAccountExtra = {||};
 
 export type Account = EtherspotAccount | ArchanovaAccount | KeyBasedAccount;
-
-export type Accounts = Account[];

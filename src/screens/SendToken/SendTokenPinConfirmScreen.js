@@ -35,7 +35,7 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
@@ -46,7 +46,7 @@ type Props = {
     callback: (status: TransactionStatus) => void,
   ) => void,
   resetIncorrectPassword: () => void,
-  accounts: Accounts,
+  accounts: Account[],
   isOnline: boolean,
   logEvent: (name: string, properties: Object) => void,
   useBiometrics: boolean,
