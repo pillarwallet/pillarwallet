@@ -122,21 +122,21 @@ class EtherspotService {
     const network = networkNameFromChain(chain);
     if (!network) {
       reportErrorLog('EtherspotService getSdkForChain failed', { chain });
-      return undefined;
+      return null;
     }
 
     const sdk = this.instances[network];
     if (!sdk) {
       reportErrorLog('EtherspotService getSdkForChain failed', { chain, network });
-      return undefined;
+      return null;
     }
 
     return sdk;
   }
 
-  getAccount(chain: Chain, accountAddress: string): Promise<?EtherspotAccount> {
+  getAccount(chain: Chain, accountAddress: string): ?Promise<?EtherspotAccount> {
     const sdk = this.getSdkForChain(chain);
-    if (!sdk) return Promise.resolve(null);
+    if (!sdk) return null;
 
     return sdk.getAccount({ address: accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
