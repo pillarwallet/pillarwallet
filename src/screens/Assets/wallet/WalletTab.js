@@ -54,8 +54,8 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import PillarPaySummary from '../components/PillarPaySummary';
-import ChainListHeader from '../components/ChainListHeader';
-import ChainListFooter from '../components/ChainListFooter';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
 import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';

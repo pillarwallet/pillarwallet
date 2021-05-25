@@ -44,8 +44,8 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import ChainListHeader from '../components/ChainListHeader';
-import ChainListFooter from '../components/ChainListFooter';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import { type RewardItem, useRewardsBalance, useRewardsChainBalances, useRewardsAssets } from './selectors';
 import RewardListItem from './RewardListItem';
 

@@ -50,8 +50,8 @@ import type { DepositAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import ChainListHeader from '../components/ChainListHeader';
-import ChainListFooter from '../components/ChainListFooter';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import ServiceListHeader from '../components/ServiceListHeader';
 import DepositListItem from './DepositListItem';
 import { useDepositsBalance, useDepositsChainBalances, useDepositsAssets } from './selectors';
