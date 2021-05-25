@@ -18,4 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const RAMP_CURRENCY_TOKENS = ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'];
+import { ETH, DAI, PLR, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
+
+export const MATIC_DAI = 'MATIC_DAI';
+export const MATIC_USDC = 'MATIC_USDC';
+
+export const RAMP_CURRENCY_TOKENS = [ETH, DAI, PLR, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI];
