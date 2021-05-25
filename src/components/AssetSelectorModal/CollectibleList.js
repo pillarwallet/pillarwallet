@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,127 +18,123 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
-import { FlatList } from 'react-native';
-import styled, { useTheme } from 'styled-components/native';
-import t from 'translations/translate';
+import * as React from 'react';
+import { SectionList, useWindowDimensions } from 'react-native';
+import styled from 'styled-components/native';
+import { chunk } from 'lodash';
+import { useTranslation } from 'translations/translate';
 
 // Components
-import { BaseText } from 'components/Typography';
-import CollectibleImage from 'components/CollectibleImage';
-import Button from 'components/Button';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ReceiveModal from 'screens/Asset/ReceiveModal';
-import { Spacing } from 'components/Layout';
-import Modal from 'components/Modal';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { smallScreen, getDeviceWidth } from 'utils/common';
-import { fontStyles } from 'utils/variables';
-import { images } from 'utils/images';
+import { spacing } from 'utils/variables';
 
 // Types
+import type { SectionBase } from 'utils/types/react-native';
+import type { Chain } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
+
+// Local
+
+import CollectibleListItem from 'screens/Assets/collectibles/CollectibleListItem';
 
 type Props = {|
   items: Collectible[],
-  onSelectItem: (Collectible) => mixed,
+  onSelectItem: (collectible: Collectible) => mixed,
   isSearching: boolean,
 |};
 
-const screenWidth = getDeviceWidth();
-const collectibleMargins = 60;
+function CollectibleList({ items, onSelectItem, isSearching }: Props) {
+  const { t } = useTranslation();
 
-const CollectiblesList = ({ items, onSelectItem, isSearching }: Props) => {
-  const theme = useTheme();
-  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+  const { width } = useWindowDimensions();
+  const numberOfColumns = 2;
 
-  const openReceiveModal = () => Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
+  const sections = useSectionData(items, numberOfColumns);
 
-  const renderItem = (item: Collectible) => {
-    const { name, image: icon } = item;
-    const { genericToken } = images(theme);
+  const renderSectionHeader = ({ chain }: Section) => {
+    return <ChainListHeader chain={chain} />;
+  };
 
-    const collectibleSize = (screenWidth / 2) - collectibleMargins;
+  const renderItem = (rowItems: Collectible[]) => {
+    const itemWidth = (width - 48) / numberOfColumns;
 
     return (
-      <CardWrapper>
-        <Card onPress={() => onSelectItem(item)}>
-          <CollectibleImage
-            width={collectibleSize}
-            height={collectibleSize}
-            source={{ uri: icon }}
-            fallbackSource={genericToken}
-            resizeMode="contain"
+      <ListRow>
+        {rowItems.map((item) => (
+          <CollectibleListItem
+            key={item.id}
+            title={item.name}
+            iconUrl={item.icon}
+            width={itemWidth}
+            onPress={() => onSelectItem(item)}
           />
-          <Spacing h={10} />
-          <Name center numberOfLines={1} ellipsizeMode="tail" smallScreen={smallScreen()}>
-            {name}
-          </Name>
-        </Card>
-      </CardWrapper>
+        ))}
+      </ListRow>
     );
   };
 
-  const emptyStateInfo = {
-    title: t('collectiblesList.emptyState.noCollectibles.title'),
-    bodyText: t('collectiblesList.emptyState.noCollectibles.paragraph'),
+  const renderEmptyState = () => {
+    const emptyStateInfo = {
+      title: t('collectiblesList.emptyState.noCollectibles.title'),
+      bodyText: t('collectiblesList.emptyState.noCollectibles.paragraph'),
+    };
+
+    if (isSearching) {
+      emptyStateInfo.title = t('collectiblesList.emptyState.noneFound.title');
+      emptyStateInfo.bodyText = t('collectiblesList.emptyState.noneFound.paragraph');
+    }
+
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph {...emptyStateInfo} />
+      </EmptyStateWrapper>
+    );
   };
 
-  if (isSearching) {
-    emptyStateInfo.title = t('collectiblesList.emptyState.noneFound.title');
-    emptyStateInfo.bodyText = t('collectiblesList.emptyState.noneFound.paragraph');
-  }
-
   return (
-    <FlatList
-      data={items}
-      keyExtractor={(it) => `${it.assetContract}${it.id}`}
+    <SectionList
+      sections={sections}
+      renderSectionHeader={({ section }) => renderSectionHeader(section)}
+      renderSectionFooter={() => <ChainListFooter />}
       renderItem={({ item }) => renderItem(item)}
-      numColumns={2}
-      style={{ flexGrow: 1 }}
-      contentContainerStyle={{
-        paddingTop: 20,
-        paddingHorizontal: 12,
-      }}
-      ListEmptyComponent={
-        <EmptyStateWrapper>
-          <EmptyStateParagraph {...emptyStateInfo} />
-          <Button title={t('button.receive')} marginTop={40} secondary onPress={openReceiveModal} />
-        </EmptyStateWrapper>
-      }
-      removeClippedSubviews
-      keyboardShouldPersistTaps="always"
+      keyExtractor={(rowItems) => rowItems[0]?.key}
+      ListEmptyComponent={renderEmptyState()}
     />
   );
+}
+
+export default CollectibleList;
+
+type Section = {
+  ...SectionBase<Collectible[]>,
+  chain: Chain,
 };
 
-export default CollectiblesList;
+const useSectionData = (items: Collectible[], numberOfColumns: number): Section[] => {
+  const chains = useSupportedChains();
+
+  return chains.map((chain) => {
+    const data = chunk(items, numberOfColumns);
+    return { key: chain, chain, data };
+  });
+};
+
+const ListRow = styled.View`
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0 ${spacing.mediumLarge}px;
+`;
 
 const EmptyStateWrapper = styled.View`
   align-items: center;
   justify-content: center;
   padding: 20px;
   flex-grow: 1;
-`;
-
-const Name = styled(BaseText)`
-  ${fontStyles.small};
-  width: 100%;
-  text-align: center;
-`;
-
-const Card = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: 10px;
-  padding: 16px;
-  align-items: center;
-  margin: 3px 8px;
-`;
-
-const CardWrapper = styled.View`
-  width: 50%;
 `;
