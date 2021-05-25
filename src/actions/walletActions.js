@@ -51,7 +51,6 @@ import type { BackupStatus } from 'reducers/walletReducer';
 // actions
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
-import { selfAwardBadgeAction } from './badgesActions';
 import { addWalletBackupEventAction } from './userEventsActions';
 import { changeUseBiometricsAction } from './appSettingsActions';
 
@@ -61,7 +60,6 @@ export const backupWalletAction = () => {
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isBackedUp: true } });
     dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
 
-    dispatch(selfAwardBadgeAction('wallet-backed-up'));
     dispatch(addWalletBackupEventAction());
 
     dispatch(logEventAction('phrase_backed_up'));

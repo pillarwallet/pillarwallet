@@ -71,7 +71,6 @@ import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
@@ -295,9 +294,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: setRatesAction');
       dispatch(setRatesAction(rates));
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching badges action: fetchBadgesAction');
-      dispatch(fetchBadgesAction(false));
 
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching referrals action: fetchReferralRewardAction');
       dispatch(fetchReferralRewardAction());
