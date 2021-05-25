@@ -21,10 +21,11 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
+import { orderBy } from 'lodash';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -35,14 +36,16 @@ import type {
   AssetData,
   Assets,
   AssetOption,
-  AssetBalance,
-  Balance,
-  Balances,
+  AssetOptionBalance,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
+import type {
+  WalletAssetBalance,
+  WalletAssetsBalances,
+} from 'models/Balances';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -60,7 +63,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
-export const transformBalancesToObject = (balancesArray: Balance[] = []): Balances => {
+export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): WalletAssetsBalances => {
   return balancesArray.reduce((memo, balance) => {
     memo[balance.symbol] = balance;
     return memo;
@@ -77,7 +80,7 @@ export const sortAssets = (assets: Assets): Asset[] => {
   return sortAssetsArray(assetsList);
 };
 
-export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => {
+export const getBalanceBN = (balances: ?WalletAssetsBalances, asset: ?string): BigNumber => {
   if (!balances || !asset) return BigNumber('0');
   return BigNumber(balances[asset]?.balance ?? '0');
 };
@@ -85,7 +88,7 @@ export const getBalanceBN = (balances: ?Balances, asset: ?string): BigNumber => 
 /**
  * @deprecated: do not use because of rounding issues
  */
-export const getBalance = (balances: ?Balances, asset: string): number => {
+export const getBalance = (balances: ?WalletAssetsBalances, asset: string): number => {
   if (!balances) return 0;
 
   const assetBalance = get(balances, asset);
@@ -174,7 +177,7 @@ export const calculateMaxAmount = (
 };
 
 export const isEnoughBalanceForTransactionFee = (
-  balances: Balances,
+  balances: WalletAssetsBalances,
   transaction: {
     txFeeInWei: ?Value,
     gasToken?: ?GasToken,
@@ -216,8 +219,8 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: Balances, rates: Rates): number => {
-  const balanceValues: Balance[] = Object.keys(balances).map(key => balances[key]);
+export const balanceInEth = (balances: WalletAssetsBalances, rates: Rates): number => {
+  const balanceValues: WalletAssetBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
     const balance = +item.balance;
@@ -233,19 +236,13 @@ export const balanceInEth = (balances: Balances, rates: Rates): number => {
   }, 0);
 };
 
-export const calculateBalanceInFiat = (
-  rates: Rates,
-  balances: Balances,
-  currency: string,
-) => {
+export const getTotalBalanceInFiat = (balances: WalletAssetsBalances, rates: Rates, currency: string): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
   }
 
-  const totalEth = balanceInEth(balances, rates);
-
-  return get(ethRates, currency, 0) * totalEth;
+  return get(ethRates, currency, 0) * balanceInEth(balances, rates);
 };
 
 export const getPPNTokenAddress = (token: string, assets: Assets): ?string => {
@@ -296,6 +293,10 @@ export const getAssetDataByAddress = (
   return userAssets.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || supportedAssetsData.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || {};
+};
+
+export const getAssetFromRegistry = (assetRegistry: Asset[], symbol: string): ?Asset => {
+  return assetRegistry.find((asset) => asset.symbol === symbol);
 };
 
 export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
@@ -370,7 +371,12 @@ export const getFormattedBalanceInFiat = (
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
-const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fiatCurrency: ?string): ?AssetBalance => {
+const getAssetOptionBalance = (
+  symbol: string,
+  balances: ?WalletAssetsBalances,
+  rates: ?Rates,
+  fiatCurrency: ?string,
+): ?AssetOptionBalance => {
   if (!balances) return null;
 
   const balance = getBalance(balances, symbol);
@@ -387,7 +393,7 @@ const getAssetBalance = (symbol: string, balances: ?Balances, rates: ?Rates, fia
 
 export const getAssetOption = (
   asset: Asset,
-  balances: ?Balances,
+  balances: ?WalletAssetsBalances,
   rates: ?Rates,
   baseFiatCurrency: ?string,
 ): AssetOption => {
@@ -403,13 +409,13 @@ export const getAssetOption = (
     formattedBalanceInFiat,
     icon: iconUrl,
     assetBalance: formattedAssetBalance,
-    balance: getAssetBalance(symbol, balances, rates, baseFiatCurrency),
+    balance: getAssetOptionBalance(symbol, balances, rates, baseFiatCurrency),
   };
 };
 
 export const mapAssetDataToAssetOption = (
   assetData: AssetData,
-  balances?: ?Balances,
+  balances?: ?WalletAssetsBalances,
   rates?: ?Rates,
   fiatCurrency?: ?string,
 ): AssetOption => {
@@ -420,7 +426,7 @@ export const mapAssetDataToAssetOption = (
     name: assetData.name ?? '',
     imageUrl: assetData.icon,
     tokenType: assetData.tokenType ?? TOKENS,
-    balance: getAssetBalance(assetData.token, balances, rates, fiatCurrency),
+    balance: getAssetOptionBalance(assetData.token, balances, rates, fiatCurrency),
   };
 };
 
@@ -430,4 +436,27 @@ export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency:
     return 0;
   }
   return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};
+
+/**
+ * Sort asset options with default priority
+ */
+export const defaultSortAssetOptions = (options: AssetOption[]): AssetOption[] => {
+  return orderBy(
+    options,
+    [
+      (option: AssetOption) => getAssetOptionSortPriority(option),
+      (option: AssetOption) => option.balance?.balanceInFiat ?? 0,
+      (option: AssetOption) => option.name?.trim().toLowerCase(),
+    ],
+    ['desc', 'desc', 'asc'],
+  );
+};
+
+export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetOption) => {
+  if (balance?.balance && symbol === ETH) return 4;
+  if (balance?.balance && symbol === PLR) return 3;
+  if (balance?.balance) return 2;
+  if (imageUrl) return 1;
+  return 0;
 };

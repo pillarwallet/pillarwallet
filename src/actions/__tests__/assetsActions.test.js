@@ -20,6 +20,12 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
+import { BigNumber } from 'utils/common';
+
+// actions
+import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
+
+// constants
 import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
@@ -27,13 +33,25 @@ import {
   FETCHING,
   ETH,
   PLR,
-  UPDATE_BALANCES,
+  ASSET_CATEGORY,
 } from 'constants/assetsConstants';
-import type { Assets, AssetsByAccount } from 'models/Asset';
-import PillarSdk from 'services/api';
-import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
+import {
+  SET_ACCOUNT_ASSETS_BALANCES,
+  SET_FETCHING_ASSETS_BALANCES,
+} from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// services
+import PillarSdk from 'services/api';
+
+// utils
 import { mockSupportedAssets } from 'testUtils/jestSetup';
+
+// types
+import type { Assets, AssetsByAccount } from 'models/Asset';
+
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -116,8 +134,11 @@ const initialState = {
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
-  balances: { data: {} },
+  assetsBalances: { data: {} },
   featureFlags: { data: INITIAL_REMOTE_CONFIG },
+  rates: { data: {} },
+  appSettings: { data: {} },
+  totalBalances: { data: {} },
 };
 
 describe('Assets actions', () => {
@@ -141,10 +162,23 @@ describe('Assets actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
-    const updateBalancesPayload = { [mockAccounts[0].id]: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } } };
+    const updateBalancesPayload = {
+      accountId: mockAccounts[0].id,
+      chain: CHAIN.ETHEREUM,
+      category: ASSET_CATEGORY.WALLET,
+      balances: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } },
+    };
+    const updateTotalBalancePayload = {
+      accountId: mockAccounts[0].id,
+      chain: CHAIN.ETHEREUM,
+      category: ASSET_CATEGORY.WALLET,
+      balance: BigNumber(0),
+    };
     const expectedActions = [
-      { payload: FETCHING, type: UPDATE_ASSETS_STATE },
-      { payload: updateBalancesPayload, type: UPDATE_BALANCES },
+      { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
+      { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
+      { type: SET_ACCOUNT_TOTAL_BALANCE, payload: updateTotalBalancePayload },
+      { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
     return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {

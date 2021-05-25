@@ -44,18 +44,19 @@ import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/asse
 import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { calculateRemoveLiquidityTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 // types
-import type { Asset, Balances } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -72,7 +73,7 @@ type Props = {
     tokensAssets: Asset[],
     obtainedAssetsValues: string[],
   ) => void,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   liquidityPoolsState: LiquidityPoolsReducerState,
 };
 
@@ -179,7 +180,7 @@ const RemoveLiquidityScreen = ({
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
     const tokenSymbol = tokensData[tokenIndex]?.symbol;
-    const customBalances: Balances = tokenSymbol
+    const customBalances: WalletAssetsBalances = tokenSymbol
       ? {
         [tokenSymbol]: {
           balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
@@ -308,7 +309,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 export const FETCHED = 'FETCHED';
 export const FETCHING = 'FETCHING';
 export const FETCHING_INITIAL = 'FETCHING_INITIAL';
@@ -30,7 +31,6 @@ export const UPDATE_ASSETS_SEARCH_RESULT = 'UPDATE_ASSETS_SEARCH_RESULT';
 export const RESET_ASSETS_SEARCH_RESULT = 'RESET_ASSETS_SEARCH_RESULT';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
-export const UPDATE_BALANCES = 'UPDATE_BALANCES';
 
 // fiat
 export const EUR = 'EUR';
@@ -40,6 +40,11 @@ export const USD = 'USD';
 // token symbols
 export const ETH = 'ETH';
 export const PLR = 'PLR';
+
+export const MATIC = 'MATIC';
+export const BNB = 'BNB';
+export const XDAI = 'xDAI';
+
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
 export const SNX = 'SNX';
@@ -113,4 +118,13 @@ export const CURRENCY_SYMBOLS = {
   USD: '$',
   GBP: '£',
   EUR: '€',
+};
+
+export const ASSET_CATEGORY = {
+  WALLET: ('wallet': 'wallet'),
+  DEPOSITS: ('deposits': 'deposits'),
+  INVESTMENTS: ('investments': 'investments'),
+  LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
+  COLLECTIBLES: ('collectibles': 'collectibles'),
+  REWARDS: ('rewards': 'rewards'),
 };

@@ -26,6 +26,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import SvgIcon from 'components/modern/Icon';
 import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
@@ -33,6 +34,7 @@ import { noop } from 'utils/common';
 // types
 import type { Theme } from 'models/Theme';
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { IconName as SvgIconName } from 'components/modern/Icon';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';
@@ -41,6 +43,7 @@ import HeaderActionButton from './HeaderActionButton';
 type NavItem = {|
   title?: string,
   icon?: string,
+  svgIcon?: SvgIconName,
   link?: string,
   close?: boolean,
   onPress?: () => void,
@@ -65,13 +68,11 @@ export type OwnProps = {|
   noBack?: boolean,
   customOnBack?: () => void,
   noPaddingTop?: boolean,
-  noBottomBorder?: boolean,
   onClose?: () => void,
   leftSideFlex?: number,
   wrapperStyle?: Object,
   noHorizontalPadding?: boolean,
   forceInsetTop?: string,
-  bottomBorderAnimationValue?: Animated.Value | Animated.Interpolation,
 |};
 
 type Props = {|
@@ -81,7 +82,6 @@ type Props = {|
 
 const Wrapper = styled(Animated.View)`
   width: 100%;
-  border-bottom-width: 1px;
   ${({ floating }) => floating && `
     position: absolute;
     top: 0;
@@ -153,6 +153,14 @@ const ActionIcon = styled(IconButton)`
   padding: 5px 10px;
 `;
 
+const ActionSvgIcon = styled(SvgIcon)`
+  position: relative;
+  align-self: center;
+  height: 36px;
+  width: 44px;
+  padding: 5px 10px;
+`;
+
 const CloseIcon = styled(IconButton)`
   position: relative;
   align-self: center;
@@ -188,7 +196,6 @@ const IconImage = styled(Image)`
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
-const animatedValueZero = new Animated.Value(0);
 
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose?.();
@@ -284,6 +291,27 @@ class HeaderBlock extends React.Component<Props> {
         </View>
       );
     }
+    if (item.svgIcon) {
+      const additionalIconStyle = {};
+      const additionalIconProps = item.iconProps || {};
+      if (type === LEFT) additionalIconStyle.marginLeft = -10;
+      if (type === RIGHT) additionalIconStyle.marginRight = -10;
+      return (
+        <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.svgIcon}>
+          <TouchableOpacity onPress={item.onPress}>
+            <ActionSvgIcon
+              name={item.svgIcon}
+              color={
+                item.color || getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })
+              }
+              horizontalAlign="flex-start"
+              {...additionalIconProps}
+            />
+          </TouchableOpacity>
+          {!!item.indicator && <Indicator />}
+        </View>
+      );
+    }
     if (item.iconSource) {
       return (
         <TouchableOpacity
@@ -362,8 +390,6 @@ class HeaderBlock extends React.Component<Props> {
       wrapperStyle,
       noHorizontalPadding,
       forceInsetTop = 'always',
-      bottomBorderAnimationValue = animatedValueZero,
-      noBottomBorder,
     } = this.props;
     const updatedColors = {};
     if (light) {
@@ -372,34 +398,13 @@ class HeaderBlock extends React.Component<Props> {
     }
     const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
-    let backgroundColor;
-    let borderColor;
-
-    if (noBottomBorder || floating) {
-      backgroundColor = floating ? 'transparent' : updatedTheme.colors.basic050;
-      borderColor = 'transparent';
-    } else {
-      backgroundColor = bottomBorderAnimationValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: ([theme.colors.basic070, theme.colors.basic050]: string[]),
-        extrapolate: 'clamp',
-      });
-
-      const borderColorByTheme =
-        getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic080', darkKey: 'basic050' });
-
-      borderColor = bottomBorderAnimationValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: ([`${borderColorByTheme}00`, borderColorByTheme]: string[]),
-        extrapolate: 'clamp',
-      });
-    }
+    const backgroundColor = theme.colors.basic070;
 
     return (
       <ThemeProvider theme={updatedTheme}>
         <Wrapper
           floating={floating}
-          style={{ backgroundColor, borderColor, ...wrapperStyle }}
+          style={{ backgroundColor, ...wrapperStyle }}
         >
           <SafeArea
             forceInset={{ bottom: 'never', top: forceInsetTop }}

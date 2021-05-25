@@ -49,7 +49,8 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WithdrawalFee } from 'models/PaymentNetwork';
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Assets, Rates } from 'models/Asset';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // constants
 import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
@@ -59,7 +60,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -102,7 +103,7 @@ const FormWrapper = styled.View`
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   availableStake: number,
   session: Object,
   estimateWithdrawFromVirtualAccount: Function,
@@ -311,7 +312,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
   availableStake: availableStakeSelector,
   useGasToken: useGasTokenSelector,

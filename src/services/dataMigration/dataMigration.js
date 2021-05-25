@@ -20,7 +20,6 @@
 
 import loadAndMigrateAppSettings from './appSettings';
 import loadAndMigrateAccounts from './accounts';
-import loadAndMigrateBalances from './balances';
 import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
@@ -48,10 +47,6 @@ export async function migrate(
 
     case 'assets':
       data = loadAndMigrateAssets(storageData);
-      break;
-
-    case 'balances':
-      data = loadAndMigrateBalances(storageData);
       break;
 
     case 'history':

@@ -30,9 +30,11 @@ import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
 
 // constants
+import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -71,6 +73,7 @@ import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_RARI_USER_DATA } from 'constants/rariConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
+import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -99,7 +102,6 @@ export const initAppAndRedirectAction = () => {
       // migrations
       storageData = await migrate('accounts', storageData, dispatch, getState);
       storageData = await migrate('assets', storageData, dispatch, getState);
-      storageData = await migrate('balances', storageData, dispatch, getState);
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
@@ -120,8 +122,8 @@ export const initAppAndRedirectAction = () => {
       const { fiatExchangeSupportedAssets = [] } = get(storageData, 'fiatExchangeSupportedAssets', {});
       dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
-      const { balances = {} } = get(storageData, 'balances', {});
-      dispatch({ type: UPDATE_BALANCES, payload: balances });
+      const assetsBalances = storageData?.assetsBalances?.data ?? {};
+      dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
 
       const { rates = {} } = get(storageData, 'rates', {});
       dispatch({ type: UPDATE_RATES, payload: rates });
@@ -193,6 +195,9 @@ export const initAppAndRedirectAction = () => {
 
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
+
+      const totalBalances = storageData?.totalBalances?.data ?? {};
+      dispatch({ type: SET_TOTAL_BALANCES, payload: totalBalances });
 
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
@@ -267,10 +272,12 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
       extra: {
         walletId,
         ethAddress: address,
+        [IS_APP_VERSION_V3]: true,
       },
     });
     // eslint-disable-next-line i18next/no-literal-string
     Instabug.setUserAttribute('address', address);
+    Instabug.setUserAttribute(IS_APP_VERSION_V3, true);
     if (username) {
       Instabug.setUserAttribute('ENS', username);
     }

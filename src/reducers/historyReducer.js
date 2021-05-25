@@ -26,6 +26,7 @@ import {
   UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
   SET_HISTORY_LAST_SYNC_IDS,
+  SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
 import type {
   HistoryLastSyncIds,
@@ -39,6 +40,7 @@ export type HistoryReducerState = {
   isFetched: boolean,
   updatingTransaction: ?string,
   historyLastSyncIds?: HistoryLastSyncIds,
+  isFetching: boolean,
 }
 
 export type HistoryAction = {
@@ -54,6 +56,7 @@ export const initialState = {
   },
   isFetched: false,
   updatingTransaction: null,
+  isFetching: false,
 };
 
 export default function historyReducer(
@@ -97,6 +100,8 @@ export default function historyReducer(
     case SET_ACCOUNT_HISTORY_LAST_SYNC_ID:
       const { accountId, lastSyncId } = action.payload;
       return { ...state, historyLastSyncIds: { ...historyLastSyncIds, [accountId]: lastSyncId } };
+    case SET_FETCHING_HISTORY:
+      return { ...state, isFetching: action.payload };
     default:
       return state;
   }

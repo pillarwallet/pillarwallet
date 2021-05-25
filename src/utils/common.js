@@ -251,6 +251,20 @@ export const truncateAmount = (amount: Value, precision: ?number): string => {
     : amountBN.toString();
 };
 
+/**
+ * Checks if given value has too much decimal places for available precission.
+ * It also rejects NaNs & infinite values.
+ */
+export const hasTooMuchDecimals = (value: Value, decimals: ?number): boolean => {
+  const valueBN = wrapBigNumber(value);
+
+  if (!valueBN.isFinite()) return false;
+
+  if (decimals == null) return true;
+
+  return valueBN.decimalPlaces() > decimals;
+};
+
 export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
@@ -280,10 +294,10 @@ export const getCurrencySymbol = (currency: string): string => {
 };
 
 export const commify = (
-  src: number | string, options?: { skipCents?: boolean },
+  src: Value, options?: { skipCents?: boolean },
 ): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
-  const num = new BigNumber(src).toFixed(2);
+  const num = wrapBigNumber(src).toFixed(2);
   let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
   if (options?.skipCents) {
     formatedValue = formatedValue.substring(0, formatedValue.length - 3);
@@ -291,14 +305,12 @@ export const commify = (
   return formatedValue;
 };
 
-export const formatFiatValue = (value: number | string, options?: { skipCents?: boolean }): string => {
+export const formatFiatValue = (value: Value, options?: { skipCents?: boolean }): string => {
   const formatedValue = commify(value, options);
   return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
 };
 
-export const formatFiat = (
-  value: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
-): string => {
+export const formatFiat = (value: Value, baseFiatCurrency?: ?string, options?: { skipCents?: boolean }): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   return `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
 };

@@ -38,7 +38,7 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  HOME,
+  MAIN_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
@@ -111,6 +111,7 @@ import {
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
+import { fetchAllAccountsTotalBalancesAction, fetchAllChainBalancesAction } from './assetsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -281,6 +282,8 @@ export const loginAction = (
 
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
+        dispatch(fetchAllChainBalancesAction());
+        dispatch(fetchAllAccountsTotalBalancesAction());
       }
 
       dispatch(checkForWalletBackupToastAction());
@@ -328,7 +331,7 @@ export const loginAction = (
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || HOME,
+        routeName: lastActiveScreen || MAIN_FLOW,
         params: lastActiveScreenParams,
       });
       if (!hasSeenTutorial) await dispatch(getTutorialDataAction());

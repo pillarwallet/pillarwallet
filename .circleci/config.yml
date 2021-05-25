@@ -380,6 +380,9 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export INSTABUG_APP_VERSION_NAME=$(cat ~/pillarwallet/buildNumber.txt)
+            export INSTABUG_APP_VERSION_CODE=$(cat ~/pillarwallet/buildNumber.txt)
+            export INSTABUG_APP_TOKEN=$INSTABUG_APPCENTER_TOKEN
             cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
 
       - *gradle_save_cache

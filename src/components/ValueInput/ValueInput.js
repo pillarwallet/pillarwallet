@@ -36,7 +36,14 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, wrapBigNumber, noop, formatFiat } from 'utils/common';
+import {
+  formatAmount,
+  isValidNumber,
+  wrapBigNumber,
+  hasTooMuchDecimals,
+  noop,
+  formatFiat,
+} from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -45,22 +52,23 @@ import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assets
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Balances, AssetOption } from 'models/Asset';
+import type { Rates, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {|
   disabled?: boolean,
   customAssets?: AssetOption[],
-  customBalances?: Balances,
+  customBalances?: WalletAssetsBalances,
   selectorOptionsTitle?: string,
   assetData: AssetOption | Collectible,
   // Called when selected asset is AssetOption
@@ -82,7 +90,7 @@ export type ExternalProps = {|
 
 type InnerProps = {|
   assets: AssetOption[],
-  balances: Balances,
+  balances: WalletAssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   collectibles: Collectible[],
@@ -192,24 +200,25 @@ export const ValueInputComponent = ({
     setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
 
     setCalculateBalanceSendPercent(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
-      const split = newValue.split('.');
-      // only allow 2 decimals in fiat mode
-      if (split.length <= 2 && !(split[1] && split[1].length > 2)) {
-        setValueInFiat(newValue);
-        const convertedValue =
-        getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
-        onValueChange(convertedValue);
-      }
+      if (hasTooMuchDecimals(newValue, 2)) return;
+
+      const tokenValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      const truncatedTokenValue = formatAmount(tokenValue, assetData.decimals);
+      onValueChange(truncatedTokenValue);
+      setValueInFiat(newValue);
     } else {
+      if (hasTooMuchDecimals(newValue, assetData.decimals)) return;
+
+      onValueChange(newValue);
       const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
-      onValueChange(newValue);
     }
   };
 
@@ -345,7 +354,8 @@ export const ValueInputComponent = ({
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>{assetData.name}
+          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>
+            {assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />
@@ -371,7 +381,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });

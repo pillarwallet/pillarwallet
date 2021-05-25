@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>FCEF09CF-E60E-4173-982A-8485CCEFF4DC</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Icons/2" transform="translate(-253.000000, -185.000000)" stroke="#000" stroke-width="1.5">
+            <g id="Row" transform="translate(0.000000, 175.726562)">
+                <g id="Icons/24/info-circle/new" transform="translate(253.000000, 10.000000)">
+                    <g id="Group" transform="translate(3.000000, 3.000000)">
+                        <circle id="Oval" cx="9" cy="9" r="9"></circle>
+                        <line x1="9" y1="5" x2="9.01" y2="5" id="Path"></line>
+                        <polyline id="Path" points="8 9 9 9 9 13 10 13"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -231,8 +231,6 @@ const ContactSelectorOptions = ({
           contentContainerStyle={styles.flatListContantContainer}
         />
 
-        {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
-
         {allowAddContact && customAddressContact && !hasSearchError && (
           <ActionButtonsContainer>
             <Button
@@ -246,6 +244,8 @@ const ContactSelectorOptions = ({
           </ActionButtonsContainer>
         )}
       </ContainerWithHeader>
+
+      {allowAddContact && !customAddressContact && <FloatingButtons items={buttons} />}
     </SlideModal>
   );
 };

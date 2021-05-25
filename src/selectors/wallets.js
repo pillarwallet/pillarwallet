@@ -29,12 +29,8 @@ import { isSmartWalletAccount } from 'utils/accounts';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 
-// local selectors
-import {
-  accountsSelector,
-  activeAccountSelector,
-  activeBlockchainSelector,
-} from './selectors';
+// local
+import { accountsSelector, activeAccountSelector, activeBlockchainSelector } from './selectors';
 
 
 export const activeWalletSelector = createSelector(

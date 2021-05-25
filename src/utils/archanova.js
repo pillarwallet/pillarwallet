@@ -22,7 +22,7 @@ import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
-import { Migrator, TransactionRequest } from '@etherspot/archanova-migrator';
+import { Migrator } from '@etherspot/archanova-migrator';
 import { utils, Wallet } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
@@ -52,7 +52,7 @@ import { ETH } from 'constants/assetsConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
 // services
-import { parseEstimatePayload } from 'services/archanova';
+import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -78,10 +78,7 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
-import {
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-} from './common';
+import { isCaseInsensitiveMatch, reportErrorLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
@@ -417,9 +414,10 @@ export const buildArchanovaTxFeeInfo = (
   };
 };
 
-export const buildEnsMigrationTransactions = async (
+export const buildEnsMigrationRawTransactions = async (
   accounts: Accounts,
-): Promise<TransactionRequest[] | null> => {
+  wallet: Wallet,
+): Promise<?string[]> => {
   const isKovan = getEnv().NETWORK_PROVIDER === 'kovan';
 
   const etherspotAccount = findFirstEtherspotAccount(accounts);
@@ -433,23 +431,47 @@ export const buildEnsMigrationTransactions = async (
     etherspotAccount: getAccountAddress(etherspotAccount),
   });
 
-  const archanovaAccountDevice = Wallet.createRandom();
+  const { migratorAddress } = migrator;
+  const connectedAccountDevices = await archanovaService.getConnectedAccountDevices();
 
-  migrator = migrator.addAccountDevice();
+  const isMigratorDeviceAdded = connectedAccountDevices.some(({
+    device,
+  }) => addressesEqual(device?.address, migratorAddress));
+
+  if (!isMigratorDeviceAdded) {
+    await archanovaService.addAccountDevice(migratorAddress);
+    migrator = migrator.addAccountDevice();
+  }
 
   // we cannot test ENS migration so let's just add simple transaction
   migrator = isKovan
     ? migrator.transferBalance(utils.parseEther('0.001'))
     : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
 
-  const archanovaAccountDeviceSignature = await archanovaAccountDevice
-    .signMessage(migrator.migrationMessage)
-    .catch((error) => {
-      reportErrorLog('buildENSMigrationTransactions -> signMessage failed', { error });
-      return null;
-    });
+  const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
 
   if (!archanovaAccountDeviceSignature) return null;
 
-  return migrator.encodeTransactionRequests(archanovaAccountDeviceSignature);
+  return migrator
+    .encodeTransactionRequests(archanovaAccountDeviceSignature)
+    .map(({ data, to }) => {
+      if (addressesEqual(to, migratorAddress)) {
+        // Jegor's provided fix
+        try {
+          const { account } = archanovaService.getSdk().contract;
+          // eslint-disable-next-line i18next/no-literal-string
+          return account.encodeMethodInput('executeTransaction', to, 0, data);
+        } catch (error) {
+          reportErrorLog('buildEnsMigrationRawTransactions -> encodeMethodInput failed', {
+            error,
+            encodedTransactionRequest: { to, data },
+            migratorAddress,
+            archanovaAccount,
+            etherspotAccount,
+          });
+        }
+      }
+
+      return data;
+    });
 };

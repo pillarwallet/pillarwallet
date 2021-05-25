@@ -58,14 +58,15 @@ import { themedColors } from 'utils/themes';
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Assets, Asset, Balances } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
@@ -74,7 +75,7 @@ type Props = {
   assets: Assets,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
@@ -276,7 +277,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -49,8 +49,9 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Assets, Rates } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
@@ -60,7 +61,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
 
@@ -102,7 +103,7 @@ const FormWrapper = styled.View`
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   session: Object,
   estimateTopUpVirtualAccount: () => void,
   topUpFee: TopUpFee,
@@ -310,7 +311,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
   useGasToken: useGasTokenSelector,
 });

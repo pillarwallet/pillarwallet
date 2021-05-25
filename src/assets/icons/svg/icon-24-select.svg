@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>4E456AF5-C921-4E08-81B6-6E8770C98E6E</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Icons/Arrows" transform="translate(-253.000000, -405.000000)" stroke="#000" stroke-width="1.5">
+            <g id="Row" transform="translate(0.500000, 395.726562)">
+                <g id="Icons/24/arrows/selector/new" transform="translate(253.000000, 10.000000)">
+                    <polyline id="Path" points="8.66666667 9.5 12 6.16666667 15.3333333 9.5"></polyline>
+                    <polyline id="Path" points="15.3333333 14.5 12 17.8333333 8.66666667 14.5"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

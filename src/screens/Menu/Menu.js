@@ -44,6 +44,7 @@ import Icon from 'components/Icon';
 import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
+import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 
 // constants
 import {
@@ -262,12 +263,12 @@ const Menu = ({
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         ListFooterComponent={
           <Footer>
+            <MigrateEnsBanner style={{ marginTop: 15 }} />
             {showMigrateWallet && (
               <FooterBanner>
                 <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} />
               </FooterBanner>
             )}
-
             <LinksSection>
               <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
                 {t('settingsContent.button.termOfUse')}

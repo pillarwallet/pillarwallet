@@ -19,9 +19,13 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+
+// constants
+import { COLLECTIBLES, TOKENS } from 'constants/assetsConstants';
+
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
+
 export type AssetData = {|
   token: string,
   contractAddress?: string,
@@ -60,24 +64,6 @@ export type AssetsStore = {
   [accountId: string]: Asset[],
 };
 
-export type Balance = {
-  balance: string,
-  symbol: string,
-};
-
-export type MixedBalance = {
-  balance: number | string,
-  symbol: string,
-};
-
-export type Balances = {
-  [symbol: string]: Balance,
-};
-
-export type BalancesStore = {
-  [accountId: string]: Balances,
-};
-
 export type Rates = {
   [string]: {
     [string]: number,
@@ -112,10 +98,11 @@ export type KeyBasedAssetTransfer = {|
   signedTransaction?: Object,
   status?: string,
 |};
+
 export type AssetOption = {
   // Core props
   address?: string,
-  balance?: ?AssetBalance,
+  balance?: ?AssetOptionBalance,
   decimals?: number,
   imageUrl: string,
   name: string,
@@ -137,7 +124,7 @@ export type AssetOption = {
   tokenId?: string,
 };
 
-export type AssetBalance = {|
+export type AssetOptionBalance = {|
   balance?: number,
   balanceInFiat?: number,
   token?: string,

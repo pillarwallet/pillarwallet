@@ -44,10 +44,11 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 
 // types
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Assets, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 // utils
 import {
@@ -65,7 +66,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
-  paymentNetworkBalances: Balances,
+  paymentNetworkBalances: WalletAssetsBalances,
   baseFiatCurrency: ?string,
   rates: Rates,
   assets: Assets,

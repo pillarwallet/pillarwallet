@@ -48,12 +48,12 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances, Assets, Asset } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 
@@ -69,6 +69,7 @@ import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // types
 import type { TransactionToEstimate, TransactionFeeInfo } from 'models/Transaction';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 
 const ContentWrapper = styled.View`
@@ -96,7 +97,7 @@ type Props = {
   session: Object,
   smartWallet: Object,
   accounts: Accounts,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
   assets: Assets,
@@ -315,7 +316,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   assets: accountAssetsSelector,
   accountAddress: activeAccountAddressSelector,
 });

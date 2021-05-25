@@ -33,15 +33,14 @@ import { getThemeColors } from 'utils/themes';
 import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import {
-  elipsizeAddress,
   isPendingTransaction,
   isSmartWalletAccountAddress,
   groupPPNTransactions,
-  getElipsizeAddress,
   isFailedTransaction,
   isTimedOutTransaction,
   isArchanovaAccountAddress,
 } from 'utils/feedData';
+import { formatHexAddress } from 'utils/format';
 import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
@@ -556,7 +555,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         const wbtcValue = `+ ${getFormattedValue(String(event.value / 100000000), event.asset)}`;
         const wbtcValueFixed = `+ ${getFormattedValue(String((event.value / 100000000).toFixed(5)), event.asset)}`;
         data = {
-          label: elipsizeAddress(relevantAddress),
+          label: formatHexAddress(relevantAddress),
           fullItemValue: wbtcValue,
           itemValue: wbtcValueFixed,
           valueColor: 'secondaryAccent140',
@@ -815,9 +814,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       }
       default:
-        const usernameOrAddress = event.username
-          || ensRegistry[relevantAddress]
-          || elipsizeAddress(relevantAddress);
+        const usernameOrAddress = event.username || ensRegistry[relevantAddress] || formatHexAddress(relevantAddress);
 
         const isBetweenSmartWalletAccounts = isSmartWalletAccountAddress(event.from, accounts)
           && isSmartWalletAccountAddress(event.to, accounts);
@@ -932,7 +929,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     } = event;
 
     const relevantAddress = this.getRelevantAddress(event);
-    const usernameOrAddress = getElipsizeAddress(relevantAddress);
+    const usernameOrAddress = formatHexAddress(relevantAddress);
 
     const subtext = isReceived
       ? t('label.collectibleFromUser', { username: usernameOrAddress })

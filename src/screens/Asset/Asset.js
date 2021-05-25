@@ -34,6 +34,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Image from 'components/Image';
+import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
@@ -67,21 +68,22 @@ import assetsConfig from 'configs/assetsConfig';
 
 // selectors
 import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
-import { accountBalancesSelector } from 'selectors/balances';
+import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Balances, Asset } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
-  balances: Balances,
+  balances: WalletAssetsBalances,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
@@ -89,7 +91,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   activeAccount: ?Account,
-  paymentNetworkBalances: Balances,
+  paymentNetworkBalances: WalletAssetsBalances,
   history: Object[],
   availableStake: number,
   getExchangeSupportedAssets: () => void,
@@ -292,6 +294,9 @@ class AssetScreen extends React.Component<Props> {
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
+    // TODO: Here provide Etherspot transactions history.
+    const historyItems = [];
+
     return (
       <ContainerWithHeader
         navigation={navigation}
@@ -357,13 +362,19 @@ class AssetScreen extends React.Component<Props> {
             />
             {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
-          {!!relatedTransactions.length &&
-          <ActivityFeed
-            feedTitle={t('title.transactions')}
-            navigation={navigation}
-            feedData={relatedTransactions}
-            isAssetView
-          />}
+
+          {!!relatedTransactions.length && (
+            <ActivityFeed
+              feedTitle={t('title.transactions')}
+              navigation={navigation}
+              feedData={relatedTransactions}
+              isAssetView
+            />
+          )}
+
+          {!!historyItems.length && (
+            <HistoryList items={historyItems} />
+          )}
         </ScrollWrapper>
         <RetryGraphQueryBox
           message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
@@ -397,7 +408,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: accountEthereumWalletAssetsBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
