@@ -182,7 +182,11 @@ export const getTransactionsFromHistory = (history: Transaction[], accounts: Acc
   return mapTransactionsHistory(tokenTxHistory, accounts, TRANSACTION_EVENT);
 };
 
-export const getTokenTransactionsFromHistory = (history: Transaction[], accounts: Account[], token: string): Transaction[] => {
+export const getTokenTransactionsFromHistory = (
+  history: Transaction[],
+  accounts: Account[],
+  token: string,
+): Transaction[] => {
   const mappedTransactions = getTransactionsFromHistory(history, accounts);
   return mappedTransactions.filter(
     ({ asset, tag = '', extra = [] }) =>
