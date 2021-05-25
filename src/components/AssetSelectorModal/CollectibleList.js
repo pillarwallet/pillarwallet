@@ -125,19 +125,12 @@ const useSectionData = (items: Collectible[], numberOfColumns: number): Section[
   const chains = useSupportedChains();
 
   return mapNotNil(chains, (chain) => {
-    const chainItems = items.filter((item) => isMatchingChain(item, chain));
+    const chainItems = items.filter((item) => item.chain === chain);
     if (!chainItems.length) return null;
 
     const data = chunk(chainItems, numberOfColumns);
     return { key: chain, chain, data };
   });
-};
-
-const isMatchingChain = (item: Collectible, chain: Chain) => {
-  // Note: temporary compatibility measure for older code
-  if (item.chain == null && chain === CHAIN.ETHEREUM) return true;
-
-  return item.chain === chain;
 };
 
 const ListRow = styled.View`

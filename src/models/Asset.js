@@ -111,7 +111,7 @@ export type AssetOption = {
   name: string,
   symbol: string,
   tokenType?: TokenType,
-  chain?: Chain,
+  chain: Chain,
 
   // Additional props
   assetBalance?: string,

@@ -105,19 +105,12 @@ const useSectionData = (items: AssetOption[]): Section[] => {
   const chains = useSupportedChains();
 
   return mapNotNil(chains, (chain) => {
-    const data = items.filter((item) => isMatchingChain(item, chain));
+    const data = items.filter((item) => item.chain === chain);
     const balance = sumOrNull(data.map((option) => wrapBigNumberOrNil(option.balance?.balanceInFiat)));
     if (!data.length) return null;
 
     return { key: chain, chain, balance, data };
   });
-};
-
-const isMatchingChain = (item: AssetOption, chain: Chain) => {
-  // Note: temporary compatibility measure for older code
-  if (!item.chain && chain === CHAIN.ETHEREUM) return true;
-
-  return item.chain === chain;
 };
 
 const EmptyStateWrapper = styled.View`

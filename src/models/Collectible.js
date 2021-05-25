@@ -35,7 +35,7 @@ export type Collectible = {
   tokenType: string,
   symbol?: void,
   decimals?: void,
-  chain?: Chain;
+  chain: Chain;
 };
 
 export type CollectibleTrx = {

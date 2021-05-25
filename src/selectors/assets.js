@@ -22,6 +22,9 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // utils
 import {
   findFirstArchanovaAccount,
@@ -168,8 +171,8 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
         const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        // $FlowFixMe: flow update to 0.122
         assetsWithBalance.push({
+          ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
           balance: !!formattedBalanceInFiat && {
@@ -181,7 +184,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
           token: symbol,
           value: symbol,
           contractAddress: address,
-          ...relatedAsset,
+          chain: CHAIN.ETHEREUM,
         });
       }
       return assetsWithBalance;
