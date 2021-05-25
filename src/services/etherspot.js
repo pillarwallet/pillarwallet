@@ -21,10 +21,11 @@
 import { constants as EthersConstants, utils as EthersUtils } from 'ethers';
 import {
   Sdk as EtherspotSdk,
+  Env,
+  EnvNames,
   NetworkNames,
   Account as EtherspotAccount,
   Accounts as EtherspotAccounts,
-  EnvNames,
   ENSNode,
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
@@ -75,20 +76,22 @@ class EtherspotService {
      * the app due to non-instantiation of the getEnv
      * function which is called from envConfig.js
      */
-    this.supportedNetworks = [
-      (isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan),
+    this.supportedNetworks = isMainnet ? [
+      NetworkNames.Mainnet,
       NetworkNames.Bsc,
       NetworkNames.Matic,
       NetworkNames.Xdai,
+    ] : [
+      NetworkNames.Kovan, // Ethereum Testnet
+      NetworkNames.BscTest, // Binance Testnet
+      NetworkNames.Mumbai, // Matic Testnet
+      NetworkNames.Sokol, // xDAI Testnet
     ];
 
-    const primaryNetworkName = isMainnet
-      ? NetworkNames.Mainnet
-      : NetworkNames.Kovan;
-
-    const envName = isMainnet
-      ? EnvNames.MainNets
-      : EnvNames.TestNets;
+    // Not mainnet? Switch to "testnets" environment.
+    if (!isMainnet) {
+      Env.defaultName = EnvNames.TestNets;
+    }
 
     /**
      * Cycle through the supported networks and build an
@@ -96,8 +99,7 @@ class EtherspotService {
      */
     this.supportedNetworks.forEach((currentNetworkName) => {
       // Instantiate
-      this.instances[currentNetworkName] = new EtherspotSdk(privateKey, { env: envName, currentNetworkName });
-
+      this.instances[currentNetworkName] = new EtherspotSdk(privateKey, { networkName: currentNetworkName });
       // Schedule exection of computeContractAccount's
       etherspotComputeContractPromises.push(
         this.instances[currentNetworkName].computeContractAccount({ sync: true }),
@@ -105,7 +107,8 @@ class EtherspotService {
     });
 
     // Assign the primary instance of the default networkName to `sdk`
-    this.sdk = this.instances[primaryNetworkName];
+    const [primaryNetwork] = this.instances;
+    this.sdk = primaryNetwork;
 
     // Compute contract accounts. The result will always be the same.
     await Promise.all(etherspotComputeContractPromises);
