@@ -1390,8 +1390,9 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     }));
 
     // no need to import empty balance accounts
-    const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
-    if (!archanovaAccountsHasBalances) return;
+    // Note: disabling that check as it's reporting empty balance for account with non-zero balance
+    // const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
+    // if (!archanovaAccountsHasBalances) return;
 
     dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: archanovaAccounts });
     await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
