@@ -53,15 +53,15 @@ import { navigate } from 'services/navigation';
 import { accountsSelector, activeAccountSelector } from 'selectors';
 
 // types
-import type { AccountExtra, AccountTypes } from 'models/Account';
+import type { AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
 export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
-  accountExtra?: AccountExtra,
-  backendAccounts: Object[] = [],
+  accountExtra?: any,
+  backendAccounts: any[] = [],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -73,10 +73,11 @@ export const addAccountAction = (
       walletId: '',
     };
 
-    const existingAccount = accounts.find(account => account.id.toLowerCase() === accountAddress.toLowerCase());
-    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
-    const backendAccount = backendAccounts.find(({ ethAddress }) =>
-      ethAddress.toLowerCase() === accountAddress.toLowerCase());
+    const existingAccount = accounts.find((account) => account.id.toLowerCase() === accountAddress.toLowerCase());
+    const updatedAccounts = accounts.filter((account) => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    const backendAccount = backendAccounts.find(
+      ({ ethAddress }) => ethAddress.toLowerCase() === accountAddress.toLowerCase(),
+    );
 
     if (backendAccount) {
       smartWalletAccount.walletId = backendAccount.id;
@@ -87,8 +88,10 @@ export const addAccountAction = (
     }
 
     if (existingAccount) {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
     } else {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push(smartWalletAccount);
     }
 
@@ -102,7 +105,7 @@ export const addAccountAction = (
 
 export const updateAccountExtraIfNeededAction = (
   accountId: string,
-  accountExtra: AccountExtra,
+  accountExtra: any,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());

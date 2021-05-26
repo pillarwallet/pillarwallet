@@ -117,7 +117,7 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import type { ColorKey, Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
@@ -133,7 +133,7 @@ type Props = {
   event: Object,
   feedType?: string,
   activeAccountAddress: string,
-  accounts: Accounts,
+  accounts: Account[],
   isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   isPPNView?: boolean,

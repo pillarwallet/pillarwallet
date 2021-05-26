@@ -32,6 +32,7 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Types
+import type { Account } from 'models/Account';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 
@@ -47,23 +48,27 @@ export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
 
 export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);
 
-const isActiveAccountDeployedOnEthereumSelector = (root: RootReducerState): boolean => {
-  const activeAccount = activeAccountSelector(root);
-  if (isEtherspotAccount(activeAccount)) return isEtherspotAccountDeployed(activeAccount);
-  if (isArchanovaAccount(activeAccount)) return isArchanovaWalletActivatedSelector(root);
-  return false;
-};
-
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
-  isActiveAccountDeployedOnEthereumSelector,
-  (isDeployedOnEthereum) => {
-    return {
-      ethereum: isDeployedOnEthereum,
-      polygon: true,
-      // TODO: handle BSC when available
-      binance: true,
-      xdai: true,
-    };
+  activeAccountSelector,
+  isArchanovaWalletActivatedSelector,
+  (account: ?Account, isArchanovaDeployed): ChainRecord<boolean> => {
+    if (isEtherspotAccount(account)) {
+      return {
+        ethereum: isEtherspotAccountDeployed(account, CHAIN.ETHEREUM),
+        binance: isEtherspotAccountDeployed(account, CHAIN.BINANCE),
+        // Note: hardcoded due to business requirements
+        polygon: true,
+        xdai: true,
+      };
+    }
+
+    if (isArchanovaAccount(account)) {
+      return {
+        ethereum: isArchanovaDeployed,
+      };
+    }
+
+    return { ethereum: false };
   },
 );

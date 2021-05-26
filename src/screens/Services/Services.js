@@ -67,7 +67,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { User } from 'models/User';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
@@ -89,7 +89,7 @@ type Props = {
   getMetaData: () => void,
   isArchanovaWalletActivated: boolean,
   user: User,
-  accounts: Accounts,
+  accounts: Account[],
   getApi: () => SDKWrapper,
   isAltalixAvailable: null | boolean,
   loadAltalixInfo: () => void,

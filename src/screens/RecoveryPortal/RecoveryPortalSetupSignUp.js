@@ -27,7 +27,7 @@ import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
 import { RECOVERY_PORTAL_SETUP_CONNECT_DEVICE } from 'constants/navigationConstants';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { ConnectedArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -36,7 +36,7 @@ type Props = {
   navigation: NavigationScreenProp<mixed>,
   connectedSmartWallet: ConnectedArchanovaWalletAccount,
   executeDeepLink: (deepLink: string) => void,
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: Object,
 };
 
