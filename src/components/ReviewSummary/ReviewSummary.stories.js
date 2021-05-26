@@ -22,6 +22,9 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { withTheme } from 'styled-components/native';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 import { TokenReviewSummaryComponent } from './TokenReviewSummary';
@@ -75,6 +78,7 @@ const collectible = {
   image: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk',
   icon: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk=s250',
   description: '',
+  chain: CHAIN.ETHEREUM,
 };
 
 const TokenReviewSummaryComponentWithTheme = withTheme(TokenReviewSummaryComponent);

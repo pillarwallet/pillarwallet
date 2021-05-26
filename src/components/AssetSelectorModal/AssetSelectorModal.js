@@ -19,16 +19,12 @@
 */
 
 import * as React from 'react';
-import { Keyboard, FlatList } from 'react-native';
-import styled from 'styled-components/native';
+import { Keyboard } from 'react-native';
 import { orderBy } from 'lodash';
 import t from 'translations/translate';
 
 // Components
-import CollectiblesList from 'components/CollectiblesList';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
@@ -45,6 +41,10 @@ import { useThemeColors } from 'utils/themes';
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
+// Local
+import TokenList from './TokenList';
+import CollectibleList from './CollectibleList';
+
 type Props = {|
   options?: AssetOption[],
   collectibles?: Collectible[],
@@ -53,13 +53,7 @@ type Props = {|
   title?: string,
 |};
 
-const AssetSelectorOptions = ({
-  options,
-  collectibles,
-  onSelectOption,
-  onSelectCollectible,
-  title,
-}: Props) => {
+const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCollectible, title }: Props) => {
   const searchInputRef = React.useRef(null);
   const modalRef = React.useRef(null);
 
@@ -98,51 +92,6 @@ const AssetSelectorOptions = ({
 
   const colors = useThemeColors();
 
-  const renderOption = (option: AssetOption) => {
-    if (!option) return null;
-
-    return (
-      <ListItemWithImage
-        onPress={() => selectOption(option)}
-        label={option.name}
-        itemImageUrl={option.imageUrl}
-        balance={option.balance}
-        fallbackToGenericToken
-      />
-    );
-  };
-
-  const renderEmptyState = () => {
-    return (
-      <EmptyStateWrapper>
-        <EmptyStateParagraph title={t('label.nothingFound')} />
-      </EmptyStateWrapper>
-    );
-  };
-
-  const renderList = () => {
-    if (activeTabId === COLLECTIBLES) {
-      return (
-        <CollectiblesList
-          collectibles={getCollectibles(collectibles, query)}
-          onCollectiblePress={selectCollectible}
-          isSearching={!!query}
-        />
-      );
-    }
-
-    return (
-      <FlatList
-        data={getAssets(options, query)}
-        renderItem={({ item }) => renderOption(item)}
-        keyExtractor={(option) => option.symbol}
-        keyboardShouldPersistTaps="always"
-        ListEmptyComponent={renderEmptyState()}
-        contentInsetAdjustmentBehavior="scrollableAxes"
-      />
-    );
-  };
-
   return (
     <SlideModal
       ref={modalRef}
@@ -168,15 +117,23 @@ const AssetSelectorOptions = ({
           iconProps={{ persistIconOnFocus: true }}
         />
 
-        {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22 }} />}
+        {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22, paddingBottom: 12 }} />}
 
-        {renderList()}
+        {activeTabId === TOKENS && <TokenList items={getAssets(options, query)} onSelectItem={selectOption} />}
+
+        {activeTabId === COLLECTIBLES && (
+          <CollectibleList
+            items={getCollectibles(collectibles, query)}
+            onSelectItem={selectCollectible}
+            isSearching={!!query}
+          />
+        )}
       </ContainerWithHeader>
     </SlideModal>
   );
 };
 
-export default AssetSelectorOptions;
+export default AssetSelectorModal;
 
 const getAssets = (options: AssetOption[] = [], query: ?string): AssetOption[] => {
   const filteredOptions = options.filter((option) => isMatchingAsset(option, query));
@@ -193,9 +150,3 @@ const isMatchingAsset = (option: AssetOption, query: ?string) =>
 
 const isMatchingCollectible = (collectible: Collectible, query: ?string) =>
   caseInsensitiveIncludes(collectible.name, query);
-
-const EmptyStateWrapper = styled.View`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  align-items: center;
-`;

@@ -17,13 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { CHAIN } from 'constants/chainConstants';
+
 import {
   isFiatCurrency, isAmountToSellAboveMax, isAmountToSellBelowMin, calculateAmountToBuy, getFixedQuantity,
 } from 'utils/exchange';
 import { validateInput, shouldTriggerSearch, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-const assetEth = { symbol: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
-const assetPlr = { symbol: 'PLR', assetBalance: '0.001', name: 'Pillar' };
+const assetEth = { symbol: 'ETH', assetBalance: '42.42', name: 'Ethereum', chain: CHAIN.ETHEREUM };
+const assetPlr = { symbol: 'PLR', assetBalance: '0.001', name: 'Pillar', chain: CHAIN.ETHEREUM };
 
 describe('Exchange Utility function tests', () => {
   it('Should call isFiatCurrency for EUR, GBP and USD to return true, for other symbols returns false.', () => {

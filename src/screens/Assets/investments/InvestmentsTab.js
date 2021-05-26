@@ -28,6 +28,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 
@@ -49,8 +51,6 @@ import type { InvestmentAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import ChainListHeader from '../components/ChainListHeader';
-import ChainListFooter from '../components/ChainListFooter';
 import ServiceListHeader from '../components/ServiceListHeader';
 import {
   useInvestmentsBalance,

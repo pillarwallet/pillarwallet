@@ -19,13 +19,18 @@
 */
 
 import { getEnv } from 'configs/envConfig';
+
+// Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
   UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
+
+// Utils
 import {
   getAccountAddress,
   getAccountId,
@@ -77,6 +82,7 @@ export const collectibleFromResponse = (responseItem: Object): Collectible => {
     tokenType: COLLECTIBLES,
     image,
     icon,
+    chain: CHAIN.ETHEREUM,
   };
 };
 
