@@ -167,11 +167,7 @@ import {
   updateAccountExtraIfNeededAction,
 } from './accountsActions';
 import { saveDbAction } from './dbActions';
-import {
-  fetchAssetsBalancesAction,
-  fetchInitialAssetsAction,
-  getAllOwnedAssets,
-} from './assetsActions';
+import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
   afterHistoryUpdatedAction,
@@ -1377,21 +1373,21 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     const archanovaAccounts = await archanovaService.getAccounts();
     if (isEmpty(archanovaAccounts)) return;
 
-
+    // Note: disabling zero-balance check as it's reporting empty balance for account with non-zero balance
     // check balances of existing archanova accounts
-    const supportedAssets = await api.fetchSupportedAssets(walletId);
-    const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(async ({ address }) => {
-      const ownedAssets = await getAllOwnedAssets(api, address, supportedAssets);
+    // const supportedAssets = await api.fetchSupportedAssets(walletId);
+    // const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(async ({ address }) => {
+    //   const ownedAssets = await getAllOwnedAssets(api, address, supportedAssets);
 
-      return api.fetchBalances({
-        address,
-        assets: getAssetsAsList(ownedAssets),
-      });
-    }));
+    //   return api.fetchBalances({
+    //     address,
+    //     assets: getAssetsAsList(ownedAssets),
+    //   });
+    // }));
 
     // no need to import empty balance accounts
-    // Note: disabling that check as it's reporting empty balance for account with non-zero balance
-    // const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
+    // const archanovaAccountsHasBalances =
+    //   archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
     // if (!archanovaAccountsHasBalances) return;
 
     dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: archanovaAccounts });
