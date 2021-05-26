@@ -121,7 +121,7 @@ class EtherspotService {
   getSdkForChain(chain: Chain): ?EtherspotSdk {
     const network = networkNameFromChain(chain);
     if (!network) {
-      reportErrorLog('EtherspotService getSdkForChain failed', { chain });
+      reportErrorLog('EtherspotService getSdkForChain failed: no network', { chain });
       return null;
     }
 
