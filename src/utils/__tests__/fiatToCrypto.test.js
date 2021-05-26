@@ -41,10 +41,9 @@ describe('The fiatToCrypto.js utility module', () => {
         hostApiKey: null,
         userAddress: fakeEthAddress,
         userEmailAddress: fakeUserEmail,
-        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'],
+        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'].join(','),
       };
-
-      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
+      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams).replace(/%2C/g, ',')}`;
 
       expect(generatedUrl).toBe(expectedUrl);
     });

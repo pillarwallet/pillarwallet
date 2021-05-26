@@ -24,13 +24,13 @@ import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
-
 // utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol } from 'utils/common';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import { rampWidgetUrl } from 'utils/fiatToCrypto';
+import { getActiveAccount, getAccountAddress, isSmartWalletAccount } from 'utils/accounts';
 
 // compomnents
 import { Container } from 'components/modern/Layout';
@@ -40,20 +40,39 @@ import TextInput from 'components/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
+import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 
 // selectors
-import { useFiatCurrency } from 'selectors';
-
+import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
+import { useUser } from 'selectors/user';
 
 const AddCash = () => {
   const navigation = useNavigation();
   const [value, setValue] = React.useState('0');
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  const address = navigation.getParam('address');
-  const email = navigation.getParam('email');
+  const accounts = useRootSelector(accountsSelector);
+  const user = useUser();
 
-  const tryOpenCryptoPurchaseUrl = async (url: string | null) => {
+  const getCryptoPurchaseAddress = (): string | null => {
+    const activeAccount = getActiveAccount(accounts);
+
+    if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
+      Modal.open(() => <BuyCryptoAccountNotActiveModal />);
+      return null;
+    }
+
+    return getAccountAddress(activeAccount);
+  };
+
+  const handleChangeText = (text: string) => {
+    const amount = text.replace(currencySymbol, '');
+    const updatedAmount = amount.replace(/^0+/, '');
+    setValue(updatedAmount);
+  };
+
+  const openUrl = async (url: string | null) => {
     if (url) {
       await openInAppBrowser(url).catch(showServiceLaunchError);
     } else {
@@ -85,26 +104,26 @@ const AddCash = () => {
               value: `${currencySymbol}${value}`,
               autoCapitalize: 'none',
               disabled: false,
-              onChangeText: (text) => {
-                const amount = text.replace(currencySymbol, '');
-                const updatedAmount = amount.replace(/^0+/, '');
-                setValue(updatedAmount);
-              },
-              placeholder: '$0',
+              onChangeText: handleChangeText,
+              placeholder: `${currencySymbol}0`,
               keyboardType: 'numeric',
             }}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
-            errorMessage={!isValidFiatValue(value) && t('error.invalid.fiatValue')}
+            errorMessage={value && !isValidFiatValue(value) && t('error.invalid.fiatValue')}
           />
         </AddCashView>
       </ScrollView>
       <Footer>
         <Button
-          onPress={() => tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, fiatCurrency, value))}
+          onPress={() => {
+            const address = getCryptoPurchaseAddress();
+            if (address === null) return;
+            openUrl(rampWidgetUrl(address, user?.email, fiatCurrency, value));
+          }}
           title={t('button.next')}
-          disabled={value === '0' || !isValidFiatValue(value)}
+          disabled={value !== null && (value === '0' || !isValidFiatValue(value))}
         />
       </Footer>
     </Container>

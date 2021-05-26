@@ -243,12 +243,7 @@ class ServicesScreen extends React.Component<Props> {
         key: 'ramp',
         title: t('servicesContent.ramp.title'),
         body: t('servicesContent.ramp.description'),
-        action: () => {
-          const email = user?.email;
-          const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
-          navigation.navigate(ADD_CASH, { address, email });
-        },
+        action: () => navigation.navigate(ADD_CASH),
       });
     }
 
