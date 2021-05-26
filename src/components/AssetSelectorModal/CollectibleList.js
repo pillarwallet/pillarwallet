@@ -59,9 +59,7 @@ function CollectibleList({ items, onSelectItem, isSearching }: Props) {
 
   const sections = useSectionData(items, numberOfColumns);
 
-  const renderSectionHeader = ({ chain }: Section) => {
-    return <ChainListHeader chain={chain} />;
-  };
+  const renderSectionHeader = ({ chain }: Section) => <ChainListHeader chain={chain} />;
 
   const renderItem = (rowItems: Collectible[]) => {
     const itemWidth = (width - 48) / numberOfColumns;
