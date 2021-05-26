@@ -21,10 +21,10 @@ import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
 import { findFirstArchanovaAccount } from 'utils/accounts';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 
 
-function addWalletIdToSmartWalletAccount(accounts: Accounts, walletId: string): Accounts {
+function addWalletIdToSmartWalletAccount(accounts: Account[], walletId: string): Account[] {
   return accounts.map(account => {
     if (account.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) return account;
     return {

@@ -45,7 +45,7 @@ import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { PendingWBTCTransaction } from 'models/WBTC';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 
 // constants
 import { WBTC, BTC } from 'constants/assetsConstants';
@@ -61,7 +61,7 @@ type Props = {
   theme: Theme,
   history: Transaction[],
   pendingWbtcTransactions: PendingWBTCTransaction[],
-  accounts: Accounts,
+  accounts: Account[],
   updateWBTCCafeTransactions: () => void,
   settledWbtcTransactions: Transaction[]
 };
