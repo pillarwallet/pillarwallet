@@ -1,9 +1,9 @@
 // @flow
 import { ADD_ACCOUNT, UPDATE_ACCOUNTS, CHANGING_ACCOUNT } from 'constants/accountsConstants';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 
 export type AccountsReducerState = {
-  data: Accounts,
+  data: Account[],
   isChanging: boolean,
 };
 

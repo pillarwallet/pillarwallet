@@ -47,7 +47,7 @@ import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // models
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -96,7 +96,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   smartWallet: Object,
-  accounts: Accounts,
+  accounts: Account[],
   balances: WalletAssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
