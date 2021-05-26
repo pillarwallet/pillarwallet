@@ -931,19 +931,3 @@ export const checkForMissedAssetsAction = () => {
     }
   };
 };
-
-export const fetchAllChainBalancesAction = () => {
-  return async () => {
-    const networkBalances = {};
-
-    const resolvedBalances = await Promise.all(
-      etherspotService.supportedNetworks.map((network) => etherspotService.instances[network].getAccountBalances()),
-    );
-
-    resolvedBalances.forEach((balance, idx) => {
-      networkBalances[etherspotService.supportedNetworks[idx]] = balance;
-    });
-
-    return networkBalances;
-  };
-};
