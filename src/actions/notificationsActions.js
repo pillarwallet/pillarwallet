@@ -29,7 +29,6 @@ import messaging from '@react-native-firebase/messaging';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 import {
   subscribeToEtherspotNotificationsAction,
   unsubscribeToEtherspotNotificationsAction,
@@ -117,9 +116,6 @@ export const subscribeToSocketEventsAction = () => {
         dispatch(checkForMissedAssetsAction());
         dispatch(fetchTransactionsHistoryAction());
         dispatch(fetchAssetsBalancesAction());
-      }
-      if (data.type === BADGE) {
-        dispatch(fetchBadgesAction(false));
       }
       if (
         data.type === CONNECTION_REQUESTED_EVENT ||
@@ -257,10 +253,6 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
-        }
-
-        if (type === BADGE) {
-          dispatch(fetchBadgesAction(false));
         }
 
         const routeName = notificationRoute || HOME;

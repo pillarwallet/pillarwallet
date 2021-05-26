@@ -32,7 +32,7 @@ import { ALTALIX_AVAILABLE_COUNTRIES } from 'constants/fiatToCryptoConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { reportErrorLog, reportLog, uniqBy } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
 import { retryOnNetworkError } from 'utils/retry';
@@ -40,7 +40,6 @@ import httpRequest from 'utils/httpRequest';
 
 // models, types
 import type { Asset } from 'models/Asset';
-import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
@@ -571,29 +570,6 @@ class SDKWrapper {
 
     // if we fail to get the balances in one call, let's use the fallback method
     return fetchAssetBalancesOnChain(assets, address);
-  }
-
-  fetchBadges(walletId: string): Promise<UserBadgesResponse> {
-    return Promise.resolve()
-      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.badge.my({ walletId })))
-      .then(({ data }) => data)
-      .then(data => uniqBy(data, 'id'))
-      .catch(() => []);
-  }
-
-  fetchContactBadges(walletId: string, userId: string): Promise<Badges> {
-    return Promise.resolve()
-      .then(() => retryOnNetworkError(() => this.pillarWalletSdk.badge.get({ walletId, userId })))
-      .then(({ data }) => data)
-      .then(data => uniqBy(data, 'id'))
-      .catch(() => []);
-  }
-
-  selfAwardBadge(walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
-      .then(({ data }) => data)
-      .catch(() => ({}));
   }
 
   setUsername(username: string) {

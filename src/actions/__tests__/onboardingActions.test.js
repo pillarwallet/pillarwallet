@@ -38,7 +38,6 @@ import {
 } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import { UPDATE_BADGES } from 'constants/badgesConstants';
 
 // actions
 import {
@@ -67,7 +66,6 @@ import {
   mockArchanovaAccountApiData,
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
-  mockUserBadges,
 } from 'testUtils/jestSetup';
 
 // types
@@ -98,7 +96,6 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   userInfo: jest.fn(() => mockUser),
   fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
   fetchSupportedAssets: jest.fn(() => mockSupportedAssets),
-  fetchBadges: jest.fn(() => mockUserBadges),
   getAddressErc20TokensInfo: jest.fn((address: string) => {
     // mock owned assets for mocked archanova account
     if (address === mockArchanovaAccount.extra.address) {
@@ -291,7 +288,6 @@ describe('Onboarding actions', () => {
       },
       { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
 
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
@@ -353,7 +349,6 @@ describe('Onboarding actions', () => {
       },
       { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: UPDATE_RATES, payload: mockExchangeRates },
-      { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
 
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
