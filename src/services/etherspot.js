@@ -127,7 +127,7 @@ class EtherspotService {
 
     const sdk = this.instances[network];
     if (!sdk) {
-      reportErrorLog('EtherspotService getSdkForChain failed', { chain, network });
+      reportErrorLog('EtherspotService getSdkForChain failed: cannot get SDK instance', { chain, network });
       return null;
     }
 
