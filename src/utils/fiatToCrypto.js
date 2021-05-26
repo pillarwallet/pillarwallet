@@ -40,10 +40,10 @@ export function rampWidgetUrl(
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
-    swapAsset: RAMP_CURRENCY_TOKENS,
+    swapAsset: RAMP_CURRENCY_TOKENS.join(','),
   };
 
-  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params).replace(/%2C/g, ',')}`;
 }
 
 export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) => api.getSendwyreWidgetURL(params);
