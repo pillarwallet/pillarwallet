@@ -22,7 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
 
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { CollectibleTrx } from 'models/Collectible';
 
@@ -44,7 +44,7 @@ import { isCaseInsensitiveMatch, uniqBy } from './common';
 
 export function mapTransactionsHistory(
   history: Object[],
-  accounts: Accounts,
+  accounts: Account[],
   eventType: string,
   keepHashDuplicatesIfBetweenAccounts?: boolean,
   duplicatePPN?: boolean,
@@ -182,12 +182,12 @@ export const isTimedOutTransaction = ({ status }: Object) => {
   return status === TX_TIMEDOUT_STATUS;
 };
 
-export const isArchanovaAccountAddress = (address: string, accounts: Accounts) => {
+export const isArchanovaAccountAddress = (address: string, accounts: Account[]) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && isArchanovaAccount(account));
+  return !!account && isArchanovaAccount(account);
 };
 
-export const isSmartWalletAccountAddress = (address: string, accounts: Accounts) => {
+export const isSmartWalletAccountAddress = (address: string, accounts: Account[]) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && isSmartWalletAccount(account));
+  return !!account && isSmartWalletAccount(account);
 };

@@ -22,6 +22,9 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // utils
 import {
   findFirstArchanovaAccount,
@@ -29,7 +32,7 @@ import {
   getAccountId,
   getEnabledAssets,
 } from 'utils/accounts';
-import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
+import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
 
 // constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
@@ -165,21 +168,23 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        // $FlowFixMe: flow update to 0.122
         assetsWithBalance.push({
+          ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
           balance: !!formattedBalanceInFiat && {
             balance: assetBalance,
+            balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
           },
           token: symbol,
           value: symbol,
           contractAddress: address,
-          ...relatedAsset,
+          chain: CHAIN.ETHEREUM,
         });
       }
       return assetsWithBalance;
