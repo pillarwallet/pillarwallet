@@ -55,9 +55,9 @@ export type Asset = {
   isSynthetixAsset?: boolean,
 };
 
-export type Assets = {|
+export type Assets = {
   [symbol: string]: Asset,
-|};
+};
 
 export type AssetsByAccount = {
   [accountId: string]: Assets,

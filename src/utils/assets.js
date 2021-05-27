@@ -21,7 +21,7 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
-import { orderBy } from 'lodash';
+import { keyBy, orderBy } from 'lodash';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -287,13 +287,8 @@ export const findSupportedAssetsBySymbols = (supportedAssets: Asset[], symbols: 
 };
 
 export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
-  const result = {};
-  symbols.forEach(symbol => {
-    const asset = findSupportedAssetBySymbol(supportedAssets, symbol);
-    if (asset) result[symbol] = asset;
-  });
-
-  return result;
+  const assets = mapNotNil(symbols, symbol => findSupportedAssetBySymbol(supportedAssets, symbol));
+  return keyBy(assets, (asset) => asset.symbol);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
