@@ -820,8 +820,9 @@ export const resetSearchAssetsResultAction = () => ({
 });
 
 export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
+  console.log('SSS getSupportedTokens', supportedAssets, accountsAssets);
   const accountId = getAccountId(account);
-  const accountAssets = get(accountsAssets, accountId, {});
+  const accountAssets = accountsAssets[accountId] ?? {};
   const accountAssetsTickers = Object.keys(accountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
@@ -879,6 +880,7 @@ export const loadSupportedAssetsAction = () => {
   };
 };
 
+// TODO: handle side chain balances
 export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -889,10 +891,14 @@ export const checkForMissedAssetsAction = () => {
     await dispatch(loadSupportedAssetsAction());
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
 
+    console.log('RRR accounts', accounts);
+    console.log('RRR walletSupportedAssets', walletSupportedAssets);
+
     const accountUpdatedAssets = accounts
       .filter(isNotKeyBasedType)
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
+    console.log('RRR accountUpdatedAssets', accountUpdatedAssets);
 
     // check tx history if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(

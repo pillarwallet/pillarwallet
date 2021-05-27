@@ -29,6 +29,7 @@ import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'c
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
+import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 
 // types
@@ -73,6 +74,14 @@ export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = 
 
 export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
+};
+
+export const getAssetsFromArray = (assets: Asset[]): Assets => {
+  const result = {};
+  assets.forEach(asset => {
+    result[asset.symbol] = asset;
+  });
+  return result;
 };
 
 export const sortAssets = (assets: Assets): Asset[] => {
@@ -266,6 +275,14 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
 
 export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
   return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+};
+
+export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
+  return supportedAssets.find((asset) => asset.symbol === symbol);
+};
+
+export const findSupportedAssetsBySymbols = (supportedAssets: Asset[], symbols: string[]): Asset[] => {
+  return mapNotNil(symbols, (symbol) => findSupportedAssetBySymbol(supportedAssets, symbol));
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {

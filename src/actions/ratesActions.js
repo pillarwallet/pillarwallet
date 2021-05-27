@@ -29,7 +29,7 @@ import { getCoinGeckoBitcoinAndWBTCPrices } from 'services/coinGecko';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { assetsSelector } from 'selectors';
+import { assetsSelector, allChainsWalletAssetSelector, accountChainsWalletAssetSelector } from 'selectors';
 
 // utils
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
@@ -54,7 +54,7 @@ export const setRatesAction = (newRates: Rates) => {
 
 export const fetchAccountAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountChainsWalletAssetSelector(getState());
     const rates = await getExchangeRates(accountAssets);
     dispatch(setRatesAction(rates));
   };
@@ -62,7 +62,7 @@ export const fetchAccountAssetsRatesAction = () => {
 
 export const fetchAllAccountsAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const allAccountsAssets = assetsSelector(getState());
+    const allAccountsAssets = allChainsWalletAssetSelector(getState());
 
     // check if not empty just in case
     if (isEmpty(allAccountsAssets)) {
@@ -81,6 +81,7 @@ export const fetchAllAccountsAssetsRatesAction = () => {
     }, {});
 
     const rates = await getExchangeRates(allAssets);
+    console.log('fetchAllAccountsAssetsRatesAction rates', rates);
     dispatch(setRatesAction(rates));
   };
 };

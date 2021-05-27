@@ -20,19 +20,21 @@
 
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import get from 'lodash.get';
+import { get, mapValues, uniq } from 'lodash';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
+import { getAssetsFromArray, findSupportedAssetsBySymbols } from 'utils/assets';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, AccountAllowances } from 'models/Offer';
-import type { Asset, AssetsByAccount } from 'models/Asset';
+import type { Asset, Assets, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
+import type { AssetBalancesPerAccount, CategoryBalancesPerChain } from 'models/Balances';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -80,14 +82,53 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
+export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
 export const supportedAssetsSelector = ({ assets }: RootReducerState): Asset[] =>
   get(assets, 'supportedAssets', []);
+
+export const allChainsWalletAssetSelector: Selector<AssetsByAccount> = createSelector(
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    return mapValues(assetsBalances, (account: CategoryBalancesPerChain) => {
+      const ethereumSymbols = Object.keys(account.ethereum?.wallet ?? {});
+      const polygonSymbols = Object.keys(account.polygon?.wallet ?? {});
+      const binanceSymbols = Object.keys(account.binance?.wallet ?? {});
+      const xdaiSymbols = Object.keys(account.xdai?.wallet ?? {});
+      const allSymbols = uniq([...ethereumSymbols, ...polygonSymbols, ...binanceSymbols, ...xdaiSymbols]);
+      console.log('allChainsWalletAssetSelector 1', allSymbols);
+
+      const assets = findSupportedAssetsBySymbols(supportedAssets, allSymbols);
+      console.log('allChainsWalletAssetSelector 2', assets);
+      return getAssetsFromArray(assets);
+    });
+  },
+);
+
+export const accountChainsWalletAssetSelector: Selector<Assets> = createSelector(
+  activeAccountIdSelector,
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    const account = assetsBalances[accountId];
+
+    const ethereumSymbols = Object.keys(account.ethereum?.wallet ?? {});
+    const polygonSymbols = Object.keys(account.polygon?.wallet ?? {});
+    const binanceSymbols = Object.keys(account.binance?.wallet ?? {});
+    const xdaiSymbols = Object.keys(account.xdai?.wallet ?? {});
+    const allSymbols = uniq([...ethereumSymbols, ...polygonSymbols, ...binanceSymbols, ...xdaiSymbols]);
+    console.log('accountChainsWalletAssetSelector 1', allSymbols);
+
+    const assets = findSupportedAssetsBySymbols(supportedAssets, allSymbols);
+    console.log('accountChainsWalletAssetSelector 2', assets);
+    return getAssetsFromArray(assets);
+  },
+);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
