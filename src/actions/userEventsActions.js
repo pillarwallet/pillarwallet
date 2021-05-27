@@ -31,17 +31,20 @@ import {
   LEGACY_SMART_WALLET_CREATED,
   ETHERSPOT_SMART_WALLET_CREATED,
 } from 'constants/userEventsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
 import {
-  getAccountCreatedAtTimestamp,
+  getSmartWalletAccountCreatedAtTimestamp,
+  isAccountType,
   isArchanovaAccount,
   isEtherspotAccount,
   isNotKeyBasedType,
 } from 'utils/accounts';
+import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { accountsSelector } from 'selectors';
@@ -54,15 +57,23 @@ export const addWalletCreationEventAction = (account: Account) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { userEvents: { data: userEvents } } = getState();
 
+    // key based not supported
+    if (isAccountType(account, ACCOUNT_TYPES.KEY_BASED)) return;
+
     // keep as it is to not break existing events
     const eventTitle = isEtherspotAccount(account)
       ? ETHERSPOT_SMART_WALLET_CREATED
       : LEGACY_SMART_WALLET_CREATED;
     const eventId = eventTitle.replace(/ /g, '');
-    const createdAtTimestamp = getAccountCreatedAtTimestamp(account);
-    const accountCreatedAt = createdAtTimestamp
-      ? new Date(createdAtTimestamp / 1000)
-      : new Date();
+    const createdAtTimestamp = getSmartWalletAccountCreatedAtTimestamp(account);
+
+    // this shouldn't happen
+    if (!createdAtTimestamp) {
+      reportErrorLog('addWalletCreationEventAction failed: no createdAtTimestamp', { account });
+      return;
+    }
+
+    const accountCreatedAt = new Date(createdAtTimestamp / 1000);
 
     const walletCreatedMissing = !userEvents.some(({ id }) => id === eventId);
     if (walletCreatedMissing) {

@@ -75,8 +75,10 @@ export const addAccountAction = (
     const updatedAccounts = accounts.filter((account) => !isCaseInsensitiveMatch(account.id, accountAddress));
 
     if (existingAccount) {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
     } else {
+      // $FlowFixMe: flow gets confused here
       updatedAccounts.push(smartWalletAccount);
     }
 

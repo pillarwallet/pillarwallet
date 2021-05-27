@@ -187,6 +187,7 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTrx => {
     contractAddress,
     assetContract: category,
     tokenType: COLLECTIBLES,
+    chain: CHAIN.ETHEREUM,
   };
 
   return {

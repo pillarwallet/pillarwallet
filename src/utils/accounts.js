@@ -24,6 +24,7 @@ import t from 'translations/translate';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Account, AccountTypes } from 'models/Account';
@@ -153,10 +154,12 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 export const getAccountEnsName = (account: ?Account): ?string => {
   if (!account) return null;
 
-  switch (account.type) {
+  switch (getAccountType(account)) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-      return account.extra?.ethereum?.ensNode?.name;
+      // $FlowFixMe: [CHAIN.ETHEREUM] is bothering flow, fix later?
+      return account.extra?.[CHAIN.ETHEREUM]?.ensNode?.name;
     case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+      // $FlowFixMe: ensName is bothering flow, fix later?
       return account.extra?.ensName;
     default:
       return null;
@@ -180,13 +183,20 @@ export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.K
 export const isArchanovaAccountAddress = (address: string, accounts: Account[]): boolean =>
   getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
 
-export const getAccountCreatedAtTimestamp = (account: Account): ?number => {
-  switch (account?.type) {
+export const getSmartWalletAccountCreatedAtTimestamp = (account: Account): ?number => {
+  let createdAt;
+  switch (getAccountType(account)) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-      return +account?.extra?.ensNode?.createdAt;
+      // $FlowFixMe: [CHAIN.ETHEREUM] is bothering flow, fix later?
+      createdAt = account?.extra?.[CHAIN.ETHEREUM]?.createdAt;
+      break;
     case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-      return +account?.extra?.updatedAt;
+      // $FlowFixMe: updatedAt is bothering flow, fix later?
+      createdAt = account?.extra?.updatedAt;
+      break;
     default:
-      return null;
+      break;
   }
+
+  return createdAt ? +createdAt : null;
 };
