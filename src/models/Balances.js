@@ -23,6 +23,34 @@ import { BigNumber } from 'bignumber.js';
 // types
 import type { ChainRecord } from 'models/Chain';
 
+export type CategoryRecord<T> = {|
+  wallet?: T,
+  deposits?: T,
+  investments?: T,
+  liquidityPools?: T,
+  rewards?: T,
+|};
+
+export type ServiceRecord<T> = {|
+  deposits?: T,
+  investments?: T,
+  liquidityPools?: T,
+  rewards?: T,
+|};
+
+export type BalancePerChain = ChainRecord<BigNumber>;
+
+export type CategoryTotalBalancesX = CategoryRecord<BalancePerChain>;
+export type CategoryTotalBalancesPerAccount = { [accountId: string]: CategoryTotalBalancesX };
+
+export type ServiceTotalBalances = ServiceRecord<BalancePerChain>;
+export type ServiceTotalBalancesPerAccount = { [accountId: string]: ServiceTotalBalances };
+
+export type WalletTotalBalancesPerAccount = { [accoundId: string]: BalancePerChain };
+
+
+//// LEGACY
+
 export type CategoryTotalBalances = {|
   wallet?: BigNumber,
   deposits?: BigNumber,
