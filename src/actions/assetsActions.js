@@ -391,18 +391,26 @@ export const updateAccountWalletAssetsBalancesForChainAction = (
 export const fetchAccountWalletBalancesAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletAddress = getAccountAddress(account);
-
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
 
+    const chains = getSupportedChains(account);
     const accountAssets = getAssetsAsList(makeAccountEnabledAssetsSelector(accountId)(getState()));
     const supportedAssets = supportedAssetsSelector(getState());
-    const chains = getSupportedChains(account);
 
     chains.forEach(async (chain) => {
-      const newBalances = isEtherspotAccount(account)
-        ? await etherspotService.getBalances(chain, walletAddress, accountAssets, supportedAssets)
-        : await api.fetchBalances({ address: walletAddress, assets: accountAssets });
+      let newBalances = [];
+      try {
+        newBalances = isEtherspotAccount(account)
+          ? await etherspotService.getBalances(chain, walletAddress, accountAssets, supportedAssets)
+          : await api.fetchBalances({ address: walletAddress, assets: accountAssets });
+      } catch (error) {
+        reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
+          accountId,
+          accountType: account.type,
+          chain,
+        });
+      }
 
       if (isEmpty(newBalances)) return;
 
@@ -417,6 +425,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
         if (!asset?.balance) return BigNumber(0);
 
         const rate = getRate(rates, asset.symbol, currency);
+        console.log('ASSET', chain, asset, rate);
         return BigNumber(asset.balance).times(rate);
       });
 

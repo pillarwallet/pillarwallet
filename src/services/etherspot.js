@@ -197,7 +197,7 @@ class EtherspotService {
           : supportedAssets.find(({ address }) => addressesEqual(address, token));
 
       if (!asset) {
-        reportErrorLog('EtherspotService getBalances asset mapping failed', { token });
+        reportErrorLog('EtherspotService getBalances asset mapping failed', { chain, token });
         return null;
       }
 
