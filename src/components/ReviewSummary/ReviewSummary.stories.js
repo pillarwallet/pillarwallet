@@ -34,11 +34,9 @@ const plrAsset = {
   isPreferred: false,
   address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
   decimals: 18,
-  description: 'Pillar is developing a decentralised solution for digital asset and personal data management.',
   name: 'Pillar',
   symbol: 'PLR',
   value: 'PLR',
-  wallpaperUrl: 'asset/images/tokens/wallpaper/plrBg.png',
   iconUrl: 'asset/images/tokens/icons/plrColor.png',
   iconMonoUrl: 'asset/images/tokens/icons/plr.png',
   email: 'info@pillarproject.io',
@@ -66,7 +64,7 @@ const reduxMock = {
 };
 
 const collectible = {
-  id: 5191,
+  id: '5191',
   category: 'CryptoKittiesRinkeby',
   name: 'CryptoKittiesRinkeby 5191',
   contractAddress: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',

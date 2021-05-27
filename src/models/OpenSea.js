@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,35 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const DEVICE_CATEGORIES = {
-  SMART_WALLET_DEVICE: 'SMART_WALLET_DEVICE',
-};
-export const SET_CONNECTED_DEVICES = 'SET_CONNECTED_DEVICES';
-export const SET_ADDING_CONNECTED_DEVICE_ADDRESS = 'SET_ADDING_CONNECTED_DEVICE_ADDRESS';
-export const RESET_ADDING_CONNECTED_DEVICE_ADDRESS = 'RESET_ADDING_CONNECTED_DEVICE_ADDRESS';
-export const SET_REMOVING_CONNECTED_DEVICE_ADDRESS = 'SET_REMOVING_CONNECTED_DEVICE_ADDRESS';
-export const RESET_REMOVING_CONNECTED_DEVICE_ADDRESS = 'RESET_REMOVING_CONNECTED_DEVICE_ADDRESS';
-export const SET_CONNECTED_DEVICES_ERROR_MESSAGE = 'SET_CONNECTED_DEVICES_ERROR_MESSAGE';
+
+export type OpenSeaAssetAccount = {|
+  address: string,
+|};
+
+export type OpenSeaAssetContract = {|
+  name: string,
+  address: string,
+|};
+
+export type OpenSeaAssetTransaction = {|
+  transaction_hash: string,
+  block_number: string,
+  timestamp: number,
+  id: number,
+|};
+
+export type OpenSeaAsset = {|
+  asset_contract: OpenSeaAssetContract,
+  name: string,
+  token_id: string,
+  description: string,
+  image_url?: string,
+  image_preview_url?: string,
+|};
+
+export type OpenSeaHistoryItem = {|
+  asset: OpenSeaAsset,
+  transaction: OpenSeaAssetTransaction,
+  to_account: OpenSeaAssetAccount,
+  from_account: OpenSeaAssetAccount,
+|};

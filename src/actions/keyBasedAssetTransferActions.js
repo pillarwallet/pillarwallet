@@ -42,13 +42,12 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // actions
-import { getAllOwnedAssets } from 'actions/assetsActions';
 import { collectibleFromResponse } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
-import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
+import { addressesEqual, getBalance, transformBalancesToObject } from 'utils/assets';
 import { BigNumber, truncateAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
@@ -56,9 +55,10 @@ import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 // services
 import { calculateGasEstimate, fetchTransactionInfo, transferSigned } from 'services/assets';
 import KeyBasedWallet from 'services/keyBasedWallet';
+import etherspotService from 'services/etherspot';
+import { fetchCollectibles } from 'services/opensea';
 
 // types
-import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Account } from 'models/Account';
@@ -165,7 +165,7 @@ export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: 
 };
 
 export const fetchAvailableBalancesToTransferAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: walletData },
       assets: { supportedAssets },
@@ -179,19 +179,7 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
 
-    // fetch key based assets
-    const ownedAssets = await getAllOwnedAssets(api, keyBasedWalletAddress, supportedAssets);
-
-    // it's not fetched on mainnet using getAllOwnedAssets
-    if (!ownedAssets[ETH]) {
-      const ethAsset = supportedAssets.find(({ symbol }) => symbol === ETH);
-      if (ethAsset) ownedAssets[ETH] = ethAsset;
-    }
-
-    const availableBalances = await api.fetchBalances({
-      address: keyBasedWalletAddress,
-      assets: getAssetsAsList(ownedAssets),
-    });
+    const availableBalances = await etherspotService.getPositiveBalances(keyBasedWalletAddress, supportedAssets);
 
     dispatch({
       type: SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
@@ -201,7 +189,7 @@ export const fetchAvailableBalancesToTransferAction = () => {
 };
 
 export const fetchAvailableCollectiblesToTransferAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const keyBasedWalletAddress = getState().wallet.data?.address;
     if (!keyBasedWalletAddress) {
       reportLog('fetchAvailableCollectiblesToTransferAction failed: no keyBasedWalletAddress');
@@ -212,13 +200,11 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
 
     let availableCollectibles = [];
 
-    const fetchedCollectibles = await api.fetchCollectibles(keyBasedWalletAddress);
-    if (fetchedCollectibles.error) {
+    const fetchedCollectibles = await fetchCollectibles(keyBasedWalletAddress);
+    if (!fetchedCollectibles) {
       reportLog('Failed to fetch key based wallet collectibles', { requestResult: fetchedCollectibles });
     } else {
-      availableCollectibles = !isEmpty(fetchedCollectibles?.assets)
-        ? fetchedCollectibles.assets.map(collectibleFromResponse)
-        : [];
+      availableCollectibles = fetchedCollectibles.map(collectibleFromResponse);
     }
 
     dispatch({ type: SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER, payload: availableCollectibles });
@@ -414,7 +400,6 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
       id: keyBasedWalletAddress,
       type: ACCOUNT_TYPES.KEY_BASED,
       isActive: false,
-      walletId: '',
     };
 
     const keyBasedWallet = new KeyBasedWallet(wallet.privateKey);

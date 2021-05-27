@@ -69,12 +69,16 @@ import {
   getAccountAddress,
   getAccountId,
 } from 'utils/accounts';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import {
+  getAssetData,
+  getAssetsAsList,
+  transformAssetsToObject,
+} from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
+import { initialAssets } from 'fixtures/assets';
 
 
 export const connectEtherspotAccountAction = (accountId: string) => {
@@ -122,7 +126,7 @@ export const initEtherspotServiceAction = (privateKey: string) => {
 };
 
 export const importEtherspotAccountsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: session },
       user: { data: user },
@@ -137,13 +141,6 @@ export const importEtherspotAccountsAction = () => {
 
     if (!user) {
       reportErrorLog('importEtherspotAccountsAction failed: no user');
-      return;
-    }
-
-    const { walletId } = user;
-
-    if (!walletId) {
-      reportErrorLog('importEtherspotAccountsAction failed: no walletId', { user });
       return;
     }
 
@@ -170,13 +167,13 @@ export const importEtherspotAccountsAction = () => {
     dispatch(setEnsNameIfNeededAction());
 
     // set default assets for active Etherspot wallet
-    const initialAssets = await api.fetchInitialAssets(walletId);
+    const defaultInitialAssets = transformAssetsToObject(initialAssets);
     await dispatch({
       type: SET_INITIAL_ASSETS,
-      payload: { accountId, assets: initialAssets },
+      payload: { accountId, assets: defaultInitialAssets },
     });
 
-    const assets = { [accountId]: initialAssets };
+    const assets = { [accountId]: defaultInitialAssets };
 
     dispatch(saveDbAction('assets', { assets }, true));
   };

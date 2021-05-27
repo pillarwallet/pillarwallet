@@ -25,7 +25,6 @@ import { WebSocket } from 'mock-socket';
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
 import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } from 'constants/onboardingConstants';
-import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
@@ -50,7 +49,6 @@ import {
 import { transformAssetsToObject } from 'utils/assets';
 
 // services
-import PillarSdk from 'services/api';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 
@@ -76,49 +74,11 @@ global.WebSocket = WebSocket;
 
 jest.setTimeout(20000);
 
-const mockUser = { username: 'snow', walletId: 2 };
-
-const mockFetchInitialAssetsResponse = transformAssetsToObject(mockInitialAssets);
-
-jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
-  init: jest.fn(),
-  setUsername: jest.fn(),
-  fetchAccessTokens: jest.fn(),
-  fetchNotifications: jest.fn(),
-  listAccounts: jest.fn(),
-  registerOnAuthServer: jest.fn(() => ({
-    userId: 1,
-    walletId: 2,
-    refreshToken: 'uniqueRefreshToken',
-    accessToken: 'uniqueAccessToken',
-  })),
-  updateUser: jest.fn(() => mockUser),
-  userInfo: jest.fn(() => mockUser),
-  fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
-  fetchSupportedAssets: jest.fn(() => mockSupportedAssets),
-  getAddressErc20TokensInfo: jest.fn((address: string) => {
-    // mock owned assets for mocked archanova account
-    if (address === mockArchanovaAccount.extra.address) {
-      return [{ tokenInfo: { symbol: 'PLR' } }];
-    }
-
-    return [];
-  }),
-  fetchBalances: jest.fn(({ address, assets }) => {
-    // mock positive balances for mocked archanova account
-    if (address === mockArchanovaAccount.extra.address) {
-      return assets.map(({ symbol }) => ({ symbol, balance: 1 }));
-    }
-
-    return [];
-  }),
-})));
+const mockUser = { username: 'snow' };
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
-const pillarSdk = new PillarSdk();
-
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const mockWallet: EthereumWallet = {
   address: '0x9c',
@@ -141,12 +101,6 @@ const mockOnboarding: Object = {
 const mockBackupStatus: Object = {
   isImported: false,
   isBackedUp: false,
-  isRecoveryPending: false,
-};
-
-const mockOauthTokens: Object = {
-  accessToken: 'uniqueAccessToken',
-  refreshToken: 'uniqueRefreshToken',
 };
 
 const mockFcmToken = '12x2342x212';
@@ -220,7 +174,6 @@ describe('Onboarding actions', () => {
     const expectedActions = [
       { type: SET_REGISTERING_USER, payload: true },
       { type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false },
-      { type: UPDATE_OAUTH_TOKENS, payload: mockOauthTokens },
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_USER, payload: mockUser },
       { type: SET_REGISTERING_USER, payload: false },

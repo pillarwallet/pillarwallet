@@ -20,7 +20,6 @@
 
 import { Linking } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -40,10 +39,9 @@ import {
   MAIN_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
-  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
   TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
-import { SET_USER, UPDATE_USER } from 'constants/userConstants';
+import { SET_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -52,7 +50,6 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 // utils
 import { delay, reportLog, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
-import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { clearWebViewCookies } from 'utils/exchange';
 import {
   setKeychainDataObject,
@@ -69,18 +66,15 @@ import { isTest } from 'utils/environment';
 
 // services
 import Storage from 'services/storage';
-import archanovaService from 'services/archanova';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { initOnLoginArchanovaAccountAction } from './accountsActions';
 import {
@@ -93,12 +87,7 @@ import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
-import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
-import {
-  checkAndFinishSmartWalletRecoveryAction,
-  checkRecoveredSmartWalletStateAction,
-} from './recoveryPortalActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
@@ -111,21 +100,22 @@ import {
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
 import { fetchAllAccountsTotalBalancesAction, fetchAllChainBalancesAction } from './assetsActions';
+import { finishOnboardingAction } from './onboardingActions';
 
 
 const storage = Storage.getInstance('db');
 
-export const updateFcmTokenAction = (walletId: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const updateFcmTokenAction = () => {
+  return async (dispatch: Dispatch) => {
     const fcmToken = await firebaseMessaging.getToken().catch(e => {
       // We was unable to fetch the FCM token.
       reportLog(`Unable to fetch Firebase FCM token: ${e.message}`, e);
-
       return null;
     });
     if (!fcmToken) return;
+
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-    await api.updateFCMToken(walletId, fcmToken);
+    // TODO: update Etherspot session with FCM token
   };
 };
 
@@ -141,14 +131,13 @@ export const loginAction = (
   onLoginSuccess: ?Function,
   useBiometrics?: ?boolean,
 ) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: {
         data: {
           blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted, hasSeenTutorial,
         },
       },
-      oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
     } = getState();
@@ -183,7 +172,7 @@ export const loginAction = (
         throw new Error();
       }
 
-      let { user = {} } = await storage.get('user');
+      const { user = {} } = await storage.get('user');
 
       const decryptedPrivateKey = wallet?.privateKey;
       if (!decryptedPrivateKey) {
@@ -194,45 +183,7 @@ export const loginAction = (
       dispatch({ type: SET_USER, payload: user });
 
       const { address } = wallet;
-      let unlockedWallet = { address };
-
-      /**
-       * if user isn't completely registered then put private key into state to complete registration,
-       * this can happen due offline or web recovery portal onboarding
-       */
-      if (!user?.walletId) {
-        unlockedWallet = { ...unlockedWallet, privateKey: decryptedPrivateKey };
-      }
-
-      // web recovery portal recovery pending, let's navigate accordingly
-      if (getState().wallet.backupStatus.isRecoveryPending) {
-        dispatch({ type: SET_WALLET, payload: unlockedWallet });
-        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await archanovaService.init(
-          decryptedPrivateKey,
-          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
-        );
-        dispatch(checkAndFinishSmartWalletRecoveryAction());
-        return;
-      }
-
-      /**
-       * Important!
-       * SDK must be initiated before onLoginSuccess in case OAuth tokens fail/expire
-       * since it's used to update front-end with new tokens
-       */
-      if (user?.walletId) {
-        // oauth fallback method for expired access token
-        const updateOAuth = updateOAuthTokensCB(dispatch);
-
-        // oauth fallback method for all tokens expired or invalid
-        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
-
-        // init API
-        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
-      } else {
-        api.init();
-      }
+      const unlockedWallet = { address };
 
       // execute login success callback
       if (onLoginSuccess) {
@@ -242,7 +193,13 @@ export const loginAction = (
         await onLoginSuccess(rawPrivateKey);
       }
 
-      dispatch({ type: SET_WALLET, payload: unlockedWallet });
+      if (isEmpty(accounts)) {
+        // complete registration, this can happen due offline
+        dispatch({ type: SET_WALLET, payload: { ...unlockedWallet, privateKey: decryptedPrivateKey } });
+        await dispatch(finishOnboardingAction());
+      } else {
+        dispatch({ type: SET_WALLET, payload: unlockedWallet });
+      }
 
       // Archanova init flow
       const archanovaAccount = findFirstArchanovaAccount(accounts);
@@ -287,30 +244,11 @@ export const loginAction = (
       dispatch(checkForWalletBackupToastAction());
 
       // user is registered
-      if (user?.walletId) {
-        // set API username (local method)
-        api.setUsername(user.username);
-
-        if (isOnline) {
-          // make first api call which can also trigger OAuth fallback methods
-          const userInfo = await api.userInfo(user.walletId);
-
-          // update FCM
-          dispatch(updateFcmTokenAction(user.walletId));
-
-          // save updated user, just in case userInfo endpoint failed check if result is empty
-          if (!isEmpty(userInfo)) {
-            user = merge({}, user, userInfo);
-            dispatch({ type: UPDATE_USER, payload: user });
-            dispatch(saveDbAction('user', { user }, true));
-          }
-
-          dispatch(getWalletsCreationEventsAction());
-          dispatch(fetchTransactionsHistoryAction());
-          dispatch(fetchReferralRewardAction());
-
-          firebaseCrashlytics.setUserId(user.username);
-        }
+      if (isOnline) {
+        // update FCM
+        dispatch(updateFcmTokenAction());
+        dispatch(fetchTransactionsHistoryAction());
+        firebaseCrashlytics.setUserId(user.username);
       }
 
       dispatch(updatePinAttemptsAction(false));
@@ -479,7 +417,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 };
 
 export const resetAppServicesAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async () => {
     // reset firebase fcm
     await firebaseIid
       .delete()
@@ -489,14 +427,6 @@ export const resetAppServicesAction = () => {
     const env = await storage.get('environment');
     await storage.removeAll();
     if (env) await storage.save('environment', env, true);
-
-    /**
-     *  reset smart wallet service if it's not smart wallet recovery through web portal,
-     *  portal recovery initially resets smart wallet instance in order to create it's own
-     */
-    if (!getState().onboarding.isPortalRecovery) {
-      await archanovaService.reset();
-    }
 
     await etherspotService.logout();
 

@@ -101,15 +101,6 @@ export const findFirstSmartWalletAccount = (
 ): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET)
   || findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
-export const getActiveAccountWalletId = (accounts: Accounts): string => {
-  const activeAccount = getActiveAccount(accounts);
-  if (!activeAccount) {
-    return '';
-  }
-
-  return activeAccount.walletId;
-};
-
 export const isSmartWalletAccount = (account: ?Account): boolean => [
   ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
@@ -192,3 +183,14 @@ export const isArchanovaAccountAddress = (
   address: string,
   accounts: Accounts,
 ): boolean => getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
+
+export const getAccountCreatedAtTimestamp = (account: Account): ?number => {
+  switch (account?.type) {
+    case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+      return +account?.extra?.ensNode?.createdAt;
+    case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+      return +account?.extra?.updatedAt;
+    default:
+      return null;
+  }
+};

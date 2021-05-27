@@ -19,6 +19,8 @@
 */
 
 import { getEnv } from 'configs/envConfig';
+
+// constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
@@ -26,6 +28,11 @@ import {
   COLLECTIBLE_TRANSACTION,
   UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
+
+// services
+import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
+
+// utils
 import {
   getAccountAddress,
   getAccountId,
@@ -33,14 +40,23 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { getTrxInfo } from 'utils/history';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import {
+  isCaseInsensitiveMatch,
+  reportErrorLog,
+} from 'utils/common';
 
-import type SDKWrapper from 'services/api';
-import type { Collectible } from 'models/Collectible';
+// types
+import type { Collectible, CollectibleTrx } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
+import type {
+  OpenSeaAsset,
+  OpenSeaHistoryItem,
+} from 'models/OpenSea';
 
+// actions
 import { saveDbAction } from './dbActions';
+
 
 const parseCollectibleMedia = (data) => {
   const {
@@ -54,7 +70,7 @@ const parseCollectibleMedia = (data) => {
   };
 };
 
-export const collectibleFromResponse = (responseItem: Object): Collectible => {
+export const collectibleFromResponse = (responseItem: OpenSeaAsset): Collectible => {
   const {
     token_id: id,
     asset_contract: assetContract,
@@ -88,25 +104,44 @@ const collectibleTransactionUpdate = (hash: string) => {
 };
 
 
-export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const fetchCollectiblesAction = (account?: Account) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
     } = getState();
-    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
-    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
 
-    if (!walletAddress || !accountId) return;
-    const response = await api.fetchCollectibles(walletAddress);
+    const walletAddress = account
+      ? getAccountAddress(account)
+      : getActiveAccountAddress(accounts);
 
-    if (response.error || !response.assets) return;
+    const accountId = account
+      ? getAccountId(account)
+      : getActiveAccountId(accounts);
 
-    const accountCollectibles = response.assets.map(collectibleFromResponse);
+    if (!walletAddress || !accountId) {
+      reportErrorLog('fetchCollectiblesAction failed: no walletAddress or accountId', {
+        accountId,
+        walletAddress,
+        defaultAccount: account,
+      });
+      return;
+    }
+
+    const openSeaCollectibles = await fetchCollectibles(walletAddress);
+    if (!openSeaCollectibles) {
+      reportErrorLog('fetchCollectiblesAction failed: response not valid', {
+        openSeaCollectibles,
+        accountId,
+        walletAddress,
+        defaultAccount: account,
+      });
+      return;
+    }
 
     const updatedCollectibles = {
       ...collectibles,
-      [accountId]: accountCollectibles,
+      [accountId]: openSeaCollectibles.map(collectibleFromResponse),
     };
 
     dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
@@ -114,7 +149,7 @@ export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
   };
 };
 
-const collectibleTransaction = (event) => {
+const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTrx => {
   const {
     asset,
     transaction,
@@ -125,18 +160,29 @@ const collectibleTransaction = (event) => {
   const {
     asset_contract: assetContract,
     name,
-    token_id: id,
+    token_id: tokenId,
     description,
   } = asset;
-  const { name: category, address: contractAddress } = assetContract;
-  const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
-  const collectibleName = name || `${category} ${id}`;
+  const {
+    name: category,
+    address: contractAddress,
+  } = assetContract;
+
+  const {
+    transaction_hash: trxHash,
+    block_number: blockNumber,
+    timestamp,
+  } = transaction;
+
+  const transactionId = (+transaction.id).toString();
+
+  const collectibleName = name || `${category} ${tokenId}`;
 
   const { image, icon } = parseCollectibleMedia(asset);
 
   const assetData = {
-    id,
+    id: transactionId,
     category,
     name: collectibleName,
     description,
@@ -151,8 +197,9 @@ const collectibleTransaction = (event) => {
     to: toAcc.address,
     from: fromAcc.address,
     hash: trxHash,
+    batchHash: null,
     createdAt: (new Date(timestamp).getTime()) / 1000,
-    _id: transaction.id,
+    _id: transactionId,
     protocol: 'Ethereum', // eslint-disable-line i18next/no-literal-string
     asset: collectibleName,
     contractAddress,
@@ -176,22 +223,42 @@ const isCollectibleTransaction = (event: Object): boolean => {
   return assetContract.schema_name === 'ERC721';
 };
 
-export const fetchCollectiblesHistoryAction = (accountToFetchFor?: Account) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const fetchCollectiblesHistoryAction = (account?: Account) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
 
-    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
-    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
+    const walletAddress = account
+      ? getAccountAddress(account)
+      : getActiveAccountAddress(accounts);
 
-    if (!walletAddress || !accountId) return;
-    const response = await api.fetchCollectiblesTransactionHistory(walletAddress);
+    const accountId = account
+      ? getAccountId(account)
+      : getActiveAccountId(accounts);
 
-    if (response.error || !response.asset_events) return;
+    if (!walletAddress || !accountId) {
+      reportErrorLog('fetchCollectiblesHistoryAction failed: no walletAddress or accountId', {
+        accountId,
+        walletAddress,
+        defaultAccount: account,
+      });
+      return;
+    }
 
-    const accountCollectiblesHistory = response.asset_events
+    const openSeaHistory = await fetchCollectiblesTransactionHistory(walletAddress);
+    if (!openSeaHistory) {
+      reportErrorLog('fetchCollectiblesHistoryAction failed: response not valid', {
+        openSeaHistory,
+        accountId,
+        walletAddress,
+        defaultAccount: account,
+      });
+      return;
+    }
+
+    const accountCollectiblesHistory = openSeaHistory
       .filter(isCollectibleTransaction)
       .map(collectibleTransaction);
 
@@ -242,7 +309,7 @@ export const fetchAllCollectiblesDataAction = () => {
 };
 
 export const updateCollectibleTransactionAction = (hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: { isOnline } },
       collectibles: { transactionHistory: collectiblesHistory },
@@ -250,7 +317,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     if (!isOnline) return;
 
     dispatch(collectibleTransactionUpdate(hash));
-    const trxInfo = await getTrxInfo(api, hash, getEnv().COLLECTIBLES_NETWORK);
+    const trxInfo = await getTrxInfo(hash, getEnv().COLLECTIBLES_NETWORK);
     if (!trxInfo) {
       dispatch(collectibleTransactionUpdate(''));
       return;

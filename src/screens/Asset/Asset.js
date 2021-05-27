@@ -31,13 +31,12 @@ import t from 'translations/translate';
 // components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Image from 'components/Image';
 import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
-import { BaseText, Paragraph, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
@@ -46,7 +45,6 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -54,7 +52,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
-import { spacing, fontSizes, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
@@ -96,7 +94,6 @@ type Props = {
   availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
-  fetchReferralRewardsIssuerAddresses: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
   activeAccountAddress: string,
@@ -144,10 +141,6 @@ const Disclaimer = styled(BaseText)`
   margin-top: 5px;
 `;
 
-const Description = styled(Paragraph)`
-  padding-bottom: 80px;
-`;
-
 const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
@@ -170,10 +163,8 @@ class AssetScreen extends React.Component<Props> {
       navigation,
       getExchangeSupportedAssets,
       exchangeSupportedAssets,
-      fetchReferralRewardsIssuerAddresses,
     } = this.props;
     const { resetHideRemoval } = navigation.state.params;
-    fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
   }
@@ -217,16 +208,6 @@ class AssetScreen extends React.Component<Props> {
     ));
   }
 
-  openDescriptionModal = () => {
-    const { assetData } = this.props.navigation.state.params;
-
-    Modal.open(() => (
-      <SlideModal title={assetData.name}>
-        <Description small light>{assetData.description}</Description>
-      </SlideModal>
-    ));
-  }
-
   render() {
     const {
       rates,
@@ -240,7 +221,6 @@ class AssetScreen extends React.Component<Props> {
       history,
       availableStake,
       exchangeSupportedAssets,
-      fetchReferralRewardsIssuerAddresses,
       isFetchingUniswapTokens,
       uniswapTokensGraphQueryFailed,
       getExchangeSupportedAssets,
@@ -302,13 +282,6 @@ class AssetScreen extends React.Component<Props> {
         navigation={navigation}
         headerProps={{
           centerItems: [{ title: assetData.name }],
-          rightItems: [
-            {
-              icon: 'info-circle-inverse',
-              onPress: this.openDescriptionModal,
-            },
-          ],
-          rightIconsSize: fontSizes.large,
         }}
         inset={{ bottom: 0 }}
       >
@@ -316,10 +289,7 @@ class AssetScreen extends React.Component<Props> {
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => {
-                fetchAssetsBalances();
-                fetchReferralRewardsIssuerAddresses();
-              }}
+              onRefresh={() => { fetchAssetsBalances(); }}
             />
           }
         >
@@ -427,7 +397,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     dispatch(fetchAssetsBalancesAction());
   },
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
-  fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

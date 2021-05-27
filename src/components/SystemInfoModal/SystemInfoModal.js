@@ -48,7 +48,6 @@ const SystemInfoModal = () => {
     SDK_PROVIDER,
     TX_DETAILS_URL,
     NETWORK_PROVIDER,
-    NOTIFICATIONS_URL,
     COLLECTIBLES_NETWORK,
     OPEN_SEA_API,
     BUILD_NUMBER,
@@ -80,10 +79,6 @@ const SystemInfoModal = () => {
         <LabeledRow>
           <Label>COLLECTIBLES_NETWORK</Label>
           <Value>{COLLECTIBLES_NETWORK}</Value>
-        </LabeledRow>
-        <LabeledRow>
-          <Label>NOTIFICATIONS_URL</Label>
-          <Value>{NOTIFICATIONS_URL}</Value>
         </LabeledRow>
         <LabeledRow>
           <Label>OPEN_SEA_API</Label>

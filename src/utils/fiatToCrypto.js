@@ -21,34 +21,12 @@
 import querystring from 'querystring';
 import { getEnv } from 'configs/envConfig';
 
-import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
-import type SDKWrapper from 'services/api';
-
-export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean) {
+export function rampWidgetUrl(address: string, plrMode?: boolean) {
   const params = {
     swapAsset: plrMode ? 'PLR' : null, // This turns on the ability to purchase PLR
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
-    ...(email ? { userEmailAddress: email } : {}),
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
-
-export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>
-  api.getSendwyreWidgetURL(params);
-
-type Rate = $Values<SendwyreRates>;
-type CurrencyPair = [string, string];
-
-function rateToCurrencyPair([joint, split]: [string, Rate]): CurrencyPair {
-  const [a, b] = ((Object.keys(split): any): [string, string]);
-  return a + b === joint ? [a, b] : [b, a];
-}
-
-export const getSendwyreCurrencyPairs = (rates: SendwyreRates): CurrencyPair[] =>
-  ((Object.entries(rates): any): [string, Rate][])
-    .map(rateToCurrencyPair);
-
-export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
-  api.generateAltalixTransactionUrl(params);

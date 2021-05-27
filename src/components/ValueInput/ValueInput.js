@@ -49,7 +49,6 @@ import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
-import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -122,8 +121,6 @@ export const getErrorMessage = (
     return t('error.amount.invalidNumber');
   } else if (assetSymbol !== BTC && assetBalanceBN.lt(amountBN)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
-  } else if (assetSymbol === BTC && amountBN.lt(MIN_WBTC_CAFE_AMOUNT)) {
-    return t('wbtcCafe.higherAmount');
   }
   return '';
 };

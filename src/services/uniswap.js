@@ -54,7 +54,6 @@ import { parseOffer, createAllowanceTx, getFixedQuantity } from 'utils/exchange'
 import httpRequest from 'utils/httpRequest';
 
 // services
-import { defaultAxiosRequestConfig } from 'services/api';
 
 // models
 import type { Asset } from 'models/Asset';
@@ -67,6 +66,7 @@ import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import { DEFAULT_AXIOS_REQUEST_CONFIG } from 'constants/appConstants';
 
 const getEthProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
@@ -312,7 +312,7 @@ export const createUniswapAllowanceTx =
   };
 
 export const fetchUniswapSupportedTokens = (): Promise<?string[]> =>
-  httpRequest.get<string>(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, defaultAxiosRequestConfig)
+  httpRequest.get<string>(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, DEFAULT_AXIOS_REQUEST_CONFIG)
     .then(({ data: responseData }) => {
       if (!responseData) {
         reportErrorLog('fetchUniswapSupportedTokens failed: unexpected response', { response: responseData });

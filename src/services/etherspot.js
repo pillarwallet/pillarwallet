@@ -18,7 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { constants as EthersConstants, utils as EthersUtils } from 'ethers';
+import {
+  constants as EthersConstants,
+  utils as EthersUtils,
+  Wallet as EthersWallet,
+} from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -41,6 +45,7 @@ import t from 'translations/translate';
 
 // utils
 import {
+  BigNumber,
   getEnsName,
   parseTokenAmount,
   reportErrorLog,
@@ -58,13 +63,13 @@ import type { EthereumTransaction, TransactionPayload, TransactionResult } from 
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { WalletAssetBalance } from 'models/Balances';
 
-class EtherspotService {
+export class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
   instances: Array<EtherspotSdk> = [];
   supportedNetworks: Array<NetworkNames> = [];
 
-  async init(privateKey: string): Promise<void> {
+  async init(privateKey?: string): Promise<void> {
     const etherspotComputeContractPromises = [];
     const isMainnet = isProdEnv();
 
@@ -192,9 +197,27 @@ class EtherspotService {
     }, []);
   }
 
+  async getPositiveBalances(accountAddress: string, assets: Asset[]): Promise<WalletAssetBalance[]> {
+    const balances = await this.getBalances(accountAddress, assets);
+
+    return balances.filter(({ balance }) => BigNumber(balance ?? 0).gt(0));
+  }
+
+  async getOwnedAssets(accountAddress: string, assets: Asset[]): Promise<{ [symbol: string]: Asset }> {
+    const balances = await this.getPositiveBalances(accountAddress, assets);
+
+    return balances.reduce((ownedAssets, { symbol }) => {
+      const supportedAsset = assets.find((asset) => asset.symbol === symbol);
+
+      if (supportedAsset) return { ...ownedAssets, [symbol]: supportedAsset };
+
+      return ownedAssets;
+    }, {});
+  }
+
   reserveEnsName(username: string): Promise<?ENSNode> {
     const fullEnsName = getEnsName(username);
-    return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
+    return this.sdk.getAccountTokenListTokens({ name: fullEnsName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;
     });
@@ -359,6 +382,34 @@ class EtherspotService {
       });
   }
 
+  async getSupportedAssets(): Promise<?Asset[]> {
+    try {
+      const tokens = await this.sdk.getTokenListTokens();
+      if (!tokens) {
+        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
+        return null;
+      }
+
+      return tokens.map(({
+        address,
+        name,
+        symbol,
+        decimals,
+        logoURI,
+      }) => ({
+        symbol,
+        name,
+        address,
+        decimals,
+        iconUrl: logoURI,
+        iconMonoUrl: logoURI,
+      }));
+    } catch (error) {
+      reportErrorLog('EtherspotService getSupportedAssets failed', { error });
+      return null;
+    }
+  }
+
   async logout(): Promise<void> {
     if (!this.sdk) return; // not initialized, nothing to do
 
@@ -368,5 +419,17 @@ class EtherspotService {
 }
 
 const etherspot = new EtherspotService();
+
+// this is for accounts unrelated Etherspot SDK usage
+const etherspotSupportService = new EtherspotService();
+
+export const getEtherspotSupportService = async (): Promise<EtherspotService> => {
+  if (etherspotSupportService.sdk) return etherspotSupportService;
+
+  const wallet = EthersWallet.createRandom();
+  await etherspotSupportService.init(wallet.privateKey);
+
+  return etherspotSupportService;
+};
 
 export default etherspot;

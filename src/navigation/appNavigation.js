@@ -56,8 +56,6 @@ import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/Wa
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
 import BadgeScreen from 'screens/Badge';
-import OTPScreen from 'screens/OTP';
-import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
@@ -66,13 +64,9 @@ import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
 import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
-import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
-import ReferFriendsScreen from 'screens/ReferFriends/ReferFriendsScreen';
-import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import PPNHomeScreen from 'screens/PPNHome/PPNHome';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
@@ -83,16 +77,6 @@ import KnowledgeBaseWebView from 'screens/Menu/KnowledgeBaseWebView';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
-import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
-import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
-import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
-import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
-import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
-import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
-import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
-import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
-import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
-import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 import PoolTogetherDashboardScreen from 'screens/PoolTogether/PoolTogetherDashboard';
 import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
 import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
@@ -119,8 +103,6 @@ import SablierIncomingStreamScreen from 'screens/Sablier/IncomingStream';
 import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
-import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
-import WBTCCafeScreen from 'screens/WBTCCafe';
 import RariDepositScreen from 'screens/Rari/RariDeposit';
 import RariInfoScreen from 'screens/Rari/RariInfo';
 import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
@@ -147,7 +129,6 @@ import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 
 // components
-import RetryApiRegistration from 'components/RetryApiRegistration';
 import Toast from 'components/Toast';
 import UsernameFailed from 'components/UsernameFailed';
 
@@ -161,7 +142,6 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
 import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
 import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
@@ -204,8 +184,6 @@ import {
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
   BADGE,
-  OTP,
-  CONFIRM_CLAIM,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -215,8 +193,6 @@ import {
   MANAGE_WALLETS_FLOW,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
-  MANAGE_USERS_FLOW,
-  ADD_EDIT_USER,
   MENU,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
@@ -226,10 +202,8 @@ import {
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
   SEND_SYNTHETIC_AMOUNT,
-  SEND_SYNTHETIC_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
-  REFER_FLOW,
   SERVICES,
   PPN_HOME,
   STORYBOOK,
@@ -241,20 +215,6 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   WALLET_ACTIVATED,
-  REFERRAL_SENT,
-  RECOVERY_PORTAL_SETUP_FLOW,
-  RECOVERY_PORTAL_RECOVERY_FLOW,
-  RECOVERY_PORTAL_SETUP_INTRO,
-  RECOVERY_PORTAL_SETUP_SIGN_UP,
-  RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
-  RECOVERY_PORTAL_SETUP_COMPLETE,
-  MANAGE_CONNECTED_DEVICES,
-  CONNECTED_DEVICES_FLOW,
-  REMOVE_SMART_WALLET_CONNECTED_DEVICE,
-  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
-  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
-  REFERRAL_CONTACT_INFO_MISSING,
-  REFERRAL_INCOMING_REWARD,
   LENDING_CHOOSE_DEPOSIT,
   LENDING_DEPOSITED_ASSETS_LIST,
   LENDING_ADD_DEPOSIT_FLOW,
@@ -287,9 +247,7 @@ import {
   SABLIER_OUTGOING_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
-  SENDWYRE_INPUT,
   EXCHANGE_FLOW,
-  WBTC_CAFE,
   RARI_FLOW,
   RARI_DEPOSIT,
   RARI_INFO,
@@ -330,10 +288,10 @@ import { getThemeByType, getThemeColors } from 'utils/themes';
 // types
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
-import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
 import type { EthereumWallet } from 'models/Wallet';
 import type { BackupStatus } from 'reducers/walletReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 const SLEEP_TIMEOUT = 20000;
@@ -380,14 +338,11 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 // SERVICES FLOW
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
-  [SENDWYRE_INPUT]: SendwyreInputScreen,
-  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 // WALLET CONNECT CALL REQUEST FLOW
@@ -413,14 +368,10 @@ const walletConnectFlow = createStackNavigator(
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [HOME_HISTORY]: HistoryScreen,
-  [OTP]: OTPScreen,
-  [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
-  [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
@@ -472,7 +423,6 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
   {
     // synthetic
     [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
-    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
     // other
@@ -488,11 +438,6 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
-}, StackNavigatorConfig);
-
-// MANAGE USERS FLOW
-const manageUsersFlow = createStackNavigator({
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 // TANK FLOWS
@@ -523,24 +468,7 @@ const menuFlow = createStackNavigator({
   [WALLET_SETTINGS]: WalletSettingsScreen,
   [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
   [APP_SETTINGS]: AppSettingsScreen,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
   [KNOWLEDGE_BASE_WEB_VIEW]: KnowledgeBaseWebView,
-}, StackNavigatorConfig);
-
-const recoveryPortalSetupFlow = createStackNavigator({
-  [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
-  [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
-  [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
-}, StackNavigatorConfig);
-
-const connectedDevicesFlow = createStackNavigator({
-  [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
-  [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
-}, StackNavigatorConfig);
-
-const recoveryPortalRecoveryFlow = createStackNavigator({
-  [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
-  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
 }, StackNavigatorConfig);
 
 // POOLTOGETHER FLOW
@@ -661,20 +589,12 @@ const AppFlowNavigation = createStackNavigator(
     [TANK_FUND_FLOW]: tankFundFlow,
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
-    [MANAGE_USERS_FLOW]: manageUsersFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
-    [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
-    [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
-    [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
     [POOLTOGETHER_FLOW]: poolTogetherFlow,
-    [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
-    [REFERRAL_SENT]: ReferralSentScreen,
-    [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
-    [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
     [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
     [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
     [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
@@ -698,7 +618,6 @@ const AppFlowNavigation = createStackNavigator(
 );
 
 type Props = {
-  user: ?User,
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
@@ -719,13 +638,8 @@ type Props = {
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
-  isRegisteringUser: boolean,
-  finishOnboarding: () => void,
-  onboardingErrorMessage: ?string,
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
-  isAuthorizing: boolean,
-  isFinishingOnboarding: boolean,
   checkArchanovaSession: () => void,
 };
 
@@ -748,19 +662,8 @@ class AppFlow extends React.Component<Props, State> {
       fetchAllAccountsAssetsBalances,
       fetchAllCollectiblesData,
       initWalletConnect,
-      backupStatus,
-      user,
       checkArchanovaSession,
     } = this.props;
-
-    /**
-     * If wallet recovery is pending do not initiate any listeners
-     * as we block user from accessing wallet, only pending screen is accessed.
-     *
-     * In future we can maybe unlock certain listeners/actions
-     * depending on chosen product/business logic.
-     */
-    if (backupStatus.isRecoveryPending) return;
 
     startListeningNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
@@ -769,11 +672,6 @@ class AppFlow extends React.Component<Props, State> {
       checkArchanovaSession,
       SMART_WALLET_SESSION_CHECK_INTERVAL,
     );
-
-    if (!user?.walletId) {
-      this.checkIfOnboardingFinished();
-      return;
-    }
 
     // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsAssetsBalances();
@@ -785,22 +683,13 @@ class AppFlow extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
-      user,
       wallet,
       removePrivateKeyFromMemory,
-      isOnline,
-      isAuthorizing,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
-    if (user?.walletId && wallet?.privateKey) {
+    if (wallet?.privateKey) {
       removePrivateKeyFromMemory();
-    }
-
-    // do check only on network change or unlock
-    if ((isOnline && prevProps.isOnline !== isOnline)
-      || (!isAuthorizing && prevProps.isAuthorizing !== isAuthorizing)) {
-      this.checkIfOnboardingFinished();
     }
 
     notifications
@@ -810,43 +699,11 @@ class AppFlow extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    const {
-      stopListeningNotifications,
-      backupStatus,
-    } = this.props;
-
-    // case per what's defined on componentWillMount
-    if (backupStatus.isRecoveryPending) return;
+    const { stopListeningNotifications } = this.props;
 
     stopListeningNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
     BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
-  }
-
-  checkIfOnboardingFinished = () => {
-    const {
-      isOnline,
-      user,
-      isRegisteringUser,
-      finishOnboarding,
-      wallet,
-      onboardingErrorMessage,
-      onboardingUsernameRegistrationFailed,
-      isAuthorizing,
-      isFinishingOnboarding,
-    } = this.props;
-
-    // no user.walletId means user is not yet registered, try to finish this right away when online
-    if (!!wallet?.privateKey
-      && !isAuthorizing
-      && !isFinishingOnboarding
-      && !user?.walletId
-      && !isRegisteringUser
-      && !onboardingErrorMessage
-      && !onboardingUsernameRegistrationFailed
-      && isOnline) {
-      finishOnboarding();
-    }
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -880,31 +737,21 @@ class AppFlow extends React.Component<Props, State> {
 
   render() {
     const {
-      user,
       showHomeUpdateIndicator,
       navigation,
       backupStatus,
       theme,
       i18n,
-      isOnline,
       onboardingUsernameRegistrationFailed,
     } = this.props;
 
-
-    // wallet might be created, but recovery is pending and no user registered yet
-    if (!backupStatus.isRecoveryPending
-      && !user?.walletId
-      && isOnline) {
-      if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
-      return <RetryApiRegistration />;
-    }
+    if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
 
     const { isImported, isBackedUp } = backupStatus;
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <MemoizedAppFlowNavigation
-        profileImage={user?.profileImage}
         showHomeUpdateIndicator={showHomeUpdateIndicator}
         isWalletBackedUp={isWalletBackedUp}
         theme={theme}
@@ -918,7 +765,6 @@ class AppFlow extends React.Component<Props, State> {
 // Workaround for React Navigation 4 obscure crash occuring if `screenProps` object is re-created on each render.
 // Functional component created just to use useMemo hook, can be inlined when AppFlow is migrated to FC.
 const MemoizedAppFlowNavigation = ({
-  profileImage,
   showHomeUpdateIndicator,
   isWalletBackedUp,
   theme,
@@ -927,14 +773,12 @@ const MemoizedAppFlowNavigation = ({
 }) => {
   const screenProps = React.useMemo(
     () => ({
-      profileImage,
       showHomeUpdateIndicator,
       isWalletBackedUp,
       theme,
       language,
     }),
     [
-      profileImage,
       showHomeUpdateIndicator,
       isWalletBackedUp,
       theme,
@@ -951,22 +795,15 @@ const MemoizedAppFlowNavigation = ({
 };
 
 const mapStateToProps = ({
-  user: { data: user },
   notifications: {
     data: notifications,
     showHomeUpdateIndicator,
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  session: { data: { isOnline, isAuthorizing } },
-  onboarding: {
-    isRegisteringUser,
-    errorMessage: onboardingErrorMessage,
-    usernameRegistrationFailed: onboardingUsernameRegistrationFailed,
-    isFinishingOnboarding,
-  },
-}) => ({
-  user,
+  session: { data: { isOnline } },
+  onboarding: { usernameRegistrationFailed: onboardingUsernameRegistrationFailed },
+}: RootReducerState): $Shape<Props> => ({
   notifications,
   showHomeUpdateIndicator,
   wallet,
@@ -974,14 +811,10 @@ const mapStateToProps = ({
   isPickingImage,
   isBrowsingWebView,
   isOnline,
-  isRegisteringUser,
-  onboardingErrorMessage,
   onboardingUsernameRegistrationFailed,
-  isAuthorizing,
-  isFinishingOnboarding,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
@@ -991,7 +824,6 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
-  finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
   checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });

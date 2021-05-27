@@ -27,15 +27,13 @@ describe('The fiatToCrypto.js utility module', () => {
 
     it('successfully returns a RAMP url with for PLR tokens', () => {
       const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, true);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, true);
 
       const expectedParams = {
         swapAsset: 'PLR',
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
       };
 
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
@@ -45,15 +43,13 @@ describe('The fiatToCrypto.js utility module', () => {
 
     it('successfully returns a RAMP url with for non-PLR tokens', () => {
       const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, false);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, false);
 
       const expectedParams = {
         swapAsset: null,
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
       };
 
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
@@ -63,15 +59,13 @@ describe('The fiatToCrypto.js utility module', () => {
 
     it('successfully returns a RAMP url with for non-PLR tokens when plrMode flag omitted', () => {
       const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress);
 
       const expectedParams = {
         swapAsset: null,
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
       };
 
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;

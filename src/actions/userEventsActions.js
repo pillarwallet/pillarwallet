@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
@@ -27,116 +26,80 @@ import {
   PPN_INIT_EVENT,
   WALLET_CREATE_EVENT,
   WALLET_BACKUP_EVENT,
-  WALLET_CREATED,
   KEY_WALLET,
   PILLAR_NETWORK,
-  SMART_WALLET_CREATED,
-  UNKNOWN_EVENT,
+  LEGACY_SMART_WALLET_CREATED,
+  ETHERSPOT_SMART_WALLET_CREATED,
 } from 'constants/userEventsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import { isNotKeyBasedType } from 'utils/accounts';
-import { reportLog } from 'utils/common';
+import {
+  getAccountCreatedAtTimestamp,
+  isArchanovaAccount,
+  isEtherspotAccount,
+  isNotKeyBasedType,
+} from 'utils/accounts';
+
+// selectors
+import { accountsSelector } from 'selectors';
 
 // types
-import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
 
-export const addWalletCreationEventAction = (type: string, createdAt: number) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      userEvents: { data: userEvents },
-    } = getState();
+export const addWalletCreationEventAction = (account: Account) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { userEvents: { data: userEvents } } = getState();
 
-    let eventTitle;
+    // keep as it is to not break existing events
+    const eventTitle = isEtherspotAccount(account)
+      ? ETHERSPOT_SMART_WALLET_CREATED
+      : LEGACY_SMART_WALLET_CREATED;
+    const eventId = eventTitle.replace(/ /g, '');
+    const createdAtTimestamp = getAccountCreatedAtTimestamp(account);
+    const accountCreatedAt = createdAtTimestamp
+      ? new Date(createdAtTimestamp / 1000)
+      : new Date();
 
-    switch (type) {
-      case ACCOUNT_TYPES.KEY_BASED:
-        eventTitle = WALLET_CREATED;
-        break;
-      case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        eventTitle = SMART_WALLET_CREATED;
-        break;
-      default:
-        eventTitle = UNKNOWN_EVENT;
+    const walletCreatedMissing = !userEvents.some(({ id }) => id === eventId);
+    if (walletCreatedMissing) {
+      const walletCreatedEvent = {
+        id: eventId,
+        eventTitle,
+        createdAt: accountCreatedAt,
+        type: USER_EVENT,
+        subType: WALLET_CREATE_EVENT,
+      };
+      dispatch({ type: ADD_USER_EVENT, payload: walletCreatedEvent });
     }
 
-    const eventId = eventTitle.replace(/ /g, '');
-    const walletCreateEvent = {
-      id: eventId,
-      eventTitle,
-      createdAt,
-      type: USER_EVENT,
-      subType: WALLET_CREATE_EVENT,
-    };
-
-    dispatch({
-      type: ADD_USER_EVENT,
-      payload: walletCreateEvent,
-    });
-
-    let ppnCreateEvent;
-    let updatedUserEvents = [];
-    if (type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
-      ppnCreateEvent = {
+    const ppnCreatedEventMissing = isArchanovaAccount(account) && !userEvents.some(({ id }) => id === PPN_INIT_EVENT);
+    if (ppnCreatedEventMissing) {
+      const ppnCreatedEvent = {
         id: PPN_INIT_EVENT,
         eventTitle: PILLAR_NETWORK,
         eventSubtitle: t('label.enabled'),
-        createdAt: createdAt + 1, // to list it after smart wallet is created
+        createdAt: new Date(+accountCreatedAt + 1), // to list it after smart wallet is created
         type: USER_EVENT,
         subType: PPN_INIT_EVENT,
       };
 
-      dispatch({
-        type: ADD_USER_EVENT,
-        payload: ppnCreateEvent,
-      });
-      if (!userEvents.find(({ id }) => id === PPN_INIT_EVENT)) {
-        updatedUserEvents.push(ppnCreateEvent);
-      }
+      dispatch({ type: ADD_USER_EVENT, payload: ppnCreatedEvent });
     }
 
-    if (ppnCreateEvent) {
-      updatedUserEvents =
-        [...userEvents.filter(({ id }) => id !== eventId && id !== PPN_INIT_EVENT), walletCreateEvent, ppnCreateEvent];
-    } else {
-      updatedUserEvents = [...userEvents.filter(({ id }) => id !== eventId), walletCreateEvent];
-    }
-
-    await dispatch(saveDbAction('userEvents', { userEvents: updatedUserEvents }, true));
+    const { userEvents: { data: updatedUserEvents } } = getState();
+    dispatch(saveDbAction('userEvents', { userEvents: updatedUserEvents }, true));
   };
 };
 
 export const getWalletsCreationEventsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      session: { data: { isOnline } },
-      user: { data: user },
-    } = getState();
-    // cannot be done while offline
-    if (!isOnline) return;
-
-    const walletId = user?.walletId;
-    if (!walletId) {
-      reportLog('getWalletsCreationEventsAction failed: unable to get walletId', { user });
-      return;
-    }
-
-    const userAccounts = await api.listAccounts(walletId);
-    if (isEmpty(userAccounts)) {
-      reportLog('getWalletsCreationEventsAction failed: userAccounts is empty');
-      return;
-    }
-
-    const walletCreatedEventsPromises = userAccounts
+  return (dispatch: Dispatch, getState: GetState) => {
+    accountsSelector(getState())
       .filter(isNotKeyBasedType)
-      .map((acc) => dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000)));
-
-    await Promise.all(walletCreatedEventsPromises);
+      .forEach((account) => dispatch(addWalletCreationEventAction(account)));
   };
 };
 

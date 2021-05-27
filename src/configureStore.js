@@ -31,7 +31,6 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
 import offlineMiddleware from 'utils/offlineMiddleware';
-import PillarSdk from 'services/api';
 import rootReducer from './reducers/rootReducer';
 
 import migrations from './redux-migrations/migrations';
@@ -56,20 +55,19 @@ const persistConfig = {
   storage: AsyncStorage,
   version: 1, // bump up the version when new changes are made with migrations
   stateReconciler: autoMergeLevel2,
-  whitelist: ['history', 'walletConnectSessions', 'referrals', 'poolTogether', 'liquidityPools'],
+  whitelist: ['history', 'walletConnectSessions', 'poolTogether', 'liquidityPools'],
   migrate: createMigrate(migrations, { debug: false }),
   timeout: 0, // HACK: wait until the storage responds
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
 
-const pillarSdk = new PillarSdk();
 const navigationMiddleware = createReactNavigationReduxMiddleware(
   'root',
   state => state.navigation,
 );
 
 const middlewares = [
-  thunk.withExtraArgument(pillarSdk),
+  thunk,
   navigationMiddleware,
   ReduxAsyncQueue,
   offlineMiddleware,

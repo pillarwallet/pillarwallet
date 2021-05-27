@@ -270,7 +270,6 @@ export const mockArchanovaAccountApiData = {
 export const mockArchanovaAccount = {
   id: '0x0',
   isActive: false,
-  walletId: '',
   type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   extra: mockArchanovaAccountApiData,
 };
@@ -354,8 +353,6 @@ jest.setMock('react-native-keychain', {
 
 jest.setMock('@walletconnect/client', WalletConnectMock);
 
-jest.mock('react-native-branch', () => jest.fn());
-
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
   Severity: {},
@@ -376,10 +373,8 @@ export const mockSupportedAssets = [
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
   {
@@ -387,10 +382,8 @@ export const mockSupportedAssets = [
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 ];
@@ -462,7 +455,6 @@ jest.setMock('services/1inch', {
 export const mockEtherspotAccount = {
   id: '0x9e',
   isActive: false,
-  walletId: '',
   type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 };
 

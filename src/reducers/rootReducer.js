@@ -24,7 +24,6 @@ import { RESET_APP_STATE } from 'constants/authConstants';
 
 // types
 import type { DbAction } from 'models/DbAction';
-import type SDKWrapper from 'services/api';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -39,7 +38,6 @@ import userReducer from './userReducer';
 import historyReducer from './historyReducer';
 import notificationsReducer from './notificationsReducer';
 import sessionReducer from './sessionReducer';
-import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
 import badgesReducer from './badgesReducer';
@@ -54,15 +52,11 @@ import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
-import referralsReducer from './referralsReducer';
-import phoneContactsReducer from './phoneContactsReducer';
-import connectedDevicesReducer from './connectedDevicesReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 import contactsReducer from './contactsReducer';
 import sablierReducer from './sablierReducer';
-import fiatToCryptoReducer from './fiatToCryptoReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
@@ -86,7 +80,6 @@ import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
 import type { SessionReducerState } from './sessionReducer';
-import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
@@ -101,9 +94,6 @@ import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walk
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
-import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
-import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
-import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 import type { PoolTogetherReducerState } from './poolTogetherReducer';
 import type {
@@ -112,7 +102,6 @@ import type {
 } from './keyBasedAssetTransferReducer';
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
-import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
@@ -133,7 +122,6 @@ export type RootReducerState = {|
   history: HistoryReducerState,
   notifications: NotificationsReducerState,
   session: SessionReducerState,
-  oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
   collectibles: CollectiblesReducerState,
   badges: BadgesReducerState,
@@ -147,16 +135,12 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
-  referrals: ReferralsReducerState,
   insights: InsightsReducerState,
-  phoneContacts: PhoneContactsReducerState,
-  connectedDevices: ConnectedDevicesReducerState,
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
   contacts: ContactsReducerState,
   sablier: SablierReducerState,
-  fiatToCrypto: FiatToCryptoReducerState,
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
   transactionEstimate: TransactionEstimateReducerState,
@@ -185,14 +169,10 @@ type RootReducerAction =
   | SyntheticsReducerAction
   | EnsRegistryReducerAction
   | InsightsReducerAction
-  | ReferralsReducerAction
-  | PhoneContactsReducerAction
-  | ConnectedDevicesReducerAction
   | LendingReducerAction
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
   | SablierReducerAction
-  | FiatToCryptoReducerAction
   | OnboardingReducerAction
   | CacheAction
   | TransactionEstimateReducerAction
@@ -204,7 +184,6 @@ export type GetState = () => RootReducerState;
 export type ThunkAction = (
   dispatch: Dispatch,
   getState: GetState,
-  api: SDKWrapper,
 ) => any;
 export type Dispatch = (
   action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
@@ -227,7 +206,6 @@ const appReducer = combineReducers({
   history: historyReducer,
   notifications: notificationsReducer,
   session: sessionReducer,
-  oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
   badges: badgesReducer,
@@ -242,15 +220,11 @@ const appReducer = combineReducers({
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
-  referrals: referralsReducer,
-  phoneContacts: phoneContactsReducer,
-  connectedDevices: connectedDevicesReducer,
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
   contacts: contactsReducer,
   sablier: sablierReducer,
-  fiatToCrypto: fiatToCryptoReducer,
   onboarding: onboardingReducer,
   cache: cacheReducer,
   transactionEstimate: transactionEstimateReducer,

@@ -19,20 +19,30 @@
 */
 
 import React from 'react';
-import RecoveryPortalWebView from 'components/RecoveryPortalWebView';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// components
+import WebView from 'components/WebView';
+
+// constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 type Props = {
-    navigation: NavigationScreenProp<mixed>
+  navigation: NavigationScreenProp<mixed>
 };
 
 const KnowledgeBaseWebView = ({
   navigation,
 }: Props) => {
+  const url = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
   return (
-    <RecoveryPortalWebView
+    <WebView
       title={t('settingsContent.settingsItem.faq.title')}
+      url={url}
       navigation={navigation}
       goBackDismiss
       isKnowledgeBaseUrl

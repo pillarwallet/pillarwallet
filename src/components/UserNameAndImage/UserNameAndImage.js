@@ -29,7 +29,7 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Contants
-import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Selectors
 import { useSmartWalletAccounts } from 'selectors';
@@ -49,15 +49,13 @@ type Props = {
 const UserNameAndImage = ({ user }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
-
-  const { profileImage, lastUpdateTime, username } = user;
-  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+  const { username } = user;
 
   const accountCount = useSmartWalletAccounts().length;
 
   return (
-    <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      <ProfileImage uri={userImageUri} userName={username} diameter={24} />
+    <Wrapper>
+      <ProfileImage userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
@@ -66,13 +64,13 @@ const UserNameAndImage = ({ user }: Props) => {
           <Icon name="select" color={colors.basic020} />
         </TouchableOpacity>
       )}
-    </TouchableContainer>
+    </Wrapper>
   );
 };
 
 export default UserNameAndImage;
 
-const TouchableContainer = styled.TouchableOpacity`
+const Wrapper = styled.View`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;

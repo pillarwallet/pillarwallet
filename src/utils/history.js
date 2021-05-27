@@ -19,8 +19,6 @@
 */
 import isEmpty from 'lodash.isempty';
 
-import type SDKWrapper from 'services/api';
-
 // constants
 import {
   TRANSACTION_CONFIRMATION_EVENT,
@@ -47,6 +45,10 @@ import type { Value } from 'utils/common';
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
+import {
+  fetchTransactionInfo,
+  fetchTransactionReceipt,
+} from 'services/assets';
 
 export const buildHistoryTransaction = ({
   from,
@@ -160,10 +162,10 @@ export const findTransactionAcrossAccounts = (
       || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
 
-export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string) => {
+export const getTrxInfo = async (hash: string, network?: string) => {
   const [txInfo, txReceipt] = await Promise.all([
-    api.fetchTxInfo(hash, network),
-    api.fetchTransactionReceipt(hash, network),
+    fetchTransactionInfo(hash, network),
+    fetchTransactionReceipt(hash, network),
   ]);
 
   if (!txInfo || !txReceipt) return null;

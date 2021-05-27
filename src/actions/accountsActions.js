@@ -32,7 +32,6 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
-  checkIfArchanovaWalletWasRegisteredAction,
   connectArchanovaAccountAction,
   initArchanovaSdkAction,
   setSmartWalletUpgradeStatusAction,
@@ -61,7 +60,6 @@ export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
   accountExtra?: AccountExtra,
-  backendAccounts: Object[] = [],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -70,21 +68,10 @@ export const addAccountAction = (
       type,
       extra: accountExtra,
       isActive: false,
-      walletId: '',
     };
 
     const existingAccount = accounts.find(account => account.id.toLowerCase() === accountAddress.toLowerCase());
     const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
-    const backendAccount = backendAccounts.find(({ ethAddress }) =>
-      ethAddress.toLowerCase() === accountAddress.toLowerCase());
-
-    if (backendAccount) {
-      smartWalletAccount.walletId = backendAccount.id;
-    }
-
-    if (existingAccount && backendAccount && !existingAccount.walletId) {
-      existingAccount.walletId = backendAccount.id;
-    }
 
     if (existingAccount) {
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
@@ -96,6 +83,7 @@ export const addAccountAction = (
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
     });
+
     await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
@@ -218,7 +206,6 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: { data: accounts },
-      user: { data: user },
     } = getState();
 
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
@@ -239,11 +226,6 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
         payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
       });
     }
-
-    // following code should not be done if user is not registered on back-end
-    if (!user?.walletId) return;
-
-    dispatch(checkIfArchanovaWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };
 

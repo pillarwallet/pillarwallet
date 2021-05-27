@@ -19,6 +19,11 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import { GasPriceOracle } from 'gas-price-oracle';
+import t from 'translations/translate';
+
+// components
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -81,7 +86,6 @@ import {
 
 // models, types
 import type { Transaction } from 'models/Transaction';
-import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Event } from 'models/History';
 
@@ -229,7 +233,6 @@ export const fetchTransactionsHistoryAction = () => {
         rariHistory,
       );
 
-      // TODO: Jan: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
       if (finalArchanovaTransactionsHistory.length) {
         newHistoryTransactions = [...newHistoryTransactions, ...finalArchanovaTransactionsHistory];
         const newLastSyncedId = archanovaTransactions?.[0]?.id?.toString();
@@ -246,12 +249,23 @@ export const fetchTransactionsHistoryAction = () => {
 };
 
 export const fetchGasInfoAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const gasInfo = await api.fetchGasInfo();
-    dispatch({
-      type: SET_GAS_INFO,
-      payload: gasInfo,
-    });
+  return async (dispatch: Dispatch) => {
+    const gasPriceOracle = new GasPriceOracle();
+    try {
+      const {
+        low: min,
+        standard: avg,
+        fast: max,
+      } = await gasPriceOracle.fetchGasPricesOffChain();
+      dispatch({ type: SET_GAS_INFO, payload: { min, avg, max } });
+    } catch (error) {
+      reportLog('fetchGasInfoAction failed', { error });
+      Toast.show({
+        message: t('toast.failedToGetGasPrices'),
+        emoji: 'fuelpump',
+        supportLink: true,
+      });
+    }
   };
 };
 
@@ -261,7 +275,7 @@ const setUpdatingTransactionAction = (hash: ?string) => ({
 });
 
 export const updateTransactionStatusAction = (hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isOnline } } } = getState();
 
     if (!isOnline) return;
@@ -273,7 +287,7 @@ export const updateTransactionStatusAction = (hash: string) => {
 
     dispatch(setUpdatingTransactionAction(hash));
 
-    const trxInfo = await getTrxInfo(api, hash);
+    const trxInfo = await getTrxInfo(hash);
 
     let sdkTransactionInfo;
     let sdkToAppStatus;

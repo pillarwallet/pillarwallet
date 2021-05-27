@@ -126,7 +126,6 @@
     "purchase": "ይግዙ",
     "received": "ተቀብሏል",
     "receiving": "መቀበል",
-    "referralReward": "የአስተዋዋቂ ሽልማት",
     "registered": "ተመዝግቧል",
     "registerEnsName": "የኢኤንኤስ መለያ ስም ያስመዝግቡ",
     "removed": "ተወግዷል",
@@ -782,13 +781,6 @@
       "support": {
         "title": "ከረዳትጋ ይገናኙ"
       },
-      "recoveryPortal": {
-        "title": "የማስመለሻ መስክ",
-        "subtitle": {
-          "default": "የብልህ ቦርሳ መለያ ማዳኛ ድረ ገፅ",
-          "smartWalletNotActivated": "የብልህ ቦርሳ መለያ ማዳኛ ድረ ገፅ (ያለ ብልህ ቦርሳ አይሰራም)"
-        }
-      },
       "recoverySettings": {
         "title": "የማስመለሻ አማራጮች",
         "screenTitle": "የማስመለሻ",
@@ -862,80 +854,6 @@
           "cancel": "ሰርዝ"
         }
       }
-    }
-  },
-
-  "referralsContent": {
-    "banner": {
-      "inviteBanner": {
-        "title": "ፒላር ማህበራዊ ነው"
-      }
-    },
-    "modal": {
-      "missingPhone": {
-        "title": {
-          "activeRewardCampaign": "ጋብዘው ይሸለሙ",
-          "inactiveRewardCampaign": "ወደ ፒላር ይጋብዙ"
-        },
-        "paragraph": {
-          "reward": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ እያንዳንዱ ወዳጆ መጠን {{reward}} ይሸለማሉ።",
-          "enablingReferrals": "የማስተዋወቂያው ስራዓት እንዲሰራ ትክክለኛ ተጠቃሚ መሆንዎትን ማረጋገጥ አለብን። ለተጠቃሚዎችችን መረጃ ጥንቃቄ እንወስዳለን እናም ለማንም አናጋራውም።",
-          "enablingInvitations": "የማስተዋወቂያው ስራዓት እንዲሰራ ትክክለኛ ተጠቃሚ መሆንዎትን ማረጋገጥ አለብን። ለተጠቃሚዎችችን ግላዊ መረጃ ጥንቃቄ እንወስዳለን እናም ለማንም አናጋራውም።"
-        },
-        "button": {
-          "toUserData": "ኢሜል ወይም ስልኮን ያረጋግጡ"
-        }
-      }
-    },
-    "referralRewardText": "{{rewardsList}} እና መለዮ",
-    "title": {
-      "inviteMain": "ጓደኞችዎን ይጋብዙ",
-      "invitationsSent": "ግብዣው ተልኳል",
-      "referMain": "ጓደኞችዎን ይጋብዙ",
-      "incomingReward": "ሽልማቶ እየመጣ ነው",
-      "thanksForJoining": "ፒላርን ስለተቀላቀሉ እናመሰኛለን",
-      "thanksForUsing": "ፒላርን ስለተጠቀሙ እናመሰኛለን",
-      "claimTokens": "ቶክኖችን ይገባኛል በሉ",
-      "claimTokensError": "ስህተት"
-    },
-    "instruction": {
-      "shareLink": {
-        "title": "ማስፈንጠርያዎትን ያጋሩ",
-        "paragraph": "ወዳጆችዎን ወደ ፒላር ይጋብዙ"
-      },
-      "giveSmartWallet": {
-        "title": "ብልህ ቦርሳ በነፃ ይስጡ",
-        "paragraph": "በእርሶ ማስፈንጠርያ ፒላርን የጫኑ ወዳጆችዎ የነፃ የፒላር ብልህ ቦርሳ ማስጀመርያ ያገኛሉ"
-      },
-      "getTokens": {
-        "title": "የነፃ PLR ይውሰዱ",
-        "paragraph": "ጓደኞችዎን ስላስተዋወቁ ሜታ-ቶክኖችን ይሸለሙ"
-      }
-    },
-    "paragraph": {
-      "incomingAward": "ፒላርን ስለተቀላቀሉ እንኳን ደስ ያሎት።\nይሄንን ለማክበርም  {{reward}} ሸልመኖታል።\nሽልማቱን ለመቀበል ኢሜሎን ወይም ስልኮን መቸመር አለብዎት።\nሽልማቱ ለአዲስ ተጠቃሚዎች ብቻ ነው የሚሰጠው።",
-      "rewardMechanics": "ወዳጆችዎ የግብዣ ማስፈንጠርያ ይደርሳቸዋል። ስልክ ቁጥራቸውን ውይም ኢሜላቸውን ካረጋገጡ በኋላ የPLR ቶክን ሽልማትና መለዮ ይደርሳቸዋል። እርሶም ሽልማቶን ከዛ በኋላ ያገኛሉ።",
-      "invitationViaPhoneRules": "በኤስኤምኤስ ለመጋበዝ ስልኮትን ማረጋገጥ ይጠበቅቦታል።",
-      "invitationViaEmailRules": "በኢሜል ለመጋበዝ ኢሜሎትን ማረጋገጥ ይጠበቅቦታል።",
-      "rewardForEachInvitation": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ እያንዳንዱ ወዳጆ መጠን {{reward}} ይሸለማሉ። ነገር ግን ሁለታችሁም ዝርዝር መረጃችሁን ማረጋገጥ ይጠበቅባችሁዋል።",
-      "thanksForReferring": "ስለፒላር መረጃ ስላባዙ እናመሰኛለን።",
-      "rewardClaimingPending": "ግብይቱ በመካሄድ ላይ ነው።\nትንሽ ደቂቃዎችን ሊፈጅ ይችላል።\nሂደቱን እዚህ የቤት ገጹ ላይ ማየት ይችላሉ።",
-      "rewardClaimingError": "በአሁኑ ሰዓት ቁልፉን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
-      "getBadgesForEachInvitation": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ ወዳጆ ምክንያት የመለዮ ሽልማት መቀበሎን ይጀምሩ!",
-      "allowedInviteViaEmail": "አሁን ጓደኞችዎን በኢሜል መጋበዝ ይችላሉ።",
-      "allowedInviteViaPhone": "አሁን ጓደኞችዎን በስልክ መልክት መጋበዝ ይችላሉ።",
-      "emailVerified": "ኢሜይሎ ተረጋግጧል",
-      "phoneVerified": "ኢሜይሎ ተረጋግጧል"
-    },
-    "label": {
-      "invitesCount": "ግብዣዎት ({{amountText}} ለዛሬ ይቀራል)",
-      "referralsCount": "የማስተዋወቂያዎት ብዛት ({{amountText}} ለዛሬ ይቀራል)",
-      "remainingCount": "{{amount}} ተጨማሪ",
-      "noReferralCode": "መለያ የለም",
-      "fromCode": "ከ {{code}}",
-      "claiming": "ይገባኛልን በማድረስ ላይ",
-      "inviteFriends": "ወዳጆችዎን ወደ ፒላር ይጋብዙ",
-      "referAndGetRewards": "ወዳጆችዎን በመጋበዝ ነፃ የፒላርና ሌላ ተጨማሪ ሽልማቶች ያግኙ"
     }
   },
 
@@ -1175,14 +1093,6 @@
       "title": "በራምፕ ኔትወርክ ይግዙ",
       "description": "አሁን ይግዙ"
     },
-    "wyre": {
-      "title": "በዋየር ይግዙ (ከአውሮፓ ውጭ)",
-      "description": "አሁን ይግዙ"
-    },
-    "altalix": {
-      "title": "በአልታሊክስ ይግዙ",
-      "description": "አሁን ይግዙ"
-    },
     "label": {
       "requiresActivation": "ገቢራዊነት ይፈልጋል",
       "forSmartWallet": "ለብልህ ቦርሳ",
@@ -1261,11 +1171,6 @@
     "verificationSuccess": {
       "email": "የኢሜል ማረጋገጫው ተሳክቷል።",
       "phone": "የስልክ ማረጋገጫው ተሳክቷል።",
-      "referralReward": "፣እረጃዎትን ስላረጋገጡ እናመሰኛለን። የሽልማትዎት ስጦታ በሂደት ላይ ነው።"
-    },
-    "referralInviteCantBeSent": {
-      "allInvites": "ግብዣዎቹ አልተላኩም። እባክዎት ትንሽ ቆይተው ይሞክሩ።",
-      "notAllInvites": "ይውተወሰኑ ግብዣዎች አልተላኩም። እባክዎት ትንሽ ቆይተው ይሞክሩ።"
     },
     "userIsOffline": "መስመር ላይ ያሉ አይመስልም። እባክዎ የበይነ-መረብ ግንኙነት እንዳለዎት ያረጋግጡ።",
     "biometricLoginEnabled": "የባዮሜትሪክ መግቢያው በስራ ላይ ውሏል።",
@@ -1375,7 +1280,6 @@
       "confirmScreen": "ዝርዝሮች",
       "settingsScreen": "ቅንጅቶች",
       "activateSmartWalletScreen": "ብልህ ቦርሳውን ያስጀምሩ",
-      "buyWithWyreScreen": "በዋየር ይግዙ "
     },
     "button": {
       "enableAsset": "ንብረቱን ገቢራዊ ያድርጉ",
@@ -1432,10 +1336,6 @@
         "cancel": "ሰርዝ",
         "backup": "12 የመጠባበቂያ ቃላት ያስቀምጡ"
       }
-    },
-    "invalidReferralDeepLink": {
-      "title": "የተሳሳተ ማስፈንጠሪያ",
-      "message": "የግብዣው መለያ የለም"
     },
     "walletConnectDisconnect": {
       "title": "ከ {{name}} ይለያዩ",

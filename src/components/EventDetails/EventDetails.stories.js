@@ -62,13 +62,11 @@ const reduxData = {
     {
       id: '0xKeyWallet',
       type: 'KEY_BASED',
-      walletId: '350145cb-b266-488e-8dda-c89d77034226',
       isActive: false,
     },
     {
       id: '0xSmartWallet',
       type: 'SMART_WALLET',
-      walletId: 'f13c646b-435c-4bbc-ab08-4121b7319333',
       isActive: true,
       extra:
         {
@@ -99,8 +97,6 @@ const reduxData = {
   accountAssets: [],
   isPPNActivated: true,
   history: [],
-  referralRewardIssuersAddresses: [],
-  isPillarRewardCampaignActive: true,
   collectiblesHistory: [],
 };
 
@@ -352,7 +348,6 @@ storiesOf('EventDetail', module)
         label: '0x1234567...132456789',
         fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
-        avatarUrl: '',
         iconName: 'sent',
         iconColor: 'negative',
         valueColor: 'basic010',
@@ -374,7 +369,6 @@ storiesOf('EventDetail', module)
         label: 'alexander',
         fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
-        avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'negative',
         valueColor: 'basic010',
@@ -397,7 +391,6 @@ storiesOf('EventDetail', module)
         label: 'alexander',
         fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
-        avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'negative',
         valueColor: 'basic010',
@@ -465,7 +458,6 @@ storiesOf('EventDetail', module)
         label: '0x1234567...132456789',
         fullItemValue: '+ 10 PLR',
         subtext: 'to Key wallet',
-        avatarUrl: '',
         iconName: 'received',
         iconColor: 'transactionReceivedIcon',
         valueColor: 'secondaryAccent140',
@@ -488,7 +480,6 @@ storiesOf('EventDetail', module)
         label: 'alexander',
         fullItemValue: '+ 10 PLR',
         subtext: 'to Key wallet',
-        avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'transactionReceivedIcon',
         valueColor: 'secondaryAccent140',
@@ -511,7 +502,6 @@ storiesOf('EventDetail', module)
         label: '0x1234567...132456789',
         fullItemValue: '- 10 PLR',
         subtext: 'from Key wallet',
-        avatarUrl: '',
         iconName: 'sent',
         iconColor: 'negative',
         valueColor: 'basic010',
@@ -658,7 +648,6 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        avatarUrl: placeholderImage,
         isReceived: true,
       }}
     />
@@ -679,7 +668,6 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        avatarUrl: placeholderImage,
       }}
     />
   ))

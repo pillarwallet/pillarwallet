@@ -28,7 +28,6 @@ import { getEnv } from 'configs/envConfig';
 import type { Offer } from 'models/Offer';
 import type { Asset, AssetOption } from 'models/Asset';
 import type { Theme } from 'models/Theme';
-import { BTC } from 'constants/assetsConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { AllowanceTransaction } from 'models/Transaction';
 
@@ -142,8 +141,6 @@ export const createAllowanceTx = async (
     return null;
   }
 };
-
-export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;
 
 export const calculateAmountToBuy = (askRate: number | string, amountToSell: string): string =>
   new BigNumber(askRate).multipliedBy(new BigNumber(amountToSell)).toFixed();

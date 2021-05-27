@@ -703,3 +703,5 @@ export const toFixedString = (amount: number) => {
 };
 
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
+
+export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');

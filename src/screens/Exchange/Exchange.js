@@ -41,20 +41,15 @@ import {
   resetOffersAction,
   markNotificationAsSeenAction,
   getExchangeSupportedAssetsAction,
-  getWbtcFeesAction,
 } from 'actions/exchangeActions';
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
-import { fetchBitcoinRateAction } from 'actions/ratesActions';
 
 // constants
-import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
-import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 
 // utils, services
 import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
-import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
-import { gatherWBTCFeeData, showWbtcErrorToast, isWbtcCafeActive } from 'services/wbtcCafe';
 import { isArchanovaAccount } from 'utils/accounts';
 
 import { noop } from 'utils/common';
@@ -71,7 +66,7 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
+import type { ExchangeOptions } from 'utils/exchange';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 // partials
@@ -87,7 +82,6 @@ import {
   getToOption,
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
-import WBTCCafeInfo from './WBTCCafeInfo';
 
 
 type Props = {
@@ -103,7 +97,6 @@ type Props = {
   exchangeAllowances: Allowance[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: () => void,
-  oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
   exchangeSupportedAssets: Asset[],
@@ -112,11 +105,8 @@ type Props = {
   updateHasSeenExchangeIntro: () => void,
   theme: Theme,
   offers: Offer[],
-  wbtcFees: ?WBTCFeesRaw,
-  getWbtcFees: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
-  getBtcRate: () => void,
   activeAccount: ?Account
 };
 
@@ -127,7 +117,6 @@ type State = {
   fromAsset: AssetOption,
   toAsset: AssetOption,
   isFormValid: boolean,
-  wbtcData: ?WBTCFeesWithRate,
 };
 
 const FormWrapper = styled.View`
@@ -154,7 +143,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       isSubmitted: false,
       showEmptyMessage: false,
       isFormValid: false,
-      wbtcData: null,
     };
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
@@ -162,11 +150,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   componentDidMount() {
     InteractionManager.runAfterInteractions(() => {
       const {
-        getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
+        getExchangeSupportedAssets,
+        hasSeenExchangeIntro,
       } = this.props;
       const { fromAsset, toAsset } = this.state;
-      getWbtcFees();
-      getBtcRate();
       getExchangeSupportedAssets(() => {
         // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
         if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
@@ -195,9 +182,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets,
       exchangeSupportedAssets,
-      oAuthAccessToken,
-      getWbtcFees,
-      getBtcRate,
     } = this.props;
     const {
       fromAsset, toAsset, fromAmount, isFormValid,
@@ -212,19 +196,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
       || fromAsset !== prevFromAsset || toAsset !== prevToAsset) {
       this.options = this.provideOptions();
-      if (!isWbtcCafe(prevFromAsset?.symbol) && isWbtcCafe(fromAsset?.symbol)) {
-        getWbtcFees();
-        getBtcRate();
-      }
     }
 
     if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
       setTimeout(this.focusInputWithKeyboard, 300);
     }
 
-    const { oAuthAccessToken: prevAccessToken } = prevProps;
     if (shouldResetAndTriggerSearch(
-      fromAmount, prevFromAmount, fromAsset, prevFromAsset, toAsset, prevToAsset, oAuthAccessToken, prevAccessToken,
+      fromAmount, prevFromAmount, fromAsset, prevFromAsset, toAsset, prevToAsset,
     )) {
       this.resetSearch();
       this.triggerSearch();
@@ -250,16 +229,8 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleFromInputChange = async (input: string) => {
-    const { fromAsset } = this.state;
-    const { wbtcFees } = this.props;
-    const { symbol = '' } = fromAsset;
     const val = input.replace(/,/g, '.');
     this.setState({ fromAmount: val });
-    if (isWbtcCafe(fromAsset.symbol)) {
-      const wbtcData = await gatherWBTCFeeData(Number(val), wbtcFees, symbol);
-      if (wbtcData) this.setState({ wbtcData });
-      if (!wbtcData || (wbtcData && !wbtcData.estimate && +input >= MIN_WBTC_CAFE_AMOUNT)) showWbtcErrorToast();
-    }
   };
 
   getFromInput = () => {
@@ -271,7 +242,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <ValueInput
           assetData={fromAsset}
           onAssetDataChange={(assetData) => this.setState({
-            fromAsset: assetData, toAsset: assetData.symbol === BTC ? getToOption(WBTC, this.options) : toAsset,
+            fromAsset: assetData, toAsset,
           })}
           onCollectibleAssetDataChange={(collectible) => this.setState({ fromAsset: collectible })}
           value={fromAmount}
@@ -282,7 +253,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           getInputRef={ref => { this.fromInputRef = ref; }}
           onBlur={this.blurFromInput}
           onFormValid={valid => this.setState({ isFormValid: valid })}
-          hideMaxSend={fromAsset.symbol === BTC}
         />
       </>
     );
@@ -290,19 +260,10 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   getToInput = () => {
     const { offers } = this.props;
-    const {
-      toAsset, fromAmount, fromAsset, wbtcData,
-    } = this.state;
+    const { toAsset, fromAmount } = this.state;
     const { toOptions } = this.options;
 
-    let toAmount;
-    const isWbtc = isWbtcCafe(fromAsset.symbol);
-
-    if (isWbtc && wbtcData) {
-      toAmount = String(wbtcData.estimate);
-    } else if (offers?.length && fromAmount) {
-      toAmount = getBestAmountToBuy(offers, fromAmount);
-    }
+    const toAmount = getBestAmountToBuy(offers, fromAmount);
 
     return (
       <ValueInput
@@ -315,7 +276,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
         hideMaxSend
-        disableAssetChange={isWbtc}
       />
     );
   }
@@ -353,7 +313,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency,
     } = this.props;
-    return provideOptions(assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency, isWbtcCafeActive());
+    return provideOptions(assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency);
   };
 
   triggerSearch = () => {
@@ -396,10 +356,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       isFormValid,
       fromAsset,
       toAsset,
-      wbtcData,
     } = this.state;
 
-    const displayWbtcCafe = isWbtcCafe(fromAsset?.symbol);
     const { fromOptions, toOptions } = this.options;
     const assetsLoaded = !!fromOptions.length && !!toOptions.length && !isEmpty(fromAsset) && !isEmpty(toAsset);
     const rightItems = getHeaderRightItems(
@@ -429,7 +387,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           {assetsLoaded &&
           <FormWrapper>
             {this.getFromInput()}
-            <ExchangeSwapIcon onPress={this.handleBuySellSwap} disabled={displayWbtcCafe} />
+            <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
             {this.getToInput()}
           </FormWrapper>}
           {!!disableNonFiatExchange &&
@@ -438,7 +396,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               buttonTitle={t('smartWalletContent.exchangeActivation.button')}
             />
           }
-          {displayWbtcCafe && <WBTCCafeInfo wbtcData={wbtcData} amount={fromAmount} navigation={navigation} />}
           {!!isSubmitted && isFormValid &&
           <ExchangeOffers
             fromAmount={fromAmount}
@@ -461,7 +418,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  oAuthTokens: { data: { accessToken: oAuthAccessToken } },
   appSettings: { data: { baseFiatCurrency, hasSeenExchangeIntro } },
   exchange: {
     data: {
@@ -469,7 +425,6 @@ const mapStateToProps = ({
       hasNotification: hasUnreadExchangeNotification,
       offers,
     },
-    wbtcFees,
     exchangeSupportedAssets,
     isFetchingUniswapTokens,
     uniswapTokensGraphQueryFailed,
@@ -482,13 +437,11 @@ const mapStateToProps = ({
   rates,
   exchangeSearchRequest,
   hasUnreadExchangeNotification,
-  oAuthAccessToken,
   accounts,
   smartWalletState,
   exchangeSupportedAssets,
   hasSeenExchangeIntro,
   offers,
-  wbtcFees,
   isFetchingUniswapTokens,
   uniswapTokensGraphQueryFailed,
 });
@@ -513,8 +466,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getExchangeSupportedAssets: (callback) => dispatch(getExchangeSupportedAssetsAction(callback)),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
-  getWbtcFees: () => dispatch(getWbtcFeesAction()),
-  getBtcRate: () => dispatch(fetchBitcoinRateAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));

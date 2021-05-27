@@ -19,11 +19,16 @@
 */
 import { getEnv } from 'configs/envConfig';
 
-// services
-import { API_REQUEST_TIMEOUT } from 'services/api';
+// constants
+import { API_REQUEST_TIMEOUT } from 'constants/appConstants';
 
 // utils
 import httpRequest from 'utils/httpRequest';
+import { reportErrorLog } from 'utils/common';
+import type {
+  OpenSeaAsset,
+  OpenSeaHistoryItem,
+} from 'models/OpenSea';
 
 const requestConfig = {
   timeout: API_REQUEST_TIMEOUT,
@@ -34,23 +39,61 @@ const requestConfig = {
   },
 };
 
-export const getLimitedData =
-  (url: string, data: Array<Object>, limit: number, offset: number,
-    responseDataKey: string, resolve: Function, reject: Function) => {
-    httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig)
-      .then(({ data: responseData }) => {
-        const retrievedData = data.concat(responseData[responseDataKey]);
-        const newOffset = offset + limit;
-        if (responseData[responseDataKey].length === limit) {
-          setTimeout(() => {
-            getLimitedData(`${url}&limit=${limit}&offset=${newOffset}`,
-              retrievedData, limit, newOffset, responseDataKey, resolve, reject);
-          }, 1000);
-        } else {
-          setTimeout(() => {
-            resolve(retrievedData);
-          }, 1000);
-        }
-      })
-      .catch(error => { reject(error); });
-  };
+const paginatedRequest = (
+  url: string,
+  paginatedData: Array<Object> = [],
+  limit: number = 300,
+  offset: number = 0,
+) => {
+  return new Promise(async (resolve) => {
+    const { data: responseData } = await httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig);
+    const assets = responseData?.assets || [];
+    const updatedPaginatedData = [...paginatedData, ...assets];
+    const newOffset = offset + limit;
+    if (assets.length === limit) {
+      setTimeout(() => { paginatedRequest(url, updatedPaginatedData, limit, newOffset); }, 1000);
+    } else {
+      resolve(updatedPaginatedData);
+    }
+  });
+};
+
+/* eslint-disable i18next/no-literal-string */
+export const fetchCollectibles = async (
+  walletAddress: string,
+): Promise<?OpenSeaAsset[]> => {
+  if (!walletAddress) return null;
+
+  const url = `${getEnv().OPEN_SEA_API}/assets/` +
+    `?owner=${walletAddress}` +
+    '&exclude_currencies=true' +
+    '&order_by=listing_date' +
+    '&order_direction=asc';
+
+  try {
+    const { assets } = await paginatedRequest(url);
+    return assets;
+  } catch (error) {
+    reportErrorLog('fetchCollectibles failed', { walletAddress, error });
+    return null;
+  }
+};
+
+export const fetchCollectiblesTransactionHistory = async (
+  walletAddress: string,
+): Promise<?OpenSeaHistoryItem[]> => {
+  try {
+    const url = `${getEnv().OPEN_SEA_API}/events/` +
+      `?account_address=${walletAddress}` +
+      '&exclude_currencies=true' +
+      '&event_type=transfer';
+
+    const { data } = await httpRequest.get(url, requestConfig);
+
+    return data?.asset_events; // eslint-disable-line camelcase
+  } catch (error) {
+    reportErrorLog('fetchCollectiblesTransactionHistory failed', { walletAddress, error });
+    return null;
+  }
+};
+/* eslint-enable i18next/no-literal-string */

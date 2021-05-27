@@ -10,7 +10,6 @@ export type Account = {
   type: AccountTypes,
   extra?: AccountExtra,
   isActive: boolean,
-  walletId: string,
 };
 
 export type Accounts = Account[];

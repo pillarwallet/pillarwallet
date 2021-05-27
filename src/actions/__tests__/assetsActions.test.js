@@ -43,9 +43,6 @@ import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
-// services
-import PillarSdk from 'services/api';
-
 // utils
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
@@ -53,8 +50,7 @@ import { mockSupportedAssets } from 'testUtils/jestSetup';
 import type { Assets, AssetsByAccount } from 'models/Asset';
 
 
-const pillarSdk = new PillarSdk();
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const getTransactionCountMock = jest.fn(() => {
   return new Promise((resolve) => {
@@ -87,10 +83,8 @@ const mockAssetsByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };
@@ -105,10 +99,8 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
   PLR: {
@@ -116,10 +108,8 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };

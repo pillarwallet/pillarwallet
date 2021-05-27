@@ -28,7 +28,6 @@ import {
   SET_ARCHANOVA_SDK_INIT,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
 } from 'constants/archanovaConstants';
-import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   SET_UNISWAP_TOKENS_QUERY_STATUS,
@@ -41,7 +40,6 @@ import { loginAction } from 'actions/authActions';
 
 // services
 import Storage from 'services/storage';
-import PillarSdk from 'services/api';
 import etherspotService from 'services/etherspot';
 
 // test utils
@@ -55,7 +53,6 @@ import {
 
 const mockUpdatedUser = {
   username: 'John Appleseed',
-  walletId: 'walletIdUnique',
 };
 
 jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
@@ -66,8 +63,7 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
-const pillarSdk = new PillarSdk();
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const mockWallet: Object = {
   address: '0x9c',
@@ -79,13 +75,10 @@ const mockUser: Object = {
 
 const mockRegisteredUser: Object = {
   username: 'JonR',
-  walletId: 'walletIdUnique',
 };
 
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
 const mockActiveSmartWalletAccount = { ...mockArchanovaAccount, isActive: true };
-
-pillarSdk.userInfo.mockResolvedValue(mockUpdatedUser);
 
 Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
@@ -105,7 +98,6 @@ describe('Auth actions', () => {
       exchange: { exchangeSupportedAssets: [] },
       assets: { data: {} },
       navigation: {},
-      oAuthTokens: { data: {} },
       wallet: {
         backupStatus: { isBackedUp: false, isImported: false },
       },
@@ -117,7 +109,7 @@ describe('Auth actions', () => {
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
       assetsBalances: { data: {} },
-      user: { data: { walletId: 'test-wallet-id' } },
+      user: { data: { username: 'test-username' } },
     });
   });
 
@@ -134,7 +126,6 @@ describe('Auth actions', () => {
         },
       },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
@@ -164,7 +155,6 @@ describe('Auth actions', () => {
       { type: SET_USER, payload: mockRegisteredUser },
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
