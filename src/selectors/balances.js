@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { createSelector } from 'reselect';
+import { mapValues } from 'lodash';
 
 // constants
 import { ASSET_CATEGORY, PLR } from 'constants/assetsConstants';
@@ -28,11 +29,15 @@ import { getTotalBalanceInFiat } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 import { isEtherspotAccount } from 'utils/accounts';
-import { getChainTotalBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
+import {
+  getChainTotalBalancesForCategory,
+  getTotalCategoryBalance,
+  getAssetsFromAccountAssetsBalances,
+} from 'utils/balances';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Rates, Asset, Assets, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type {
   ChainTotalBalancesPerAccount,
@@ -46,6 +51,7 @@ import type {
 // selectors
 import {
   assetsBalancesSelector,
+  supportedAssetsSelector,
   fiatCurrencySelector,
   ratesSelector,
   activeAccountIdSelector,
@@ -188,4 +194,31 @@ export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelec
     liquidityPoolsBalance,
     rewardsBalance,
   ]),
+);
+
+/**
+ * Compat function for providing array of assets represening all accounts assets across all chains.
+ * Intended to be used in place of `assetsSelector` from 'selectors`.
+ */
+export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    return mapValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) =>
+      getAssetsFromAccountAssetsBalances(accountAssetsBalances, supportedAssets),
+    );
+  },
+);
+
+/**
+ * Compat function for providing array of assets represening active account assets across all chains.
+ * Intended to be used in place of `accountAssetsSelector` from 'selectors`.
+ */
+export const accountAssetsCompatSelector: Selector<Assets> = createSelector(
+  activeAccountIdSelector,
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    getAssetsFromAccountAssetsBalances(assetsBalances[accountId], supportedAssets);
+  },
 );

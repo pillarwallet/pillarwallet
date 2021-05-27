@@ -25,8 +25,10 @@ import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // utils
 import { sum } from 'utils/bigNumber';
+import { pickSupportedAssetsWithSymbols } from 'utils/assets';
 
 // types
+import type { Asset } from 'models/Asset';
 import type {
   CategoryBalancesPerChain,
   CategoryTotalBalancesPerChain,
@@ -89,3 +91,20 @@ export const getChainWalletAssetsBalances = (
   accountAssetsBalances ?? {},
   (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET],
 );
+
+export const getAssetsFromAccountAssetsBalances = (
+  accountAssetsBalances: CategoryBalancesPerChain,
+  supportedAssets: Asset[],
+) => {
+  const assetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
+  const symbols = getSymbolsFromChainsWalletAssetsBalances(assetsBalancesPerChain);
+  return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
+};
+
+export const getSymbolsFromChainsWalletAssetsBalances = (chainsAssets: ChainRecord<WalletAssetsBalances>): string[] => {
+  return Object.keys(chainsAssets).flatMap((chain) => getSymbolsFromWalletAssetsBalances(chainsAssets[chain]));
+};
+
+export const getSymbolsFromWalletAssetsBalances = (assets: ?WalletAssetsBalances): string[] => {
+  return Object.keys(assets ?? {});
+};

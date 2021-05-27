@@ -39,6 +39,7 @@ import type {
   Assets,
   AssetOption,
   AssetOptionBalance,
+  AssetsByAccount,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
@@ -285,6 +286,16 @@ export const findSupportedAssetsBySymbols = (supportedAssets: Asset[], symbols: 
   return mapNotNil(symbols, (symbol) => findSupportedAssetBySymbol(supportedAssets, symbol));
 };
 
+export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
+  const result = {};
+  symbols.forEach(symbol => {
+    const asset = findSupportedAssetBySymbol(supportedAssets, symbol);
+    if (asset) result[symbol] = asset;
+  });
+
+  return result;
+};
+
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
@@ -479,4 +490,9 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
   if (balance?.balance) return 2;
   if (imageUrl) return 1;
   return 0;
+};
+
+export const mergeAccountAssets = (assetsByAccount: AssetsByAccount): Assets => {
+  const assetsArray = Object.keys(assetsByAccount).map(accountId => assetsByAccount[accountId]);
+  return Object.assign({}, ...assetsArray);
 };
