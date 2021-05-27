@@ -26,7 +26,7 @@ import t from 'translations/translate';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // types
-import type { Account, Accounts, AccountTypes } from 'models/Account';
+import type { Account, AccountTypes } from 'models/Account';
 import type { Assets } from 'models/Asset';
 import type { TranslatedString } from 'models/Translations';
 
@@ -34,15 +34,15 @@ import type { TranslatedString } from 'models/Translations';
 import { addressesEqual } from './assets';
 
 
-export const getActiveAccount = (accounts: Accounts): ?Account => {
+export const getActiveAccount = (accounts: Account[]): ?Account => {
   return accounts.find(({ isActive }) => isActive);
 };
 
-export const getInactiveUserAccounts = (accounts: Accounts): Accounts => {
+export const getInactiveUserAccounts = (accounts: Account[]): Account[] => {
   return accounts.filter(({ isActive }) => !isActive);
 };
 
-export const getActiveAccountId = (accounts: Accounts): string => {
+export const getActiveAccountId = (accounts: Account[]): string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
     return '';
@@ -59,7 +59,7 @@ export const getAccountType = (account: Account): ?AccountTypes => {
   return account.type;
 };
 
-export const getActiveAccountType = (accounts: Accounts): ?AccountTypes => {
+export const getActiveAccountType = (accounts: Account[]): ?AccountTypes => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
     return null;
@@ -72,7 +72,7 @@ export const getAccountAddress = (account: Account): string => {
   return account.id;
 };
 
-export const getActiveAccountAddress = (accounts: Accounts): ?string => {
+export const getActiveAccountAddress = (accounts: Account[]): ?string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) return null;
 
@@ -80,41 +80,37 @@ export const getActiveAccountAddress = (accounts: Accounts): ?string => {
 };
 
 export const findAccountByType = (
-  accounts: Accounts,
+  accounts: Account[],
   accountType: AccountTypes,
 ): ?Account => accounts.find(({ type }) => type === accountType);
 
-export const findKeyBasedAccount = (
-  accounts: Accounts,
-): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.KEY_BASED);
+export const findKeyBasedAccount = (accounts: Account[]): ?Account =>
+  findAccountByType(accounts, ACCOUNT_TYPES.KEY_BASED);
 
-export const findFirstArchanovaAccount = (
-  accounts: Accounts,
-): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
+export const findFirstArchanovaAccount = (accounts: Account[]): ?Account =>
+  findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
-export const findFirstEtherspotAccount = (
-  accounts: Accounts,
-): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
+export const findFirstEtherspotAccount = (accounts: Account[]): ?Account =>
+  findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
-export const findFirstSmartWalletAccount = (
-  accounts: Accounts,
-): ?Account => findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET)
-  || findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
+export const findFirstSmartWalletAccount = (accounts: Account[]): ?Account =>
+  findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) ||
+  findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
 export const isSmartWalletAccount = (account: ?Account): boolean => [
   ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 ].includes(account?.type);
 
-export const isAccountType = (account: ?Account, type: string): boolean => account?.type === type;
+export const isAccountType = (account: ?Account, type: AccountTypes): boolean %checks =>
+  // Note: null checks has to be done separately or flow predicate function is not working correctly.
+  account != null && account.type === type;
 
-export const isArchanovaAccount = (
-  account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
+export const isArchanovaAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
-export const isEtherspotAccount = (
-  account: ?Account,
-): boolean => isAccountType(account, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
+export const isEtherspotAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
@@ -127,17 +123,17 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
   }
 };
 
-export const findAccountByAddress = (address: string, accounts: Accounts): ?Account => {
-  return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
+export const findAccountByAddress = (address: string, accounts: Account[]): ?Account => {
+  return accounts.find((account) => addressesEqual(address, getAccountAddress(account)));
 };
 
-export const getAccountTypeByAddress = (address: string, accounts: Accounts): ?string => {
+export const getAccountTypeByAddress = (address: string, accounts: Account[]): ?string => {
   const relatedAccount = findAccountByAddress(address, accounts);
   if (!relatedAccount) return null;
   return relatedAccount.type;
 };
 
-export const findAccountById = (accountId: string, accounts: Accounts): ?Account => {
+export const findAccountById = (accountId: string, accounts: Account[]): ?Account => {
   return accounts.find(({ id }) => id === accountId);
 };
 
@@ -155,11 +151,13 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 };
 
 export const getAccountEnsName = (account: ?Account): ?string => {
-  switch (account?.type) {
+  if (!account) return null;
+
+  switch (account.type) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-      return account?.extra?.ensNode?.name;
+      return account.extra?.ethereum?.ensNode?.name;
     case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-      return account?.extra?.ensName;
+      return account.extra?.ensName;
     default:
       return null;
   }
@@ -179,10 +177,8 @@ export const getInitials = (fullName: string = '') => {
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
 
-export const isArchanovaAccountAddress = (
-  address: string,
-  accounts: Accounts,
-): boolean => getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
+export const isArchanovaAccountAddress = (address: string, accounts: Account[]): boolean =>
+  getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
 
 export const getAccountCreatedAtTimestamp = (account: Account): ?number => {
   switch (account?.type) {

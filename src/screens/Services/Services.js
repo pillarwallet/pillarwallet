@@ -62,7 +62,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -76,7 +76,7 @@ let areLiquidityPoolsEnabled = true;
 type Props = {
   navigation: NavigationScreenProp<*>,
   isArchanovaWalletActivated: boolean,
-  accounts: Accounts,
+  accounts: Account[],
 };
 
 type Service = {|

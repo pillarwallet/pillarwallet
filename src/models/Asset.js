@@ -20,8 +20,11 @@
 
 import { BigNumber } from 'bignumber.js';
 
-// constants
+// Constants
 import { COLLECTIBLES, TOKENS } from 'constants/assetsConstants';
+
+// Types
+import type { Chain } from 'models/Chain';
 
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
@@ -106,6 +109,7 @@ export type AssetOption = {
   name: string,
   symbol: string,
   tokenType?: TokenType,
+  chain: Chain,
 
   // Additional props
   assetBalance?: string,

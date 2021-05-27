@@ -47,7 +47,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Asset, Assets } from 'models/Asset';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import ArrowIcon from '../../components/ArrowIcon/ArrowIcon';
 
 
@@ -58,7 +58,7 @@ type Props = {
   assets: Assets,
   history: Object[],
   sablierEvents: Object[],
-  accounts: Accounts,
+  accounts: Account[],
 };
 
 const TokenIcon = styled(Image)`

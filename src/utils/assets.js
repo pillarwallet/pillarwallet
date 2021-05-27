@@ -26,6 +26,7 @@ import { getEnv } from 'configs/envConfig';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -410,6 +411,7 @@ export const getAssetOption = (
     icon: iconUrl,
     assetBalance: formattedAssetBalance,
     balance: getAssetOptionBalance(symbol, balances, rates, baseFiatCurrency),
+    chain: CHAIN.ETHEREUM,
   };
 };
 
@@ -427,6 +429,7 @@ export const mapAssetDataToAssetOption = (
     imageUrl: assetData.icon,
     tokenType: assetData.tokenType ?? TOKENS,
     balance: getAssetOptionBalance(assetData.token, balances, rates, fiatCurrency),
+    chain: CHAIN.ETHEREUM,
   };
 };
 

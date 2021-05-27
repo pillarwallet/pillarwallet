@@ -18,6 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// Types
+import type { Chain } from 'models/Chain';
+
 export type Collectible = {
   id: string,
   category: string,
@@ -32,6 +35,7 @@ export type Collectible = {
   tokenType: string,
   symbol?: void,
   decimals?: void,
+  chain: Chain;
 };
 
 export type CollectibleTrx = {

@@ -41,7 +41,7 @@ import {
 
 // types
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 
@@ -50,7 +50,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   message: string,
   buttonTitle: string,
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: Object,
   title?: string,
   theme: Theme,

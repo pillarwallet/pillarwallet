@@ -55,7 +55,7 @@ import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
   TransactionFeeInfo,
@@ -110,7 +110,7 @@ const getMessage = (
 };
 
 export const getArchanovaWalletStatus = (
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: SmartWalletReducerState,
 ): ArchanovaWalletStatus => {
   const activeAccount = getActiveAccount(accounts);
@@ -350,7 +350,7 @@ export const isHiddenUnsettledTransaction = (
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
 
-export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
+export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Account[]) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
   return !error && (deploymentStarted || archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING);
@@ -414,10 +414,7 @@ export const buildArchanovaTxFeeInfo = (
   };
 };
 
-export const buildEnsMigrationRawTransactions = async (
-  accounts: Accounts,
-  wallet: Wallet,
-): Promise<?string[]> => {
+export const buildEnsMigrationRawTransactions = async (accounts: Account[], wallet: Wallet): Promise<?(string[])> => {
   const isKovan = getEnv().NETWORK_PROVIDER === 'kovan';
 
   const etherspotAccount = findFirstEtherspotAccount(accounts);

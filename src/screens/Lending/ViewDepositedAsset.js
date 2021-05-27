@@ -58,7 +58,7 @@ import { archanovaAccountHistorySelector } from 'selectors/history';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset, Rates } from 'models/Asset';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { BadgeRewardEvent } from 'models/Badge';
 
 type Props = {
@@ -67,7 +67,7 @@ type Props = {
   fetchDepositedAsset: (symbol: string) => void,
   baseFiatCurrency: ?string,
   rates: Rates,
-  accounts: Accounts,
+  accounts: Account[],
   archanovaAccountHistory: Object[],
   navigation: NavigationScreenProp<*>,
   badgesEvents: BadgeRewardEvent[],

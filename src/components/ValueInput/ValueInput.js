@@ -24,11 +24,13 @@ import { Keyboard } from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
+
+// Components
 import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import AssetSelectorOptions from 'components/AssetSelectorOptions';
+import AssetSelectorModal from 'components/AssetSelectorModal';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -255,7 +257,7 @@ export const ValueInputComponent = ({
   const openAssetSelector = () => {
     Keyboard.dismiss();
     Modal.open(() => (
-      <AssetSelectorOptions
+      <AssetSelectorModal
         options={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
         onSelectOption={onAssetDataChange}

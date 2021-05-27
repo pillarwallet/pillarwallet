@@ -171,7 +171,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
@@ -187,7 +187,7 @@ type StateProps = {|
   rates: Rates,
   baseFiatCurrency: ?string,
   user: Object,
-  accounts: Accounts,
+  accounts: Account[],
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   updatingTransaction: ?string,

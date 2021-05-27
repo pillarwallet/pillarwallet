@@ -59,7 +59,7 @@ import { useFiatCurrency } from 'selectors';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Account, Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { RenderItemProps } from 'utils/types/react-native';
@@ -83,7 +83,7 @@ type ListItem = {|
 
 type Props = {|
   blockchainNetworks: BlockchainNetwork[],
-  accounts: Accounts,
+  accounts: Account[],
   switchAccount: (accountId: string) => void,
   fetchAllAccountsTotalBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,

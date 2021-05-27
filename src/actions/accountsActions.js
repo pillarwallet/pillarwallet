@@ -52,14 +52,15 @@ import { navigate } from 'services/navigation';
 import { accountsSelector, activeAccountSelector } from 'selectors';
 
 // types
-import type { AccountExtra, AccountTypes } from 'models/Account';
+import type { AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 
 export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
-  accountExtra?: AccountExtra,
+  accountExtra?: any,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -70,8 +71,8 @@ export const addAccountAction = (
       isActive: false,
     };
 
-    const existingAccount = accounts.find(account => account.id.toLowerCase() === accountAddress.toLowerCase());
-    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    const existingAccount = accounts.find((account) => isCaseInsensitiveMatch(account.id, accountAddress));
+    const updatedAccounts = accounts.filter((account) => !isCaseInsensitiveMatch(account.id, accountAddress));
 
     if (existingAccount) {
       updatedAccounts.push({ ...existingAccount, extra: accountExtra });
@@ -90,7 +91,7 @@ export const addAccountAction = (
 
 export const updateAccountExtraIfNeededAction = (
   accountId: string,
-  accountExtra: AccountExtra,
+  accountExtra: any,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());

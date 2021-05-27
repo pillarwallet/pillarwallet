@@ -56,9 +56,11 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Asset } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { WalletAssetBalance } from 'models/Balances';
@@ -66,8 +68,8 @@ import type { WalletAssetBalance } from 'models/Balances';
 export class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
-  instances: Array<EtherspotSdk> = [];
-  supportedNetworks: Array<NetworkNames> = [];
+  instances: { [network: string]: EtherspotSdk } = {};
+  supportedNetworks: Array<string> = [];
 
   async init(privateKey?: string): Promise<void> {
     const etherspotComputeContractPromises = [];
@@ -81,32 +83,24 @@ export class EtherspotService {
      * function which is called from envConfig.js
      */
     this.supportedNetworks = [
-      (isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan),
+      isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
       NetworkNames.Bsc,
       NetworkNames.Matic,
       NetworkNames.Xdai,
     ];
 
-    const primaryNetworkName = isMainnet
-      ? NetworkNames.Mainnet
-      : NetworkNames.Kovan;
-
-    const envName = isMainnet
-      ? EnvNames.MainNets
-      : EnvNames.TestNets;
+    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
 
     /**
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    this.supportedNetworks.forEach((currentNetworkName) => {
-      // Instantiate
-      this.instances[currentNetworkName] = new EtherspotSdk(privateKey, { env: envName, currentNetworkName });
+    this.supportedNetworks.forEach((networkName) => {
+      const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
+      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
       // Schedule exection of computeContractAccount's
-      etherspotComputeContractPromises.push(
-        this.instances[currentNetworkName].computeContractAccount({ sync: true }),
-      );
+      etherspotComputeContractPromises.push(this.instances[networkName].computeContractAccount({ sync: true }));
     });
 
     // Assign the primary instance of the default networkName to `sdk`
@@ -129,8 +123,27 @@ export class EtherspotService {
     this.subscription.unsubscribe();
   }
 
-  getAccount(accountAddress: string): Promise<?EtherspotAccount> {
-    return this.sdk.getAccount({ address: accountAddress }).catch((error) => {
+  getSdkForChain(chain: Chain): ?EtherspotSdk {
+    const network = networkNameFromChain(chain);
+    if (!network) {
+      reportErrorLog('EtherspotService getSdkForChain failed: no network', { chain });
+      return null;
+    }
+
+    const sdk = this.instances[network];
+    if (!sdk) {
+      reportErrorLog('EtherspotService getSdkForChain failed: cannot get SDK instance', { chain, network });
+      return null;
+    }
+
+    return sdk;
+  }
+
+  getAccount(chain: Chain, accountAddress: string): ?Promise<?EtherspotAccount> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    return sdk.getAccount({ address: accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
     });
@@ -433,3 +446,18 @@ export const getEtherspotSupportService = async (): Promise<EtherspotService> =>
 };
 
 export default etherspot;
+
+function networkNameFromChain(chain: Chain): ?string {
+  switch (chain) {
+    case CHAIN.ETHEREUM:
+      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan;
+    case CHAIN.BINANCE:
+      return NetworkNames.Bsc;
+    case CHAIN.POLYGON:
+      return NetworkNames.Matic;
+    case CHAIN.XDAI:
+      return NetworkNames.Xdai;
+    default:
+      return null;
+  }
+}

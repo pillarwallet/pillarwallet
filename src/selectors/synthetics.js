@@ -21,6 +21,8 @@
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 
+import { CHAIN } from 'constants/chainConstants';
+
 import { mapNotNil } from 'utils/array';
 import { formatTokenAmount } from 'utils/common';
 
@@ -46,6 +48,7 @@ export const activeSyntheticAssetsSelector = createSelector(
           syntheticBalance: formatTokenAmount(asset.availableBalance, asset.symbol),
           token: asset.symbol,
         },
+        chain: CHAIN.ETHEREUM,
       };
     });
   },

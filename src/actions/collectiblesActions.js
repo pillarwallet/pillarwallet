@@ -20,8 +20,9 @@
 
 import { getEnv } from 'configs/envConfig';
 
-// constants
+// Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
@@ -29,10 +30,10 @@ import {
   UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 
-// services
+// Services
 import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
 
-// utils
+// Utils
 import {
   getAccountAddress,
   getAccountId,
@@ -40,21 +41,15 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { getTrxInfo } from 'utils/history';
-import {
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-} from 'utils/common';
+import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // types
 import type { Collectible, CollectibleTrx } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-import type {
-  OpenSeaAsset,
-  OpenSeaHistoryItem,
-} from 'models/OpenSea';
+import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
 
-// actions
+// Actions
 import { saveDbAction } from './dbActions';
 
 
@@ -93,6 +88,7 @@ export const collectibleFromResponse = (responseItem: OpenSeaAsset): Collectible
     tokenType: COLLECTIBLES,
     image,
     icon,
+    chain: CHAIN.ETHEREUM,
   };
 };
 
