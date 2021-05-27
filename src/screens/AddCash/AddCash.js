@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { ScrollView, Keyboard } from 'react-native';
+import { ScrollView, Keyboard, Platform } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -27,21 +27,24 @@ import { useNavigation } from 'react-navigation-hooks';
 // utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
-import { getCurrencySymbol } from 'utils/common';
+import { getCurrencySymbol, hasTooMuchDecimals } from 'utils/common';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import { rampWidgetUrl } from 'utils/fiatToCrypto';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount } from 'utils/accounts';
+import { useThemeColors } from 'utils/themes';
 
 // compomnents
 import { Container } from 'components/modern/Layout';
-import { Footer } from 'components/Layout/Layout';
-import Button from 'components/Button';
+import Button from 'components/modern/Button';
 import TextInput from 'components/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
+import ValueInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/ValueInputAccessory/ValueInputAccessoryHolder';
 
 // selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
@@ -51,6 +54,7 @@ const AddCash = () => {
   const navigation = useNavigation();
   const [value, setValue] = React.useState('0');
   const fiatCurrency = useFiatCurrency();
+  const colors = useThemeColors();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const accounts = useRootSelector(accountsSelector);
   const user = useUser();
@@ -68,6 +72,7 @@ const AddCash = () => {
 
   const handleChangeText = (text: string) => {
     const amount = text.replace(currencySymbol, '');
+    if (hasTooMuchDecimals(amount, 2)) return;
     const updatedAmount = amount.replace(/^0+/, '');
     setValue(updatedAmount);
   };
@@ -88,6 +93,19 @@ const AddCash = () => {
     });
   };
 
+  const handleUseValue = async (accessoryValue: string) => {
+    Keyboard.dismiss();
+    setValue(accessoryValue);
+  };
+
+  const onInputBlur = () => {
+    ValueInputAccessoryHolder.removeAccessory();
+  };
+
+  const onInputFocus = () => {
+    ValueInputAccessoryHolder.addAccessory(handleUseValue);
+  };
+
   return (
     <Container>
       <HeaderBlock
@@ -98,7 +116,9 @@ const AddCash = () => {
       />
       <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
         <AddCashView>
-          <Text variant="medium">{t('servicesContent.ramp.addCash.subTitle')}</Text>
+          <Text color={colors.basic030} variant="medium">
+            {t('servicesContent.ramp.addCash.subTitle')}
+          </Text>
           <TextInput
             inputProps={{
               value: `${currencySymbol}${value}`,
@@ -107,6 +127,9 @@ const AddCash = () => {
               onChangeText: handleChangeText,
               placeholder: `${currencySymbol}0`,
               keyboardType: 'numeric',
+              onBlur: onInputBlur,
+              onFocus: onInputFocus,
+              inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
             }}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
@@ -115,7 +138,7 @@ const AddCash = () => {
           />
         </AddCashView>
       </ScrollView>
-      <Footer>
+      <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
         <Button
           onPress={() => {
             const address = getCryptoPurchaseAddress();
@@ -123,9 +146,16 @@ const AddCash = () => {
             openUrl(rampWidgetUrl(address, user?.email, fiatCurrency, value));
           }}
           title={t('button.next')}
-          disabled={value !== null && (value === '0' || !isValidFiatValue(value))}
+          disabled={value !== null && (Number(value) === 0 || !isValidFiatValue(value))}
         />
       </Footer>
+      <ValueInputAccessoryHolder
+        ref={(c) => {
+          if (c && !ValueInputAccessoryHolder.instances.includes(c)) {
+          ValueInputAccessoryHolder.instances.push(c);
+          }
+        }}
+      />
     </Container>
   );
 };
@@ -142,8 +172,8 @@ const styles = {
     backgroundColor: 'transparent',
   },
   additionalStyle: {
-    fontSize: fontSizes.giant,
-    fontFamily: appFont.medium,
+    fontSize: fontSizes.jumbo,
+    fontFamily: appFont.regular,
     textAlign: 'center',
   },
 };
@@ -154,6 +184,10 @@ const AddCashView = styled.View`
   min-height: 220px;
   flex: 1;
   margin-top: 70px;
+`;
+
+const Footer = styled.KeyboardAvoidingView`
+  padding: 20px 20px 20px;
 `;
 
 export default AddCash;

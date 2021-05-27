@@ -164,7 +164,9 @@ const ActionSvgIcon = styled(SvgIcon)`
 const CloseIcon = styled(IconButton)`
   position: relative;
   align-self: center;
-  padding: 20px;
+  padding: 15px;
+  border-radius: 36px;
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })}
 `;
 
 const TextButton = styled.TouchableOpacity`
@@ -354,6 +356,7 @@ class HeaderBlock extends React.Component<Props> {
             {
               marginTop: -20,
               marginBottom: -20,
+              paddingLeft: 20,
             },
             itemStyle,
           ]}
@@ -366,7 +369,7 @@ class HeaderBlock extends React.Component<Props> {
               darkKey: 'basic020',
             })}
             onPress={getCloseAction({ ...item, onClose }, navigation)}
-            fontSize={fontSizes.regular}
+            fontSize={fontSizes.small}
             horizontalAlign="flex-end"
           />
         </View>
