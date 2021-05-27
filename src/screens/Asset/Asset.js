@@ -76,7 +76,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 // models, types
 import type { Assets, Asset } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
-import type { Account, Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 
@@ -89,7 +89,7 @@ type Props = {
   baseFiatCurrency: ?string,
   resetHideRemoval?: Function,
   smartWalletState: Object,
-  accounts: Accounts,
+  accounts: Account[],
   activeAccount: ?Account,
   paymentNetworkBalances: WalletAssetsBalances,
   history: Object[],

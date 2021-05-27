@@ -62,7 +62,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Stream } from 'models/Sablier';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 // local
@@ -76,7 +76,7 @@ type Props = {
   balances: WalletAssetsBalances,
   history: Object[],
   sablierEvents: Object[],
-  accounts: Accounts,
+  accounts: Account[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   calculateSablierCancelTransactionEstimate: (stream: Stream) => void,

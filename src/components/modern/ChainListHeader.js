@@ -19,8 +19,10 @@
 */
 
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import Text from 'components/modern/Text';
@@ -28,9 +30,12 @@ import Text from 'components/modern/Text';
 // Selectors
 import { useFiatCurrency } from 'selectors';
 
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
 // Utils
 import { formatFiatValue } from 'utils/format';
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
@@ -43,26 +48,45 @@ type Props = {|
 |};
 
 function ChainListHeader({ chain, onPress, balance }: Props) {
-  const currency = useFiatCurrency();
-
+  const { t } = useTranslation();
   const { title, color } = useChainsConfig()[chain];
 
+  const currency = useFiatCurrency();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
+
   const fiatValue = formatFiatValue(balance, currency, { stripTrailingZeros: true });
+  const titleSegments = fiatValue != null ? [title, fiatValue] : [title];
+  const isDeployed = isDeployedOnChain[chain];
 
   return (
-    <TouchableContainer onPress={onPress}>
-      <Text variant="medium" color={color}>
-        {/* eslint-disable-next-line i18next/no-literal-string */}
-        {title}{fiatValue != null && ` · ${fiatValue}`}
-      </Text>
-    </TouchableContainer>
+    <Container>
+      <TouchableOpacity onPress={onPress} disabled={!onPress}>
+        <Title color={color}>{titleSegments.join(t('label.dotSeparator'))}</Title>
+      </TouchableOpacity>
+
+      {!isDeployed && (
+        <TouchableOpacity onPress={() => showDeploymentInterjection(chain)}>
+          <WalletNotDeployed>{t('label.walletNotDeployed')}</WalletNotDeployed>
+        </TouchableOpacity>
+      )}
+    </Container>
   );
 }
 
 export default ChainListHeader;
 
-const TouchableContainer = styled.TouchableOpacity`
+const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
-  padding: ${spacing.small}px ${spacing.large}px;
   align-items: center;
+`;
+
+const Title = styled(Text)`
+  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  ${fontStyles.medium};
+`;
+
+const WalletNotDeployed = styled(Text)`
+  padding-bottom: ${spacing.mediumLarge}px;
+  ${fontStyles.small};
+  color: ${({ theme }) => theme.colors.link};
 `;

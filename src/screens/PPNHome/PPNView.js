@@ -65,7 +65,7 @@ import {
 } from 'constants/paymentNetworkConstants';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -100,7 +100,7 @@ type Props = {
   availableStake: number,
   assetsOnNetwork: Object,
   fetchVirtualAccountBalance: () => void,
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: Object,
   PPNTransactions: Transaction[],
   history: Object[],

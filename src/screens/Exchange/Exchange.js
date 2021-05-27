@@ -68,7 +68,7 @@ import { activeAccountExchangeAllowancesSelector, activeAccountSelector } from '
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
 import type { Asset, Assets, AssetOption, Rates } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
-import type { Account, Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
@@ -104,7 +104,7 @@ type Props = {
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: () => void,
   oAuthAccessToken: ?string,
-  accounts: Accounts,
+  accounts: Account[],
   smartWalletState: Object,
   exchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: (callback: () => void) => void,

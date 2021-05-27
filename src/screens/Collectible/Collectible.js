@@ -51,7 +51,7 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { accountHistorySelector } from 'selectors/history';
 
 import type { Collectible } from 'models/Collectible';
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
@@ -61,7 +61,7 @@ type Props = {
   collectibles: Collectible[],
   openSeaTxHistory: Object[],
   history: Object[],
-  accounts: Accounts,
+  accounts: Account[],
   theme: Theme,
 };
 

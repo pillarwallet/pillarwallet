@@ -43,7 +43,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -86,7 +86,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   smartWallet: Object,
-  accounts: Accounts,
+  accounts: Account[],
   balances: WalletAssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,

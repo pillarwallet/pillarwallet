@@ -46,7 +46,7 @@ import type { Collectible } from 'models/Collectible';
 
 type Props = {|
   collectibles: Collectible[],
-  onCollectiblePress: Collectible => void,
+  onCollectiblePress: Collectible => mixed,
   isSearching: boolean,
 |};
 

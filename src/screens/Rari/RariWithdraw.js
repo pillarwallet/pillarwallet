@@ -44,6 +44,7 @@ import { calculateRariWithdrawTransactionEstimateAction } from 'actions/rariActi
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
@@ -101,6 +102,7 @@ const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): As
       iconUrl,
       icon: iconUrl,
       imageUrl,
+      chain: CHAIN.ETHEREUM,
     };
   });
 };

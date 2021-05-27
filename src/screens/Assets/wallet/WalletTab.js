@@ -28,6 +28,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
+import ChainListHeader from 'components/modern/ChainListHeader';
+import ChainListFooter from 'components/modern/ChainListFooter';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
@@ -54,8 +56,6 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import PillarPaySummary from '../components/PillarPaySummary';
-import ChainListHeader from '../components/ChainListHeader';
-import ChainListFooter from '../components/ChainListFooter';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
 import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
