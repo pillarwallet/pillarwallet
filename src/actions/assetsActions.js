@@ -72,11 +72,7 @@ import {
 } from 'services/zapper';
 
 // utils
-import {
-  getAssetsAsList,
-  getRate,
-  transformBalancesToObject,
-} from 'utils/assets';
+import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import { getSupportedChains } from 'utils/chains';
 import {
   parseTokenAmount,
@@ -97,7 +93,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sum, sumBy } from 'utils/bigNumber';
+import { sumBy } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
@@ -106,7 +102,6 @@ import {
   supportedAssetsSelector,
   assetsBalancesSelector,
   fiatCurrencySelector,
-  ratesSelector,
 } from 'selectors';
 import { totalBalancesSelector } from 'selectors/totalBalances';
 
@@ -417,28 +412,6 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
       await dispatch(
         updateAccountWalletAssetsBalancesForChainAction(accountId, chain, transformBalancesToObject(newBalances)),
       );
-
-      const rates = ratesSelector(getState());
-      const currency = fiatCurrencySelector(getState());
-
-      const assetsFiatBalances = newBalances.map((asset) => {
-        if (!asset?.balance) return BigNumber(0);
-
-        const rate = getRate(rates, asset.symbol, currency);
-        return BigNumber(asset.balance).times(rate);
-      });
-
-      const totalBalance = sum(assetsFiatBalances);
-
-      dispatch({
-        type: SET_ACCOUNT_TOTAL_BALANCE,
-        payload: {
-          accountId,
-          chain,
-          category: ASSET_CATEGORY.WALLET,
-          balance: totalBalance,
-        },
-      });
     }));
 
     const accountsTotalBalances = totalBalancesSelector(getState());
