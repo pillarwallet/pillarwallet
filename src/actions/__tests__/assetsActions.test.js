@@ -168,16 +168,9 @@ describe('Assets actions', () => {
       category: ASSET_CATEGORY.WALLET,
       balances: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } },
     };
-    const updateTotalBalancePayload = {
-      accountId: mockAccounts[0].id,
-      chain: CHAIN.ETHEREUM,
-      category: ASSET_CATEGORY.WALLET,
-      balance: BigNumber(0),
-    };
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
-      { type: SET_ACCOUNT_TOTAL_BALANCE, payload: updateTotalBalancePayload },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
     return store.dispatch(fetchAssetsBalancesAction())
