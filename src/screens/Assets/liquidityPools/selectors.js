@@ -34,12 +34,12 @@ import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
 import type { LiquidityPoolAssetBalance } from 'models/Balances';
 
-export function useLiquidityPoolsBalance(): FiatBalance {
-  const value = sumRecord(useLiquidityPoolsChainBalances());
+export function useLiquidityPoolsTotalBalance(): FiatBalance {
+  const value = sumRecord(useLiquidityPoolsBalancePerChain());
   return { value };
 }
 
-export function useLiquidityPoolsChainBalances(): ChainRecord<BigNumber> {
+export function useLiquidityPoolsBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountLiquidityPoolsBalancePerChainSelector);
 }
 

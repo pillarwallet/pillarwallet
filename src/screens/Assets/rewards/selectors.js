@@ -30,11 +30,11 @@ import { sumRecord } from 'utils/bigNumber';
 // Types
 import type { ChainRecord } from 'models/Chain';
 
-export function useRewardsBalance(): BigNumber {
-  return sumRecord(useRewardsChainBalances());
+export function useRewardsTotalBalance(): BigNumber {
+  return sumRecord(useRewardsBalancePerChain());
 }
 
-export function useRewardsChainBalances(): ChainRecord<BigNumber> {
+export function useRewardsBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountRewardsBalancePerChainSelector);
 }
 export type RewardItem = {|

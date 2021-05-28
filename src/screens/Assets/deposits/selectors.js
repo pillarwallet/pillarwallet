@@ -34,12 +34,12 @@ import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
 import type { DepositAssetBalance } from 'models/Balances';
 
-export function useDepositsBalance(): FiatBalance {
-  const value = sumRecord(useDepositsChainBalances());
+export function useDepositsTotalBalance(): FiatBalance {
+  const value = sumRecord(useDepositsBalancePerChain());
   return { value };
 }
 
-export function useDepositsChainBalances(): ChainRecord<BigNumber> {
+export function useDepositsBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountDepositsBalancePerChainSelector);
 }
 
