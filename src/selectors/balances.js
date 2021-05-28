@@ -17,16 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { createSelector } from 'reselect';
+import { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
 
 // utils
-import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
-import { BigNumber } from 'utils/common';
 import { isEtherspotAccount } from 'utils/accounts';
+import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
 import { getWalletAssetsSymbols } from 'utils/balances';
 
 // types
