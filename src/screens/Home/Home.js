@@ -42,8 +42,9 @@ import { useUser } from 'selectors/user';
 import { useRootSelector } from 'selectors';
 
 // Utils
+import { sumRecord } from 'utils/bigNumber';
+import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
-import { getTotalBalance } from 'utils/balances';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -51,24 +52,22 @@ import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import {
+  useAccountTotalBalances,
   useCollectibleCountPerChain,
-  useCategoryBalancesPerChain,
-  getTotalCategoryBalances,
-  getTotalChainBalances,
 } from './utils';
 
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const categoryBalancesPerChain = useCategoryBalancesPerChain();
+  const accountTotalBalances = useAccountTotalBalances();
   const collectibleCountPerChain = useCollectibleCountPerChain();
   const user = useUser();
   const dispatch = useDispatch();
 
-  const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
-  const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
-  const totalBalance = getTotalBalance(categoryBalances);
+  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
+  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
+  const totalBalance = sumRecord(balancePerCategory);
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => dispatch(fetchAllAccountsTotalBalancesAction());
@@ -86,12 +85,7 @@ function Home() {
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
-        refreshControl={(
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-          />
-        )}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Stories />
 
@@ -99,11 +93,11 @@ function Home() {
 
         <WalletConnectRequests />
 
-        <ChartsSection categoryBalances={categoryBalances} chainBalances={chainBalances} />
+        <ChartsSection categoryBalances={balancePerCategory} chainBalances={balancePerChain} />
 
         <AssetsSection
-          categoryBalances={categoryBalances}
-          categoryBalancesPerChain={categoryBalancesPerChain}
+          categoryBalances={balancePerCategory}
+          categoryBalancesPerChain={accountTotalBalances}
           collectibleCountPerChain={collectibleCountPerChain}
         />
       </Content>

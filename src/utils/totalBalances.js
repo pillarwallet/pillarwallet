@@ -19,31 +19,31 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { mapValues } from 'lodash';
-
-// Selectors
-import { useRootSelector } from 'selectors';
-import { accountCollectiblesSelector } from 'selectors/collectibles';
-import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 
 // Utils
 import { sumBy, sumRecord } from 'utils/bigNumber';
 import { recordValues } from 'utils/object';
 
 // Types
-import type { CollectibleCountPerChain } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { AccountTotalBalances, CategoryRecord } from 'models/TotalBalances';
 
-export function useAccountTotalBalances(): AccountTotalBalances {
-  return useRootSelector(accountTotalBalancesSelector);
+export function calculateTotalBalance(accountBalances: AccountTotalBalances): BigNumber {
+  const totalBalancePerCategory = calculateTotalBalancePerCategory(accountBalances);
+  return sumRecord(totalBalancePerCategory);
 }
 
-export function caculateTotalBalancePerCategory(accountBalances: AccountTotalBalances): CategoryRecord<BigNumber> {
-  return mapValues(accountBalances, (balancePerChain: ChainRecord<BigNumber>) => sumRecord(balancePerChain));
+export function calculateTotalBalancePerCategory(accountBalances: AccountTotalBalances): CategoryRecord<BigNumber> {
+  return {
+    wallet: sumRecord(accountBalances.wallet),
+    deposits: sumRecord(accountBalances.deposits),
+    investments: sumRecord(accountBalances.investments),
+    liquidityPools: sumRecord(accountBalances.liquidityPools),
+    rewards: sumRecord(accountBalances.rewards),
+  };
 }
 
-export function caculateTotalBalancePerChain(accountBalances: AccountTotalBalances): ChainRecord<BigNumber> {
+export function calculateTotalBalancePerChain(accountBalances: AccountTotalBalances): ChainRecord<BigNumber> {
   const balancesPerChain = recordValues(accountBalances);
   return {
     ethereum: sumBy(balancesPerChain, (balance) => balance?.ethereum),
@@ -53,12 +53,3 @@ export function caculateTotalBalancePerChain(accountBalances: AccountTotalBalanc
   };
 }
 
-export function useCollectibleCountPerChain(): CollectibleCountPerChain {
-  const ethereum = useRootSelector(accountCollectiblesSelector).length;
-  return { ethereum };
-}
-
-export function calculateTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {
-  const counts = recordValues(collectibleCountPerChain);
-  return counts.reduce((total, count) => count != null ? total + count : total, 0);
-}

@@ -43,7 +43,7 @@ import type {
   AccountTotalBalances,
   WalletTotalBalances,
   StoredTotalBalances,
-  CategoryTotalBalances,
+  BalancePerChain,
 } from 'models/TotalBalances';
 
 export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = createSelector(
@@ -60,9 +60,9 @@ export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = create
 
 export const totalBalancesSelector: Selector<TotalBalances> = createSelector(
   walletTotalBalancesSelector,
-  (root: RootReducerState) => root.totalBalances.dataX,
+  (root: RootReducerState) => root.totalBalances.data,
   (walletBalances: WalletTotalBalances, storedTotalBalances: StoredTotalBalances): TotalBalances => {
-    const wrappedWalletBalances = mapValues(walletBalances, (wallet: CategoryTotalBalances) => ({ wallet }));
+    const wrappedWalletBalances = mapValues(walletBalances, (wallet: BalancePerChain) => ({ wallet }));
     return merge(wrappedWalletBalances, storedTotalBalances);
   },
 );
@@ -75,10 +75,10 @@ export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = crea
   },
 );
 
-export const accountWalletTotalBalancesSelector: Selector<CategoryTotalBalances> = createSelector(
+export const accountWalletTotalBalancesSelector: Selector<BalancePerChain> = createSelector(
   activeAccountIdSelector,
   walletTotalBalancesSelector,
-  (accountId: string, walletBalances: WalletTotalBalances): CategoryTotalBalances => {
+  (accountId: string, walletBalances: WalletTotalBalances): BalancePerChain => {
     return walletBalances[accountId] ?? {};
   },
 );

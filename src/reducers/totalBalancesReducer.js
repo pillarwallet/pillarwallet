@@ -30,12 +30,11 @@ import {
 import { BigNumber } from 'utils/common';
 
 // types
-import type { ServiceTotalBalancesPerAccount, ChainTotalBalancesPerAccount } from 'models/Balances';
+import type { ServiceTotalBalancesPerAccount } from 'models/Balances';
 
 
 export type TotalBalancesReducerState = {
-  data: ChainTotalBalancesPerAccount,
-  dataX: ServiceTotalBalancesPerAccount,
+  data: ServiceTotalBalancesPerAccount,
   isFetching: boolean,
 };
 
@@ -46,7 +45,7 @@ export type SetFetchingTotalBalancesAction = {|
 
 export type SetTotalBalancesAction = {|
   type: typeof SET_TOTAL_BALANCES,
-  payload: ChainTotalBalancesPerAccount,
+  payload: ServiceTotalBalancesPerAccount,
 |};
 
 export type SetAccountTotalChainCategoryBalanceAction = {|
@@ -71,20 +70,19 @@ export type TotalBalancesReducerAction = SetFetchingTotalBalancesAction
 
 export const initialState = {
   data: {},
-  dataX: {},
   isFetching: false,
 };
 
 const setNewBalance = (balancesState, accountId, chain, category, newBalance) => {
   const accountState = balancesState[accountId] ?? {};
-  const chainState = accountState[chain];
+  const categoryState = accountState[category];
   return {
     ...balancesState,
     [accountId]: {
       ...accountState,
-      [chain]: {
-        ...chainState,
-        [category]: newBalance,
+      [category]: {
+        ...categoryState,
+        [chain]: newBalance,
       },
     },
   };

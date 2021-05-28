@@ -43,8 +43,7 @@ export type CategoryRecord<T> = {|
 |};
 
 export type TotalBalances = AccountRecord<AccountTotalBalances>;
-export type AccountTotalBalances = CategoryRecord<CategoryTotalBalances>;
-export type CategoryTotalBalances = ChainRecord<BigNumber>;
+export type AccountTotalBalances = CategoryRecord<ChainRecord<BigNumber>>;
 
 // Stored balances are stored directly in redux
 export type StoreRecord<T> = {|
@@ -55,10 +54,10 @@ export type StoreRecord<T> = {|
 |};
 
 export type StoredTotalBalances = AccountRecord<StoredAccountTotalBalances>;
-export type StoredAccountTotalBalances = StoreRecord<CategoryTotalBalances>;
+export type StoredAccountTotalBalances = StoreRecord<ChainRecord<BigNumber>>;
 
 // Wallet balances are calculated using selectors in redux
-export type WalletTotalBalances = AccountRecord<CategoryTotalBalances>;
+export type WalletTotalBalances = AccountRecord<ChainRecord<BigNumber>>;
 
 // Collectibles do not have balances but are counted
 export type AccountCollectibleCount = ChainRecord<number>;

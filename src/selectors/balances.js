@@ -75,7 +75,7 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
 
 export const totalBalancesSelector = ({
   totalBalances,
-}: RootReducerState): ChainTotalBalancesPerAccount => totalBalances.data;
+}: RootReducerState): ChainTotalBalancesPerAccount => ({});
 
 export const activeAccountTotalBalancesSelector: (RootReducerState) => CategoryTotalBalancesPerChain = createSelector(
   activeAccountIdSelector,

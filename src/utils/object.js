@@ -20,6 +20,15 @@
 
 import { omitBy, isNil } from 'lodash';
 
+export type Record<T> = { [string]: T };
+
+/**
+ * Properly typed version of `Object.values`.
+ */
+export function recordValues<T>(record: Record<T>): T[] {
+  return Object.keys(record).map((key) => record[key]);
+}
+
 /**
  * Returns a copy of the object but without any `undefined` or `null` properties.
  */
