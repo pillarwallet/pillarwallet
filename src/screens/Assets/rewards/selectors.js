@@ -22,20 +22,21 @@ import { BigNumber } from 'bignumber.js';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { rewardsTotalBalanceByChainsSelector, rewardsTotalBalanceSelector } from 'selectors/balances';
+import { accountRewardsBalancesSelector } from 'selectors/totalBalances';
+
+// Utils
+import { sumRecord } from 'utils/bigNumber';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
-import type { TotalBalancesPerChain } from 'models/Balances';
 
 export function useRewardsBalance(): BigNumber {
-  return useRootSelector(rewardsTotalBalanceSelector);
+  return sumRecord(useRewardsChainBalances());
 }
 
-export function useRewardsChainBalances(): TotalBalancesPerChain {
-  return useRootSelector(rewardsTotalBalanceByChainsSelector);
+export function useRewardsChainBalances(): ChainRecord<BigNumber> {
+  return useRootSelector(accountRewardsBalancesSelector);
 }
-
 export type RewardItem = {|
   key: string,
   service: string,

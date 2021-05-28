@@ -18,49 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { mapValues } from 'lodash';
-import { BigNumber } from 'bignumber.js';
 
-// constants
+// Constants
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
-// utils
-import { sum } from 'utils/bigNumber';
-
-// types
+// Types
 import type {
   CategoryBalancesPerChain,
-  CategoryTotalBalancesPerChain,
-  InvestmentAssetBalance,
-  LiquidityPoolAssetBalance,
-  TotalBalancesPerChain,
   WalletAssetsBalances,
   DepositAssetBalance,
+  InvestmentAssetBalance,
+  LiquidityPoolAssetBalance,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
-export const getChainTotalBalancesForCategory = (
-  accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  category: string,
-): TotalBalancesPerChain => mapValues(
-  accountTotalBalances ?? {},
-  (categoryBalances) => categoryBalances?.[category] || BigNumber(0),
-);
-
-export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber => {
-  const balances = Object.keys(entries).map((key) => entries[key] || BigNumber(0));
-  return sum(balances);
-};
-
-export const getTotalCategoryBalance = (
-  accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  category: string,
-): BigNumber => {
-  const balancesOnChains = (Object.values(accountTotalBalances || {}): any);
-
-  return sum(balancesOnChains.map((chainTotals) => {
-    return chainTotals?.[category] || BigNumber(0);
-  }));
-};
 
 export const getChainDepositAssetsBalances = (
   accountAssetsBalances: ?CategoryBalancesPerChain,

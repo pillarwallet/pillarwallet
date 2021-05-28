@@ -90,7 +90,17 @@ export const accountDepositsTotalBalancesSelector = (root: RootReducerState) => 
 
 export const accountInvestmentsTotalBalancesSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
-  return root.totalBalances.data[accountId].deposits ?? {};
+  return root.totalBalances.data[accountId].investments ?? {};
+};
+
+export const accountLiquidityPoolsTotalBalancesSelector = (root: RootReducerState) => {
+  const accountId = activeAccountIdSelector(root);
+  return root.totalBalances.data[accountId].liquidityPools ?? {};
+};
+
+export const accountRewardsBalancesSelector = (root: RootReducerState) => {
+  const accountId = activeAccountIdSelector(root);
+  return root.totalBalances.data[accountId].rewards ?? {};
 };
 
 const calculateWalletAssetsFiatValue = (

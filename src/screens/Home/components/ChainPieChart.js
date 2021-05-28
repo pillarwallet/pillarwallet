@@ -30,7 +30,7 @@ import { formatPercentValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { getTotalBalance } from 'utils/balances';
+import { sumRecord } from 'utils/bigNumber';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
@@ -98,7 +98,7 @@ const useChartProps = (balances: ChainRecord<BigNumber>) => {
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  const total = getTotalBalance(balances);
+  const total = sumRecord(balances);
 
   // Zero balance case
   if (total.isZero()) {

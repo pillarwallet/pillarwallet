@@ -43,7 +43,6 @@ import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navig
 import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 import { assetRegistrySelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
-import { walletBalancesPerChainSelector } from 'selectors/balances';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
@@ -58,7 +57,7 @@ import type { Chain } from 'models/Chain';
 import PillarPaySummary from '../components/PillarPaySummary';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
-import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
+import { type WalletItem, useWalletBalance, useWalletBalancePerChain, useWalletAssets } from './selectors';
 
 function WalletTab() {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
@@ -173,7 +172,7 @@ type Section = {
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useWalletAssets();
-  const balancePerChain = useRootSelector(walletBalancesPerChainSelector);
+  const balancePerChain = useWalletBalancePerChain();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
