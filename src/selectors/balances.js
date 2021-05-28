@@ -75,7 +75,7 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
 
 export const totalBalancesSelector = ({
   totalBalances,
-}: RootReducerState): ChainTotalBalancesPerAccount => ({});
+}: RootReducerState): ChainTotalBalancesPerAccount => totalBalances.data;
 
 export const activeAccountTotalBalancesSelector: (RootReducerState) => CategoryTotalBalancesPerChain = createSelector(
   activeAccountIdSelector,
@@ -122,20 +122,6 @@ export const walletBalancesPerChainSelector: Selector<TotalBalancesPerChain> = c
   (accountAssetsBalances: CategoryTotalBalancesPerChain): TotalBalancesPerChain => {
     return getChainTotalBalancesForCategory(accountAssetsBalances, ASSET_CATEGORY.WALLET);
   },
-);
-
-export const depositsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
-);
-
-export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
 );
 
 export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(

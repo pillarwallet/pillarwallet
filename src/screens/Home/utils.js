@@ -18,47 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber } from 'bignumber.js';
-import { mapValues } from 'lodash';
-
 // Selectors
 import { useRootSelector } from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
-import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 
 // Utils
-import { sumBy, sumRecord } from 'utils/bigNumber';
 import { recordValues } from 'utils/object';
 
 // Types
-import type { CollectibleCountPerChain } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
-import type { AccountTotalBalances, CategoryRecord } from 'models/TotalBalances';
 
-export function useAccountTotalBalances(): AccountTotalBalances {
-  return useRootSelector(accountTotalBalancesSelector);
-}
-
-export function caculateTotalBalancePerCategory(accountBalances: AccountTotalBalances): CategoryRecord<BigNumber> {
-  return mapValues(accountBalances, (balancePerChain: ChainRecord<BigNumber>) => sumRecord(balancePerChain));
-}
-
-export function caculateTotalBalancePerChain(accountBalances: AccountTotalBalances): ChainRecord<BigNumber> {
-  const balancesPerChain = recordValues(accountBalances);
-  return {
-    ethereum: sumBy(balancesPerChain, (balance) => balance?.ethereum),
-    polygon: sumBy(balancesPerChain, (balance) => balance?.polygon),
-    binance: sumBy(balancesPerChain, (balance) => balance?.binance),
-    xdai: sumBy(balancesPerChain, (balance) => balance?.xdai),
-  };
-}
-
-export function useCollectibleCountPerChain(): CollectibleCountPerChain {
+export function useAccountCollectibleCounts(): ChainRecord<number> {
   const ethereum = useRootSelector(accountCollectiblesSelector).length;
   return { ethereum };
 }
 
-export function calculateTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {
-  const counts = recordValues(collectibleCountPerChain);
-  return counts.reduce((total, count) => count != null ? total + count : total, 0);
+export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<number>): number {
+  const counts = recordValues(accountCollectibleCounts);
+  return counts.reduce((total, count) => (count != null ? total + count : total), 0);
 }

@@ -108,7 +108,7 @@ import {
   fiatCurrencySelector,
   ratesSelector,
 } from 'selectors';
-import { totalBalancesSelector } from 'selectors/balances';
+import { totalBalancesSelector } from 'selectors/totalBalances';
 
 // types
 import type { Asset, AssetsByAccount } from 'models/Asset';

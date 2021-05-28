@@ -22,24 +22,26 @@ import * as React from 'react';
 import { View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { clamp } from 'lodash';
 
 // Components
 import PagerControl from 'components/modern/PagerControl';
 
 // Types
-import type { CategoryTotalBalances, TotalBalancesPerChain } from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
+import type { CategoryRecord } from 'models/TotalBalances';
 
 // Local
 import AssetPieChart from './components/AssetPieChart';
 import ChainPieChart from './components/ChainPieChart';
 
 type Props = {|
-  categoryBalances: CategoryTotalBalances,
-  chainBalances: TotalBalancesPerChain,
+  balancePerCategory: CategoryRecord<BigNumber>,
+  balancePerChain: ChainRecord<BigNumber>,
 |};
 
-function ChartsSection({ categoryBalances, chainBalances }: Props) {
+function ChartsSection({ balancePerCategory, balancePerChain }: Props) {
   const pagerRef = React.useRef<any>();
 
   const [currentPage, setCurrentPage] = React.useState(0);
@@ -58,10 +60,10 @@ function ChartsSection({ categoryBalances, chainBalances }: Props) {
     <Container>
       <PagerView ref={pagerRef} onPageScroll={handlePageScroll} style={styles.pageView}>
         <View key="assets" collapsable={false}>
-          <AssetPieChart categoryBalances={categoryBalances} />
+          <AssetPieChart balancePerCategory={balancePerCategory} />
         </View>
         <View key="chains" collapsable={false}>
-          <ChainPieChart chainBalances={chainBalances} />
+          <ChainPieChart balancePerChain={balancePerChain} />
         </View>
       </PagerView>
       <PagerControl pageCount={2} currentPage={currentPage} onChangePage={handleChangePage} />

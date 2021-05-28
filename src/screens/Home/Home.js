@@ -38,8 +38,9 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
-import { useUser } from 'selectors/user';
 import { useRootSelector } from 'selectors';
+import { accountTotalBalancesSelector } from 'selectors/totalBalances';
+import { useUser } from 'selectors/user';
 
 // Utils
 import { sumRecord } from 'utils/bigNumber';
@@ -51,17 +52,14 @@ import BalanceSection from './BalanceSection';
 import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
-import {
-  useAccountTotalBalances,
-  useCollectibleCountPerChain,
-} from './utils';
+import { useAccountCollectibleCounts } from './utils';
 
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const accountTotalBalances = useAccountTotalBalances();
-  const collectibleCountPerChain = useCollectibleCountPerChain();
+  const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
+  const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
 
@@ -93,12 +91,11 @@ function Home() {
 
         <WalletConnectRequests />
 
-        <ChartsSection categoryBalances={balancePerCategory} chainBalances={balancePerChain} />
+        <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 
         <AssetsSection
-          categoryBalances={balancePerCategory}
-          categoryBalancesPerChain={accountTotalBalances}
-          collectibleCountPerChain={collectibleCountPerChain}
+          accountTotalBalances={accountTotalBalances}
+          accountCollectibleCounts={accountCollectibleCounts}
         />
       </Content>
 

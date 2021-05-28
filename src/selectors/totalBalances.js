@@ -38,12 +38,12 @@ import type {
   CategoryAssetsBalances,
   WalletAssetsBalances,
 } from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
 import type {
   TotalBalances,
   AccountTotalBalances,
+  StoreTotalBalances,
   WalletTotalBalances,
-  StoredTotalBalances,
-  BalancePerChain,
 } from 'models/TotalBalances';
 
 export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = createSelector(
@@ -61,9 +61,9 @@ export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = create
 export const totalBalancesSelector: Selector<TotalBalances> = createSelector(
   walletTotalBalancesSelector,
   (root: RootReducerState) => root.totalBalances.data,
-  (walletBalances: WalletTotalBalances, storedTotalBalances: StoredTotalBalances): TotalBalances => {
-    const wrappedWalletBalances = mapValues(walletBalances, (wallet: BalancePerChain) => ({ wallet }));
-    return merge(wrappedWalletBalances, storedTotalBalances);
+  (walletBalances: WalletTotalBalances, storeBalances: StoreTotalBalances): TotalBalances => {
+    const wrappedWalletBalances = mapValues(walletBalances, (wallet: ChainRecord<BigNumber>) => ({ wallet }));
+    return merge(wrappedWalletBalances, storeBalances);
   },
 );
 
@@ -75,13 +75,23 @@ export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = crea
   },
 );
 
-export const accountWalletTotalBalancesSelector: Selector<BalancePerChain> = createSelector(
+export const accountWalletTotalBalancesSelector: Selector<ChainRecord<BigNumber>> = createSelector(
   activeAccountIdSelector,
   walletTotalBalancesSelector,
-  (accountId: string, walletBalances: WalletTotalBalances): BalancePerChain => {
+  (accountId: string, walletBalances: WalletTotalBalances): ChainRecord<BigNumber> => {
     return walletBalances[accountId] ?? {};
   },
 );
+
+export const accountDepositsTotalBalancesSelector = (root: RootReducerState) => {
+  const accountId = activeAccountIdSelector(root);
+  return root.totalBalances.data[accountId].deposits ?? {};
+};
+
+export const accountInvestmentsTotalBalancesSelector = (root: RootReducerState) => {
+  const accountId = activeAccountIdSelector(root);
+  return root.totalBalances.data[accountId].deposits ?? {};
+};
 
 const calculateWalletAssetsFiatValue = (
   assetBalances: WalletAssetsBalances,
