@@ -59,3 +59,6 @@ export type StoredAccountTotalBalances = StoreRecord<CategoryTotalBalances>;
 
 // Wallet balances are calculated using selectors in redux
 export type WalletTotalBalances = AccountRecord<CategoryTotalBalances>;
+
+// Collectibles do not have balances but are counted
+export type AccountCollectibleCount = ChainRecord<number>;
