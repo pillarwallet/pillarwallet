@@ -20,23 +20,23 @@
 import * as React from 'react';
 import { Keyboard, Platform, InputAccessoryView } from 'react-native';
 import { noop } from 'utils/common';
-import ValueInputAccessory from './ValueInputAccessory';
+import AddCashValueInputAccessory from './AddCashValueInputAccessory';
 
 type State = {
   isVisible: boolean,
   isActive: boolean,
-  handleUseValueCallback: (number) => any,
+  onSelectValueCallback: (number) => any,
 };
 
 export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID_VALUES';
 
-class ValueInputAccessoryHolder extends React.Component<{}, State> {
+class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
   static instances: Object[] = [];
 
-  static addAccessory = (handleUseValueCallback: (string) => any) => {
+  static addAccessory = (onSelectValueCallback: (string) => any) => {
     const instance = this.instances[this.instances.length - 1];
     if (instance) {
-      instance.handleAddAccessory(handleUseValueCallback);
+      instance.handleAddAccessory(onSelectValueCallback);
     }
   }
 
@@ -51,7 +51,7 @@ class ValueInputAccessoryHolder extends React.Component<{}, State> {
   state = {
     isVisible: false,
     isActive: false,
-    handleUseValueCallback: noop,
+    onSelectValueCallback: noop,
   };
 
   componentDidMount() {
@@ -62,13 +62,13 @@ class ValueInputAccessoryHolder extends React.Component<{}, State> {
   componentWillUnmount() {
     Keyboard.removeListener('keyboardDidShow', this.handleKeyboardDidShow);
     Keyboard.removeListener('keyboardDidHide', this.handleKeyboardDidHide);
-    ValueInputAccessoryHolder.instances.splice(ValueInputAccessoryHolder.instances.length - 1);
+    AddCashValueInputAccessoryHolder.instances.splice(AddCashValueInputAccessoryHolder.instances.length - 1);
   }
 
-  handleAddAccessory = (handleUseValueCallback: (number) => any) => {
+  handleAddAccessory = (onSelectValueCallback: (number) => any) => {
     this.setState({
       isActive: true,
-      handleUseValueCallback,
+      onSelectValueCallback,
     });
   }
 
@@ -89,11 +89,11 @@ class ValueInputAccessoryHolder extends React.Component<{}, State> {
   }
 
   render() {
-    const { isVisible, isActive, handleUseValueCallback } = this.state;
+    const { isVisible, isActive, onSelectValueCallback } = this.state;
     if (Platform.OS !== 'android') {
       return (
         <InputAccessoryView nativeID={INPUT_ACCESSORY_NATIVE_ID}>
-          <ValueInputAccessory handleUseValue={handleUseValueCallback} />
+          <AddCashValueInputAccessory onSelectValue={onSelectValueCallback} />
         </InputAccessoryView>
       );
     }
@@ -101,9 +101,9 @@ class ValueInputAccessoryHolder extends React.Component<{}, State> {
       return null;
     }
     return (
-      <ValueInputAccessory handleUseValue={handleUseValueCallback} />
+      <AddCashValueInputAccessory onSelectValue={onSelectValueCallback} />
     );
   }
 }
 
-export default ValueInputAccessoryHolder;
+export default AddCashValueInputAccessoryHolder;

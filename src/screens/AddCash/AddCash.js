@@ -42,13 +42,14 @@ import Text from 'components/modern/Text';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
-import ValueInputAccessoryHolder, {
-  INPUT_ACCESSORY_NATIVE_ID,
-} from 'components/ValueInputAccessory/ValueInputAccessoryHolder';
 
 // selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 import { useUser } from 'selectors/user';
+
+import AddCashValueInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from './components/AddCashAccessory/AddCashValueInputAccessoryHolder';
 
 const AddCash = () => {
   const navigation = useNavigation();
@@ -93,18 +94,17 @@ const AddCash = () => {
     });
   };
 
-  const handleUseValue = async (accessoryValue: string) => {
+  const onSelectValue = async (accessoryValue: string) => {
     Keyboard.dismiss();
     setValue(accessoryValue);
   };
 
-  const onInputBlur = () => {
-    ValueInputAccessoryHolder.removeAccessory();
+  const openRamp = () => {
+    const address = getCryptoPurchaseAddress();
+    if (address === null) return;
+    openUrl(rampWidgetUrl(address, user?.email, fiatCurrency, value));
   };
 
-  const onInputFocus = () => {
-    ValueInputAccessoryHolder.addAccessory(handleUseValue);
-  };
 
   return (
     <Container>
@@ -127,8 +127,8 @@ const AddCash = () => {
               onChangeText: handleChangeText,
               placeholder: `${currencySymbol}0`,
               keyboardType: 'numeric',
-              onBlur: onInputBlur,
-              onFocus: onInputFocus,
+              onBlur: () => AddCashValueInputAccessoryHolder.removeAccessory(),
+              onFocus: () => AddCashValueInputAccessoryHolder.addAccessory(onSelectValue),
               inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
             }}
             inputWrapperStyle={styles.inputWrapperStyles}
@@ -140,19 +140,15 @@ const AddCash = () => {
       </ScrollView>
       <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
         <Button
-          onPress={() => {
-            const address = getCryptoPurchaseAddress();
-            if (address === null) return;
-            openUrl(rampWidgetUrl(address, user?.email, fiatCurrency, value));
-          }}
+          onPress={openRamp}
           title={t('button.next')}
           disabled={value !== null && (Number(value) === 0 || !isValidFiatValue(value))}
         />
       </Footer>
-      <ValueInputAccessoryHolder
+      <AddCashValueInputAccessoryHolder
         ref={(c) => {
-          if (c && !ValueInputAccessoryHolder.instances.includes(c)) {
-          ValueInputAccessoryHolder.instances.push(c);
+          if (c && !AddCashValueInputAccessoryHolder.instances.includes(c)) {
+            AddCashValueInputAccessoryHolder.instances.push(c);
           }
         }}
       />

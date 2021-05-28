@@ -23,10 +23,24 @@ import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 
 type Props = {
-  handleUseValue: (number) => any,
+  onSelectValue: (number) => mixed,
 };
 
 const VALUES = [100, 200, 500, 1000, 3000];
+
+const AddCashValueInputAccessory = ({ onSelectValue }: Props) => {
+  return (
+    <AccessoryContentWrapper>
+      {VALUES.map(value => (
+        <TouchableOpacity onPress={() => onSelectValue(value)} key={value}>
+          <BaseText>{value}</BaseText>
+        </TouchableOpacity>
+      ))}
+    </AccessoryContentWrapper>
+  );
+};
+
+export default AddCashValueInputAccessory;
 
 const AccessoryContentWrapper = styled.View`
   flex-direction: row;
@@ -36,17 +50,3 @@ const AccessoryContentWrapper = styled.View`
   border-top-width: 1px;
   border-color: ${({ theme }) => theme.colors.basic060};
 `;
-
-const ValueInputAccessory = ({ handleUseValue }: Props) => {
-  return (
-    <AccessoryContentWrapper>
-      {VALUES.map(values => (
-        <TouchableOpacity onPress={() => handleUseValue(values)} key={values}>
-          <BaseText>{values}</BaseText>
-        </TouchableOpacity>
-      ))}
-    </AccessoryContentWrapper>
-  );
-};
-
-export default ValueInputAccessory;
