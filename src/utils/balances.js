@@ -17,14 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { mapValues } from 'lodash';
+
+import { BigNumber } from 'bignumber.js';
+import { mapValues, pickBy } from 'lodash';
 
 // Constants
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
+// Utils
+import { mapRecordValues } from 'utils/object';
+
 // Types
 import type {
   CategoryBalancesPerChain,
+  WalletAssetBalance,
   WalletAssetsBalances,
   DepositAssetBalance,
   InvestmentAssetBalance,
@@ -32,6 +38,13 @@ import type {
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
+export const getChainWalletAssetsBalances = (
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<WalletAssetsBalances> => {
+  return mapRecordValues(assetsBalances ?? {}, (categoryBalances) =>
+    filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
+  );
+};
 
 export const getChainDepositAssetsBalances = (
   accountAssetsBalances: ?CategoryBalancesPerChain,
@@ -54,11 +67,6 @@ export const getChainInvestmentAssetsBalances = (
   (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.INVESTMENTS],
 );
 
-export const getChainWalletAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<WalletAssetsBalances> =>
-  mapValues(accountAssetsBalances ?? {}, (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET]);
-
 export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {
   const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
 
@@ -66,4 +74,8 @@ export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesP
     const walletAssetsBalances = walletAssetsBalancesPerChain[chain];
     return Object.keys(walletAssetsBalances ?? {});
   });
+};
+
+export const filterNonZeroAssetBalances = (balances: WalletAssetsBalances): WalletAssetsBalances => {
+  return pickBy(balances, ({ balance }: WalletAssetBalance) => !!balance && !BigNumber(balance).isZero());
 };

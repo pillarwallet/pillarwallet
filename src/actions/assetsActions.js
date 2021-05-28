@@ -103,7 +103,6 @@ import {
   assetsBalancesSelector,
   fiatCurrencySelector,
 } from 'selectors';
-import { totalBalancesSelector } from 'selectors/totalBalances';
 
 // types
 import type { Asset, AssetsByAccount } from 'models/Asset';
@@ -414,7 +413,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
       );
     }));
 
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
   };
 };
@@ -572,7 +571,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
 
     const accountsAssetsBalances = assetsBalancesSelector(getState());
@@ -608,7 +607,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     const updatedBalances = assetsBalancesSelector(getState());
     dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
 
-    const updatedTotalBalances = totalBalancesSelector(getState());
+    const updatedTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: updatedTotalBalances }, true));
   };
 };

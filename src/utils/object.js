@@ -20,13 +20,28 @@
 
 import { omitBy, isNil } from 'lodash';
 
-export type Record<T> = { [string]: T };
+export type Record<Value, Key: string = string> = { [Key]: Value };
 
 /**
  * Properly typed version of `Object.values`.
  */
-export function recordValues<T>(record: Record<T>): T[] {
+export function recordValues<Value>(record: Record<Value>): Value[] {
   return Object.keys(record).map((key) => record[key]);
+}
+
+/**
+ * Improved version of lodash mapValue.
+ */
+export function mapRecordValues<Value, Target, Key: string>(
+  record: Record<Value, Key>,
+  selector: (value: Value, key: Key) => Target,
+): Record<Target> {
+  const result = {};
+  Object.keys(record).forEach((key) => {
+    result[key] = selector(record[key], key);
+  });
+
+  return result;
 }
 
 /**

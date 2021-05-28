@@ -20,7 +20,7 @@
 
 import { BigNumber } from 'bignumber.js';
 import { createSelector } from 'reselect';
-import { map, mapValues, merge } from 'lodash';
+import { map, merge } from 'lodash';
 
 // Selectors
 import { assetsBalancesSelector, activeAccountIdSelector, ratesSelector, fiatCurrencySelector } from 'selectors';
@@ -28,6 +28,7 @@ import { assetsBalancesSelector, activeAccountIdSelector, ratesSelector, fiatCur
 // Utils
 import { getRate } from 'utils/assets';
 import { sum } from 'utils/bigNumber';
+import { mapRecordValues } from 'utils/object';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
@@ -51,10 +52,10 @@ export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = create
   ratesSelector,
   fiatCurrencySelector,
   (assetsBalancesPerAccount: AssetBalancesPerAccount, rates: Rates, currency: string): WalletTotalBalances =>
-    mapValues(assetsBalancesPerAccount, (assetsBalancesPerChain: CategoryBalancesPerChain) =>
-      mapValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances) =>
-        calculateWalletAssetsFiatValue(assetBalances.wallet ?? {}, rates, currency),
-      ),
+    mapRecordValues(assetsBalancesPerAccount, (assetsBalancesPerChain: CategoryBalancesPerChain) =>
+      mapRecordValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances) => {
+        return calculateWalletAssetsFiatValue(assetBalances.wallet ?? {}, rates, currency);
+      }),
     ),
 );
 
@@ -62,8 +63,8 @@ export const totalBalancesSelector: Selector<TotalBalances> = createSelector(
   walletTotalBalancesSelector,
   (root: RootReducerState) => root.totalBalances.data,
   (walletBalances: WalletTotalBalances, storeBalances: StoreTotalBalances): TotalBalances => {
-    const wrappedWalletBalances = mapValues(walletBalances, (wallet: ChainRecord<BigNumber>) => ({ wallet }));
-    return merge(wrappedWalletBalances, storeBalances);
+    const wrappedWalletBalances = mapRecordValues(walletBalances, (wallet: ChainRecord<BigNumber>) => ({ wallet }));
+    return merge(storeBalances, wrappedWalletBalances);
   },
 );
 

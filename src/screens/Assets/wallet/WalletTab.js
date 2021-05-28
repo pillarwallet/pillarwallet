@@ -57,7 +57,7 @@ import type { Chain } from 'models/Chain';
 import PillarPaySummary from '../components/PillarPaySummary';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
-import { type WalletItem, useWalletTotalBalance, useWalletBalancePerChain, useWalletAssets } from './selectors';
+import { type WalletItem, useWalletTotalBalance, useWalletBalancePerChain, useWalletAssetsPerChain } from './selectors';
 
 function WalletTab() {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
@@ -171,7 +171,7 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const assetsPerChain = useWalletAssets();
+  const assetsPerChain = useWalletAssetsPerChain();
   const balancePerChain = useWalletBalancePerChain();
 
   return chains.map((chain) => {
