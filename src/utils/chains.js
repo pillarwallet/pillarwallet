@@ -30,7 +30,7 @@ import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import type { Account } from 'models/Account';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ETHEREUM_MAINNET]: CHAIN.ETHEREUM,

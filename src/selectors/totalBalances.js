@@ -20,7 +20,7 @@
 
 import { BigNumber } from 'bignumber.js';
 import { createSelector } from 'reselect';
-import { map, merge } from 'lodash';
+import { map, mapValues, merge } from 'lodash';
 
 // Selectors
 import { assetsBalancesSelector, activeAccountIdSelector, ratesSelector, fiatCurrencySelector } from 'selectors';
@@ -53,9 +53,9 @@ export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = create
   fiatCurrencySelector,
   (assetsBalancesPerAccount: AssetBalancesPerAccount, rates: Rates, currency: string): WalletTotalBalances =>
     mapRecordValues(assetsBalancesPerAccount, (assetsBalancesPerChain: CategoryBalancesPerChain) =>
-      mapRecordValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances) => {
-        return calculateWalletAssetsFiatValue(assetBalances.wallet ?? {}, rates, currency);
-      }),
+      mapValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances) =>
+        calculateWalletAssetsFiatValue(assetBalances.wallet ?? {}, rates, currency),
+      ),
     ),
 );
 
