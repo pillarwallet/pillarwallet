@@ -37,7 +37,7 @@ import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector, useActiveAccount } from 'selectors';
-import { accountWalletTotalBalancesSelector } from 'selectors/totalBalances';
+import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
@@ -81,7 +81,7 @@ function FloatingActions() {
 }
 
 const useEnabledActions = () => {
-  const walletTotalBalance = sumRecord(useRootSelector(accountWalletTotalBalancesSelector));
+  const walletTotalBalance = sumRecord(useRootSelector(accountWalletBalancePerChainSelector));
   const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 

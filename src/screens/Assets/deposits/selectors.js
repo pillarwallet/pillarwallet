@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
-import { accountDepositsTotalBalancesSelector } from 'selectors/totalBalances';
+import { accountDepositsBalancePerChainSelector } from 'selectors/totalBalances';
 
 // Utils
 import { getChainDepositAssetsBalances } from 'utils/balances';
@@ -40,7 +40,7 @@ export function useDepositsBalance(): FiatBalance {
 }
 
 export function useDepositsChainBalances(): ChainRecord<BigNumber> {
-  return useRootSelector(accountDepositsTotalBalancesSelector);
+  return useRootSelector(accountDepositsBalancePerChainSelector);
 }
 
 export function useDepositsAssets(): ChainRecord<DepositAssetBalance[]> {

@@ -75,7 +75,7 @@ export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = crea
   },
 );
 
-export const accountWalletTotalBalancesSelector: Selector<ChainRecord<BigNumber>> = createSelector(
+export const accountWalletBalancePerChainSelector: Selector<ChainRecord<BigNumber>> = createSelector(
   activeAccountIdSelector,
   walletTotalBalancesSelector,
   (accountId: string, walletBalances: WalletTotalBalances): ChainRecord<BigNumber> => {
@@ -83,22 +83,22 @@ export const accountWalletTotalBalancesSelector: Selector<ChainRecord<BigNumber>
   },
 );
 
-export const accountDepositsTotalBalancesSelector = (root: RootReducerState) => {
+export const accountDepositsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
   return root.totalBalances.data[accountId].deposits ?? {};
 };
 
-export const accountInvestmentsTotalBalancesSelector = (root: RootReducerState) => {
+export const accountInvestmentsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
   return root.totalBalances.data[accountId].investments ?? {};
 };
 
-export const accountLiquidityPoolsTotalBalancesSelector = (root: RootReducerState) => {
+export const accountLiquidityPoolsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
   return root.totalBalances.data[accountId].liquidityPools ?? {};
 };
 
-export const accountRewardsBalancesSelector = (root: RootReducerState) => {
+export const accountRewardsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
   return root.totalBalances.data[accountId].rewards ?? {};
 };
