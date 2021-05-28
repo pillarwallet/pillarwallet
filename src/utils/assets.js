@@ -77,14 +77,6 @@ export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
 };
 
-export const getAssetsFromArray = (assets: Asset[]): Assets => {
-  const result = {};
-  assets.forEach(asset => {
-    result[asset.symbol] = asset;
-  });
-  return result;
-};
-
 export const sortAssets = (assets: Assets): Asset[] => {
   const assetsList = getAssetsAsList(assets);
 
