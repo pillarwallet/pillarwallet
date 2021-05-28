@@ -21,7 +21,7 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
-import { orderBy } from 'lodash';
+import { keyBy, orderBy } from 'lodash';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -29,6 +29,7 @@ import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'c
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
+import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 
 // types
@@ -38,6 +39,7 @@ import type {
   Assets,
   AssetOption,
   AssetOptionBalance,
+  AssetsByAccount,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
@@ -268,6 +270,15 @@ export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?str
   return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
 };
 
+export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
+  return supportedAssets.find((asset) => asset.symbol === symbol);
+};
+
+export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
+  const assets = mapNotNil(symbols, symbol => findSupportedAssetBySymbol(supportedAssets, symbol));
+  return keyBy(assets, (asset) => asset.symbol);
+};
+
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
@@ -462,4 +473,9 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
   if (balance?.balance) return 2;
   if (imageUrl) return 1;
   return 0;
+};
+
+export const mergeAccountAssets = (assetsByAccount: AssetsByAccount): Assets => {
+  const assetsArray = Object.keys(assetsByAccount).map(accountId => assetsByAccount[accountId]);
+  return Object.assign({}, ...assetsArray);
 };

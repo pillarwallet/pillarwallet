@@ -40,14 +40,14 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 import { assetRegistrySelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
+import { walletBalancesPerChainSelector } from 'selectors/balances';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { getRate, getAssetFromRegistry } from 'utils/assets';
-import { sum } from 'utils/bigNumber';
+import { getAssetFromRegistry } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -167,18 +167,17 @@ export default WalletTab;
 type Section = {
   ...SectionBase<WalletItem>,
   chain: Chain,
-  balance: BigNumber,
+  balance: ?BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useWalletAssets();
-  const rates = useRates();
-  const currency = useFiatCurrency();
+  const balancePerChain = useRootSelector(walletBalancesPerChainSelector);
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
+    const balance = balancePerChain[chain];
     const data = expandItemsPerChain[chain] ? items : [];
     return { key: chain, chain, balance, data };
   });
