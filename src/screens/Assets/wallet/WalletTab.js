@@ -167,7 +167,7 @@ export default WalletTab;
 type Section = {
   ...SectionBase<WalletItem>,
   chain: Chain,
-  balance: BigNumber,
+  balance: ?BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
@@ -177,7 +177,7 @@ const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = balancePerChain[chain] ?? BigNumber(0);
+    const balance = balancePerChain[chain];
     const data = expandItemsPerChain[chain] ? items : [];
     return { key: chain, chain, balance, data };
   });
