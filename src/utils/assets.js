@@ -282,10 +282,6 @@ export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?st
   return supportedAssets.find((asset) => asset.symbol === symbol);
 };
 
-export const findSupportedAssetsBySymbols = (supportedAssets: Asset[], symbols: string[]): Asset[] => {
-  return mapNotNil(symbols, (symbol) => findSupportedAssetBySymbol(supportedAssets, symbol));
-};
-
 export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
   const assets = mapNotNil(symbols, symbol => findSupportedAssetBySymbol(supportedAssets, symbol));
   return keyBy(assets, (asset) => asset.symbol);
