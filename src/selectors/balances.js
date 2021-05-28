@@ -117,6 +117,13 @@ export const walletTotalBalanceSelector: (RootReducerState) => BigNumber = creat
   },
 );
 
+export const walletBalancesPerChainSelector: Selector<TotalBalancesPerChain> = createSelector(
+  activeAccountTotalBalancesSelector,
+  (accountAssetsBalances: CategoryTotalBalancesPerChain): TotalBalancesPerChain => {
+    return getChainTotalBalancesForCategory(accountAssetsBalances, ASSET_CATEGORY.WALLET);
+  },
+);
+
 export const depositsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
   activeAccountTotalBalancesSelector,
   (
