@@ -48,7 +48,7 @@ import {
 import { isProdEnv } from 'utils/environment';
 import { mapNotNil } from 'utils/array';
 import { addressesEqual } from 'utils/assets';
-import { nativeSymbolFromChain } from 'utils/chains';
+import { nativeSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
@@ -188,7 +188,7 @@ class EtherspotService {
       return []; // logged above, no balances
     }
 
-    const nativeSymbol = nativeSymbolFromChain[chain];
+    const nativeSymbol = nativeSymbolPerChain[chain];
     return mapNotNil(accountBalances.items, ({ balance, token }) => {
       // `token === null` means it's chain gas token.
       const asset =
