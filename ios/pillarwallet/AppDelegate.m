@@ -4,6 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <Firebase.h>
+#import <Instabug/IBGReplies.h>
 #import "RNSplashScreen.h"
 #import "RCTLinkingManager.h"
 #import "RNNotifications.h"
@@ -21,6 +22,8 @@
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }
+  NSDictionary *notificationDictionary = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+  BOOL isInstabugNotification = [IBGReplies didReceiveRemoteNotification:notificationDictionary];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"pillarwallet"
@@ -48,6 +51,11 @@
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [IBGReplies didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    BOOL isInstabugNotification = [IBGReplies didReceiveRemoteNotification:userInfo];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
