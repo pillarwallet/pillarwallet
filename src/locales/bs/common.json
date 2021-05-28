@@ -1170,7 +1170,7 @@
     },
     "verificationSuccess": {
       "email": "Provjera e-pošte bila je uspješna",
-      "phone": "Telefonska provjera bila je uspješna",
+      "phone": "Telefonska provjera bila je uspješna"
     },
     "userIsOffline": "Čini se da ste offline. Molimo provjerite internetsku vezu.",
     "biometricLoginEnabled": "Biometrijska prijava omogućena.",
@@ -1279,7 +1279,7 @@
     "title": {
       "confirmScreen": "Detalji",
       "settingsScreen": "Postavke",
-      "activateSmartWalletScreen": "Aktiviraj Smart Wallet",
+      "activateSmartWalletScreen": "Aktiviraj Smart Wallet"
     },
     "button": {
       "enableAsset": "Omogući Token",

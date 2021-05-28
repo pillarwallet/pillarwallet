@@ -1453,7 +1453,7 @@
     },
     "verificationSuccess": {
       "email": "Email verification was successful",
-      "phone": "Phone verification was successful",
+      "phone": "Phone verification was successful"
     },
     "userIsOffline": "It seems you're offline. Please check your internet connection.",
     "biometricLoginEnabled": "Biometric login enabled.",
@@ -1599,7 +1599,7 @@
     "title": {
       "confirmScreen": "Details",
       "settingsScreen": "Settings",
-      "activateSmartWalletScreen": "Activate Smart Wallet",
+      "activateSmartWalletScreen": "Activate Smart Wallet"
     },
     "button": {
       "enableAsset": "Enable Asset",

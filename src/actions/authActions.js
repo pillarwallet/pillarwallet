@@ -230,7 +230,7 @@ export const loginAction = (
         // create etherspot account if does not exist, this also applies as migration from old key based wallets
         const etherspotAccount = findFirstEtherspotAccount(accounts);
         if (!etherspotAccount) {
-          dispatch(importEtherspotAccountsAction()); // imports and sets as active
+          await dispatch(importEtherspotAccountsAction()); // imports and sets as active
         }
 
         dispatch(setEnsNameIfNeededAction());

@@ -43,6 +43,9 @@ import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
+// services
+import etherspotService from 'services/etherspot';
+
 // utils
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
@@ -114,6 +117,10 @@ const mockFullAssetsListByAccount: Assets = {
   },
 };
 
+const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH' };
+
+jest.spyOn(etherspotService, 'getBalances').mockImplementation(() => [mockEthBalance]);
+
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
 });
@@ -156,7 +163,7 @@ describe('Assets actions', () => {
       accountId: mockAccounts[0].id,
       chain: CHAIN.ETHEREUM,
       category: ASSET_CATEGORY.WALLET,
-      balances: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } },
+      balances: { ETH: mockEthBalance },
     };
     const updateTotalBalancePayload = {
       accountId: mockAccounts[0].id,

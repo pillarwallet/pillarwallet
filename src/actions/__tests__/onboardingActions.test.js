@@ -225,7 +225,7 @@ describe('Onboarding actions', () => {
       accounts: { data: [] },
       smartWallet: {},
       assets: {
-        supportedAssets: [],
+        supportedAssets: mockSupportedAssets,
         data: {},
       },
       history: { data: {} },
@@ -286,13 +286,14 @@ describe('Onboarding actions', () => {
       accounts: { data: [mockArchanovaAccount] },
       smartWallet: { connectedAccount: mockArchanovaConnectedAccount },
       assets: {
-        supportedAssets: [],
+        supportedAssets: mockSupportedAssets,
         data: {},
       },
       history: { data: {} },
       assetsBalances: { data: {} },
       rates: { data: {} },
       badges: { data: [] },
+      userEvents: { data: [] },
     });
 
     const expectedActions = [

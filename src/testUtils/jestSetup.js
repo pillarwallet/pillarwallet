@@ -388,18 +388,6 @@ export const mockSupportedAssets = [
   },
 ];
 
-export const mockUserBadges = [{
-  badgeId: '5c9bda927d7363000673f08c',
-  createdAt: 1553717906,
-  description: 'Badge description',
-  id: 1553717906,
-  imageUrl: 'https://s3.eu-west-2.amazonaws.com/pillar-qa-badges-images-eu-west-2-861741397496/new-wallet_180%403x.png',
-  name: 'To the Moon!',
-  receivedAt: 1601876318,
-  subtitle: 'Wallet created',
-  updatedAt: 1553717968,
-}];
-
 jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/coinGecko', {
@@ -468,3 +456,21 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
 };
 
 jest.setMock('instabug-reactnative', {});
+
+const mockEtherspotGetBalances = (address, assets) => {
+  // mock positive balances for mocked archanova account
+  const balances = address === mockArchanovaAccount.extra.address
+    ? assets.map(({ symbol }) => ({ symbol, balance: 1 }))
+    : [];
+
+  return Promise.resolve(balances);
+};
+
+jest.setMock('services/etherspot', {
+  sdk: jest.fn(),
+  init: jest.fn(),
+  getAccounts: jest.fn(),
+  getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
+  getBalances: mockEtherspotGetBalances,
+  getPositiveBalances: mockEtherspotGetBalances,
+});

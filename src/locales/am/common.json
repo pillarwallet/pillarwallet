@@ -1170,7 +1170,7 @@
     },
     "verificationSuccess": {
       "email": "የኢሜል ማረጋገጫው ተሳክቷል።",
-      "phone": "የስልክ ማረጋገጫው ተሳክቷል።",
+      "phone": "የስልክ ማረጋገጫው ተሳክቷል።"
     },
     "userIsOffline": "መስመር ላይ ያሉ አይመስልም። እባክዎ የበይነ-መረብ ግንኙነት እንዳለዎት ያረጋግጡ።",
     "biometricLoginEnabled": "የባዮሜትሪክ መግቢያው በስራ ላይ ውሏል።",
@@ -1279,7 +1279,7 @@
     "title": {
       "confirmScreen": "ዝርዝሮች",
       "settingsScreen": "ቅንጅቶች",
-      "activateSmartWalletScreen": "ብልህ ቦርሳውን ያስጀምሩ",
+      "activateSmartWalletScreen": "ብልህ ቦርሳውን ያስጀምሩ"
     },
     "button": {
       "enableAsset": "ንብረቱን ገቢራዊ ያድርጉ",

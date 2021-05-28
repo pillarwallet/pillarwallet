@@ -17,11 +17,10 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import merge from 'lodash.merge';
 
 // constants
 import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'constants/walletConstants';
-import { UPDATE_USER, SET_USER } from 'constants/userConstants';
+import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
@@ -34,6 +33,7 @@ import {
   UNISWAP_TOKENS_QUERY_STATUS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -42,6 +42,9 @@ import { loginAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import etherspotService from 'services/etherspot';
 
+// utils
+import { transformAssetsToObject } from 'utils/assets';
+
 // test utils
 import {
   mockEtherspotAccount,
@@ -49,17 +52,8 @@ import {
   mockArchanovaAccount,
   mockArchanovaConnectedAccount,
 } from 'testUtils/jestSetup';
+import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
-
-const mockUpdatedUser = {
-  username: 'John Appleseed',
-};
-
-jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
-  init: jest.fn(),
-  setUsername: jest.fn(),
-  userInfo: jest.fn(() => mockUpdatedUser),
-})));
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
@@ -71,10 +65,6 @@ const mockWallet: Object = {
 
 const mockUser: Object = {
   username: 'Jon',
-};
-
-const mockRegisteredUser: Object = {
-  username: 'JonR',
 };
 
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
@@ -113,46 +103,11 @@ describe('Auth actions', () => {
     });
   });
 
-  it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
+  it('should expect series of actions with payload to be dispatch on loginAction execution', () => {
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
       { type: SET_WALLET_IS_DECRYPTING },
       { type: SET_USER, payload: mockUser },
-      {
-        type: SET_WALLET,
-        payload: {
-          ...mockWallet,
-          privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
-        },
-      },
-      { type: SET_ARCHANOVA_SDK_INIT, payload: true },
-      { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
-      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
-      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
-      { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
-      { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
-      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
-
-      // appends new Etherspot account to reducer
-      { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
-    ];
-
-    const pin = '123456';
-
-    return store.dispatch(loginAction(pin))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
-  });
-
-  it('Should expect a different set of actions for registered users.', async () => {
-    const storage = Storage.getInstance('db');
-    storage.save('user', { user: mockRegisteredUser });
-    const expectedActions = [
-      { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
-      { type: SET_WALLET_IS_DECRYPTING },
-      { type: SET_USER, payload: mockRegisteredUser },
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
@@ -161,11 +116,18 @@ describe('Auth actions', () => {
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockEtherspotAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
 
-      { type: UPDATE_USER, payload: merge({}, mockRegisteredUser, mockUpdatedUser) },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
+
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 

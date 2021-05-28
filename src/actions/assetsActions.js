@@ -836,8 +836,6 @@ export const checkForMissedAssetsAction = () => {
       .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    console.log('updatedAssets: ', updatedAssets)
-
     let newAssetsFound = false;
     Object.keys(updatedAssets).forEach(account => {
       if (!accountsAssets[account] || !updatedAssets[account]) {
