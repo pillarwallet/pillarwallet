@@ -23,20 +23,30 @@ import { getEnv } from 'configs/envConfig';
 
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
+import { RAMP_CURRENCY_TOKENS } from '../configs/rampConfig';
 
-export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean) {
+const PILLAR = 'Pillar';
+
+export function rampWidgetUrl(
+  address: string,
+  email?: string,
+  fiatCurrency: string,
+  fiatValue: string,
+) {
   const params = {
-    swapAsset: plrMode ? 'PLR' : null, // This turns on the ability to purchase PLR
+    hostAppName: PILLAR,
+    fiatCurrency,
+    fiatValue,
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
+    swapAsset: RAMP_CURRENCY_TOKENS.join(','),
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
-export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>
-  api.getSendwyreWidgetURL(params);
+export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) => api.getSendwyreWidgetURL(params);
 
 type Rate = $Values<SendwyreRates>;
 type CurrencyPair = [string, string];
@@ -47,8 +57,7 @@ function rateToCurrencyPair([joint, split]: [string, Rate]): CurrencyPair {
 }
 
 export const getSendwyreCurrencyPairs = (rates: SendwyreRates): CurrencyPair[] =>
-  ((Object.entries(rates): any): [string, Rate][])
-    .map(rateToCurrencyPair);
+  ((Object.entries(rates): any): [string, Rate][]).map(rateToCurrencyPair);
 
 export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
   api.generateAltalixTransactionUrl(params);

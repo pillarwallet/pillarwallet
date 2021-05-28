@@ -73,8 +73,8 @@ export type RewardAssetBalance = {|
 |};
 
 export type WalletAssetBalance = {|
-  balance: string,
   symbol: string,
+  balance: string,
 |};
 
 export type WalletAssetsBalances = {

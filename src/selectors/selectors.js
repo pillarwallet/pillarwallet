@@ -20,7 +20,7 @@
 
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import get from 'lodash.get';
+import { get } from 'lodash';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -80,8 +80,8 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
+export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});

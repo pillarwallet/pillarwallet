@@ -95,12 +95,25 @@ export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
 export const VISIBLE_NUMBER_DECIMALS = 18;
 
 export const POPULAR_EXCHANGE_TOKENS = [
-  ETH, PLR, LINK, BAT, PPT, AE, DAI, KNC, MKR, USDT, VERI, BNT, OMG, WAX, ZIL, ZRX,
+  ETH,
+  PLR,
+  LINK,
+  BAT,
+  PPT,
+  AE,
+  DAI,
+  KNC,
+  MKR,
+  USDT,
+  VERI,
+  BNT,
+  OMG,
+  WAX,
+  ZIL,
+  ZRX,
 ];
 
-export const HIGH_VALUE_TOKENS = [
-  YFI, WBTC, sBTC, BTC, iBTC, renBTC, tBTC, OBTC, wBTC, testBTC,
-];
+export const HIGH_VALUE_TOKENS = [YFI, WBTC, sBTC, BTC, iBTC, renBTC, tBTC, OBTC, wBTC, testBTC];
 
 export const SPEED_TYPES = {
   SLOW: 'min',

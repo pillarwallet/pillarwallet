@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList } from 'react-native';
 import Instabug from 'instabug-reactnative';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -45,19 +45,15 @@ import {
   WBTC_CAFE,
   RARI_DEPOSIT,
   LIQUIDITY_POOLS,
+  ADD_CASH,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { spacing } from 'utils/variables';
 import { openInAppBrowser } from 'utils/inAppBrowser';
-import {
-  getActiveAccount,
-  getAccountAddress,
-  isSmartWalletAccount,
-  isArchanovaAccount,
-} from 'utils/accounts';
-import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
+import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isArchanovaAccount } from 'utils/accounts';
+import { wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -66,10 +62,10 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
+import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { User } from 'models/User';
-import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
 // Config constants, to be overwritten in componentDidMount
@@ -220,9 +216,7 @@ class ServicesScreen extends React.Component<Props> {
     const { navigation, accounts } = this.props;
 
     // services are left for archanova only and will be decommissioned later
-    const services = isArchanovaAccount(getActiveAccount(accounts))
-      ? this.getArchanovaSupportedServices()
-      : [];
+    const services = isArchanovaAccount(getActiveAccount(accounts)) ? this.getArchanovaSupportedServices() : [];
 
     if (isOffersEngineEnabled) {
       services.push({
@@ -240,7 +234,7 @@ class ServicesScreen extends React.Component<Props> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
-    const { isAltalixAvailable, user, getApi } = this.props;
+    const { isAltalixAvailable, user, getApi, navigation } = this.props;
 
     const walletId = user?.walletId;
 
@@ -249,27 +243,7 @@ class ServicesScreen extends React.Component<Props> {
         key: 'ramp',
         title: t('servicesContent.ramp.title'),
         body: t('servicesContent.ramp.description'),
-        action: () => {
-          const email = user?.email;
-          const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
-
-          Alert.alert(
-            t('servicesContent.ramp.assetDecisionAlert.title'),
-            t('servicesContent.ramp.assetDecisionAlert.description'),
-            [
-              {
-                text: t('servicesContent.ramp.assetDecisionAlert.actionNonPlr'),
-                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email)),
-              },
-              {
-                text: t('servicesContent.ramp.assetDecisionAlert.actionPlr'),
-                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, true)),
-              },
-            ],
-            { cancelable: true },
-          );
-        },
+        action: () => navigation.navigate(ADD_CASH),
       });
     }
 
@@ -299,22 +273,27 @@ class ServicesScreen extends React.Component<Props> {
         action: async () => {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
-          this.tryOpenCryptoPurchaseUrl(await altalixWidgetUrl({
-            walletId,
-            address,
-            sellCurrency: 'EUR',
-            buyCurrency: 'ETH',
+          this.tryOpenCryptoPurchaseUrl(
+            await altalixWidgetUrl(
+              {
+                walletId,
+                address,
+                sellCurrency: 'EUR',
+                buyCurrency: 'ETH',
 
-            // The amount is adjustable in the Altalix app, but the link won't work
-            // if the initial value is 0
-            buyAmount: 0.02,
-          }, getApi()));
+                // The amount is adjustable in the Altalix app, but the link won't work
+                // if the initial value is 0
+                buyAmount: 0.02,
+              },
+              getApi(),
+            ),
+          );
         },
       });
     }
 
     return buyCryptoServices;
-  }
+  };
 
   getCryptoPurchaseAddress = (): string | null => {
     const { accounts } = this.props;
@@ -327,12 +306,11 @@ class ServicesScreen extends React.Component<Props> {
     }
 
     return getAccountAddress(activeAccount);
-  }
+  };
 
   tryOpenCryptoPurchaseUrl = async (url: string | null) => {
     if (url) {
-      await openInAppBrowser(url)
-        .catch(this.showServiceLaunchError);
+      await openInAppBrowser(url).catch(this.showServiceLaunchError);
     } else {
       this.showServiceLaunchError();
     }
@@ -344,31 +322,16 @@ class ServicesScreen extends React.Component<Props> {
       emoji: 'hushed',
       supportLink: true,
     });
-  }
+  };
 
   renderServicesItem = ({ item }) => {
-    const {
-      title,
-      body,
-      action,
-      disabled,
-      label,
-      hidden = false,
-    } = item;
+    const { title, body, action, disabled, label, hidden = false } = item;
 
     if (hidden) {
       return null;
     }
-    return (
-      <ListCard
-        title={title}
-        subtitle={body}
-        action={action}
-        disabled={disabled}
-        label={label}
-      />
-    );
-  }
+    return <ListCard title={title} subtitle={body} action={action} disabled={disabled} label={label} />;
+  };
 
   render() {
     const services = this.getServices();

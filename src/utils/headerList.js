@@ -38,7 +38,10 @@ type HeaderItem<Item> = {| type: 'header', key: string, items: Item[] |};
 /**
  * Transform list of items, by grouping them using `groupKey` selector.
  */
-export function prepareHeaderListItems<Item>(items: Item[], groupKey: (Item) => string): HeaderListItem<Item>[] {
+export function prepareHeaderListItems<Item: KeyedItem>(
+  items: Item[],
+  groupKey: (Item) => string,
+): HeaderListItem<Item>[] {
   const groups = groupBy(items, groupKey);
   return Object.keys(groups).flatMap((key) => {
     const headerItem = { type: 'header', key, items: groups[key] };
