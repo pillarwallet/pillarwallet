@@ -97,7 +97,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sum } from 'utils/bigNumber';
+import { sum, sumBy } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
@@ -565,8 +565,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               });
 
               // add to total balance
-              const balancesValues = assetsBalances.map(({ value }) => value);
-              categoryTotalBalance = sum([categoryTotalBalance, ...balancesValues]);
+              const totalValue = sumBy(assetsBalances, (balance) => balance.value);
+              categoryTotalBalance = categoryTotalBalance.plus(totalValue);
 
               return [...combinedBalances, ...assetsBalances];
             }, []);
