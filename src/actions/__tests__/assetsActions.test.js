@@ -20,7 +20,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { BigNumber } from 'utils/common';
 
 // actions
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
@@ -40,7 +39,6 @@ import {
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
