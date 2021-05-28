@@ -19,7 +19,6 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { mapValues } from 'lodash';
 
 // Selectors
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
@@ -30,6 +29,7 @@ import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { mapNotNil } from 'utils/array';
 import { findSupportedAssetBySymbol } from 'utils/assets';
 import { getChainWalletAssetsBalances } from 'utils/balances';
+import { mapChainRecordValues } from 'utils/chains';
 import { sumRecord } from 'utils/bigNumber';
 import { getImageUrl } from 'utils/images';
 import { recordValues } from 'utils/object';
@@ -62,7 +62,7 @@ export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
   const walletAssetsPerChain = getChainWalletAssetsBalances(useRootSelector(accountAssetsBalancesSelector));
   const supportedAssets = useRootSelector(supportedAssetsSelector);
 
-  return mapValues(walletAssetsPerChain, (balancesRecord: WalletAssetsBalances, chain: Chain) => {
+  return mapChainRecordValues(walletAssetsPerChain, (balancesRecord: WalletAssetsBalances, chain: Chain) => {
     const balanceList = recordValues(balancesRecord);
     return mapNotNil(balanceList, (balance) => buildWalletItem(balance, chain, supportedAssets));
   });

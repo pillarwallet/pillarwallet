@@ -19,10 +19,10 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { mapValues, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 
-// Constants
-import { ASSET_CATEGORY } from 'constants/assetsConstants';
+// Utils
+import { mapChainRecordValues } from 'utils/chains';
 
 // Types
 import type {
@@ -37,32 +37,25 @@ import type { ChainRecord } from 'models/Chain';
 
 export const getChainWalletAssetsBalances = (
   assetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<WalletAssetsBalances> => {
-  return mapValues(assetsBalances ?? {}, (categoryBalances) =>
+): ChainRecord<WalletAssetsBalances> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) =>
     filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
   );
-};
 
 export const getChainDepositAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<DepositAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.DEPOSITS],
-);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<DepositAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
 
 export const getChainLiquidityPoolAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<LiquidityPoolAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.LIQUIDITY_POOLS],
-);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<LiquidityPoolAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
 
 export const getChainInvestmentAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<InvestmentAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.INVESTMENTS],
-);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<InvestmentAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
 export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {
   const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);

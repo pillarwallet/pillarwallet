@@ -20,7 +20,6 @@
 
 import { createSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
-import { mapValues } from 'lodash';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -29,6 +28,7 @@ import { PLR } from 'constants/assetsConstants';
 import { isEtherspotAccount } from 'utils/accounts';
 import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
 import { getWalletAssetsSymbols } from 'utils/balances';
+import { mapRecordValues } from 'utils/object';
 
 // types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
@@ -87,7 +87,7 @@ export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
   assetsBalancesSelector,
   supportedAssetsSelector,
   (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    return mapValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
+    return mapRecordValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
       const symbols = getWalletAssetsSymbols(accountAssetsBalances);
       return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
     });
