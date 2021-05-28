@@ -25,10 +25,8 @@ import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // utils
 import { sum } from 'utils/bigNumber';
-import { pickSupportedAssetsWithSymbols } from 'utils/assets';
 
 // types
-import type { Asset } from 'models/Asset';
 import type {
   CategoryBalancesPerChain,
   CategoryTotalBalancesPerChain,
@@ -87,24 +85,14 @@ export const getChainInvestmentAssetsBalances = (
 
 export const getChainWalletAssetsBalances = (
   accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<WalletAssetsBalances> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET],
-);
+): ChainRecord<WalletAssetsBalances> =>
+  mapValues(accountAssetsBalances ?? {}, (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET]);
 
-export const getAssetsFromAccountAssetsBalances = (
-  accountAssetsBalances: CategoryBalancesPerChain,
-  supportedAssets: Asset[],
-) => {
-  const assetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
-  const symbols = getSymbolsFromChainsWalletAssetsBalances(assetsBalancesPerChain);
-  return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
-};
+export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {
+  const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
 
-export const getSymbolsFromChainsWalletAssetsBalances = (chainsAssets: ChainRecord<WalletAssetsBalances>): string[] => {
-  return Object.keys(chainsAssets).flatMap((chain) => getSymbolsFromWalletAssetsBalances(chainsAssets[chain]));
-};
-
-export const getSymbolsFromWalletAssetsBalances = (assets: ?WalletAssetsBalances): string[] => {
-  return Object.keys(assets ?? {});
+  return Object.keys(walletAssetsBalancesPerChain).flatMap((chain) => {
+    const walletAssetsBalances = walletAssetsBalancesPerChain[chain];
+    return Object.keys(walletAssetsBalances ?? {});
+  });
 };

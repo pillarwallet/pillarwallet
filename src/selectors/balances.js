@@ -25,15 +25,11 @@ import { ASSET_CATEGORY, PLR } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { getTotalBalanceInFiat } from 'utils/assets';
+import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { sum } from 'utils/bigNumber';
 import { isEtherspotAccount } from 'utils/accounts';
-import {
-  getChainTotalBalancesForCategory,
-  getTotalCategoryBalance,
-  getAssetsFromAccountAssetsBalances,
-} from 'utils/balances';
+import { getChainTotalBalancesForCategory, getTotalCategoryBalance, getWalletAssetsSymbols } from 'utils/balances';
 
 // types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
@@ -204,9 +200,10 @@ export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
   assetsBalancesSelector,
   supportedAssetsSelector,
   (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    return mapValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) =>
-      getAssetsFromAccountAssetsBalances(accountAssetsBalances, supportedAssets),
-    );
+    return mapValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
+      const symbols = getWalletAssetsSymbols(accountAssetsBalances);
+      return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
+    });
   },
 );
 
@@ -219,6 +216,7 @@ export const accountAssetsCompatSelector: Selector<Assets> = createSelector(
   assetsBalancesSelector,
   supportedAssetsSelector,
   (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    getAssetsFromAccountAssetsBalances(assetsBalances[accountId], supportedAssets);
+    const symbols = getWalletAssetsSymbols(assetsBalances[accountId]);
+    return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
   },
 );
