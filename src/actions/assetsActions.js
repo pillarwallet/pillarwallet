@@ -398,7 +398,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
     const accountAssets = getAssetsAsList(makeAccountEnabledAssetsSelector(accountId)(getState()));
     const supportedAssets = supportedAssetsSelector(getState());
 
-    chains.forEach(async (chain) => {
+    await Promise.all(chains.map(async (chain) => {
       let newBalances = [];
       try {
         newBalances = isEtherspotAccount(account)
@@ -439,7 +439,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
           balance: totalBalance,
         },
       });
-    });
+    }));
 
     const accountsTotalBalances = totalBalancesSelector(getState());
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
