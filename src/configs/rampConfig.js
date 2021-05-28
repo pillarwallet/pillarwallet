@@ -18,30 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type AltalixTrxParams = {
-    walletId: string,
-    address: string,
-    sellCurrency: string,
-    buyCurrency: string,
-    sellAmount?: number,
-    buyAmount?: number,
-};
+import { ETH, DAI, PLR, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
 
-export type SendwyreRates = {
-  [symbol: string]: {
-    // not defined by the type, but there should be exactly two properties
-    [symbol: string]: number,
-  },
-};
+export const MATIC_DAI = 'MATIC_DAI';
+export const MATIC_USDC = 'MATIC_USDC';
 
-export type SendwyreTrxValues = {
-    sourceCurrency: string,
-    destCurrency: string,
-    amount: string,
-}
-
-export type SendwyreTrxParams = SendwyreTrxValues & {
-    walletId: string,
-    address: string,
-}
-
+export const RAMP_CURRENCY_TOKENS = [ETH, DAI, PLR, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI];

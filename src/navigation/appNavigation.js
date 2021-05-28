@@ -145,6 +145,7 @@ import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
+import AddCashScreen from 'screens/AddCash/AddCash';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -320,6 +321,7 @@ import {
   ENS_MIGRATION_CONFIRM,
   KNOWLEDGE_BASE_WEB_VIEW,
   ENS_MIGRATION_FLOW,
+  ADD_CASH,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -334,7 +336,6 @@ import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
 import type { EthereumWallet } from 'models/Wallet';
 import type { BackupStatus } from 'reducers/walletReducer';
-
 
 const SLEEP_TIMEOUT = 20000;
 const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
@@ -374,21 +375,35 @@ const assetsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-const exchangeFlow = createStackNavigator({
-  [EXCHANGE]: ExchangeScreen,
-  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-  [EXCHANGE_INFO]: ExchangeInfoScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  [WBTC_CAFE]: WBTCCafeScreen,
-}, StackNavigatorConfig);
+const exchangeFlow = createStackNavigator(
+  {
+    [EXCHANGE]: ExchangeScreen,
+    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
+    [EXCHANGE_INFO]: ExchangeInfoScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [WBTC_CAFE]: WBTCCafeScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // SERVICES FLOW
-const servicesFlow = createStackNavigator({
-  [SERVICES]: ServicesScreen,
-  [SENDWYRE_INPUT]: SendwyreInputScreen,
-  [WBTC_CAFE]: WBTCCafeScreen,
-}, StackNavigatorConfig);
+const servicesFlow = createStackNavigator(
+  {
+    [SERVICES]: ServicesScreen,
+    [SENDWYRE_INPUT]: SendwyreInputScreen,
+    [WBTC_CAFE]: WBTCCafeScreen,
+  },
+  StackNavigatorConfig,
+);
+
+// ADD CASH FLOW
+const addCashFlow = createStackNavigator(
+  {
+    [ADD_CASH]: AddCashScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // WALLET CONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
@@ -408,27 +423,29 @@ const walletConnectFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-
 // HOME FLOW
-const homeFlow = createStackNavigator({
-  [HOME]: HomeScreen,
-  [HOME_HISTORY]: HistoryScreen,
-  [OTP]: OTPScreen,
-  [CONFIRM_CLAIM]: ConfirmClaimScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-  [BADGE]: BadgeScreen,
-  [REFER_FLOW]: ReferFriendsScreen,
-  [STORYBOOK]: StorybookScreen,
-  [WALLET_SETTINGS]: WalletSettingsScreen,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
+const homeFlow = createStackNavigator(
+  {
+    [HOME]: HomeScreen,
+    [HOME_HISTORY]: HistoryScreen,
+    [OTP]: OTPScreen,
+    [CONFIRM_CLAIM]: ConfirmClaimScreen,
+    [COLLECTIBLE]: CollectibleScreen,
+    [BADGE]: BadgeScreen,
+    [REFER_FLOW]: ReferFriendsScreen,
+    [STORYBOOK]: StorybookScreen,
+    [WALLET_SETTINGS]: WalletSettingsScreen,
+    [ADD_EDIT_USER]: AddOrEditUserScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+    [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+    [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
+    [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator(
@@ -442,22 +459,31 @@ const sendTokenFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
-const changePinFlow = createStackNavigator({
-  [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
-  [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
-  [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
-}, StackNavigatorModalConfig);
+const changePinFlow = createStackNavigator(
+  {
+    [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
+    [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
+    [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // WALLET BACKUP IN SETTINGS FLOW
-const backupWalletFlow = createStackNavigator({
-  [BACKUP_PHRASE]: BackupPhraseScreen,
-  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
-}, StackNavigatorModalConfig);
+const backupWalletFlow = createStackNavigator(
+  {
+    [BACKUP_PHRASE]: BackupPhraseScreen,
+    [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // TUTORIAL FLOW
-const tutorialFlow = createStackNavigator({
-  [TUTORIAL]: TutorialScreen,
-}, StackNavigatorConfig);
+const tutorialFlow = createStackNavigator(
+  {
+    [TUTORIAL]: TutorialScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
@@ -485,63 +511,93 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 );
 
 // MANAGE WALLETS FLOW
-const manageWalletsFlow = createStackNavigator({
-  [ACCOUNTS]: AccountsScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
-}, StackNavigatorConfig);
+const manageWalletsFlow = createStackNavigator(
+  {
+    [ACCOUNTS]: AccountsScreen,
+    [FUND_CONFIRM]: FundConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // MANAGE USERS FLOW
-const manageUsersFlow = createStackNavigator({
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-}, StackNavigatorConfig);
+const manageUsersFlow = createStackNavigator(
+  {
+    [ADD_EDIT_USER]: AddOrEditUserScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // TANK FLOWS
-const tankSettleFlow = createStackNavigator({
-  [SETTLE_BALANCE]: SettleBalanceScreen,
-  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
-}, StackNavigatorConfig);
+const tankSettleFlow = createStackNavigator(
+  {
+    [SETTLE_BALANCE]: SettleBalanceScreen,
+    [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // UNSETTLED ASSETS FLOW
-const unsettledAssetsFlow = createStackNavigator({
-  [UNSETTLED_ASSETS]: UnsettledAssetsScreen,
-  [SETTLE_BALANCE]: SettleBalanceScreen,
-  [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
-}, StackNavigatorConfig);
+const unsettledAssetsFlow = createStackNavigator(
+  {
+    [UNSETTLED_ASSETS]: UnsettledAssetsScreen,
+    [SETTLE_BALANCE]: SettleBalanceScreen,
+    [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const tankFundFlow = createStackNavigator({
-  [FUND_TANK]: FundTankScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
-}, StackNavigatorConfig);
+const tankFundFlow = createStackNavigator(
+  {
+    [FUND_TANK]: FundTankScreen,
+    [FUND_CONFIRM]: FundConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const tankWithdrawalFlow = createStackNavigator({
-  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
-  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
-}, StackNavigatorConfig);
+const tankWithdrawalFlow = createStackNavigator(
+  {
+    [TANK_WITHDRAWAL]: TankWithdrawalScreen,
+    [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const menuFlow = createStackNavigator({
-  [MENU]: MenuScreen,
-  [WALLET_SETTINGS]: WalletSettingsScreen,
-  [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
-  [APP_SETTINGS]: AppSettingsScreen,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-  [KNOWLEDGE_BASE_WEB_VIEW]: KnowledgeBaseWebView,
-}, StackNavigatorConfig);
+const menuFlow = createStackNavigator(
+  {
+    [MENU]: MenuScreen,
+    [WALLET_SETTINGS]: WalletSettingsScreen,
+    [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
+    [APP_SETTINGS]: AppSettingsScreen,
+    [ADD_EDIT_USER]: AddOrEditUserScreen,
+    [KNOWLEDGE_BASE_WEB_VIEW]: KnowledgeBaseWebView,
+  },
+  StackNavigatorConfig,
+);
 
-const recoveryPortalSetupFlow = createStackNavigator({
-  [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
-  [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
-  [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
-}, StackNavigatorConfig);
+const recoveryPortalSetupFlow = createStackNavigator(
+  {
+    [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
+    [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
+    [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const connectedDevicesFlow = createStackNavigator({
-  [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
-  [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
-}, StackNavigatorConfig);
+const connectedDevicesFlow = createStackNavigator(
+  {
+    [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
+    [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const recoveryPortalRecoveryFlow = createStackNavigator({
-  [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
-  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
-}, StackNavigatorConfig);
+const recoveryPortalRecoveryFlow = createStackNavigator(
+  {
+    [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
+    [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
+  },
+  StackNavigatorConfig,
+);
 
 // POOLTOGETHER FLOW
 const poolTogetherFlow = createStackNavigator({
@@ -693,6 +749,7 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
+    [ADD_CASH]: addCashFlow,
   },
   modalTransition,
 );
@@ -783,14 +840,7 @@ class AppFlow extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      notifications,
-      user,
-      wallet,
-      removePrivateKeyFromMemory,
-      isOnline,
-      isAuthorizing,
-    } = this.props;
+    const { notifications, user, wallet, removePrivateKeyFromMemory, isOnline, isAuthorizing } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (user?.walletId && wallet?.privateKey) {
@@ -798,22 +848,21 @@ class AppFlow extends React.Component<Props, State> {
     }
 
     // do check only on network change or unlock
-    if ((isOnline && prevProps.isOnline !== isOnline)
-      || (!isAuthorizing && prevProps.isAuthorizing !== isAuthorizing)) {
+    if (
+      (isOnline && prevProps.isOnline !== isOnline) ||
+      (!isAuthorizing && prevProps.isAuthorizing !== isAuthorizing)
+    ) {
       this.checkIfOnboardingFinished();
     }
 
     notifications
       .slice(prevNotifications.length)
       // $FlowFixMe: flow update to 0.122
-      .forEach(notification => Toast.show({ ...notification }));
+      .forEach((notification) => Toast.show({ ...notification }));
   }
 
   componentWillUnmount() {
-    const {
-      stopListeningNotifications,
-      backupStatus,
-    } = this.props;
+    const { stopListeningNotifications, backupStatus } = this.props;
 
     // case per what's defined on componentWillMount
     if (backupStatus.isRecoveryPending) return;
@@ -837,17 +886,19 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
 
     // no user.walletId means user is not yet registered, try to finish this right away when online
-    if (!!wallet?.privateKey
-      && !isAuthorizing
-      && !isFinishingOnboarding
-      && !user?.walletId
-      && !isRegisteringUser
-      && !onboardingErrorMessage
-      && !onboardingUsernameRegistrationFailed
-      && isOnline) {
+    if (
+      !!wallet?.privateKey &&
+      !isAuthorizing &&
+      !isFinishingOnboarding &&
+      !user?.walletId &&
+      !isRegisteringUser &&
+      !onboardingErrorMessage &&
+      !onboardingUsernameRegistrationFailed &&
+      isOnline
+    ) {
       finishOnboarding();
     }
-  }
+  };
 
   handleAppStateChange = (nextAppState: string) => {
     const {
@@ -869,8 +920,7 @@ class AppFlow extends React.Component<Props, State> {
       lockTimer = BackgroundTimer.setTimeout(() => {
         stopListeningNotifications();
       }, SLEEP_TIMEOUT);
-    } else if (APP_LOGOUT_STATES.includes(lastAppState)
-      && nextAppState === ACTIVE_APP_STATE) {
+    } else if (APP_LOGOUT_STATES.includes(lastAppState) && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
       checkArchanovaSession();
@@ -890,11 +940,8 @@ class AppFlow extends React.Component<Props, State> {
       onboardingUsernameRegistrationFailed,
     } = this.props;
 
-
     // wallet might be created, but recovery is pending and no user registered yet
-    if (!backupStatus.isRecoveryPending
-      && !user?.walletId
-      && isOnline) {
+    if (!backupStatus.isRecoveryPending && !user?.walletId && isOnline) {
       if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
       return <RetryApiRegistration />;
     }
@@ -933,32 +980,22 @@ const MemoizedAppFlowNavigation = ({
       theme,
       language,
     }),
-    [
-      profileImage,
-      showHomeUpdateIndicator,
-      isWalletBackedUp,
-      theme,
-      language,
-    ],
+    [profileImage, showHomeUpdateIndicator, isWalletBackedUp, theme, language],
   );
 
-  return (
-    <AppFlowNavigation
-      screenProps={screenProps}
-      navigation={navigation}
-    />
-  );
+  return <AppFlowNavigation screenProps={screenProps} navigation={navigation} />;
 };
 
 const mapStateToProps = ({
   user: { data: user },
-  notifications: {
-    data: notifications,
-    showHomeUpdateIndicator,
-  },
+  notifications: { data: notifications, showHomeUpdateIndicator },
   wallet: { data: wallet, backupStatus },
-  appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  session: { data: { isOnline, isAuthorizing } },
+  appSettings: {
+    data: { isPickingImage, isBrowsingWebView },
+  },
+  session: {
+    data: { isOnline, isAuthorizing },
+  },
   onboarding: {
     isRegisteringUser,
     errorMessage: onboardingErrorMessage,
@@ -981,7 +1018,7 @@ const mapStateToProps = ({
   isFinishingOnboarding,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
