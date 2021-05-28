@@ -24,9 +24,6 @@ import { mapValues, pickBy } from 'lodash';
 // Constants
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
-// Utils
-import { mapRecordValues } from 'utils/object';
-
 // Types
 import type {
   CategoryBalancesPerChain,
@@ -41,7 +38,7 @@ import type { ChainRecord } from 'models/Chain';
 export const getChainWalletAssetsBalances = (
   assetsBalances: ?CategoryBalancesPerChain,
 ): ChainRecord<WalletAssetsBalances> => {
-  return mapRecordValues(assetsBalances ?? {}, (categoryBalances) =>
+  return mapValues(assetsBalances ?? {}, (categoryBalances) =>
     filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
   );
 };
