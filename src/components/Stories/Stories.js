@@ -19,27 +19,27 @@
 */
 
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
-import { useDispatch } from 'react-redux';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
 
 // Utils
-import { spacing } from 'utils/variables';
 import { reportOrWarn } from 'utils/common';
+import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 // Configs
 import { getEnv } from 'configs/envConfig';
 
-type Props = {|
-  renderHeader?: () => React.Node,
-|};
+const Stories = () => {
+  const colors = useThemeColors();
 
-const Stories = ({ renderHeader }: Props) => {
-  const dispatch = useDispatch();
   const [storyGroupCount, setStoryGroupCount] = React.useState(0);
+
+  const dispatch = useDispatch();
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -50,13 +50,12 @@ const Stories = ({ renderHeader }: Props) => {
 
   return (
     <Container $hide={storyGroupCount === 0}>
-      {!!renderHeader && renderHeader()}
-
       <StorylyWithSpacing
         storylyId={getEnv().STORYLY_TOKEN}
         onLoad={handleLoad}
         onFail={logStorylyError}
         onStoryOpen={logStoryOpen}
+        storyGroupTextColor={colors.text}
       />
     </Container>
   );
