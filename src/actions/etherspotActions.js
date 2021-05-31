@@ -26,7 +26,6 @@ import Toast from 'components/Toast';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { CHAIN } from 'constants/chainConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
   SET_HISTORY,
@@ -93,7 +92,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const extra = await etherspotService.getAccountPerChains(accountAddress)
+    const extra = await etherspotService.getAccountPerChains(accountAddress);
 
     if (!extra?.ethereum) {
       reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
@@ -159,7 +158,7 @@ export const importEtherspotAccountsAction = () => {
         etherspotAccountAddress,
         ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
         extra, // full object as extras
-      ))
+      ));
     }));
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
