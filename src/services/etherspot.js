@@ -60,7 +60,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Asset } from 'models/Asset';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { WalletAssetBalance } from 'models/Balances';
@@ -147,6 +147,15 @@ export class EtherspotService {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
     });
+  }
+
+  async getAccountInChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
+    const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
+    const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
+    const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
+    const xdai = await this.getAccount(CHAIN.XDAI, accountAddress);
+
+    return { ethereum, binance, polygon, xdai };
   }
 
   getAccounts(): Promise<?EtherspotAccount[]> {
