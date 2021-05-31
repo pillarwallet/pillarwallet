@@ -458,7 +458,7 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
 export const mockEtherspotAccountExtra: Etherspot.Account = {
   ethereum: mockEtherspotApiAccount,
   xdai: null,
-  bsc: null,
+  binance: null,
   polygon: null,
 };
 
@@ -477,7 +477,7 @@ jest.setMock('services/etherspot', {
   sdk: jest.fn(),
   init: jest.fn(),
   getAccounts: jest.fn(),
-  getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, bsc: null, polygon: null }),
+  getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
   getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
   getBalances: mockEtherspotGetBalances,
   getPositiveBalances: mockEtherspotGetBalances,
