@@ -51,6 +51,7 @@ import {
   mockEtherspotApiAccount,
   mockArchanovaAccount,
   mockArchanovaConnectedAccount,
+  mockEtherspotAccountExtra,
 } from 'testUtils/jestSetup';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
@@ -67,7 +68,7 @@ const mockUser: Object = {
   username: 'Jon',
 };
 
-const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
+const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
 const mockActiveSmartWalletAccount = { ...mockArchanovaAccount, isActive: true };
 
 Object.defineProperty(mockWallet, 'encrypt', {

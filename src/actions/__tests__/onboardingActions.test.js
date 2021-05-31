@@ -64,6 +64,7 @@ import {
   mockArchanovaAccountApiData,
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
+  mockEtherspotAccountExtra,
 } from 'testUtils/jestSetup';
 
 // types
@@ -108,7 +109,7 @@ const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9
 
 
 const mockNewArchanovaAccount = { ...mockArchanovaAccount, extra: mockArchanovaAccountApiData };
-const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotApiAccount };
+const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
 
 describe('Onboarding actions', () => {
   let store;
