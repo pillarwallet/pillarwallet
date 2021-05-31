@@ -1,11 +1,7 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - Branch (0.31.3):
-    - Branch/Core (= 0.31.3)
-  - Branch/Core (0.31.3)
   - BVLinearGradient (2.5.4):
     - React
-  - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.4)
   - FBReactNativeSpec (0.63.4):
@@ -342,9 +338,6 @@ PODS:
     - React
   - react-native-background-timer (2.1.1):
     - React
-  - react-native-branch (4.4.0):
-    - Branch (= 0.31.3)
-    - React
   - react-native-camera (3.28.0):
     - React
     - react-native-camera/RCT (= 3.28.0)
@@ -352,8 +345,6 @@ PODS:
   - react-native-camera/RCT (3.28.0):
     - React
   - react-native-camera/RN (3.28.0):
-    - React
-  - react-native-contacts (5.0.7):
     - React
   - react-native-cookies (3.2.0):
     - React
@@ -374,7 +365,6 @@ PODS:
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-udp (2.7.0):
-    - CocoaAsyncSocket
     - React
   - react-native-webview (10.2.3):
     - React
@@ -534,7 +524,6 @@ PODS:
     - Storyly (= 1.10.0)
   - SwiftyGif (5.4.0)
   - TcpSockets (3.3.2):
-    - CocoaAsyncSocket
     - React
   - Yoga (1.14.0)
 
@@ -565,9 +554,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
-  - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-camera (from `../node_modules/react-native-camera`)
-  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -625,8 +612,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
-    - Branch
-    - CocoaAsyncSocket
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -705,12 +690,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-appearance"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
-  react-native-branch:
-    :path: "../node_modules/react-native-branch"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
-  react-native-contacts:
-    :path: "../node_modules/react-native-contacts"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
   react-native-date-picker:
@@ -818,9 +799,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  Branch: 9b299693ee54b308ff8c18146afe1f711c2069ec
   BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
-  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
   FBReactNativeSpec: f2c97f2529dd79c083355182cc158c9f98f4bd6e
@@ -845,7 +824,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   instabug-reactnative: b7dc930d9532b5dd4a70a679751e12e0b3c803e6
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
-  lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
+  lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: a664f59f1f298c2696dd0ae07b15cbdfc433cb02
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   Permission-Camera: afad27bf90337684d4a86f3825112d648c8c4d3b
@@ -866,9 +845,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
-  react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-camera: 8ab02aac456a7db830980cef5f3772644fe96e1f
-  react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: aec68ba9b276beddd2cf941bd7cebf459ac9d301
   react-native-netinfo: cb74e17062b2af5a16a4b137f32495f241df1a8e
@@ -878,7 +855,7 @@ SPEC CHECKSUMS:
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-udp: 96a517e5a121cfe69f4b05eeeafefe00c623debf
+  react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   react-native-webview: 0bacc79175bc44869e4c1a015b9bc21df8cf4feb
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -925,9 +902,9 @@ SPEC CHECKSUMS:
   Storyly: 86fc3288f6b3603b2de885447576e9ea6bb30726
   storyly-react-native: e7dba6eacb3a2b913913e3147cd4e30129318242
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
-  TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
 PODFILE CHECKSUM: 1a2fc07fbddaa7f8d84146f5d7394a4c64c5bbee
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.0
