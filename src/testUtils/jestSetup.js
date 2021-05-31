@@ -455,6 +455,13 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
   updatedAt: new Date(),
 };
 
+export const mockEtherspotAccountExtra: Etherspot.Account = {
+  ethereum: mockEtherspotApiAccount,
+  xdai: null,
+  bsc: null,
+  polygon: null,
+};
+
 jest.setMock('instabug-reactnative', {});
 
 const mockEtherspotGetBalances = (address, assets) => {
@@ -470,6 +477,7 @@ jest.setMock('services/etherspot', {
   sdk: jest.fn(),
   init: jest.fn(),
   getAccounts: jest.fn(),
+  getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, bsc: null, polygon: null }),
   getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
   getBalances: mockEtherspotGetBalances,
   getPositiveBalances: mockEtherspotGetBalances,
