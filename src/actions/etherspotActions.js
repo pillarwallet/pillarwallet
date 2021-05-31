@@ -93,7 +93,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const extra = await etherspotService.getAccountInChains(accountAddress)
+    const extra = await etherspotService.getAccountPerChains(accountAddress)
 
     if (!extra?.ethereum) {
       reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
@@ -154,7 +154,7 @@ export const importEtherspotAccountsAction = () => {
 
     // sync accounts with app
     await Promise.all(etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
-      const extra = await etherspotService.getAccountInChains(etherspotAccountAddress);
+      const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
       dispatch(addAccountAction(
         etherspotAccountAddress,
         ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,

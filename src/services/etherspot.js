@@ -149,7 +149,7 @@ export class EtherspotService {
     });
   }
 
-  async getAccountInChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
+  async getAccountPerChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
     const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
     const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
     const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
