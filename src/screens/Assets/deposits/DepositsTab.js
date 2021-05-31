@@ -54,7 +54,7 @@ import type { DepositAssetBalance } from 'models/Balances';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ServiceListHeader from '../components/ServiceListHeader';
 import DepositListItem from './DepositListItem';
-import { useDepositsBalance, useDepositsChainBalances, useDepositsAssets } from './selectors';
+import { useDepositsTotalBalance, useDepositsBalancePerChain, useDepositsAssets } from './selectors';
 
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
@@ -64,7 +64,7 @@ function DepositsTab() {
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
-  const totalBalance = useDepositsBalance();
+  const totalBalance = useDepositsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
@@ -127,7 +127,7 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const balancePerChain = useDepositsChainBalances();
+  const balancePerChain = useDepositsBalancePerChain();
   const assetsPerChain = useDepositsAssets();
 
   return chains.map((chain) => {
