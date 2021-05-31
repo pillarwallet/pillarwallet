@@ -74,7 +74,7 @@ export const initialState = {
 
 const setNewBalance = (balancesState, accountId, chain, category, newBalance) => {
   const accountState = balancesState[accountId] ?? {};
-  const categoryState = accountState[category];
+  const categoryState = accountState[category] ?? {};
   return {
     ...balancesState,
     [accountId]: {
