@@ -53,8 +53,8 @@ import type { InvestmentAssetBalance } from 'models/Balances';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ServiceListHeader from '../components/ServiceListHeader';
 import {
-  useInvestmentsBalance,
-  useInvestmentsChainBalances,
+  useInvestmentsTotalBalance,
+  useInvestmentsBalancePerChain,
   useInvestmentAssets,
 } from './selectors';
 import InvestmentListItem from './InvestmentListItem';
@@ -67,7 +67,7 @@ function InvestmentsTab() {
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
-  const totalBalance = useInvestmentsBalance();
+  const totalBalance = useInvestmentsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
@@ -127,7 +127,7 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const balancePerChain = useInvestmentsChainBalances();
+  const balancePerChain = useInvestmentsBalancePerChain();
   const assetsPerChain = useInvestmentAssets();
 
   return chains.map((chain) => {

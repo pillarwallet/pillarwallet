@@ -72,11 +72,7 @@ import {
 } from 'services/zapper';
 
 // utils
-import {
-  getAssetsAsList,
-  getRate,
-  transformBalancesToObject,
-} from 'utils/assets';
+import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import { getSupportedChains } from 'utils/chains';
 import {
   parseTokenAmount,
@@ -97,7 +93,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sum } from 'utils/bigNumber';
+import { sumBy } from 'utils/bigNumber';
 
 // selectors
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
@@ -106,9 +102,7 @@ import {
   supportedAssetsSelector,
   assetsBalancesSelector,
   fiatCurrencySelector,
-  ratesSelector,
 } from 'selectors';
-import { totalBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Asset, AssetsByAccount } from 'models/Asset';
@@ -417,31 +411,9 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
       await dispatch(
         updateAccountWalletAssetsBalancesForChainAction(accountId, chain, transformBalancesToObject(newBalances)),
       );
-
-      const rates = ratesSelector(getState());
-      const currency = fiatCurrencySelector(getState());
-
-      const assetsFiatBalances = newBalances.map((asset) => {
-        if (!asset?.balance) return BigNumber(0);
-
-        const rate = getRate(rates, asset.symbol, currency);
-        return BigNumber(asset.balance).times(rate);
-      });
-
-      const totalBalance = sum(assetsFiatBalances);
-
-      dispatch({
-        type: SET_ACCOUNT_TOTAL_BALANCE,
-        payload: {
-          accountId,
-          chain,
-          category: ASSET_CATEGORY.WALLET,
-          balance: totalBalance,
-        },
-      });
     }));
 
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
   };
 };
@@ -565,8 +537,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               });
 
               // add to total balance
-              const balancesValues = assetsBalances.map(({ value }) => value);
-              categoryTotalBalance = sum([categoryTotalBalance, ...balancesValues]);
+              const totalValue = sumBy(assetsBalances, (balance) => balance.value);
+              categoryTotalBalance = categoryTotalBalance.plus(totalValue);
 
               return [...combinedBalances, ...assetsBalances];
             }, []);
@@ -599,7 +571,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
 
     const accountsAssetsBalances = assetsBalancesSelector(getState());
@@ -635,7 +607,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     const updatedBalances = assetsBalancesSelector(getState());
     dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
 
-    const updatedTotalBalances = totalBalancesSelector(getState());
+    const updatedTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: updatedTotalBalances }, true));
   };
 };

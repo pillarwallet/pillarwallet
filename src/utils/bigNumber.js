@@ -20,6 +20,12 @@
 
 import { BigNumber } from 'bignumber.js';
 
+// Utils
+import { recordValues } from 'utils/object';
+
+// Types
+import type { Record } from 'utils/object';
+
 export const wrapBigNumber = (value: BigNumber | number | string): BigNumber => {
   if (value instanceof BigNumber) return value;
   return new BigNumber(value);
@@ -34,7 +40,7 @@ export const wrapBigNumberOrNil = (value: ?BigNumber | number | string): ?BigNum
  *
  * It returns 0 when input is empty or contain only nulls.
  */
-export function sum(values: (?BigNumber)[]): BigNumber {
+export function sum(values: BigNumber[] | (?BigNumber)[]): BigNumber {
   let total = BigNumber(0);
 
   values.forEach((value) => {
@@ -53,4 +59,14 @@ export function sum(values: (?BigNumber)[]): BigNumber {
  */
 export function sumOrNull(values: (?BigNumber)[]): BigNumber | null {
   return values.some((v) => v != null) ? sum(values) : null;
+}
+
+export function sumRecord(valuesRecord: ?Record<BigNumber>) {
+  const values = recordValues(valuesRecord ?? {});
+  return sum(values);
+}
+
+export function sumBy<Element>(elements: Element[], valueSelector: (element: Element) => ?BigNumber): BigNumber {
+  const values: (?BigNumber)[] = elements.map(valueSelector);
+  return sum(values);
 }

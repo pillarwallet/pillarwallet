@@ -23,24 +23,24 @@ import { useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import Svg, { Circle } from 'react-native-svg';
 import { VictoryPie, VictoryLabel } from 'victory-native';
+import { BigNumber } from 'bignumber.js';
 
 // Utils
-import { BigNumber } from 'utils/common';
 import { formatPercentValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
-import { getTotalBalance } from 'utils/balances';
+import { sumRecord } from 'utils/bigNumber';
 
 // Types
-import type { CategoryTotalBalances } from 'models/Balances';
+import type { CategoryRecord } from 'models/TotalBalances';
 
 type Props = {|
-  categoryBalances: CategoryTotalBalances,
+  balancePerCategory: CategoryRecord<BigNumber>,
 |};
 
-function AssetPieChart({ categoryBalances }: Props) {
-  const { data, colorScale } = useChartProps(categoryBalances);
+function AssetPieChart({ balancePerCategory }: Props) {
+  const { data, colorScale } = useChartProps(balancePerCategory);
   const colors = useThemeColors();
 
   const window = useWindowDimensions();
@@ -91,14 +91,14 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: CategoryTotalBalances) => {
+const useChartProps = (balances: CategoryRecord<BigNumber>) => {
   const config = useAssetCategoriesConfig();
   const colors = useThemeColors();
 
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  const total = getTotalBalance(balances);
+  const total = sumRecord(balances);
 
   // Zero balance case
   if (total.isZero()) {

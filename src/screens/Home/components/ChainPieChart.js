@@ -23,24 +23,24 @@ import { useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import Svg, { Circle } from 'react-native-svg';
 import { VictoryPie, VictoryLabel } from 'victory-native';
+import { BigNumber } from 'bignumber.js';
 
 // Utils
-import { BigNumber } from 'utils/common';
 import { formatPercentValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { getTotalBalance } from 'utils/balances';
+import { sumRecord } from 'utils/bigNumber';
 
 // Types
-import type { TotalBalancesPerChain } from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
 
 type Props = {|
-  chainBalances: TotalBalancesPerChain,
+  balancePerChain: ChainRecord<BigNumber>,
 |};
 
-function ChainPieChart({ chainBalances }: Props) {
-  const { data, colorScale } = useChartProps(chainBalances);
+function ChainPieChart({ balancePerChain }: Props) {
+  const { data, colorScale } = useChartProps(balancePerChain);
   const colors = useThemeColors();
 
   const window = useWindowDimensions();
@@ -91,14 +91,14 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: TotalBalancesPerChain) => {
+const useChartProps = (balances: ChainRecord<BigNumber>) => {
   const config = useChainsConfig();
   const colors = useThemeColors();
 
   const data: ChartDatum[] = [];
   const colorScale: string[] = [];
 
-  const total = getTotalBalance(balances);
+  const total = sumRecord(balances);
 
   // Zero balance case
   if (total.isZero()) {
