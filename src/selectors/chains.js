@@ -29,6 +29,7 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 
 // utils
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { getSupportedChains } from 'utils/chains';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Types
@@ -38,12 +39,7 @@ import type { RootReducerState, Selector } from 'reducers/rootReducer';
 
 export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
   const activeAccount = activeAccountSelector(root);
-
-  if (isEtherspotAccount(activeAccount)) {
-    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
-  }
-
-  return [CHAIN.ETHEREUM];
+  return getSupportedChains(activeAccount);
 };
 
 export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);

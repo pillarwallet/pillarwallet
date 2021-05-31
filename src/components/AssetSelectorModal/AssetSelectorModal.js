@@ -142,7 +142,7 @@ const getAssets = (options: AssetOption[] = [], query: ?string): AssetOption[] =
 
 const getCollectibles = (collectibles: Collectible[] = [], query: ?string): Collectible[] => {
   const filteredCollectibles = collectibles.filter((collectible) => isMatchingCollectible(collectible, query));
-  return orderBy(filteredCollectibles, [(option: AssetOption) => option.name?.trim().toLowerCase()], ['asc']);
+  return orderBy(filteredCollectibles, [(option: Collectible) => option.name?.trim().toLowerCase()], ['asc']);
 };
 
 const isMatchingAsset = (option: AssetOption, query: ?string) =>

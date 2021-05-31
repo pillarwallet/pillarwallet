@@ -21,20 +21,32 @@
 import { BigNumber } from 'bignumber.js';
 
 // Selectors
-import { useRootSelector } from 'selectors';
-import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
-import { walletTotalBalanceSelector } from 'selectors/balances';
+import { useRootSelector, supportedAssetsSelector } from 'selectors';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
+import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 
 // Utils
-import { defaultSortAssetOptions } from 'utils/assets';
+import { mapNotNil } from 'utils/array';
+import { findSupportedAssetBySymbol } from 'utils/assets';
+import { getChainWalletAssetsBalances } from 'utils/balances';
+import { mapChainRecordValues } from 'utils/chains';
+import { sumRecord } from 'utils/bigNumber';
+import { getImageUrl } from 'utils/images';
+import { recordValues } from 'utils/object';
 
 // Types
-import type { ChainRecord } from 'models/Chain';
+import type { Asset } from 'models/Asset';
+import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
 
-export function useWalletBalance(): FiatBalance {
-  const value = useRootSelector(walletTotalBalanceSelector);
+export function useWalletTotalBalance(): FiatBalance {
+  const value = sumRecord(useWalletBalancePerChain());
   return { value };
+}
+
+export function useWalletBalancePerChain(): ChainRecord<BigNumber> {
+  return useRootSelector(accountWalletBalancePerChainSelector);
 }
 
 export type WalletItem = {|
@@ -46,16 +58,25 @@ export type WalletItem = {|
   change?: BigNumber,
 |};
 
-export const useWalletAssets = (): ChainRecord<WalletItem[]> => {
-  const assets = useRootSelector(visibleActiveAccountAssetsWithBalanceSelector);
+export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
+  const walletAssetsPerChain = getChainWalletAssetsBalances(useRootSelector(accountAssetsBalancesSelector));
+  const supportedAssets = useRootSelector(supportedAssetsSelector);
 
-  const ethereum = defaultSortAssetOptions(assets).map((asset) => ({
-    key: `ethereum-${asset.address ?? ''}`,
+  return mapChainRecordValues(walletAssetsPerChain, (balancesRecord: WalletAssetsBalances, chain: Chain) => {
+    const balanceList = recordValues(balancesRecord);
+    return mapNotNil(balanceList, (balance) => buildWalletItem(balance, chain, supportedAssets));
+  });
+};
+
+const buildWalletItem = ({ symbol, balance }: WalletAssetBalance, chain: Chain, supportedAssets: Asset[]) => {
+  const asset = findSupportedAssetBySymbol(supportedAssets, symbol);
+  if (!asset) return null;
+
+  return {
+    key: `${chain}-${symbol}`,
     title: asset.name,
-    iconUrl: asset.imageUrl,
+    iconUrl: getImageUrl(asset.iconUrl, 3),
     symbol: asset.symbol,
-    value: BigNumber(asset.balance?.balance ?? 0),
-  }));
-
-  return { ethereum };
+    value: BigNumber(balance || 0),
+  };
 };

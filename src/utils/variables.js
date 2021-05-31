@@ -163,6 +163,7 @@ export const fontSizes = {
   big: 18,
   large: 24,
   giant: 36,
+  jumbo: 52,
   rSmall: responsiveSize(12),
   rRegular: responsiveSize(14),
   rBig: responsiveSize(18),

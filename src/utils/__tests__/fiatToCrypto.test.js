@@ -24,56 +24,25 @@ import { rampWidgetUrl } from '../fiatToCrypto';
 describe('The fiatToCrypto.js utility module', () => {
   describe('The rampWidgetUrl function', () => {
     const rampStagingUrl = 'https://ri-widget-staging-kovan.firebaseapp.com/';
+    const PILLAR = 'Pillar';
 
-    it('successfully returns a RAMP url with for PLR tokens', () => {
+    it('successfully returns a RAMP url', () => {
       const fakeEthAddress = '0x123';
       const fakeUserEmail = 'support@pillarproject.io';
+      const fakeFiatCurrency = '$';
+      const fakeFiatValue = '0.1';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, true);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, fakeFiatCurrency, fakeFiatValue);
 
       const expectedParams = {
-        swapAsset: 'PLR',
+        hostAppName: PILLAR,
+        fiatCurrency: fakeFiatCurrency,
+        fiatValue: fakeFiatValue,
         hostApiKey: null,
         userAddress: fakeEthAddress,
         userEmailAddress: fakeUserEmail,
+        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'].join(','),
       };
-
-      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
-
-      expect(generatedUrl).toBe(expectedUrl);
-    });
-
-    it('successfully returns a RAMP url with for non-PLR tokens', () => {
-      const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
-
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, false);
-
-      const expectedParams = {
-        swapAsset: null,
-        hostApiKey: null,
-        userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
-      };
-
-      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
-
-      expect(generatedUrl).toBe(expectedUrl);
-    });
-
-    it('successfully returns a RAMP url with for non-PLR tokens when plrMode flag omitted', () => {
-      const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
-
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail);
-
-      const expectedParams = {
-        swapAsset: null,
-        hostApiKey: null,
-        userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
-      };
-
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 
       expect(generatedUrl).toBe(expectedUrl);

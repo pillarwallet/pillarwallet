@@ -18,51 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { mapValues } from 'lodash';
-
 // Selectors
 import { useRootSelector } from 'selectors';
-import { activeAccountTotalBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // Utils
-import { getTotalBalance } from 'utils/balances';
-import { sum } from 'utils/bigNumber';
+import { recordValues } from 'utils/object';
 
 // Types
-import type {
-  CategoryTotalBalances,
-  TotalBalancesPerChain,
-  CategoryTotalBalancesPerChain,
-  CollectibleCountPerChain,
-} from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
 
-export function useCategoryBalancesPerChain(): CategoryTotalBalancesPerChain {
-  return useRootSelector(activeAccountTotalBalancesSelector);
-}
-
-export function useCollectibleCountPerChain(): CollectibleCountPerChain {
+export function useAccountCollectibleCounts(): ChainRecord<number> {
   const ethereum = useRootSelector(accountCollectiblesSelector).length;
   return { ethereum };
 }
 
-export function getTotalCategoryBalances(chains: CategoryTotalBalancesPerChain): CategoryTotalBalances {
-  const chainBalances = Object.keys(chains ?? {}).map((key) => chains[key]);
-
-  return {
-    wallet: sum(chainBalances.map((chain) => chain?.wallet)),
-    deposits: sum(chainBalances.map((chain) => chain?.deposits)),
-    investments: sum(chainBalances.map((chain) => chain?.investments)),
-    liquidityPools: sum(chainBalances.map((chain) => chain?.liquidityPools)),
-    rewards: sum(chainBalances.map((chain) => chain?.rewards)),
-  };
-}
-
-export function getTotalChainBalances(chains: CategoryTotalBalancesPerChain): TotalBalancesPerChain {
-  return mapValues(chains, (balances) => getTotalBalance(balances));
-}
-
-export function getTotalCollectibleCount(collectibleCountPerChain: CollectibleCountPerChain): number {
-  const counts = Object.keys(collectibleCountPerChain).map((chain) => collectibleCountPerChain[chain]);
-  return counts.reduce((total, count) => count != null ? total + count : total, 0);
+export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<number>): number {
+  const counts = recordValues(accountCollectibleCounts);
+  return counts.reduce((total, count) => (count != null ? total + count : total), 0);
 }

@@ -22,10 +22,16 @@
 import { isProdEnv } from 'utils/environment';
 
 // Constants
+import { ETH, MATIC, BNB, DAI } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
-// Models
-import type { Chain } from 'models/Chain';
+// Utils
+import { isEtherspotAccount } from 'utils/accounts';
+import { mapRecordValues } from 'utils/object';
+
+// Types
+import type { Account } from 'models/Account';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ETHEREUM_MAINNET]: CHAIN.ETHEREUM,
@@ -46,4 +52,30 @@ export function mapChainToChainId(chain: Chain): number {
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
+}
+
+export function getSupportedChains(account: ?Account): Chain[] {
+  if (!isEtherspotAccount(account)) {
+    return [CHAIN.ETHEREUM];
+  }
+
+  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
+}
+
+export const nativeSymbolPerChain = {
+  ethereum: ETH,
+  polygon: MATIC,
+  binance: BNB,
+  xdai: DAI,
+};
+
+/**
+ * Flow-supported version of mapRecordValues counterpart for ChainRecord.
+ */
+export function mapChainRecordValues<Value, Target>(
+  record: ChainRecord<Value>,
+  selector: (value: Value, chain: Chain) => Target,
+): ChainRecord<Target> {
+  // $FlowFixMe: exact vs inexact
+  return mapRecordValues(record, selector);
 }
