@@ -33,7 +33,6 @@ import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
-import Stories from 'components/Stories';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
@@ -80,8 +79,6 @@ function WalletConnectHome() {
     return (
       <ListHeader>
         <WalletConnectRequests />
-
-        <Stories renderHeader={() => <SectionHeader>{t('headerStories')}</SectionHeader>} />
 
         <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
 
