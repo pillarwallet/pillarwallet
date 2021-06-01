@@ -38,37 +38,34 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
-import { useUser } from 'selectors/user';
 import { useRootSelector } from 'selectors';
+import { accountTotalBalancesSelector } from 'selectors/totalBalances';
+import { useUser } from 'selectors/user';
 
 // Utils
+import { sumRecord } from 'utils/bigNumber';
+import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
-import { getTotalBalance } from 'utils/balances';
 
 // Local
 import BalanceSection from './BalanceSection';
 import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
-import {
-  useCollectibleCountPerChain,
-  useCategoryBalancesPerChain,
-  getTotalCategoryBalances,
-  getTotalChainBalances,
-} from './utils';
+import { useAccountCollectibleCounts } from './utils';
 
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
 
-  const categoryBalancesPerChain = useCategoryBalancesPerChain();
-  const collectibleCountPerChain = useCollectibleCountPerChain();
+  const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
+  const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
 
-  const categoryBalances = getTotalCategoryBalances(categoryBalancesPerChain);
-  const chainBalances = getTotalChainBalances(categoryBalancesPerChain);
-  const totalBalance = getTotalBalance(categoryBalances);
+  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
+  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
+  const totalBalance = sumRecord(balancePerCategory);
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => dispatch(fetchAllAccountsTotalBalancesAction());
@@ -86,12 +83,7 @@ function Home() {
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
-        refreshControl={(
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-          />
-        )}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Stories />
 
@@ -99,12 +91,11 @@ function Home() {
 
         <WalletConnectRequests />
 
-        <ChartsSection categoryBalances={categoryBalances} chainBalances={chainBalances} />
+        <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 
         <AssetsSection
-          categoryBalances={categoryBalances}
-          categoryBalancesPerChain={categoryBalancesPerChain}
-          collectibleCountPerChain={collectibleCountPerChain}
+          accountTotalBalances={accountTotalBalances}
+          accountCollectibleCounts={accountCollectibleCounts}
         />
       </Content>
 

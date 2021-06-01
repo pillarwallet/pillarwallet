@@ -122,6 +122,11 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
   return re.test(phone);
 }
 
+export function isValidFiatValue(value: string) {
+  const regex = /^(\d+(\.\d{0,2})?|\.?\d{1,2})$/;
+  return regex.test(value);
+}
+
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
 

@@ -53,8 +53,8 @@ import type { LiquidityPoolAssetBalance } from 'models/Balances';
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ServiceListHeader from '../components/ServiceListHeader';
 import {
-  useLiquidityPoolsBalance,
-  useLiquidityPoolsChainBalances,
+  useLiquidityPoolsTotalBalance,
+  useLiquidityPoolsBalancePerChain,
   useLiquidityPoolAssets,
 } from './selectors';
 import LiquidityPoolListItem from './LiquidityPoolListItem';
@@ -67,7 +67,7 @@ function LiquidityPoolsTab() {
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
-  const totalBalance = useLiquidityPoolsBalance();
+  const totalBalance = useLiquidityPoolsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
@@ -135,7 +135,7 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const balancePerChain = useLiquidityPoolsChainBalances();
+  const balancePerChain = useLiquidityPoolsBalancePerChain();
   const assetsPerChain = useLiquidityPoolAssets();
 
   return chains.map((chain) => {

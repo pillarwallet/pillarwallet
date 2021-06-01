@@ -23,20 +23,6 @@ import { BigNumber } from 'bignumber.js';
 // types
 import type { ChainRecord } from 'models/Chain';
 
-export type CategoryTotalBalances = {|
-  wallet?: BigNumber,
-  deposits?: BigNumber,
-  investments?: BigNumber,
-  liquidityPools?: BigNumber,
-  rewards?: BigNumber,
-|};
-
-export type CategoryTotalBalancesPerChain = ChainRecord<CategoryTotalBalances>;
-
-export type ChainTotalBalancesPerAccount = {
-  [accountId: string]: CategoryTotalBalancesPerChain,
-};
-
 export type CategoryAssetsBalances = {|
   wallet?: WalletAssetsBalances,
   deposits?: DepositAssetBalance[],
@@ -73,8 +59,8 @@ export type RewardAssetBalance = {|
 |};
 
 export type WalletAssetBalance = {|
-  balance: string,
   symbol: string,
+  balance: string,
 |};
 
 export type WalletAssetsBalances = {
@@ -86,7 +72,3 @@ export type AssetBalancesPerAccount = {
 };
 
 export type CategoryBalancesPerChain = ChainRecord<CategoryAssetsBalances>;
-
-export type TotalBalancesPerChain = ChainRecord<BigNumber>;
-
-export type CollectibleCountPerChain = ChainRecord<number>;

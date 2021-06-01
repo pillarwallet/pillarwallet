@@ -28,14 +28,14 @@ import { getExchangeRates } from 'services/assets';
 import { getCoinGeckoBitcoinAndWBTCPrices } from 'services/coinGecko';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
-import { assetsSelector } from 'selectors';
+import { assetsCompatSelector, accountAssetsCompatSelector } from 'selectors/balances';
 
 // utils
+import { mergeAccountAssets } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // models, types
-import type { Assets, Rates } from 'models/Asset';
+import type { Rates } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
@@ -54,7 +54,7 @@ export const setRatesAction = (newRates: Rates) => {
 
 export const fetchAccountAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountAssetsCompatSelector(getState());
     const rates = await getExchangeRates(accountAssets);
     dispatch(setRatesAction(rates));
   };
@@ -62,7 +62,7 @@ export const fetchAccountAssetsRatesAction = () => {
 
 export const fetchAllAccountsAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const allAccountsAssets = assetsSelector(getState());
+    const allAccountsAssets = assetsCompatSelector(getState());
 
     // check if not empty just in case
     if (isEmpty(allAccountsAssets)) {
@@ -70,16 +70,7 @@ export const fetchAllAccountsAssetsRatesAction = () => {
       return;
     }
 
-    const allAssets = (Object.values(allAccountsAssets): any).reduce((allAssetsCombined, accountAssets: Assets) => {
-      // check if not empty just in case
-      if (accountAssets) {
-        Object.keys(accountAssets).forEach((assetSymbol) => {
-          if (!allAssetsCombined[assetSymbol]) allAssetsCombined[assetSymbol] = accountAssets[assetSymbol];
-        });
-      }
-      return allAssetsCombined;
-    }, {});
-
+    const allAssets = mergeAccountAssets(allAccountsAssets);
     const rates = await getExchangeRates(allAssets);
     dispatch(setRatesAction(rates));
   };

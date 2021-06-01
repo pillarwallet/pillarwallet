@@ -40860,6 +40860,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                     Object {
                       "marginBottom": -20,
                       "marginTop": -20,
+                      "paddingLeft": 20,
                     },
                     Object {},
                   ]
@@ -40879,12 +40880,14 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                     Object {
                       "alignItems": "flex-end",
                       "alignSelf": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 36,
                       "justifyContent": "center",
                       "opacity": 1,
-                      "paddingBottom": 20,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 20,
+                      "paddingBottom": 15,
+                      "paddingLeft": 15,
+                      "paddingRight": 15,
+                      "paddingTop": 15,
                       "position": "relative",
                     }
                   }
@@ -40895,7 +40898,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                       Array [
                         Object {
                           "color": "#0A1427",
-                          "fontSize": 14,
+                          "fontSize": 12,
                           "marginBottom": undefined,
                           "marginLeft": undefined,
                           "marginRight": undefined,
@@ -41138,6 +41141,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                     Object {
                       "marginBottom": -20,
                       "marginTop": -20,
+                      "paddingLeft": 20,
                     },
                     Object {},
                   ]
@@ -41157,12 +41161,14 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                     Object {
                       "alignItems": "flex-end",
                       "alignSelf": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 36,
                       "justifyContent": "center",
                       "opacity": 1,
-                      "paddingBottom": 20,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 20,
+                      "paddingBottom": 15,
+                      "paddingLeft": 15,
+                      "paddingRight": 15,
+                      "paddingTop": 15,
                       "position": "relative",
                     }
                   }
@@ -41173,7 +41179,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                       Array [
                         Object {
                           "color": "#0A1427",
-                          "fontSize": 14,
+                          "fontSize": 12,
                           "marginBottom": undefined,
                           "marginLeft": undefined,
                           "marginRight": undefined,
@@ -49007,6 +49013,7 @@ exports[`Storyshots SlideModal default 1`] = `
                           Object {
                             "marginBottom": -20,
                             "marginTop": -20,
+                            "paddingLeft": 20,
                           },
                           Object {},
                         ]
@@ -49026,12 +49033,14 @@ exports[`Storyshots SlideModal default 1`] = `
                           Object {
                             "alignItems": "flex-end",
                             "alignSelf": "center",
+                            "backgroundColor": "#EBF0F6",
+                            "borderRadius": 36,
                             "justifyContent": "center",
                             "opacity": 1,
-                            "paddingBottom": 20,
-                            "paddingLeft": 20,
-                            "paddingRight": 20,
-                            "paddingTop": 20,
+                            "paddingBottom": 15,
+                            "paddingLeft": 15,
+                            "paddingRight": 15,
+                            "paddingTop": 15,
                             "position": "relative",
                           }
                         }
@@ -49042,7 +49051,7 @@ exports[`Storyshots SlideModal default 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontSize": 14,
+                                "fontSize": 12,
                                 "marginBottom": undefined,
                                 "marginLeft": undefined,
                                 "marginRight": undefined,

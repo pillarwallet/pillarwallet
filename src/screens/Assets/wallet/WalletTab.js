@@ -40,14 +40,13 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
 import { assetRegistrySelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { getRate, getAssetFromRegistry } from 'utils/assets';
-import { sum } from 'utils/bigNumber';
+import { getAssetFromRegistry } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -58,7 +57,7 @@ import type { Chain } from 'models/Chain';
 import PillarPaySummary from '../components/PillarPaySummary';
 import WalletListItem from './WalletListItem';
 import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
-import { type WalletItem, useWalletBalance, useWalletAssets } from './selectors';
+import { type WalletItem, useWalletTotalBalance, useWalletBalancePerChain, useWalletAssetsPerChain } from './selectors';
 
 function WalletTab() {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
@@ -68,7 +67,7 @@ function WalletTab() {
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
-  const totalBalance = useWalletBalance();
+  const totalBalance = useWalletTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
   const assetRegistry = useRootSelector(assetRegistrySelector);
@@ -167,18 +166,17 @@ export default WalletTab;
 type Section = {
   ...SectionBase<WalletItem>,
   chain: Chain,
-  balance: BigNumber,
+  balance: ?BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const assetsPerChain = useWalletAssets();
-  const rates = useRates();
-  const currency = useFiatCurrency();
+  const assetsPerChain = useWalletAssetsPerChain();
+  const balancePerChain = useWalletBalancePerChain();
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const balance = sum(items.map((item) => item.value.times(getRate(rates, item.symbol, currency))));
+    const balance = balancePerChain[chain];
     const data = expandItemsPerChain[chain] ? items : [];
     return { key: chain, chain, balance, data };
   });
