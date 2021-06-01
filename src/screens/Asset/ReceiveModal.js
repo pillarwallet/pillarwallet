@@ -20,7 +20,7 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { Dimensions, Share, Clipboard } from 'react-native';
+import { Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -54,9 +54,7 @@ type StateProps = {|
 
 type OwnProps = {|
   address: string,
-  handleBuyTokens?: Function,
   onModalHide?: Function,
-  showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
 |};
 
@@ -64,8 +62,6 @@ type Props = {|
   ...StateProps,
   ...OwnProps,
 |};
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
   Clipboard.setString(addressOrEnsName);
@@ -77,7 +73,6 @@ const ReceiveModal = ({
   activeAccount,
   address,
   onModalHide,
-  showBuyTokensButton = false,
   user,
 }: Props) => {
   const handleAddressShare = useCallback(() => {
@@ -86,7 +81,6 @@ const ReceiveModal = ({
 
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
-  const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
 
   return (
     <SlideModal
@@ -118,14 +112,10 @@ const ReceiveModal = ({
           <BaseText style={{ color: baseColors.dodgerBlue }}>{t('paragraph.withCaution')}</BaseText>
         </WarningText>
         <CopyButton>
-          <Button
-            title={t('button.copyAddress')}
-            onPress={() => handleCopyToClipboard(address)}
-            small={needsSmallButtons}
-          />
+          <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
         </CopyButton>
         <ShareButton>
-          <Button title={t('button.shareAddress')} onPress={handleAddressShare} small={needsSmallButtons} secondary />
+          <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
         </ShareButton>
       </ContentWrapper>
     </SlideModal>
