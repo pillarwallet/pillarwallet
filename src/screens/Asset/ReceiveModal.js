@@ -87,6 +87,16 @@ const ReceiveModal = ({
       onModalHide={onModalHide}
       noPadding
       noClose
+      // TODO : The label itself will be revisited later on the direction of the product team
+      // headerLeftItems={showErc20Note ? [{
+      //   custom: (
+      //     <LabelBadge
+      //       label={t('label.erc20TokensOnly')}
+      //       labelStyle={{ fontSize: fontSizes.tiny }}
+      //       primary
+      //     />
+      //   ),
+      // }] : undefined}
       centerFloatingItem={
         <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
           <ProfileImage userName={username} diameter={48} />
