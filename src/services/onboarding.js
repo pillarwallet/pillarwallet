@@ -23,10 +23,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // services
 import { ArchanovaService } from 'services/archanova';
-import {
-  EtherspotService,
-  getEtherspotSupportService,
-} from 'services/etherspot';
+import { EtherspotService, getEtherspotSupportService } from 'services/etherspot';
 
 // utils
 import {
@@ -46,11 +43,15 @@ export const getExistingServicesAccounts = async (privateKey: string): Promise<A
   const etherspotAccounts = await etherspotService.getAccounts();
   let etherspotMappedAccounts = [];
   if (etherspotAccounts) {
-    etherspotMappedAccounts = etherspotAccounts.map((account) => ({
-      id: account.address,
-      type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
-      extra: account,
-      isActive: false,
+    etherspotMappedAccounts = await Promise.all(etherspotAccounts.map(async ({ address }) => {
+      // $FlowFixMe: Account extras
+      const extra = await etherspotService.getAccountPerChains(address);
+      return {
+        id: address,
+        type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+        extra,
+        isActive: false,
+      };
     }));
   }
 

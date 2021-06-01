@@ -60,7 +60,7 @@ import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // types
-import type { Asset } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
@@ -233,7 +233,7 @@ export class EtherspotService {
     chain: Chain,
     accountAddress: string,
     supportedAssets: Asset[],
-  ): Promise<{ [symbol: string]: Asset }> {
+  ): Promise<Assets> {
     const balances = await this.getBalances(chain, accountAddress, supportedAssets);
 
     return balances.reduce((ownedAssets, { symbol }) => {

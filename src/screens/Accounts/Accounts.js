@@ -105,7 +105,7 @@ const AccountsScreen = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
 
-  const [switchingToAccountId, setSwitchingToAccuntId] = useState(false);
+  const [switchingToAccountId, setSwitchingToAccountId] = useState(false);
 
   const { smartWalletIcon } = images(theme);
   const activeBlockchainNetwork = blockchainNetworks.find(({ isActive }) => !!isActive);
@@ -143,7 +143,7 @@ const AccountsScreen = ({
         title={title}
         subtitle={balance}
         onPress={() => {
-          setSwitchingToAccuntId(id);
+          setSwitchingToAccountId(id);
           mainAction();
         }}
         isActive={isActive}

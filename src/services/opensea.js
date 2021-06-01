@@ -50,11 +50,12 @@ const paginatedRequest = (
     const assets = responseData?.assets || [];
     const updatedPaginatedData = [...paginatedData, ...assets];
     const newOffset = offset + limit;
-    if (assets.length === limit) {
-      setTimeout(() => { paginatedRequest(url, updatedPaginatedData, limit, newOffset); }, 1000);
-    } else {
-      resolve(updatedPaginatedData);
-    }
+
+    const results = assets.length === limit
+      ? await paginatedRequest(url, updatedPaginatedData, limit, newOffset)
+      : updatedPaginatedData;
+
+    resolve(results);
   });
 };
 
