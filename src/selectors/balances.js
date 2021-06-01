@@ -17,35 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { createSelector } from 'reselect';
+import { BigNumber } from 'bignumber.js';
 
 // constants
-import { ASSET_CATEGORY, PLR } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
+import { PLR } from 'constants/assetsConstants';
 
 // utils
-import { getTotalBalanceInFiat } from 'utils/assets';
-import { BigNumber } from 'utils/common';
-import { sum } from 'utils/bigNumber';
 import { isEtherspotAccount } from 'utils/accounts';
-import { getChainTotalBalancesForCategory, getTotalCategoryBalance } from 'utils/balances';
+import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
+import { getWalletAssetsSymbols } from 'utils/balances';
+import { mapRecordValues } from 'utils/object';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Rates, Asset, Assets, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
-import type {
-  ChainTotalBalancesPerAccount,
-  CategoryTotalBalancesPerChain,
-  TotalBalancesPerChain,
-  WalletAssetsBalances,
-  CategoryBalancesPerChain,
-  AssetBalancesPerAccount,
-} from 'models/Balances';
+import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
 
 // selectors
 import {
   assetsBalancesSelector,
+  supportedAssetsSelector,
   fiatCurrencySelector,
   ratesSelector,
   activeAccountIdSelector,
@@ -63,25 +57,12 @@ export const accountAssetsBalancesSelector = createSelector(
 
 export const accountEthereumWalletAssetsBalancesSelector = createSelector(
   accountAssetsBalancesSelector,
-  (accountBalances): WalletAssetsBalances => accountBalances?.[CHAIN.ETHEREUM]?.[ASSET_CATEGORY.WALLET] || {},
+  (accountBalances): WalletAssetsBalances => accountBalances?.ethereum?.wallet || {},
 );
 
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
   (hasPositiveBalance) => !!hasPositiveBalance,
-);
-
-export const totalBalancesSelector = ({
-  totalBalances,
-}: RootReducerState): ChainTotalBalancesPerAccount => totalBalances.data;
-
-export const activeAccountTotalBalancesSelector: (RootReducerState) => CategoryTotalBalancesPerChain = createSelector(
-  activeAccountIdSelector,
-  totalBalancesSelector,
-  (
-    activeAccountId: string,
-    totalBalances: ChainTotalBalancesPerAccount,
-  ): CategoryTotalBalancesPerChain => totalBalances[activeAccountId],
 );
 
 export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
@@ -98,94 +79,31 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
   },
 );
 
-export const walletTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  activeAccountTotalBalancesSelector,
-  paymentNetworkTotalBalanceSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-    paymentNetworkBalance: BigNumber,
-  ): BigNumber => {
-    const balancesOnChains = (Object.values(accountTotalBalances || {}): any);
-
-    const totalWalletBalancesOnChains = balancesOnChains.map((chainTotalBalances) => {
-      return chainTotalBalances?.wallet || BigNumber(0);
+/**
+ * Compat function for providing array of assets represening all accounts assets across all chains.
+ * Intended to be used in place of `assetsSelector` from 'selectors`.
+ */
+export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    return mapRecordValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
+      const symbols = getWalletAssetsSymbols(accountAssetsBalances);
+      return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
     });
-
-    return sum([...totalWalletBalancesOnChains, paymentNetworkBalance]);
   },
 );
 
-export const depositsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
-);
-
-export const investmentsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
-);
-
-export const liquidityPoolsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
-);
-
-export const rewardsTotalBalanceByChainsSelector: (RootReducerState) => TotalBalancesPerChain = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): TotalBalancesPerChain => getChainTotalBalancesForCategory(accountTotalBalances, ASSET_CATEGORY.REWARDS),
-);
-
-export const depositsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.DEPOSITS),
-);
-
-export const investmentsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.INVESTMENTS),
-);
-
-export const liquidityPoolsTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  activeAccountTotalBalancesSelector,
-  (
-    accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  ): BigNumber => getTotalCategoryBalance(accountTotalBalances, ASSET_CATEGORY.LIQUIDITY_POOLS),
-);
-
-// TODO: add once ready
-export const rewardsTotalBalanceSelector: (RootReducerState) => BigNumber = () => {
-  return BigNumber(0);
-};
-
-export const totalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  walletTotalBalanceSelector,
-  investmentsTotalBalanceSelector,
-  depositsTotalBalanceSelector,
-  liquidityPoolsTotalBalanceSelector,
-  rewardsTotalBalanceSelector,
-  (
-    walletBalance: BigNumber,
-    investmentsBalance: BigNumber,
-    depositsBalance: BigNumber,
-    liquidityPoolsBalance: BigNumber,
-    rewardsBalance: BigNumber,
-  ): BigNumber => sum([
-    walletBalance,
-    investmentsBalance,
-    depositsBalance,
-    liquidityPoolsBalance,
-    rewardsBalance,
-  ]),
+/**
+ * Compat function for providing array of assets represening active account assets across all chains.
+ * Intended to be used in place of `accountAssetsSelector` from 'selectors`.
+ */
+export const accountAssetsCompatSelector: Selector<Assets> = createSelector(
+  activeAccountIdSelector,
+  assetsBalancesSelector,
+  supportedAssetsSelector,
+  (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
+    const symbols = getWalletAssetsSymbols(assetsBalances[accountId]);
+    return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
+  },
 );

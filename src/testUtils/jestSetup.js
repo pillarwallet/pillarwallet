@@ -464,7 +464,7 @@ export const mockEtherspotAccountExtra: Etherspot.Account = {
 
 jest.setMock('instabug-reactnative', {});
 
-const mockEtherspotGetBalances = (address, assets) => {
+const mockEtherspotGetBalances = (chain, address, assets) => {
   // mock positive balances for mocked archanova account
   const balances = address === mockArchanovaAccount.extra.address
     ? assets.map(({ symbol }) => ({ symbol, balance: 1 }))
@@ -480,5 +480,4 @@ jest.setMock('services/etherspot', {
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
   getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
   getBalances: mockEtherspotGetBalances,
-  getPositiveBalances: mockEtherspotGetBalances,
 });

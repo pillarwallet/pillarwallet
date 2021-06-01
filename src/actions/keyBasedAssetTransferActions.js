@@ -40,6 +40,7 @@ import {
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { collectibleFromResponse } from 'actions/collectiblesActions';
@@ -179,7 +180,11 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
 
-    const availableBalances = await etherspotService.getPositiveBalances(keyBasedWalletAddress, supportedAssets);
+    const availableBalances = await etherspotService.getBalances(
+      CHAIN.ETHEREUM,
+      keyBasedWalletAddress,
+      supportedAssets,
+    );
 
     dispatch({
       type: SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,

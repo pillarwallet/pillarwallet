@@ -18,27 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import querystring from 'querystring';
+import { ETH, DAI, PLR, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
 
-// config
-import { getEnv } from 'configs/envConfig';
-import { RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+export const MATIC_DAI = 'MATIC_DAI';
+export const MATIC_USDC = 'MATIC_USDC';
 
-const PILLAR = 'Pillar';
-
-export function rampWidgetUrl(
-  address: string,
-  fiatCurrency: string,
-  fiatValue: string,
-) {
-  const params = {
-    hostAppName: PILLAR,
-    fiatCurrency,
-    fiatValue,
-    hostApiKey: getEnv().RAMPNETWORK_API_KEY,
-    userAddress: address,
-    swapAsset: RAMP_CURRENCY_TOKENS.join(','),
-  };
-
-  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
-}
+export const RAMP_CURRENCY_TOKENS = [ETH, DAI, PLR, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI];

@@ -52,6 +52,7 @@ import {
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { addressesEqual } from 'utils/assets';
+import { nativeSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
@@ -113,9 +114,7 @@ export class EtherspotService {
   subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
     if (!this.sdk) return;
 
-    this.subscription = this.sdk.notifications$
-      .pipe(map(callback))
-      .subscribe();
+    this.subscription = this.sdk.notifications$.pipe(map(callback)).subscribe();
   }
 
   unsubscribe() {
@@ -167,9 +166,16 @@ export class EtherspotService {
       });
   }
 
-  async getBalances(accountAddress: string, assets: Asset[]): Promise<WalletAssetBalance[]> {
-    const assetAddresses = assets
-      // 0x0...0 is default ETH address in our assets, but it's not a token
+  async getBalances(
+    chain: Chain,
+    accountAddress: string,
+    supportedAssets: Asset[],
+  ): Promise<WalletAssetBalance[]> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return [];
+
+    const assetAddresses = supportedAssets
+      // 0x0...0 is default native token address in our assets, but it's not a ERC20 token
       .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
       .map(({ address }) => address);
 
@@ -185,51 +191,53 @@ export class EtherspotService {
     }
 
     // gets balances by provided token (asset) address and ETH balance regardless
-    const accountBalances = await this.sdk
-      .getAccountBalances(balancesRequestPayload)
-      .catch((error) => {
-        reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
-        return null;
-      });
+    const accountBalances = await sdk.getAccountBalances(balancesRequestPayload).catch((error) => {
+      reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, chain, accountAddress });
+      return null;
+    });
 
     if (!accountBalances?.items) {
       return []; // logged above, no balances
     }
 
-    // map to our WalletAssetBalance type
-    return accountBalances.items.reduce((balances, { balance, token }) => {
-      // if SDK returned token value is null then it's ETH
-      const asset = assets.find(({
-        address,
-        symbol,
-      }) => token === null ? symbol === ETH : addressesEqual(address, token));
+    const nativeSymbol = nativeSymbolPerChain[chain];
+
+    return accountBalances.items.reduce((positiveBalances, { balance, token }) => {
+      // `token === null` means it's chain native token
+      const asset = token === null
+        ? supportedAssets.find(({ symbol }) => symbol === nativeSymbol)
+        : supportedAssets.find(({ address }) => addressesEqual(address, token));
 
       if (!asset) {
-        reportErrorLog('EtherspotService getBalances asset mapping failed', { token });
-        return balances;
+        reportErrorLog('EtherspotService getBalances asset mapping failed', { chain, token });
+        return positiveBalances;
+      }
+
+      const positiveBalance = EthersUtils.formatUnits(balance, asset.decimals);
+      if (!BigNumber(positiveBalance ?? 0).isZero()) {
+        // no need to return zero balance asset
+        return positiveBalances;
       }
 
       return [
-        ...balances,
+        ...positiveBalances,
         {
           symbol: asset.symbol,
-          balance: EthersUtils.formatUnits(balance, asset.decimals),
+          balance: positiveBalance,
         },
       ];
     }, []);
   }
 
-  async getPositiveBalances(accountAddress: string, assets: Asset[]): Promise<WalletAssetBalance[]> {
-    const balances = await this.getBalances(accountAddress, assets);
-
-    return balances.filter(({ balance }) => BigNumber(balance ?? 0).gt(0));
-  }
-
-  async getOwnedAssets(accountAddress: string, assets: Asset[]): Promise<{ [symbol: string]: Asset }> {
-    const balances = await this.getPositiveBalances(accountAddress, assets);
+  async getOwnedAssets(
+    chain: Chain,
+    accountAddress: string,
+    supportedAssets: Asset[],
+  ): Promise<{ [symbol: string]: Asset }> {
+    const balances = await this.getBalances(chain, accountAddress, supportedAssets);
 
     return balances.reduce((ownedAssets, { symbol }) => {
-      const supportedAsset = assets.find((asset) => asset.symbol === symbol);
+      const supportedAsset = supportedAssets.find((asset) => asset.symbol === symbol);
 
       if (supportedAsset) return { ...ownedAssets, [symbol]: supportedAsset };
 
@@ -383,8 +391,9 @@ export class EtherspotService {
     });
   }
 
-  getTransactionsByAddress(address: string): Promise<?EtherspotTransaction[]> {
-    return this.sdk.getTransactions({ account: address })
+  getTransactionsByAddress(address: string): Promise<?(EtherspotTransaction[])> {
+    return this.sdk
+      .getTransactions({ account: address })
       .then(({ items }) => items)
       .catch((error) => {
         reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, error });
@@ -393,11 +402,12 @@ export class EtherspotService {
   }
 
   getDashboardData(accountAddress: string, currencySymbol: string, periodInDays: number): Promise<AccountDashboard> {
-    return this.sdk.getAccountDashboard({
-      account: accountAddress,
-      currency: currencySymbol.toLowerCase(),
-      days: periodInDays,
-    })
+    return this.sdk
+      .getAccountDashboard({
+        account: accountAddress,
+        currency: currencySymbol.toLowerCase(),
+        days: periodInDays,
+      })
       .catch((error) => {
         reportErrorLog('EtherspotService getDashboardData failed', { error });
         return null;

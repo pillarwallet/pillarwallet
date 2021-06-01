@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
@@ -68,16 +67,12 @@ import {
 } from 'services/zapper';
 
 // utils
-import {
-  getAssetsAsList,
-  getRate,
-  transformBalancesToObject,
-} from 'utils/assets';
+import { transformBalancesToObject } from 'utils/assets';
+import { getSupportedChains } from 'utils/chains';
 import {
   parseTokenAmount,
   reportErrorLog,
   uniqBy,
-  wrapBigNumber,
 } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
@@ -93,18 +88,16 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sum } from 'utils/bigNumber';
+import { sumBy } from 'utils/bigNumber';
 
 // selectors
-import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector } from 'selectors/assets';
 import {
   accountsSelector,
+  supportedAssetsSelector,
   assetsBalancesSelector,
   fiatCurrencySelector,
-  ratesSelector,
-  supportedAssetsSelector,
 } from 'selectors';
-import { totalBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Asset, AssetsByAccount } from 'models/Asset';
@@ -364,8 +357,8 @@ export const sendAssetAction = (
 
 export const updateAccountWalletAssetsBalancesForChainAction = (
   accountId: string,
-  balances: WalletAssetsBalances,
   chain: Chain,
+  balances: WalletAssetsBalances,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
     dispatch({
@@ -386,48 +379,32 @@ export const updateAccountWalletAssetsBalancesForChainAction = (
 export const fetchAccountWalletBalancesAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const walletAddress = getAccountAddress(account);
-
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
 
-    const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
+    const chains = getSupportedChains(account);
+    const supportedAssets = supportedAssetsSelector(getState());
 
-    // TODO: add multi chain balances fetching from Etherspot
+    await Promise.all(chains.map(async (chain) => {
+      let newBalances = [];
+      try {
+        newBalances = await etherspotService.getBalances(chain, walletAddress, supportedAssets);
+      } catch (error) {
+        reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
+          accountId,
+          accountType: account.type,
+          chain,
+        });
+      }
 
-    const newBalances = await etherspotService.getBalances(walletAddress, getAssetsAsList(accountAssets));
+      if (isEmpty(newBalances)) return;
 
-    if (isEmpty(newBalances)) return;
+      await dispatch(
+        updateAccountWalletAssetsBalancesForChainAction(accountId, chain, transformBalancesToObject(newBalances)),
+      );
+    }));
 
-    await dispatch(updateAccountWalletAssetsBalancesForChainAction(
-      accountId,
-      transformBalancesToObject(newBalances),
-      CHAIN.ETHEREUM,
-    ));
-
-    const rates = ratesSelector(getState());
-    const currency = fiatCurrencySelector(getState());
-
-    const assetsFiatBalances = newBalances.map((asset) => {
-      if (!asset?.balance) return BigNumber(0);
-
-      const { balance, symbol } = asset;
-
-      return wrapBigNumber(balance).times(getRate(rates, symbol, currency));
-    });
-
-    const totalBalance = sum(assetsFiatBalances);
-
-    dispatch({
-      type: SET_ACCOUNT_TOTAL_BALANCE,
-      payload: {
-        accountId,
-        chain: CHAIN.ETHEREUM,
-        category: ASSET_CATEGORY.WALLET,
-        balance: totalBalance,
-      },
-    });
-
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
   };
 };
@@ -551,8 +528,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
               });
 
               // add to total balance
-              const balancesValues = assetsBalances.map(({ value }) => value);
-              categoryTotalBalance = sum([categoryTotalBalance, ...balancesValues]);
+              const totalValue = sumBy(assetsBalances, (balance) => balance.value);
+              categoryTotalBalance = categoryTotalBalance.plus(totalValue);
 
               return [...combinedBalances, ...assetsBalances];
             }, []);
@@ -585,7 +562,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 
-    const accountsTotalBalances = totalBalancesSelector(getState());
+    const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
 
     const accountsAssetsBalances = assetsBalancesSelector(getState());
@@ -621,7 +598,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     const updatedBalances = assetsBalancesSelector(getState());
     dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
 
-    const updatedTotalBalances = totalBalancesSelector(getState());
+    const updatedTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: updatedTotalBalances }, true));
   };
 };
@@ -766,7 +743,7 @@ export const resetSearchAssetsResultAction = () => ({
 
 export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
   const accountId = getAccountId(account);
-  const accountAssets = get(accountsAssets, accountId, {});
+  const accountAssets = accountsAssets[accountId] ?? {};
   const accountAssetsTickers = Object.keys(accountAssets);
 
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
@@ -800,6 +777,7 @@ export const loadSupportedAssetsAction = () => {
   };
 };
 
+// TODO: handle side chain balances
 export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -824,7 +802,7 @@ export const checkForMissedAssetsAction = () => {
           const accountId = getAccountId(account);
           // TODO: refactor whole checkForMissedAssetsAction
           // $FlowFixMe: didn't refactor existing code, flow is messing up due obvious reasons
-          const ownedAssets = await etherspotService.getOwnedAssets(accountAddress, supportedAssets);
+          const ownedAssets = await etherspotService.getOwnedAssets(CHAIN.ETHEREUM, accountAddress, supportedAssets);
           return { id: accountId, ...ownedAssets };
         }),
     );
@@ -859,21 +837,5 @@ export const checkForMissedAssetsAction = () => {
       dispatch(fetchAssetsBalancesAction());
       dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
     }
-  };
-};
-
-export const fetchAllChainBalancesAction = () => {
-  return async () => {
-    const networkBalances = {};
-
-    const resolvedBalances = await Promise.all(
-      etherspotService.supportedNetworks.map((network) => etherspotService.instances[network].getAccountBalances()),
-    );
-
-    resolvedBalances.forEach((balance, idx) => {
-      networkBalances[etherspotService.supportedNetworks[idx]] = balance;
-    });
-
-    return networkBalances;
   };
 };

@@ -20,7 +20,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { BigNumber } from 'utils/common';
 
 // actions
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
@@ -40,7 +39,6 @@ import {
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
@@ -165,16 +163,9 @@ describe('Assets actions', () => {
       category: ASSET_CATEGORY.WALLET,
       balances: { ETH: mockEthBalance },
     };
-    const updateTotalBalancePayload = {
-      accountId: mockAccounts[0].id,
-      chain: CHAIN.ETHEREUM,
-      category: ASSET_CATEGORY.WALLET,
-      balance: BigNumber(0),
-    };
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
-      { type: SET_ACCOUNT_TOTAL_BALANCE, payload: updateTotalBalancePayload },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
     return store.dispatch(fetchAssetsBalancesAction())

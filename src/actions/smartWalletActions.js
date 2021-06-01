@@ -79,6 +79,7 @@ import {
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { SABLIER_CANCEL_STREAM, SABLIER_WITHDRAW } from 'constants/sablierConstants';
 import { initialAssets } from 'fixtures/assets';
+import { CHAIN } from 'constants/chainConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -1321,7 +1322,7 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     const supportedAssets = supportedAssetsSelector(getState());
     const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(({
       address,
-    }) => etherspotService.getPositiveBalances(address, supportedAssets)));
+    }) => etherspotService.getBalances(CHAIN.ETHEREUM, address, supportedAssets)));
 
     // no need to import empty balance accounts
     const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));

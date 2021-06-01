@@ -25,7 +25,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import type { ChainRecord } from 'models/Chain';
 
 export type AccountTypes = $Values<typeof ACCOUNT_TYPES>;
-
 export type EtherspotAccount = {|
   type: typeof ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
   id: string,
@@ -70,3 +69,5 @@ export type KeyBasedAccount = {|
 export type KeyBasedAccountExtra = {||};
 
 export type Account = EtherspotAccount | ArchanovaAccount | KeyBasedAccount;
+
+export type AccountRecord<T> = { [accountId: string]: T };

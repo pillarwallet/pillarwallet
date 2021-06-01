@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList } from 'react-native';
 import Instabug from 'instabug-reactnative';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -40,19 +40,18 @@ import {
   SABLIER_STREAMS,
   RARI_DEPOSIT,
   LIQUIDITY_POOLS,
+  ADD_CASH,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { spacing } from 'utils/variables';
-import { openInAppBrowser } from 'utils/inAppBrowser';
 import {
   getActiveAccount,
   getAccountAddress,
   isSmartWalletAccount,
   isArchanovaAccount,
 } from 'utils/accounts';
-import { rampWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -186,9 +185,7 @@ class ServicesScreen extends React.Component<Props> {
     const { navigation, accounts } = this.props;
 
     // services are left for archanova only and will be decommissioned later
-    const services = isArchanovaAccount(getActiveAccount(accounts))
-      ? this.getArchanovaSupportedServices()
-      : [];
+    const services = isArchanovaAccount(getActiveAccount(accounts)) ? this.getArchanovaSupportedServices() : [];
 
     if (isOffersEngineEnabled) {
       services.push({
@@ -206,37 +203,19 @@ class ServicesScreen extends React.Component<Props> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
+    const { navigation } = this.props;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
         key: 'ramp',
         title: t('servicesContent.ramp.title'),
         body: t('servicesContent.ramp.description'),
-        action: () => {
-          const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
-
-          Alert.alert(
-            t('servicesContent.ramp.assetDecisionAlert.title'),
-            t('servicesContent.ramp.assetDecisionAlert.description'),
-            [
-              {
-                text: t('servicesContent.ramp.assetDecisionAlert.actionNonPlr'),
-                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address)),
-              },
-              {
-                text: t('servicesContent.ramp.assetDecisionAlert.actionPlr'),
-                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, true)),
-              },
-            ],
-            { cancelable: true },
-          );
-        },
+        action: () => navigation.navigate(ADD_CASH),
       });
     }
 
     return buyCryptoServices;
-  }
+  };
 
   getCryptoPurchaseAddress = (): string | null => {
     const { accounts } = this.props;
@@ -249,15 +228,6 @@ class ServicesScreen extends React.Component<Props> {
     }
 
     return getAccountAddress(activeAccount);
-  }
-
-  tryOpenCryptoPurchaseUrl = async (url: string | null) => {
-    if (url) {
-      await openInAppBrowser(url)
-        .catch(this.showServiceLaunchError);
-    } else {
-      this.showServiceLaunchError();
-    }
   };
 
   showServiceLaunchError = () => {
@@ -266,31 +236,16 @@ class ServicesScreen extends React.Component<Props> {
       emoji: 'hushed',
       supportLink: true,
     });
-  }
+  };
 
   renderServicesItem = ({ item }) => {
-    const {
-      title,
-      body,
-      action,
-      disabled,
-      label,
-      hidden = false,
-    } = item;
+    const { title, body, action, disabled, label, hidden = false } = item;
 
     if (hidden) {
       return null;
     }
-    return (
-      <ListCard
-        title={title}
-        subtitle={body}
-        action={action}
-        disabled={disabled}
-        label={label}
-      />
-    );
-  }
+    return <ListCard title={title} subtitle={body} action={action} disabled={disabled} label={label} />;
+  };
 
   render() {
     const services = this.getServices();

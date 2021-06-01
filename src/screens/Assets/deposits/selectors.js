@@ -18,29 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { BigNumber } from 'bignumber.js';
+
 // Selectors
 import { useRootSelector } from 'selectors';
-import {
-  accountAssetsBalancesSelector,
-  depositsTotalBalanceByChainsSelector,
-  depositsTotalBalanceSelector,
-} from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
+import { accountDepositsBalancePerChainSelector } from 'selectors/totalBalances';
 
 // Utils
 import { getChainDepositAssetsBalances } from 'utils/balances';
+import { sumRecord } from 'utils/bigNumber';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { DepositAssetBalance, TotalBalancesPerChain } from 'models/Balances';
+import type { DepositAssetBalance } from 'models/Balances';
 
-export function useDepositsBalance(): FiatBalance {
-  const value = useRootSelector(depositsTotalBalanceSelector);
+export function useDepositsTotalBalance(): FiatBalance {
+  const value = sumRecord(useDepositsBalancePerChain());
   return { value };
 }
 
-export function useDepositsChainBalances(): TotalBalancesPerChain {
-  return useRootSelector(depositsTotalBalanceByChainsSelector);
+export function useDepositsBalancePerChain(): ChainRecord<BigNumber> {
+  return useRootSelector(accountDepositsBalancePerChainSelector);
 }
 
 export function useDepositsAssets(): ChainRecord<DepositAssetBalance[]> {

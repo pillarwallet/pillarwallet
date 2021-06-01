@@ -447,7 +447,8 @@
     "emptyName": "Ime ne smije biti prazno",
     "invalid": {
       "address": "Netočna adresa",
-      "email": "Molimo unesite točan email"
+      "email": "Molimo unesite točan email",
+      "fiatValue": "Žao nam je, unesite važeći iznos (uključuje 0-9 i decimalnu zarez). Molimo pokušajte ponovo."
     },
     "cannotSendYourself": "Ne možete slati sebi. Molimo koristite drugu adresu.",
     "ensNameNotFound": "ENS ime nije pronađeno. Molimo provjerite i pokušajte ponovo.",
@@ -1089,6 +1090,10 @@
         "description": "Želite kupiti PLR tokene, ili neke druge?",
         "actionNonPlr": "Drugi tokeni",
         "actionPlr": "PLR tokeni"
+      },
+      "addCash": {
+        "title": "Kupi kripto",
+        "subTitle": "Plaćate karticom"
       },
       "title": "Kupuj sa Ramp.Mrežom",
       "description": "Kupi Odmah"
