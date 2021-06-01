@@ -244,7 +244,7 @@
     "sendMax": "ሁሉንም ይላኩ",
     "settleMore": "ጨምረው ይወስኑ",
     "settleTransactions": "ግብይቱን ይወስኑ",
-    "shareAddress": "አድራሻ ይጋሩ",
+    "shareAddress": ".ር ያድርጉ",
     "smartWalletFAQ": "ብልህ ቦርሳ ተደጋጋሚ ጥያቄዎች",
     "subscribe": "ይመዝገቡ",
     "support": "ረዳት",
@@ -290,7 +290,8 @@
     "proceed": "ቀጥል",
     "readMore": "ተጨማሪ ያንብቡ",
     "activateSmartWallet": "ብልህ ቦርሳውን ያስጀምሩ",
-    "finish": "መጨረሻ"
+    "finish": "መጨረሻ",
+    "copyAddress": "አድራሻውን ይቅዱ"
   },
 
   "paragraph": {
@@ -307,7 +308,9 @@
     "backupPhraseRevealedPurpose": "እባክዎት ባለ 12 ቃላት የመጠባበቂያ ቃላቶችዎን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
     "privateKeyRevealedPurpose": "እባክዎት ይሄንን የግል ቁልፍዎትን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
     "doNotShareBackup": "ቦርሳዎ አደጋ ቢያጋጥመው ያለዎት የማስመለሻ አማራጭ ይሄ ብቻ ስለሆነ በጥንቃቄ ያስቅምጡት። ኢሜል አያድርጉ ወይም የማያ ገጹን ግልባጭ አይውሰዱ።",
-    "sessionExpiredReEnterPin": "የገቡበት ክፍለ ግዜ አልቋል። እባክዎ የይለፍ ቃሎትን አስገብተው ይቀጥሉ።"
+    "sessionExpiredReEnterPin": "የገቡበት ክፍለ ግዜ አልቋል። እባክዎ የይለፍ ቃሎትን አስገብተው ይቀጥሉ።",
+    "cautionMessage": "ሁሉም ሰንሰለቶች ነጠላ የኪስ ቦርሳ አድራሻ ይጠቀማሉ ፡፡\n ተቀበል <0>{{ethereum}}</0> ንብረቶች",
+    "withCaution": "በጥንቃቄ"
   },
 
   "insight": {

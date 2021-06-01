@@ -20,7 +20,7 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
+import { Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -30,14 +30,13 @@ import { createStructuredSelector } from 'reselect';
 import { BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
-import { LabelBadge } from 'components/LabelBadge';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
+import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles, baseColors } from 'utils/variables';
 import { getAccountEnsName } from 'utils/accounts';
 
 // models and types
@@ -47,12 +46,6 @@ import type { User } from 'models/User';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
-
-
-const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px 60px;
-  align-items: center;
-`;
 
 type StateProps = {|
   user: User,
@@ -72,50 +65,7 @@ type Props = {|
   ...OwnProps,
 |};
 
-const QRCodeWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const WalletAddress = styled(BaseText)`
-  ${fontStyles.regular};
-  margin: ${spacing.small}px 0;
-`;
-
-const IconsContainer = styled.View`
-  flex-direction: row;
-  margin: 0 ${spacing.layoutSides}px;
-  justify-content: center;
-`;
-
-const IconsSpacing = styled.View`
-  width: ${spacing.small}px;
-`;
-
-const ButtonsRow = styled.View`
-  flex-direction: row;
-  margin-top: ${spacing.medium}px;
-  margin-bottom: ${spacing.medium}px;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const InfoView = styled.View`
-  margin-bottom: ${spacing.medium}px;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const ImageWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-`;
-
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const visaIcon = require('assets/icons/visa.png');
-const mastercardIcon = require('assets/icons/mastercard.png');
 
 const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
   Clipboard.setString(addressOrEnsName);
@@ -126,10 +76,8 @@ const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
 const ReceiveModal = ({
   activeAccount,
   address,
-  handleBuyTokens,
   onModalHide,
   showBuyTokensButton = false,
-  showErc20Note,
   user,
 }: Props) => {
   const handleAddressShare = useCallback(() => {
@@ -145,15 +93,6 @@ const ReceiveModal = ({
       onModalHide={onModalHide}
       noPadding
       noClose
-      headerLeftItems={showErc20Note ? [{
-        custom: (
-          <LabelBadge
-            label={t('label.erc20TokensOnly')}
-            labelStyle={{ fontSize: fontSizes.tiny }}
-            primary
-          />
-        ),
-      }] : undefined}
       centerFloatingItem={
         <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
           <ProfileImage userName={username} diameter={48} />
@@ -161,51 +100,33 @@ const ReceiveModal = ({
       }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <WarningBanner rounded small />
-        {!!ensName && (
-          <InfoView>
-            <BaseText
-              big
-              onPress={() => handleCopyToClipboard(ensName, true)}
-              center
-            >
+        <InfoView>
+          {!!ensName && (
+            <TextWithCopy textToCopy={ensName} iconColor="#007aff">
               {ensName}
-            </BaseText>
-            <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
-          </InfoView>
-        )}
-        <QRCodeWrapper>
-          <View style={{ overflow: 'hidden', padding: 10 }}>
-            {!!address && <QRCodeWithTheme value={address} size={160} />}
-          </View>
-          <WalletAddress onPress={() => handleCopyToClipboard(address)}>
-            {address}
-          </WalletAddress>
-        </QRCodeWrapper>
-        <ButtonsRow>
-          {showBuyTokensButton && (
-          <Button
-            title={t('button.buyTokens')}
-            onPress={handleBuyTokens}
-            primarySecond
-            small={needsSmallButtons}
-            style={{ flex: 1, marginRight: 10 }}
-          />
+            </TextWithCopy>
           )}
+          <WalletAddress>{address}</WalletAddress>
+        </InfoView>
+        <QRCodeWrapper>{!!address && <QRCodeWithTheme value={address} size={104} />}</QRCodeWrapper>
+        <WarningText center small>
+          {t('paragraph.cautionMessage', {
+            ethereum: t('chains.ethereum'),
+            mediumText: true,
+            color: '#62688f',
+          })}{' '}
+          <BaseText style={{ color: baseColors.dodgerBlue }}>{t('paragraph.withCaution')}</BaseText>
+        </WarningText>
+        <CopyButton>
           <Button
-            title={t('button.shareAddress')}
-            onPress={handleAddressShare}
+            title={t('button.copyAddress')}
+            onPress={() => handleCopyToClipboard(address)}
             small={needsSmallButtons}
-            style={{ flex: 1 }}
           />
-        </ButtonsRow>
-        {showBuyTokensButton && (
-        <IconsContainer>
-          <Image source={visaIcon} />
-          <IconsSpacing />
-          <Image source={mastercardIcon} />
-        </IconsContainer>
-        )}
+        </CopyButton>
+        <ShareButton>
+          <Button title={t('button.shareAddress')} onPress={handleAddressShare} small={needsSmallButtons} secondary />
+        </ShareButton>
       </ContentWrapper>
     </SlideModal>
   );
@@ -227,3 +148,54 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<StateProps> =>
 });
 
 export default (connect(combinedMapStateToProps)(ReceiveModal): AbstractComponent<OwnProps>);
+
+const ContentWrapper = styled(SafeAreaView)`
+  padding: 0 ${spacing.layoutSides}px 30px;
+  align-items: center;
+`;
+
+const QRCodeWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: ${spacing.largePlus}px;
+`;
+
+const WalletAddress = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin: ${spacing.mediumLarge}px;
+  text-align: center;
+`;
+
+const CopyButton = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  margin-top: ${spacing.largePlus}px;
+  margin-bottom: ${spacing.small}px;
+`;
+
+const ShareButton = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: ${spacing.medium}px;
+`;
+
+const InfoView = styled.View`
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const ImageWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WarningText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin-top: ${spacing.medium}px;
+  text-align: center;
+`;
