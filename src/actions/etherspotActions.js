@@ -26,7 +26,6 @@ import Toast from 'components/Toast';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { CHAIN } from 'constants/chainConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
   SET_HISTORY,
@@ -70,12 +69,16 @@ import {
   getAccountAddress,
   getAccountId,
 } from 'utils/accounts';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import {
+  getAssetData,
+  getAssetsAsList,
+  transformAssetsToObject,
+} from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
+import { initialAssets } from 'fixtures/assets';
 
 
 export const connectEtherspotAccountAction = (accountId: string) => {
@@ -89,14 +92,9 @@ export const connectEtherspotAccountAction = (accountId: string) => {
     }
 
     const accountAddress = getAccountAddress(account);
-    const ethereum = await etherspotService.getAccount(CHAIN.ETHEREUM, accountAddress);
-    const binance = await etherspotService.getAccount(CHAIN.BINANCE, accountAddress);
-    const polygon = await etherspotService.getAccount(CHAIN.POLYGON, accountAddress);
-    const xdai = await etherspotService.getAccount(CHAIN.XDAI, accountAddress);
+    const extra = await etherspotService.getAccountPerChains(accountAddress);
 
-    const extra = { ethereum, binance, polygon, xdai };
-
-    if (!ethereum) {
+    if (!extra?.ethereum) {
       reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
       return;
     }
@@ -128,7 +126,7 @@ export const initEtherspotServiceAction = (privateKey: string) => {
 };
 
 export const importEtherspotAccountsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: session },
       user: { data: user },
@@ -146,13 +144,6 @@ export const importEtherspotAccountsAction = () => {
       return;
     }
 
-    const { walletId } = user;
-
-    if (!walletId) {
-      reportErrorLog('importEtherspotAccountsAction failed: no walletId', { user });
-      return;
-    }
-
     const etherspotAccounts = await etherspotService.getAccounts();
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
@@ -161,11 +152,14 @@ export const importEtherspotAccountsAction = () => {
     }
 
     // sync accounts with app
-    await Promise.all(etherspotAccounts.map((etherspotAccount) => dispatch(addAccountAction(
-      etherspotAccount.address,
-      ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
-      etherspotAccount, // full object as extras
-    ))));
+    await Promise.all(etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
+      const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
+      dispatch(addAccountAction(
+        etherspotAccountAddress,
+        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+        extra, // full object as extras
+      ));
+    }));
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
 
@@ -176,13 +170,13 @@ export const importEtherspotAccountsAction = () => {
     dispatch(setEnsNameIfNeededAction());
 
     // set default assets for active Etherspot wallet
-    const initialAssets = await api.fetchInitialAssets(walletId);
+    const defaultInitialAssets = transformAssetsToObject(initialAssets);
     await dispatch({
       type: SET_INITIAL_ASSETS,
-      payload: { accountId, assets: initialAssets },
+      payload: { accountId, assets: defaultInitialAssets },
     });
 
-    const assets = { [accountId]: initialAssets };
+    const assets = { [accountId]: defaultInitialAssets };
 
     dispatch(saveDbAction('assets', { assets }, true));
   };

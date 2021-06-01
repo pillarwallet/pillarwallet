@@ -28,7 +28,6 @@ import t from 'translations/translate';
 
 // Actions
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
 import Button from 'components/Button';
@@ -130,11 +129,6 @@ const ContactsList = () => {
       title: t('button.addContact'),
       iconName: 'add-contact',
       onPress: () => openContactDetails(null),
-    },
-    {
-      title: t('button.inviteFriend'),
-      iconName: 'plus',
-      onPress: () => dispatch(goToInvitationFlowAction()),
     },
     !!contacts.length && {
       title: t('button.send'),

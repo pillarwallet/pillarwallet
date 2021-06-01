@@ -119,7 +119,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
-import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
 
@@ -139,7 +138,6 @@ type Props = {
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
-  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   supportedAssets: Asset[],
   sessionLanguageCode: ?string, // important for re-rendering on language change
 };
@@ -151,7 +149,6 @@ export type EventData = {
   badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
-  avatarUrl?: string,
   username?: string,
   itemImageUrl?: string,
   iconName?: ?string,
@@ -394,7 +391,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       theme,
       isPPNView,
       isAssetView,
-      referralRewardIssuersAddresses,
       supportedAssets,
     } = this.props;
 
@@ -818,7 +814,6 @@ export class ActivityFeedItem extends React.Component<Props> {
 
         const isBetweenSmartWalletAccounts = isSmartWalletAccountAddress(event.from, accounts)
           && isSmartWalletAccountAddress(event.to, accounts);
-        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
           if (isArchanovaAccountAddress(event.from, accounts) && isArchanovaAccountAddress(event.to, accounts)) {
@@ -879,18 +874,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             additionalInfo.iconName = directionIcon;
             // eslint-disable-next-line i18next/no-literal-string
             additionalInfo.iconColor = isReceived ? 'secondaryAccent140' : 'secondaryAccent240';
-          }
-
-          if (isReferralRewardTransaction) {
-            let referralAwardTokenImage;
-            const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
-            if (referralAwardAssetData) {
-              const { iconUrl } = referralAwardAssetData;
-              referralAwardTokenImage = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-              additionalInfo.iconName = null;
-              additionalInfo.avatarUrl = referralAwardTokenImage;
-            }
-            additionalInfo.label = t('label.referralReward');
           }
 
           data = {
@@ -1016,13 +999,11 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  referrals: { referralRewardIssuersAddresses },
   assets: { supportedAssets },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
-  referralRewardIssuersAddresses,
   supportedAssets,
   sessionLanguageCode,
 });

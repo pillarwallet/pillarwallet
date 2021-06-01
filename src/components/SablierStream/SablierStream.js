@@ -161,10 +161,7 @@ class SablierStream extends React.Component<Props> {
 
     return (
       <Container onPress={this.navigateToDetails}>
-        <ProfileImage
-          userName={username}
-          diameter={48}
-        />
+        <ProfileImage userName={username} diameter={48} />
         <Spacing w={12} />
         <AssetContainer>
           <AmountContainer>

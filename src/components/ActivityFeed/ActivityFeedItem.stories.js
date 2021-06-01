@@ -68,7 +68,6 @@ const reduxData = {
   activeBlockchainNetwork: '',
   isSmartWalletActivated: false,
   accounts: [],
-  referralRewardIssuersAddresses: ['0x123456'],
   supportedAssets: [],
 };
 
@@ -79,13 +78,11 @@ const dataForAllAccounts = {
     {
       id: '0xKeyWallet',
       type: 'KEY_BASED',
-      walletId: '350145cb-b266-488e-8dda-c89d77034226',
       isActive: false,
     },
     {
       id: '0xSmartWallet',
       type: 'SMART_WALLET',
-      walletId: 'f13c646b-435c-4bbc-ab08-4121b7319333',
       isActive: true,
       extra:
         {
@@ -465,7 +462,6 @@ storiesOf('ActivityFeedItem', module)
         {
           id: '0xKeyWallet',
           type: 'KEY_BASED',
-          walletId: '350145cb-b266-488e-8dda-c89d77034226',
           isActive: false,
         },
       ]}
@@ -488,7 +484,6 @@ storiesOf('ActivityFeedItem', module)
         {
           id: '0xKeyWallet',
           type: 'KEY_BASED',
-          walletId: '350145cb-b266-488e-8dda-c89d77034226',
           isActive: false,
         },
       ]}
@@ -512,7 +507,6 @@ storiesOf('ActivityFeedItem', module)
         {
           id: '0xSmartWallet',
           type: 'SMART_WALLET',
-          walletId: '350145cb-b266-488e-8dda-c89d77034226',
           isActive: false,
         },
       ]}
@@ -536,7 +530,6 @@ storiesOf('ActivityFeedItem', module)
         {
           id: '0xSmartWallet',
           type: 'SMART_WALLET',
-          walletId: '350145cb-b266-488e-8dda-c89d77034226',
           isActive: false,
         },
       ]}
@@ -549,19 +542,6 @@ storiesOf('ActivityFeedItem', module)
         asset: 'CryptoKitty',
         username: 'Smart Wallet',
         assetData: { image: placeholderImage },
-      }}
-    />
-  ))
-  .add('Key wallet referral reward', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0x123456',
-        to: '0x000000',
-        accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'PLR',
-        value: '250000000000000000000',
       }}
     />
   ))

@@ -48,7 +48,6 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
 
@@ -113,8 +112,6 @@ type Props = {
   executeDeepLink: (deepLinkUrl: string) => void,
   activeWalkthroughSteps: Steps,
   themeType: string,
-  startReferralsListener: () => void,
-  stopReferralsListener: () => void,
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
@@ -151,8 +148,7 @@ class App extends React.Component<Props, *> {
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
   componentWillUnmount() {
-    const { stopListeningOnOpenNotification, stopReferralsListener } = this.props;
-    stopReferralsListener();
+    const { stopListeningOnOpenNotification } = this.props;
     stopListeningOnOpenNotification();
     if (this.removeNetInfoEventListener) {
       this.removeNetInfoEventListener();
@@ -165,7 +161,6 @@ class App extends React.Component<Props, *> {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
-      startReferralsListener,
       sessionLanguageVersion,
       updateTranslationResourceOnContextChange,
     } = this.props;
@@ -213,7 +208,6 @@ class App extends React.Component<Props, *> {
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
-    startReferralsListener();
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
@@ -377,8 +371,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
-  startReferralsListener: () => dispatch(startReferralsListenerAction()),
-  stopReferralsListener: () => dispatch(stopReferralsListenerAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),

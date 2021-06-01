@@ -105,14 +105,14 @@ const AccountsScreen = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
 
-  const [switchingToWalletId, setSwitchingToWalletId] = useState(false);
+  const [switchingToAccountId, setSwitchingToAccountId] = useState(false);
 
   const { smartWalletIcon } = images(theme);
   const activeBlockchainNetwork = blockchainNetworks.find(({ isActive }) => !!isActive);
   const isEthereumActive = activeBlockchainNetwork?.id === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
 
-  const setAccountActive = async (wallet: Account) => {
-    await switchAccount(wallet.id);
+  const setAccountActive = async (account: Account) => {
+    await switchAccount(account.id);
     navigation.goBack(null);
   };
 
@@ -139,11 +139,11 @@ const AccountsScreen = ({
 
     return (
       <SettingsItemCarded
-        isLoading={id === switchingToWalletId}
+        isLoading={id === switchingToAccountId}
         title={title}
         subtitle={balance}
         onPress={() => {
-          setSwitchingToWalletId(id);
+          setSwitchingToAccountId(id);
           mainAction();
         }}
         isActive={isActive}

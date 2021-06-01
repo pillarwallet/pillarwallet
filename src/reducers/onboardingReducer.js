@@ -24,7 +24,6 @@ import {
   SET_CHECKING_USERNAME,
   SET_FINISHING_ONBOARDING,
   SET_IMPORTING_WALLET,
-  SET_IS_PORTAL_RECOVERY,
   SET_ONBOARDING_ERROR,
   SET_ONBOARDING_PIN_CODE,
   SET_ONBOARDING_USER,
@@ -36,19 +35,18 @@ import {
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
-import type { User } from 'models/User';
 import type { TutorialDataObject } from 'models/CMSData';
+import type { OnboardingUser } from 'models/User';
 
 
 export type OnboardingReducerState = {
   pinCode: ?string,
   wallet: ?EthereumWallet,
-  user: ?User,
+  user: ?OnboardingUser,
   errorMessage: ?string,
   isCheckingUsername: boolean,
   isImportingWallet: boolean,
   isRegisteringUser: boolean,
-  isPortalRecovery: boolean,
   usernameRegistrationFailed: boolean,
   isFinishingOnboarding: boolean,
   tutorialData: ?TutorialDataObject,
@@ -67,7 +65,6 @@ export const initialState = {
   isCheckingUsername: false,
   isImportingWallet: false,
   isRegisteringUser: false,
-  isPortalRecovery: false,
   usernameRegistrationFailed: false,
   isFinishingOnboarding: false,
   tutorialData: null,
@@ -121,11 +118,6 @@ export default function onboardingReducer(
       return {
         ...state,
         isRegisteringUser: action.payload,
-      };
-    case SET_IS_PORTAL_RECOVERY:
-      return {
-        ...state,
-        isPortalRecovery: true,
       };
     case SET_ONBOARDING_USERNAME_REGISTRATION_FAILED:
       return {

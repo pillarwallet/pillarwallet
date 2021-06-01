@@ -22,7 +22,7 @@
 import type { Chain } from 'models/Chain';
 
 export type Collectible = {
-  id: number,
+  id: string,
   category: string,
   name: string,
   description: string,
@@ -56,7 +56,7 @@ export type CollectibleTrx = {
   to: string,
   type: string,
   value: number,
-  _id: number,
+  _id: string,
 };
 
 

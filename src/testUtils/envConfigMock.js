@@ -28,7 +28,6 @@ const buildEnvironment = {
   BUILD_TYPE: STAGING,
   OPEN_SEA_API_KEY: '',
   INFURA_PROJECT_ID: '',
-  ETHPLORER_API_KEY: '',
   RAMPNETWORK_API_KEY: '',
 };
 
@@ -45,14 +44,8 @@ const envVars = {
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
     SDK_PROVIDER: 'https://api-qa-core.pillarproject.io',
-    NOTIFICATIONS_URL: 'https://api-qa-notifications.pillarproject.io',
-    INVESTMENTS_URL: 'https://api-qa-investments.pillarproject.io',
-    SYNTHETICS_URL: 'https://10lskb6zud.execute-api.us-east-2.amazonaws.com/qa',
-    SYNTHETICS_CONTRACT_ADDRESS: '0x47230564236C772Eaf98F82d9e5A1fAD2380aDf9',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
-    SOCKET_NOTIFICATIONS: 'wss://platform-websockets-qa.nonprod.pillarproject.io?walletId=',
     RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
-    RECOVERY_PORTAL_URL: 'https://recovery-qa.pillarproject.io',
     NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS: '0x506B0B2CF20FAA8f38a4E2B524EE43e1f4458Cc5',
     AAVE_SUBGRAPH_NAME: 'aave/protocol-multy-kovan-raw',

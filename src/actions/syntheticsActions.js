@@ -17,12 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
-import t from 'translations/translate';
-
-// components
-import Toast from 'components/Toast';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -33,55 +27,18 @@ import {
 
 // utils, services
 import { getAssetData, getAssetsAsList } from 'utils/assets';
-import syntheticsService from 'services/synthetics';
-import { parseNumber, reportLog } from 'utils/common';
+import { parseNumber } from 'utils/common';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { SyntheticAsset } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-
-export const initSyntheticsServiceAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { oAuthTokens: { data: { accessToken } } } = getState();
-    if (!accessToken) {
-      Toast.show({
-        message: t('toast.syntheticTransactionFailed'),
-        emoji: 'hushed',
-        supportLink: true,
-        autoClose: false,
-      });
-      return;
-    }
-    syntheticsService.init({ accessToken });
-  };
-};
-
-export const commitSyntheticsTransaction = (transactionId: string, paymentHash: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch(initSyntheticsServiceAction());
-    syntheticsService
-      .commitTransaction(transactionId, paymentHash)
-      .catch(() => {
-        reportLog('Failed to complete synthetic asset transaction', { transactionId, paymentHash });
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
-      });
-  };
-};
 
 export const fetchAvailableSyntheticAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_SYNTHETIC_ASSETS_FETCHING, payload: true });
-
-    dispatch(initSyntheticsServiceAction());
 
     const {
       paymentNetwork: { availableStake },
@@ -90,10 +47,6 @@ export const fetchAvailableSyntheticAssetsAction = () => {
 
     const accountAssets = accountAssetsSelector(getState());
     const assetsData = getAssetsAsList(accountAssets);
-
-    const result = await syntheticsService.getDataFromLiquidityPool().catch(() => []);
-    const syntheticAssets = get(result, 'output.liquidityPools', []);
-    const syntheticExchangeRates = get(result, 'output.rates', []);
 
     const stakedPLR = parseNumber(availableStake);
 
@@ -104,36 +57,6 @@ export const fetchAvailableSyntheticAssetsAction = () => {
       exchangeRate: 1,
     }];
 
-    const availableAssets: SyntheticAsset = syntheticAssets
-      .reduce((availableList, syntheticAsset) => {
-        const assetSymbol = get(syntheticAsset, 'token.symbol');
-        const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-        const syntheticBalanceInPool = Number(get(syntheticAsset, 'value', 0));
-        const assetExchangeRate = syntheticExchangeRates.find(({ from }) => from === assetSymbol);
-        if (!isEmpty(assetData) && !isEmpty(assetExchangeRate)) {
-          /**
-           * calculate available balance according to how much PLR user has staked
-           * and how much of synthetic asset is available in pool
-           * i. e. if user has staked more than available in pool then max available amount is what's in the pool
-           * otherwise max available amount is according toi how much user has staked
-           */
-          const { rate: exchangeRate } = assetExchangeRate;
-          const syntheticBalanceByStaked = stakedPLR / exchangeRate;
-          const availableBalance = syntheticBalanceInPool < syntheticBalanceByStaked
-            ? syntheticBalanceInPool
-            : syntheticBalanceByStaked;
-
-          availableList.push({
-            ...assetData,
-            availableBalance,
-            exchangeRate,
-          });
-        }
-        return availableList;
-      }, defaultAvailableSyntheticAssets)
-      .filter(({ exchangeRate = 0 }) => exchangeRate !== 0);
-
-
-    dispatch({ type: SET_AVAILABLE_SYNTHETIC_ASSETS, payload: availableAssets });
+    dispatch({ type: SET_AVAILABLE_SYNTHETIC_ASSETS, payload: defaultAvailableSyntheticAssets });
   };
 };

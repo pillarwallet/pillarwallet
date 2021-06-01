@@ -21,7 +21,6 @@ import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
 
@@ -41,18 +40,12 @@ import {
   HIDE_HOME_UPDATE_INDICATOR,
   BCX,
   COLLECTIBLE,
-  BADGE,
   FCM_DATA_TYPE,
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
-import {
-  CONNECTION_REQUESTED_EVENT,
-  COLLECTIBLE_EVENT,
-} from 'constants/socketConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
-import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
 // utils
@@ -61,7 +54,6 @@ import {
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
-import { reportErrorLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -93,44 +85,6 @@ export const fetchAllNotificationsAction = () => {
     dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAssetsBalancesAction());
-  };
-};
-
-export const subscribeToSocketEventsAction = () => {
-  return async (dispatch: Dispatch) => {
-    if (get(SOCKET(), 'socket.readyState') !== 1) return;
-
-    SOCKET().onMessage((response) => {
-      let data;
-      try {
-        data = JSON.parse(response.data.msg);
-      } catch (error) {
-        // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-        reportErrorLog('Platform WebSocket notification parse failed', { response, error });
-        return; // unable to parse data, do not proceed
-      }
-      if (data.type === COLLECTIBLE_EVENT) {
-        dispatch(fetchAllCollectiblesDataAction());
-      }
-      if (data.type === BCX) {
-        dispatch(checkForMissedAssetsAction());
-        dispatch(fetchTransactionsHistoryAction());
-        dispatch(fetchAssetsBalancesAction());
-      }
-      if (
-        data.type === CONNECTION_REQUESTED_EVENT ||
-        data.type === COLLECTIBLE_EVENT ||
-        data.type === BCX ||
-        data.type === BADGE
-      ) {
-        const notification = {
-          title: response.notification.title,
-          message: response.notification.body,
-        };
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-        dispatch(showHomeUpdateIndicatorAction());
-      }
-    });
   };
 };
 
@@ -188,7 +142,6 @@ export const subscribeToPushNotificationsAction = () => {
 
 export const startListeningNotificationsAction = () => {
   return (dispatch: Dispatch) => {
-    dispatch(subscribeToSocketEventsAction());
     dispatch(subscribeToPushNotificationsAction());
     dispatch(subscribeToEtherspotNotificationsAction());
   };
@@ -212,7 +165,6 @@ export const stopListeningNotificationsAction = () => {
 
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
-    await SOCKET().init();
     /*
     * TODO: Android initial notification and onOpened event are not working
     * seems like native lifecycle onIntent event is not fired
