@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -32,12 +32,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Toast from 'components/Toast';
 
 // constants
-import { defaultFiatCurrency, ETH, BTC, WBTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
-import { setDismissTransactionAction, getWbtcGatewayAddressAction } from 'actions/exchangeActions';
+import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // utils
@@ -50,7 +50,6 @@ import {
   getBalance,
 } from 'utils/assets';
 import { getOfferProviderLogo } from 'utils/exchange';
-import { showWbtcErrorToast } from 'services/wbtcCafe';
 import { isProdEnv } from 'utils/environment';
 import { isWethConvertedTx } from 'utils/uniswap';
 
@@ -64,7 +63,6 @@ import type {
 } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 // selectors
@@ -73,7 +71,6 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
-import WBTCCafeInfo from './WBTCCafeInfo';
 import ConfirmationTable from './ConfirmationTable';
 
 
@@ -93,7 +90,6 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  getWbtcGatewayAddress: (params: WBTCGatewayAddressParams) => void;
 };
 
 const MainWrapper = styled.View`
@@ -120,16 +116,9 @@ const ExchangeConfirmScreen = ({
   estimateTransaction,
   accountAssets,
   supportedAssets,
-  getWbtcGatewayAddress,
 }: Props) => {
-  const wbtcData: WBTCGatewayAddressParams = navigation.getParam('wbtcTxData');
-  const wbtcEstimationData: ?WBTCFeesWithRate = navigation.getParam('wbtcEstData');
-  const isWbtcCafe = !!wbtcData;
-  const [gatewayAddress, setGatewayAddress] = useState<string>('');
-  const [wbtcError, setWbtcError] = useState<boolean>(false);
-
   useEffect(() => {
-    if (!isWbtcCafe && !executingExchangeTransaction) navigation.goBack();
+    if (!executingExchangeTransaction) navigation.goBack();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [executingExchangeTransaction]);
 
@@ -178,18 +167,8 @@ const ExchangeConfirmScreen = ({
     });
   };
 
-  const fetchWbtcAddress = async () => {
-    const resp: WBTCGatewayAddressResponse = await getWbtcGatewayAddress(wbtcData);
-    if (resp?.result === 'success' && resp?.gatewayAddress) {
-      setGatewayAddress(resp?.gatewayAddress || '');
-    } else {
-      setWbtcError(true);
-      showWbtcErrorToast();
-    }
-  };
-
   useEffect(() => {
-    if (isWbtcCafe) { fetchWbtcAddress(); } else { fetchTransactionEstimate(); }
+    fetchTransactionEstimate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -233,10 +212,10 @@ const ExchangeConfirmScreen = ({
     }
   };
 
-  if (!isWbtcCafe && !executingExchangeTransaction) return null;
+  if (!executingExchangeTransaction) return null;
 
-  const fromAssetCode = isWbtcCafe ? BTC : fromAsset.code || fromAsset.symbol;
-  const toAssetCode = isWbtcCafe ? WBTC : toAsset.code || toAsset.symbol;
+  const fromAssetCode = fromAsset.code || fromAsset.symbol;
+  const toAssetCode = toAsset.code || toAsset.symbol;
 
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -256,11 +235,9 @@ const ExchangeConfirmScreen = ({
       balance: getBalance(balances, feeSymbol),
     });
 
-  const toQuantity = isWbtcCafe ? wbtcEstimationData?.estimate || 0 : receiveQuantity;
+  const formattedReceiveAmount = formatTokenAmount(receiveQuantity, toAssetCode);
 
-  const formattedReceiveAmount = formatTokenAmount(toQuantity, toAssetCode);
-
-  const receiveAmountInFiat = parseFloat(toQuantity) * getRate(rates, toAssetCode, fiatCurrency);
+  const receiveAmountInFiat = parseFloat(receiveQuantity) * getRate(rates, toAssetCode, fiatCurrency);
   const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);
 
   const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
@@ -276,17 +253,6 @@ const ExchangeConfirmScreen = ({
     />
   );
 
-  const getWbtcInfoComponent = () => (
-    <WBTCCafeInfo
-      extendedInfo
-      wbtcData={wbtcEstimationData}
-      amount={wbtcData.amount}
-      address={gatewayAddress}
-      error={wbtcError}
-      navigation={navigation}
-    />
-  );
-
   return (
     <ContainerWithHeader
       headerProps={{
@@ -298,7 +264,7 @@ const ExchangeConfirmScreen = ({
       <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
         <MainWrapper>
           <ExchangeScheme
-            fromValue={isWbtcCafe ? wbtcData.amount : payQuantity}
+            fromValue={payQuantity}
             fromAssetCode={fromAssetCode}
             toValue={formattedReceiveAmount}
             toValueInFiat={formattedReceiveAmountInFiat}
@@ -306,7 +272,7 @@ const ExchangeConfirmScreen = ({
             imageSource={providerLogo}
           />
           <Spacing h={36} />
-          {isWbtcCafe ? getWbtcInfoComponent() : getTable()}
+          {getTable()}
         </MainWrapper>
       </ScrollWrapper>
     </ContainerWithHeader>
@@ -344,7 +310,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
-  getWbtcGatewayAddress: (params) => dispatch(getWbtcGatewayAddressAction(params)),
   estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
 });
 

@@ -22,7 +22,6 @@ import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -113,13 +112,13 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
           <ModalContainer>
             <MediumText center medium>{t('relayerMigrationContent.modal.switch.title')}</MediumText>
             <Spacing h={18} />
-            {iconUrl &&
-            <Image
-              style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={{ uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` }}
-              resizeMode="contain"
-            />
-            }
+            {iconUrl && (
+              <Image
+                style={{ width: 64, height: 64, alignSelf: 'center' }}
+                source={{ uri: iconUrl }}
+                resizeMode="contain"
+              />
+            )}
             <Spacing h={20} />
             <BaseText medium>{t('relayerMigrationContent.modal.switch.paragraph')}</BaseText>
             <Spacing h={30} />

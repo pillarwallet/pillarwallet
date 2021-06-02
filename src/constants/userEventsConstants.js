@@ -30,5 +30,6 @@ export const WALLET_BACKUP_EVENT = 'WALLET_BACKUP_EVENT';
 export const WALLET_CREATED = 'Wallet created';
 export const KEY_WALLET = 'Key wallet';
 export const PILLAR_NETWORK = 'Pillar Network';
-export const SMART_WALLET_CREATED = 'Smart Wallet created';
+export const LEGACY_SMART_WALLET_CREATED = 'Smart Wallet created';
+export const ETHERSPOT_SMART_WALLET_CREATED = 'Etherspot Smart Wallet created';
 export const UNKNOWN_EVENT = 'Unknown event';

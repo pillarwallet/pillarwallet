@@ -137,66 +137,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               },
             ]
           }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "marginLeft": 8,
-                },
-                Object {},
-                Object {
-                  "marginRight": -10,
-                },
-              ]
-            }
-          >
-            <View
-              accessible={true}
-              focusable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "alignItems": "flex-start",
-                  "alignSelf": "center",
-                  "height": 36,
-                  "justifyContent": "center",
-                  "opacity": 1,
-                  "paddingBottom": 5,
-                  "paddingLeft": 10,
-                  "paddingRight": 10,
-                  "paddingTop": 5,
-                  "position": "relative",
-                  "width": 44,
-                }
-              }
-            >
-              <View
-                name="info-circle-inverse"
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 24,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    },
-                    Object {},
-                  ]
-                }
-              />
-            </View>
-          </View>
-        </View>
+        />
       </View>
     </View>
   </View>

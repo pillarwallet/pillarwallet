@@ -39,14 +39,12 @@ import Modal from 'components/Modal';
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
 import { spacing } from 'utils/variables';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
-import { addressesEqual } from 'utils/assets';
 import { isArchanovaAccount } from 'utils/accounts';
 
 // selectors
@@ -64,7 +62,6 @@ import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { Account } from 'models/Account';
 
 // local
@@ -84,7 +81,6 @@ type Props = {
   setPreferredGasToken: (token: string) => void,
   localisation: ?LocalisationOptions,
   navigation: NavigationScreenProp<*>,
-  devices: ConnectedDevice[],
   activeDeviceAddress: string,
   sessionLanguageCode: ?string,
   activeAccount: ?Account,
@@ -108,9 +104,6 @@ class AppSettings extends React.Component<Props, State> {
       isGasTokenSupported,
       setPreferredGasToken,
       localisation,
-      navigation,
-      devices,
-      activeDeviceAddress,
       sessionLanguageCode,
       activeAccount,
     } = this.props;
@@ -119,8 +112,6 @@ class AppSettings extends React.Component<Props, State> {
 
     const showRelayerMigration = isArchanovaAccountActive && !isGasTokenSupported;
 
-    const hasOtherDevicesLinked = !!devices.length
-      && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
     const showGasTokenOption = isArchanovaAccountActive
       && firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
 
@@ -157,15 +148,6 @@ class AppSettings extends React.Component<Props, State> {
         toggle: true,
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
-      },
-      {
-        key: 'linkedDevices',
-        title: t('settingsContent.settingsItem.linkedDevices.title'),
-        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
-        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
-        bulletedLabel: !hasOtherDevicesLinked && {
-          label: t('label.notSet'),
-        },
       },
       {
         key: 'analytics',
@@ -240,14 +222,12 @@ const mapStateToProps = ({
     },
   },
   smartWallet: { connectedAccount: { activeDeviceAddress } },
-  connectedDevices: { data: devices },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
   localisation,
   activeDeviceAddress,
-  devices,
   sessionLanguageCode,
 });
 

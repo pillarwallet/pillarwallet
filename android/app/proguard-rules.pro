@@ -16,10 +16,6 @@
 -keep class com.facebook.hermes.unicode.** { *; }
 -keep class com.facebook.jni.** { *; }
 
-# branch.io:
--dontwarn io.branch.**
--keep class com.google.android.gms.ads.identifier.** { *; }
-
 # signal:
 -keep class * { public private *; }
 

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
@@ -26,14 +25,10 @@ import { BigNumber } from 'bignumber.js';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
-  UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
   START_ASSETS_SEARCH,
   UPDATE_ASSETS_SEARCH_RESULT,
   RESET_ASSETS_SEARCH_RESULT,
-  SET_INITIAL_ASSETS,
-  FETCHING_INITIAL,
-  FETCH_INITIAL_FAILED,
   ETH,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
@@ -72,7 +67,7 @@ import {
 } from 'services/zapper';
 
 // utils
-import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
+import { transformBalancesToObject } from 'utils/assets';
 import { getSupportedChains } from 'utils/chains';
 import {
   parseTokenAmount,
@@ -96,7 +91,7 @@ import { catchTransactionError } from 'utils/wallet';
 import { sumBy } from 'utils/bigNumber';
 
 // selectors
-import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector } from 'selectors/assets';
 import {
   accountsSelector,
   supportedAssetsSelector,
@@ -108,7 +103,6 @@ import {
 import type { Asset, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
@@ -383,21 +377,18 @@ export const updateAccountWalletAssetsBalancesForChainAction = (
 };
 
 export const fetchAccountWalletBalancesAction = (account: Account) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
 
     const chains = getSupportedChains(account);
-    const accountAssets = getAssetsAsList(makeAccountEnabledAssetsSelector(accountId)(getState()));
     const supportedAssets = supportedAssetsSelector(getState());
 
     await Promise.all(chains.map(async (chain) => {
       let newBalances = [];
       try {
-        newBalances = isEtherspotAccount(account)
-          ? await etherspotService.getBalances(chain, walletAddress, accountAssets, supportedAssets)
-          : await api.fetchBalances({ address: walletAddress, assets: accountAssets });
+        newBalances = await etherspotService.getBalances(chain, walletAddress, supportedAssets);
       } catch (error) {
         reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
           accountId,
@@ -641,47 +632,6 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
   };
 };
 
-export const fetchInitialAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: user },
-      accounts: { data: accounts },
-    } = getState();
-
-    const walletId = user?.walletId;
-    if (!walletId) {
-      reportErrorLog('fetchInitialAssetsAction failed: no walletId', { user });
-      return;
-    }
-
-    dispatch({
-      type: UPDATE_ASSETS_STATE,
-      payload: FETCHING_INITIAL,
-    });
-
-    const initialAssets = await api.fetchInitialAssets(walletId);
-    if (isEmpty(initialAssets)) {
-      // TODO: add default initial assets if none set
-      dispatch({
-        type: UPDATE_ASSETS_STATE,
-        payload: FETCH_INITIAL_FAILED,
-      });
-      return;
-    }
-
-    const activeAccountId = getActiveAccountId(accounts);
-    dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: {
-        accountId: activeAccountId,
-        assets: initialAssets,
-      },
-    });
-
-    dispatch(fetchAssetsBalancesAction());
-  };
-};
-
 export const addMultipleAssetsAction = (assetsToAdd: Asset[]) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
@@ -749,40 +699,41 @@ export const addAssetAction = (asset: Asset) => {
   };
 };
 
+export const updateAssetsSearchResultAction = (assets: Asset[]) => ({
+  type: UPDATE_ASSETS_SEARCH_RESULT,
+  payload: assets,
+});
+
 export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      assets: { supportedAssets },
-      user: { data: user },
-    } = getState();
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { assets: { supportedAssets } } = getState();
     const search = query.toUpperCase();
 
-    const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
-      return (name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search)) && symbol !== BTC;
-    });
+    let matchingAssets = supportedAssets.filter(({
+      name,
+      symbol,
+    }) => name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search));
 
-    if (filteredAssets.length > 0) {
-      dispatch({
-        type: UPDATE_ASSETS_SEARCH_RESULT,
-        payload: filteredAssets,
-      });
-
-      return;
-    }
-
-    const walletId = user?.walletId;
-    if (!walletId) {
-      reportErrorLog('searchAssetsAction failed: no walletId', { user });
+    if (matchingAssets?.length > 0) {
+      dispatch(updateAssetsSearchResultAction(matchingAssets));
       return;
     }
 
     dispatch({ type: START_ASSETS_SEARCH });
 
-    const apiAssets = await api.assetsSearch(query, walletId);
-    dispatch({
-      type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: apiAssets,
-    });
+    const latestSupportedAssets = await etherspotService.getSupportedAssets();
+    if (!latestSupportedAssets) {
+      reportErrorLog('searchAssetsAction failed: no latestSupportedAssets', { query });
+      dispatch(updateAssetsSearchResultAction([]));
+      return;
+    }
+
+    matchingAssets = latestSupportedAssets.filter(({
+      name,
+      symbol,
+    }) => name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search));
+
+    dispatch(updateAssetsSearchResultAction(matchingAssets));
   };
 };
 
@@ -806,38 +757,14 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   return { id: accountId, ...updatedAccountAssets };
 };
 
-export const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]): Object => {
-  const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
-  const accOwnedErc20Assets = {};
-  if (addressErc20Tokens.length) {
-    addressErc20Tokens.forEach((token) => {
-      const tokenTicker = get(token, 'tokenInfo.symbol', '');
-      const supportedAsset = supportedAssets.find(asset => asset.symbol === tokenTicker);
-      if (supportedAsset && !accOwnedErc20Assets[tokenTicker]) {
-        accOwnedErc20Assets[tokenTicker] = supportedAsset;
-      }
-    });
-  }
-  return accOwnedErc20Assets;
-};
-
 export const loadSupportedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: user },
-      session: { data: { isOnline } },
-    } = getState();
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { session: { data: { isOnline } } } = getState();
 
     // nothing to do if offline
     if (!isOnline) return;
 
-    const walletId = user?.walletId;
-    if (!walletId) {
-      reportErrorLog('loadSupportedAssetsAction failed: no walletId', { user });
-      return;
-    }
-
-    const supportedAssets = await api.fetchSupportedAssets(walletId);
+    const supportedAssets = await etherspotService.getSupportedAssets();
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
@@ -852,32 +779,35 @@ export const loadSupportedAssetsAction = () => {
 
 // TODO: handle side chain balances
 export const checkForMissedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       assets: { data: accountsAssets },
     } = getState();
 
     await dispatch(loadSupportedAssetsAction());
-    const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
+    const supportedAssets = supportedAssetsSelector(getState());
 
     const accountUpdatedAssets = accounts
       .filter(isNotKeyBasedType)
-      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
+      .map((acc) => getSupportedTokens(supportedAssets, accountsAssets, acc))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled
-    const ownedAssetsByAccount = await Promise.all(
+    const ownedAssetsByAccounts = await Promise.all(
       accounts
         .filter(isNotKeyBasedType)
-        .map(async (acc) => {
-          const accountId = getAccountId(acc);
-          const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
+        .map(async (account) => {
+          const accountAddress = getAccountAddress(account);
+          const accountId = getAccountId(account);
+          // TODO: refactor whole checkForMissedAssetsAction
+          // $FlowFixMe: didn't refactor existing code, flow is messing up due obvious reasons
+          const ownedAssets = await etherspotService.getOwnedAssets(CHAIN.ETHEREUM, accountAddress, supportedAssets);
           return { id: accountId, ...ownedAssets };
         }),
     );
 
-    const allAccountAssets = ownedAssetsByAccount
+    const allAccountAssets = ownedAssetsByAccounts
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     const updatedAssets = Object.keys(accountUpdatedAssets)

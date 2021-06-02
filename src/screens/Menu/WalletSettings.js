@@ -33,11 +33,9 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 // constants
 import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  CHANGE_PIN_FLOW, MANAGE_CONNECTED_DEVICES, RECOVERY_PORTAL_SETUP_INTRO,
-  RECOVERY_PORTAL_SETUP_SIGN_UP,
+  CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -56,9 +54,6 @@ import type { Theme } from 'models/Theme';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // relative
 import { SettingsSection } from './SettingsSection';
@@ -85,7 +80,6 @@ type Props = {
   omitPinOnLogin?: boolean,
   backupStatus: BackupStatus,
   isArchanovaWalletActivated: boolean,
-  hasSeenRecoveryPortalIntro: boolean,
   theme: Theme,
 };
 
@@ -99,8 +93,6 @@ const showFaceIDFailedMessage = () => {
     autoClose: true,
   });
 };
-
-let isRecoveryPortalDisabled = false;
 
 class WalletSettings extends React.Component<Props, State> {
   state = {
@@ -117,7 +109,6 @@ class WalletSettings extends React.Component<Props, State> {
       this.setState({ supportedBiometryType });
     });
     this.retrieveWalletObject();
-    isRecoveryPortalDisabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED);
   }
 
   retrieveWalletObject = async () => {
@@ -142,20 +133,10 @@ class WalletSettings extends React.Component<Props, State> {
       useBiometrics,
       omitPinOnLogin,
       toggleOmitPinOnLogin,
-      isArchanovaWalletActivated,
-      hasSeenRecoveryPortalIntro,
     } = this.props;
     const { supportedBiometryType } = this.state;
 
-    const recoveryPortalSubtitle = isArchanovaWalletActivated
-      ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
-      : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
-
-    const recoveryPortalNavigationPath = hasSeenRecoveryPortalIntro
-      ? RECOVERY_PORTAL_SETUP_SIGN_UP
-      : RECOVERY_PORTAL_SETUP_INTRO;
-
-    const settings = [
+    return [
       {
         key: 'changePIN',
         title: t('settingsContent.settingsItem.changePIN.title'),
@@ -177,18 +158,6 @@ class WalletSettings extends React.Component<Props, State> {
         toggle: true,
       },
     ];
-
-    if (!isRecoveryPortalDisabled) {
-      settings.push({
-        key: 'recoveryPortal',
-        title: t('settingsContent.settingsItem.recoveryPortal.title'),
-        subtitle: recoveryPortalSubtitle,
-        disabled: !isArchanovaWalletActivated,
-        onPress: () => isArchanovaWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
-      });
-    }
-
-    return settings;
   };
 
   handleBiometricPress = async () => {
@@ -250,32 +219,6 @@ class WalletSettings extends React.Component<Props, State> {
     ];
   };
 
-  getGlobalSection = () => {
-    const { navigation, isArchanovaWalletActivated, hasSeenRecoveryPortalIntro } = this.props;
-    const recoveryPortalSubtitle = isArchanovaWalletActivated
-      ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
-      : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
-
-    const recoveryPortalNavigationPath = hasSeenRecoveryPortalIntro
-      ? RECOVERY_PORTAL_SETUP_SIGN_UP
-      : RECOVERY_PORTAL_SETUP_INTRO;
-    return [
-      {
-        key: 'linkedDevices',
-        title: t('settingsContent.settingsItem.linkedDevices.title'),
-        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
-        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
-      },
-      {
-        key: 'recoveryPortal',
-        title: t('settingsContent.settingsItem.recoveryPortal.title'),
-        subtitle: recoveryPortalSubtitle,
-        disabled: !isArchanovaWalletActivated,
-        onPress: () => isArchanovaWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
-      },
-    ];
-  };
-
   onPinValid = (pin, { mnemonic, privateKey }) => {
     this.setState({ pin, wallet: { mnemonic: mnemonic?.phrase, privateKey }, showPinModal: false });
   };
@@ -324,12 +267,11 @@ class WalletSettings extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { useBiometrics, omitPinOnLogin, hasSeenRecoveryPortalIntro } },
+  appSettings: { data: { useBiometrics, omitPinOnLogin } },
   wallet: { backupStatus },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
   omitPinOnLogin,
-  hasSeenRecoveryPortalIntro,
   backupStatus,
 });
 

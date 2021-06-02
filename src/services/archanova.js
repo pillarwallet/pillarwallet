@@ -39,14 +39,12 @@ import { ARCHANOVA_WALLET_DEPLOYMENT_ERRORS } from 'constants/archanovaConstants
 
 // utils
 import { addressesEqual } from 'utils/assets';
-import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // types
 import type { ConnectedArchanovaWalletAccount, ArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
-import type SDKWrapper from 'services/api';
-import type { GasToken, EthereumTransaction, TransactionPayload } from 'models/Transaction';
+import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
@@ -165,7 +163,7 @@ const parseEstimateError = (error: Error, logExtras: Object = {}) => {
   throw new Error(errorMessage);
 };
 
-class Archanova {
+export class ArchanovaService {
   sdk: Sdk = null;
   sdkInitialized: boolean;
 
@@ -233,17 +231,11 @@ class Archanova {
     return accounts;
   }
 
-  createAccount(username: ?string) {
-    if (!username) {
-      reportErrorLog('Unable to create Smart Account: no username', { username });
-      return null;
-    }
-
-    const ensName = normalizeForEns(username);
+  createAccount() {
     return this.getSdk()
-      .createAccount(ensName)
+      .createAccount()
       .catch((e) => {
-        reportErrorLog('Unable to create Smart Account', { username, e });
+        reportErrorLog('Unable to create Smart Account', { e });
         return null;
       });
   }
@@ -264,31 +256,6 @@ class Archanova {
 
   getConnectedAccountFromSdkState() {
     return this.getSdk()?.state?.account;
-  }
-
-  async syncSmartAccountsWithBackend(
-    api: SDKWrapper,
-    smartAccounts: ArchanovaWalletAccount[],
-    walletId: string,
-    privateKey: string,
-    fcmToken: ?string,
-  ) {
-    const backendAccounts = await api.listAccounts(walletId);
-    const registerOnBackendPromises = smartAccounts.map(async account => {
-      const backendAccount = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
-      if (!backendAccount) {
-        return api.registerSmartWallet({
-          walletId,
-          privateKey,
-          ethAddress: account.address,
-          fcmToken: fcmToken || '',
-        });
-      }
-      return Promise.resolve();
-    });
-    return Promise
-      .all(registerOnBackendPromises)
-      .catch(e => reportErrorLog('Unable to sync smart wallets', { e }));
   }
 
   async deployAccount(
@@ -575,20 +542,6 @@ class Archanova {
     return this.getSdk().getConnectedAccountTransaction(hash).catch(() => null);
   }
 
-  async setAccountEnsName(username: string) {
-    if (!this.sdkInitialized) return null;
-
-    const ensName = normalizeForEns(username);
-    const estimated = await this.getSdk()
-      .estimateSetAccountEnsName(ensName)
-      .catch(e => reportErrorLog('Unable to estimate ENS update transaction', { e, username, ensName }));
-
-    if (!estimated) return null;
-    return this.getSdk()
-      .setAccountEnsName(estimated)
-      .catch(e => reportErrorLog('Unable to set ENS name for user', { e, username, ensName }));
-  }
-
   switchToGasTokenRelayer() {
     return this.getSdk().switchToGasTokenRelayer().catch(() => null);
   }
@@ -626,5 +579,5 @@ class Archanova {
   }
 }
 
-const archanovaInstance = new Archanova();
+const archanovaInstance = new ArchanovaService();
 export default archanovaInstance;

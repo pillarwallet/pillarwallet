@@ -11,8 +11,6 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
-import io.branch.rnbranch.RNBranchModule;
-
 public class MainActivity extends ReactActivity {
 
     @Override
@@ -39,19 +37,5 @@ public class MainActivity extends ReactActivity {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (BuildConfig.DEBUG) RNBranchModule.setDebug();
-        RNBranchModule.initSession(getIntent().getData(), this);
-    }
-
-    // Needed for Branch.io
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
     }
 }

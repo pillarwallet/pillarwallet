@@ -34,7 +34,6 @@ import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
-import { initialState as referralsState } from 'reducers/referralsReducer';
 import { initialState as sessionState } from 'reducers/sessionReducer';
 
 
@@ -46,7 +45,6 @@ const initialStore = mockStore({
   history: historyState,
   ensRegistry: ensRegistryState,
   smartWallet: smartWalletState,
-  referrals: referralsState,
   session: sessionState,
 });
 
