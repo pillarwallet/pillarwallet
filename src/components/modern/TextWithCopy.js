@@ -40,6 +40,7 @@ type Props = {|
   textToCopy?: string,
   style?: ViewStyleProp,
   iconColor?: string,
+  ensCopy?: boolean,
 |};
 
 const TextWithCopy = ({
@@ -47,6 +48,7 @@ const TextWithCopy = ({
   textToCopy,
   style,
   iconColor,
+  ensCopy,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -54,12 +56,13 @@ const TextWithCopy = ({
     if (!textToCopy) return;
 
     Clipboard.setString(textToCopy);
-    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+    const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
+    Toast.show({ message, emoji: 'ok_hand' });
   };
 
   return (
     <TouchableContainer onPress={copyToClipboard} disabled={!textToCopy} hitSlop={hitSlop20} style={style}>
-      {typeof children === 'string' ? <Text>{children}</Text> : children}
+      {typeof children === 'string' ? <Text style={style}>{children}</Text> : children}
       {!!textToCopy && <CopyIcon name="copy" color={iconColor} width={18} height={18} />}
     </TouchableContainer>
   );
