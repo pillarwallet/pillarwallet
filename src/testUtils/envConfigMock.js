@@ -43,7 +43,6 @@ const envVars = {
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
-    SDK_PROVIDER: 'https://api-qa-core.pillarproject.io',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
     RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
     NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',

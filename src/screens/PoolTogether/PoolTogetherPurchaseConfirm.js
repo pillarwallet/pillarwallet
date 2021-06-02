@@ -23,7 +23,6 @@ import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 
@@ -156,7 +155,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 
     const asset = supportedAssets.find(({ symbol }) => poolToken === symbol);
     const iconUrl = asset?.iconUrl;
-    const assetIcon = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : null;
 
     const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
 
@@ -178,7 +176,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
         >
           <ContentWrapper>
             <Center>
-              <TokenImage source={{ uri: assetIcon }} />
+              <TokenImage source={{ uri: iconUrl }} />
               <Spacing h={16} />
               <BaseText regular>{t('poolTogetherContent.label.youArePurchasing')}</BaseText>
               <Spacing h={16} />

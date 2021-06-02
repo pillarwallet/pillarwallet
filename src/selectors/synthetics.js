@@ -19,7 +19,6 @@
 */
 
 import { createSelector } from 'reselect';
-import { getEnv } from 'configs/envConfig';
 
 import { CHAIN } from 'constants/chainConstants';
 
@@ -42,7 +41,7 @@ export const activeSyntheticAssetsSelector = createSelector(
       return {
         ...asset,
         token: asset.symbol,
-        imageUrl: asset.iconUrl ? `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` : '',
+        imageUrl: asset.iconUrl,
         contractAddress: asset.address,
         balance: {
           syntheticBalance: formatTokenAmount(asset.availableBalance, asset.symbol),

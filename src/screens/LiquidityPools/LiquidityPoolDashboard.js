@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -56,7 +55,7 @@ import {
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
-import { images, getImageUrl } from 'utils/images';
+import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -250,7 +249,7 @@ const LiquidityPoolDashboard = ({
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
       value: t('tokenValue', { value: formatBigAmount(poolStats.tokensLiquidity[tokenSymbol]), token: tokenSymbol }),
-      iconUrl: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3`,
+      iconUrl: tokenData.iconUrl,
     });
   });
 
@@ -258,7 +257,7 @@ const LiquidityPoolDashboard = ({
     stats.push({
       title: t('liquidityPoolsContent.label.weeklyRewards'),
       value: t('tokenValue', { value: formatBigAmount(pool.rewards[0].amount), token: rewardAssetData.symbol }),
-      iconUrl: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3`,
+      iconUrl: rewardAssetData.iconUrl,
     });
   }
 
@@ -281,7 +280,7 @@ const LiquidityPoolDashboard = ({
       >
         <MainContainter>
           <AssetIcon
-            source={{ uri: getImageUrl(pool.iconUrl, 3) }}
+            source={{ uri: pool.iconUrl }}
             defaultSource={genericToken}
             fallback
           />
@@ -333,7 +332,7 @@ const LiquidityPoolDashboard = ({
               <Card>
                 <StretchedRow>
                   <Row>
-                    <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
+                    <CardIcon source={{ uri: pool.iconUrl }} />
                     <Spacing w={12} />
                     <MediumText fontSize={20}>{formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
                       <MediumText secondary regular>{pool.symbol}</MediumText>
@@ -379,7 +378,7 @@ const LiquidityPoolDashboard = ({
               <Spacing h={6} />
               <Card>
                 <Row>
-                  <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3` }} />
+                  <CardIcon source={{ uri: rewardAssetData.iconUrl }} />
                   <Spacing w={12} />
                   <View>
                     <BaseText fontSize={20}>
@@ -431,7 +430,7 @@ const LiquidityPoolDashboard = ({
                   <StretchedRow>
                     <Row>
                       <AllocationIcon
-                        source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }}
+                        source={{ uri: tokenData.iconUrl }}
                         fallbackSource={genericToken}
                       />
                       <Spacing w={8} />

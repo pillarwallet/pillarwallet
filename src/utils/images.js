@@ -21,7 +21,6 @@
 
 import { useTheme } from 'styled-components/native';
 import MD5 from 'crypto-js/md5';
-import { getEnv } from 'configs/envConfig';
 import type { Theme } from 'models/Theme';
 import { getThemeType } from './themes';
 
@@ -183,11 +182,6 @@ export const staticImages = {
   synthetixDarkMonochrome,
   exchangeDefaultLogoDark,
   exchangeDefaultLogoLight,
-};
-
-export const getImageUrl = (url: ?string, size: number) => {
-  if (!url) return undefined;
-  return `${getEnv().SDK_PROVIDER}/${url}?size=${size}`;
 };
 
 export const isSvgImage = (uri: ?string) => {

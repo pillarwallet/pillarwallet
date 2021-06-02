@@ -26,7 +26,6 @@ import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
-import { getEnv } from 'configs/envConfig';
 import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -95,16 +94,13 @@ const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): As
     asset => !addressesInclude(blockedTokenAddresses, asset.address),
   );
 
-  return allowedAssets.map(({ iconUrl, ...rest }) => {
-    const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    return {
-      ...rest,
-      iconUrl,
-      icon: iconUrl,
-      imageUrl,
-      chain: CHAIN.ETHEREUM,
-    };
-  });
+  return allowedAssets.map(({ iconUrl, ...rest }) => ({
+    ...rest,
+    iconUrl,
+    icon: iconUrl,
+    imageUrl: iconUrl,
+    chain: CHAIN.ETHEREUM,
+  }));
 };
 
 

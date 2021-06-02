@@ -45,7 +45,6 @@ const Value = styled(MediumText)`
 
 const SystemInfoModal = () => {
   const {
-    SDK_PROVIDER,
     TX_DETAILS_URL,
     NETWORK_PROVIDER,
     COLLECTIBLES_NETWORK,
@@ -63,10 +62,6 @@ const SystemInfoModal = () => {
         <LabeledRow>
           <Label>BUILD_NUMBER</Label>
           <Value>{BUILD_NUMBER}</Value>
-        </LabeledRow>
-        <LabeledRow>
-          <Label>SDK_PROVIDER</Label>
-          <Value>{SDK_PROVIDER}</Value>
         </LabeledRow>
         <LabeledRow>
           <Label>TX_DETAILS_URL</Label>
