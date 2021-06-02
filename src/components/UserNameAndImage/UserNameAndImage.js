@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -54,23 +53,19 @@ const UserNameAndImage = ({ user }: Props) => {
   const accountCount = useSmartWalletAccounts().length;
 
   return (
-    <Wrapper>
+    <Wrapper onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
       <ProfileImage userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
-      {accountCount > 1 && (
-        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
-          <Icon name="select" color={colors.basic020} />
-        </TouchableOpacity>
-      )}
+      {accountCount > 1 && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
   );
 };
 
 export default UserNameAndImage;
 
-const Wrapper = styled.View`
+const Wrapper = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
