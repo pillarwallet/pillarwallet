@@ -202,29 +202,38 @@ export class EtherspotService {
 
     const nativeSymbol = nativeSymbolPerChain[chain];
 
-    return accountBalances.items.reduce((positiveBalances, { balance, token }) => {
-      // `token === null` means it's chain native token
-      const asset = token === null
-        ? supportedAssets.find(({ symbol }) => symbol === nativeSymbol)
-        : supportedAssets.find(({ address }) => addressesEqual(address, token));
+    return accountBalances.items.reduce((positiveBalances, asset) => {
+      const { balance, token } = asset;
 
-      if (!asset) {
-        reportErrorLog('EtherspotService getBalances asset mapping failed', { chain, token });
+      const supportedAsset = supportedAssets.find(({
+        symbol: supportedSymbol,
+        address: supportedAddress,
+      }) => {
+        // `token === null` means it's chain native token
+        if (token === null) return supportedSymbol === nativeSymbol;
+        return addressesEqual(supportedAddress, token);
+      });
+
+      if (!supportedAsset) {
+        reportErrorLog('EtherspotService getBalances asset mapping failed', {
+          chain,
+          token,
+        });
         return positiveBalances;
       }
 
-      const positiveBalance = EthersUtils.formatUnits(balance, asset.decimals);
-      if (!BigNumber(positiveBalance ?? 0).isZero()) {
-        // no need to return zero balance asset
+      const { decimals, symbol } = supportedAsset;
+
+      const positiveBalance = EthersUtils.formatUnits(balance, decimals);
+
+      // no need to return zero balance asset
+      if (BigNumber(positiveBalance ?? 0).isZero()) {
         return positiveBalances;
       }
 
       return [
         ...positiveBalances,
-        {
-          symbol: asset.symbol,
-          balance: positiveBalance,
-        },
+        { symbol, balance: positiveBalance },
       ];
     }, []);
   }
@@ -416,13 +425,14 @@ export class EtherspotService {
 
   async getSupportedAssets(): Promise<?Asset[]> {
     try {
-      const tokens = await this.sdk.getTokenListTokens();
+      // eslint-disable-next-line i18next/no-literal-string
+      const tokens = await this.sdk.getTokenListTokens({ name: 'CoinGeckoTokens' });
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;
       }
 
-      return tokens.map(({
+      const mappedAssets = tokens.map(({
         address,
         name,
         symbol,
@@ -436,6 +446,23 @@ export class EtherspotService {
         iconUrl: logoURI,
         iconMonoUrl: logoURI,
       }));
+
+      // add ETH if not within tokens list (most of the time since it's not a token)
+      const mappedAssetsHaveEth = mappedAssets.some(({ symbol }) => symbol === ETH);
+      if (!mappedAssetsHaveEth) {
+        // eslint-disable-next-line i18next/no-literal-string
+        const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
+        mappedAssets.push({
+          address: EthersConstants.AddressZero,
+          name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
+          symbol: ETH,
+          decimals: 18,
+          iconUrl,
+          iconMonoUrl: iconUrl,
+        });
+      }
+
+      return mappedAssets;
     } catch (error) {
       reportErrorLog('EtherspotService getSupportedAssets failed', { error });
       return null;
