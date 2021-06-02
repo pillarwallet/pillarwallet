@@ -350,7 +350,6 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
   // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
   const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
 
-  console.log('GET EXCHNAGE RATES', assetSymbols);
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assets);
