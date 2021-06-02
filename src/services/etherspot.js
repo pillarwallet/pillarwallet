@@ -426,7 +426,7 @@ export class EtherspotService {
   async getSupportedAssets(): Promise<?Asset[]> {
     try {
       // eslint-disable-next-line i18next/no-literal-string
-      const tokens = await this.sdk.getTokenListTokens({ name: 'CoinGeckoTokens' });
+      const tokens = await this.sdk.getTokenListTokens();
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;
