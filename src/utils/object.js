@@ -61,8 +61,6 @@ export function mapRecordValues<Value, Target>(
   return result;
 }
 
-
-
 /**
  * Returns a copy of the object but without any `undefined` or `null` properties.
  */
