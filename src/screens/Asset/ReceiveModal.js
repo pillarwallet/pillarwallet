@@ -25,9 +25,10 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
+import { useNavigation } from 'react-navigation-hooks';
 
 // components
-import { BaseText } from 'components/Typography';
+import Text from 'components/modern/Text';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import QRCodeWithTheme from 'components/QRCode';
@@ -36,16 +37,22 @@ import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
-import { spacing, fontStyles, baseColors } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getAccountEnsName } from 'utils/accounts';
+import { getThemeColors } from 'utils/themes';
 
 // models and types
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
+import type { Theme } from 'models/Theme';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
+
+import {
+  ETHERSPOT_DEPLOYMENT_INTERJECTION,
+} from 'constants/navigationConstants';
 
 type StateProps = {|
   user: User,
@@ -61,6 +68,7 @@ type OwnProps = {|
 type Props = {|
   ...StateProps,
   ...OwnProps,
+  theme: Theme,
 |};
 
 const handleCopyToClipboard = (addressName: string) => {
@@ -73,10 +81,14 @@ const ReceiveModal = ({
   address,
   onModalHide,
   user,
+  theme,
 }: Props) => {
   const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
+
+  const colors = getThemeColors(theme);
+  const navigation = useNavigation();
 
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -105,26 +117,33 @@ const ReceiveModal = ({
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
           {!!ensName && (
-            <TextWithCopy textToCopy={ensName} ensCopy iconColor={baseColors.dodgerBlue}>
+            <TextWithCopy textToCopy={ensName} toastText={t('toast.ensNameCopiedToClipboard')} iconColor={colors.link}>
               {ensName}
             </TextWithCopy>
           )}
           {ensName ? (
             <WalletAddress>{address}</WalletAddress>
           ) : (
-            <WalletAddressWithCopy textToCopy={address} iconColor={baseColors.dodgerBlue}>
+            <TextWithCopy
+              toastText={t('toast.addressCopiedToClipboard')}
+              textToCopy={address}
+              textStyle={{ color: colors.basic030 }}
+              iconColor={colors.link}
+            >
               {address}
-            </WalletAddressWithCopy>
+            </TextWithCopy>
           )}
         </InfoView>
-        <QRCodeWrapper>{!!address && <QRCodeWithTheme value={address} size={104} />}</QRCodeWrapper>
+        {!!address && <QRCodeWrapper><QRCodeWithTheme value={address} size={104} /></QRCodeWrapper>}
         <WarningText center small>
           {t('paragraph.cautionMessage', {
-            ethereum: t('chains.ethereum'),
+            chain: t('chains.ethereum'),
             mediumText: true,
-            color: baseColors.desaturatedDarkBlue,
+            color: colors.recieveModalWarningText,
           })}{' '}
-          <BaseText style={{ color: baseColors.dodgerBlue }}>{t('paragraph.withCaution')}</BaseText>
+          <Text color={colors.link} onPress={() => navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION)}>
+            {t('paragraph.withCaution')}
+          </Text>
         </WarningText>
         <CopyButton>
           <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
@@ -166,16 +185,10 @@ const QRCodeWrapper = styled.View`
   margin: ${spacing.largePlus}px;
 `;
 
-const WalletAddress = styled(BaseText)`
+const WalletAddress = styled(Text)`
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic030};
   margin: ${spacing.mediumLarge}px;
-  text-align: center;
-`;
-
-const WalletAddressWithCopy = styled(TextWithCopy)`
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
   text-align: center;
 `;
 
@@ -204,7 +217,7 @@ const ImageWrapper = styled.View`
   justify-content: center;
 `;
 
-const WarningText = styled(BaseText)`
+const WarningText = styled(Text)`
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic030};
   margin-top: ${spacing.medium}px;
