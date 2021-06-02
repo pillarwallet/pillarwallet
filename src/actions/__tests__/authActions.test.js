@@ -112,6 +112,7 @@ describe('Auth actions', () => {
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
 
@@ -128,8 +129,6 @@ describe('Auth actions', () => {
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
-
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 
     const pin = '123456';

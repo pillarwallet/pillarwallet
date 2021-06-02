@@ -107,12 +107,12 @@ export const connectEtherspotAccountAction = (accountId: string) => {
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      session: { data: { isOnline } },
+      session: { data: { isOnline, fcmToken } },
     } = getState();
 
     if (!isOnline) return; // nothing to do
 
-    await etherspotService.init(privateKey);
+    await etherspotService.init(privateKey, fcmToken);
 
     const accounts = accountsSelector(getState());
     const etherspotAccount = findFirstEtherspotAccount(accounts);

@@ -72,8 +72,7 @@ export class EtherspotService {
   instances: { [network: string]: EtherspotSdk } = {};
   supportedNetworks: Array<string> = [];
 
-  async init(privateKey?: string): Promise<void> {
-    const etherspotComputeContractPromises = [];
+  async init(privateKey?: string, fcmToken: ?string = null): Promise<void> {
     const isMainnet = isProdEnv();
 
     /**
@@ -96,19 +95,28 @@ export class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    this.supportedNetworks.forEach((networkName) => {
+    await Promise.all(this.supportedNetworks.map(async (networkName) => {
       const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
-      // Schedule exection of computeContractAccount's
-      etherspotComputeContractPromises.push(this.instances[networkName].computeContractAccount({ sync: true }));
-    });
+      // FCM only for mainnet, session creation should happen before computing contract account
+      if (fcmToken && networkName === primaryNetworkName) {
+        try {
+          await this.instances[networkName].createSession({ fcmToken });
+        } catch (error) {
+          reportErrorLog('EtherspotService network init failed at createSession', { networkName, error });
+        }
+      }
+
+      try {
+        await this.instances[networkName].computeContractAccount({ sync: true });
+      } catch (error) {
+        reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
+      }
+    }));
 
     // Assign the primary instance of the default networkName to `sdk`
     this.sdk = this.instances[primaryNetworkName];
-
-    // Compute contract accounts. The result will always be the same.
-    await Promise.all(etherspotComputeContractPromises);
   }
 
   subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {

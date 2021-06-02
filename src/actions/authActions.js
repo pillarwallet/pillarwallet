@@ -115,7 +115,6 @@ export const updateFcmTokenAction = () => {
     if (!fcmToken) return;
 
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-    // TODO: update Etherspot session with FCM token
   };
 };
 
@@ -208,6 +207,7 @@ export const loginAction = (
       }
 
       // init Etherspot SDK
+      await dispatch(updateFcmTokenAction());
       await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
       /**
@@ -244,8 +244,6 @@ export const loginAction = (
 
       // user is registered
       if (isOnline) {
-        // update FCM
-        dispatch(updateFcmTokenAction());
         dispatch(fetchTransactionsHistoryAction());
         firebaseCrashlytics.setUserId(user.username);
       }
