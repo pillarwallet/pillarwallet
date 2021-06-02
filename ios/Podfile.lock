@@ -154,10 +154,10 @@ PODS:
   - libwebp/mux (1.2.0):
     - libwebp/demux
   - libwebp/webp (1.2.0)
-  - lottie-ios (3.1.3)
-  - lottie-react-native (3.4.0):
-    - lottie-ios (~> 3.1.3)
-    - React
+  - lottie-ios (3.1.8)
+  - lottie-react-native (4.0.2):
+    - lottie-ios (~> 3.1.8)
+    - React-Core
   - nanopb (1.30905.0):
     - nanopb/decode (= 1.30905.0)
     - nanopb/encode (= 1.30905.0)
@@ -170,7 +170,7 @@ PODS:
   - Permission-PhotoLibrary (2.1.5):
     - RNPermissions
   - PromisesObjC (1.2.12)
-  - Protobuf (3.15.8)
+  - Protobuf (3.17.0)
   - QBImagePickerController (3.4.0)
   - RCTRequired (0.63.4)
   - RCTTypeSafety (0.63.4):
@@ -845,14 +845,14 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   instabug-reactnative: b7dc930d9532b5dd4a70a679751e12e0b3c803e6
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
-  lottie-ios: 841bf559abaded5aa81796acb770db2a814fb452
-  lottie-react-native: a664f59f1f298c2696dd0ae07b15cbdfc433cb02
+  lottie-ios: 2e935fa7fb8271f80ec6f18ecced5a2a3e2dce45
+  lottie-react-native: 4dff8fe8d10ddef9e7880e770080f4a56121397e
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   Permission-Camera: afad27bf90337684d4a86f3825112d648c8c4d3b
   Permission-FaceID: fbdeb41087f35887f0cade55396007fadee3a234
   Permission-PhotoLibrary: 4d2eff62c8f4b8a27bcf045c0e36f5047efbbf20
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  Protobuf: adb85cd18a15bd1a777c158af9fd6e612a0e6d69
+  Protobuf: 7327d4444215b5f18e560a97f879ff5503c4581c
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
   RCTTypeSafety: 8c9c544ecbf20337d069e4ae7fd9a377aadf504b
