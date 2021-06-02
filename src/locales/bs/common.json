@@ -309,8 +309,8 @@
     "privateKeyRevealedPurpose": "Molim korisite ovaj privatni ključ kako bi obnovili svoj račun.",
     "doNotShareBackup": "Držite ih sigurnim jer je to jedini način za obnovu računa. Nemojte email-at ga ili screenshot-at.",
     "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak.",
-    "cautionMessage": "Svi lanci koriste jednu adresu novčanika.\n Primite <0>{{ethereum}}</0> imovina",
-    "withCaution": "s oprezom"
+    "cautionMessage": "Svi lanci koriste jednu adresu novčanika.\nPrimite <0>{{chain}}</0> imovina",
+    "withCaution": "s oprezom."
   },
 
   "insight": {

@@ -383,8 +383,8 @@
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
     "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
-    "cautionMessage": "All chains use single wallet address.\n Receive <0>{{ethereum}}</0> assets",
-    "withCaution": "with caution"
+    "cautionMessage": "All chains use single wallet address.\nReceive <0>{{chain}}</0> assets",
+    "withCaution": "with caution."
   },
 
   "insight": {
