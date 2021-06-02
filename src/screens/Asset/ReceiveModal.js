@@ -63,10 +63,9 @@ type Props = {|
   ...OwnProps,
 |};
 
-const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
-  Clipboard.setString(addressOrEnsName);
-  const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
-  Toast.show({ message, emoji: 'ok_hand' });
+const handleCopyToClipboard = (addressName: string) => {
+  Clipboard.setString(addressName);
+  Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
 };
 
 const ReceiveModal = ({
@@ -106,18 +105,24 @@ const ReceiveModal = ({
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
           {!!ensName && (
-            <TextWithCopy textToCopy={ensName} iconColor="#007aff">
+            <TextWithCopy textToCopy={ensName} ensCopy iconColor={baseColors.dodgerBlue}>
               {ensName}
             </TextWithCopy>
           )}
-          <WalletAddress>{address}</WalletAddress>
+          {ensName ? (
+            <WalletAddress>{address}</WalletAddress>
+          ) : (
+            <WalletAddressWithCopy textToCopy={address} iconColor={baseColors.dodgerBlue}>
+              {address}
+            </WalletAddressWithCopy>
+          )}
         </InfoView>
         <QRCodeWrapper>{!!address && <QRCodeWithTheme value={address} size={104} />}</QRCodeWrapper>
         <WarningText center small>
           {t('paragraph.cautionMessage', {
             ethereum: t('chains.ethereum'),
             mediumText: true,
-            color: '#62688f',
+            color: baseColors.desaturatedDarkBlue,
           })}{' '}
           <BaseText style={{ color: baseColors.dodgerBlue }}>{t('paragraph.withCaution')}</BaseText>
         </WarningText>
@@ -165,6 +170,12 @@ const WalletAddress = styled(BaseText)`
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic030};
   margin: ${spacing.mediumLarge}px;
+  text-align: center;
+`;
+
+const WalletAddressWithCopy = styled(TextWithCopy)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
   text-align: center;
 `;
 
