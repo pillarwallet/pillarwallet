@@ -448,7 +448,8 @@ export class EtherspotService {
       }));
 
       // add ETH if not within tokens list (most of the time since it's not a token)
-      if (!mappedAssets.some(({ symbol }) => symbol === ETH)) {
+      const mappedAssetsHaveEth = mappedAssets.some(({ symbol }) => symbol === ETH);
+      if (!mappedAssetsHaveEth) {
         // eslint-disable-next-line i18next/no-literal-string
         const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
         mappedAssets.push({
