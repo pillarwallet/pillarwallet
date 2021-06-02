@@ -37,7 +37,6 @@ import {
   RESET_ARCHANOVA_WALLET_DEPLOYMENT,
   SET_CHECKING_ARCHANOVA_SESSION,
   SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
-  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   SET_ARCHANOVA_WALLET_ACCOUNTS,
   SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
   SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
@@ -52,7 +51,7 @@ import {
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
   START_ARCHANOVA_WALLET_DEPLOYMENT,
 } from 'constants/archanovaConstants';
-import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
   ADD_TRANSACTION,
@@ -78,17 +77,18 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
-import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { SABLIER_CANCEL_STREAM, SABLIER_WITHDRAW } from 'constants/sablierConstants';
+import { initialAssets } from 'fixtures/assets';
+import { CHAIN } from 'constants/chainConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
 import archanovaService, { formatEstimated, parseEstimatePayload } from 'services/archanova';
-import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import aaveService from 'services/aave';
+import etherspotService from 'services/etherspot';
 
 // selectors
 import { accountAssetsSelector, archanovaAccountAssetsSelector } from 'selectors/assets';
@@ -96,6 +96,7 @@ import {
   accountsSelector,
   activeAccountAddressSelector,
   activeAccountIdSelector,
+  supportedAssetsSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -110,8 +111,6 @@ import type {
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionStatus } from 'models/Transaction';
-import type { ConnectedDevice } from 'models/ConnectedDevice';
-import type SDKWrapper from 'services/api';
 
 // utils
 import {
@@ -120,14 +119,12 @@ import {
   updateHistoryRecord,
 } from 'utils/history';
 import {
-  findAccountById,
   findFirstArchanovaAccount,
   getAccountAddress,
   getAccountId,
   getActiveAccount,
   getActiveAccountId,
   isArchanovaAccount,
-  normalizeForEns,
 } from 'utils/accounts';
 import {
   buildArchanovaTransactionEstimate,
@@ -143,6 +140,7 @@ import {
   getAssetsAsList,
   getBalance,
   getPPNTokenAddress,
+  transformAssetsToObject,
 } from 'utils/assets';
 import {
   formatMoney,
@@ -167,17 +165,13 @@ import {
   updateAccountExtraIfNeededAction,
 } from './accountsActions';
 import { saveDbAction } from './dbActions';
-import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
+import { fetchAssetsBalancesAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
   afterHistoryUpdatedAction,
   fetchTransactionsHistoryAction,
   insertTransactionAction,
 } from './historyActions';
-import {
-  completeConnectedDeviceRemoveAction,
-  setConnectedDevicesAction,
-} from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
@@ -189,8 +183,6 @@ import {
   setTransactionsEstimateFeeAction,
 } from './transactionEstimateActions';
 
-
-const storage = Storage.getInstance('db');
 
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
   const syntheticsExchangeType = get(sdkConstants, 'AccountPaymentTypes.SyntheticsExchange');
@@ -206,69 +198,45 @@ const notifySmartWalletNotInitialized = () => {
   });
 };
 
-const mapToConnectedDevices = (
-  smartWalletDevices: ArchanovaWalletAccountDevice[],
-): ConnectedDevice[] => smartWalletDevices
-  // extensions are SDK internal device types which should not be managed manually
-  .filter(({ type }) => type !== sdkConstants.AccountDeviceTypes.Extension)
-  .map(({
-    device: { address },
-    updatedAt,
-  }: ArchanovaWalletAccountDevice) => ({
-    category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
-    address,
-    updatedAt,
-  }));
-
 export const loadSmartWalletAccountsAction = (privateKey?: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
 
-    const { user = {} } = await storage.get('user');
-    const { session: { data: session } } = getState();
+    const { session: { data: { isOnline } } } = getState();
 
-    const smartAccounts = await archanovaService.getAccounts();
-    if (!smartAccounts.length && privateKey) {
-      const newSmartAccount = await archanovaService.createAccount(user.username);
-      if (newSmartAccount) smartAccounts.push(newSmartAccount);
+    if (!isOnline) return;
+
+    let archanovaAccounts = await archanovaService.getAccounts();
+    if (!archanovaAccounts?.length && privateKey) {
+      const newArchanovaAccount = await archanovaService.createAccount();
+      archanovaAccounts = [newArchanovaAccount];
     }
+
+    if (!archanovaAccounts?.length) {
+      reportErrorLog('loadSmartWalletAccountsAction failed: no archanovaAccounts');
+      return;
+    }
+
     dispatch({
       type: SET_ARCHANOVA_WALLET_ACCOUNTS,
-      payload: smartAccounts,
+      payload: archanovaAccounts,
     });
-    await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
 
-    // register missed accounts on the backend
-    if (privateKey) {
-      await archanovaService.syncSmartAccountsWithBackend(
-        api,
-        smartAccounts,
-        user.walletId,
-        privateKey,
-        session?.fcmToken,
-      );
-    }
-    const backendAccounts = await api.listAccounts(user.walletId);
+    await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
 
-    const accountsPromises = smartAccounts.map((account) => dispatch(addAccountAction(
+    archanovaAccounts.forEach((account) => dispatch(addAccountAction(
       account.address,
       ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
       account,
-      backendAccounts,
     )));
-
-    await Promise.all(accountsPromises);
   };
 };
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_ARCHANOVA_WALLET_DEPLOYMENT });
-
-      const accountAssets = accountAssetsSelector(getState());
-      if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction());
     }
     dispatch({
       type: SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
@@ -297,14 +265,10 @@ export const resetSmartWalletDeploymentDataAction = () => {
   };
 };
 
-export const setSmartWalletConnectedAccount = (connectedAccount: ArchanovaWalletAccount) => {
-  return (dispatch: Dispatch) => {
-    const smartWalletAccountDevices = get(connectedAccount, 'devices', []);
-    const mapped = mapToConnectedDevices(smartWalletAccountDevices);
-    dispatch(setConnectedDevicesAction(mapped));
-    dispatch({ type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
-  };
-};
+export const setSmartWalletConnectedAccount = (connectedAccount: ArchanovaWalletAccount) => ({
+  type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
+  payload: connectedAccount,
+});
 
 export const fetchConnectedArchanovaAccountAction = () => {
   return async (dispatch: Dispatch) => {
@@ -647,7 +611,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       // incoming deployment state from event
       const newAccountDeviceState = get(event, 'payload.state', '');
       const newAccountDeviceNextState = get(event, 'payload.nextState', '');
-      const eventAccountDeviceAddress = get(event, 'payload.device.address', '');
 
       // just a constant for comparing deployed state
       const deployedDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
@@ -675,16 +638,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           // update connected devices
           await dispatch(fetchConnectedArchanovaAccountAction());
         }
-      }
-
-      const removingConnectedDeviceAddress = get(getState(), 'connectedDevices.removingDeviceAddress');
-      if (removingConnectedDeviceAddress
-        && newAccountDeviceState === createdDeviceState
-        && addressesEqual(eventAccountDeviceAddress, removingConnectedDeviceAddress)) {
-        await dispatch(removeSmartWalletAccountDeviceAction(eventAccountDeviceAddress));
-        dispatch(completeConnectedDeviceRemoveAction());
-      } else {
-        dispatch(fetchConnectedArchanovaAccountAction());
       }
     }
 
@@ -1352,78 +1305,51 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
 };
 
 export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     await dispatch(initArchanovaSdkAction(privateKey));
 
     if (!archanovaService || !archanovaService.sdkInitialized) return;
 
-    const {
-      session: { data: session },
-      user: { data: user },
-    } = getState();
-
-    if (!user.walletId) {
-      reportErrorLog('importArchanovaAccountsAction failed: no walletId', { user });
-      return;
-    }
-
-    const { walletId } = user;
+    // nothing to do offline
+    const { session: { data: session } } = getState();
+    if (!session.isOnline) return;
 
     // check if archanova accounts were ever created, otherwise there is no need to create new
     const archanovaAccounts = await archanovaService.getAccounts();
     if (isEmpty(archanovaAccounts)) return;
 
-    // Note: disabling zero-balance check as it's reporting empty balance for account with non-zero balance
     // check balances of existing archanova accounts
-    // const supportedAssets = await api.fetchSupportedAssets(walletId);
-    // const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(async ({ address }) => {
-    //   const ownedAssets = await getAllOwnedAssets(api, address, supportedAssets);
-
-    //   return api.fetchBalances({
-    //     address,
-    //     assets: getAssetsAsList(ownedAssets),
-    //   });
-    // }));
+    const supportedAssets = supportedAssetsSelector(getState());
+    const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(({
+      address,
+    }) => etherspotService.getBalances(CHAIN.ETHEREUM, address, supportedAssets)));
 
     // no need to import empty balance accounts
-    // const archanovaAccountsHasBalances =
-    //   archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
-    // if (!archanovaAccountsHasBalances) return;
+    const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
+    if (!archanovaAccountsHasBalances) return;
 
     dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: archanovaAccounts });
     await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
 
-    // register missed accounts on the backend
-    await archanovaService.syncSmartAccountsWithBackend(
-      api,
-      archanovaAccounts,
-      walletId,
-      privateKey,
-      session.fcmToken,
-    );
-
-    const backendAccounts = await api.listAccounts(walletId);
-
-    await Promise.all(archanovaAccounts.map((account) => dispatch(addAccountAction(
+    archanovaAccounts.forEach((account) => dispatch(addAccountAction(
       account.address,
       ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
       account,
-      backendAccounts,
-    ))));
+    )));
 
     const accountId = normalizeWalletAddress(archanovaAccounts[0].address);
     await dispatch(connectArchanovaAccountAction(accountId));
 
     // set default assets for smart wallet
-    const initialAssets = await api.fetchInitialAssets(walletId);
+    const defaultInitialAssets = transformAssetsToObject(initialAssets);
     await dispatch({
       type: SET_INITIAL_ASSETS,
       payload: {
         accountId,
-        assets: initialAssets,
+        assets: defaultInitialAssets,
       },
     });
-    const assets = { [accountId]: initialAssets };
+    const assets = { [accountId]: defaultInitialAssets };
     dispatch(saveDbAction('assets', { assets }, true));
 
     dispatch(fetchAssetsBalancesAction());
@@ -1527,34 +1453,6 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
   };
 };
 
-export const setSmartWalletEnsNameAction = (username: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    if (!archanovaService || !archanovaService.sdkInitialized) return;
-    const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount) return;
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-    const normalizedUsername = normalizeForEns(username);
-
-    const hash = await archanovaService.setAccountEnsName(username);
-    if (!hash) return;
-
-    const historyTx = buildHistoryTransaction({
-      from: accountAddress,
-      hash,
-      to: accountAddress,
-      value: '0',
-      asset: ETH,
-      tag: SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
-      extra: {
-        ensName: normalizedUsername,
-      },
-    });
-    dispatch(insertTransactionAction(historyTx, accountId));
-  };
-};
-
 export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitArchanovaProps) => {
   return async (dispatch: Dispatch) => {
     let privateKey = _privateKey;
@@ -1597,63 +1495,6 @@ export const switchToGasTokenRelayerAction = () => {
     });
     dispatch(insertTransactionAction(historyTx, accountId));
     dispatch(fetchConnectedArchanovaAccountAction());
-  };
-};
-
-export const checkIfArchanovaWalletWasRegisteredAction = (privateKey: string, smartWalletAccountId: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      accounts: { data: accounts },
-      user: { data: user },
-      session: { data: session },
-    } = getState();
-
-    // cannot be done while offline
-    if (!session.isOnline) return;
-
-    const walletId = user?.walletId;
-    if (!walletId) {
-      reportLog('checkIfSmartWalletWasRegisteredAction failed: unable to get walletId', { user });
-      return;
-    }
-
-    const account = findAccountById(smartWalletAccountId, accounts);
-    if (!account || account.walletId) return;
-
-    // no account.walletId set means we fail to register that account on the backend
-    const accountAddress = getAccountAddress(account);
-    const result = await api.registerSmartWallet({
-      walletId,
-      privateKey,
-      ethAddress: accountAddress,
-      fcmToken: session.fcmToken || '',
-    });
-
-    if (result?.error) {
-      reportLog('Unable to register smart wallet', { reason: result.reason });
-      return;
-    }
-
-    // validate the account was registered correctly
-    const backendAccounts = await api.listAccounts(walletId);
-    const registeredAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, accountAddress));
-
-    if (!registeredAccount || !registeredAccount.walletId) {
-      reportLog('Unable to register smart wallet', { smartWalletAccountId });
-      return;
-    }
-
-    const { accounts: { data: currentAccounts } } = getState();
-    const updatedAccounts = currentAccounts.map(acc => ({
-      ...acc,
-      walletId: acc.id === smartWalletAccountId ? registeredAccount.walletId : acc.walletId,
-    }));
-
-    dispatch({
-      type: UPDATE_ACCOUNTS,
-      payload: updatedAccounts,
-    });
-    dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
 

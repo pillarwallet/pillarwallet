@@ -22,7 +22,6 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { MediumText } from 'components/Typography';
 import CircularProgressBar from 'components/CircularProgressBar';
@@ -99,7 +98,7 @@ const SablierStreamCircles = ({
 
   const { days, hours, minutes } = streamCountDownDHMS(stream);
 
-  const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+  const { iconUrl } = assetData;
 
   const isStreamCanceled = !!stream.cancellation;
   const isOutgoing = isCaseInsensitiveMatch(stream.sender, activeAccountAddress);
@@ -130,7 +129,7 @@ const SablierStreamCircles = ({
             backgroundAnimation={!isStreamCanceled}
           />
         )}
-        <TokenIcon source={{ uri: assetIcon }} />
+        <TokenIcon source={{ uri: iconUrl }} />
         <Spacing h={20} />
         <MediumText giant color={isStreamCanceled ? colors.labelTertiary : colors.text}>
           {formattedStreamedAmount}

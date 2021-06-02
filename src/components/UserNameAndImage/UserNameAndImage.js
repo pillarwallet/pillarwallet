@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -29,7 +28,7 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Contants
-import { ACCOUNTS, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Selectors
 import { useSmartWalletAccounts } from 'selectors';
@@ -49,30 +48,24 @@ type Props = {
 const UserNameAndImage = ({ user }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
-
-  const { profileImage, lastUpdateTime, username } = user;
-  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+  const { username } = user;
 
   const accountCount = useSmartWalletAccounts().length;
 
   return (
-    <TouchableContainer onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
-      <ProfileImage uri={userImageUri} userName={username} diameter={24} />
+    <Wrapper onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+      <ProfileImage userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
-      {accountCount > 1 && (
-        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
-          <Icon name="select" color={colors.basic020} />
-        </TouchableOpacity>
-      )}
-    </TouchableContainer>
+      {accountCount > 1 && <Icon name="select" color={colors.basic020} />}
+    </Wrapper>
   );
 };
 
 export default UserNameAndImage;
 
-const TouchableContainer = styled.TouchableOpacity`
+const Wrapper = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;

@@ -28,9 +28,6 @@ import {
   searchOffersAction,
   takeOfferAction,
   getExchangeSupportedAssetsAction,
-  addWbtcPendingTxAction,
-  setWbtcPendingTxsAction,
-  updatePendingWbtcTransactionsAction,
 } from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
@@ -41,8 +38,6 @@ import {
   SET_UNISWAP_TOKENS_QUERY_STATUS,
   UNISWAP_TOKENS_QUERY_STATUS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  ADD_WBTC_PENDING_TRANSACTION,
-  SET_WBTC_PENDING_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
@@ -76,7 +71,6 @@ const storeState = {
   accounts: {
     data: [{
       id: 'id',
-      walletId: 'walletId',
       type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
       isActive: true,
     }],
@@ -240,27 +234,6 @@ describe('Exchange actions test', () => {
       }];
 
       await store.dispatch(getExchangeSupportedAssetsAction());
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
-
-  describe('WBTC.Cafe tests', () => {
-    beforeEach(() => {
-      store = mockStore(storeState);
-    });
-    it('adds pending WBTC txs', () => {
-      const expectedActions = [{ type: ADD_WBTC_PENDING_TRANSACTION, payload: pending[2] }];
-      store.dispatch(addWbtcPendingTxAction(pending[2]));
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-    it('sets pending txs', () => {
-      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[2]] }];
-      store.dispatch(setWbtcPendingTxsAction([pending[2]]));
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-    it('correctly updates pending transactions', () => {
-      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[0]] }];
-      store.dispatch(updatePendingWbtcTransactionsAction());
       expect(store.getActions()).toEqual(expectedActions);
     });
   });

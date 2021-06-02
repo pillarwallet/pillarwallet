@@ -23,7 +23,6 @@ import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -200,7 +199,7 @@ const ViewDepositedAsset = ({
           />
           <Image
             style={{ width: 48, height: 48 }}
-            source={{ uri: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
+            source={{ uri: iconUrl }}
             resizeMode="contain"
           />
         </ImagesWrapper>

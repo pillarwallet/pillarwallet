@@ -18,7 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { constants as EthersConstants, utils as EthersUtils } from 'ethers';
+import {
+  constants as EthersConstants,
+  utils as EthersUtils,
+  Wallet as EthersWallet,
+} from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -41,12 +45,12 @@ import t from 'translations/translate';
 
 // utils
 import {
+  BigNumber,
   getEnsName,
   parseTokenAmount,
   reportErrorLog,
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
-import { mapNotNil } from 'utils/array';
 import { addressesEqual } from 'utils/assets';
 import { nativeSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
@@ -54,22 +58,22 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // types
-import type { Asset } from 'models/Asset';
-import type { Chain } from 'models/Chain';
+import type { Asset, Assets } from 'models/Asset';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
 import type { EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { WalletAssetBalance } from 'models/Balances';
 
-class EtherspotService {
+export class EtherspotService {
   sdk: EtherspotSdk;
   subscription: ?Subscription;
   instances: { [network: string]: EtherspotSdk } = {};
   supportedNetworks: Array<string> = [];
 
-  async init(privateKey: string): Promise<void> {
-    const etherspotComputeContractPromises = [];
+  async init(privateKey?: string, fcmToken: ?string = null): Promise<void> {
     const isMainnet = isProdEnv();
 
     /**
@@ -92,19 +96,28 @@ class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    this.supportedNetworks.forEach((networkName) => {
+    await Promise.all(this.supportedNetworks.map(async (networkName) => {
       const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
-      // Schedule exection of computeContractAccount's
-      etherspotComputeContractPromises.push(this.instances[networkName].computeContractAccount({ sync: true }));
-    });
+      // FCM only for mainnet, session creation should happen before computing contract account
+      if (fcmToken && networkName === primaryNetworkName) {
+        try {
+          await this.instances[networkName].createSession({ fcmToken });
+        } catch (error) {
+          reportErrorLog('EtherspotService network init failed at createSession', { networkName, error });
+        }
+      }
+
+      try {
+        await this.instances[networkName].computeContractAccount({ sync: true });
+      } catch (error) {
+        reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
+      }
+    }));
 
     // Assign the primary instance of the default networkName to `sdk`
     this.sdk = this.instances[primaryNetworkName];
-
-    // Compute contract accounts. The result will always be the same.
-    await Promise.all(etherspotComputeContractPromises);
   }
 
   subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
@@ -144,6 +157,15 @@ class EtherspotService {
     });
   }
 
+  async getAccountPerChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
+    const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
+    const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
+    const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
+    const xdai = await this.getAccount(CHAIN.XDAI, accountAddress);
+
+    return { ethereum, binance, polygon, xdai };
+  }
+
   getAccounts(): Promise<?EtherspotAccount[]> {
     return this.sdk.getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items)
@@ -156,13 +178,12 @@ class EtherspotService {
   async getBalances(
     chain: Chain,
     accountAddress: string,
-    accountAssets: Asset[],
     supportedAssets: Asset[],
   ): Promise<WalletAssetBalance[]> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return [];
 
-    const assetAddresses = accountAssets
+    const assetAddresses = supportedAssets
       // 0x0...0 is default native token address in our assets, but it's not a ERC20 token
       .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
       .map(({ address }) => address);
@@ -189,28 +210,62 @@ class EtherspotService {
     }
 
     const nativeSymbol = nativeSymbolPerChain[chain];
-    return mapNotNil(accountBalances.items, ({ balance, token }) => {
-      // `token === null` means it's chain gas token.
-      const asset =
-        token === null
-          ? supportedAssets.find(({ symbol }) => symbol === nativeSymbol)
-          : supportedAssets.find(({ address }) => addressesEqual(address, token));
 
-      if (!asset) {
-        reportErrorLog('EtherspotService getBalances asset mapping failed', { chain, token });
-        return null;
+    return accountBalances.items.reduce((positiveBalances, asset) => {
+      const { balance, token } = asset;
+
+      const supportedAsset = supportedAssets.find(({
+        symbol: supportedSymbol,
+        address: supportedAddress,
+      }) => {
+        // `token === null` means it's chain native token
+        if (token === null) return supportedSymbol === nativeSymbol;
+        return addressesEqual(supportedAddress, token);
+      });
+
+      if (!supportedAsset) {
+        reportErrorLog('EtherspotService getBalances asset mapping failed', {
+          chain,
+          token,
+        });
+        return positiveBalances;
       }
 
-      return {
-        symbol: asset.symbol,
-        balance: EthersUtils.formatUnits(balance, asset.decimals),
-      };
-    });
+      const { decimals, symbol } = supportedAsset;
+
+      const positiveBalance = EthersUtils.formatUnits(balance, decimals);
+
+      // no need to return zero balance asset
+      if (BigNumber(positiveBalance ?? 0).isZero()) {
+        return positiveBalances;
+      }
+
+      return [
+        ...positiveBalances,
+        { symbol, balance: positiveBalance },
+      ];
+    }, []);
+  }
+
+  async getOwnedAssets(
+    chain: Chain,
+    accountAddress: string,
+    supportedAssets: Asset[],
+  ): Promise<Assets> {
+    const balances = await this.getBalances(chain, accountAddress, supportedAssets);
+
+    return balances.reduce((ownedAssets, { symbol }) => {
+      const supportedAsset = supportedAssets.find((asset) => asset.symbol === symbol);
+
+      if (supportedAsset) return { ...ownedAssets, [symbol]: supportedAsset };
+
+      return ownedAssets;
+    }, {});
   }
 
   reserveEnsName(username: string): Promise<?ENSNode> {
     const fullEnsName = getEnsName(username);
-    return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
+    return this.sdk.getAccountTokenListTokens({ name: fullEnsName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;
     });
@@ -377,6 +432,69 @@ class EtherspotService {
       });
   }
 
+  async getSupportedAssets(): Promise<?Asset[]> {
+    try {
+      // eslint-disable-next-line i18next/no-literal-string
+      const tokens = await this.sdk.getTokenListTokens();
+      if (!tokens) {
+        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
+        return null;
+      }
+
+      const supportedAssets = tokens.map(({
+        address,
+        name,
+        symbol,
+        decimals,
+        logoURI,
+      }) => ({
+        symbol,
+        name,
+        address,
+        decimals,
+        iconUrl: logoURI,
+        iconMonoUrl: logoURI,
+      }));
+
+      // add ETH if not within tokens list (most of the time since it's not a token)
+      const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);
+      if (!supportedAssetsHaveEth) {
+        // eslint-disable-next-line i18next/no-literal-string
+        const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
+        supportedAssets.push({
+          address: EthersConstants.AddressZero,
+          name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
+          symbol: ETH,
+          decimals: 18,
+          iconUrl,
+          iconMonoUrl: iconUrl,
+        });
+      }
+
+      // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
+      LIQUIDITY_POOLS().forEach(({
+        uniswapPairAddress: address,
+        name,
+        symbol,
+        iconUrl,
+      }) => {
+        supportedAssets.push({
+          address,
+          name,
+          symbol,
+          decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
+          iconUrl,
+          iconMonoUrl: iconUrl,
+        });
+      });
+
+      return supportedAssets;
+    } catch (error) {
+      reportErrorLog('EtherspotService getSupportedAssets failed', { error });
+      return null;
+    }
+  }
+
   async logout(): Promise<void> {
     if (!this.sdk) return; // not initialized, nothing to do
 
@@ -386,6 +504,18 @@ class EtherspotService {
 }
 
 const etherspot = new EtherspotService();
+
+// this is for accounts unrelated Etherspot SDK usage
+const etherspotSupportService = new EtherspotService();
+
+export const getEtherspotSupportService = async (): Promise<EtherspotService> => {
+  if (etherspotSupportService.sdk) return etherspotSupportService;
+
+  const wallet = EthersWallet.createRandom();
+  await etherspotSupportService.init(wallet.privateKey);
+
+  return etherspotSupportService;
+};
 
 export default etherspot;
 

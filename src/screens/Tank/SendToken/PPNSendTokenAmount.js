@@ -23,7 +23,6 @@ import { TouchableOpacity, Keyboard } from 'react-native';
 import tForm from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -200,10 +199,9 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
-    const icon = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({
-      icon,
+      icon: iconUrl,
       currency: symbol,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },

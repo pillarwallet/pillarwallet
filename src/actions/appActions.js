@@ -36,7 +36,6 @@ import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsCons
 import { UPDATE_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
@@ -46,7 +45,6 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
-  SET_WBTC_SETTLED_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -65,7 +63,6 @@ import {
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
-import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_STREAMS } from 'constants/sablierConstants';
@@ -80,7 +77,6 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
-import { setWbtcPendingTxsAction } from './exchangeActions';
 
 
 const storage = Storage.getInstance('db');
@@ -100,7 +96,6 @@ export const initAppAndRedirectAction = () => {
 
     if (walletTimestamp) {
       // migrations
-      storageData = await migrate('accounts', storageData, dispatch, getState);
       storageData = await migrate('assets', storageData, dispatch, getState);
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
@@ -127,9 +122,6 @@ export const initAppAndRedirectAction = () => {
 
       const { rates = {} } = get(storageData, 'rates', {});
       dispatch({ type: UPDATE_RATES, payload: rates });
-
-      const { oAuthTokens = {} } = get(storageData, 'oAuthTokens', {});
-      dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
@@ -165,20 +157,11 @@ export const initAppAndRedirectAction = () => {
       const { allowances = {} } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);
-      dispatch(setWbtcPendingTxsAction(pendingWbtcTransactions));
-
-      const { settledWbtcTransactions = [] } = get(storageData, 'settledWbtcTransactions', []);
-      dispatch({ type: SET_WBTC_SETTLED_TRANSACTIONS, payload: settledWbtcTransactions });
-
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
-
-      const { removingConnectedDeviceAddress = null } = get(storageData, 'connectedDevices', {});
-      dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: removingConnectedDeviceAddress });
 
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
@@ -264,13 +247,11 @@ export const initAppAndRedirectAction = () => {
 
 export const setupSentryAction = (user: ?Object, wallet: Object) => {
   return async () => {
-    const { id, username, walletId = '' } = user || {};
+    const { username } = user || {};
     const { address } = wallet;
     Sentry.setUser({
-      id,
       username,
       extra: {
-        walletId,
         ethAddress: address,
         [IS_APP_VERSION_V3]: true,
       },

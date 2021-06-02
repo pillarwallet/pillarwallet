@@ -20,7 +20,6 @@
 
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
-import { getEnv } from 'configs/envConfig';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -166,8 +165,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
       const relatedAsset = assets[symbol];
       const assetBalance = getBalance(balances, symbol);
       if (assetBalance) {
-        const { iconUrl, address } = relatedAsset;
-        const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const { iconUrl: imageUrl, address } = relatedAsset;
         const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 

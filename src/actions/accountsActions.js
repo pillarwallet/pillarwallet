@@ -32,7 +32,6 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
-  checkIfArchanovaWalletWasRegisteredAction,
   connectArchanovaAccountAction,
   initArchanovaSdkAction,
   setSmartWalletUpgradeStatusAction,
@@ -55,13 +54,13 @@ import { accountsSelector, activeAccountSelector } from 'selectors';
 // types
 import type { AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 
 export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
   accountExtra?: any,
-  backendAccounts: any[] = [],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -70,22 +69,10 @@ export const addAccountAction = (
       type,
       extra: accountExtra,
       isActive: false,
-      walletId: '',
     };
 
-    const existingAccount = accounts.find((account) => account.id.toLowerCase() === accountAddress.toLowerCase());
-    const updatedAccounts = accounts.filter((account) => account.id.toLowerCase() !== accountAddress.toLowerCase());
-    const backendAccount = backendAccounts.find(
-      ({ ethAddress }) => ethAddress.toLowerCase() === accountAddress.toLowerCase(),
-    );
-
-    if (backendAccount) {
-      smartWalletAccount.walletId = backendAccount.id;
-    }
-
-    if (existingAccount && backendAccount && !existingAccount.walletId) {
-      existingAccount.walletId = backendAccount.id;
-    }
+    const existingAccount = accounts.find((account) => isCaseInsensitiveMatch(account.id, accountAddress));
+    const updatedAccounts = accounts.filter((account) => !isCaseInsensitiveMatch(account.id, accountAddress));
 
     if (existingAccount) {
       // $FlowFixMe: flow gets confused here
@@ -99,6 +86,7 @@ export const addAccountAction = (
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
     });
+
     await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
@@ -221,7 +209,6 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: { data: accounts },
-      user: { data: user },
     } = getState();
 
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
@@ -242,11 +229,6 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
         payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
       });
     }
-
-    // following code should not be done if user is not registered on back-end
-    if (!user?.walletId) return;
-
-    dispatch(checkIfArchanovaWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };
 
