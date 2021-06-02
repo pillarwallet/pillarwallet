@@ -23,7 +23,7 @@ import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, BNB, HOT, HOLO, ratesEntries } from 'constants/assetsConstants';
+import { ETH, BNB, HOT, HOLO, rateKeys } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { COIN_ID } from 'constants/coinGeckoServiceConstants';
@@ -323,7 +323,7 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   });
 
   return cryptocompare
-    .priceMulti(assets, ratesEntries)
+    .priceMulti(assets, rateKeys)
     .then(data => {
       // rename HOLO to HOT
       if (data[HOLO]) {

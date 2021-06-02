@@ -19,23 +19,25 @@
 */
 
 import querystring from 'querystring';
+import { isEmpty } from 'lodash';
 
 // utils
 import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
-import { type Record } from 'utils/object';
+import { type Record, mapRecordKeys } from 'utils/object';
 
 // constants
-import { ETH, ratesEntries, BTC, WBTC } from 'constants/assetsConstants';
+import { ETH, rateKeys, BTC, WBTC } from 'constants/assetsConstants';
 
 // types
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, Assets, Rates, RateEntry, RateKey } from 'models/Asset';
+
+// { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
+type CoinGeckoPriceEntry = Record<number>;
 
 type CoinGeckoAssetsPrices = {
-  [coinGeckoAssetId: string]: {
-    [currency: string]: number,
-  },
+  [coinGeckoAssetId: string]: CoinGeckoPriceEntry,
 };
 
 // does not change between envs
@@ -52,42 +54,21 @@ const requestConfig = {
   },
 };
 
-const mapWalletAndCoinGeckoCurrencies = (
-  coinGeckoSingleAssetPrices: ?Record<number>,
-  walletCurrencies: string[],
-): ?Record<number> => {
-  if (!coinGeckoSingleAssetPrices) return null;
-
-  return Object.keys(coinGeckoSingleAssetPrices).reduce((mappedCurrencies, coinGeckoCurrency) => {
-    const currency = walletCurrencies.find((walletCurrency) =>
-      isCaseInsensitiveMatch(coinGeckoCurrency, walletCurrency),
-    );
-    if (currency) {
-      mappedCurrencies[currency] = coinGeckoSingleAssetPrices[coinGeckoCurrency];
-    }
-
-    return mappedCurrencies;
-  }, {});
-};
+const currenciesParam = rateKeys.map(key => key.toLocaleString()).join(',');
 
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
   assetsList: Asset[],
-  walletCurrencies: string[],
-) => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
+): Rates => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
   const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
   if (walletAsset) {
     const { symbol } = walletAsset;
-    // map currencies
-    mappedResponseData[symbol] = mapWalletAndCoinGeckoCurrencies(
-      responseData[contractAddress],
-      walletCurrencies,
-    );
+    mappedResponseData[symbol] = mapPricesToRates(responseData[contractAddress]);
   }
   return mappedResponseData;
 }, {});
 
-export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> => {
+export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Rates> => {
   const assetsList = getAssetsAsList(assets);
 
   // ether does not fit into token price endpoint
@@ -96,14 +77,14 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
   const assetsContractAddresses = assetsListWithoutEther.map(({ address }) => address);
 
   const contractAddressesQuery = assetsContractAddresses.join(',');
-  const vsCurrenciesQuery = ratesEntries.map((currency) => currency.toLowerCase()).join(',');
 
-  return httpRequest.get(
-    `${COINGECKO_API_URL}/simple/token_price/ethereum`
-    + `?contract_addresses=${contractAddressesQuery}`
-    + `&vs_currencies=${vsCurrenciesQuery}`,
-    requestConfig,
-  )
+  return httpRequest
+    .get(
+      `${COINGECKO_API_URL}/simple/token_price/ethereum` +
+        `?contract_addresses=${contractAddressesQuery}` +
+        `&vs_currencies=${currenciesParam}`,
+      requestConfig,
+    )
     .then(({ data: responseData }) => {
       if (!responseData) {
         reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', {
@@ -113,7 +94,7 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
         return null;
       }
 
-      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsListWithoutEther, ratesEntries);
+      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsListWithoutEther);
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoTokenPrices failed: API request error', {
@@ -124,10 +105,10 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
     });
 };
 
-export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?Record<number>)[]> => {
+export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?RateEntry)[]> => {
   const params = {
     ids: coinIds.join(','),
-    vs_currencies: ratesEntries.map((currency) => currency.toLowerCase()).join(','),
+    vs_currencies: currenciesParam,
   };
 
   try {
@@ -140,7 +121,7 @@ export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?
       return [];
     }
 
-    return coinIds.map((coinId) => mapWalletAndCoinGeckoCurrencies(response.data[coinId], ratesEntries));
+    return coinIds.map((coinId) => mapPricesToRates(response.data[coinId]));
   } catch (error) {
     reportErrorLog('getCoinGeckoPricesByCoinIds failed: API request error', { coinIds, error });
     return [];
@@ -148,9 +129,8 @@ export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?
 };
 
 export const getCoinGeckoBitcoinAndWBTCPrices = async (): Promise<?Object> => {
-  const vsCurrenciesQuery = ratesEntries.map((currency) => currency.toLowerCase()).join(',');
   return httpRequest.get(
-    `${COINGECKO_API_URL}/simple/price?ids=${BTC_ID},${WBTC_ID}&vs_currencies=${vsCurrenciesQuery}`,
+    `${COINGECKO_API_URL}/simple/price?ids=${BTC_ID},${WBTC_ID}&vs_currencies=${currenciesParam}`,
     requestConfig,
   )
     .then(({ data: responseData }) => {
@@ -159,12 +139,21 @@ export const getCoinGeckoBitcoinAndWBTCPrices = async (): Promise<?Object> => {
         return null;
       }
       return {
-        [BTC]: mapWalletAndCoinGeckoCurrencies(responseData[BTC_ID], ratesEntries),
-        [WBTC]: mapWalletAndCoinGeckoCurrencies(responseData[WBTC_ID], ratesEntries),
+        [BTC]: mapPricesToRates(responseData[BTC_ID]),
+        [WBTC]: mapPricesToRates(responseData[WBTC_ID]),
       };
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: API request error', { error });
       return null;
     });
+};
+
+const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateEntry => {
+  if (isEmpty(prices)) return null;
+  return mapRecordKeys(prices, findRateKeyFromCoinGeckoCurrency);
+};
+
+const findRateKeyFromCoinGeckoCurrency = (coinGeckoCurrency: string): ?RateKey => {
+  return rateKeys.find((key) => isCaseInsensitiveMatch(coinGeckoCurrency, key));
 };

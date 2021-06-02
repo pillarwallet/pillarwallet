@@ -91,7 +91,7 @@ export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
 export const defaultFiatCurrency = GBP;
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 
-export const ratesEntries = [USD, EUR, GBP, ETH];
+export const rateKeys = [USD, EUR, GBP, ETH];
 
 export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
 export const VISIBLE_NUMBER_DECIMALS = 18;
