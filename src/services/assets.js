@@ -23,9 +23,10 @@ import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, BNB, HOT, HOLO, rateKeys } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { COIN_ID } from 'constants/coinGeckoServiceConstants';
 
 // utils
 import {
@@ -43,7 +44,10 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getCoinGeckoEtherPrice, getCoinGeckoTokenPrices } from 'services/coinGecko';
+import {
+  getCoinGeckoTokenPrices,
+  getCoinGeckoPricesByCoinIds,
+} from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
@@ -309,7 +313,6 @@ export function fetchERC20Balance(
 
 export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
-  const targetCurrencies = supportedFiatCurrencies.concat(ETH);
 
   assets = assets.map(token => {
     // rename HOT to HOLO
@@ -320,7 +323,7 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   });
 
   return cryptocompare
-    .priceMulti(assets, targetCurrencies)
+    .priceMulti(assets, rateKeys)
     .then(data => {
       // rename HOLO to HOT
       if (data[HOLO]) {
@@ -354,16 +357,17 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
     if (isEmpty(rates)) {
       // by any mean if CoinGecko failed let's try legacy way
       rates = await getLegacyExchangeRates(assetSymbols);
-    } else if (assetSymbols.includes(ETH)) {
-      /**
-       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether (if requested)
-       * because ether price doesn't fit into CoinGecko token price endpoint
-       */
-      const etherPrice = await getCoinGeckoEtherPrice();
 
-      // append fetched ETH price only if it didn't fail
-      if (!isEmpty(etherPrice)) {
-        rates = { ...rates, [ETH]: etherPrice };
+    // ETH & BNB require special handling as they are native tokens for Ethereum & BSC.
+    // MATIC and DAI do not require such handling since they are also ERC20 tokens on Ethereum.
+    } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
+      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
+      if (!isEmpty(ethPrice)) {
+        rates = { ...rates, [ETH]: ethPrice };
+      }
+
+      if (!isEmpty(bnbPrice)) {
+        rates = { ...rates, [BNB]: bnbPrice };
       }
     }
   }
@@ -377,7 +381,7 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
    * sometimes symbols have different symbol case and mismatch
    * between our back-end and crypto compare returned result
    */
-  return Object.keys(rates).reduce((mappedData, returnedSymbol) => {
+  return Object.keys(rates).reduce((mappedData, returnedSymbol: string) => {
     const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
     if (walletSupportedSymbol && !mappedData[walletSupportedSymbol] && rates) {
       mappedData = {

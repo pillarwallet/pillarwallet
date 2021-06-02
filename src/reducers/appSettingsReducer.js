@@ -20,6 +20,8 @@
 import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
+
+import type { Currency } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 
 export type AppSettingsReducerState = {
@@ -29,7 +31,7 @@ export type AppSettingsReducerState = {
       assetsLayout: string,
     },
     blockchainNetwork: ?string,
-    baseFiatCurrency: ?string,
+    baseFiatCurrency: ?Currency,
     transactionSpeed: ?string,
     themeType: string,
     isManualThemeSelection: boolean,
