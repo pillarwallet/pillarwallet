@@ -47,11 +47,6 @@ const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 const BTC_ID = 'bitcoin';
 const WBTC_ID = 'wrapped-bitcoin';
 
-export const CoinId = {
-  ETH: 'ethereum',
-  BNB: 'binancecoin',
-};
-
 const requestConfig = {
   timeout: 10000,
   headers: {

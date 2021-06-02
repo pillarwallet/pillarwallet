@@ -26,6 +26,7 @@ import isEmpty from 'lodash.isempty';
 import { ETH, BNB, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { COIN_ID } from 'constants/coinGeckoServiceConstants';
 
 // utils
 import {
@@ -46,7 +47,6 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import {
   getCoinGeckoTokenPrices,
   getCoinGeckoPricesByCoinIds,
-  CoinId,
 } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
@@ -361,7 +361,7 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
 
     // Handle Eth & Bnb because they are native tokens, MATIC & DAI are also ERC20 tokens hence they do not need this.
     } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
-      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([CoinId.ETH, CoinId.BNB]);
+      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
       if (!isEmpty(ethPrice)) {
         rates = { ...rates, [ETH]: ethPrice };
       }
