@@ -31,7 +31,6 @@ import { findSupportedAssetBySymbol } from 'utils/assets';
 import { getChainWalletAssetsBalances } from 'utils/balances';
 import { mapChainRecordValues } from 'utils/chains';
 import { sumRecord } from 'utils/bigNumber';
-import { getImageUrl } from 'utils/images';
 import { recordValues } from 'utils/object';
 
 // Types
@@ -75,7 +74,7 @@ const buildWalletItem = ({ symbol, balance }: WalletAssetBalance, chain: Chain, 
   return {
     key: `${chain}-${symbol}`,
     title: asset.name,
-    iconUrl: getImageUrl(asset.iconUrl, 3),
+    iconUrl: asset.iconUrl,
     symbol: asset.symbol,
     value: BigNumber(balance || 0),
   };

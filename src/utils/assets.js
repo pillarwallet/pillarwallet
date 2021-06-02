@@ -22,7 +22,6 @@ import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
 import { keyBy, orderBy } from 'lodash';
-import { getEnv } from 'configs/envConfig';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -336,7 +335,7 @@ export const mapAssetToAssetData = ({
   name,
   decimals,
   tokenType: TOKENS,
-  icon: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
+  icon: iconUrl,
 });
 
 export const mapCollectibleToAssetData = ({
@@ -417,7 +416,7 @@ export const getAssetOption = (
 
   return {
     ...asset,
-    imageUrl: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
+    imageUrl: iconUrl,
     formattedBalanceInFiat,
     icon: iconUrl,
     assetBalance: formattedAssetBalance,

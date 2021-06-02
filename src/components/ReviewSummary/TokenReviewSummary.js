@@ -20,7 +20,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Image from 'components/Image';
@@ -60,7 +59,7 @@ export const TokenReviewSummaryComponent = ({
   const formattedAmount = formatTokenAmount(amount, assetSymbol);
 
   if (asset) {
-    assetIcon = { uri: `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` };
+    assetIcon = { uri: asset.iconUrl };
     if (!fiatAmount) {
       fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
     }

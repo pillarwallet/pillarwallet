@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import styled, { useTheme } from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 
 import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
@@ -91,9 +90,8 @@ const ValueInputHeader = ({
   onAssetPress,
   disableAssetSelection,
 }: Props) => {
-  const { name, iconUrl } = asset;
-  const imageUrl = asset.imageUrl || (iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '');
-  const optionImageSource = resolveAssetSource(imageUrl);
+  const { name, iconUrl, imageUrl } = asset;
+  const optionImageSource = resolveAssetSource(imageUrl || iconUrl);
 
   const theme = useTheme();
   const { genericToken } = images(theme);

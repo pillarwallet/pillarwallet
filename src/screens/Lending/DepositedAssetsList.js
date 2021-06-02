@@ -21,7 +21,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -79,7 +78,7 @@ const DepositedAssetsList = ({
         label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}
         subtext={`${t('aaveContent.label.currentAPY')} ` +
         `${t('percentValue', { value: formatAmountDisplay(earnInterestRate) })}`}
-        itemImageUrl={iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : ''}
+        itemImageUrl={iconUrl}
         onPress={() => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
         diameter={48}
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}

@@ -23,7 +23,6 @@ import orderBy from 'lodash.orderby';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -93,7 +92,7 @@ const ChooseAssetDeposit = ({
           token: symbol,
         }),
       })}
-      itemImageUrl={iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : ''}
+      itemImageUrl={iconUrl}
       onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol })}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}
