@@ -23,6 +23,23 @@ import { omitBy, isNil } from 'lodash';
 export type Record<Value> = { [string]: Value };
 
 /**
+ * Simple way to build record from array.
+ */
+export function buildRecord<Element, Value>(
+  elements: Element[],
+  keySelector: (element: Element) => string,
+  valueSelector: (element: Element, key: string) => Value,
+): Record<Value> {
+  const result = {};
+  elements.forEach(element => {
+    const key = keySelector(element);
+    result[key] = valueSelector(element, key);
+  });
+
+  return result;
+}
+
+/**
  * Properly typed version of `Object.values`.
  */
 export function recordValues<Value>(record: Record<Value>): Value[] {
@@ -43,6 +60,8 @@ export function mapRecordValues<Value, Target>(
 
   return result;
 }
+
+
 
 /**
  * Returns a copy of the object but without any `undefined` or `null` properties.

@@ -23,7 +23,7 @@ import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, BNB, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -43,7 +43,11 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getCoinGeckoEtherPrice, getCoinGeckoTokenPrices } from 'services/coinGecko';
+import {
+  getCoinGeckoTokenPrices,
+  getCoinGeckoPricesByCoinIds,
+  CoinId,
+} from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
@@ -346,6 +350,7 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
   // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
   const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
 
+  console.log('GET EXCHNAGE RATES', assetSymbols);
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assets);
@@ -354,16 +359,16 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
     if (isEmpty(rates)) {
       // by any mean if CoinGecko failed let's try legacy way
       rates = await getLegacyExchangeRates(assetSymbols);
-    } else if (assetSymbols.includes(ETH)) {
-      /**
-       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether (if requested)
-       * because ether price doesn't fit into CoinGecko token price endpoint
-       */
-      const etherPrice = await getCoinGeckoEtherPrice();
 
-      // append fetched ETH price only if it didn't fail
-      if (!isEmpty(etherPrice)) {
-        rates = { ...rates, [ETH]: etherPrice };
+    // Handle Eth & Bnb because they are native tokens, MATIC & DAI are also ERC20 tokens hence they do not need this.
+    } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
+      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([CoinId.ETH, CoinId.BNB]);
+      if (!isEmpty(ethPrice)) {
+        rates = { ...rates, [ETH]: ethPrice };
+      }
+
+      if (!isEmpty(bnbPrice)) {
+        rates = { ...rates, [BNB]: bnbPrice };
       }
     }
   }
@@ -377,7 +382,7 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
    * sometimes symbols have different symbol case and mismatch
    * between our back-end and crypto compare returned result
    */
-  return Object.keys(rates).reduce((mappedData, returnedSymbol) => {
+  return Object.keys(rates).reduce((mappedData, returnedSymbol: string) => {
     const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
     if (walletSupportedSymbol && !mappedData[walletSupportedSymbol] && rates) {
       mappedData = {
