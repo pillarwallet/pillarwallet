@@ -21,11 +21,12 @@
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import { COLLECTIBLES, TOKENS } from 'constants/assetsConstants';
+import { COLLECTIBLES, TOKENS, USD, EUR, GBP } from 'constants/assetsConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
 
+export type Currency = typeof USD | typeof EUR | typeof GBP;
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 

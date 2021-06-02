@@ -33,12 +33,12 @@ export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
 
 // fiat
-export const EUR = 'EUR';
-export const GBP = 'GBP';
-export const USD = 'USD';
+export const USD = ('USD': 'USD');
+export const EUR = ('EUR': 'EUR');
+export const GBP = ('GBP': 'GBP');
 
 // token symbols
-export const ETH = 'ETH';
+export const ETH = ('ETH': 'ETH');
 export const PLR = 'PLR';
 
 export const MATIC = 'MATIC';
