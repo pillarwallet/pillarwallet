@@ -42,7 +42,7 @@ export function buildAssetDataNavigationParam(asset: Asset) {
     icon: iconUrl,
     iconColor: iconUrl,
     imageUrl: iconUrl,
-    // patternIcon, // TODO: remove later if no longer supported?
+    patternIcon: iconUrl,
     decimals,
   };
 }
