@@ -58,6 +58,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // types
 import type { Asset, Assets } from 'models/Asset';
@@ -440,7 +441,7 @@ export class EtherspotService {
         return null;
       }
 
-      const mappedAssets = tokens.map(({
+      const supportedAssets = tokens.map(({
         address,
         name,
         symbol,
@@ -456,11 +457,11 @@ export class EtherspotService {
       }));
 
       // add ETH if not within tokens list (most of the time since it's not a token)
-      const mappedAssetsHaveEth = mappedAssets.some(({ symbol }) => symbol === ETH);
-      if (!mappedAssetsHaveEth) {
+      const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);
+      if (!supportedAssetsHaveEth) {
         // eslint-disable-next-line i18next/no-literal-string
         const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
-        mappedAssets.push({
+        supportedAssets.push({
           address: EthersConstants.AddressZero,
           name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
           symbol: ETH,
@@ -470,7 +471,24 @@ export class EtherspotService {
         });
       }
 
-      return mappedAssets;
+      // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
+      LIQUIDITY_POOLS().forEach(({
+        uniswapPairAddress: address,
+        name,
+        symbol,
+        iconUrl,
+      }) => {
+        supportedAssets.push({
+          address,
+          name,
+          symbol,
+          decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
+          iconUrl,
+          iconMonoUrl: iconUrl,
+        });
+      });
+
+      return supportedAssets;
     } catch (error) {
       reportErrorLog('EtherspotService getSupportedAssets failed', { error });
       return null;
