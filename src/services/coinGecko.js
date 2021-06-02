@@ -21,16 +21,16 @@
 import querystring from 'querystring';
 import { isEmpty } from 'lodash';
 
-// utils
+// Constants
+import { ETH, rateKeys } from 'constants/assetsConstants';
+
+// Utils
 import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { type Record, mapRecordKeys } from 'utils/object';
 
-// constants
-import { ETH, rateKeys, BTC, WBTC } from 'constants/assetsConstants';
-
-// types
+// Types
 import type { Asset, Assets, Rates, RateEntry, RateKey } from 'models/Asset';
 
 // { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
@@ -42,9 +42,6 @@ type CoinGeckoAssetsPrices = {
 
 // does not change between envs
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
-
-const BTC_ID = 'bitcoin';
-const WBTC_ID = 'wrapped-bitcoin';
 
 const requestConfig = {
   timeout: 10000,
@@ -126,27 +123,6 @@ export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?
     reportErrorLog('getCoinGeckoPricesByCoinIds failed: API request error', { coinIds, error });
     return [];
   }
-};
-
-export const getCoinGeckoBitcoinAndWBTCPrices = async (): Promise<?Object> => {
-  return httpRequest.get(
-    `${COINGECKO_API_URL}/simple/price?ids=${BTC_ID},${WBTC_ID}&vs_currencies=${currenciesParam}`,
-    requestConfig,
-  )
-    .then(({ data: responseData }) => {
-      if (!responseData) {
-        reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: unexpected response', { response: responseData });
-        return null;
-      }
-      return {
-        [BTC]: mapPricesToRates(responseData[BTC_ID]),
-        [WBTC]: mapPricesToRates(responseData[WBTC_ID]),
-      };
-    })
-    .catch((error) => {
-      reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: API request error', { error });
-      return null;
-    });
 };
 
 const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateEntry => {
