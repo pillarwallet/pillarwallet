@@ -46,7 +46,6 @@ export type TokenAllowanceRequest = {
   fromAssetAddress: string,
   toAssetAddress: string,
   provider: string,
-  walletId: ?string,
 };
 
 export type OfferOrder = {

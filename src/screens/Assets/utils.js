@@ -19,10 +19,7 @@
 */
 
 import * as React from 'react';
-import { Platform, LayoutAnimation } from 'react-native';
-
-// Configs
-import { getEnv } from 'configs/envConfig';
+import { LayoutAnimation } from 'react-native';
 
 // Utils
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
@@ -35,24 +32,17 @@ import type { Chain } from 'models/Chain';
  * Extracted from AssetList.js. Asset screen expects specific but untyped format of data as navigation param.
  */
 export function buildAssetDataNavigationParam(asset: Asset) {
-  const { symbol, name, iconUrl, decimals, iconMonoUrl, patternUrl, wallpaperUrl } = asset;
-
-  const fullIconMonoUrl = iconMonoUrl ? `${getEnv().SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-  const fullIconWallpaperUrl = `${getEnv().SDK_PROVIDER}/${wallpaperUrl}${Platform.OS === 'ios' ? '?size=3' : ''}`;
-  const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-  const patternIcon = patternUrl ? `${getEnv().SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
+  const { symbol, name, iconUrl, decimals } = asset;
 
   return {
     id: symbol,
     name: name || symbol,
     token: symbol,
     contractAddress: asset.address,
-    icon: fullIconMonoUrl,
-    wallpaper: fullIconWallpaperUrl,
-    iconColor: fullIconUrl,
-    imageUrl: fullIconUrl,
-    patternIcon,
-    description: asset.description,
+    icon: iconUrl,
+    iconColor: iconUrl,
+    imageUrl: iconUrl,
+    patternIcon: iconUrl,
     decimals,
   };
 }

@@ -22,7 +22,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
@@ -105,7 +104,7 @@ class IncomingStream extends React.Component<Props> {
     const totalWithdrawnAmount = getTotalWithdrawn(stream);
     const formattedWithdrawnAmount = formatAmount(formatUnits(totalWithdrawnAmount, assetData.decimals), decimalPlaces);
     const formattedDeposit = formatAmount(formatUnits(stream.deposit, assetData.decimals), decimalPlaces);
-    const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+    const { iconUrl } = assetData;
 
     const transactionsOnMainnet = mapTransactionsHistory(
       history,
@@ -149,7 +148,7 @@ class IncomingStream extends React.Component<Props> {
             contentWrapperStyle={{ padding: 16 }}
           >
             <Row>
-              <TokenIcon source={{ uri: assetIcon }} />
+              <TokenIcon source={{ uri: iconUrl }} />
               <Spacing w={12} />
               <Column>
                 <MediumText fontSize={20} lineHeight={20}>{formattedStreamedAmount}{' '}

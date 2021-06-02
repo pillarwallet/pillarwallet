@@ -126,7 +126,6 @@
     "purchase": "Kupovina",
     "received": "Primljeno",
     "receiving": "Primanje",
-    "referralReward": "Nagrada za preporuku",
     "registered": "Registrirano",
     "registerEnsName": "Registriraj ENS oznaku",
     "removed": "Uklonjeno",
@@ -783,13 +782,6 @@
       "support": {
         "title": "Kontaktiraj podršku"
       },
-      "recoveryPortal": {
-        "title": "Recovery Portal",
-        "subtitle": {
-          "default": "Smart Wallet račun Web Recovery portal",
-          "smartWalletNotActivated": "Smart Wallet račun Web Recovery portal (potreban aktiviran Smart Wallet)"
-        }
-      },
       "recoverySettings": {
         "title": "Postakve oporavka",
         "screenTitle": "Oporavak",
@@ -863,80 +855,6 @@
           "cancel": "Poništi"
         }
       }
-    }
-  },
-
-  "referralsContent": {
-    "banner": {
-      "inviteBanner": {
-        "title": "Pillar je društven"
-      }
-    },
-    "modal": {
-      "missingPhone": {
-        "title": {
-          "activeRewardCampaign": "Pozovi i budi nagradjen",
-          "inactiveRewardCampaign": "Pozovi u Pillar"
-        },
-        "paragraph": {
-          "reward": "Dobit ćete {{reward}} za svakog prijatelja koji je instalirao aplikaciju s vašom preporukom.",
-          "enablingReferrals": "Da bismo omogućili sistem preporuka, moramo biti sigurni da ste pravi korisnik. Mi brinemo o privatnosti naših korisnika i nikada ne dijelimo vaše podatke.",
-          "enablingInvitations": "Da bismo omogućili sistem preporuka, moramo biti sigurni da ste pravi korisnik. Mi brinemo o privatnosti naših korisnika i nikada ne dijelimo vaše podatke."
-        },
-        "button": {
-          "toUserData": "Potvrdi email ili telefon"
-        }
-      }
-    },
-    "referralRewardText": "{{rewardsList}} i značka",
-    "title": {
-      "inviteMain": "Pozovi prijatelje",
-      "invitationsSent": "Pozivnice poslane",
-      "referMain": "Pozovi prijatelje",
-      "incomingReward": "Nagrada je na putu",
-      "thanksForJoining": "Hvala za pridruživanju u Pillar",
-      "thanksForUsing": "Hvala što korisite Pillar",
-      "claimTokens": "Preuzmi tokene",
-      "claimTokensError": "Greška"
-    },
-    "instruction": {
-      "shareLink": {
-        "title": "Podijeli svoj link",
-        "paragraph": "Pozovi prijatelje u Pillar"
-      },
-      "giveSmartWallet": {
-        "title": "Dajte Smart Wallet besplatno",
-        "paragraph": "Prijatelji koji s vašom vezom instaliraju Pillar dobit će besplatnu aktivaciju pametnog novčanika."
-      },
-      "getTokens": {
-        "title": "Nabavite besplatni PLR",
-        "paragraph": "Zaradite meta-tokene za preporučivanje prijatelja."
-      }
-    },
-    "paragraph": {
-      "incomingAward": "Hvala što ste se pridružili u Pillar.\nDa bismo to proslavili, poklanjamo vam {{nagradu}}.\nMorate dodati i potvrditi svoju e-poštu ili telefon da biste dobili nagradu.\nNagrada će se dodijeliti samo novom korisniku.",
-      "rewardMechanics": "Vaši kontakti će dobiti vezu s pozivnicom. Oni će biti nagrađeni PLR tokenima i značkom nakon potvrde svog broja telefona / adrese e-pošte. Nagradu ćete dobiti nakon što vaš kontakt bude nagrađen.",
-      "invitationViaPhoneRules": "Da biste pozvali putem SMS-a, morate potvrditi svoj telefonski broj.",
-      "invitationViaEmailRules": "Da biste pozvali putem e-pošte, morate potvrditi svoju adresu e-pošte.",
-      "rewardForEachInvitation": "Dobit ćete {{reward}} za svakog prijatelja koji je instalirao aplikaciju s vašom preporukom. Oboje biste trebali potvrditi svoje podatke da biste ispunili uslove.",
-      "thanksForReferring": "Hvala što širite riječ o nama.",
-      "rewardClaimingPending": "Transakcija se obrađuje.\nMože potrajati nekoliko minuta.\nStatus možete provjeriti kasnije ovdje ili na kartici Početna.",
-      "rewardClaimingError": "Ne možemo potvrditi kod. Pokušajte ponovo.",
-      "getBadgesForEachInvitation": "Počnite primati značke za prijatelje koji su instalirali Pillar sa svojim referalnim linkom!",
-      "allowedInviteViaEmail": "Sada možete pozivati prijatelje putem email-a.",
-      "allowedInviteViaPhone": "Sada možete pozivati prijatelje putem SMS-a.",
-      "emailVerified": "Vaš email je potvrdjen",
-      "phoneVerified": "Vaš email je potvrdjen"
-    },
-    "label": {
-      "invitesCount": "Vaše pozivnice ({{amountText}} dostupne danas)",
-      "referralsCount": "Vaše preporuke ({{amountText}} dostupno danas)",
-      "remainingCount": "{{amount}} još",
-      "noReferralCode": "Nema koda",
-      "fromCode": "Od{{code}}",
-      "claiming": "Preuzimam...",
-      "inviteFriends": "Pozovi prijatelje u Pillar",
-      "referAndGetRewards": "Preporučite prijatelje i zaradite nagrade, besplatni PLR i još mnogo toga."
     }
   },
 
@@ -1180,14 +1098,6 @@
       "title": "Kupuj sa Ramp.Mrežom",
       "description": "Kupi Odmah"
     },
-    "wyre": {
-      "title": "Kupuj sa Wyre-om (Non-EU)",
-      "description": "Kupi Odmah"
-    },
-    "altalix": {
-      "title": "Kupuj sa Altalix-om",
-      "description": "Kupi Odmah"
-    },
     "label": {
       "requiresActivation": "Zahtijeva aktivaciju",
       "forSmartWallet": "Za Smart Wallet",
@@ -1265,12 +1175,7 @@
     },
     "verificationSuccess": {
       "email": "Provjera e-pošte bila je uspješna",
-      "phone": "Telefonska provjera bila je uspješna",
-      "referralReward": "Hvala vam što ste potvrdili svoje podatke, trenutno obrađujemo vašu nagradu."
-    },
-    "referralInviteCantBeSent": {
-      "allInvites": "Pozivi nisu poslani. Pokušajte ponovo kasnije",
-      "notAllInvites": "Pozivi nisu poslani. Pokušajte ponovo kasnije"
+      "phone": "Telefonska provjera bila je uspješna"
     },
     "userIsOffline": "Čini se da ste offline. Molimo provjerite internetsku vezu.",
     "biometricLoginEnabled": "Biometrijska prijava omogućena.",
@@ -1379,8 +1284,7 @@
     "title": {
       "confirmScreen": "Detalji",
       "settingsScreen": "Postavke",
-      "activateSmartWalletScreen": "Aktiviraj Smart Wallet",
-      "buyWithWyreScreen": "Kupuj sa Wyre-om"
+      "activateSmartWalletScreen": "Aktiviraj Smart Wallet"
     },
     "button": {
       "enableAsset": "Omogući Token",
@@ -1437,10 +1341,6 @@
         "cancel": "Poništi",
         "backup": "Osigurajte 12 riječi"
       }
-    },
-    "invalidReferralDeepLink": {
-      "title": "Nepravilan link",
-      "message": "Pozivnica nedostaje"
     },
     "walletConnectDisconnect": {
       "title": "Odspoji od {{name}}",

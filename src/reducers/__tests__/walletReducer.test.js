@@ -38,7 +38,6 @@ const mockWallet: EthereumWallet = {
 const mockBackupStatus: BackupStatus = {
   isImported: false,
   isBackedUp: false,
-  isRecoveryPending: false,
 };
 
 describe('Wallet reducer', () => {

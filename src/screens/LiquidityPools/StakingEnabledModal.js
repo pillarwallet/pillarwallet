@@ -21,7 +21,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
-import { getEnv } from 'configs/envConfig';
 
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -55,7 +54,7 @@ const StakingEnabledModal = ({ pool, stakeTokens }: Props) => {
       <Wrapper>
         <MediumText big center>{t('liquidityPoolsContent.modal.stakingEnabled.liquidityAdded')}</MediumText>
         <Spacing h={16} />
-        <PoolIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
+        <PoolIcon source={{ uri: pool.iconUrl }} />
         <Spacing h={16} />
         <MediumText large center>{t('liquidityPoolsContent.modal.stakingEnabled.stakingUnlocked')}</MediumText>
         <Spacing h={8} />

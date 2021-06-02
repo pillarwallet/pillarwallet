@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
 import styled, { css } from 'styled-components/native';
 
 // Components
@@ -70,7 +69,6 @@ const CornerIcon = styled(Image)`
 `;
 
 export type ProfileImageProps = {|
-  uri?: ?string,
   userName?: ?string,
   containerStyle?: Object,
   imageStyle?: Object,
@@ -80,17 +78,14 @@ export type ProfileImageProps = {|
   borderColor?: string,
   style?: Object,
   children?: React.Node,
-  fallbackImage?: string,
   cornerIcon?: Object,
   cornerIconSize?: number,
 |};
 
-const CACHED_IMAGE_REF = 'cachedImage';
 const IMAGE_LOAD_FAILED = 'image_load_failed';
 
 const ProfileImage = (props: ProfileImageProps) => {
   const {
-    uri,
     containerStyle,
     imageStyle,
     onPress,
@@ -100,41 +95,27 @@ const ProfileImage = (props: ProfileImageProps) => {
     borderWidth = 0,
     children,
     userName,
-    fallbackImage,
     cornerIcon,
     cornerIconSize = 22,
   } = props;
 
   const diameterWithBorder = diameter + (borderWidth * 2);
+  const uri = getIdenticonImageUrl(userName, diameter);
 
-  const renderDefaultImage = () => {
-    if (fallbackImage) {
-      return (<CircleImage source={fallbackImage} diameter={diameter} />);
-    }
+  const renderImage = () => (
+    <React.Fragment>
+      {children && <InnerBackground>{children}</InnerBackground>}
 
-    return (
-      <React.Fragment>
-        {children && <InnerBackground>{children}</InnerBackground>}
-
-        {!children && !!userName && (
-          <CircleImage
-            source={{ uri: getIdenticonImageUrl(userName, diameter) }}
-            diameter={diameter}
-            additionalImageStyle={imageStyle}
-            fallbackSource={IMAGE_LOAD_FAILED}
-          />
-        )}
-      </React.Fragment>
-    );
-  };
-
-  const renderImage = (data: Object) => {
-    if (data.source === IMAGE_LOAD_FAILED) {
-      return renderDefaultImage();
-    }
-
-    return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
-  };
+      {!children && !!userName && (
+        <CircleImage
+          source={{ uri }}
+          diameter={diameter}
+          additionalImageStyle={imageStyle}
+          fallbackSource={IMAGE_LOAD_FAILED}
+        />
+      )}
+    </React.Fragment>
+  );
 
   return (
     <ImageTouchable
@@ -149,16 +130,7 @@ const ProfileImage = (props: ProfileImageProps) => {
       borderColor={borderColor}
       needBackground={!uri}
     >
-      {!uri && renderDefaultImage()}
-      {!!uri &&
-      <CircleImage
-        additionalImageStyle={imageStyle}
-        diameter={diameter}
-        renderImage={renderImage}
-        fallbackSource={IMAGE_LOAD_FAILED}
-        source={{ uri }}
-      />
-      }
+      {renderImage()}
       {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
     </ImageTouchable>
   );

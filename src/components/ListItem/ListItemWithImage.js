@@ -53,7 +53,6 @@ type Props = {
   paragraphLines?: string,
   customAddon?: React.Node,
   onPress?: ?Function,
-  avatarUrl?: string,
   iconName?: ?string,
   iconDiameter?: ?number,
   itemImageUrl?: string,
@@ -74,7 +73,6 @@ type Props = {
   imageAddonIconName?: string,
   imageAddonUrl?: string,
   imageAddonName?: string,
-  imageUpdateTimeStamp?: number,
   rightColumnInnerStyle?: Object,
   customAddonFullWidth?: React.Node,
   customAddonAlignLeft?: boolean,
@@ -342,12 +340,10 @@ const ImageWrapper = (props: ImageWrapperProps) => {
 const ItemImage = (props: Props) => {
   const {
     label,
-    avatarUrl,
     iconName,
     itemImageUrl,
     fallbackToGenericToken,
     navigateToProfile,
-    imageUpdateTimeStamp,
     customImage,
     itemImageSource,
     diameter,
@@ -445,15 +441,11 @@ const ItemImage = (props: Props) => {
     );
   }
 
-  const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
-
   return (
     <ProfileImage
       onPress={navigateToProfile}
-      uri={updatedUserImageUrl}
       userName={label}
       diameter={diameter || 52}
-      fallbackImage={fallbackSource}
       cornerIcon={cornerIcon}
       cornerIconSize={16}
     />
@@ -463,7 +455,6 @@ const ItemImage = (props: Props) => {
 const ImageAddon = (props: Props) => {
   const {
     imageAddonIconName,
-    imageAddonUrl,
     imageAddonName,
     iconColor,
   } = props;
@@ -487,7 +478,6 @@ const ImageAddon = (props: Props) => {
     <ImageAddonHolder>
       <ProfileImage
         onPress={() => {}}
-        uri={imageAddonUrl}
         userName={imageAddonName}
         diameter={22}
         borderWidth={2}

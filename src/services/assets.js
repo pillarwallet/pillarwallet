@@ -41,15 +41,13 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
-import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
 // services
 import { getCoinGeckoEtherPrice, getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Asset, Assets } from 'models/Asset';
-import type { WalletAssetBalance } from 'models/Balances';
+import type { Assets } from 'models/Asset';
 
 
 type Address = string;
@@ -307,42 +305,6 @@ export function fetchERC20Balance(
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
-}
-
-export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<WalletAssetBalance[]> {
-  const promises = assets
-    .map(async (asset: Asset) => {
-      const balance = asset.symbol === ETH
-        ? await fetchETHBalance(walletAddress).catch(() => null)
-        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => null);
-      return {
-        balance,
-        symbol: asset.symbol,
-      };
-    });
-  return Promise.all(promises)
-    .then(balances => balances.filter(({ balance }) => balance !== null))
-    .catch(() => []);
-}
-
-export async function fetchAddressBalancesFromProxyContract(
-  assets: Asset[],
-  accountAddress: string,
-): Promise<WalletAssetBalance[]> {
-  if (!['homestead', 'kovan'].includes(getEnv().NETWORK_PROVIDER)) return [];
-
-  const tokens = assets.map(({ address }) => address);
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const contract = new Contract(getEnv().BALANCE_CHECK_CONTRACT, BALANCE_CHECKER_CONTRACT_ABI, provider);
-
-  const balances = await contract.balances([accountAddress], tokens)
-    .then(values =>
-      assets.map((asset, assetIdx) => ({
-        symbol: asset.symbol,
-        balance: utils.formatUnits(values[assetIdx], asset.decimals),
-      })))
-    .catch(() => []);
-  return balances;
 }
 
 export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {

@@ -20,23 +20,16 @@
 import {
   SET_USERNAME,
   UPDATE_USER,
-  USER_PHONE_VERIFIED,
-  USER_EMAIL_VERIFIED,
-  SENDING_OTP,
-  OTP_SENT,
-  RESET_OTP_STATUS,
-  VERIFICATION_FAILED,
   SET_USER,
 } from 'constants/userConstants';
 import merge from 'lodash.merge';
 
+// types
 import type { User } from 'models/User';
+
 
 export type UserReducerState = {
   data: User,
-  sendingOneTimePassword: boolean,
-  oneTimePasswordSent: boolean,
-  verificationFailed: boolean,
 };
 
 export type UserReducerAction = {
@@ -47,13 +40,7 @@ export type UserReducerAction = {
 export const initialState: UserReducerState = {
   data: {
     username: null,
-    isLegacyUser: true,
-    isEmailVerified: false,
-    isPhoneVerified: false,
   },
-  sendingOneTimePassword: false,
-  oneTimePasswordSent: false,
-  verificationFailed: false,
 };
 
 const userReducer = (
@@ -63,38 +50,6 @@ const userReducer = (
   const { data } = state;
 
   switch (action.type) {
-    case SENDING_OTP:
-      return {
-        ...state,
-        sendingOneTimePassword: true,
-        oneTimePasswordSent: false,
-        verificationFailed: false,
-      };
-
-    case OTP_SENT:
-      return {
-        ...state,
-        sendingOneTimePassword: false,
-        oneTimePasswordSent: true,
-        verificationFailed: false,
-      };
-
-    case RESET_OTP_STATUS:
-      return {
-        ...state,
-        sendingOneTimePassword: false,
-        oneTimePasswordSent: false,
-        verificationFailed: false,
-      };
-
-    case VERIFICATION_FAILED:
-      return {
-        ...state,
-        sendingOneTimePassword: false,
-        oneTimePasswordSent: true,
-        verificationFailed: true,
-      };
-
     case SET_USER:
       return {
         ...state,
@@ -111,26 +66,6 @@ const userReducer = (
       return {
         ...state,
         data: { ...state.data, username: action.payload },
-      };
-
-    case USER_EMAIL_VERIFIED:
-      return {
-        ...state,
-        data: merge({}, { ...data }, {
-          isEmailVerified: true,
-        }),
-        sendingOneTimePassword: false,
-        oneTimePasswordSent: false,
-      };
-
-    case USER_PHONE_VERIFIED:
-      return {
-        ...state,
-        data: merge({}, { ...data }, {
-          isPhoneVerified: true,
-        }),
-        sendingOneTimePassword: false,
-        oneTimePasswordSent: false,
       };
 
     default:

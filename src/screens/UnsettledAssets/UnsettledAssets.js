@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -86,13 +85,11 @@ class UnsettledAssets extends React.Component<Props> {
     const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
-    const { symbol, iconUrl, name } = thisAsset;
-    const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const { symbol, name } = thisAsset;
 
     return (
       <ListItemWithImage
         label={name || symbol}
-        avatarUrl={fullIconUrl}
         balance={{
           balance: paymentNetworkBalanceFormatted,
           value: formattedAmountInFiat,

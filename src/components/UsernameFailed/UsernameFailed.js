@@ -47,7 +47,7 @@ import { getEnsPrefix } from 'utils/common';
 // types
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { User } from 'models/User';
+import type { OnboardingUser } from 'models/User';
 
 
 const ContentWrapper = styled.View`
@@ -69,7 +69,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   checkUsernameAvailability: (username: string) => void,
   resetUsernameCheck: () => void,
-  user: ?User,
+  onboardingUser: ?OnboardingUser,
   theme: Theme,
   errorMessage: ?string,
   finishOnboarding: () => void,
@@ -77,7 +77,7 @@ type Props = {
 };
 
 const UsernameFailed = ({
-  user,
+  onboardingUser,
   checkUsernameAvailability,
   theme,
   errorMessage,
@@ -87,7 +87,7 @@ const UsernameFailed = ({
 }: Props) => {
   useEffect(() => {
     // prepare for username check if no user set
-    if (!user) resetUsernameCheck();
+    if (!onboardingUser) resetUsernameCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,7 +122,7 @@ const UsernameFailed = ({
     // user updated, reset
     if (isCheckingUsername) setIsCheckingUsername(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [onboardingUser]);
 
   useEffect(() => {
     if (!usernameValidationErrorMessage) onValidUsername();
@@ -141,7 +141,7 @@ const UsernameFailed = ({
     colors,
     isUsernameInputDirty,
     isCheckingUsername,
-    user,
+    onboardingUser,
     usernameValidationErrorMessage,
     errorMessage,
   );
@@ -186,12 +186,12 @@ const UsernameFailed = ({
 
 const mapStateToProps = ({
   onboarding: {
-    user,
+    user: onboardingUser,
     errorMessage,
   },
   user: { data: { username: savedUsername } },
 }: RootReducerState): $Shape<Props> => ({
-  user,
+  onboardingUser,
   savedUsername,
   errorMessage,
 });

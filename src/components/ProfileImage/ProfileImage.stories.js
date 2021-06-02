@@ -24,22 +24,20 @@ import ProfileImage from './ProfileImage';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const userImage = 'https://picsum.photos/200';
 const usdcIcon = require('assets/images/usdc_color.png');
 
 storiesOf('ProfileImage', module)
   .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ProfileImage userName="Username" uri={userImage} />
+    <ProfileImage userName="Username" />
   ))
   .add('with border', () => (
-    <ProfileImage userName="Username" uri={userImage} borderWidth={2} />
+    <ProfileImage userName="Username" borderWidth={2} />
   ))
   .add('with addon image', () => (
     <ProfileImage
       userName="Username"
-      uri={userImage}
       cornerIcon={usdcIcon}
       cornerIconSize={16}
     />

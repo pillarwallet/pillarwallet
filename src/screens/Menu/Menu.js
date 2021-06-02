@@ -51,7 +51,6 @@ import {
   WALLET_SETTINGS,
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
-  ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   KEY_BASED_ASSET_TRANSFER_INTRO,
@@ -63,7 +62,6 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
@@ -83,15 +81,11 @@ type Props = {|
   backupStatus: BackupStatus,
   logoutUser: () => void,
   lockScreen: () => void,
-  goToInvitationFlow: () => void,
-  isPillarRewardCampaignActive: boolean,
   hasKeyBasedAssetsTransferInProgress: boolean,
   keyBasedWalletHasPositiveBalance: boolean,
 |};
 
 const Menu = ({
-  goToInvitationFlow,
-  isPillarRewardCampaignActive,
   hasKeyBasedAssetsTransferInProgress,
   logoutUser,
   backupStatus,
@@ -128,12 +122,6 @@ const Menu = ({
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
-      key: 'userProfile',
-      title: t('settingsContent.settingsItem.userProfile.title'),
-      emoji: 'male-singer',
-      action: () => navigation.navigate(ADD_EDIT_USER),
-    },
-    {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
@@ -148,15 +136,6 @@ const Menu = ({
         label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
         color: colors.negative,
       },
-    },
-    {
-      key: 'referFriends',
-      title: isPillarRewardCampaignActive
-        ? t('settingsContent.settingsItem.referFriends.title')
-        : t('settingsContent.settingsItem.inviteFriends.title'),
-      icon: 'present',
-      iconColor: colors.accent,
-      action: goToInvitationFlow,
     },
     {
       key: 'community',
@@ -295,11 +274,9 @@ const Menu = ({
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
-  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
-  isPillarRewardCampaignActive,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -315,7 +292,6 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Menu);

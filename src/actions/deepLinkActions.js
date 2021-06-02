@@ -18,17 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Alert } from 'react-native';
 import isEmpty from 'lodash.isempty';
-import t from 'translations/translate';
 
+// actions
 import { connectToWalletConnectConnectorAction } from 'actions/walletConnectActions';
-
-// constants
-import { CONFIRM_CLAIM } from 'constants/navigationConstants';
-
-// services
-import { updateNavigationLastScreenState } from 'services/navigation';
 
 // utils
 import { validateDeepLink } from 'utils/deepLink';
@@ -50,17 +43,6 @@ export const executeDeepLinkAction = (deepLink: string) => {
 
     // NOTE: actions (hosts) are parsed in lowercase
     switch (action) {
-      case 'referral':
-        const referralCode = query?.code;
-        if (referralCode) {
-          updateNavigationLastScreenState({
-            lastActiveScreen: CONFIRM_CLAIM,
-            lastActiveScreenParams: { code: referralCode },
-          });
-        } else {
-          Alert.alert(t('alert.invalidReferralDeepLink.title'), t('alert.invalidReferralDeepLink.message'));
-        }
-        break;
       case 'wc':
         let walletConnectUrl = query?.url || query?.uri;
         if (walletConnectUrl) {

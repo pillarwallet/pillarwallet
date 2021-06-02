@@ -28,11 +28,10 @@ describe('The fiatToCrypto.js utility module', () => {
 
     it('successfully returns a RAMP url', () => {
       const fakeEthAddress = '0x123';
-      const fakeUserEmail = 'support@pillarproject.io';
       const fakeFiatCurrency = '$';
       const fakeFiatValue = '0.1';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail, fakeFiatCurrency, fakeFiatValue);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue);
 
       const expectedParams = {
         hostAppName: PILLAR,
@@ -40,7 +39,6 @@ describe('The fiatToCrypto.js utility module', () => {
         fiatValue: fakeFiatValue,
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        userEmailAddress: fakeUserEmail,
         swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'].join(','),
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
