@@ -23,7 +23,7 @@ import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, BNB, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, BNB, HOT, HOLO, ratesEntries } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { COIN_ID } from 'constants/coinGeckoServiceConstants';
@@ -313,7 +313,6 @@ export function fetchERC20Balance(
 
 export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
-  const targetCurrencies = supportedFiatCurrencies.concat(ETH);
 
   assets = assets.map(token => {
     // rename HOT to HOLO
@@ -324,7 +323,7 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   });
 
   return cryptocompare
-    .priceMulti(assets, targetCurrencies)
+    .priceMulti(assets, ratesEntries)
     .then(data => {
       // rename HOLO to HOT
       if (data[HOLO]) {
