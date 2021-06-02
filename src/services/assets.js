@@ -359,7 +359,8 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
       // by any mean if CoinGecko failed let's try legacy way
       rates = await getLegacyExchangeRates(assetSymbols);
 
-    // Handle Eth & Bnb because they are native tokens, MATIC & DAI are also ERC20 tokens hence they do not need this.
+    // ETH & BNB require special handling as they are native tokens for Ethereum & BSC.
+    // MATIC and DAI do not require such handling since they are also ERC20 tokens on Ethereum.
     } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
       const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
       if (!isEmpty(ethPrice)) {
