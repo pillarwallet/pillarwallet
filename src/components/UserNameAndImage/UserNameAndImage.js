@@ -54,15 +54,15 @@ const UserNameAndImage = ({ user }: Props) => {
   const accountCount = useSmartWalletAccounts().length;
 
   return (
-    <Wrapper>
+    <Wrapper onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
       <ProfileImage userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
       {accountCount > 1 && (
-        <TouchableOpacity onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+        <SwitchIconWrapper>
           <Icon name="select" color={colors.basic020} />
-        </TouchableOpacity>
+        </SwitchIconWrapper>
       )}
     </Wrapper>
   );
@@ -70,11 +70,13 @@ const UserNameAndImage = ({ user }: Props) => {
 
 export default UserNameAndImage;
 
-const Wrapper = styled.View`
+const Wrapper = styled.TouchableOpacity`
   padding: 0 ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
 `;
+
+const SwitchIconWrapper = styled.View``;
 
 const UserName = styled(Text)`
   ${fontStyles.medium};
