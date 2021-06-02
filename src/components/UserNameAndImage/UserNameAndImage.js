@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -59,11 +58,7 @@ const UserNameAndImage = ({ user }: Props) => {
 
       {!!username && <UserName>{username}</UserName>}
 
-      {accountCount > 1 && (
-        <SwitchIconWrapper>
-          <Icon name="select" color={colors.basic020} />
-        </SwitchIconWrapper>
-      )}
+      {accountCount > 1 && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
   );
 };
@@ -75,8 +70,6 @@ const Wrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
-
-const SwitchIconWrapper = styled.View``;
 
 const UserName = styled(Text)`
   ${fontStyles.medium};
