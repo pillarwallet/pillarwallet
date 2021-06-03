@@ -27,8 +27,8 @@ export const buildEnvironment = {
   SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
-  OPEN_SEA_API_KEY: '43a6b0b3fc5645fe826f392e7ac88bdf',
-  INFURA_PROJECT_ID: '31a9622172b644d8844cbff3fc17eefd',
+  OPEN_SEA_API_KEY: '_open_sea_api_key_',
+  INFURA_PROJECT_ID: '_infura_project_id_',
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
   ZAPPER_API_KEY: '96e0cc51-a62e-42ca-acee-910ea7d2a241', // public
   INSTABUG_TOKEN: '_instabug_token_',
