@@ -25,7 +25,6 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -197,7 +196,6 @@ class TankWithdrawal extends React.Component<Props, State> {
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance
@@ -237,7 +235,7 @@ class TankWithdrawal extends React.Component<Props, State> {
       feeSymbol,
     );
     const formFields = getAmountFormFields({
-      icon,
+      icon: iconUrl,
       currency: token,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },

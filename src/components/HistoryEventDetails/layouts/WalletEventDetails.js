@@ -34,7 +34,6 @@ import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 
 // Actions
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
@@ -78,8 +77,6 @@ function WalletEventDetails({ event }: Props) {
     Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
   };
 
-  const navigateToInviteFriends = () => dispatch(goToInvitationFlowAction());
-
   const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
@@ -89,9 +86,6 @@ function WalletEventDetails({ event }: Props) {
         <Spacing h={spacing.extraLarge} />
 
         <Button variant="secondary" title={t('button.topUp')} onPress={openTopUp} />
-
-        <Spacing h={spacing.small} />
-        <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
       </BaseEventDetails>
     );
   }
@@ -110,8 +104,6 @@ function WalletEventDetails({ event }: Props) {
         <Spacing h={spacing.mediumLarge} />
 
         <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
-        <Spacing h={spacing.small} />
-        <Button variant="text" title={t('button.inviteFriends')} onPress={navigateToInviteFriends} />
       </BaseEventDetails>
     );
   }

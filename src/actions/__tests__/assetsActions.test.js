@@ -42,7 +42,7 @@ import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
-import PillarSdk from 'services/api';
+import etherspotService from 'services/etherspot';
 
 // utils
 import { mockSupportedAssets } from 'testUtils/jestSetup';
@@ -51,8 +51,7 @@ import { mockSupportedAssets } from 'testUtils/jestSetup';
 import type { Assets, AssetsByAccount } from 'models/Asset';
 
 
-const pillarSdk = new PillarSdk();
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const getTransactionCountMock = jest.fn(() => {
   return new Promise((resolve) => {
@@ -85,10 +84,8 @@ const mockAssetsByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };
@@ -103,10 +100,8 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
   PLR: {
@@ -114,13 +109,15 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };
+
+const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH' };
+
+jest.spyOn(etherspotService, 'getBalances').mockImplementation(() => [mockEthBalance]);
 
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
@@ -164,7 +161,7 @@ describe('Assets actions', () => {
       accountId: mockAccounts[0].id,
       chain: CHAIN.ETHEREUM,
       category: ASSET_CATEGORY.WALLET,
-      balances: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } },
+      balances: { ETH: mockEthBalance },
     };
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },

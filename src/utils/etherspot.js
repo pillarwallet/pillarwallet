@@ -78,7 +78,7 @@ export const parseEtherspotTransactions = (
       hash,
       status: rawStatus,
       asset: assetPayload,
-      createdAt,
+      timestamp: createdAt,
     } = etherspotTransaction;
 
     let asset = ETH;

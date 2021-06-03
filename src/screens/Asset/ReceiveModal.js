@@ -136,10 +136,9 @@ const ReceiveModal = ({
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
 
-  const { profileImage, lastUpdateTime = 0, username = '' } = user;
+  const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
   const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
-  const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
   return (
     <SlideModal
@@ -157,11 +156,7 @@ const ReceiveModal = ({
       }] : undefined}
       centerFloatingItem={
         <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-          <ProfileImage
-            uri={profileImageURI}
-            userName={username}
-            diameter={48}
-          />
+          <ProfileImage userName={username} diameter={48} />
         </ImageWrapper>
       }
     >

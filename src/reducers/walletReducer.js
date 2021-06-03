@@ -34,7 +34,6 @@ import type { EthereumWallet } from 'models/Wallet';
 export type BackupStatus = {|
   isImported: boolean,
   isBackedUp: boolean,
-  isRecoveryPending: boolean,
 |};
 
 export type WalletReducerState = {|
@@ -58,7 +57,6 @@ const initialState = {
   backupStatus: {
     isImported: false,
     isBackedUp: false,
-    isRecoveryPending: false,
   },
   pinAttemptsCount: 0,
   lastPinAttempt: 0,

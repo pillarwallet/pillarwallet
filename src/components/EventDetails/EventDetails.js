@@ -41,7 +41,6 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
-import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
 import { Spacing } from 'components/Layout';
 
 // utils
@@ -82,7 +81,7 @@ import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // constants
-import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -120,7 +119,6 @@ import {
   POOLTOGETHER_WITHDRAW,
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
-  EXCHANGE,
   RARI_DEPOSIT,
   RARI_CLAIM_RGT,
   LIQUIDITY_POOL_DASHBOARD,
@@ -164,7 +162,6 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -181,10 +178,9 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 import type { Stream } from 'models/Sablier';
-import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
-import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 
 type StateProps = {|
@@ -194,10 +190,8 @@ type StateProps = {|
   accounts: Account[],
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
-  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   updatingTransaction: ?string,
   updatingCollectibleTransaction: ?string,
-  isPillarRewardCampaignActive: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
   incomingStreams: Stream[],
@@ -218,7 +212,6 @@ type SelectorProps = {|
 |};
 
 type DispatchProps = {|
-  goToInvitationFlow: () => void,
   updateTransactionStatus: (hash: string) => void,
   updateCollectibleTransaction: (hash: string) => void,
   lookupAddress: (address: string) => void,
@@ -547,11 +540,6 @@ export class EventDetail extends React.Component<Props> {
     this.openReceiveModal(smartWalletAddress);
   };
 
-  referFriends = () => {
-    const { goToInvitationFlow } = this.props;
-    goToInvitationFlow();
-  };
-
   activateSW = () => {
     Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
   };
@@ -650,11 +638,6 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
   }
 
-  goToWbtcCafeExchange = () => {
-    const { navigation } = this.props;
-    navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC });
-  }
-
   goToStreamWithdraw = (streamId: string) => {
     const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
@@ -711,12 +694,6 @@ export class EventDetail extends React.Component<Props> {
     );
   }
 
-  getReferButtonTitle = () => {
-    const { isPillarRewardCampaignActive } = this.props;
-    if (isPillarRewardCampaignActive) return t('button.referFriends');
-    return t('button.inviteFriends');
-  };
-
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
     const formattedAmount = parseFloat(formatUnits(amount, decimals)).toString();
@@ -739,16 +716,6 @@ export class EventDetail extends React.Component<Props> {
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isArchanovaWalletActivated } = this.props;
     switch (event.eventTitle) {
-      case 'Wallet created':
-        return {
-          buttons: [
-            {
-              title: this.getReferButtonTitle(),
-              onPress: this.referFriends,
-              secondary: true,
-            },
-          ],
-        };
       case 'Smart Wallet created':
         const activateButton = {
           title: t('button.activate'),
@@ -763,17 +730,6 @@ export class EventDetail extends React.Component<Props> {
 
         return {
           buttons: isArchanovaWalletActivated ? [topUpButton] : [activateButton],
-        };
-      case 'Wallet imported':
-        return {
-          primaryButtonTitle: this.getReferButtonTitle(),
-          buttons: [
-            {
-              title: this.getReferButtonTitle(),
-              onPress: this.referFriends,
-              secondary: true,
-            },
-          ],
         };
       default:
         return null;
@@ -826,16 +782,6 @@ export class EventDetail extends React.Component<Props> {
           ],
         };
 
-      case WALLET_BACKUP_EVENT:
-        return {
-          buttons: [
-            {
-              title: this.getReferButtonTitle(),
-              onPress: this.referFriends,
-              secondary: true,
-            },
-          ],
-        };
       default:
         return null;
     }
@@ -847,7 +793,6 @@ export class EventDetail extends React.Component<Props> {
       accounts,
       isPPNActivated,
       itemData,
-      referralRewardIssuersAddresses,
       depositedAssets,
       ensRegistry,
       supportedAssets,
@@ -881,24 +826,12 @@ export class EventDetail extends React.Component<Props> {
           onPress: this.topUpPillarNetwork,
         };
 
-        const referFriendsButton = {
-          title: this.getReferButtonTitle(),
-          onPress: this.referFriends,
-          secondary: true,
-        };
-
-        const referFriendsButtonSecondary = {
-          title: this.getReferButtonTitle(),
-          onPress: this.referFriends,
-          secondary: true,
-        };
-
         eventData = {
           actionTitle: t('label.activated'),
           actionSubtitle: this.getFeeLabel(event),
-          buttons: isPPNActivated || !isArchanovaAccountActive
-            ? [referFriendsButton]
-            : [activatePillarNetworkButton, referFriendsButtonSecondary],
+          buttons: !isPPNActivated && isArchanovaAccountActive
+            ? [activatePillarNetworkButton]
+            : [],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
@@ -1100,16 +1033,8 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case SABLIER_CANCEL_STREAM:
-        return null;
       case WBTC_PENDING_TRANSACTION:
-        eventData = {
-          buttons: [{
-            title: t('wbtcCafe.buyMore'),
-            onPress: this.goToWbtcCafeExchange,
-            secondary: true,
-          }],
-        };
-        break;
+        return null;
       case RARI_DEPOSIT_TRANSACTION:
       case RARI_CLAIM_TRANSACTION:
       case RARI_WITHDRAW_TRANSACTION: {
@@ -1265,7 +1190,6 @@ export class EventDetail extends React.Component<Props> {
         const isBetweenArchanovaAccounts = isArchanovaAccountAddress(event.from, accounts)
           && isArchanovaAccountAddress(event.to, accounts);
 
-        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
         const actionSubtitle = isReceived ? t('label.toPPN') : t('label.fromPPN');
         const isZeroValue = formattedValue === '0';
 
@@ -1321,12 +1245,6 @@ export class EventDetail extends React.Component<Props> {
 
           let buttons = [];
 
-          const inviteToPillarButton = {
-            title: t('button.inviteToPillar'),
-            onPress: this.referFriends,
-            secondary: true,
-          };
-
           const sendBackToAddress = {
             title: t('button.sendBack'),
             onPress: () => this.sendTokensToAddress(relevantAddress),
@@ -1339,18 +1257,12 @@ export class EventDetail extends React.Component<Props> {
             secondary: true,
           };
 
-          if (isReferralRewardTransaction) {
-            buttons = [];
-          } else if (isReceived) {
-            if (isPending) {
-              buttons = [inviteToPillarButton];
-            } else {
-              buttons = [sendBackToAddress, inviteToPillarButton];
+          if (isReceived) {
+            if (!isPending) {
+              buttons = [sendBackToAddress];
             }
-          } else if (isPending) {
-            buttons = [inviteToPillarButton];
-          } else {
-            buttons = [sendMoreToAddress, inviteToPillarButton];
+          } else if (!isPending) {
+            buttons = [sendMoreToAddress];
           }
           eventData.buttons = buttons;
           if (!isReceived) {
@@ -1677,7 +1589,6 @@ export class EventDetail extends React.Component<Props> {
         {customActionTitle}
         {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        {event.tag === WBTC_PENDING_TRANSACTION && <WBTCCafeWarning />}
       </DetailModal>
     );
   };
@@ -1740,7 +1651,6 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
-  referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
@@ -1753,8 +1663,6 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
-  referralRewardIssuersAddresses,
-  isPillarRewardCampaignActive,
   updatingTransaction,
   updatingCollectibleTransaction,
   depositedAssets,
@@ -1781,7 +1689,6 @@ const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| .
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),

@@ -20,6 +20,8 @@
 import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
+
+import type { Currency } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 
 export type AppSettingsReducerState = {
@@ -29,14 +31,13 @@ export type AppSettingsReducerState = {
       assetsLayout: string,
     },
     blockchainNetwork: ?string,
-    baseFiatCurrency: ?string,
+    baseFiatCurrency: ?Currency,
     transactionSpeed: ?string,
     themeType: string,
     isManualThemeSelection: boolean,
     useBiometrics?: boolean,
     optOutTracking?: boolean,
     hasSeenExchangeIntro?: boolean,
-    hasSeenWbtcCafeIntro?: boolean,
     hasSeenTutorial?: boolean,
     hideBalance?: boolean,
     hasDismissedConnectAppsIntro?: boolean,
@@ -46,12 +47,13 @@ export type AppSettingsReducerState = {
     hideRari?: boolean,
     preferredGasToken: ?string,
     initialDeeplinkExecuted: boolean,
-    hasSeenRecoveryPortalIntro?: boolean,
     hideLendingDeposits?: boolean,
     omitPinOnLogin: boolean,
     localisation: ?LocalisationOptions,
     hideLiquidityPools?: boolean,
     hideWalletConnectPromoCard?: boolean,
+    isPickingImage?: boolean,
+    isBrowsingWebView?: boolean,
   },
   isFetched: boolean,
 };
@@ -74,7 +76,6 @@ export const initialState: AppSettingsReducerState = {
     isManualThemeSelection: false,
     useBiometrics: false,
     hasSeenExchangeIntro: false,
-    hasSeenWbtcCafeIntro: false,
     hasSeenTutorial: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
@@ -84,7 +85,6 @@ export const initialState: AppSettingsReducerState = {
     hideRari: false,
     preferredGasToken: null,
     initialDeeplinkExecuted: false,
-    hasSeenRecoveryPortalIntro: false,
     hideLendingDeposits: false,
     omitPinOnLogin: false,
     localisation: null,

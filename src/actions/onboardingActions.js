@@ -21,19 +21,16 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
-import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
+import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import {
   APP_FLOW,
   NEW_WALLET,
   TUTORIAL_FLOW,
   HOME,
-  REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
-  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -56,14 +53,21 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { isCaseInsensitiveMatch, reportErrorLog, reportLog, logBreadcrumb } from 'utils/common';
-import { updateOAuthTokensCB } from 'utils/oAuth';
+import {
+  reportErrorLog,
+  reportLog,
+  logBreadcrumb,
+  getEnsPrefix,
+  extractUsernameFromEnsName,
+} from 'utils/common';
 import { transformAssetsToObject } from 'utils/assets';
+import { getAccountEnsName } from 'utils/accounts';
 
 // services
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
+import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -71,14 +75,11 @@ import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
-import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
@@ -89,15 +90,14 @@ import { initialAssets } from 'fixtures/assets';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
 
 
-export const setupUserAction = (username: ?string, recoveryData?: Object) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const setupUserAction = (username: ?string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     // eslint-disable-next-line i18next/no-literal-string
     logBreadcrumb('onboarding', 'onboardingAction.js: setupUserAction checking for username');
     if (!username) {
-      reportLog('setupUserAction failed: no username', { recoveryData });
+      reportLog('setupUserAction failed: no username');
       return;
     }
 
@@ -116,14 +116,14 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     } = getState();
 
     // save for future onboarding retry in case anything fails or is offline
-    let userInfo = { username };
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: saveDbAction', userInfo);
-    await dispatch(saveDbAction('user', { user: userInfo }, true));
+    const user = { username };
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: saveDbAction', user);
+    await dispatch(saveDbAction('user', { user }, true));
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking for privateKey while setupUserAction');
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
-      reportLog('setupUserAction failed: no privateKey', { recoveryData });
+      reportLog('setupUserAction failed: no privateKey', { username });
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_REGISTERING_USER}');
       dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
@@ -131,7 +131,6 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online');
     if (isOnline) {
-      api.init();
       logBreadcrumb('onboarding', 'onboardingAction.js: user is online, registering for FCM Remote Notifications');
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
       await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
@@ -145,53 +144,9 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
         return null;
       });
 
-      logBreadcrumb('onboarding', 'onboardingAction.js: setupUserAction.. registering for auth server');
-      const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
-
-      if (!!sdkWallet?.error || !sdkWallet?.walletId) {
-        logBreadcrumb('onboarding', 'onboardingAction.js: checking for sdkWallet error reason');
-        const usernameFailed = sdkWallet?.reason === SDK_REASON_USERNAME_FAILED;
-        const error = usernameFailed
-          ? t('auth:error.registrationApiUsernameFailed')
-          : t('auth:error.registrationApiFailedWithNoReason');
-        reportErrorLog('setupUserAction user registration failed', { error, username, recoveryData });
-        if (usernameFailed) {
-          logBreadcrumb(
-            'onboarding',
-            'onboardingAction.js: Dispatching action: ${SET_ONBOARDING_USERNAME_REGISTRATION_FAILED}',
-          );
-          dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: true });
-        }
-        logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_ONBOARDING_ERROR}', error);
-        dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
-        return;
-      }
-
-      const { walletId } = sdkWallet;
-      userInfo = { ...userInfo, walletId };
-
-      const oAuthTokens = {
-        refreshToken: sdkWallet.refreshToken,
-        accessToken: sdkWallet.accessToken,
-      };
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: updating Auth Tokens');
-      const updateOAuth = updateOAuthTokensCB(dispatch);
-      api.init(updateOAuth, oAuthTokens);
-      await updateOAuth(oAuthTokens);
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: recieving updated user info');
-      const updatedUserInfo = await api.userInfo(walletId);
-      if (!isEmpty(updatedUserInfo)) {
-        userInfo = { ...userInfo, ...updatedUserInfo };
-      }
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: setting username');
-      api.setUsername(userInfo.username);
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: saving updated user info in DB');
       // save updated
-      dispatch(saveDbAction('user', { user: userInfo }, true));
+      logBreadcrumb('onboarding', 'onboardingAction.js: saving updated user info in DB');
+      dispatch(saveDbAction('user', { user }, true));
 
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${UPDATE_SESSION}');
       dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
@@ -201,7 +156,7 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     }
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_USER}');
-    dispatch({ type: SET_USER, payload: userInfo });
+    dispatch({ type: SET_USER, payload: user });
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_REGISTERING_USER}');
     dispatch({ type: SET_REGISTERING_USER, payload: false });
@@ -214,7 +169,6 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
       onboarding: {
         pinCode,
         wallet: importedWallet, // wallet was already added in import step
-        isPortalRecovery,
       },
     } = getState();
 
@@ -240,8 +194,7 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Checking for recovery pending and backup status');
-    const isRecoveryPending = !!isPortalRecovery;
-    const backupStatus = { isImported, isBackedUp: !!isImported, isRecoveryPending };
+    const backupStatus = { isImported, isBackedUp: !!isImported };
 
     // dispatch to reducer only, will be stored with encryptAndSaveWalletAction
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${UPDATE_WALLET_BACKUP_STATUS}');
@@ -257,10 +210,9 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
 };
 
 export const setupAppServicesAction = (privateKey: ?string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { backupStatus },
-      user: { data: { walletId } },
       session: { data: { isOnline } },
     } = getState();
 
@@ -271,9 +223,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     }
 
     // set default in case account cannot be created offline
-    const defaultInitialAssets = isOnline && walletId ?
-      await api.fetchInitialAssets(walletId)
-      : transformAssetsToObject(initialAssets);
+    const defaultInitialAssets = transformAssetsToObject(initialAssets);
 
     const defaultAssets = { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: defaultInitialAssets };
 
@@ -284,60 +234,54 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch(saveDbAction('assets', { assets: defaultAssets }, true));
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
+
     // all the calls below require user to be online
     if (!isOnline) return;
 
+    // active Etherspot service is required to proceed
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching etherspotActions action: initEtherspotServiceAction',
+    );
+    await dispatch(initEtherspotServiceAction(privateKey));
+
     // user might not be registered at this point
-    if (walletId) {
-      await dispatch(loadSupportedAssetsAction());
+    await dispatch(loadSupportedAssetsAction());
 
-      const rates = await getExchangeRates(defaultInitialAssets);
+    const rates = await getExchangeRates(defaultInitialAssets);
 
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: setRatesAction');
-      dispatch(setRatesAction(rates));
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: setRatesAction');
+    dispatch(setRatesAction(rates));
 
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching badges action: fetchBadgesAction');
-      dispatch(fetchBadgesAction(false));
+    // create Archanova accounts if needed
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching smartWalletActions action: importArchanovaAccountsIfNeededAction',
+    );
+    await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
 
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching referrals action: fetchReferralRewardAction');
-      dispatch(fetchReferralRewardAction());
+    // create Etherspot accounts
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching etherspotActions action: importEtherspotAccountsAction',
+    );
+    await dispatch(importEtherspotAccountsAction());
 
-      // create smart wallet account only for new wallets
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching smartWalletActions action: importArchanovaAccountsIfNeededAction',
-      );
-      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching historyActions action: fetchTransactionsHistoryAction',
+    );
+    await dispatch(fetchTransactionsHistoryAction());
 
-      // Etherspot smart wallet silent account creation
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching etherspotActions action: initEtherspotServiceAction',
-      );
-      await dispatch(initEtherspotServiceAction(privateKey));
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching smart wallet action: managePPNInitFlagAction');
+    dispatch(managePPNInitFlagAction());
 
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching etherspotActions action: importEtherspotAccountsAction',
-      );
-      await dispatch(importEtherspotAccountsAction());
-
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching historyActions action: fetchTransactionsHistoryAction',
-      );
-      await dispatch(fetchTransactionsHistoryAction());
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching smart wallet action: managePPNInitFlagAction');
-      dispatch(managePPNInitFlagAction());
-
-      // add wallet created / imported events
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: Dispatching user event action: getWalletsCreationEventsAction',
-      );
-      dispatch(getWalletsCreationEventsAction());
-    }
+    // add wallet created / imported events
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching user event action: getWalletsCreationEventsAction',
+    );
+    dispatch(getWalletsCreationEventsAction());
 
     // if wallet was imported let's check its balance for key based assets migration
     if (backupStatus.isImported) {
@@ -357,7 +301,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
   };
 };
 
-export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) => {
+export const finishOnboardingAction = (retry?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_FINISHING_ONBOARDING}');
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: true });
@@ -371,17 +315,15 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     const {
       onboarding: { user: onboardingUser },
       user: { data: user },
-      wallet: { backupStatus: { isRecoveryPending }, data: walletData },
+      wallet: { data: walletData },
     } = getState();
 
-    // either retry during onboarding or previously stored username during onboarding
-    if (!user?.walletId) {
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: setupUserAction');
-      await dispatch(setupUserAction(onboardingUser?.username || user?.username, recoveryData));
-    }
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: setupUserAction');
+    await dispatch(setupUserAction(onboardingUser?.username || user?.username));
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: setupAppServicesAction');
     await dispatch(setupAppServicesAction(walletData?.privateKey));
+
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching exchange action: getExchangeSupportedAssetsAction');
     dispatch(getExchangeSupportedAssetsAction());
@@ -397,48 +339,25 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
       reportErrorLog('onboardingAction.js: errors recieved retry will happen in application', errorMessage);
     }
 
-    // reset if recovery was pending as it's successful recover by this step
-    if (isRecoveryPending) {
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${UPDATE_WALLET_BACKUP_STATUS}');
-      dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: false } });
-
-      logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching Db action: saveDbAction');
-      dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
-    }
-
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching cms action: getTutorialDataAction');
     await dispatch(getTutorialDataAction());
 
     logBreadcrumb('onboarding', 'checking for FEATURE_ONBOARDING flag for enable onboarding');
     const enableOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
 
-    const { onboarding: { tutorialData }, referrals: { referralToken } } = getState();
-    const BASIC_FLOW = tutorialData && enableOnboarding ? TUTORIAL_FLOW : HOME;
+    const { onboarding: { tutorialData } } = getState();
+    const routeName = tutorialData && enableOnboarding ? TUTORIAL_FLOW : HOME;
 
-    if (tutorialData && referralToken) {
-      // show Tutorial first, then navigate to Referral flow when it's finished/skipped
-      logBreadcrumb(
-        'onboarding',
-        'tutorial data and referal token exist application will show tutorial first and then referral flow',
-      );
-      navigate(NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: { nextNavigationRouteName: REFERRAL_INCOMING_REWARD },
-        action: NavigationActions.navigate({ routeName: TUTORIAL_FLOW }),
-      }));
-    } else {
-      // check if user was referred to install the app and navigate accordingly
-      logBreadcrumb(
-        'onboarding',
-        'checking if user was referred to install the app and application will navigate accoridngly',
-      );
-      const routeName = referralToken ? REFERRAL_INCOMING_REWARD : BASIC_FLOW;
-      navigate(NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName }),
-      }));
-    }
+    // check if tutorial needs to bw shown and navigate accordingly
+    logBreadcrumb(
+      'onboarding',
+      'checking if tutorial needs to bw shown and navigating accordingly',
+    );
+    navigate(NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName }),
+    }));
 
     logBreadcrumb(
       'onboarding',
@@ -450,10 +369,9 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 export const beginOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // pass current onboarding, referrals and some session values to keep after redux state reset
+    // pass current onboarding and some session values to keep after redux state reset
     const {
       onboarding,
-      referrals,
       session: {
         data: {
           isOnline,
@@ -468,7 +386,6 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching auth action: resetAppStateAction');
     dispatch(resetAppStateAction({
       onboarding,
-      referrals,
       session: {
         data: {
           isOnline,
@@ -488,33 +405,17 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: setupWalletAction');
     await dispatch(setupWalletAction(enableBiometrics));
 
-    logBreadcrumb('onboarding', 'onboardingAction.js: Checking if wallet import is pending');
-    // checks if wallet import is pending and in this state we don't want to auth any users yet
-    if (onboarding.isPortalRecovery) {
-      navigate(NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
-      }));
-
-      logBreadcrumb(
-        'onboarding',
-        'onboardingAction.js: wallet import is pending.. Dispatching action: checkAndFinishSmartWalletRecoveryAction',
-      );
-      dispatch(checkAndFinishSmartWalletRecoveryAction());
-      return;
-    }
-
     logBreadcrumb(
       'onboarding',
       'onboardingAction.js: beginOnboarding Action completed.. Dispatching action: finishOnboarding',
     );
+
     dispatch(finishOnboardingAction());
   };
 };
 
 export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch) => {
     // reset if back was pressed and new mnemonic entered
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     dispatch({ type: SET_ONBOARDING_USER, payload: null });
@@ -542,22 +443,23 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
       return;
     }
 
-    logBreadcrumb('onboarding', 'onboardingAction.js: Trying to validate address of registered wallet user');
-    api.init();
-    const registeredWalletUser = await api.validateAddress(importedWallet.address);
-    if (registeredWalletUser?.walletId) {
-      const {
-        walletId,
-        username,
-        profileImage,
-      } = registeredWalletUser;
+    logBreadcrumb('onboarding', 'onboardingAction.js: Trying to validate registered user');
+    const existingAccounts = await getExistingServicesAccounts(importedWallet.privateKey);
+    const existingAccountWithPillarEns = existingAccounts.find((account) => {
+      const ensName = getAccountEnsName(account);
+      return ensName && ensName.includes(getEnsPrefix());
+    });
+    const ensName = getAccountEnsName(existingAccountWithPillarEns);
+
+    if (existingAccountWithPillarEns && ensName) {
+      const username = extractUsernameFromEnsName(ensName);
 
       logBreadcrumb(
         'onboarding',
         'onboardingAction.js: registered wallet user dispatching action: ${SET_ONBOARDING_USER}',
         { username },
       );
-      dispatch({ type: SET_ONBOARDING_USER, payload: { walletId, username, profileImage } });
+      dispatch({ type: SET_ONBOARDING_USER, payload: { username, isExisting: true } });
     }
 
     const {
@@ -601,7 +503,7 @@ export const resetOnboardingAndNavigateAction = (routeName: string) => {
 };
 
 export const checkUsernameAvailabilityAction = (username: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: resetUsernameCheckAction');
     dispatch(resetUsernameCheckAction());
 
@@ -630,25 +532,16 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     }
 
     logBreadcrumb('onboarding', 'onboardingAction.js: searching for username}');
-    api.init();
-    const result: {
-      status?: number,
-      username?: string,
-      message?: string,
-    } = await api.usernameSearch(username);
-
-    const usernameTaken = isCaseInsensitiveMatch(result?.username, username);
-
-    if (result?.status === 400 || usernameTaken) {
-      const errorMessage = result?.message || t('auth:error.invalidUsername.default');
+    const usernameTaken = await isUsernameTaken(username);
+    if (usernameTaken) {
       reportLog(
         'onboardingAction.js checkUsernameAvailability action failed',
-        usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage,
+        t('auth:error.invalidUsername.taken'),
       );
       logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${SET_ONBOARDING_ERROR}');
       dispatch({
         type: SET_ONBOARDING_ERROR,
-        payload: usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage,
+        payload: t('auth:error.invalidUsername.taken'),
       });
       return;
     }
@@ -658,6 +551,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       'onboardingAction.js: checkUsernameAvailabilityAction done...Dispatching action: ${SET_ONBOARDING_USER}',
       username,
     );
+
     dispatch({
       type: SET_ONBOARDING_USER,
       payload: { username },

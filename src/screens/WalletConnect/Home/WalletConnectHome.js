@@ -69,9 +69,11 @@ function WalletConnectHome() {
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
 
+  const { isDeployedOnChain } = useDeploymentStatus();
+
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
-  const { isDeployedOnChain } = useDeploymentStatus();
+
 
   const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
 
@@ -171,11 +173,12 @@ type SectionData = {|
 const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => {
   const categoriesQuery = useFetchWalletConnectCategoriesQuery();
   const appsQuery = useFetchWalletConnectAppsQuery();
+  const supportedChains = useSupportedChains();
 
   if (!categoriesQuery.data || !appsQuery.data) return { isFetching: true };
 
   const categories = categoriesQuery.data;
-  const apps = filterAppsByChain(appsQuery.data, chain);
+  const apps = filterAppsByChain(appsQuery.data, supportedChains, chain);
 
   const data = mapNotNil(categories, ({ id, title }) => {
     const matchingApps = apps.filter((app) => app.categoryId === id);
@@ -191,9 +194,16 @@ const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => 
   return { data, isFetching: false };
 };
 
-const filterAppsByChain = (apps: WalletConnectCmsApp[], chain: ?Chain): WalletConnectCmsApp[] => {
-  if (!chain) return apps;
-  return apps.filter((app) => app.chains.includes(chain));
+const filterAppsByChain = (
+  apps: WalletConnectCmsApp[],
+  supportedChains: Chain[],
+  chain: ?Chain,
+): WalletConnectCmsApp[] => {
+  if (chain) {
+    return apps.filter((app) => app.chains.includes(chain));
+  }
+
+  return apps.filter((app) => supportedChains.some((supporedChain) => app.chains.includes(supporedChain)));
 };
 
 const styles = {

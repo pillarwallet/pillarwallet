@@ -22,8 +22,8 @@ import React, { useCallback, useMemo, useEffect } from 'react';
 import type { AbstractComponent } from 'react';
 import { Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 import t from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import Modal from 'components/Modal';
@@ -37,18 +37,14 @@ import { ETH } from 'constants/assetsConstants';
 
 // actions
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 
-type OwnProps = {|
-  token?: string,
-  receiveAddress: string,
-|};
 
 type Props = {|
-  ...OwnProps,
-  navigation: $FlowFixMe,
+  token?: string,
+  receiveAddress: string,
 |};
 
 const exchangeSupportedAssetsSelector = ({
@@ -63,18 +59,14 @@ const exchangeSupportedAssetsSelector = ({
   uniswapTokensGraphQueryFailed,
 });
 
-const rewardActiveSelector = ({
-  referrals: { isPillarRewardCampaignActive: rewardActive },
-}: RootReducerState) => rewardActive;
-
-const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
+const AddFundsModal = ({ token, receiveAddress }: Props) => {
   const dispatch = useDispatch();
   const {
     exchangeSupportedAssets,
     isFetchingUniswapTokens,
     uniswapTokensGraphQueryFailed,
   } = useSelector(exchangeSupportedAssetsSelector);
-  const rewardActive = useSelector(rewardActiveSelector);
+  const navigation = useNavigation();
 
   const isSupportedByExchange = useMemo(() =>
     !!token && exchangeSupportedAssets.some(({ symbol }) => symbol === token),
@@ -117,13 +109,6 @@ const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
       onPress: () => navigation.navigate(EXCHANGE, token && { toAssetCode: token }),
       hide: hideExchangeOption,
     },
-    {
-      key: 'invite',
-      label: t('button.inviteAndGetTokens'),
-      iconName: 'present',
-      hide: !rewardActive,
-      onPress: () => dispatch(goToInvitationFlowAction()),
-    },
   ];
 
   const retryBox = (
@@ -144,4 +129,4 @@ const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
   );
 };
 
-export default (withNavigation(AddFundsModal): AbstractComponent<OwnProps>);
+export default (AddFundsModal: AbstractComponent<Props>);

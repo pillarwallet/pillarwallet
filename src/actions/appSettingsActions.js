@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import branchIo from 'react-native-branch';
 import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 import t from 'translations/translate';
@@ -58,11 +57,6 @@ export const saveOptOutTrackingAction = (status: boolean) => {
       dispatch(logEventAction('tracking_opted_in'));
     }
     await firebaseAnalytics.setAnalyticsCollectionEnabled(status);
-    try {
-      await branchIo.disableTracking(status);
-    } catch (e) {
-      // catch exception if native module failed by any reason
-    }
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
   };
@@ -176,11 +170,6 @@ export const hasSeenTutorialAction = () => (dispatch: Dispatch) => {
   dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenTutorial: true } });
 };
 
-export const hasSeenWbtcCafeIntroAction = () => (dispatch: Dispatch) => {
-  dispatch(saveDbAction('app_settings', { appSettings: { hasSeenWbtcCafeIntro: true } }));
-  dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenWbtcCafeIntro: true } });
-};
-
 export const toggleBalanceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -241,12 +230,6 @@ export const initialDeeplinkExecutedAction = () => {
       type: UPDATE_APP_SETTINGS,
       payload: { initialDeeplinkExecuted: true },
     });
-  };
-};
-
-export const hasSeenRecoveryPortalIntroAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(updateAppSettingsAction('hasSeenRecoveryPortalIntro', true));
   };
 };
 

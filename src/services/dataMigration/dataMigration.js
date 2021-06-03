@@ -19,7 +19,6 @@
 */
 
 import loadAndMigrateAppSettings from './appSettings';
-import loadAndMigrateAccounts from './accounts';
 import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
@@ -39,10 +38,6 @@ export async function migrate(
   switch (collection) {
     case 'app_settings':
       data = await loadAndMigrateAppSettings(storageData, dispatch);
-      break;
-
-    case 'accounts':
-      data = await loadAndMigrateAccounts(storageData, dispatch);
       break;
 
     case 'assets':

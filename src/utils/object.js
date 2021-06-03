@@ -23,6 +23,23 @@ import { omitBy, isNil } from 'lodash';
 export type Record<Value> = { [string]: Value };
 
 /**
+ * Simple way to build record from array.
+ */
+export function buildRecord<Element, Value>(
+  elements: Element[],
+  keySelector: (element: Element) => string,
+  valueSelector: (element: Element, key: string) => Value,
+): Record<Value> {
+  const result = {};
+  elements.forEach(element => {
+    const key = keySelector(element);
+    result[key] = valueSelector(element, key);
+  });
+
+  return result;
+}
+
+/**
  * Properly typed version of `Object.values`.
  */
 export function recordValues<Value>(record: Record<Value>): Value[] {
@@ -30,15 +47,35 @@ export function recordValues<Value>(record: Record<Value>): Value[] {
 }
 
 /**
+ * Improved version of lodash mapKeys.
+ * Supports flow typing as well as key filtering when new key maps to null or undefined.
+ */
+export function mapRecordKeys<Value>(
+  record: Record<Value>,
+  keySelector: (key: string, value: Value) => ?string,
+): Record<Value> {
+  const result = {};
+  Object.keys(record).forEach((oldKey) => {
+    const newKey = keySelector(oldKey, record[oldKey]);
+    if (newKey != null) {
+      result[newKey] = record[oldKey];
+    }
+  });
+
+  return result;
+}
+
+/**
  * Improved version of lodash mapValue.
+ * Supports flow typing.
  */
 export function mapRecordValues<Value, Target>(
   record: Record<Value>,
-  selector: (value: Value, key: string) => Target,
+  valueSelector: (value: Value, key: string) => Target,
 ): Record<Target> {
   const result = {};
   Object.keys(record).forEach((key) => {
-    result[key] = selector(record[key], key);
+    result[key] = valueSelector(record[key], key);
   });
 
   return result;

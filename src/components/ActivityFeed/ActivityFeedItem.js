@@ -24,7 +24,6 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { BigNumber as EthersBigNumber } from 'ethers';
 
@@ -41,7 +40,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/feedData';
 import { formatHexAddress } from 'utils/format';
-import { images, getImageUrl, isSvgImage } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 import {
@@ -119,7 +118,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
-import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
 
@@ -139,7 +137,6 @@ type Props = {
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
-  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   supportedAssets: Asset[],
   sessionLanguageCode: ?string, // important for re-rendering on language change
 };
@@ -151,7 +148,6 @@ export type EventData = {
   badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
-  avatarUrl?: string,
   username?: string,
   itemImageUrl?: string,
   iconName?: ?string,
@@ -291,7 +287,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { event, supportedAssets } = this.props;
     if (!event?.extra?.symbol) return null;
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
-    return iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : null;
+    return iconUrl ? { uri: iconUrl } : null;
   };
 
   getSablierEventData = (event: Object) => {
@@ -394,7 +390,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       theme,
       isPPNView,
       isAssetView,
-      referralRewardIssuersAddresses,
       supportedAssets,
     } = this.props;
 
@@ -751,7 +746,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: getImageUrl(pool.iconUrl, 3),
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }
@@ -771,7 +766,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: getImageUrl(pool.iconUrl, 3),
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }
@@ -783,7 +778,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: pool.name,
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
-          itemImageUrl: getImageUrl(pool.iconUrl, 3),
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }
@@ -796,7 +791,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: getImageUrl(pool.iconUrl, 3),
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }
@@ -809,7 +804,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: getImageUrl(pool.iconUrl, 3),
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }
@@ -818,7 +813,6 @@ export class ActivityFeedItem extends React.Component<Props> {
 
         const isBetweenSmartWalletAccounts = isSmartWalletAccountAddress(event.from, accounts)
           && isSmartWalletAccountAddress(event.to, accounts);
-        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
           if (isArchanovaAccountAddress(event.from, accounts) && isArchanovaAccountAddress(event.to, accounts)) {
@@ -879,18 +873,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             additionalInfo.iconName = directionIcon;
             // eslint-disable-next-line i18next/no-literal-string
             additionalInfo.iconColor = isReceived ? 'secondaryAccent140' : 'secondaryAccent240';
-          }
-
-          if (isReferralRewardTransaction) {
-            let referralAwardTokenImage;
-            const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
-            if (referralAwardAssetData) {
-              const { iconUrl } = referralAwardAssetData;
-              referralAwardTokenImage = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-              additionalInfo.iconName = null;
-              additionalInfo.avatarUrl = referralAwardTokenImage;
-            }
-            additionalInfo.label = t('label.referralReward');
           }
 
           data = {
@@ -1016,13 +998,11 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  referrals: { referralRewardIssuersAddresses },
   assets: { supportedAssets },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
-  referralRewardIssuersAddresses,
   supportedAssets,
   sessionLanguageCode,
 });

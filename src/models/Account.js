@@ -30,7 +30,6 @@ export type EtherspotAccount = {|
   id: string,
   extra?: EtherspotAccountExtra,
   isActive: boolean,
-  walletId: string,
 |};
 
 export type EtherspotAccountExtra = ChainRecord<{
@@ -48,7 +47,6 @@ export type ArchanovaAccount = {|
   id: string,
   extra?: ArchanovaAccountExtra,
   isActive: boolean,
-  walletId: string,
 |};
 
 export type ArchanovaAccountExtra = {
@@ -66,7 +64,6 @@ export type KeyBasedAccount = {|
   id: string,
   extra?: KeyBasedAccountExtra,
   isActive: boolean,
-  walletId: string,
 |};
 
 export type KeyBasedAccountExtra = {||};

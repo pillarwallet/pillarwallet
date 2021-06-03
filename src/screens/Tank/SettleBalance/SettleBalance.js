@@ -186,9 +186,7 @@ class SettleBalance extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.toggleItemToTransfer(assetInfo)}
         label={nameOrAddress}
-        avatarUrl=""
         valueColor={colors.positive}
-        imageUpdateTimeStamp={0}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>

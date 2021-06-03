@@ -32,26 +32,21 @@ import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 
 // actions
-import { fetchAvailableSyntheticAssetsAction, initSyntheticsServiceAction } from 'actions/syntheticsActions';
+import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 
 // utils, services
 import { parseNumber } from 'utils/common';
-import syntheticsService from 'services/synthetics';
 import { getReceiverWithEnsName } from 'utils/contacts';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
-import {
-  ACCOUNTS,
-  SEND_SYNTHETIC_CONFIRM,
-  SEND_TOKEN_CONFIRM,
-} from 'constants/navigationConstants';
+import { ACCOUNTS, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 
 // models, types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { AssetOption } from 'models/Asset';
-import type { SyntheticTransaction, TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
 
@@ -62,7 +57,6 @@ import archanovaService from 'services/archanova';
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 
 type Props = {
-  initSyntheticsService: () => void,
   navigation: NavigationScreenProp<any>,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
@@ -109,8 +103,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { initSyntheticsService, fetchAvailableSyntheticAssets } = this.props;
-    initSyntheticsService();
+    const { fetchAvailableSyntheticAssets } = this.props;
     fetchAvailableSyntheticAssets();
     this.setPreselectedValues();
   }
@@ -202,57 +195,39 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       const { navigation } = this.props;
       const amount = parseNumber(value);
       Keyboard.dismiss();
-      if (assetCode === PLR) {
-        // go through regular confirm as PLR is staked by the user already so he owns it
-        const transactionPayload: TransactionPayload = {
-          to: receiver,
-          receiverEnsName,
-          amount,
-          gasLimit: 0,
-          gasPrice: 0,
-          txFeeInWei: 0,
-          usePPN: true,
-          symbol: assetCode,
-          contractAddress,
-          decimals: decimals || 18,
-        };
-        this.formSubmitComplete(() => {
-          navigation.navigate(SEND_TOKEN_CONFIRM, {
-            transactionPayload,
-            source: this.source,
-          });
+
+      /**
+       * go through regular confirm as PLR is already staked by the user
+       * so he owns it and previous synthetic assets deprecated
+       */
+      if (!assetCode === PLR) {
+        Toast.show({
+          message: t('toast.cannotSendSyntheticAsset'),
+          emoji: 'woman-shrugging',
+          supportLink: true,
         });
         return;
       }
-      syntheticsService
-        .createExchangeIntent(receiver, amount, assetCode)
-        .then((result) => {
-          if (result.error) throw result.error;
 
-          const { output: { transactionId, exchangeAmount } } = result;
-          this.formSubmitComplete(() => {
-            const syntheticTransaction: SyntheticTransaction = {
-              transactionId,
-              fromAmount: exchangeAmount,
-              toAmount: amount,
-              toAssetCode: assetCode,
-              toAddress: receiver,
-              receiverEnsName,
-            };
-            Keyboard.dismiss();
-            navigation.navigate(SEND_SYNTHETIC_CONFIRM, {
-              syntheticTransaction,
-              assetData,
-              source: this.source,
-            });
-          });
-        })
-        .catch(() => {
-          this.setState({
-            submitPressed: false,
-            intentError: t('error.synthetics.failedToCalculate'),
-          });
+      const transactionPayload: TransactionPayload = {
+        to: receiver,
+        receiverEnsName,
+        amount,
+        gasLimit: 0,
+        gasPrice: 0,
+        txFeeInWei: 0,
+        usePPN: true,
+        symbol: assetCode,
+        contractAddress,
+        decimals: decimals || 18,
+      };
+
+      this.formSubmitComplete(() => {
+        navigation.navigate(SEND_TOKEN_CONFIRM, {
+          transactionPayload,
+          source: this.source,
         });
+      });
     });
   };
 
@@ -332,7 +307,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
   fetchSingleAssetRates: (assetCode: string) => dispatch(fetchSingleAssetRatesAction(assetCode)),
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });

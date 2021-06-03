@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -139,7 +138,6 @@ const LiquidityPoolsScreen = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   const tabs = [
     {
       id: TABS.AVAILABLE,
@@ -189,7 +187,7 @@ const LiquidityPoolsScreen = ({
         <ListItemWithImage
           label={pool.name}
           subtext={poolProportionsString}
-          itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
+          itemImageUrl={pool.iconUrl}
         />
         <Spacing h={8} />
         <Card>
@@ -247,10 +245,9 @@ const LiquidityPoolsScreen = ({
                     const asset = supportedAssets.find(
                       ({ symbol }) => symbol === reward.symbol,
                     );
-                    const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
                     return (
                       <Reward key={reward.symbol}>
-                        <RewardIcon source={{ uri: iconUri }} />
+                        <RewardIcon source={{ uri: asset.iconUri }} />
                         <Spacing w={6} />
                         <BaseText regular>
                           {t('tokenValue', {
@@ -277,7 +274,7 @@ const LiquidityPoolsScreen = ({
         <ListItemWithImage
           label={pool.name}
           subtext={t('tokenValue', { token: pool.symbol, value: formatTokenAmount(balance, pool.symbol) })}
-          itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
+          itemImageUrl={pool.iconUrl}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
               <BaseText big>{balanceInFiat}</BaseText>

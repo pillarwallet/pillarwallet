@@ -26,7 +26,6 @@ import t from 'translations/translate';
 
 // Actions
 import { addContactAction } from 'actions/contactsActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // Components
 import { Spacing } from 'components/Layout';
@@ -177,11 +176,6 @@ const ContactSelectorOptions = ({
       title: t('button.addContact'),
       iconName: 'add-contact',
       onPress: () => handleAddToContactsPress(),
-    },
-    {
-      title: t('button.inviteFriend'),
-      iconName: 'plus',
-      onPress: () => dispatch(goToInvitationFlowAction()),
     },
   ];
 
