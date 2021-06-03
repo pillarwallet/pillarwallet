@@ -244,7 +244,7 @@
     "sendMax": "Pošalji sve",
     "settleMore": "Podmiri još",
     "settleTransactions": "Podmiri transakcije",
-    "shareAddress": "Podijeli Adresu",
+    "shareAddress": "Podijeli",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Pretplati se",
     "support": "Podrška",
@@ -290,7 +290,8 @@
     "proceed": "Nastavi",
     "readMore": "Saznaj još",
     "activateSmartWallet": "Aktiviraj Smart Wallet",
-    "finish": "Završi"
+    "finish": "Završi",
+    "copyAddress": "Kopiraj adresu"
   },
 
   "paragraph": {
@@ -307,7 +308,9 @@
     "backupPhraseRevealedPurpose": "Molim korisite ovih 12 tajnih riječi kako bi obnovili svoj račun.",
     "privateKeyRevealedPurpose": "Molim korisite ovaj privatni ključ kako bi obnovili svoj račun.",
     "doNotShareBackup": "Držite ih sigurnim jer je to jedini način za obnovu računa. Nemojte email-at ga ili screenshot-at.",
-    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak."
+    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak.",
+    "cautionMessage": "Svi lanci koriste jednu adresu novčanika.\nPrimite <0>{{chain}}</0> imovina",
+    "withCaution": "s oprezom."
   },
 
   "insight": {

@@ -20,39 +20,39 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
+import { Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
+import { useNavigation } from 'react-navigation-hooks';
 
 // components
-import { BaseText } from 'components/Typography';
+import Text from 'components/modern/Text';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
-import { LabelBadge } from 'components/LabelBadge';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
+import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getAccountEnsName } from 'utils/accounts';
+import { getThemeColors } from 'utils/themes';
 
 // models and types
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
+import type { Theme } from 'models/Theme';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
 
-
-const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px 60px;
-  align-items: center;
-`;
+import {
+  ETHERSPOT_DEPLOYMENT_INTERJECTION,
+} from 'constants/navigationConstants';
 
 type StateProps = {|
   user: User,
@@ -61,99 +61,53 @@ type StateProps = {|
 
 type OwnProps = {|
   address: string,
-  handleBuyTokens?: Function,
   onModalHide?: Function,
-  showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
 |};
 
 type Props = {|
   ...StateProps,
   ...OwnProps,
+  theme: Theme,
 |};
 
-const QRCodeWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const WalletAddress = styled(BaseText)`
-  ${fontStyles.regular};
-  margin: ${spacing.small}px 0;
-`;
-
-const IconsContainer = styled.View`
-  flex-direction: row;
-  margin: 0 ${spacing.layoutSides}px;
-  justify-content: center;
-`;
-
-const IconsSpacing = styled.View`
-  width: ${spacing.small}px;
-`;
-
-const ButtonsRow = styled.View`
-  flex-direction: row;
-  margin-top: ${spacing.medium}px;
-  margin-bottom: ${spacing.medium}px;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const InfoView = styled.View`
-  margin-bottom: ${spacing.medium}px;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const ImageWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-`;
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const visaIcon = require('assets/icons/visa.png');
-const mastercardIcon = require('assets/icons/mastercard.png');
-
-const handleCopyToClipboard = (addressOrEnsName: string, ensCopy?: boolean) => {
-  Clipboard.setString(addressOrEnsName);
-  const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
-  Toast.show({ message, emoji: 'ok_hand' });
+const handleCopyToClipboard = (addressName: string) => {
+  Clipboard.setString(addressName);
+  Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
 };
 
 const ReceiveModal = ({
   activeAccount,
   address,
-  handleBuyTokens,
   onModalHide,
-  showBuyTokensButton = false,
-  showErc20Note,
   user,
+  theme,
 }: Props) => {
   const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
 
+  const colors = getThemeColors(theme);
+  const navigation = useNavigation();
+
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
-  const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
 
   return (
     <SlideModal
       onModalHide={onModalHide}
       noPadding
       noClose
-      headerLeftItems={showErc20Note ? [{
-        custom: (
-          <LabelBadge
-            label={t('label.erc20TokensOnly')}
-            labelStyle={{ fontSize: fontSizes.tiny }}
-            primary
-          />
-        ),
-      }] : undefined}
+      // TODO : The label itself will be revisited later on the direction of the product team
+      // headerLeftItems={showErc20Note ? [{
+      //   custom: (
+      //     <LabelBadge
+      //       label={t('label.erc20TokensOnly')}
+      //       labelStyle={{ fontSize: fontSizes.tiny }}
+      //       primary
+      //     />
+      //   ),
+      // }] : undefined}
       centerFloatingItem={
         <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
           <ProfileImage userName={username} diameter={48} />
@@ -161,51 +115,42 @@ const ReceiveModal = ({
       }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <WarningBanner rounded small />
-        {!!ensName && (
-          <InfoView>
-            <BaseText
-              big
-              onPress={() => handleCopyToClipboard(ensName, true)}
-              center
-            >
+        <InfoView>
+          {!!ensName && (
+            <TextWithCopy textToCopy={ensName} toastText={t('toast.ensNameCopiedToClipboard')} iconColor={colors.link}>
               {ensName}
-            </BaseText>
-            <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
-          </InfoView>
-        )}
-        <QRCodeWrapper>
-          <View style={{ overflow: 'hidden', padding: 10 }}>
-            {!!address && <QRCodeWithTheme value={address} size={160} />}
-          </View>
-          <WalletAddress onPress={() => handleCopyToClipboard(address)}>
-            {address}
-          </WalletAddress>
-        </QRCodeWrapper>
-        <ButtonsRow>
-          {showBuyTokensButton && (
-          <Button
-            title={t('button.buyTokens')}
-            onPress={handleBuyTokens}
-            primarySecond
-            small={needsSmallButtons}
-            style={{ flex: 1, marginRight: 10 }}
-          />
+            </TextWithCopy>
           )}
-          <Button
-            title={t('button.shareAddress')}
-            onPress={handleAddressShare}
-            small={needsSmallButtons}
-            style={{ flex: 1 }}
-          />
-        </ButtonsRow>
-        {showBuyTokensButton && (
-        <IconsContainer>
-          <Image source={visaIcon} />
-          <IconsSpacing />
-          <Image source={mastercardIcon} />
-        </IconsContainer>
-        )}
+          {ensName ? (
+            <WalletAddress>{address}</WalletAddress>
+          ) : (
+            <TextWithCopy
+              toastText={t('toast.addressCopiedToClipboard')}
+              textToCopy={address}
+              textStyle={{ color: colors.basic030 }}
+              iconColor={colors.link}
+            >
+              {address}
+            </TextWithCopy>
+          )}
+        </InfoView>
+        {!!address && <QRCodeWrapper><QRCodeWithTheme value={address} size={104} /></QRCodeWrapper>}
+        <WarningText center small>
+          {t('paragraph.cautionMessage', {
+            chain: t('chains.ethereum'),
+            mediumText: true,
+            color: colors.recieveModalWarningText,
+          })}{' '}
+          <Text color={colors.link} onPress={() => navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION)}>
+            {t('paragraph.withCaution')}
+          </Text>
+        </WarningText>
+        <CopyButton>
+          <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
+        </CopyButton>
+        <ShareButton>
+          <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
+        </ShareButton>
       </ContentWrapper>
     </SlideModal>
   );
@@ -227,3 +172,54 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<StateProps> =>
 });
 
 export default (connect(combinedMapStateToProps)(ReceiveModal): AbstractComponent<OwnProps>);
+
+const ContentWrapper = styled(SafeAreaView)`
+  padding: 0 ${spacing.layoutSides}px 30px;
+  align-items: center;
+`;
+
+const QRCodeWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: ${spacing.largePlus}px;
+`;
+
+const WalletAddress = styled(Text)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin: ${spacing.mediumLarge}px;
+  text-align: center;
+`;
+
+const CopyButton = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  margin-top: ${spacing.largePlus}px;
+  margin-bottom: ${spacing.small}px;
+`;
+
+const ShareButton = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: ${spacing.medium}px;
+`;
+
+const InfoView = styled.View`
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const ImageWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WarningText = styled(Text)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin-top: ${spacing.medium}px;
+  text-align: center;
+`;

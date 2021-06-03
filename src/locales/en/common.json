@@ -307,7 +307,7 @@
     "sendMore": "Send more",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
-    "shareAddress": "Share Address",
+    "shareAddress": "Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
@@ -363,7 +363,8 @@
     "claimMoreRewards": "Claim more",
     "back": "Back",
     "native": "I know Crypto",
-    "new": "I'm new to Crypto"
+    "new": "I'm new to Crypto",
+    "copyAddress": "Copy address"
   },
 
   "paragraph": {
@@ -381,7 +382,9 @@
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
-    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets."
+    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
+    "cautionMessage": "All chains use single wallet address.\nReceive <0>{{chain}}</0> assets",
+    "withCaution": "with caution."
   },
 
   "insight": {
