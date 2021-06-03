@@ -21,11 +21,12 @@
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import { COLLECTIBLES, TOKENS } from 'constants/assetsConstants';
+import { COLLECTIBLES, TOKENS, ETH, USD, EUR, GBP } from 'constants/assetsConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
 
+export type Currency = typeof USD | typeof EUR | typeof GBP;
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 
@@ -44,10 +45,8 @@ export type Asset = {
   symbol: string,
   name: string,
   address: string,
-  description: string,
   iconUrl: string,
   iconMonoUrl: string,
-  wallpaperUrl: string,
   patternUrl?: string,
   decimals: number,
   amount?: number,
@@ -67,10 +66,13 @@ export type AssetsStore = {
   [accountId: string]: Asset[],
 };
 
+export type RateKey = Currency | typeof ETH;
+
+// TODO: migrate to stronly typed keys: USD, EUR, GBP, ETH.
+export type RateEntry = { [key: string]: number };
+
 export type Rates = {
-  [string]: {
-    [string]: number,
-  },
+  [symbol: string]: RateEntry,
 };
 
 export type SyntheticAsset = Asset & {

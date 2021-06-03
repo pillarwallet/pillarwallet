@@ -25,9 +25,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
-// actions
-import { loadAltalixAvailability } from 'actions/fiatToCryptoActions';
-
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,8 +38,6 @@ import {
   LENDING_CHOOSE_DEPOSIT,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
-  SENDWYRE_INPUT,
-  WBTC_CAFE,
   RARI_DEPOSIT,
   LIQUIDITY_POOLS,
   ADD_CASH,
@@ -51,9 +46,12 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { spacing } from 'utils/variables';
-import { openInAppBrowser } from 'utils/inAppBrowser';
-import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isArchanovaAccount } from 'utils/accounts';
-import { wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
+import {
+  getActiveAccount,
+  getAccountAddress,
+  isSmartWalletAccount,
+  isArchanovaAccount,
+} from 'utils/accounts';
 
 // selectors
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
@@ -62,33 +60,22 @@ import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-import type { User } from 'models/User';
-import type SDKWrapper from 'services/api';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
-let isAltalixEnabled = true;
-let isWBTCCafeEnabled = true;
 let isRariEnabled = true;
 let areLiquidityPoolsEnabled = true;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  getMetaData: () => void,
   isArchanovaWalletActivated: boolean,
-  user: User,
   accounts: Account[],
-  getApi: () => SDKWrapper,
-  isAltalixAvailable: null | boolean,
-  loadAltalixInfo: () => void,
 };
 
 type Service = {|
@@ -102,23 +89,16 @@ type Service = {|
 
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
-    const { isAltalixAvailable, loadAltalixInfo } = this.props;
-
     /**
      * Retrieve boolean flags for services from Remote Config.
      */
     isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_OFFERS_ENGINE);
     isAaveEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_AAVE);
     isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_POOL_TOGETHER);
-    isWyreEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
-    isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
-    isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
     isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
     areLiquidityPoolsEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_LIQUIDITY_POOLS);
-
-    if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
   navigateToRouteIfArchanovaWalletActivated = (route: string) => {
@@ -187,17 +167,6 @@ class ServicesScreen extends React.Component<Props> {
       });
     }
 
-    if (isWBTCCafeEnabled) {
-      archanovaSupportedServices.push({
-        key: 'wbtc',
-        title: t('wbtcCafe.cafe'),
-        body: t('wbtcCafe.trade'),
-        disabled: servicesDisabled,
-        label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(WBTC_CAFE),
-      });
-    }
-
     if (isRariEnabled) {
       archanovaSupportedServices.push({
         key: 'rari',
@@ -234,9 +203,7 @@ class ServicesScreen extends React.Component<Props> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
-    const { isAltalixAvailable, user, getApi, navigation } = this.props;
-
-    const walletId = user?.walletId;
+    const { navigation } = this.props;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
@@ -244,51 +211,6 @@ class ServicesScreen extends React.Component<Props> {
         title: t('servicesContent.ramp.title'),
         body: t('servicesContent.ramp.description'),
         action: () => navigation.navigate(ADD_CASH),
-      });
-    }
-
-    if (isWyreEnabled && walletId) {
-      buyCryptoServices.push({
-        key: 'wyre',
-        title: t('servicesContent.wyre.title'),
-        body: t('servicesContent.wyre.description'),
-        action: () => {
-          const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
-          this.props.navigation.navigate(SENDWYRE_INPUT, {
-            onSubmit: async (values: SendwyreTrxValues) => {
-              const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
-              await this.tryOpenCryptoPurchaseUrl(url);
-            },
-          });
-        },
-      });
-    }
-
-    if (isAltalixEnabled && isAltalixAvailable && walletId) {
-      buyCryptoServices.push({
-        key: 'altalix',
-        title: t('servicesContent.altalix.title'),
-        body: t('servicesContent.altalix.description'),
-        action: async () => {
-          const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
-          this.tryOpenCryptoPurchaseUrl(
-            await altalixWidgetUrl(
-              {
-                walletId,
-                address,
-                sellCurrency: 'EUR',
-                buyCurrency: 'ETH',
-
-                // The amount is adjustable in the Altalix app, but the link won't work
-                // if the initial value is 0
-                buyAmount: 0.02,
-              },
-              getApi(),
-            ),
-          );
-        },
       });
     }
 
@@ -306,14 +228,6 @@ class ServicesScreen extends React.Component<Props> {
     }
 
     return getAccountAddress(activeAccount);
-  };
-
-  tryOpenCryptoPurchaseUrl = async (url: string | null) => {
-    if (url) {
-      await openInAppBrowser(url).catch(this.showServiceLaunchError);
-    } else {
-      this.showServiceLaunchError();
-    }
   };
 
   showServiceLaunchError = () => {
@@ -364,13 +278,9 @@ class ServicesScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  user: { data: user },
   accounts: { data: accounts },
-  fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
-  user,
   accounts,
-  isAltalixAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -382,13 +292,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loadAltalixInfo: () => dispatch(loadAltalixAvailability()),
-
-  // When using redux-thunk, dispatch does return the result of the inner function.
-  // (Although it's meant to be used inside thunks, see:
-  // https://github.com/reduxjs/redux-thunk#composition )
-  getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
-});
-
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen);
+export default connect(combinedMapStateToProps)(ServicesScreen);

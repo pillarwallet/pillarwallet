@@ -33,13 +33,12 @@ import Button from 'components/Button';
 
 // utils
 import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
+import { calculateTotalBalance } from 'utils/totalBalances';
 import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { responsiveSize } from 'utils/ui';
 import { useTheme } from 'utils/themes';
-import { getTotalCategoryBalances } from 'screens/Home/utils';
 import { formatFiat } from 'utils/common';
-import { getTotalBalance } from 'utils/balances';
 
 // constants
 import { KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
@@ -52,18 +51,19 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 
 // selectors
-import { totalBalancesSelector, keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { useFiatCurrency } from 'selectors';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+import { totalBalancesSelector } from 'selectors/totalBalances';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
+import type { RenderItemProps } from 'utils/types/react-native';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import type { RenderItemProps } from 'utils/types/react-native';
-import type { ChainTotalBalancesPerAccount } from 'models/Balances';
+import type { TotalBalances } from 'models/TotalBalances';
 
 
 const ITEM_TYPE = {
@@ -87,7 +87,7 @@ type Props = {|
   switchAccount: (accountId: string) => void,
   fetchAllAccountsTotalBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
-  totalBalances: ChainTotalBalancesPerAccount,
+  totalBalances: TotalBalances,
 |};
 
 const AccountsScreen = ({
@@ -105,14 +105,14 @@ const AccountsScreen = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
 
-  const [switchingToWalletId, setSwitchingToWalletId] = useState(false);
+  const [switchingToAccountId, setSwitchingToAccountId] = useState(false);
 
   const { smartWalletIcon } = images(theme);
   const activeBlockchainNetwork = blockchainNetworks.find(({ isActive }) => !!isActive);
   const isEthereumActive = activeBlockchainNetwork?.id === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
 
-  const setAccountActive = async (wallet: Account) => {
-    await switchAccount(wallet.id);
+  const setAccountActive = async (account: Account) => {
+    await switchAccount(account.id);
     navigation.goBack(null);
   };
 
@@ -139,11 +139,11 @@ const AccountsScreen = ({
 
     return (
       <SettingsItemCarded
-        isLoading={id === switchingToWalletId}
+        isLoading={id === switchingToAccountId}
         title={title}
         subtitle={balance}
         onPress={() => {
-          setSwitchingToWalletId(id);
+          setSwitchingToAccountId(id);
           mainAction();
         }}
         isActive={isActive}
@@ -164,8 +164,7 @@ const AccountsScreen = ({
       const { id, isActive, type } = account;
       const isActiveWallet = !!isActive && isEthereumActive;
 
-      const totalCategoryBalances = getTotalCategoryBalances(totalBalances[id] ?? {});
-      const totalBalance = getTotalBalance(totalCategoryBalances);
+      const totalBalance = calculateTotalBalance(totalBalances[id] ?? {});
       const totalBalanceFormatted = formatFiat(totalBalance, fiatCurrency);
 
       return {

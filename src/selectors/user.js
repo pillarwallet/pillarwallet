@@ -18,35 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { createSelector } from 'reselect';
-import querystring from 'querystring';
-
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { User } from 'models/User';
-import type { Selector } from 'selectors';
-
+// local
 import { useRootSelector } from './selectors';
 
+
 export const useUser = () => useRootSelector((root) => root.user.data);
-
-export const userSelector = ({ user: { data } }: RootReducerState): User => data;
-
-export const usernameSelector: Selector<?string> =
-  createSelector(userSelector, ({ username }: User): ?string => username);
-
-const lastUserUpdateTimeSelector: Selector<void | number> =
-  createSelector(userSelector, ({ lastUpdateTime }: User): void | number => lastUpdateTime);
-
-const profileImageSelector: Selector<void | string> =
-  createSelector(userSelector, ({ profileImage }: User): void | string => profileImage);
-
-export const updatedProfileImageSelector: Selector<string | null> = createSelector(
-  profileImageSelector,
-  lastUserUpdateTimeSelector,
-  (profileImage, lastUpdateTime = 0) => profileImage
-    ? `${profileImage}?${querystring.stringify({ t: lastUpdateTime })}`
-    : null,
-);
-
-export const walletIdSelector: Selector<void | string> =
-  createSelector(userSelector, ({ walletId }: User): void | string => walletId);

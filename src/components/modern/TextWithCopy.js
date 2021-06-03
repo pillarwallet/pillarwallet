@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import Clipboard from '@react-native-community/clipboard';
 import styled from 'styled-components/native';
 
@@ -33,13 +32,15 @@ import { hitSlop20 } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 type Props = {|
   children?: React.Node | string,
   textToCopy?: string,
   style?: ViewStyleProp,
   iconColor?: string,
+  toastText: string,
+  textStyle?: TextStyleProp,
 |};
 
 const TextWithCopy = ({
@@ -47,19 +48,19 @@ const TextWithCopy = ({
   textToCopy,
   style,
   iconColor,
+  toastText,
+  textStyle,
 }: Props) => {
-  const { t } = useTranslation();
-
   const copyToClipboard = () => {
     if (!textToCopy) return;
 
     Clipboard.setString(textToCopy);
-    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+    Toast.show({ message: toastText, emoji: 'ok_hand' });
   };
 
   return (
     <TouchableContainer onPress={copyToClipboard} disabled={!textToCopy} hitSlop={hitSlop20} style={style}>
-      {typeof children === 'string' ? <Text>{children}</Text> : children}
+      {typeof children === 'string' ? <Text style={textStyle}>{children}</Text> : children}
       {!!textToCopy && <CopyIcon name="copy" color={iconColor} width={18} height={18} />}
     </TouchableContainer>
   );

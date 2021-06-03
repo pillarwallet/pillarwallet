@@ -33,10 +33,11 @@ import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constant
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
+import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector, useActiveAccount } from 'selectors';
-import { walletTotalBalanceSelector } from 'selectors/balances';
+import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
@@ -80,7 +81,7 @@ function FloatingActions() {
 }
 
 const useEnabledActions = () => {
-  const walletTotalBalance = useRootSelector(walletTotalBalanceSelector);
+  const walletTotalBalance = sumRecord(useRootSelector(accountWalletBalancePerChainSelector));
   const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 

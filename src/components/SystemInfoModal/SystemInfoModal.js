@@ -45,10 +45,8 @@ const Value = styled(MediumText)`
 
 const SystemInfoModal = () => {
   const {
-    SDK_PROVIDER,
     TX_DETAILS_URL,
     NETWORK_PROVIDER,
-    NOTIFICATIONS_URL,
     COLLECTIBLES_NETWORK,
     OPEN_SEA_API,
     BUILD_NUMBER,
@@ -66,10 +64,6 @@ const SystemInfoModal = () => {
           <Value>{BUILD_NUMBER}</Value>
         </LabeledRow>
         <LabeledRow>
-          <Label>SDK_PROVIDER</Label>
-          <Value>{SDK_PROVIDER}</Value>
-        </LabeledRow>
-        <LabeledRow>
           <Label>TX_DETAILS_URL</Label>
           <Value>{TX_DETAILS_URL}</Value>
         </LabeledRow>
@@ -80,10 +74,6 @@ const SystemInfoModal = () => {
         <LabeledRow>
           <Label>COLLECTIBLES_NETWORK</Label>
           <Value>{COLLECTIBLES_NETWORK}</Value>
-        </LabeledRow>
-        <LabeledRow>
-          <Label>NOTIFICATIONS_URL</Label>
-          <Value>{NOTIFICATIONS_URL}</Value>
         </LabeledRow>
         <LabeledRow>
           <Label>OPEN_SEA_API</Label>

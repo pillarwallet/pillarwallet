@@ -33,7 +33,7 @@ import { rampWidgetUrl } from 'utils/fiatToCrypto';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 
-// compomnents
+// components
 import { Container } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import TextInput from 'components/TextInput';
@@ -45,7 +45,6 @@ import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActive
 
 // selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
-import { useUser } from 'selectors/user';
 
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
@@ -58,7 +57,6 @@ const AddCash = () => {
   const colors = useThemeColors();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const accounts = useRootSelector(accountsSelector);
-  const user = useUser();
 
   const getCryptoPurchaseAddress = (): string | null => {
     const activeAccount = getActiveAccount(accounts);
@@ -102,7 +100,7 @@ const AddCash = () => {
   const openRamp = () => {
     const address = getCryptoPurchaseAddress();
     if (address === null) return;
-    openUrl(rampWidgetUrl(address, user?.email, fiatCurrency, value));
+    openUrl(rampWidgetUrl(address, fiatCurrency, value));
   };
 
 

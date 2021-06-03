@@ -20,7 +20,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { BigNumber } from 'utils/common';
 
 // actions
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
@@ -40,11 +39,10 @@ import {
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { SET_ACCOUNT_TOTAL_BALANCE } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
-import PillarSdk from 'services/api';
+import etherspotService from 'services/etherspot';
 
 // utils
 import { mockSupportedAssets } from 'testUtils/jestSetup';
@@ -53,8 +51,7 @@ import { mockSupportedAssets } from 'testUtils/jestSetup';
 import type { Assets, AssetsByAccount } from 'models/Asset';
 
 
-const pillarSdk = new PillarSdk();
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const getTransactionCountMock = jest.fn(() => {
   return new Promise((resolve) => {
@@ -87,10 +84,8 @@ const mockAssetsByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };
@@ -105,10 +100,8 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
   PLR: {
@@ -116,13 +109,15 @@ const mockFullAssetsListByAccount: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 };
+
+const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH' };
+
+jest.spyOn(etherspotService, 'getBalances').mockImplementation(() => [mockEthBalance]);
 
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
@@ -166,18 +161,11 @@ describe('Assets actions', () => {
       accountId: mockAccounts[0].id,
       chain: CHAIN.ETHEREUM,
       category: ASSET_CATEGORY.WALLET,
-      balances: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } },
-    };
-    const updateTotalBalancePayload = {
-      accountId: mockAccounts[0].id,
-      chain: CHAIN.ETHEREUM,
-      category: ASSET_CATEGORY.WALLET,
-      balance: BigNumber(0),
+      balances: { ETH: mockEthBalance },
     };
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
-      { type: SET_ACCOUNT_TOTAL_BALANCE, payload: updateTotalBalancePayload },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
     return store.dispatch(fetchAssetsBalancesAction())

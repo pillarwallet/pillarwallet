@@ -40,28 +40,29 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
+import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { CategoryTotalBalancesPerChain, CategoryTotalBalances, CollectibleCountPerChain } from 'models/Balances';
 import type { AssetCategory } from 'models/AssetCategory';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
+import type { AccountTotalBalances, CategoryRecord } from 'models/TotalBalances';
+
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
 import ChainListItem from './components/ChainListItem';
-import { getTotalCollectibleCount } from './utils';
+import { calculateTotalCollectibleCount } from './utils';
 
 type Props = {|
-  categoryBalances: CategoryTotalBalances,
-  categoryBalancesPerChain: CategoryTotalBalancesPerChain,
-  collectibleCountPerChain: CollectibleCountPerChain,
+  accountTotalBalances: AccountTotalBalances,
+  accountCollectibleCounts: ChainRecord<number>,
 |};
 
 type FlagPerCategory = { [AssetCategory]: ?boolean };
 
-function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectibleCountPerChain }: Props) {
+function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props) {
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -75,7 +76,8 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
   const chainsConfig = useChainsConfig();
   const categoriesConfig = useAssetCategoriesConfig();
 
-  const totalCollectibleCount = getTotalCollectibleCount(collectibleCountPerChain);
+  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
+  const totalCollectibleCount = calculateTotalCollectibleCount(accountCollectibleCounts);
 
   const navigateToAssetDetails = (category: AssetCategory, chain: Chain) => {
     navigation.navigate(ASSETS, { category, chain });
@@ -97,8 +99,8 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     navigateToAssetDetails(category, CHAIN.ETHEREUM);
   };
 
-  const renderCategoryWithBalance = (category: $Keys<CategoryTotalBalances>) => {
-    const balance = categoryBalances[category] ?? BigNumber(0);
+  const renderCategoryWithBalance = (category: $Keys<CategoryRecord<BigNumber>>) => {
+    const balance = balancePerCategory[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
@@ -118,8 +120,8 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
     );
   };
 
-  const renderChainWithBalance = (category: $Keys<CategoryTotalBalances>, chain: Chain) => {
-    const balance = categoryBalancesPerChain?.[chain]?.[category] ?? BigNumber(0);
+  const renderChainWithBalance = (category: $Keys<CategoryRecord<BigNumber>>, chain: Chain) => {
+    const balance = accountTotalBalances?.[category]?.[chain] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title } = chainsConfig[chain];
@@ -158,7 +160,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
-        value={formatValue(collectibleCountPerChain[chain] ?? 0)}
+        value={formatValue(accountCollectibleCounts[chain] ?? 0)}
         isDeployed={isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
@@ -168,7 +170,7 @@ function AssetsSection({ categoryBalances, categoryBalancesPerChain, collectible
 
   return (
     <Container>
-      {!!categoryBalances && Object.keys(categoryBalances).map((category) => renderCategoryWithBalance(category))}
+      {Object.keys(balancePerCategory).map((category) => renderCategoryWithBalance(category))}
 
       {renderCollectiblesCategory()}
 

@@ -25,7 +25,6 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -237,13 +236,12 @@ class AssetSearch extends React.Component<Props, State> {
       } = asset;
 
       const isAdded = !!assets[symbol];
-      const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
 
       return (
         <ListItemWithImage
           label={name}
           subtext={symbol}
-          itemImageUrl={fullIconUrl}
+          itemImageUrl={iconUrl}
           fallbackToGenericToken
           small
         >
@@ -288,14 +286,13 @@ class AssetSearch extends React.Component<Props, State> {
       iconUrl,
       symbol,
     } = token;
-    const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
     const balance = getBalance(balances, symbol);
     const isAdded = !!assets[symbol];
 
     return (
       <ListItemWithImage
         label={name}
-        itemImageUrl={fullIconUrl}
+        itemImageUrl={iconUrl}
         subtext={t('tokenValue', { value: balance, token: symbol })}
         fallbackToGenericToken
       >

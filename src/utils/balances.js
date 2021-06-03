@@ -17,76 +17,45 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { mapValues } from 'lodash';
+
 import { BigNumber } from 'bignumber.js';
+import { pickBy } from 'lodash';
 
-// constants
-import { ASSET_CATEGORY } from 'constants/assetsConstants';
+// Utils
+import { mapChainRecordValues } from 'utils/chains';
 
-// utils
-import { sum } from 'utils/bigNumber';
-
-// types
+// Types
 import type {
   CategoryBalancesPerChain,
-  CategoryTotalBalancesPerChain,
-  InvestmentAssetBalance,
-  LiquidityPoolAssetBalance,
-  TotalBalancesPerChain,
+  WalletAssetBalance,
   WalletAssetsBalances,
   DepositAssetBalance,
+  InvestmentAssetBalance,
+  LiquidityPoolAssetBalance,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
-export const getChainTotalBalancesForCategory = (
-  accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  category: string,
-): TotalBalancesPerChain => mapValues(
-  accountTotalBalances ?? {},
-  (categoryBalances) => categoryBalances?.[category] || BigNumber(0),
-);
-
-export const getTotalBalance = (entries: { [key: string]: BigNumber}): BigNumber => {
-  const balances = Object.keys(entries).map((key) => entries[key] || BigNumber(0));
-  return sum(balances);
-};
-
-export const getTotalCategoryBalance = (
-  accountTotalBalances: ?CategoryTotalBalancesPerChain,
-  category: string,
-): BigNumber => {
-  const balancesOnChains = (Object.values(accountTotalBalances || {}): any);
-
-  return sum(balancesOnChains.map((chainTotals) => {
-    return chainTotals?.[category] || BigNumber(0);
-  }));
-};
+export const getChainWalletAssetsBalances = (
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<WalletAssetsBalances> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) =>
+    filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
+  );
 
 export const getChainDepositAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<DepositAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.DEPOSITS],
-);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<DepositAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
 
 export const getChainLiquidityPoolAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<LiquidityPoolAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.LIQUIDITY_POOLS],
-);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<LiquidityPoolAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
 
 export const getChainInvestmentAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<InvestmentAssetBalance[]> => mapValues(
-  accountAssetsBalances ?? {},
-  (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.INVESTMENTS],
-);
-
-export const getChainWalletAssetsBalances = (
-  accountAssetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<WalletAssetsBalances> =>
-  mapValues(accountAssetsBalances ?? {}, (categoryBalances) => categoryBalances?.[ASSET_CATEGORY.WALLET]);
+  assetsBalances: ?CategoryBalancesPerChain,
+): ChainRecord<InvestmentAssetBalance[]> =>
+  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
 export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {
   const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
@@ -95,4 +64,8 @@ export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesP
     const walletAssetsBalances = walletAssetsBalancesPerChain[chain];
     return Object.keys(walletAssetsBalances ?? {});
   });
+};
+
+export const filterNonZeroAssetBalances = (balances: WalletAssetsBalances): WalletAssetsBalances => {
+  return pickBy(balances, ({ balance }: WalletAssetBalance) => !!balance && !BigNumber(balance).isZero());
 };

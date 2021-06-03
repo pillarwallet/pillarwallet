@@ -25,7 +25,7 @@ import Instabug from 'instabug-reactnative';
 
 import { getRate, getBalance, sortAssets, getAssetOption } from 'utils/assets';
 import { formatMoney } from 'utils/common';
-import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { getArchanovaWalletStatus, getDeploymentData } from 'utils/archanova';
@@ -95,20 +95,6 @@ export const validateInput = (
 ): boolean =>
   !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
-const getBtcOption = (): AssetOption => {
-  const btcAsset = {
-    name: 'Bitcoin',
-    address: '',
-    description: '',
-    iconUrl: 'asset/images/tokens/icons/btcColor.png',
-    symbol: BTC,
-    decimals: 8,
-    iconMonoUrl: '',
-    wallpaperUrl: '',
-  };
-  return getAssetOption(btcAsset);
-};
-
 const getExchangeFromAssetOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
@@ -143,7 +129,6 @@ export const provideOptions = (
   balances: WalletAssetsBalances,
   rates: Rates,
   baseFiatCurrency: ?string,
-  isWbtcCafeActive?: boolean,
 ): ExchangeOptions => {
   const assetsOptionsFrom = getExchangeFromAssetOptions(
     assets,
@@ -161,7 +146,7 @@ export const provideOptions = (
   );
 
   return {
-    fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
+    fromOptions: assetsOptionsFrom,
     toOptions: assetsOptionsTo,
   };
 };
@@ -229,15 +214,9 @@ export const shouldResetAndTriggerSearch = (
   prevFromAsset: AssetOption,
   toAsset: AssetOption,
   prevToAsset: AssetOption,
-  accessToken: ?string,
-  prevAccesToken: ?string,
 ): boolean => {
-  // access token has changed, init search again
-  return (
-    prevAccesToken !== accessToken ||
-    // valid input provided or asset changed
-    ((fromAsset !== prevFromAsset || toAsset !== prevToAsset || fromAmount !== prevFromAmount) &&
-      validateInput(fromAmount, fromAsset, toAsset) &&
-      shouldTriggerSearch(fromAsset, toAsset, fromAmount))
-  );
+  // valid input provided or asset changed
+  return (fromAsset !== prevFromAsset || toAsset !== prevToAsset || fromAmount !== prevFromAmount) &&
+    validateInput(fromAmount, fromAsset, toAsset) &&
+    shouldTriggerSearch(fromAsset, toAsset, fromAmount);
 };

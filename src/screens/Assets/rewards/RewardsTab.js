@@ -46,7 +46,7 @@ import type { Chain } from 'models/Chain';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
-import { type RewardItem, useRewardsBalance, useRewardsChainBalances, useRewardsAssets } from './selectors';
+import { type RewardItem, useRewardsTotalBalance, useRewardsBalancePerChain, useRewardsAssets } from './selectors';
 import RewardListItem from './RewardListItem';
 
 function RewardsTab() {
@@ -58,7 +58,7 @@ function RewardsTab() {
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
-  const totalBalance = useRewardsBalance();
+  const totalBalance = useRewardsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
 
   const renderListHeader = () => {
@@ -102,7 +102,7 @@ type Section = {
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
-  const balancePerChain = useRewardsChainBalances();
+  const balancePerChain = useRewardsBalancePerChain();
   const assetsPerChain = useRewardsAssets();
 
   return chains.map((chain) => {

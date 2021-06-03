@@ -92,6 +92,7 @@ export const lightThemeColorsOld = {
   buttonTextTitle: lightThemeColors.basic000,
   pagerActive: '#000000',
   pagerInactive: '#d4d9db',
+  recieveModalWarningText: '#62688f',
 };
 
 // will be removed after transition
@@ -153,6 +154,7 @@ export const darkThemeColorsOld = {
   buttonTextTitle: darkThemeColors.basic000,
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
+  recieveModalWarningText: '#62688f',
 };
 
 export const themedColors = {
@@ -299,6 +301,10 @@ export const themedColors = {
   graphPrimaryColor: theme('current', {
     lightTheme: lightThemeColorsOld.graphPrimaryColor,
     darkTheme: darkThemeColorsOld.graphPrimaryColor,
+  }),
+  recieveModalWarningText: theme('current', {
+    lightTheme: lightThemeColorsOld.recieveModalWarningText,
+    darkTheme: darkThemeColorsOld.recieveModalWarningText,
   }),
 };
 

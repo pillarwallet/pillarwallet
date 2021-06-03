@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,30 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type AltalixTrxParams = {
-    walletId: string,
-    address: string,
-    sellCurrency: string,
-    buyCurrency: string,
-    sellAmount?: number,
-    buyAmount?: number,
+export const COIN_ID = {
+  ETH: 'ethereum',
+  BNB: 'binancecoin',
 };
-
-export type SendwyreRates = {
-  [symbol: string]: {
-    // not defined by the type, but there should be exactly two properties
-    [symbol: string]: number,
-  },
-};
-
-export type SendwyreTrxValues = {
-    sourceCurrency: string,
-    destCurrency: string,
-    amount: string,
-}
-
-export type SendwyreTrxParams = SendwyreTrxValues & {
-    walletId: string,
-    address: string,
-}
-

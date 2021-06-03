@@ -18,19 +18,11 @@ import * as React from 'react';
 import { WebView } from 'react-native-webview';
 import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
-import t from 'translations/translate';
 
 // components
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
-
-// constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 
 type Props = {
@@ -38,32 +30,28 @@ type Props = {
   navigation: NavigationScreenProp<mixed>,
   onWebViewNavigate?: Function,
   onRef?: Function,
-  title?: string,
+  title: string,
   isVisible?: boolean,
   webViewRef?: WebView,
   urlPath?: string,
   goBackDismiss?: boolean,
-  isKnowledgeBaseUrl?: boolean,
+  url: string,
 };
 
 const renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
 
-const RecoveryPortalWebView = ({
+const WebViewComponent = ({
   onWebViewMessage,
   title,
   onWebViewNavigate,
   isVisible = true,
   navigation,
   onRef,
-  urlPath = '',
   goBackDismiss,
-  isKnowledgeBaseUrl,
+  url,
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
-  // eslint-disable-next-line i18next/no-literal-string
-  const knowledgeBaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
-  const uri = isKnowledgeBaseUrl ? knowledgeBaseUrl : `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {
@@ -90,7 +78,7 @@ const RecoveryPortalWebView = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: title || t('auth:recoveryPortal.title.recoveryPortal') }],
+        centerItems: [{ title }],
         customOnBack: handleNavigationBack,
       }}
     >
@@ -99,7 +87,7 @@ const RecoveryPortalWebView = ({
         {isVisible &&
           <WebView
             ref={(ref) => { webViewRef = ref; if (onRef) onRef(webViewRef); }}
-            source={{ uri }}
+            source={{ uri: url }}
             onNavigationStateChange={onNavigationStateChange}
             allowsBackForwardNavigationGestures={false}
             onMessage={onWebViewMessage}
@@ -117,4 +105,4 @@ const RecoveryPortalWebView = ({
   );
 };
 
-export default RecoveryPortalWebView;
+export default WebViewComponent;

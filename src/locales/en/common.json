@@ -169,7 +169,6 @@
     "purchase": "Purchase",
     "received": "Received",
     "receiving": "Receiving",
-    "referralReward": "Referral reward",
     "registered": "Registered",
     "registerEnsName": "Register ENS label",
     "removed": "Removed",
@@ -308,7 +307,7 @@
     "sendMore": "Send more",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
-    "shareAddress": "Share Address",
+    "shareAddress": "Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
@@ -364,7 +363,8 @@
     "claimMoreRewards": "Claim more",
     "back": "Back",
     "native": "I know Crypto",
-    "new": "I'm new to Crypto"
+    "new": "I'm new to Crypto",
+    "copyAddress": "Copy address"
   },
 
   "paragraph": {
@@ -382,7 +382,9 @@
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
-    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets."
+    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
+    "cautionMessage": "All chains use single wallet address.\nReceive <0>{{chain}}</0> assets",
+    "withCaution": "with caution."
   },
 
   "insight": {
@@ -996,13 +998,6 @@
       "support": {
         "title": "Chat with support"
       },
-      "recoveryPortal": {
-        "title": "Recovery Portal",
-        "subtitle": {
-          "default": "Smart Wallet account web recovery portal",
-          "smartWalletNotActivated": "Smart Wallet account web recovery portal (requires activated Smart Wallet)"
-        }
-      },
       "recoverySettings": {
         "title": "Recovery settings",
         "screenTitle": "Recovery",
@@ -1120,73 +1115,6 @@
     "time": "Transaction time",
     "timeHrs": "1 - 3 hrs",
     "confirmBTC": "Please confirm that you have sent bitcoins by clicking on this button."
-  },
-
-  "referralsContent": {
-    "banner": {
-      "inviteBanner": {
-        "title": "Pillar is social"
-      }
-    },
-    "modal": {
-      "missingPhone": {
-        "title": {
-          "activeRewardCampaign": "Invite and get rewarded",
-          "inactiveRewardCampaign": "Invite to Pillar"
-        },
-        "paragraph": {
-          "reward": "You will receive {{reward}} for each friend installed the app with your referral link.",
-          "enablingReferrals": "To enable referral system we need to make sure you're a genuine user. We care for our users' privacy and never share your data.",
-          "enablingInvitations": "To enable invitation system we need to make sure you're a genuine user. We care for our users' privacy and never share your data."
-        },
-        "button": {
-          "toUserData": "Verify email or phone"
-        }
-      },
-      "contactsPermission": {
-        "title": "Allow access to phone contacts",
-        "body": "It is required to easily select your friends to invite. Pillar never stores nor uses personal data.",
-        "allow": "Allow"
-      }
-    },
-    "referralRewardText": "{{rewardsList}} and a badge",
-    "title": {
-      "inviteFriends": "Invite friends",
-      "referFriends": "Refer friends",
-      "invitationsSent": "Invitations sent",
-      "incomingReward": "Your reward is on the way",
-      "thanksForJoining": "Thanks for joining Pillar",
-      "thanksForUsing": "Thank you for using Pillar",
-      "claimTokens": "Claim tokens",
-      "claimTokensError": "Error"
-    },
-    "paragraph": {
-      "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
-      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
-      "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number.",
-      "invitationViaEmailRules": "To invite via email, you need to verify your email address.",
-      "rewardForEachInvitation": "You will receive {{reward}} for each friend installed the app with your referral link. You both should have verified your details in order to be eligible.",
-      "thanksForReferring": "Thank you for spreading the word about Pillar.",
-      "rewardClaimingPending": "Transaction is processing.\n It may take a few minutes.\n You can check the status later here or in Home tab.",
-      "rewardClaimingError": "We can't verify your code at this time. Please try later.",
-      "getBadgesForEachInvitation": "Start receiving badges for friends installed Pillar with your referral link!",
-      "allowedInviteViaEmail": "You are now able to invite friends via email.",
-      "allowedInviteViaPhone": "You are now able to invite friends via text message.",
-      "emailVerified": "Your email has been verified",
-      "phoneVerified": "Your phone has been verified"
-    },
-    "label": {
-      "remainingCount": "Available {{remainingCount}}/{{totalCount}}",
-      "noReferralCode": "No code",
-      "fromCode": "From {{code}}",
-      "claiming": "Claiming...",
-      "inviteFriends": "Invite friends to Pillar",
-      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
-      "noMoreDailyInvitesAvailable": "No more invites available today"
-    },
-    "button": {
-      "invite": "Invite"
-    }
   },
 
   "relayerMigrationContent": {
@@ -1441,14 +1369,6 @@
       "title": "Buy with Ramp.Network",
       "description": "Buy Now"
     },
-    "wyre": {
-      "title": "Buy with Wyre (Non-EU)",
-      "description": "Buy Now"
-    },
-    "altalix": {
-      "title": "Buy with Altalix",
-      "description": "Buy Now"
-    },
     "rari": {
       "title": "Rari Capital",
       "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
@@ -1541,12 +1461,7 @@
     },
     "verificationSuccess": {
       "email": "Email verification was successful",
-      "phone": "Phone verification was successful",
-      "referralReward": "Thank you for verifying your information, we are currently processing your reward."
-    },
-    "referralInviteCantBeSent": {
-      "allInvites": "Invites have not been sent. Please try again later",
-      "notAllInvites": "Some invites have not been sent. Please try again later"
+      "phone": "Phone verification was successful"
     },
     "userIsOffline": "It seems you're offline. Please check your internet connection.",
     "biometricLoginEnabled": "Biometric login enabled.",
@@ -1559,7 +1474,6 @@
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) to {{toAssetName}} ({{toAssetSymbol}}) exchange enabled.",
     "keyWalletAssetsTransfered": "Assets transferred. Enjoy using your Smart Wallet!",
     "walletRecovered": "Your wallet is now recovered. Enjoy using Pillar!",
-    "rewardsOnTheirWay": "Referral reward is on its way. You will receive it soon.",
     "somethingWentWrong": "Something went wrong, we are already investigating it. Don't worry, your funds are safe. Please try again or contact support.",
     "failedToLogIn": "There was a problem logging you in, please try again.",
     "PPNTopUpSuccess": "{{paymentInfo}} added to Pillar Tank.",
@@ -1661,7 +1575,9 @@
     "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
     "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
     "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed.",
-    "ensMigrationFailed": "Sorry, ENS migration failed."
+    "ensMigrationFailed": "Sorry, ENS migration failed.",
+    "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
+    "failedToGetGasPrices": "Failed to get gas prices."
   },
 
   "exchangeContent": {
@@ -1691,8 +1607,7 @@
     "title": {
       "confirmScreen": "Details",
       "settingsScreen": "Settings",
-      "activateSmartWalletScreen": "Activate Smart Wallet",
-      "buyWithWyreScreen": "Buy with Wyre"
+      "activateSmartWalletScreen": "Activate Smart Wallet"
     },
     "button": {
       "enableAsset": "Enable Asset",
@@ -1856,10 +1771,6 @@
         "cancel": "Cancel",
         "backup": "Backup 12 words"
       }
-    },
-    "invalidReferralDeepLink": {
-      "title": "Invalid link",
-      "message": "Referral code is missing"
     },
     "walletConnectDisconnect": {
       "title": "Disconnect from {{name}}",

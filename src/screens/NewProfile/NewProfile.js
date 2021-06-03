@@ -51,7 +51,7 @@ import { getEnsPrefix } from 'utils/common';
 // types
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { User } from 'models/User';
+import type { OnboardingUser } from 'models/User';
 
 
 const UsernameWrapper = styled(Wrapper)`
@@ -96,7 +96,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   checkUsernameAvailability: (username: string) => void,
   resetUsernameCheck: () => void,
-  user: ?User,
+  user: ?OnboardingUser,
   theme: Theme,
   errorMessage: ?string,
 };
@@ -105,7 +105,7 @@ export const getUsernameInputIcon = (
   colors: Object,
   isUsernameInputDirty: boolean,
   isCheckingUsername: boolean,
-  user: ?User,
+  user: ?OnboardingUser,
   usernameValidationErrorMessage: ?string,
   errorMessage: ?string,
 ) => {
@@ -181,7 +181,7 @@ const NewProfile = ({
 
   const colors = getThemeColors(theme);
 
-  const existingUser = !!user?.walletId;
+  const existingUser = !!user?.isExisting;
 
   const proceedToNextScreen = () => {
     Keyboard.dismiss();
@@ -232,7 +232,6 @@ const NewProfile = ({
   const renderWelcomeBack = () => (
     <Wrapper flex={1} center regularPadding>
       <ProfileImage
-        uri={user?.profileImage}
         diameter={PROFILE_IMAGE_WIDTH}
         style={{ marginBottom: 47 }}
         userName={user?.username}

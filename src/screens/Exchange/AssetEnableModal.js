@@ -21,7 +21,6 @@
 import React, { useRef } from 'react';
 import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
@@ -114,8 +113,6 @@ const AssetEnableModal = (props: Props) => {
     assetIcon,
   } = enableData;
 
-  const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
-
   const { genericToken: fallbackSource } = images(theme);
 
   let notEnoughForFee;
@@ -146,7 +143,7 @@ const AssetEnableModal = (props: Props) => {
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <AssetImage
-          source={{ uri: fullIconUrl }}
+          source={{ uri: assetIcon }}
           fallbackSource={fallbackSource}
         />
         <Paragraph>

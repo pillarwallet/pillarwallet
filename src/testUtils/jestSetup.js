@@ -270,7 +270,6 @@ export const mockArchanovaAccountApiData = {
 export const mockArchanovaAccount = {
   id: '0x0',
   isActive: false,
-  walletId: '',
   type: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
   extra: mockArchanovaAccountApiData,
 };
@@ -354,8 +353,6 @@ jest.setMock('react-native-keychain', {
 
 jest.setMock('@walletconnect/client', WalletConnectMock);
 
-jest.mock('react-native-branch', () => jest.fn());
-
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
   Severity: {},
@@ -376,10 +373,8 @@ export const mockSupportedAssets = [
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
   {
@@ -387,31 +382,17 @@ export const mockSupportedAssets = [
     name: 'ethereum',
     balance: 1,
     address: '',
-    description: '',
     iconUrl: '',
     iconMonoUrl: '',
-    wallpaperUrl: '',
     decimals: 18,
   },
 ];
-
-export const mockUserBadges = [{
-  badgeId: '5c9bda927d7363000673f08c',
-  createdAt: 1553717906,
-  description: 'Badge description',
-  id: 1553717906,
-  imageUrl: 'https://s3.eu-west-2.amazonaws.com/pillar-qa-badges-images-eu-west-2-861741397496/new-wallet_180%403x.png',
-  name: 'To the Moon!',
-  receivedAt: 1601876318,
-  subtitle: 'Wallet created',
-  updatedAt: 1553717968,
-}];
 
 jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
-  getCoinGeckoEtherPrice: () => Promise.resolve(mockEtherExchangeRates),
+  getCoinGeckoPricesByCoinIds: () => Promise.resolve([mockEtherExchangeRates, null]),
 });
 
 const getMockedTranslations = (url) => {
@@ -462,7 +443,6 @@ jest.setMock('services/1inch', {
 export const mockEtherspotAccount = {
   id: '0x9e',
   isActive: false,
-  walletId: '',
   type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
 };
 
@@ -475,4 +455,29 @@ export const mockEtherspotApiAccount: Etherspot.Account = {
   updatedAt: new Date(),
 };
 
+export const mockEtherspotAccountExtra: Etherspot.Account = {
+  ethereum: mockEtherspotApiAccount,
+  xdai: null,
+  binance: null,
+  polygon: null,
+};
+
 jest.setMock('instabug-reactnative', {});
+
+const mockEtherspotGetBalances = (chain, address, assets) => {
+  // mock positive balances for mocked archanova account
+  const balances = address === mockArchanovaAccount.extra.address
+    ? assets.map(({ symbol }) => ({ symbol, balance: 1 }))
+    : [];
+
+  return Promise.resolve(balances);
+};
+
+jest.setMock('services/etherspot', {
+  sdk: jest.fn(),
+  init: jest.fn(),
+  getAccounts: jest.fn(),
+  getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
+  getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
+  getBalances: mockEtherspotGetBalances,
+});

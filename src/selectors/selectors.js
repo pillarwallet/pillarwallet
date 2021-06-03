@@ -64,14 +64,9 @@ export const accountsSelector = ({ accounts }: RootReducerState) => accounts.dat
 export const activeAccountSelector =
   ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
 
-export const activeAccountIdSelector = createSelector(
+export const activeAccountIdSelector: Selector<string> = createSelector(
   activeAccountSelector,
   activeAccount => activeAccount ? activeAccount.id : null,
-);
-
-export const activeAccountWalletIdSelector = createSelector(
-  activeAccountSelector,
-  activeAccount => activeAccount ? activeAccount.walletId : null,
 );
 
 export const activeAccountAddressSelector = createSelector(
