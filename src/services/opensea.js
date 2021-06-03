@@ -39,7 +39,7 @@ const requestConfig = {
   },
 };
 
-const paginatedRequest = (
+const getOpenSeaAssets = (
   url: string,
   paginatedData: Array<Object> = [],
   limit: number = 300,
@@ -52,7 +52,7 @@ const paginatedRequest = (
     const newOffset = offset + limit;
 
     const results = assets.length === limit
-      ? await paginatedRequest(url, updatedPaginatedData, limit, newOffset)
+      ? await getOpenSeaAssets(url, updatedPaginatedData, limit, newOffset)
       : updatedPaginatedData;
 
     resolve(results);
@@ -72,8 +72,7 @@ export const fetchCollectibles = async (
     '&order_direction=asc';
 
   try {
-    const { assets } = await paginatedRequest(url);
-    return assets;
+    return getOpenSeaAssets(url);
   } catch (error) {
     reportErrorLog('fetchCollectibles failed', { walletAddress, error });
     return null;
