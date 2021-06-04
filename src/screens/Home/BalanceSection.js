@@ -34,7 +34,7 @@ import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-// constants
+// Constants
 import {
   ADD_CASH,
 } from 'constants/navigationConstants';
