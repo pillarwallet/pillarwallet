@@ -44,11 +44,27 @@ import type { Value } from 'utils/common';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
-import { isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
+import {
+  formatUnits,
+  isCaseInsensitiveMatch,
+  wrapBigNumber,
+} from 'utils/common';
 import {
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
+import {
+  addressesEqual,
+  getAssetData,
+} from 'utils/assets';
+import { EVENT_TYPE } from 'models/History';
+import type { Event } from 'models/History';
+import type {
+  Asset,
+  Assets,
+} from 'models/Asset';
+import type { TokenValue } from 'models/Value';
+import { ETH } from 'constants/assetsConstants';
 
 export const buildHistoryTransaction = ({
   from,
@@ -196,3 +212,87 @@ export const getTokenTransactionsFromHistory = (
       (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)),
   );
 };
+
+export const parseHistoryEventFee = () => (
+  feeWithGasToken: ?FeeWithGasToken,
+  gasUsed: ?number,
+  gasPrice: ?number,
+): ?TokenValue => {
+  if (feeWithGasToken?.feeInWei) {
+    const {
+      feeInWei,
+      gasToken: { decimals, symbol },
+    } = feeWithGasToken;
+    return {
+      value: wrapBigNumber(formatUnits(feeInWei, decimals)),
+      symbol,
+    };
+  }
+
+  if (gasUsed && gasPrice) {
+    const feeValue = wrapBigNumber(gasPrice).multipliedBy(wrapBigNumber(gasPrice));
+    return {
+      value: wrapBigNumber(formatUnits(feeValue, 18)),
+      symbol: ETH,
+    };
+  }
+
+  return null;
+};
+
+export const getHistoryEventsFromTransactions = (
+  transactions: Transaction[],
+  activeAccountAddress: string,
+  accountAssets: Asset[],
+  supportedAssets: Asset[],
+) => transactions.map(({
+    _id,
+    hash,
+    batchHash,
+    value: rawValue,
+    asset: symbol,
+    createdAt,
+    from: fromAddress,
+    to: toAddress,
+    extra,
+    gasUsed,
+    gasPrice,
+    feeWithGasToken,
+    status,
+}) => {
+  const fee = parseHistoryEventFee(feeWithGasToken, gasUsed, gasPrice);
+  const { decimals } = getAssetData(accountAssets, supportedAssets, symbol);
+  const value = {
+    value: wrapBigNumber(formatUnits(rawValue, decimals)),
+    symbol,
+  };
+
+  let transaction = {
+    id: _id,
+    hash,
+    batchHash,
+    value,
+    date: new Date(+createdAt * 1000),
+    fromAddress,
+    toAddress,
+    status,
+    fee,
+  };
+
+  let eventType = addressesEqual(fromAddress, activeAccountAddress)
+    ? EVENT_TYPE.TOKEN_SENT
+    : EVENT_TYPE.TOKEN_RECEIVED;
+
+  if (extra?.ensName) {
+    eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
+    transaction = { ...transaction, ensName: extra.ensName };
+  }
+
+  transaction = {
+    ...transaction,
+    type: eventType,
+    fee,
+  };
+
+  return transaction;
+});

@@ -48,7 +48,7 @@ import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
 
 import {
   accountAssetsSelector,
-  visibleActiveAccountAssetsWithBalanceSelector,
+  accountAssetsWithBalanceSelector,
 } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -278,7 +278,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
-  visibleAssets: visibleActiveAccountAssetsWithBalanceSelector,
+  visibleAssets: accountAssetsWithBalanceSelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
 });

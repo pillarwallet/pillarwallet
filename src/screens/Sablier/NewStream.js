@@ -52,7 +52,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector, visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { accountAssetsSelector, accountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // types
 import type { Asset, Assets, AssetOption } from 'models/Asset';
@@ -289,7 +289,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
-  assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
+  assetsWithBalance: accountAssetsWithBalanceSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

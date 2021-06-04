@@ -50,6 +50,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { Chain } from 'models/Chain';
 
 
 export const resetEstimateTransactionAction = () => {
@@ -94,7 +95,10 @@ export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
   };
 };
 
-export const estimateTransactionsAction = (transactionsToEstimate: TransactionToEstimate[]) => {
+export const estimateTransactionsAction = (
+  transactionsToEstimate: TransactionToEstimate[],
+  chain: Chain,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(setEstimatingTransactionAction(true));
 
@@ -155,11 +159,11 @@ export const estimateTransactionsAction = (transactionsToEstimate: TransactionTo
           return;
         }
 
-        await etherspotService.setTransactionsBatch(transactions).catch((error) => {
+        await etherspotService.setTransactionsBatch(transactions, chain).catch((error) => {
           errorMessage = error?.message;
         });
 
-        estimated = await etherspotService.estimateTransactionsBatch(gasToken?.address).catch((error) => {
+        estimated = await etherspotService.estimateTransactionsBatch(gasToken?.address, chain).catch((error) => {
           errorMessage = error?.message;
           return null;
         });
@@ -186,8 +190,8 @@ export const estimateTransactionsAction = (transactionsToEstimate: TransactionTo
   };
 };
 
-export const estimateTransactionAction = (transaction: TransactionToEstimate) => {
+export const estimateTransactionAction = (transaction: TransactionToEstimate, chain: Chain) => {
   return (dispatch: Dispatch) => {
-    dispatch(estimateTransactionsAction([transaction]));
+    dispatch(estimateTransactionsAction([transaction], chain));
   };
 };

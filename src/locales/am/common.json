@@ -1110,7 +1110,7 @@
 
   "transactions": {
     "title": {
-      "sendScreen": "ይላኩ",
+      "sendScreen": "ይላኩ {{chain}}",
       "valueSelectorModal": "ይላኩ",
       "reviewAndConfirmScreen": "ገምግመው ያረጋግጡ",
       "allowanceTransactionSuccess": "ግብይቱ እየደረሰ ነው",

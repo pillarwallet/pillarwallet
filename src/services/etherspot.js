@@ -205,6 +205,8 @@ export class EtherspotService {
       return null;
     });
 
+    if (chain === CHAIN.BINANCE) console.log('accountBalances: ', accountBalances)
+
     if (!accountBalances?.items) {
       return []; // logged above, no balances
     }
@@ -435,7 +437,7 @@ export class EtherspotService {
   async getSupportedAssets(): Promise<?Asset[]> {
     try {
       // eslint-disable-next-line i18next/no-literal-string
-      const tokens = await this.sdk.getTokenListTokens();
+      const tokens = await this.sdk.getTokenListTokens({ name: 'OneInchTokens' });
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;

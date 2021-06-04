@@ -21,9 +21,6 @@
 
 import * as React from 'react';
 
-// Constants
-import { ETH } from 'constants/assetsConstants';
-
 // Components
 import HistoryList from 'components/HistoryList';
 
@@ -38,13 +35,11 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // Utils
-import { formatUnits, wrapBigNumber } from 'utils/common';
-import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
+import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
+import { addressesEqual, getAssetsAsList } from 'utils/assets';
 
 // Types
 import { EVENT_TYPE, type Event } from 'models/History';
-import type { FeeWithGasToken } from 'models/Transaction';
-import type { TokenValue } from 'models/Value';
 
 function HistoryListEtherspot() {
   const items = useHistoryEvents();
@@ -53,33 +48,6 @@ function HistoryListEtherspot() {
 }
 
 export default HistoryListEtherspot;
-
-function parseFee(
-  feeWithGasToken: ?FeeWithGasToken,
-  gasUsed: ?number,
-  gasPrice: ?number,
-): ?TokenValue {
-  if (feeWithGasToken?.feeInWei) {
-    const {
-      feeInWei,
-      gasToken: { decimals, symbol },
-    } = feeWithGasToken;
-    return {
-      value: wrapBigNumber(formatUnits(feeInWei, decimals)),
-      symbol,
-    };
-  }
-
-  if (gasUsed && gasPrice) {
-    const feeValue = wrapBigNumber(gasPrice).multipliedBy(wrapBigNumber(gasPrice));
-    return {
-      value: wrapBigNumber(formatUnits(feeValue, 18)),
-      symbol: ETH,
-    };
-  }
-
-  return null;
-}
 
 function useHistoryEvents(): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
@@ -102,7 +70,7 @@ function useHistoryEvents(): Event[] {
     gasUsed,
     gasPrice,
   }) => {
-    const fee = parseFee(feeWithGasToken, gasUsed, gasPrice);
+    const fee = parseHistoryEventFee(feeWithGasToken, gasUsed, gasPrice);
     const eventType = addressesEqual(fromAddress, activeAccountAddress)
       ? EVENT_TYPE.COLLECTIBLE_SENT
       : EVENT_TYPE.COLLECTIBLE_RECEIVED;
@@ -122,57 +90,12 @@ function useHistoryEvents(): Event[] {
     };
   });
 
-  const mappedTransactionsHistory = transactionsHistory.map(({
-    _id,
-    hash,
-    batchHash,
-    value: rawValue,
-    asset: symbol,
-    createdAt,
-    from: fromAddress,
-    to: toAddress,
-    extra,
-    gasUsed,
-    gasPrice,
-    feeWithGasToken,
-    status,
-  }) => {
-    const fee = parseFee(feeWithGasToken, gasUsed, gasPrice);
-    const { decimals } = getAssetData(accountAssets, supportedAssets, symbol);
-    const value = {
-      value: wrapBigNumber(formatUnits(rawValue, decimals)),
-      symbol,
-    };
-
-    let transaction = {
-      id: _id,
-      hash,
-      batchHash,
-      value,
-      date: new Date(+createdAt * 1000),
-      fromAddress,
-      toAddress,
-      status,
-      fee,
-    };
-
-    let eventType = addressesEqual(fromAddress, activeAccountAddress)
-      ? EVENT_TYPE.TOKEN_SENT
-      : EVENT_TYPE.TOKEN_RECEIVED;
-
-    if (extra?.ensName) {
-      eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
-      transaction = { ...transaction, ensName: extra.ensName };
-    }
-
-    transaction = {
-      ...transaction,
-      type: eventType,
-      fee,
-    };
-
-    return transaction;
-  });
+  const mappedTransactionsHistory = getHistoryEventsFromTransactions(
+    transactionsHistory,
+    activeAccountAddress,
+    accountAssets,
+    supportedAssets,
+  );
 
   return [
     ...mappedTransactionsHistory,

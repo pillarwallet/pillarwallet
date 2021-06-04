@@ -1386,7 +1386,7 @@
 
   "transactions": {
     "title": {
-      "sendScreen": "Send",
+      "sendScreen": "Send on {{chain}}",
       "valueSelectorModal": "Choose asset",
       "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",

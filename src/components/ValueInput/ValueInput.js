@@ -53,8 +53,11 @@ import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import {
+  accountAssetsBalancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
+} from 'selectors/balances';
+import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -62,9 +65,13 @@ import type { Rates, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type {
+  CategoryBalancesPerChain,
+  WalletAssetsBalances,
+} from 'models/Balances';
 
 import ValueInputHeader from './ValueInputHeader';
+import { CHAIN } from 'constants/chainConstants';
 
 export type ExternalProps = {|
   disabled?: boolean,
@@ -91,7 +98,7 @@ export type ExternalProps = {|
 
 type InnerProps = {|
   assets: AssetOption[],
-  balances: WalletAssetsBalances,
+  accountAssetsBalances: CategoryBalancesPerChain,
   baseFiatCurrency: ?string,
   rates: Rates,
   collectibles: Collectible[],
@@ -131,7 +138,7 @@ export const ValueInputComponent = ({
   disabled,
   assets,
   customAssets,
-  balances,
+  accountAssetsBalances,
   customBalances,
   baseFiatCurrency,
   rates,
@@ -160,7 +167,9 @@ export const ValueInputComponent = ({
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
+  const chain = assetData?.chain || CHAIN.ETHEREUM;
+  const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
+  const assetBalance = (customBalances || walletBalances)[assetSymbol]?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -380,8 +389,8 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: visibleActiveAccountAssetsWithBalanceSelector,
+  accountAssetsBalances: accountAssetsBalancesSelector,
+  assets: accountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });
 

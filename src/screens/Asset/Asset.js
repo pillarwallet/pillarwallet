@@ -55,48 +55,81 @@ import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } fro
 import { spacing, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
-import { getBalance, getRate } from 'utils/assets';
+import {
+  getAssetsAsList,
+  getBalance,
+  getRate,
+} from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
-import { getTokenTransactionsFromHistory } from 'utils/history';
+import {
+  getHistoryEventsFromTransactions,
+  getTokenTransactionsFromHistory,
+} from 'utils/history';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
-import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+  supportedAssetsSelector,
+} from 'selectors';
+import {
+  accountAssetsBalancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
+} from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset } from 'models/Asset';
+import type {
+  Assets,
+  Asset,
+  Rates,
+} from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type {
+  CategoryBalancesPerChain,
+  WalletAssetsBalances,
+} from 'models/Balances';
+import {
+  useEffect,
+  useMemo,
+} from 'react';
+import {
+  useNavigation,
+  useNavigationParam,
+} from 'react-navigation-hooks';
+import {
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
+import type { Transaction } from 'models/Transaction';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  assets: Assets,
-  balances: WalletAssetsBalances,
-  rates: Object,
-  navigation: NavigationScreenProp<*>,
+  accountAssets: Assets,
+  accountAssetsBalances: CategoryBalancesPerChain,
+  rates: Rates,
   baseFiatCurrency: ?string,
-  resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,
   paymentNetworkBalances: WalletAssetsBalances,
-  history: Object[],
+  history: Transaction[],
   availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
   activeAccountAddress: string,
+  supportedAssets: Asset[],
 };
 
 const AssetCardWrapper = styled.View`
@@ -155,207 +188,195 @@ const SyntheticAssetIcon = styled(Image)`
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
 
-class AssetScreen extends React.Component<Props> {
-  forceRender = false;
+const AssetScreen = ({
+  getExchangeSupportedAssets,
+  exchangeSupportedAssets,
+  activeAccountAddress,
+  rates,
+  paymentNetworkBalances,
+  fetchAssetsBalances,
+  baseFiatCurrency,
+  smartWalletState,
+  accounts,
+  history,
+  availableStake,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
+  accountAssetsBalances,
+  activeAccount,
+  accountAssets,
+  supportedAssets,
+}: Props) => {
+  const navigation = useNavigation();
 
-  componentDidMount() {
-    const {
-      navigation,
-      getExchangeSupportedAssets,
-      exchangeSupportedAssets,
-    } = this.props;
-    const { resetHideRemoval } = navigation.state.params;
-    if (resetHideRemoval) resetHideRemoval();
+  useEffect(() => {
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
-  }
+  }, []);
 
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqual(this.props, nextProps);
-    const isFocused = this.props.navigation.isFocused();
+  const assetData = useNavigationParam('assetData');
+  const { token, chain, isSynthetic = false } = assetData;
 
-    if (!isFocused) {
-      if (!isEq) this.forceRender = true;
-      return false;
-    }
+  const isSupportedByExchange = useMemo(
+    () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
+    [exchangeSupportedAssets]
+  );
 
-    if (this.forceRender) {
-      this.forceRender = false;
-      return true;
-    }
+  const tokenTransactions = useMemo(
+    () => getTokenTransactionsFromHistory(history, accounts, token),
+    [history, accounts, token],
+  );
 
-    return !isEq;
-  }
+  const transactions = useMemo(
+    () => {
+      if (isArchanovaAccount(activeAccount)) {
+        return tokenTransactions.filter(({
+          isPPNTransaction = false,
+          from,
+          to,
+          tag,
+        }) => {
+          if (isSynthetic) return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
 
-  goToSendTokenFlow = () => {
-    const { navigation } = this.props;
-    const { assetData } = navigation.state.params;
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+          const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
+            && isArchanovaAccountAddress(to, accounts);
+
+          return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+            && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
+            && !isAaveTransactionTag(tag);
+        });
+      }
+
+      if (isEtherspotAccount(activeAccount)) {
+        return getHistoryEventsFromTransactions(
+          tokenTransactions,
+          activeAccountAddress,
+          getAssetsAsList(accountAssets),
+          supportedAssets,
+        );
+      }
+
+      return [];
+    },
+    [tokenTransactions, accounts, isSynthetic, activeAccount],
+  );
+
+  const goToSendTokenFlow = () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+
+  const goToExchangeFlowIfAvailable = () => {
+    if (!isSupportedByExchange) return;
+    navigation.navigate(EXCHANGE, { fromAssetCode: token });
   };
 
-  goToExchangeFlow = (fromAssetCode: ?string, toAssetCode?: string) => {
-    this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
-  };
+  const openAddFundsModal = () => Modal.open(() => (
+    <AddFundsModal
+      token={token}
+      receiveAddress={activeAccountAddress}
+    />
+  ));
 
-  openAddFundsModal = () => {
-    const { navigation, activeAccountAddress } = this.props;
-    const { assetData: { token } } = navigation.state.params;
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const tokenRate = getRate(rates, token, fiatCurrency);
+  const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
+  const balance = getBalance(walletBalances, token);
+  const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
+  const isWalletEmpty = !isSynthetic
+    ? balance <= 0
+    : (paymentNetworkBalance <= 0 && availableStake < 0);
+  const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
+  const displayAmount = !isSynthetic
+    ? balance
+    : paymentNetworkBalance;
+  const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
 
-    Modal.open(() => (
-      <AddFundsModal
-        token={token}
-        receiveAddress={activeAccountAddress}
-      />
-    ));
-  }
+  const {
+    listed: isListed = true,
+    send: isAssetConfigSendActive = true,
+    receive: isReceiveActive = true,
+    disclaimer,
+  } = assetsConfig[token] || {};
 
-  render() {
-    const {
-      rates,
-      balances,
-      paymentNetworkBalances,
-      fetchAssetsBalances,
-      baseFiatCurrency,
-      navigation,
-      smartWalletState,
-      accounts,
-      history,
-      availableStake,
-      exchangeSupportedAssets,
-      isFetchingUniswapTokens,
-      uniswapTokensGraphQueryFailed,
-      getExchangeSupportedAssets,
-    } = this.props;
-    const { assetData } = this.props.navigation.state.params;
-    const { token, isSynthetic = false } = assetData;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const tokenRate = getRate(rates, token, fiatCurrency);
-    const balance = getBalance(balances, token);
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const isWalletEmpty = !isSynthetic
-      ? balance <= 0
-      : (paymentNetworkBalance <= 0 && availableStake < 0);
-    const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const displayAmount = !isSynthetic
-      ? balance
-      : paymentNetworkBalance;
-    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+  const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
+  const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
-    const {
-      listed: isListed = true,
-      send: isAssetConfigSendActive = true,
-      receive: isReceiveActive = true,
-      disclaimer,
-    } = assetsConfig[token] || {};
-
-    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
-    const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
-
-    const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);
-
-    const mainnetTransactions = tokenTransactions
-      .filter(({
-        isPPNTransaction = false,
-        from,
-        to,
-        tag,
-      }) => {
-        const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
-          && isArchanovaAccountAddress(to, accounts);
-
-        return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-          && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
-          && !isAaveTransactionTag(tag);
-      });
-
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
-    const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
-    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
-
-    // TODO: Here provide Etherspot transactions history.
-    const historyItems = [];
-
-    return (
-      <ContainerWithHeader
-        navigation={navigation}
-        headerProps={{
-          centerItems: [{ title: assetData.name }],
-        }}
-        inset={{ bottom: 0 }}
-      >
-        <ScrollWrapper
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { fetchAssetsBalances(); }}
-            />
-          }
-        >
-          <AssetPattern
-            token={assetData.token}
-            icon={assetData.patternIcon}
-            isListed={isListed}
+  return (
+    <ContainerWithHeader
+      navigation={navigation}
+      headerProps={{
+        centerItems: [{ title: assetData.name }],
+      }}
+      inset={{ bottom: 0 }}
+    >
+      <ScrollWrapper
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => { fetchAssetsBalances(); }}
           />
-          <DataWrapper>
-            <ValueWrapper>
-              {!!isSynthetic &&
-                <SyntheticAssetIcon source={lightningIcon} />
-              }
-              <TokenValue isSynthetic={isSynthetic}>
-                {t('tokenValue', { value: displayAmount, token })}
-              </TokenValue>
-            </ValueWrapper>
-            {!!isListed &&
-              <ValuesWrapper>
-                <ValueInFiat>
-                  {fiatAmount}
-                </ValueInFiat>
-              </ValuesWrapper>
-            }
-            {!isListed &&
-            <Disclaimer>
-              {disclaimer}
-            </Disclaimer>
-            }
-          </DataWrapper>
-          <AssetCardWrapper>
-            <AssetButtons
-              onPressReceive={this.openAddFundsModal}
-              onPressSend={this.goToSendTokenFlow}
-              onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
-              noBalance={isWalletEmpty}
-              isSendDisabled={!isSendActive}
-              isReceiveDisabled={!isReceiveActive}
-              showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
-            />
-            {!isSendActive && <SWActivationCard />}
-          </AssetCardWrapper>
-
-          {!!relatedTransactions.length && (
-            <ActivityFeed
-              feedTitle={t('title.transactions')}
-              navigation={navigation}
-              feedData={relatedTransactions}
-              isAssetView
-            />
-          )}
-
-          {!!historyItems.length && (
-            <HistoryList items={historyItems} />
-          )}
-        </ScrollWrapper>
-        <RetryGraphQueryBox
-          message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
-          hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
-          isFetching={isFetchingUniswapTokens}
-          onRetry={getExchangeSupportedAssets}
+        }
+      >
+        <AssetPattern
+          token={assetData.token}
+          icon={assetData.patternIcon}
+          isListed={isListed}
         />
-      </ContainerWithHeader>
-    );
-  }
-}
+        <DataWrapper>
+          <ValueWrapper>
+            {!!isSynthetic &&
+              <SyntheticAssetIcon source={lightningIcon} />
+            }
+            <TokenValue isSynthetic={isSynthetic}>
+              {t('tokenValue', { value: displayAmount, token })}
+            </TokenValue>
+          </ValueWrapper>
+          {!!isListed &&
+            <ValuesWrapper>
+              <ValueInFiat>
+                {fiatAmount}
+              </ValueInFiat>
+            </ValuesWrapper>
+          }
+          {!isListed &&
+          <Disclaimer>
+            {disclaimer}
+          </Disclaimer>
+          }
+        </DataWrapper>
+        <AssetCardWrapper>
+          <AssetButtons
+            onPressReceive={openAddFundsModal}
+            onPressSend={goToSendTokenFlow}
+            onPressExchange={goToExchangeFlowIfAvailable}
+            noBalance={isWalletEmpty}
+            isSendDisabled={!isSendActive}
+            isReceiveDisabled={!isReceiveActive}
+            showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
+          />
+          {!isSendActive && <SWActivationCard />}
+        </AssetCardWrapper>
+        {!!transactions.length && (
+          <>
+            {isArchanovaAccount(activeAccount) && (
+              <ActivityFeed
+                feedTitle={t('title.transactions')}
+                navigation={navigation}
+                feedData={transactions}
+                isAssetView
+              />
+            )}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions}/>}
+          </>
+        )}
+      </ScrollWrapper>
+      <RetryGraphQueryBox
+        message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
+        hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
+        isFetching={isFetchingUniswapTokens}
+        onRetry={getExchangeSupportedAssets}
+      />
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   rates: { data: rates },
@@ -378,13 +399,14 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletAssetsBalancesSelector,
+  accountAssetsBalances: accountAssetsBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
   availableStake: availableStakeSelector,
-  assets: accountAssetsSelector,
+  accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -393,9 +415,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAssetsBalances: () => {
-    dispatch(fetchAssetsBalancesAction());
-  },
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 

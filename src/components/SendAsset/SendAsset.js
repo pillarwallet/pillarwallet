@@ -45,7 +45,7 @@ import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
-import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -59,14 +59,18 @@ import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type {
+  CategoryBalancesPerChain,
+  WalletAssetsBalances,
+} from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 
 type Props = {
   defaultContact: ?Contact,
   source: string,
   navigation: NavigationScreenProp<*>,
-  balances: WalletAssetsBalances,
+  accountAssetsBalances: CategoryBalancesPerChain,
   session: SessionData,
   useGasToken: boolean,
   assetsWithBalance: AssetOption[],
@@ -118,7 +122,7 @@ const mapToAssetDataType = ({
 const SendAsset = ({
   source,
   navigation,
-  balances,
+  accountAssetsBalances,
   session,
   useGasToken,
   assetsWithBalance,
@@ -141,7 +145,9 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  const token = get(assetData, 'token');
+  const token = assetData?.token;
+  const chain = assetData?.chain;
+  const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, token);
   const currentValue = wrapBigNumber(amount || 0);
 
@@ -150,6 +156,11 @@ const SendAsset = ({
   const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
 
   const isAboveBalance = currentValue.gt(balance);
+
+  console.log('isValidAmount: ', isValidAmount)
+  console.log('isAboveBalance: ', isAboveBalance)
+  console.log('assetData: ', assetData)
+  console.log('selectedContact: ', selectedContact)
 
   const updateTxFee = () => {
     // specified amount is always valid and not necessarily matches input amount
@@ -161,6 +172,7 @@ const SendAsset = ({
       to: selectedContact.ethAddress,
       value: currentValue.toString(),
       assetData: mapToAssetDataType(assetData),
+      chain,
     });
   };
 
@@ -244,6 +256,7 @@ const SendAsset = ({
         to: selectedContact.ethAddress,
         value: calculatedBalanceAmount.toString(),
         assetData: mapToAssetDataType(assetData),
+        chain,
       });
     }
 
@@ -329,7 +342,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   useGasToken: useGasTokenSelector,
-  assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
+  assetsWithBalance: accountAssetsWithBalanceSelector,
   contacts: contactsSelector,
 });
 
@@ -340,7 +353,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => dispatch(estimateTransactionAction(transaction)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);
