@@ -22,19 +22,22 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
 
-// Components
-import AddFundsModal from 'components/AddFundsModal';
-import Modal from 'components/Modal';
 import Text from 'components/modern/Text';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+
+// constants
+import {
+  ADD_CASH,
+} from 'constants/navigationConstants';
 
 // Local
 import SpecialButton from './components/SpecialButton';
@@ -48,16 +51,12 @@ type Props = {|
 function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
+  const navigation = useNavigation();
 
   const fiatCurrency = useFiatCurrency();
-  const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
-
-  const handleAddFunds = React.useCallback(() => {
-    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
-  }, [accountAddress]);
 
   return (
     <Container>
@@ -74,7 +73,13 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
       </FirstColumn>
 
       <SecondColumn>
-        <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={handleAddFunds} />
+        <SpecialButton
+          title={tRoot('button.addCash')}
+          iconName="add-cash"
+          onPress={() => {
+            navigation.navigate(ADD_CASH);
+          }}
+        />
       </SecondColumn>
     </Container>
   );
