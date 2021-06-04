@@ -36,7 +36,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector, useActiveAccount } from 'selectors';
+import { useRootSelector, activeAccountAddressSelector, useActiveAccount, useIsExchangeAvailable } from 'selectors';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
@@ -45,6 +45,7 @@ function FloatingActions() {
   const navigation = useNavigation();
 
   const address = useRootSelector(activeAccountAddressSelector);
+  const isExchangeAvailable = useIsExchangeAvailable();
 
   const { isSendEnabled, isExchangeEnabled } = useEnabledActions();
 
@@ -58,7 +59,7 @@ function FloatingActions() {
       iconName: 'qrcode',
       onPress: showReceiveModal,
     },
-    {
+    isExchangeAvailable && {
       title: t('swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(EXCHANGE_FLOW),

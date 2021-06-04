@@ -170,11 +170,7 @@ import {
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import {
-  afterHistoryUpdatedAction,
-  fetchTransactionsHistoryAction,
-  insertTransactionAction,
-} from './historyActions';
+import { fetchTransactionsHistoryAction, insertTransactionAction } from './historyActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
@@ -770,7 +766,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 type: SET_HISTORY,
                 payload: updatedHistory,
               });
-              dispatch(afterHistoryUpdatedAction());
               dispatch({
                 type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
                 payload: txHash,
@@ -799,7 +794,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             type: SET_HISTORY,
             payload: updatedHistory,
           });
-          dispatch(afterHistoryUpdatedAction());
         }
       }
     }

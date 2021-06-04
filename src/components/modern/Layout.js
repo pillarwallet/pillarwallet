@@ -27,7 +27,7 @@ import styled from 'styled-components/native';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { ViewProps, ViewStyleProp } from 'utils/types/react-native';
+import type { ViewProps, ViewStyleProp, ScrollEvent } from 'utils/types/react-native';
 
 /**
  * Root element for screens. Normally contains `HeaderBlock` & `Content`.
@@ -43,6 +43,8 @@ type ContentProps = {|
   paddingVertical?: number,
   contentContainerStyle?: ViewStyleProp,
   refreshControl?: React.Element<any>,
+  onScroll?: ?(event: ScrollEvent) => void,
+  scrollEventThrottle?: number,
 |};
 
 /**
@@ -56,16 +58,17 @@ export function Content({
   paddingVertical = spacing.layoutSides,
   contentContainerStyle,
   refreshControl,
+  onScroll,
+  scrollEventThrottle = 0,
 }: ContentProps) {
-  const styles = [
-    contentStyles.safeArea,
-    { paddingHorizontal, paddingVertical },
-  ];
+  const styles = [contentStyles.safeArea, { paddingHorizontal, paddingVertical }];
 
   return (
     <ScrollView
       refreshControl={refreshControl}
       contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
+      onScroll={onScroll}
+      scrollEventThrottle={scrollEventThrottle}
     >
       <SafeAreaView style={styles}>{children}</SafeAreaView>
     </ScrollView>

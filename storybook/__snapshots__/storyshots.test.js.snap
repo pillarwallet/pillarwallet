@@ -47398,11 +47398,11 @@ exports[`Storyshots Table default 1`] = `
           Table
         </Text>
         <View
-          h={16}
+          h={8}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 8,
                 "width": 0,
               },
             ]
@@ -47415,10 +47415,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47526,10 +47526,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47626,10 +47626,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47698,10 +47698,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47809,10 +47809,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }

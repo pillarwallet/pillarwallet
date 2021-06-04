@@ -164,7 +164,7 @@ export const estimateTransactionsAction = (
           errorMessage = error?.message;
         });
 
-        estimated = await etherspotService.estimateTransactionsBatch(gasToken?.address, chain).catch((error) => {
+        estimated = await etherspotService.estimateTransactionsBatch(chain, gasToken?.address).catch((error) => {
           errorMessage = error?.message;
           return null;
         });

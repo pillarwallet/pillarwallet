@@ -50,7 +50,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 // utils
 import { delay, reportLog, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
-import { clearWebViewCookies } from 'utils/exchange';
+import { clearWebViewCookies } from 'utils/webview';
 import {
   setKeychainDataObject,
   resetKeychainDataObject,
@@ -86,7 +86,6 @@ import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
-import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { executeDeepLinkAction } from './deepLinkActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
@@ -222,10 +221,6 @@ export const loginAction = (
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
         dispatch(loadRemoteConfigWithUserPropertiesAction());
-
-        // to get exchange supported assets in order to show only supported assets on exchange selectors
-        // and show exchange button on supported asset screen only
-        dispatch(getExchangeSupportedAssetsAction());
 
         // create etherspot account if does not exist, this also applies as migration from old key based wallets
         const etherspotAccount = findFirstEtherspotAccount(accounts);
