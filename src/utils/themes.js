@@ -93,6 +93,7 @@ export const lightThemeColorsOld = {
   pagerActive: '#000000',
   pagerInactive: '#d4d9db',
   recieveModalWarningText: '#62688f',
+  hazardIconColor: '#8b939e',
 };
 
 // will be removed after transition
@@ -155,6 +156,7 @@ export const darkThemeColorsOld = {
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
   recieveModalWarningText: '#62688f',
+  hazardIconColor: '#8b939e',
 };
 
 export const themedColors = {
@@ -305,6 +307,10 @@ export const themedColors = {
   recieveModalWarningText: theme('current', {
     lightTheme: lightThemeColorsOld.recieveModalWarningText,
     darkTheme: darkThemeColorsOld.recieveModalWarningText,
+  }),
+  hazardIconColor: theme('current', {
+    lightTheme: lightThemeColorsOld.hazardIconColor,
+    darkTheme: darkThemeColorsOld.hazardIconColor,
   }),
 };
 
