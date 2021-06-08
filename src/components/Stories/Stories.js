@@ -69,7 +69,7 @@ const Stories = () => {
       });
     } else {
       Object.keys(RoutePath).includes(pathName) ? navigation.navigate(pathName)
-        : reportOrWarn('Storyly handleEvent error');
+        : reportOrWarn(`Storyly: No navigation route was found while handling a deep link: ${pathName}`);
     }
   };
 
