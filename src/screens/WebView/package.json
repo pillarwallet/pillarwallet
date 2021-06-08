@@ -1,0 +1,6 @@
+{
+    "name": "WebViewScreen",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./WebViewScreen.js"
+  }
