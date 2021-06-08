@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
-import { Linking } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 
 // Actions
@@ -46,6 +45,7 @@ const Stories = () => {
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const storylyRef = useRef();
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -55,11 +55,18 @@ const Stories = () => {
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
 
   const handleEvent = ({ nativeEvent }) => {
-    const url = nativeEvent.media?.actionUrl;
-    const pathName = url ? url.split('://').pop() : '';
-    if (url && isValidURL(url)) {
-      Linking.openURL(url);
-    } else if (url && url.includes('://')) {
+    if (storylyRef.current) {
+      storylyRef.current.close();
+    }
+    const mediaURL = nativeEvent.media?.actionUrl;
+    const mediaTitle = nativeEvent.title;
+    const pathName = mediaURL ? mediaURL.split('://').pop() : '';
+    if (mediaURL && isValidURL(mediaURL)) {
+      navigation.navigate(RoutePath.WEB_VIEW, {
+        title: mediaTitle,
+        url: mediaURL,
+      });
+    } else if (mediaURL && mediaURL.includes('://')) {
       Object.keys(RoutePath).includes(pathName);
       navigation.navigate(pathName);
     } else reportOrWarn('Storyly handleEvent error');
@@ -74,6 +81,7 @@ const Stories = () => {
         onStoryOpen={logStoryOpen}
         storyGroupTextColor={colors.text}
         onPress={handleEvent}
+        ref={storylyRef}
       />
     </Container>
   );
