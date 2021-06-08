@@ -128,7 +128,7 @@ export function isValidFiatValue(value: string) {
 }
 
 export function isValidURL(url: string) {
-  const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+  const regex = /^(http|https):\/\/[^ "]+$/;
   return regex.test(url);
 }
 
