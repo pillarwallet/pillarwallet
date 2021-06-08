@@ -66,10 +66,10 @@ const Stories = () => {
         title: mediaTitle,
         url: mediaURL,
       });
-    } else if (mediaURL && mediaURL.includes('://')) {
-      Object.keys(RoutePath).includes(pathName);
-      navigation.navigate(pathName);
-    } else reportOrWarn('Storyly handleEvent error');
+    } else {
+      Object.keys(RoutePath).includes(pathName) ? navigation.navigate(pathName)
+        : reportOrWarn('Storyly handleEvent error');
+    }
   };
 
   return (
