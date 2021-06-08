@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 
 // Components
 import Icon from 'components/modern/Icon';
@@ -39,23 +38,22 @@ export type Props = {|
 |};
 
 function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: Props) {
-  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
     <Container onPress={onPress}>
-      <Title>{title}</Title>
-
-      {isDeployed && !!value && (
+      {!isDeployed ? (
+        <DeployContainer>
+          <TitleWithIcon onPress={onPress}>{title}</TitleWithIcon>
+          <HazardIcon name="warning" width={16} height={16} color={colors.hazardIconColor} onPress={onPressDeploy} />
+        </DeployContainer>
+      ) : (
+        <Title>{title}</Title>
+      )}
+      {!!value && (
         <Value>{value}</Value>
       )}
 
-      {!isDeployed && (
-        <DeployContainer onPress={onPressDeploy}>
-          <DeployValue>{t('button.deploy')}</DeployValue>
-          <Icon name="question" width={14} height={14} color={colors.labelTertiary} />
-        </DeployContainer>
-      )}
     </Container>
   );
 }
@@ -63,13 +61,29 @@ function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: 
 export default CategoryListItem;
 
 const Container = styled.TouchableOpacity`
+
   flex-direction: row;
   justify-content: center;
   align-items: center;
 `;
 
+const DeployContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const HazardIcon = styled(Icon)`
+  margin-left: 8px;
+`;
+
 const Title = styled(Text)`
   flex: 1;
+  margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
+  ${fontStyles.medium};
+`;
+
+const TitleWithIcon = styled(Text)`
   margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
   ${fontStyles.medium};
 `;
@@ -79,12 +93,3 @@ const Value = styled(Text)`
   font-variant: tabular-nums;
 `;
 
-const DeployContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const DeployValue = styled(Text)`
-  ${fontStyles.medium};
-  margin-right: ${spacing.small}px;
-`;
