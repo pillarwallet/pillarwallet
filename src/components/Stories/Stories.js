@@ -36,6 +36,7 @@ import { isValidURL } from 'utils/validators';
 // Configs
 import { getEnv } from 'configs/envConfig';
 
+// Constants
 import * as RoutePath from 'constants/navigationConstants';
 
 const Stories = () => {
@@ -54,7 +55,7 @@ const Stories = () => {
 
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
 
-  const handleEvent = ({ nativeEvent }) => {
+  const storylyOnPressHandler = ({ nativeEvent }) => {
     if (storylyRef.current) {
       storylyRef.current.close();
     }
@@ -80,7 +81,7 @@ const Stories = () => {
         onFail={logStorylyError}
         onStoryOpen={logStoryOpen}
         storyGroupTextColor={colors.text}
-        onPress={handleEvent}
+        onPress={storylyOnPressHandler}
         ref={storylyRef}
       />
     </Container>
