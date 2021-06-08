@@ -22,6 +22,8 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
+import { Linking } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -30,9 +32,12 @@ import { logEventAction } from 'actions/analyticsActions';
 import { reportOrWarn } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { isValidURL } from 'utils/validators';
 
 // Configs
 import { getEnv } from 'configs/envConfig';
+
+import * as RoutePath from 'constants/navigationConstants';
 
 const Stories = () => {
   const colors = useThemeColors();
@@ -40,6 +45,7 @@ const Stories = () => {
   const [storyGroupCount, setStoryGroupCount] = React.useState(0);
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -47,6 +53,17 @@ const Stories = () => {
     reportOrWarn('Storyly error', { message: nativeEvent.errorMessage }, 'error');
 
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
+
+  const handleEvent = ({ nativeEvent }) => {
+    const url = nativeEvent.media?.actionUrl;
+    const pathName = url ? url.split('://').pop() : '';
+    if (url && isValidURL(url)) {
+      Linking.openURL(url);
+    } else if (url && url.includes('://')) {
+      Object.keys(RoutePath).includes(pathName);
+      navigation.navigate(pathName);
+    } else reportOrWarn('Storyly handleEvent error');
+  };
 
   return (
     <Container $hide={storyGroupCount === 0}>
@@ -56,6 +73,7 @@ const Stories = () => {
         onFail={logStorylyError}
         onStoryOpen={logStoryOpen}
         storyGroupTextColor={colors.text}
+        onPress={handleEvent}
       />
     </Container>
   );

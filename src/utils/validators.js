@@ -127,6 +127,11 @@ export function isValidFiatValue(value: string) {
   return regex.test(value);
 }
 
+export function isValidURL(url: string) {
+  const regex = /^(ftp|http|https):\/\/[^ "]+$/;
+  return regex.test(url);
+}
+
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
 
