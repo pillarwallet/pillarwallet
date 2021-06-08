@@ -85,9 +85,9 @@ const Stories = () => {
         ref={storylyRef}
         // eslint-disable-next-line i18next/no-literal-string
         storyGroupSize="custom"
-        storyGroupIconWidth={200}
-        storyGroupIconHeight={200}
-        storyGroupIconCornerRadius={5}
+        storyGroupIconWidth={250}
+        storyGroupIconHeight={250}
+        storyGroupIconCornerRadius={50}
       />
     </Container>
   );
