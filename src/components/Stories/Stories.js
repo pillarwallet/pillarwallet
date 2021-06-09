@@ -18,10 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
+import { useNavigation } from 'react-navigation-hooks';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -30,9 +31,13 @@ import { logEventAction } from 'actions/analyticsActions';
 import { reportOrWarn } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { isValidURL } from 'utils/validators';
 
 // Configs
 import { getEnv } from 'configs/envConfig';
+
+// Constants
+import * as RoutePath from 'constants/navigationConstants';
 
 const Stories = () => {
   const colors = useThemeColors();
@@ -40,6 +45,8 @@ const Stories = () => {
   const [storyGroupCount, setStoryGroupCount] = React.useState(0);
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const storylyRef = useRef();
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -47,6 +54,24 @@ const Stories = () => {
     reportOrWarn('Storyly error', { message: nativeEvent.errorMessage }, 'error');
 
   const logStoryOpen = () => dispatch(logEventAction('STORY_OPEN'));
+
+  const storylyOnPressHandler = ({ nativeEvent }) => {
+    if (storylyRef.current) {
+      storylyRef.current.close();
+    }
+    const mediaURL = nativeEvent.media?.actionUrl;
+    const mediaTitle = nativeEvent.title;
+    const pathName = mediaURL ? mediaURL.split('://').pop() : '';
+    if (mediaURL && isValidURL(mediaURL)) {
+      navigation.navigate(RoutePath.WEB_VIEW, {
+        title: mediaTitle,
+        url: mediaURL,
+      });
+    } else {
+      Object.keys(RoutePath).includes(pathName) ? navigation.navigate(pathName)
+        : reportOrWarn(`Storyly: No navigation route was found while handling a deep link: ${pathName}`);
+    }
+  };
 
   return (
     <Container $hide={storyGroupCount === 0}>
@@ -56,6 +81,8 @@ const Stories = () => {
         onFail={logStorylyError}
         onStoryOpen={logStoryOpen}
         storyGroupTextColor={colors.text}
+        onPress={storylyOnPressHandler}
+        ref={storylyRef}
       />
     </Container>
   );

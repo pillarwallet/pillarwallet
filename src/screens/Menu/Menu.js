@@ -56,7 +56,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
-  KNOWLEDGE_BASE_WEB_VIEW,
+  WEB_VIEW,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -156,7 +156,10 @@ const Menu = ({
       title: t('settingsContent.settingsItem.faq.title'),
       icon: 'dictionary',
       iconColor: colors.positive,
-      action: () => navigation.navigate(KNOWLEDGE_BASE_WEB_VIEW),
+      action: () => navigation.navigate(WEB_VIEW, {
+        title: t('settingsContent.settingsItem.faq.title'),
+        url: firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL),
+      }),
     },
     {
       key: 'storybook',
