@@ -91,8 +91,8 @@ const reduxMock = {
           balance: '54321',
           symbol: 'ETH',
         },
-      }
-    }
+      },
+    },
   },
   rates: {
     ETH: {

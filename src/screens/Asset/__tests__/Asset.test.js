@@ -66,16 +66,14 @@ jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => 
 
 const AssetScreen = createAppContainer(createSwitchNavigator({ screen: Asset }));
 
-const Component = (store) => (
-  renderer.create(
-    <ThemeProvider theme={defaultTheme}>
-      <Provider store={store}>
-        <I18nextProvider i18n={i18n}>
-          <AssetScreen />
-        </I18nextProvider>
-      </Provider>
-    </ThemeProvider>
-  )
+const Component = (store) => renderer.create(
+  <ThemeProvider theme={defaultTheme}>
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        <AssetScreen />
+      </I18nextProvider>
+    </Provider>
+  </ThemeProvider>,
 );
 
 describe('Asset', () => {
