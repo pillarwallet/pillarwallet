@@ -26,6 +26,8 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components/native';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'services/localisation/testing';
+import * as reactNavigationHooks from 'react-navigation-hooks';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as assetsBalancesState } from 'reducers/assetsBalancesReducer';
@@ -40,7 +42,6 @@ import { initialState as userSettingsState } from 'reducers/userSettingsReducer'
 import { initialState as exchangeState } from 'reducers/exchangeReducer';
 
 import { defaultTheme } from 'utils/themes';
-
 
 const mockStore = configureMockStore([thunk]);
 
@@ -58,37 +59,33 @@ const initialStore = mockStore({
   exchange: exchangeState,
 });
 
+jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => ({
+  token: 'PLR',
+  patternIcon: 'http://icons/plr?size=3',
+}));
 
-const Component = (store, navigation) => (
+const AssetScreen = createAppContainer(createSwitchNavigator({ screen: Asset }));
+
+const Component = (store) => (
   renderer.create(
     <ThemeProvider theme={defaultTheme}>
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
-          <Asset navigation={navigation} />
+          <AssetScreen />
         </I18nextProvider>
       </Provider>
-    </ThemeProvider>)
+    </ThemeProvider>
+  )
 );
 
 describe('Asset', () => {
-  const navigation = {
-    addListener: jest.fn(),
-    state: {
-      params: {
-        assetData: {
-          token: 'PLR',
-          patternIcon: 'http://icons/plr?size=3',
-        },
-      },
-    },
-  };
-
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
   it('renders the Asset Screen correctly', () => {
-    const component = Component(initialStore, navigation).toJSON();
+    const component = Component(initialStore).toJSON();
     expect(component).toMatchSnapshot();
   });
 });
