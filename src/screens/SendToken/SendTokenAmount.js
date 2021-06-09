@@ -30,16 +30,10 @@ import type { Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Transaction } from 'models/Transaction';
-import type {
-  CategoryBalancesPerChain,
-  WalletAssetsBalances,
-} from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
 
 // selectors
-import {
-  accountAssetsBalancesSelector,
-  accountEthereumWalletAssetsBalancesSelector,
-} from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 

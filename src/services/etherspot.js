@@ -205,8 +205,6 @@ export class EtherspotService {
       return null;
     });
 
-    if (chain === CHAIN.BINANCE) console.log('accountBalances: ', accountBalances)
-
     if (!accountBalances?.items) {
       return []; // logged above, no balances
     }
@@ -280,16 +278,36 @@ export class EtherspotService {
     });
   }
 
-  clearTransactionsBatch() {
-    return this.sdk.clearGatewayBatch();
+  clearTransactionsBatch(chain: Chain): void {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      reportErrorLog('clearTransactionsBatch failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToResetTransactions'));
+    }
+
+    sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(transactions: EthereumTransaction[]) {
-    return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
+  setTransactionsBatch(transactions: EthereumTransaction[], chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      reportErrorLog('setTransactionsBatch failed: no SDK for chain set', { transactions, chain });
+      throw new Error(t('error.unableToSetTransaction'));
+    }
+
+    return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
-    return this.sdk
+  estimateTransactionsBatch(useGasTokenAddress?: string, chain: Chain): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('estimateTransactionsBatch failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToEstimateTransaction'));
+    }
+
+    return sdk
       .estimateGatewayBatch({ refundToken: useGasTokenAddress })
       .then((result) => result?.estimation)
       .catch((error) => {
@@ -303,29 +321,36 @@ export class EtherspotService {
         }
 
         const errorMessage = etherspotErrorMessage || error?.message || t('error.unableToEstimateTransaction');
-        reportErrorLog('estimateTransactionsBatch -> estimateGatewayBatch failed', { errorMessage });
+        reportErrorLog('estimateTransactionsBatch -> estimateGatewayBatch failed', { errorMessage, chain });
         throw new Error(errorMessage);
       });
   }
 
   async setTransactionsBatchAndSend(
     transactions: EthereumTransaction[],
+    chain: Chain,
     useGasTokenAddress?: string,
   ): Promise<?TransactionResult> {
     // clear batch
-    this.clearTransactionsBatch();
+    this.clearTransactionsBatch(chain);
 
     // set batch
-    await this.setTransactionsBatch(transactions).catch((error) => {
-      reportErrorLog('setTransactionsBatchAndSend -> setTransactionsBatch failed', { error, transactions });
+    await this.setTransactionsBatch(transactions, chain).catch((error) => {
+      reportErrorLog('setTransactionsBatchAndSend -> setTransactionsBatch failed', { error, transactions, chain });
       throw error;
     });
 
     // estimate current batch
-    await this.estimateTransactionsBatch(useGasTokenAddress);
+    await this.estimateTransactionsBatch(useGasTokenAddress, chain);
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { transactions, chain });
+      throw new Error(t('error.unableToSendTransaction'));
+    }
 
     // submit current batch
-    const { hash: batchHash } = await this.sdk.submitGatewayBatch();
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
 
     return { batchHash };
   }
@@ -347,6 +372,7 @@ export class EtherspotService {
   async sendTransaction(
     transaction: TransactionPayload,
     fromAccountAddress: string,
+    chain: Chain,
     isP2P?: boolean,
   ): Promise<?TransactionResult> {
     if (isP2P) {
@@ -356,7 +382,7 @@ export class EtherspotService {
 
     const etherspotTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
 
-    return this.setTransactionsBatchAndSend(etherspotTransactions);
+    return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
   getSubmittedBatchByHash(hash: string): Promise<?GatewaySubmittedBatch> {
@@ -437,7 +463,7 @@ export class EtherspotService {
   async getSupportedAssets(): Promise<?Asset[]> {
     try {
       // eslint-disable-next-line i18next/no-literal-string
-      const tokens = await this.sdk.getTokenListTokens({ name: 'OneInchTokens' });
+      const tokens = await this.sdk.getTokenListTokens();
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;

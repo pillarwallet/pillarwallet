@@ -24,6 +24,7 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import type { AssetData } from 'models/Asset';
 import type { Value } from 'utils/common';
+import type { Chain } from 'models/Chain';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -204,6 +205,7 @@ export type TransactionPayload = {
   extra?: Object,
   usePPN?: boolean,
   sequentialTransactions?: TransactionPayload[],
+  chain?: Chain,
 };
 
 export type CollectibleTransactionPayload = $Shape<TransactionPayload>;

@@ -127,6 +127,7 @@ export const estimateTransactionsAction = (
         assetData?.tokenType,
         assetData?.contractAddress,
         assetData?.id,
+        chain,
       )));
     } catch (error) {
       dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
@@ -152,7 +153,7 @@ export const estimateTransactionsAction = (
       case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
         // reset batch, not a promise
         try {
-          etherspotService.clearTransactionsBatch();
+          etherspotService.clearTransactionsBatch(chain);
         } catch (error) {
           dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
           reportErrorLog('estimateTransactionsAction failed: clear batch was not successful', { error });

@@ -21,9 +21,6 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // utils
 import {
   findFirstArchanovaAccount,
@@ -34,11 +31,11 @@ import {
 import {
   getAssetData,
   getAssetsAsList,
-  getBalance,
   getBalanceBN,
   getBalanceInFiat,
   getFormattedBalanceInFiat,
 } from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 // constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
@@ -46,15 +43,9 @@ import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 // types
 import type { Asset, Assets, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type {
-  CategoryBalancesPerChain,
-  WalletAssetsBalances,
-} from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
 
-import {
-  accountAssetsBalancesSelector,
-  accountEthereumWalletAssetsBalancesSelector,
-} from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -64,7 +55,6 @@ import {
   ratesSelector,
   baseFiatCurrencySelector,
 } from './selectors';
-import { reportErrorLog } from 'utils/common';
 
 
 export const accountAssetsSelector = createSelector(
@@ -187,7 +177,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
           reportErrorLog(
             'accountAssetsWithBalanceSelector failed: no supported asset found for existing balance',
             { symbol },
-          )
+          );
           return;
         }
 

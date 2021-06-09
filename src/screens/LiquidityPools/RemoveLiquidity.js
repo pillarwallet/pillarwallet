@@ -37,6 +37,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
@@ -209,11 +210,12 @@ const RemoveLiquidityScreen = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: 0,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

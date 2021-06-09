@@ -30,6 +30,7 @@ import { CHAIN } from 'constants/chainConstants';
 // utils
 import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
+import { nativeSymbolPerChain } from 'utils/chains';
 
 // types
 import type {
@@ -44,10 +45,8 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
-import type {
-  WalletAssetBalance,
-  WalletAssetsBalances,
-} from 'models/Balances';
+import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -187,6 +186,7 @@ export const isEnoughBalanceForTransactionFee = (
     decimals?: number,
     symbol?: string,
   },
+  chain: Chain,
 ): boolean => {
   const {
     txFeeInWei,
@@ -196,8 +196,8 @@ export const isEnoughBalanceForTransactionFee = (
     symbol: transactionSymbol,
   } = transaction;
 
-  const feeSymbol = get(gasToken, 'symbol', ETH);
-  const feeDecimals = get(gasToken, 'decimals', 'ether');
+  const feeSymbol = gasToken?.symbol || nativeSymbolPerChain[chain];
+  const feeDecimals = gasToken?.decimals || 18;
 
   if (!balances[feeSymbol]) return false;
 

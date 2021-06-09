@@ -52,11 +52,9 @@ import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 
 
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
+import { CHAIN } from 'constants/chainConstants';
 
-import {
-  accountAssetsBalancesSelector,
-  accountEthereumWalletAssetsBalancesSelector,
-} from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
@@ -65,13 +63,9 @@ import type { Rates, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type {
-  CategoryBalancesPerChain,
-  WalletAssetsBalances,
-} from 'models/Balances';
+import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
 
 import ValueInputHeader from './ValueInputHeader';
-import { CHAIN } from 'constants/chainConstants';
 
 export type ExternalProps = {|
   disabled?: boolean,

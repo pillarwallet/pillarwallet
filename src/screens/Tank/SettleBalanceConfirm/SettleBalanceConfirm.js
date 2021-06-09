@@ -28,6 +28,7 @@ import t from 'translations/translate';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/smartWalletActions';
@@ -117,10 +118,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
         };
       }, {});
 
-    const isEnoughForFee = isEnoughBalanceForTransactionFee(combinedBalances, {
+    const balanceCheckTransaction = {
       txFeeInWei,
       gasToken,
-    });
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(combinedBalances, balanceCheckTransaction, CHAIN.ETHEREUM);
 
     if (!isEnoughForFee) {
       Toast.show({

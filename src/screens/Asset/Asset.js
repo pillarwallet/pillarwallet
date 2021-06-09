@@ -17,16 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import * as React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl } from 'react-native';
-import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // components
 import AssetButtons from 'components/AssetButtons';
@@ -67,6 +65,7 @@ import {
   getHistoryEventsFromTransactions,
   getTokenTransactionsFromHistory,
 } from 'utils/history';
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -77,40 +76,19 @@ import {
   activeAccountSelector,
   supportedAssetsSelector,
 } from 'selectors';
-import {
-  accountAssetsBalancesSelector,
-  accountEthereumWalletAssetsBalancesSelector,
-} from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type {
-  Assets,
-  Asset,
-  Rates,
-} from 'models/Asset';
+import type { Assets, Asset, Rates } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type {
-  CategoryBalancesPerChain,
-  WalletAssetsBalances,
-} from 'models/Balances';
-import {
-  useEffect,
-  useMemo,
-} from 'react';
-import {
-  useNavigation,
-  useNavigationParam,
-} from 'react-navigation-hooks';
-import {
-  isArchanovaAccount,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
+
 
 type Props = {
   fetchAssetsBalances: () => void,
@@ -218,7 +196,7 @@ const AssetScreen = ({
 
   const isSupportedByExchange = useMemo(
     () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
-    [exchangeSupportedAssets]
+    [exchangeSupportedAssets, token],
   );
 
   const tokenTransactions = useMemo(
@@ -257,7 +235,15 @@ const AssetScreen = ({
 
       return [];
     },
-    [tokenTransactions, accounts, isSynthetic, activeAccount],
+    [
+      tokenTransactions,
+      accounts,
+      isSynthetic,
+      activeAccount,
+      accountAssets,
+      activeAccountAddress,
+      supportedAssets,
+    ],
   );
 
   const goToSendTokenFlow = () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
@@ -364,7 +350,8 @@ const AssetScreen = ({
                 isAssetView
               />
             )}
-            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions}/>}
+            {/* $FlowFixMe: should be fine after Archanova history mappings are discarded */}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} />}
           </>
         )}
       </ScrollWrapper>

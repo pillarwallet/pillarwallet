@@ -131,6 +131,7 @@ export const sendAssetAction = (
       receiverEnsName,
       gasToken,
       txFeeInWei,
+      chain = CHAIN.ETHEREUM,
     } = transaction;
 
     const to = toChecksumAddress(transaction.to);
@@ -183,31 +184,21 @@ export const sendAssetAction = (
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
       : null;
 
-    let activeWalletService;
-    switch (getAccountType(activeAccount)) {
-      case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        activeWalletService = archanovaService;
-        break;
-      case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-        activeWalletService = etherspotService;
-        break;
-      default:
-        break;
-    }
-
-    if (!activeWalletService) {
-      callback({
-        isSuccess: false,
-        error: t('error.transactionFailed.default'),
-      });
-      return;
-    }
 
     let transactionResult: ?TransactionResult;
     let transactionErrorMessage: ?string;
 
     try {
-      transactionResult = await activeWalletService.sendTransaction(transaction, accountAddress, usePPN);
+      switch (getAccountType(activeAccount)) {
+        case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+          transactionResult = await archanovaService.sendTransaction(transaction, accountAddress, usePPN);
+          break;
+        case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+          transactionResult = await etherspotService.sendTransaction(transaction, accountAddress, chain, usePPN);
+          break;
+        default:
+          break;
+      }
     } catch (error) {
       ({ error: transactionErrorMessage } = catchTransactionError(error, logTransactionType, transaction));
     }

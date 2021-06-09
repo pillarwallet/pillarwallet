@@ -54,6 +54,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 // constants
 import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
@@ -212,10 +213,11 @@ class TankWithdrawal extends React.Component<Props, State> {
     // fee
     const gasToken = getGasToken(useGasToken, feeInfo);
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
-    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei,
       gasToken,
-    });
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // max amount

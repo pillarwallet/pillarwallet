@@ -45,6 +45,7 @@ import Modal from 'components/Modal';
 // constants
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -521,7 +522,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback),
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (
+    transaction: TransactionToEstimate,
+  ) => dispatch(estimateTransactionAction(transaction, CHAIN.ETHEREUM)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));

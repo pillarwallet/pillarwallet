@@ -30,6 +30,8 @@ import {
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT } from 'constants/paymentNetworkConstants';
+import { ETH } from 'constants/assetsConstants';
+import { EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
 
 // types
 import type {
@@ -41,30 +43,18 @@ import type {
 } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Value } from 'utils/common';
+import type { TokenValue } from 'models/Value';
+import type { Event } from 'models/History';
+import type { Asset } from 'models/Asset';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
-import {
-  formatUnits,
-  isCaseInsensitiveMatch,
-  wrapBigNumber,
-} from 'utils/common';
-import {
-  fetchTransactionInfo,
-  fetchTransactionReceipt,
-} from 'services/assets';
-import {
-  addressesEqual,
-  getAssetData,
-} from 'utils/assets';
-import { EVENT_TYPE } from 'models/History';
-import type { Event } from 'models/History';
-import type {
-  Asset,
-  Assets,
-} from 'models/Asset';
-import type { TokenValue } from 'models/Value';
-import { ETH } from 'constants/assetsConstants';
+import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
+import { addressesEqual, getAssetData } from 'utils/assets';
+
+// services
+import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
+
 
 export const buildHistoryTransaction = ({
   from,
@@ -213,7 +203,7 @@ export const getTokenTransactionsFromHistory = (
   );
 };
 
-export const parseHistoryEventFee = () => (
+export const parseHistoryEventFee = (
   feeWithGasToken: ?FeeWithGasToken,
   gasUsed: ?number,
   gasPrice: ?number,
@@ -245,20 +235,20 @@ export const getHistoryEventsFromTransactions = (
   activeAccountAddress: string,
   accountAssets: Asset[],
   supportedAssets: Asset[],
-) => transactions.map(({
-    _id,
-    hash,
-    batchHash,
-    value: rawValue,
-    asset: symbol,
-    createdAt,
-    from: fromAddress,
-    to: toAddress,
-    extra,
-    gasUsed,
-    gasPrice,
-    feeWithGasToken,
-    status,
+): Event[] => transactions.map(({
+  _id,
+  hash,
+  batchHash,
+  value: rawValue,
+  asset: symbol,
+  createdAt,
+  from: fromAddress,
+  to: toAddress,
+  extra,
+  gasUsed,
+  gasPrice,
+  feeWithGasToken,
+  status,
 }) => {
   const fee = parseHistoryEventFee(feeWithGasToken, gasUsed, gasPrice);
   const { decimals } = getAssetData(accountAssets, supportedAssets, symbol);
@@ -269,13 +259,13 @@ export const getHistoryEventsFromTransactions = (
 
   let transaction = {
     id: _id,
-    hash,
-    batchHash,
     value,
     date: new Date(+createdAt * 1000),
     fromAddress,
     toAddress,
-    status,
+    status: TRANSACTION_STATUS[status],
+    batchHash,
+    hash,
     fee,
   };
 
@@ -291,8 +281,8 @@ export const getHistoryEventsFromTransactions = (
   transaction = {
     ...transaction,
     type: eventType,
-    fee,
   };
 
+  // $FlowFixMe: TODO: fix return for different event types
   return transaction;
 });

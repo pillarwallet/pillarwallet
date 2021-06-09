@@ -45,6 +45,7 @@ import { resetEstimateTransactionAction, setEstimatingTransactionAction } from '
 
 import { ETH } from 'constants/assetsConstants';
 import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 import {
   accountAssetsSelector,
@@ -123,13 +124,14 @@ const RariAddDepositScreen = ({
 
   let notEnoughForFee = false;
   if (feeInfo && parseFloat(assetValue)) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: assetValue,
       decimals: selectedAsset?.decimals,
       symbol: selectedAsset?.symbol,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee
