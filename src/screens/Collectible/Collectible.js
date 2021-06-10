@@ -173,8 +173,6 @@ const CollectibleScreen = ({
     [collectibles, id],
   );
 
-
-
   const mappedCollectiblesTransactions = useMemo(
     () => {
       const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
@@ -184,7 +182,7 @@ const CollectibleScreen = ({
         COLLECTIBLE_TRANSACTION,
       );
     },
-    [accountCollectibleHistory, accounts]
+    [accountCollectibleHistory, accounts, chain],
   );
 
   const transactions = useMemo(
