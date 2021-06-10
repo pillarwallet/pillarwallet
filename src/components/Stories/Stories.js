@@ -53,14 +53,14 @@ const Stories = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const storylyRef = useRef();
-  const androidStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_HEIGHT));
-  const androidStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_WIDTH));
+  const androidStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_ANDROID_HEIGHT));
+  const androidStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_ANDROID_WIDTH));
   const androidStoriesRadius = parseFloat(
-    firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_CORNER_RADIUS),
+    firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_ANDROID_CORNER_RADIUS),
   );
-  const iosStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_HEIGHT));
-  const iosStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_WIDTH));
-  const iosStoriesRadius = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_CORNER_RADIUS));
+  const iosStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_IOS_HEIGHT));
+  const iosStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_IOS_WIDTH));
+  const iosStoriesRadius = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_STORIES_IOS_CORNER_RADIUS));
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
