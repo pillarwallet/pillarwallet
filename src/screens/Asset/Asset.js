@@ -80,13 +80,12 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset, Rates } from 'models/Asset';
+import type { Assets, Asset, Rates, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { CategoryBalancesPerChain } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
-import type { AssetDataNavigationParam } from 'models/Asset';
 
 
 type Props = {
