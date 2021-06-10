@@ -28,7 +28,7 @@ import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 const reduxData = {
   accountAssets: {},
-  accountHistory: [],
+  accountHistory: { ethereum: [] },
   baseFiatCurrency: defaultFiatCurrency,
   isGasTokenSupported: true,
   rates: {

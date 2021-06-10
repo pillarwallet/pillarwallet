@@ -22,28 +22,33 @@
 import { COLLECTIBLES } from 'constants/assetsConstants';
 
 // types
-import type { CollectibleNavigationParams } from 'screens/Collectible';
+import type { CollectibleNavigationAssetData } from 'models/Collectible';
+import type { Chain } from 'models/Chain';
 import type { CollectibleItem } from './selectors';
 
-export function buildCollectibleNavigationParams({
-  id,
-  title: name,
-  description,
-  imageUrl,
-  iconUrl,
-  contractAddress,
-  tokenId,
-}: CollectibleItem): CollectibleNavigationParams {
+export function buildCollectibleNavigationAssetData(
+  collectibleItem: CollectibleItem,
+  chain: Chain,
+): CollectibleNavigationAssetData {
+  const {
+    id,
+    title: name,
+    description,
+    imageUrl,
+    iconUrl,
+    contractAddress,
+    tokenId,
+  } = collectibleItem;
+
   return {
-    assetData: {
-      id,
-      name,
-      description,
-      imageUrl,
-      iconUrl,
-      contractAddress,
-      tokenId,
-      tokenType: COLLECTIBLES,
-    },
+    id,
+    name,
+    description,
+    imageUrl,
+    iconUrl,
+    contractAddress,
+    tokenId,
+    chain,
+    tokenType: COLLECTIBLES,
   };
 }

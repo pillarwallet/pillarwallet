@@ -63,6 +63,7 @@ import type { Assets } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Account } from 'models/Account';
+import type { ChainRecord } from 'models/Chain';
 
 // local
 import { SettingsSection } from './SettingsSection';
@@ -77,7 +78,7 @@ type Props = {
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
   accountAssets: Assets,
-  accountHistory: Transaction[],
+  accountHistory: ChainRecord<Transaction[]>,
   setPreferredGasToken: (token: string) => void,
   localisation: ?LocalisationOptions,
   navigation: NavigationScreenProp<*>,

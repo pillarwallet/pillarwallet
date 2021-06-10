@@ -32,7 +32,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
-import { combinedHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { sablierEventsSelector } from 'selectors/sablier';
 
 // Utils
@@ -60,7 +60,7 @@ export default HistoryListArchanova;
 // Extracted from legacy `Home` screen
 function useHistoryFeedItems(): any[] {
   const accounts = useRootSelector((root) => root.accounts.data);
-  const history = useRootSelector(combinedHistorySelector);
+  const history = useRootSelector(archanovaAccountEthereumHistorySelector);
   const openSeaTxHistory = useRootSelector(combinedCollectiblesHistorySelector);
   const userEvents = useRootSelector((root) => root.userEvents.data);
   const badgesEvents = useRootSelector((root) => root.badges.badgesEvents);

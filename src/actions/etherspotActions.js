@@ -27,10 +27,8 @@ import Toast from 'components/Toast';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
-import {
-  SET_HISTORY,
-  TX_CONFIRMED_STATUS,
-} from 'constants/historyConstants';
+import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import { initialAssets } from 'fixtures/assets';
 
 // actions
 import {
@@ -75,10 +73,10 @@ import {
   transformAssetsToObject,
 } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
+import { getCrossChainAccountHistory } from 'utils/history';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { initialAssets } from 'fixtures/assets';
 
 
 export const connectEtherspotAccountAction = (accountId: string) => {
@@ -241,7 +239,8 @@ export const subscribeToEtherspotNotificationsAction = () => {
         }
 
         const accountHistory = accountHistorySelector(getState());
-        const existingTransaction = accountHistory.find(({
+        const crossChainHistory = getCrossChainAccountHistory(accountHistory);
+        const existingTransaction = crossChainHistory.find(({
           batchHash: existingBatchHash,
         }) => isCaseInsensitiveMatch(existingBatchHash, batchHash));
 
@@ -262,7 +261,8 @@ export const subscribeToEtherspotNotificationsAction = () => {
 
         // checks for confirmed transaction notification
         if (existingTransaction.status !== mappedEtherspotBatchStatus
-          && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS) {
+          && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS
+          && existingTransaction.hash) {
           dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
           dispatch(fetchAssetsBalancesAction());
 

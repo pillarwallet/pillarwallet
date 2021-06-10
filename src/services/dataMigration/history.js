@@ -41,7 +41,7 @@ import { reportLog } from 'utils/common';
 export default async function (storageData: Object, dispatch: Function, getState: Function) {
   const isMigratedToReduxPersist = !!storageData?.dataMigration?.migratedToReduxPersist?.history;
   const accounts = storageData?.accounts?.accounts ?? []; // not a mistype
-  const history = storageData?.history?.history ?? {}; // not a mistype
+  let history = storageData?.history?.history ?? {}; // not a mistype
 
   const { history: { data: stateHistory } } = getState();
   const activeAccount = getActiveAccount(accounts || []);

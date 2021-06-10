@@ -69,3 +69,15 @@ export type CollectiblesStore = {
 export type CollectiblesHistoryStore = {
   [accountId: string]: CollectibleTrx[],
 };
+
+export type CollectibleNavigationAssetData = {|
+  id: string,
+  name: string,
+  description: ?string,
+  tokenType: string,
+  contractAddress: string,
+  tokenId: string,
+  chain: Chain,
+  iconUrl: ?string, // Icon URL
+  imageUrl: ?string, // Image URL
+|};

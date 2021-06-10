@@ -88,6 +88,7 @@ import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
+import type { ChainRecord } from 'models/Chain';
 
 
 type Props = {
@@ -100,7 +101,7 @@ type Props = {
   accounts: Account[],
   activeAccount: ?Account,
   paymentNetworkBalances: WalletAssetsBalances,
-  history: Transaction[],
+  accountHistory: ChainRecord<Transaction[]>,
   availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
@@ -176,7 +177,7 @@ const AssetScreen = ({
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  history,
+  accountHistory,
   availableStake,
   isFetchingUniswapTokens,
   uniswapTokensGraphQueryFailed,
@@ -193,6 +194,8 @@ const AssetScreen = ({
 
   const assetData = useNavigationParam('assetData');
   const { token, chain, isSynthetic = false } = assetData;
+
+  const history = accountHistory[chain] ?? [];
 
   const isSupportedByExchange = useMemo(
     () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
@@ -388,7 +391,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
-  history: accountHistorySelector,
+  accountHistory: accountHistorySelector,
   availableStake: availableStakeSelector,
   accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,

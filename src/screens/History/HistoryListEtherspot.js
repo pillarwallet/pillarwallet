@@ -17,8 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
-
 import * as React from 'react';
 
 // Components
@@ -34,27 +32,34 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Utils
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 
 // Types
 import { EVENT_TYPE, type Event } from 'models/History';
+import type { Chain } from 'models/Chain';
+
 
 function HistoryListEtherspot() {
-  const items = useHistoryEvents();
-
+  // TODO: add multichain tabs
+  const items = useHistoryEvents(CHAIN.ETHEREUM);
   return <HistoryList items={items} />;
 }
 
 export default HistoryListEtherspot;
 
-function useHistoryEvents(): Event[] {
+function useHistoryEvents(chain: Chain): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
-  const transactionsHistory = useRootSelector(accountHistorySelector);
+  const accountHistory = useRootSelector(accountHistorySelector);
   const accountAssets = getAssetsAsList(useRootSelector(accountAssetsSelector));
   const supportedAssets = useRootSelector(supportedAssetsSelector);
   const collectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
+
+  const transactionsHistory = accountHistory[chain] ?? [];
 
   const mappedCollectiblesHistory = collectiblesHistory.map(({
     _id,

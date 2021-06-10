@@ -24,6 +24,9 @@ import { createSelector } from 'reselect';
 // utils
 import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 
+// constants
+import { CHAIN } from 'constants/chainConstants';
+
 // types
 import type { ChainRecord } from 'models/Chain';
 import type { Transaction } from 'models/Transaction';
@@ -50,47 +53,18 @@ export const accountHistorySelector = createSelector(
   },
 );
 
-export const archanovaAccountHistorySelector = createSelector(
+export const archanovaAccountEthereumHistorySelector = createSelector(
   historySelector,
   accountsSelector,
-  (history, accounts): ChainRecord<Transaction[]> => {
+  (history, accounts): Transaction[] => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (!archanovaAccount) return { ethereum: [] };
+    if (!archanovaAccount) return [];
 
     const archanovaAccountId = getAccountId(archanovaAccount);
-    if (!archanovaAccountId) return { ethereum: [] };
+    if (!archanovaAccountId) return [];
 
-    return mapValues(
-      history[archanovaAccountId],
-      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
-    );
-  },
-);
+    const accountEthereumHistory = history?.[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
 
-export const combinedHistorySelector = createSelector(
-  historySelector,
-  (history): ChainRecord<Transaction[]> => {
-    const combinedHistory = Object.keys(history).reduce((combined, accountId) => {
-      const accountHistory = history[accountId] ?? {};
-      Object.keys(accountHistory).forEach((chain) => {
-        const accountHistoryForChain = accountHistory[chain] ?? [];
-        const combinedHistoryForChain = combined[chain] ?? [];
-
-        return {
-          ...combined,
-          [chain]: [
-            ...combinedHistoryForChain,
-            ...accountHistoryForChain,
-          ],
-        };
-      });
-
-      return combined;
-    }, {});
-
-    return mapValues(
-      combinedHistory,
-      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
-    );
+    return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
   },
 );

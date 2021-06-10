@@ -99,7 +99,7 @@ import {
   activeAccountIdSelector,
   supportedAssetsSelector,
 } from 'selectors';
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
@@ -434,8 +434,8 @@ export const fetchVirtualAccountBalanceAction = () => {
 
 export const managePPNInitFlagAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountHistory = accountHistorySelector(getState());
-    const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+    const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
+    const hasPpnPayments = accountEthereumHistory.some(({ isPPNTransaction }) => isPPNTransaction);
     if (!hasPpnPayments) return;
 
     await dispatch(fetchVirtualAccountBalanceAction());
@@ -1160,14 +1160,14 @@ export const fetchAvailableTxToSettleAction = () => {
     }
 
     const activeAccountAddress = activeAccountAddressSelector(getState());
-    const accountHistory = accountHistorySelector(getState());
+    const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
     const accountAssets = accountAssetsSelector(getState());
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await archanovaService.getAccountPaymentsToSettle(activeAccountAddress);
 
     const txToSettle = payments
-      .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
+      .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountEthereumHistory))
       .map((item) => {
         const { decimals = 18 } = accountAssets[item.token] || {};
         let senderAddress = get(item, 'sender.account.address', '');

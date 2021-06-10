@@ -50,7 +50,7 @@ import type { Chain } from 'models/Chain';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
-import { buildCollectibleNavigationParams } from './utils';
+import { buildCollectibleNavigationAssetData } from './utils';
 import CollectibleListItem from './CollectibleListItem';
 
 function CollectiblesTab() {
@@ -71,16 +71,16 @@ function CollectiblesTab() {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
 
-  const navigateToCollectibleDetails = (item: CollectibleItem) => {
-    const params = buildCollectibleNavigationParams(item);
-    navigation.navigate(COLLECTIBLE, params);
+  const navigateToCollectibleDetails = (item: CollectibleItem, chain: Chain) => {
+    const navigationAssetData = buildCollectibleNavigationAssetData(item, chain);
+    navigation.navigate(COLLECTIBLE, { assetData: navigationAssetData });
   };
 
   const renderSectionHeader = ({ chain }: Section) => {
     return <ChainListHeader chain={chain} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (items: CollectibleItem[]) => {
+  const renderItem = (items: CollectibleItem[], chain: Chain) => {
     const itemWidth = (width - 48) / numberOfColumns;
 
     return (
@@ -91,7 +91,7 @@ function CollectiblesTab() {
             title={item.title}
             iconUrl={item.iconUrl}
             width={itemWidth}
-            onPress={() => navigateToCollectibleDetails(item)}
+            onPress={() => navigateToCollectibleDetails(item, chain)}
           />
         ))}
       </ListRow>
@@ -117,7 +117,7 @@ function CollectiblesTab() {
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
         renderSectionFooter={() => <ChainListFooter />}
-        renderItem={({ item }) => renderItem(item)}
+        renderItem={({ item, section }) => renderItem(item, section.chain)}
         keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />

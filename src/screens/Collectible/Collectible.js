@@ -20,17 +20,19 @@
 
 import * as React from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
-import isEqual from 'lodash.isequal';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import t from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
+// constants
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
+// components
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -41,42 +43,34 @@ import HistoryList from 'components/HistoryList';
 import SlideModal from 'components/Modals/SlideModal';
 import Modal from 'components/Modal';
 
+// utils
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, themedColors, useTheme } from 'utils/themes';
 import { images, isSvgImage } from 'utils/images';
 
+// selectors
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountHistorySelector } from 'selectors/history';
 
-import type { Collectible } from 'models/Collectible';
+// types
+import type { Collectible, CollectibleNavigationAssetData } from 'models/Collectible';
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { ChainRecord } from 'models/Chain';
+import type { Transaction } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   collectibles: Collectible[],
   openSeaTxHistory: Object[],
-  history: Object[],
+  accountHistory: ChainRecord<Transaction[]>,
   accounts: Account[],
   theme: Theme,
 };
-
-export type CollectibleNavigationParams = {|
-  assetData: {
-    id: string,
-    name: string,
-    description: ?string,
-    tokenType: string,
-    contractAddress: string,
-    tokenId: string,
-    iconUrl: ?string, // Icon URL
-    imageUrl: ?string, // Image URL
-  },
-|};
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -109,33 +103,30 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 `;
 
 
-class CollectibleScreen extends React.Component<Props> {
-  forceRender = false;
+const CollectibleScreen = ({
+  collectibles,
+  openSeaTxHistory,
+  accountHistory,
+  accounts,
+}) => {
+  const navigation = useNavigation();
+  const theme = useTheme();
 
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqual(this.props, nextProps);
-    const isFocused = this.props.navigation.isFocused();
+  const assetData: CollectibleNavigationAssetData = useNavigationParam('assetData');
 
-    if (!isFocused) {
-      if (!isEq) this.forceRender = true;
-      return false;
-    }
+  const {
+    id,
+    name,
+    description,
+    imageUrl,
+    chain,
+  } = assetData;
 
-    if (this.forceRender) {
-      this.forceRender = false;
-      return true;
-    }
+  const history = accountHistory[chain] ?? [];
 
-    return !isEq;
-  }
+  const goToSendTokenFlow = () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
 
-  goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
-  };
-
-  openCollectibleImage(collectible: { imageUrl: ?string }) {
-    const { imageUrl } = collectible;
-    const { theme } = this.props;
+  const openCollectibleImage = () => {
     const colors = getThemeColors(theme);
 
     const imageViewImage = {
@@ -166,90 +157,75 @@ class CollectibleScreen extends React.Component<Props> {
         />
       </SlideModal>
     ));
-  }
+  };
 
-  render() {
-    const {
-      navigation,
-      collectibles,
-      openSeaTxHistory,
-      history,
-      accounts,
-      theme,
-    } = this.props;
-    const { assetData }: CollectibleNavigationParams = navigation.state.params;
-    const {
-      id,
-      name,
-      description,
-      imageUrl,
-    } = assetData;
+  const isOwned = collectibles.some((collectible) => collectible.id === id);
 
-    const isOwned = collectibles.find(collectible => {
-      return collectible.id === id;
-    });
+  const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+  // TODO: replace this to multichain once multichain collectibles available
+  const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
 
-    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(
-      collectiblesTransactions,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-    );
-    const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
-      !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
-    const { towellie: genericCollectible } = images(theme);
+  const mappedCollectiblesTransactions = mapTransactionsHistory(
+    collectiblesTransactions,
+    accounts,
+    COLLECTIBLE_TRANSACTION,
+  );
 
-    // TODO: Here provide Etherspot COLLECTIBLES transactions history once it's available
-    const historyItems = [];
+  const relatedCollectibleTransactions = mappedCollectiblesTransactions.filter(({
+    assetData: transactionAssetData,
+  }) => transactionAssetData && transactionAssetData.id && transactionAssetData.id === id);
 
-    return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
-        <ScrollWrapper>
-          <TouchableOpacity onPress={() => this.openCollectibleImage(assetData)}>
-            <StyledCollectibleImage
-              key={id.toString()}
-              source={{ uri: imageUrl }}
-              fallbackSource={genericCollectible}
-              resizeMode="contain"
-              width={180}
-              height={180}
+  const { towellie: genericCollectible } = images(theme);
+
+  // TODO: Here provide Etherspot COLLECTIBLES transactions history once it's available
+  const historyItems = [];
+
+  return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
+      <ScrollWrapper>
+        <TouchableOpacity onPress={openCollectibleImage}>
+          <StyledCollectibleImage
+            key={id.toString()}
+            source={{ uri: imageUrl }}
+            fallbackSource={genericCollectible}
+            resizeMode="contain"
+            width={180}
+            height={180}
+          />
+        </TouchableOpacity>
+        <DataWrapper>
+          {!!description &&
+            <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
+          }
+        </DataWrapper>
+        <ActionButtonsWrapper>
+          <CircleButtonsWrapper center horizontal>
+            <CircleButton
+              label={t('button.send')}
+              fontIcon="paperPlane"
+              onPress={goToSendTokenFlow}
+              disabled={!isOwned}
             />
-          </TouchableOpacity>
-          <DataWrapper>
-            {!!description &&
-              <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
-            }
-          </DataWrapper>
-          <ActionButtonsWrapper>
-            <CircleButtonsWrapper center horizontal>
-              <CircleButton
-                label={t('button.send')}
-                fontIcon="paperPlane"
-                onPress={() => this.goToSendTokenFlow(assetData)}
-                disabled={!isOwned}
-              />
-            </CircleButtonsWrapper>
-          </ActionButtonsWrapper>
+          </CircleButtonsWrapper>
+        </ActionButtonsWrapper>
 
-          {!!relatedCollectibleTransactions.length && (
-            <ActivityFeed
-              navigation={navigation}
-              feedData={relatedCollectibleTransactions}
-              showArrowsOnly
-              contentContainerStyle={{ paddingTop: 10 }}
-              invertAddon
-              feedTitle={t('title.transactions')}
-            />
-          )}
+        {!!relatedCollectibleTransactions.length && (
+          <ActivityFeed
+            navigation={navigation}
+            feedData={relatedCollectibleTransactions}
+            showArrowsOnly
+            contentContainerStyle={{ paddingTop: 10 }}
+            invertAddon
+            feedTitle={t('title.transactions')}
+          />
+        )}
 
-          {!!historyItems.length && <HistoryList items={historyItems} />}
-        </ScrollWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+        {!!historyItems.length && <HistoryList items={historyItems} />}
+      </ScrollWrapper>
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   accounts: { data: accounts },
@@ -259,7 +235,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
-  history: accountHistorySelector,
+  accountHistory: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
 });
 
@@ -268,4 +244,5 @@ const combinedMapStateToProps = (state: RootReducerState) => ({
   ...mapStateToProps(state),
 });
 
-export default withTheme(connect(combinedMapStateToProps)(CollectibleScreen));
+export default connect(combinedMapStateToProps)(CollectibleScreen);
+
