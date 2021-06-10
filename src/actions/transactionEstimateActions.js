@@ -160,7 +160,7 @@ export const estimateTransactionsAction = (
           return;
         }
 
-        await etherspotService.setTransactionsBatch(transactions, chain).catch((error) => {
+        await etherspotService.setTransactionsBatch(chain, transactions).catch((error) => {
           errorMessage = error?.message;
         });
 

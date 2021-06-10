@@ -289,7 +289,7 @@ export class EtherspotService {
     sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(transactions: EthereumTransaction[], chain: Chain) {
+  setTransactionsBatch(chain: Chain, transactions: EthereumTransaction[]) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
@@ -335,7 +335,7 @@ export class EtherspotService {
     this.clearTransactionsBatch(chain);
 
     // set batch
-    await this.setTransactionsBatch(transactions, chain).catch((error) => {
+    await this.setTransactionsBatch(chain, transactions).catch((error) => {
       reportErrorLog('setTransactionsBatchAndSend -> setTransactionsBatch failed', { error, transactions, chain });
       throw error;
     });
