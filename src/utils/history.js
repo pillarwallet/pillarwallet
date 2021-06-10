@@ -326,8 +326,8 @@ export const getHistoryEventsFromCollectiblesTransactions = (
   };
 
   const eventType = addressesEqual(fromAddress, activeAccountAddress)
-    ? EVENT_TYPE.COLLECTIBLE_RECEIVED
-    : EVENT_TYPE.COLLECTIBLE_SENT;
+    ? EVENT_TYPE.COLLECTIBLE_SENT
+    : EVENT_TYPE.COLLECTIBLE_RECEIVED;
 
   // $FlowFixMe: TODO: fix return for different event types
   return { ...historyEvent, type: eventType };
