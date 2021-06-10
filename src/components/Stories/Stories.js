@@ -58,9 +58,9 @@ const Stories = () => {
   const androidStoriesRadius = parseFloat(
     firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_CORNER_RADIUS),
   );
-  const iosStoriesHeight = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_HEIGHT);
-  const iosStoriesWidth = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_WIDTH);
-  const iosStoriesRadius = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_CORNER_RADIUS);
+  const iosStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_HEIGHT));
+  const iosStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_WIDTH));
+  const iosStoriesRadius = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_CORNER_RADIUS));
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
