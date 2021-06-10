@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { Storyly } from 'storyly-react-native';
 import { useNavigation } from 'react-navigation-hooks';
+import { Platform } from 'react-native';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -38,6 +39,11 @@ import { getEnv } from 'configs/envConfig';
 
 // Constants
 import * as RoutePath from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 
 const Stories = () => {
   const colors = useThemeColors();
@@ -47,6 +53,14 @@ const Stories = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const storylyRef = useRef();
+  const androidStoriesHeight = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_HEIGHT));
+  const androidStoriesWidth = parseFloat(firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_WIDTH));
+  const androidStoriesRadius = parseFloat(
+    firebaseRemoteConfig.getString(REMOTE_CONFIG.ANDROID_FEATURE_STORIES_CORNER_RADIUS),
+  );
+  const iosStoriesHeight = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_HEIGHT);
+  const iosStoriesWidth = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_WIDTH);
+  const iosStoriesRadius = firebaseRemoteConfig.getString(REMOTE_CONFIG.IOS_FEATURE_STORIES_CORNER_RADIUS);
 
   const handleLoad = ({ nativeEvent }) => setStoryGroupCount(nativeEvent.storyGroupList?.length ?? 0);
 
@@ -85,9 +99,9 @@ const Stories = () => {
         ref={storylyRef}
         // eslint-disable-next-line i18next/no-literal-string
         storyGroupSize="custom"
-        storyGroupIconWidth={250}
-        storyGroupIconHeight={250}
-        storyGroupIconCornerRadius={50}
+        storyGroupIconWidth={Platform.OS === 'ios' ? iosStoriesHeight : androidStoriesHeight}
+        storyGroupIconHeight={Platform.OS === 'ios' ? iosStoriesWidth : androidStoriesWidth}
+        storyGroupIconCornerRadius={Platform.OS === 'ios' ? iosStoriesRadius : androidStoriesRadius}
       />
     </Container>
   );
