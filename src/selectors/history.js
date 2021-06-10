@@ -65,6 +65,7 @@ export const archanovaAccountEthereumHistorySelector = createSelector(
 
     const accountEthereumHistory = history[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
 
+    // $FlowFixMe: fix later?
     return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
   },
 );
