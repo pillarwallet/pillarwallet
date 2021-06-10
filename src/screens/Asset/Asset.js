@@ -30,7 +30,6 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Image from 'components/Image';
 import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
@@ -47,7 +46,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
 import { spacing, fontStyles } from 'utils/variables';
@@ -78,15 +77,14 @@ import {
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset, Rates } from 'models/Asset';
+import type { Assets, Asset, Rates, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
 
@@ -100,9 +98,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,
-  paymentNetworkBalances: WalletAssetsBalances,
   accountHistory: ChainRecord<Transaction[]>,
-  availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   isFetchingUniswapTokens: boolean,
@@ -138,7 +134,7 @@ const ValueWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.basic000 : theme.colors.basic010};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -157,28 +153,16 @@ const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
 
-const SyntheticAssetIcon = styled(Image)`
-  width: 12px;
-  height: 24px;
-  margin-right: 4px;
-  margin-top: 1px;
-  tint-color: ${({ theme }) => theme.colors.basic000};
-`;
-
-const lightningIcon = require('assets/icons/icon_lightning.png');
-
 const AssetScreen = ({
   getExchangeSupportedAssets,
   exchangeSupportedAssets,
   activeAccountAddress,
   rates,
-  paymentNetworkBalances,
   fetchAssetsBalances,
   baseFiatCurrency,
   smartWalletState,
   accounts,
   accountHistory,
-  availableStake,
   isFetchingUniswapTokens,
   uniswapTokensGraphQueryFailed,
   accountAssetsBalances,
@@ -192,8 +176,8 @@ const AssetScreen = ({
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
   }, []);
 
-  const assetData = useNavigationParam('assetData');
-  const { token, chain, isSynthetic = false } = assetData;
+  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const { token, chain } = assetData;
 
   const history = accountHistory[chain] ?? [];
 
@@ -216,8 +200,6 @@ const AssetScreen = ({
           to,
           tag,
         }) => {
-          if (isSynthetic) return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-
           const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
             && isArchanovaAccountAddress(to, accounts);
 
@@ -241,7 +223,6 @@ const AssetScreen = ({
     [
       tokenTransactions,
       accounts,
-      isSynthetic,
       activeAccount,
       accountAssets,
       activeAccountAddress,
@@ -267,15 +248,9 @@ const AssetScreen = ({
   const tokenRate = getRate(rates, token, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, token);
-  const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-  const isWalletEmpty = !isSynthetic
-    ? balance <= 0
-    : (paymentNetworkBalance <= 0 && availableStake < 0);
+  const isWalletEmpty = balance <= 0;
   const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-  const displayAmount = !isSynthetic
-    ? balance
-    : paymentNetworkBalance;
-  const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
+  const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
   const {
     listed: isListed = true,
@@ -311,12 +286,7 @@ const AssetScreen = ({
         />
         <DataWrapper>
           <ValueWrapper>
-            {!!isSynthetic &&
-              <SyntheticAssetIcon source={lightningIcon} />
-            }
-            <TokenValue isSynthetic={isSynthetic}>
-              {t('tokenValue', { value: displayAmount, token })}
-            </TokenValue>
+            <TokenValue>{t('tokenValue', { value: balance, token })}</TokenValue>
           </ValueWrapper>
           {!!isListed &&
             <ValuesWrapper>
@@ -339,7 +309,6 @@ const AssetScreen = ({
             noBalance={isWalletEmpty}
             isSendDisabled={!isSendActive}
             isReceiveDisabled={!isReceiveActive}
-            showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
           />
           {!isSendActive && <SWActivationCard />}
         </AssetCardWrapper>
@@ -390,9 +359,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   accountHistory: accountHistorySelector,
-  availableStake: availableStakeSelector,
   accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,

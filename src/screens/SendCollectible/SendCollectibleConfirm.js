@@ -50,7 +50,7 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
-import { nativeSymbolPerChain } from 'utils/chains';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
@@ -98,11 +98,11 @@ const SendCollectibleConfirm = ({
 }: Props) => {
   const navigation = useNavigation();
 
-  const receiverEnsName = useNavigationParam('receiverEnsName');
+  const receiverEnsName: ?string = useNavigationParam('receiverEnsName');
   const assetData = useNavigationParam('assetData');
-  const receiver = useNavigationParam('receiver');
-  const navigationSource = useNavigationParam('source');
-  const chain = useNavigationParam('chain');
+  const receiver: string = useNavigationParam('receiver');
+  const navigationSource: ?string = useNavigationParam('source');
+  const chain: Chain = useNavigationParam('chain');
 
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
@@ -113,9 +113,8 @@ const SendCollectibleConfirm = ({
     contractAddress,
   } = assetData;
 
-  const transactionPayload: CollectibleTransactionPayload = {
+  let transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
-    receiverEnsName,
     name,
     contractAddress,
     tokenType,
@@ -123,6 +122,10 @@ const SendCollectibleConfirm = ({
     amount: 0,
     chain,
   };
+
+  if (receiverEnsName) {
+    transactionPayload = { ...transactionPayload, receiverEnsName };
+  }
 
   /**
    * we're fetching Rinkeby ETH if current network is Kovan because
@@ -192,7 +195,7 @@ const SendCollectibleConfirm = ({
     );
   }
 
-  const feeSymbol = feeInfo?.gasToken?.symbol || nativeSymbolPerChain[chain];
+  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetSymbolPerChain[chain];
   const errorMessage = isEnoughForFee
     ? estimateErrorMessage
     : t('error.notEnoughTokenForFee', { token: feeSymbol });

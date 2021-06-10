@@ -30,7 +30,7 @@ import { CHAIN } from 'constants/chainConstants';
 // utils
 import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
-import { nativeSymbolPerChain } from 'utils/chains';
+import { nativeAssetDecimalsPerChain, nativeAssetSymbolPerChain } from 'utils/chains';
 
 // types
 import type {
@@ -196,8 +196,8 @@ export const isEnoughBalanceForTransactionFee = (
     symbol: transactionSymbol,
   } = transaction;
 
-  const feeSymbol = gasToken?.symbol || nativeSymbolPerChain[chain];
-  const feeDecimals = gasToken?.decimals || 18;
+  const feeSymbol = gasToken?.symbol || nativeAssetSymbolPerChain[chain];
+  const feeDecimals = gasToken?.decimals || nativeAssetDecimalsPerChain[chain];
 
   if (!balances[feeSymbol]) return false;
 
