@@ -40,6 +40,12 @@ export const REMOTE_CONFIG = {
   FEATURE_ONBOARDING: 'feature_onboarding',
   ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
   KNOWLEDGE_BASE_URL: 'knowlegebase_url',
+  ANDROID_FEATURE_STORIES_HEIGHT: 'feature_stories_android_height',
+  ANDROID_FEATURE_STORIES_WIDTH: 'feature_stories_android_width',
+  ANDROID_FEATURE_STORIES_CORNER_RADIUS: 'feature_stories_android_corner_radius',
+  IOS_FEATURE_STORIES_HEIGHT: 'feature_stories_ios_height',
+  IOS_FEATURE_STORIES_WIDTH: 'feature_stories_ios_width',
+  IOS_FEATURE_STORIES_CORNER_RADIUS: 'feature_stories_ios_corner_radius',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
