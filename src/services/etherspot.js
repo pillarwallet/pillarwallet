@@ -52,7 +52,7 @@ import {
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { addressesEqual } from 'utils/assets';
-import { nativeSymbolPerChain } from 'utils/chains';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
@@ -209,7 +209,7 @@ export class EtherspotService {
       return []; // logged above, no balances
     }
 
-    const nativeSymbol = nativeSymbolPerChain[chain];
+    const nativeSymbol = nativeAssetSymbolPerChain[chain];
 
     return accountBalances.items.reduce((positiveBalances, asset) => {
       const { balance, token } = asset;
