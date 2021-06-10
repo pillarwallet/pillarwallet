@@ -33,7 +33,7 @@ import { useActiveAccount } from 'selectors';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Local
-import HistoryListEtherspot from './HistoryListEtherspot';
+import MultiChainHistoryEtherspot from './MultiChainHistoryEtherspot';
 import HistoryListArchanova from './HistoryListArchanova';
 
 
@@ -45,10 +45,14 @@ function HistoryScreen() {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock
+        centerItems={[{ title: t('title') }]}
+        navigation={navigation}
+        noPaddingTop
+      />
 
       {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
-      {isEtherspotAccount(activeAccount) && <HistoryListEtherspot />}
+      {isEtherspotAccount(activeAccount) && <MultiChainHistoryEtherspot />}
       {isArchanovaAccount(activeAccount) && <HistoryListArchanova />}
     </Container>
   );

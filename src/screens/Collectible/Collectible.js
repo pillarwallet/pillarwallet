@@ -46,28 +46,30 @@ import Modal from 'components/Modal';
 // utils
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
+import { mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors, useTheme } from 'utils/themes';
 import { images, isSvgImage } from 'utils/images';
+import { addressesEqual } from 'utils/assets';
 
 // selectors
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
-import { accountHistorySelector } from 'selectors/history';
 
 // types
-import type { Collectible, CollectibleNavigationAssetData } from 'models/Collectible';
+import type {
+  Collectible,
+  CollectibleNavigationAssetData,
+  CollectibleTransaction,
+} from 'models/Collectible';
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { ChainRecord } from 'models/Chain';
-import type { Transaction } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   collectibles: Collectible[],
-  openSeaTxHistory: Object[],
-  accountHistory: ChainRecord<Transaction[]>,
+  accountCollectibleHistory: ChainRecord<CollectibleTransaction[]>,
   accounts: Account[],
   theme: Theme,
 };
@@ -105,8 +107,7 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 
 const CollectibleScreen = ({
   collectibles,
-  openSeaTxHistory,
-  accountHistory,
+  accountCollectibleHistory,
   accounts,
 }) => {
   const navigation = useNavigation();
@@ -120,9 +121,8 @@ const CollectibleScreen = ({
     description,
     imageUrl,
     chain,
+    contractAddress,
   } = assetData;
-
-  const history = accountHistory[chain] ?? [];
 
   const goToSendTokenFlow = () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
 
@@ -161,10 +161,7 @@ const CollectibleScreen = ({
 
   const isOwned = collectibles.some((collectible) => collectible.id === id);
 
-  const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-
-  // TODO: replace this to multichain once multichain collectibles available
-  const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+  const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
 
   const mappedCollectiblesTransactions = mapTransactionsHistory(
     collectiblesTransactions,
@@ -174,7 +171,11 @@ const CollectibleScreen = ({
 
   const relatedCollectibleTransactions = mappedCollectiblesTransactions.filter(({
     assetData: transactionAssetData,
-  }) => transactionAssetData && transactionAssetData.id && transactionAssetData.id === id);
+  }) => transactionAssetData
+    && transactionAssetData.id
+    && transactionAssetData.contractAddress
+    && transactionAssetData.id === id
+    && addressesEqual(transactionAssetData.contractAddress, contractAddress));
 
   const { towellie: genericCollectible } = images(theme);
 
@@ -235,8 +236,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
-  accountHistory: accountHistorySelector,
-  openSeaTxHistory: accountCollectiblesHistorySelector,
+  accountCollectibleHistory: accountCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({

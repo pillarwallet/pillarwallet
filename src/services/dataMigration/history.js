@@ -34,7 +34,10 @@ import {
   isArchanovaAccount,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
-import { updateAccountHistoryForChain } from 'utils/history';
+import {
+  transactionStoreHasOldStructure,
+  updateAccountHistoryForChain,
+} from 'utils/history';
 import { reportLog } from 'utils/common';
 
 
@@ -69,10 +72,7 @@ export default async function (storageData: Object, dispatch: Function, getState
   }
 
   // check for migration to history per account per chain, tx were ethereum only per migration moment
-  const accountsHistoryHasOldStructure = Object.values(history).some((
-    accountHistory,
-  ) => accountHistory && Array.isArray(accountHistory));
-  if (accountsHistoryHasOldStructure) {
+  if (transactionStoreHasOldStructure(history)) {
     Object.keys(history).forEach((accountId) => {
       // $FlowFixMe: flow fails because of wrong mapping using prev type
       history = updateAccountHistoryForChain(history, accountId, CHAIN.ETHEREUM, history[accountId]);

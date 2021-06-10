@@ -63,7 +63,7 @@ export const archanovaAccountEthereumHistorySelector = createSelector(
     const archanovaAccountId = getAccountId(archanovaAccount);
     if (!archanovaAccountId) return [];
 
-    const accountEthereumHistory = history?.[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
+    const accountEthereumHistory = history[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
 
     return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
   },

@@ -174,7 +174,6 @@ export type Transaction = {
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
   type?: string,
-  tranType?: string,
 }
 
 export type TransactionPayload = {

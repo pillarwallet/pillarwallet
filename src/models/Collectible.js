@@ -19,7 +19,7 @@
 */
 
 // Types
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export type Collectible = {
   id: string,
@@ -38,7 +38,7 @@ export type Collectible = {
   chain: Chain;
 };
 
-export type CollectibleTrx = {
+export type CollectibleTransaction = {
   asset: string,
   assetData: Collectible,
   blockNumber: string,
@@ -67,7 +67,7 @@ export type CollectiblesStore = {
 };
 
 export type CollectiblesHistoryStore = {
-  [accountId: string]: CollectibleTrx[],
+  [accountId: string]: ChainRecord<CollectibleTransaction[]>,
 };
 
 export type CollectibleNavigationAssetData = {|

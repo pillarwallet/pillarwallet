@@ -54,7 +54,6 @@ import {
   formatTransactionFee,
   findEnsNameCaseInsensitive,
   getDecimalPlaces,
-  isCaseInsensitiveMatch,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -64,7 +63,10 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/feedData';
 import { images } from 'utils/images';
-import { findTransactionAcrossAccounts } from 'utils/history';
+import {
+  findCollectibleTransactionAcrossAccounts,
+  findTransactionAcrossAccounts,
+} from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
@@ -156,10 +158,10 @@ import {
 import {
   activeAccountAddressSelector,
   activeBlockchainSelector,
+  collectiblesHistorySelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
-import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { lookupAddressAction } from 'actions/ensRegistryActions';
@@ -173,7 +175,7 @@ import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
-import type { CollectibleTrx } from 'models/Collectible';
+import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
@@ -209,7 +211,7 @@ type SelectorProps = {|
   accountAssets: Assets,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
-  collectiblesHistory: CollectibleTrx[],
+  collectiblesHistory: CollectiblesHistoryStore,
 |};
 
 type DispatchProps = {|
@@ -403,15 +405,12 @@ export class EventDetail extends React.Component<Props> {
   findTxInfo = (isCollectible?: boolean) => {
     const { collectiblesHistory, history, event } = this.props;
 
-    if (isCollectible) {
-      return collectiblesHistory.find(({ hash, batchHash }) => isCaseInsensitiveMatch(hash ?? '', event?.hash)
-        || isCaseInsensitiveMatch(batchHash ?? '', event?.batchHash));
-    }
-
-    return findTransactionAcrossAccounts(history, event?.hash, event?.batchHash);
+    return isCollectible
+      ? findCollectibleTransactionAcrossAccounts(collectiblesHistory, event?.hash, event?.batchHash)
+      : findTransactionAcrossAccounts(history, event?.hash, event?.batchHash);
   };
 
-  syncEnsRegistry = (txInfo: Transaction | CollectibleTrx) => {
+  syncEnsRegistry = (txInfo: Transaction | CollectibleTransaction) => {
     const { ensRegistry, lookupAddress } = this.props;
     const relatedAddress = this.getRelevantAddress(txInfo);
 
@@ -420,7 +419,7 @@ export class EventDetail extends React.Component<Props> {
     }
   };
 
-  syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
+  syncTxStatus = (txInfo: Transaction | CollectibleTransaction) => {
     if (txInfo.status === TX_PENDING_STATUS) {
       this.timeout = setTimeout(this.updateTransaction, 500);
     }
@@ -1681,7 +1680,7 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
-  collectiblesHistory: combinedCollectiblesHistorySelector,
+  collectiblesHistory: collectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({

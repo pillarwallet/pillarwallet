@@ -28,15 +28,16 @@ import ActivityFeed from 'components/ActivityFeed';
 // Constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
+import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { sablierEventsSelector } from 'selectors/sablier';
 
 // Utils
-import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { mapTransactionsHistory } from 'utils/feedData';
 
 
 function HistoryListArchanova() {
@@ -60,26 +61,34 @@ export default HistoryListArchanova;
 // Extracted from legacy `Home` screen
 function useHistoryFeedItems(): any[] {
   const accounts = useRootSelector((root) => root.accounts.data);
-  const history = useRootSelector(archanovaAccountEthereumHistorySelector);
-  const openSeaTxHistory = useRootSelector(combinedCollectiblesHistorySelector);
   const userEvents = useRootSelector((root) => root.userEvents.data);
   const badgesEvents = useRootSelector((root) => root.badges.badgesEvents);
   const sablierEvents = useRootSelector(sablierEventsSelector);
 
-  const tokenTxHistory = history
-    .filter(({ tranType }) => tranType !== 'collectible')
-    .filter((historyItem) => historyItem.asset !== 'BTC');
-  const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-
-  const transactionsOnMainnet = mapTransactionsHistory(tokenTxHistory, accounts, TRANSACTION_EVENT, true, true);
-
-  const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(
-    openSeaTxHistory,
-    bcxCollectiblesTxHistory,
+  const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
+  const mappedTransactions = mapTransactionsHistory(
+    transactions,
+    accounts,
+    TRANSACTION_EVENT,
+    true,
     true,
   );
 
-  const mappedCTransactions = mapTransactionsHistory(collectiblesTransactions, accounts, COLLECTIBLE_TRANSACTION, true);
+  // archanova supports only Ethereum mainnet
+  const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
+  const collectiblesTransactions = accountCollectiblesHistory[CHAIN.ETHEREUM] ?? [];
+  const mappedCollectiblesTransactions = mapTransactionsHistory(
+    collectiblesTransactions,
+    accounts,
+    COLLECTIBLE_TRANSACTION,
+    true,
+  );
 
-  return [...transactionsOnMainnet, ...mappedCTransactions, ...userEvents, ...badgesEvents, ...sablierEvents];
+  return [
+    ...mappedTransactions,
+    ...mappedCollectiblesTransactions,
+    ...userEvents,
+    ...badgesEvents,
+    ...sablierEvents,
+  ];
 }

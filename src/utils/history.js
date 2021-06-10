@@ -46,6 +46,7 @@ import type { TokenValue } from 'models/Value';
 import type { Event, TransactionsStore } from 'models/History';
 import type { Asset } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
+import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Collectible';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -170,6 +171,19 @@ export const findTransactionAcrossAccounts = (
       || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
 
+export const findCollectibleTransactionAcrossAccounts = (
+  history: CollectiblesHistoryStore,
+  hash: ?string,
+  batchHash: ?string,
+): ?CollectibleTransaction => {
+  if (!hash && !batchHash) return {};
+
+  return Object.keys(history)
+    .flatMap((accountId) => getCrossChainAccountCollectiblesHistory(history[accountId]))
+    .find((transaction) => isCaseInsensitiveMatch(hash ?? '', transaction?.hash)
+      || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
+};
+
 export const getTrxInfo = async (hash: string, network?: string) => {
   const [txInfo, txReceipt] = await Promise.all([
     fetchTransactionInfo(hash, network),
@@ -187,17 +201,12 @@ export const getTrxInfo = async (hash: string, network?: string) => {
   };
 };
 
-export const getTransactionsFromHistory = (history: Transaction[], accounts: Account[]) => {
-  const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-  return mapTransactionsHistory(tokenTxHistory, accounts, TRANSACTION_EVENT);
-};
-
 export const getTokenTransactionsFromHistory = (
   history: Transaction[],
   accounts: Account[],
   token: string,
 ): Transaction[] => {
-  const mappedTransactions = getTransactionsFromHistory(history, accounts);
+  const mappedTransactions = mapTransactionsHistory(history, accounts, TRANSACTION_EVENT);
   return mappedTransactions.filter(
     ({ asset, tag = '', extra = [] }) =>
       (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) ||
@@ -293,3 +302,11 @@ export const getHistoryEventsFromTransactions = (
 export const getCrossChainAccountHistory = (
   accountHistory: ChainRecord<Transaction[]>,
 ): Transaction[] => Object.keys(accountHistory ?? {}).flatMap((chain) => accountHistory?.[chain] ?? []);
+
+export const getCrossChainAccountCollectiblesHistory = (
+  accountHistory: ChainRecord<CollectibleTransaction[]>,
+): CollectibleTransaction[] => Object.keys(accountHistory ?? {}).flatMap((chain) => accountHistory?.[chain] ?? []);
+
+export const transactionStoreHasOldStructure = (
+  transactionStore: TransactionsStore | CollectiblesHistoryStore,
+) => Object.values(transactionStore).some((history) => history && Array.isArray(history));

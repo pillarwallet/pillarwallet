@@ -43,7 +43,7 @@ import {
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
 import { ADD_HISTORY_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
-import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { ADD_COLLECTIBLE_HISTORY_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import {
@@ -164,7 +164,7 @@ export const sendAssetAction = (
     const accountAddress = getAccountAddress(activeAccount);
 
     const accountCollectibles = collectibles[accountId] || [];
-    const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
+    const accountCollectiblesHistory = collectiblesHistory[accountId]?.[chain] || [];
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
@@ -298,12 +298,15 @@ export const sendAssetAction = (
 
     // update transaction history
     if (isCollectibleTransaction) {
+      const { contractAddress, tokenId } = transaction;
       dispatch({
-        type: ADD_COLLECTIBLE_TRANSACTION,
+        type: ADD_COLLECTIBLE_HISTORY_TRANSACTION,
         payload: {
-          transactionData: { ...historyTx },
-          tokenId: transaction.tokenId,
+          transaction: historyTx,
+          tokenId,
+          contractAddress,
           accountId,
+          chain,
         },
       });
 

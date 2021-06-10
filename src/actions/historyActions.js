@@ -30,7 +30,7 @@ import {
   SET_GAS_INFO,
   TX_PENDING_STATUS,
   ADD_HISTORY_TRANSACTION,
-  UPDATING_TRANSACTION,
+  SET_UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
   SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
@@ -281,7 +281,7 @@ export const fetchGasInfoAction = () => {
 };
 
 const setUpdatingTransactionAction = (hash: ?string) => ({
-  type: UPDATING_TRANSACTION,
+  type: SET_UPDATING_TRANSACTION,
   payload: hash,
 });
 
