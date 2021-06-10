@@ -27,11 +27,12 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 // Types
 import type { Asset } from 'models/Asset';
 import type { Chain } from 'models/Chain';
+import type { AssetDataNavigationParam } from 'models/Asset';
 
 /**
  * Extracted from AssetList.js. Asset screen expects specific but untyped format of data as navigation param.
  */
-export function buildAssetDataNavigationParam(asset: Asset, chain: Chain) {
+export function buildAssetDataNavigationParam(asset: Asset, chain: Chain): AssetDataNavigationParam {
   const { symbol, name, iconUrl, decimals } = asset;
 
   return {

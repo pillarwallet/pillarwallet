@@ -37,16 +37,19 @@ import { BaseText } from 'components/Typography';
 // utils
 import { useChainsConfig } from 'utils/uiConfig';
 
-// types
+// selectors
 import { useRootSelector } from 'selectors';
+
+// types
+import type { TransactionPayload } from 'models/Transaction';
 
 
 const SendTokenConfirm = () => {
   const session = useRootSelector(({ session: sessionState }) => sessionState.data);
   const navigation = useNavigation();
 
-  const source = useNavigationParam('source');
-  const transactionPayload = useNavigationParam('transactionPayload');
+  const source: ?string = useNavigationParam('source');
+  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
   const { chain = CHAIN.ETHEREUM } = transactionPayload;
   const { title: chainTitle, color: chainColor } = useChainsConfig()[chain];
