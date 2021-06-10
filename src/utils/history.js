@@ -220,7 +220,7 @@ export const parseHistoryEventFee = (
   }
 
   if (gasUsed && gasPrice) {
-    const feeValue = wrapBigNumber(gasPrice).multipliedBy(wrapBigNumber(gasPrice));
+    const feeValue = wrapBigNumber(gasPrice).multipliedBy(gasPrice);
     return {
       value: wrapBigNumber(formatUnits(feeValue, 18)),
       symbol: ETH,
