@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
+import { isEmpty, mapValues } from 'lodash';
 import t from 'translations/translate';
 import { NotificationTypes as EtherspotNotificationTypes } from 'etherspot';
 
@@ -209,7 +209,7 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
     const allAccountsHistory = historySelector(getState());
 
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
-      const accountHistory = allAccountsHistory[accountId].map((transaction) => {
+      const accountHistory = mapValues(allAccountsHistory[accountId], (transaction) => {
         if (isCaseInsensitiveMatch(transaction.batchHash, batchHash)) {
           return { ...transaction, hash: transactionHash };
         }

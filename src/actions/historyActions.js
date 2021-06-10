@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
+import { get, isEmpty } from 'lodash';
 import { GasPriceOracle } from 'gas-price-oracle';
 import t from 'translations/translate';
 
@@ -30,18 +29,19 @@ import {
   SET_HISTORY,
   SET_GAS_INFO,
   TX_PENDING_STATUS,
-  ADD_TRANSACTION,
+  ADD_HISTORY_TRANSACTION,
   UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
   SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import {
   getTrxInfo,
   parseFeeWithGasToken,
-  updateAccountHistory,
+  updateAccountHistoryForChain,
   updateHistoryRecord,
 } from 'utils/history';
 import {
@@ -88,6 +88,7 @@ import {
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Event } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // actions
 import { fetchAssetsBalancesAction } from './assetsActions';
@@ -107,17 +108,21 @@ export const afterHistoryUpdatedAction = () => {
 export const syncAccountHistoryAction = (
   apiHistory: Transaction[],
   accountId: string,
+  chain: Chain,
   lastSyncId: ?string,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { history: { data: currentHistory, historyLastSyncIds = {} } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
 
     const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
     const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
 
-    const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    const existingTransactions = currentHistory[accountId]?.[chain] || [];
+    const updatedAccountHistory = uniqBy(
+      [...minedTransactions, ...existingTransactions, ...pendingTransactions],
+      'hash',
+    );
+    const updatedHistory = updateAccountHistoryForChain(currentHistory, accountId, chain, updatedAccountHistory);
 
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
@@ -162,7 +167,8 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
       supportedAssets,
     );
 
-    dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId));
+    // TODO: repeat for each chain when available on Etherspot SDK
+    dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId, CHAIN.ETHEREUM));
     dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
 
     await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
@@ -189,7 +195,7 @@ export const fetchTransactionsHistoryAction = () => {
       const keyBasedAccountId = getAccountId(keyBasedAccount);
       const currentHistory = historySelector(getState());
       if (!isEmpty(currentHistory[keyBasedAccountId])) {
-        const updatedHistory = updateAccountHistory(currentHistory, keyBasedAccountId, []);
+        const updatedHistory = updateAccountHistoryForChain(currentHistory, keyBasedAccountId, CHAIN.ETHEREUM, []);
         await dispatch(saveDbAction('history', { history: updatedHistory }, true));
         dispatch({ type: SET_HISTORY, payload: updatedHistory });
       }
@@ -236,7 +242,12 @@ export const fetchTransactionsHistoryAction = () => {
       if (finalArchanovaTransactionsHistory.length) {
         newHistoryTransactions = [...newHistoryTransactions, ...finalArchanovaTransactionsHistory];
         const newLastSyncedId = archanovaTransactions?.[0]?.id?.toString();
-        dispatch(syncAccountHistoryAction(finalArchanovaTransactionsHistory, accountId, newLastSyncedId));
+        dispatch(syncAccountHistoryAction(
+          finalArchanovaTransactionsHistory,
+          accountId,
+          CHAIN.ETHEREUM,
+          newLastSyncedId,
+        ));
       }
     }
 
@@ -375,13 +386,18 @@ export const updateTransactionStatusAction = (hash: string) => {
   };
 };
 
-export const insertTransactionAction = (historyTx: Transaction, accountId: string) => {
+export const insertTransactionAction = (
+  transaction: Transaction,
+  accountId: string,
+  chain: Chain,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({
-      type: ADD_TRANSACTION,
+      type: ADD_HISTORY_TRANSACTION,
       payload: {
         accountId,
-        historyTx,
+        transaction,
+        chain,
       },
     });
 

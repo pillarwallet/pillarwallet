@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
+import { isEmpty, mapValues } from 'lodash';
 
 // constants
 import {
@@ -39,13 +39,13 @@ import type {
   GasToken,
   Transaction,
   TransactionEthers,
-  TransactionsStore,
 } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Value } from 'utils/common';
 import type { TokenValue } from 'models/Value';
-import type { Event } from 'models/History';
+import type { Event, TransactionsStore } from 'models/History';
 import type { Asset } from 'models/Asset';
+import type { ChainRecord } from 'models/Chain';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -105,16 +105,18 @@ export const isTransactionEvent = (eventType: string) => {
   ].includes(eventType);
 };
 
-export const updateAccountHistory = (
+export const updateAccountHistoryForChain = (
   history: TransactionsStore,
   accountId: string,
-  accountHistory: Transaction[] = [],
-) => {
-  return {
-    ...history,
-    [accountId]: accountHistory,
-  };
-};
+  chain: string,
+  transactions: Transaction[],
+): TransactionsStore => ({
+  ...history,
+  [accountId]: {
+    ...(history[accountId] ?? {}),
+    [chain]: transactions,
+  },
+});
 
 type UpdateHistoryRecordResult = {
   updatedHistory: TransactionsStore,
@@ -131,7 +133,7 @@ export function updateHistoryRecord(
   let txUpdated = null;
   const accounts = Object.keys(allHistory);
   const updatedHistory = accounts.reduce((history, accountId) => {
-    const accountHistory = allHistory[accountId].map(transaction => {
+    const accountHistory = mapValues(allHistory[accountId], (transaction) => {
       if (!isCaseInsensitiveMatch(transaction.hash, hashToUpdate)) {
         return transaction;
       }
@@ -163,7 +165,7 @@ export const findTransactionAcrossAccounts = (
   if (!hash && !batchHash) return {};
 
   return Object.keys(history)
-    .flatMap((accountId) => history[accountId])
+    .flatMap((accountId) => getCrossChainAccountHistory(history[accountId]))
     .find((transaction) => isCaseInsensitiveMatch(hash ?? '', transaction?.hash)
       || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
@@ -286,3 +288,8 @@ export const getHistoryEventsFromTransactions = (
   // $FlowFixMe: TODO: fix return for different event types
   return transaction;
 });
+
+// could be just Object.values(accountHistory).flat(), but flow fails
+export const getCrossChainAccountHistory = (
+  accountHistory: ChainRecord<Transaction[]>,
+): Transaction[] => Object.keys(accountHistory ?? {}).flatMap((chain) => accountHistory?.[chain] ?? []);

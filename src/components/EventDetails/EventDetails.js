@@ -172,7 +172,7 @@ import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
-import type { Transaction, TransactionsStore } from 'models/Transaction';
+import type { Transaction } from 'models/Transaction';
 import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -181,6 +181,7 @@ import type { Stream } from 'models/Sablier';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { TransactionsStore } from 'models/History';
 
 
 type StateProps = {|

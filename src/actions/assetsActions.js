@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
+import { isEmpty } from 'lodash';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
@@ -42,7 +42,7 @@ import {
   SET_ACCOUNT_ASSETS_BALANCES,
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
-import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { ADD_HISTORY_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
@@ -74,7 +74,7 @@ import {
   reportErrorLog,
   uniqBy,
 } from 'utils/common';
-import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
+import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistoryForChain } from 'utils/history';
 import {
   getActiveAccount,
   getActiveAccountId,
@@ -322,12 +322,19 @@ export const sendAssetAction = (
 
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
-      dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+      dispatch({
+        type: ADD_HISTORY_TRANSACTION,
+        payload: {
+          accountId,
+          transaction: historyTx,
+          chain,
+        },
+      });
 
       const { history: { data: currentHistory } } = getState();
-      const accountHistory = currentHistory[accountId] || [];
-      const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-      const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+      const existingTransactions = currentHistory[accountId]?.[chain] || [];
+      const updatedAccountHistory = uniqBy([historyTx, ...existingTransactions], 'hash');
+      const updatedHistory = updateAccountHistoryForChain(currentHistory, accountId, chain, updatedAccountHistory);
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
 

@@ -19,7 +19,7 @@
 */
 
 export const SET_HISTORY = 'SET_HISTORY';
-export const ADD_TRANSACTION = 'ADD_TRANSACTION';
+export const ADD_HISTORY_TRANSACTION = 'ADD_HISTORY_TRANSACTION';
 export const PENDING = 'PENDING';
 export const TRANSACTION_EVENT = 'transactionEvent';
 export const TRANSACTION_PENDING_EVENT = 'transactionPendingEvent';

@@ -18,11 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import orderBy from 'lodash.orderby';
+import { orderBy, mapValues } from 'lodash';
 import { createSelector } from 'reselect';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
+
+// types
+import type { ChainRecord } from 'models/Chain';
+import type { Transaction } from 'models/Transaction';
 
 // selectors
 import {
@@ -37,33 +41,56 @@ export const accountHistorySelector = createSelector(
   historySelector,
   activeAccountIdSelector,
   activeBlockchainSelector,
-  (history, activeAccountId) => {
-    if (!activeAccountId) return [];
-    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
+  (history, activeAccountId): ChainRecord<Transaction[]> => {
+    if (!activeAccountId) return { ethereum: [] };
+    return mapValues(
+      history[activeAccountId],
+      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
+    );
   },
 );
 
 export const archanovaAccountHistorySelector = createSelector(
   historySelector,
   accountsSelector,
-  (history, accounts) => {
+  (history, accounts): ChainRecord<Transaction[]> => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (!archanovaAccount) return [];
+    if (!archanovaAccount) return { ethereum: [] };
 
     const archanovaAccountId = getAccountId(archanovaAccount);
-    if (!archanovaAccountId) return [];
+    if (!archanovaAccountId) return { ethereum: [] };
 
-    return orderBy(history[archanovaAccountId] || [], ['createdAt'], ['desc']);
+    return mapValues(
+      history[archanovaAccountId],
+      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
+    );
   },
 );
 
 export const combinedHistorySelector = createSelector(
   historySelector,
-  (history) => {
-    const combinedHistory = Object.keys(history).reduce((historyArray, account) => {
-      return [...historyArray, ...history[account]];
-    }, []);
+  (history): ChainRecord<Transaction[]> => {
+    const combinedHistory = Object.keys(history).reduce((combined, accountId) => {
+      const accountHistory = history[accountId] ?? {};
+      Object.keys(accountHistory).forEach((chain) => {
+        const accountHistoryForChain = accountHistory[chain] ?? [];
+        const combinedHistoryForChain = combined[chain] ?? [];
 
-    return orderBy(combinedHistory, ['createdAt'], ['desc']);
+        return {
+          ...combined,
+          [chain]: [
+            ...combinedHistoryForChain,
+            ...accountHistoryForChain,
+          ],
+        };
+      });
+
+      return combined;
+    }, {});
+
+    return mapValues(
+      combinedHistory,
+      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
+    );
   },
 );

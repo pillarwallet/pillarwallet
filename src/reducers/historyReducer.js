@@ -21,18 +21,15 @@ import get from 'lodash.get';
 import { REHYDRATE } from 'redux-persist';
 import {
   SET_HISTORY,
-  ADD_TRANSACTION,
+  ADD_HISTORY_TRANSACTION,
   SET_GAS_INFO,
   UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
   SET_HISTORY_LAST_SYNC_IDS,
   SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
-import type {
-  HistoryLastSyncIds,
-  TransactionsStore,
-} from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
+import type { TransactionsStore, HistoryLastSyncIds } from 'models/History';
 
 export type HistoryReducerState = {
   data: TransactionsStore,
@@ -59,10 +56,20 @@ export const initialState = {
   isFetching: false,
 };
 
+const addAccountTransaction = (accountHistory, payload) => {
+  const { chain, transaction } = payload;
+  const accountHistoryForChain = accountHistory?.[chain] ?? [];
+  return {
+    ...accountHistory,
+    [chain]: accountHistoryForChain.concat(transaction),
+  };
+};
+
 export default function historyReducer(
   state: HistoryReducerState = initialState,
   action: HistoryAction,
 ): HistoryReducerState {
+  let accountId;
   const { historyLastSyncIds = {} } = state;
 
   switch (action.type) {
@@ -71,24 +78,24 @@ export default function historyReducer(
         ...state,
         data: get(action.payload, 'history.data', {}),
       };
-    case ADD_TRANSACTION:
-      const accountTrxs = state.data[action.payload.accountId] || [];
-      const trxs = {
-        ...state.data,
-        [action.payload.accountId]: [...accountTrxs, action.payload.historyTx],
-      };
+    case ADD_HISTORY_TRANSACTION:
+      ({ accountId } = action.payload);
+      const accountHistory = state.data[accountId];
 
-      return Object.assign(
-        {},
-        state,
-        { data: trxs },
-      );
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [accountId]: addAccountTransaction(accountHistory, action.payload),
+        },
+      };
     case SET_HISTORY:
-      return Object.assign(
-        {},
-        state,
-        { isFetched: true, data: action.payload, updatingTransaction: null },
-      );
+      return {
+        ...state,
+        data: action.payload,
+        isFetched: true,
+        updatingTransaction: null,
+      };
     case SET_GAS_INFO:
       const gasPriceInfo = action.payload;
       const isGasFetched = !!Object.keys(gasPriceInfo).length;
@@ -98,7 +105,8 @@ export default function historyReducer(
     case SET_HISTORY_LAST_SYNC_IDS:
       return { ...state, historyLastSyncIds: { ...historyLastSyncIds, ...action.payload } };
     case SET_ACCOUNT_HISTORY_LAST_SYNC_ID:
-      const { accountId, lastSyncId } = action.payload;
+      ({ accountId } = action.payload);
+      const { lastSyncId } = action.payload;
       return { ...state, historyLastSyncIds: { ...historyLastSyncIds, [accountId]: lastSyncId } };
     case SET_FETCHING_HISTORY:
       return { ...state, isFetching: action.payload };
