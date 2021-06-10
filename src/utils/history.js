@@ -268,7 +268,7 @@ export const getHistoryEventsFromTransactions = (
     symbol,
   };
 
-  let transaction = {
+  let historyEvent = {
     id: _id,
     value,
     date: new Date(+createdAt * 1000),
@@ -286,16 +286,51 @@ export const getHistoryEventsFromTransactions = (
 
   if (extra?.ensName) {
     eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
-    transaction = { ...transaction, ensName: extra.ensName };
+    historyEvent = { ...historyEvent, ensName: extra.ensName };
   }
 
-  transaction = {
-    ...transaction,
-    type: eventType,
+  // $FlowFixMe: TODO: fix return for different event types
+  return { ...historyEvent, type: eventType };
+});
+
+export const getHistoryEventsFromCollectiblesTransactions = (
+  transactions: CollectibleTransaction[],
+  activeAccountAddress: string,
+): Event[] => transactions.map(({
+  _id,
+  hash,
+  batchHash,
+  createdAt,
+  from: fromAddress,
+  to: toAddress,
+  gasUsed,
+  gasPrice,
+  status,
+  assetData,
+}) => {
+  const fee = parseHistoryEventFee(null, gasUsed, gasPrice);
+
+  const { name: title, image: imageUrl } = assetData;
+
+  const historyEvent = {
+    id: _id,
+    date: new Date(+createdAt * 1000),
+    fromAddress,
+    toAddress,
+    status: TRANSACTION_STATUS[status],
+    batchHash,
+    hash,
+    imageUrl,
+    title,
+    fee,
   };
 
+  const eventType = addressesEqual(fromAddress, activeAccountAddress)
+    ? EVENT_TYPE.COLLECTIBLE_RECEIVED
+    : EVENT_TYPE.COLLECTIBLE_SENT;
+
   // $FlowFixMe: TODO: fix return for different event types
-  return transaction;
+  return { ...historyEvent, type: eventType };
 });
 
 // could be just Object.values(accountHistory).flat(), but flow fails

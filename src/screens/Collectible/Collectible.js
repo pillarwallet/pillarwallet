@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -50,9 +50,16 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors, useTheme } from 'utils/themes';
 import { images, isSvgImage } from 'utils/images';
 import { addressesEqual } from 'utils/assets';
+import {
+  getAccountAddress,
+  isArchanovaAccount,
+  isEtherspotAccount,
+} from 'utils/accounts';
+import { getHistoryEventsFromCollectiblesTransactions } from 'utils/history';
 
 // selectors
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
+import { activeAccountSelector } from 'selectors';
 
 // types
 import type {
@@ -72,6 +79,7 @@ type Props = {
   accountCollectibleHistory: ChainRecord<CollectibleTransaction[]>,
   accounts: Account[],
   theme: Theme,
+  activeAccount: Account,
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -109,6 +117,7 @@ const CollectibleScreen = ({
   collectibles,
   accountCollectibleHistory,
   accounts,
+  activeAccount,
 }) => {
   const navigation = useNavigation();
   const theme = useTheme();
@@ -159,28 +168,48 @@ const CollectibleScreen = ({
     ));
   };
 
-  const isOwned = collectibles.some((collectible) => collectible.id === id);
-
-  const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
-
-  const mappedCollectiblesTransactions = mapTransactionsHistory(
-    collectiblesTransactions,
-    accounts,
-    COLLECTIBLE_TRANSACTION,
+  const isOwned = useMemo(
+    () => collectibles.some((collectible) => collectible.id === id),
+    [collectibles, id],
   );
 
-  const relatedCollectibleTransactions = mappedCollectiblesTransactions.filter(({
-    assetData: transactionAssetData,
-  }) => transactionAssetData
-    && transactionAssetData.id
-    && transactionAssetData.contractAddress
-    && transactionAssetData.id === id
-    && addressesEqual(transactionAssetData.contractAddress, contractAddress));
+
+
+  const mappedCollectiblesTransactions = useMemo(
+    () => {
+      const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
+      return mapTransactionsHistory(
+        collectiblesTransactions,
+        accounts,
+        COLLECTIBLE_TRANSACTION,
+      );
+    },
+    [accountCollectibleHistory, accounts]
+  );
+
+  const transactions = useMemo(
+    () => {
+      const relatedTransactions = mappedCollectiblesTransactions.filter(({
+        assetData: transactionAssetData,
+      }) => transactionAssetData
+        && transactionAssetData.id
+        && transactionAssetData.contractAddress
+        && transactionAssetData.id === id
+        && addressesEqual(transactionAssetData.contractAddress, contractAddress));
+
+      return isEtherspotAccount(activeAccount)
+        ? getHistoryEventsFromCollectiblesTransactions(relatedTransactions, getAccountAddress(activeAccount))
+        : relatedTransactions;
+    },
+    [
+      mappedCollectiblesTransactions,
+      id,
+      contractAddress,
+      activeAccount,
+    ],
+  );
 
   const { towellie: genericCollectible } = images(theme);
-
-  // TODO: Here provide Etherspot COLLECTIBLES transactions history once it's available
-  const historyItems = [];
 
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
@@ -210,19 +239,21 @@ const CollectibleScreen = ({
             />
           </CircleButtonsWrapper>
         </ActionButtonsWrapper>
-
-        {!!relatedCollectibleTransactions.length && (
-          <ActivityFeed
-            navigation={navigation}
-            feedData={relatedCollectibleTransactions}
-            showArrowsOnly
-            contentContainerStyle={{ paddingTop: 10 }}
-            invertAddon
-            feedTitle={t('title.transactions')}
-          />
+        {!!transactions.length && (
+          <>
+            {isArchanovaAccount(activeAccount) && (
+              <ActivityFeed
+                navigation={navigation}
+                feedData={transactions}
+                showArrowsOnly
+                contentContainerStyle={{ paddingTop: 10 }}
+                invertAddon
+                feedTitle={t('title.transactions')}
+              />
+            )}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} />}
+          </>
         )}
-
-        {!!historyItems.length && <HistoryList items={historyItems} />}
       </ScrollWrapper>
     </ContainerWithHeader>
   );
@@ -237,6 +268,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   accountCollectibleHistory: accountCollectiblesHistorySelector,
+  activeAccount: activeAccountSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState) => ({
