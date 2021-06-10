@@ -73,7 +73,7 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
 import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
-import KnowledgeBaseWebView from 'screens/Menu/KnowledgeBaseWebView';
+import WebViewScreen from 'screens/WebView/WebViewScreen';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
@@ -277,7 +277,7 @@ import {
   TUTORIAL,
   TUTORIAL_FLOW,
   ENS_MIGRATION_CONFIRM,
-  KNOWLEDGE_BASE_WEB_VIEW,
+  WEB_VIEW,
   ENS_MIGRATION_FLOW,
   ADD_CASH,
 } from 'constants/navigationConstants';
@@ -510,7 +510,7 @@ const menuFlow = createStackNavigator(
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
     [APP_SETTINGS]: AppSettingsScreen,
-    [KNOWLEDGE_BASE_WEB_VIEW]: KnowledgeBaseWebView,
+    [WEB_VIEW]: WebViewScreen,
   },
   StackNavigatorConfig,
 );

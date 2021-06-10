@@ -19,35 +19,28 @@
 */
 
 import React from 'react';
-import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
 import WebView from 'components/WebView';
 
-// constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
-
 type Props = {
-  navigation: NavigationScreenProp<mixed>
+  navigation: NavigationScreenProp<*>
 };
 
-const KnowledgeBaseWebView = ({
+const WebViewScreen = ({
   navigation,
 }: Props) => {
-  const url = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
+  const title = navigation.getParam('title');
+  const url = navigation.getParam('url');
   return (
     <WebView
-      title={t('settingsContent.settingsItem.faq.title')}
+      title={title}
       url={url}
       navigation={navigation}
       goBackDismiss
-      isKnowledgeBaseUrl
     />
   );
 };
 
-export default KnowledgeBaseWebView;
+export default WebViewScreen;
