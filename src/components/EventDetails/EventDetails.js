@@ -148,6 +148,7 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
 } from 'constants/liquidityPoolsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // selectors
 import {
@@ -504,11 +505,11 @@ export class EventDetail extends React.Component<Props> {
     // if actual transaction hash is not yet obtained then try to get by batch hash directly
     let explorerLink;
     if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
-      explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+      explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(CHAIN.ETHEREUM, batchHash);
     } else {
       explorerLink = fromAccount && isArchanovaAccount(fromAccount)
         ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
-        : etherspotService.getTransactionExplorerLink(hash);
+        : etherspotService.getTransactionExplorerLink(CHAIN.ETHEREUM, hash);
     }
 
     if (!explorerLink) {
