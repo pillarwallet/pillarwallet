@@ -122,7 +122,7 @@ const ReceiveModal = ({
               textToCopy={ensName}
               toastText={t('toast.ensNameCopiedToClipboard')}
               iconColor={colors.link}
-              textStyle={{ fontSize: fontSizes.big }}
+              textStyle={styles.ensName}
             >
               {ensName}
             </TextWithCopy>
@@ -135,7 +135,7 @@ const ReceiveModal = ({
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
-              textStyle={{ color: colors.basic030, fontSize: fontSizes.regular }}
+              textStyle={styles.address}
               iconColor={colors.link}
             >
               {address}
@@ -184,6 +184,15 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<StateProps> =>
 });
 
 export default (connect(combinedMapStateToProps)(ReceiveModal): AbstractComponent<OwnProps>);
+
+const styles = {
+  ensName: {
+    fontSize: fontSizes.big,
+  },
+  address: {
+    color: getThemeColors().basic030,
+  },
+};
 
 const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px 30px;
