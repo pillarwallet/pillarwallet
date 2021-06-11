@@ -430,24 +430,24 @@ export class EtherspotService {
   }
 
   getTransactionExplorerLink(chain: Chain, transactionHash: string): string {
-    let transactionExplorerHost;
+    let blockchainExplorerUrl;
 
     switch (chain) {
       case CHAIN.POLYGON:
-        transactionExplorerHost = getEnv().TX_DETAILS_URL_POLYGON;
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_POLYGON;
         break;
       case CHAIN.XDAI:
-        transactionExplorerHost = getEnv().TX_DETAILS_URL_XDAI;
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_XDAI;
         break;
       case CHAIN.BINANCE:
-        transactionExplorerHost = getEnv().TX_DETAILS_URL_BINANCE;
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_BINANCE;
         break;
       default:
-        transactionExplorerHost = getEnv().TX_DETAILS_URL_ETHEREUM;
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
     }
 
-    return `${transactionExplorerHost}${transactionHash}`;
+    return `${blockchainExplorerUrl}${transactionHash}`;
   }
 
   waitForTransactionHashFromSubmittedBatch(chain: Chain, batchHash: string): Promise<string> {
