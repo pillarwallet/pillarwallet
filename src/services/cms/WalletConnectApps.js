@@ -40,7 +40,7 @@ import * as parse from 'utils/parse';
 const TYPE_APPS = 'dapp_showcase';
 
 /**
- * Fetch and parse Wallet Connect apps from Prismic CMS as React Query.
+ * Fetch and parse WalletConnect apps from Prismic CMS as React Query.
  */
 export function useFetchWalletConnectAppsQuery(): QueryResult<WalletConnectCmsApp[]> {
   return useQuery('WalletConnectApps', () => fetchWalletConnectAppsApiCall());

@@ -491,7 +491,7 @@
       "unsupportedAction": "Žao nam je, ne podržavamo ovo još.",
       "requestNotFound": "Zahtjev nije pronađen",
       "requestRejected": "Zahtjev za poziv je odbijen",
-      "invalidSession": "Nevažeća sesija Wallet Connect",
+      "invalidSession": "Nevažeća sesija WalletConnect",
       "alreadyPending": "Spajanje je već na čekanju"
     },
     "reverted": "vraćeno"
@@ -991,7 +991,7 @@
       "activeConnections": "Aktivne veze",
       "connect": "Spoji",
       "walletConnectRequests": "WalletConnect Zahtjev",
-      "walletConnect": "Wallet Connect",
+      "walletConnect": "WalletConnect",
       "requestType": {
         "call": "Zahtjev za poziv",
         "transaction": "Zahtjev za transakciju",
@@ -1214,7 +1214,7 @@
     "walletConnectUnsupportedApp": "Ova aplikacija nije podržana. Možete zatražiti podršku za ovu aplikaciju.",
     "walletConnectConnectionsExpired": "Veze su istekle. Povežite se ponovo.",
     "walletConnectSessionTimedOut": "Veze su istekle. Povežite se ponovo.",
-    "walletConnectSmartWalletNotActive": "Wallet Connect ne može se koristiti bez aktiviranja Smart Wallet-a",
+    "walletConnectSmartWalletNotActive": "WalletConnect ne može se koristiti bez aktiviranja Smart Wallet-a",
     "cantReadQRCode": "Ne mogu pročitati ovaj QR kôd. Pokušajte još jednom ili upotrijebite drugu sliku.",
     "incorrectQRCode": "QR kôd je netačan.",
     "transactionFeeEstimationFailed": "Ne mogu procijeniti naknadu za transakciju. Molimo pokušajte ponovo.",

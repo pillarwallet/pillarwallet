@@ -360,7 +360,7 @@ const addCashFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-// WALLET CONNECT CALL REQUEST FLOW
+// WALLETCONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
   {
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
@@ -369,7 +369,7 @@ const walletConnectCallRequestFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-// WALLET CONNECT FLOW
+// WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,
