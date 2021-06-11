@@ -209,7 +209,7 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
       const accountHistory = mapValues(
         allAccountsHistory[accountId],
-        (transactions) => transactions.map((transaction) => {
+        (transactions = []) => transactions.map((transaction) => {
           if (isCaseInsensitiveMatch(transaction.batchHash, batchHash)) {
             return { ...transaction, hash: transactionHash };
           }
