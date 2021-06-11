@@ -144,13 +144,13 @@ export class EtherspotService {
 
   unsubscribeNetworkEvents(network: string) {
     const subscription = this.subscriptions[network];
-    if (subscription) subscription.unsubscribe();
+    if (!subscription) return;
+    subscription.unsubscribe();
+    this.subscriptions[network] = null;
   }
 
   unsubscribe() {
-    this.supportedNetworks.forEach(async (networkName) => {
-      this.unsubscribeNetworkEvents(networkName);
-    });
+    this.supportedNetworks.forEach((networkName) => this.unsubscribeNetworkEvents(networkName));
   }
 
   getSdkForChain(chain: Chain): ?EtherspotSdk {
