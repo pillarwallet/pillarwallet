@@ -331,11 +331,10 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     const updatedHistory = accounts.reduce((history, accountId) => {
       const accountHistory = mapValues(
         collectiblesHistory[accountId] ?? {},
-        (transactions) => transactions.map((transaction) => {
+        (transactions = []) => transactions.map((transaction) => {
           if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
             return transaction;
           }
-
           return {
             ...transaction,
             status,
@@ -344,7 +343,6 @@ export const updateCollectibleTransactionAction = (hash: string) => {
           };
         }),
       );
-
       return { ...history, [accountId]: accountHistory };
     }, {});
 
