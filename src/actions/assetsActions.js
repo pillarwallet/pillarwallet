@@ -146,7 +146,7 @@ export const sendAssetAction = (
 
     const {
       accounts: { data: accounts },
-      collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+      collectibles: { data: collectibles },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
