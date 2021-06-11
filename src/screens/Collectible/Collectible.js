@@ -249,7 +249,7 @@ const CollectibleScreen = ({
                 feedTitle={t('title.transactions')}
               />
             )}
-            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} />}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
           </>
         )}
       </ScrollWrapper>

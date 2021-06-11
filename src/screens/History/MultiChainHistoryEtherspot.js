@@ -82,7 +82,7 @@ export default MultiChainHistoryEtherspot;
 function ChainHistoryView({ chain }: { chain: Chain }) {
   const items = useHistoryEvents(chain);
 
-  return <HistoryList items={items} />;
+  return <HistoryList items={items} chain={chain} />;
 }
 
 function useHistoryEvents(chain: Chain): Event[] {

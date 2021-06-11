@@ -236,7 +236,7 @@ export const sendAssetAction = (
       && !transactionHash
       && transactionBatchHash) {
       try {
-        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(transactionBatchHash);
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
       } catch (error) {
         reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
       }

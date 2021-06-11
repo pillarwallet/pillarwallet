@@ -69,7 +69,7 @@ import type { WalletAssetBalance } from 'models/Balances';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
-  subscription: ?Subscription;
+  subscriptions: { [network: string]: ?Subscription } = {};
   instances: { [network: string]: EtherspotSdk } = {};
   supportedNetworks: Array<string> = [];
 
@@ -120,15 +120,37 @@ export class EtherspotService {
     this.sdk = this.instances[primaryNetworkName];
   }
 
-  subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
-    if (!this.sdk) return;
+  subscribe(callback: (chain: Chain, notification: EtherspotNotification) => Promise<void>) {
+    this.supportedNetworks.forEach((networkName) => {
+      const sdk = this.instances[networkName];
+      if (!sdk) {
+        reportErrorLog('EtherspotService subscribe failed: no sdk instance for network name', { networkName });
+        return;
+      }
 
-    this.subscription = this.sdk.notifications$.pipe(map(callback)).subscribe();
+      this.unsubscribeNetworkEvents(networkName);
+
+      const chain = chainFromNetworkName(networkName);
+      if (!chain) {
+        reportErrorLog('EtherspotService subscribe failed: no chain for network name', { networkName });
+        return;
+      }
+
+      this.subscriptions[networkName] = sdk.notifications$
+        .pipe(map(((notification) => callback(chain, notification))))
+        .subscribe();
+    });
+  }
+
+  unsubscribeNetworkEvents(network: string) {
+    const subscription = this.subscriptions[network];
+    if (subscription) subscription.unsubscribe();
   }
 
   unsubscribe() {
-    if (!this.subscription) return;
-    this.subscription.unsubscribe();
+    this.supportedNetworks.forEach(async (networkName) => {
+      this.unsubscribeNetworkEvents(networkName);
+    });
   }
 
   getSdkForChain(chain: Chain): ?EtherspotSdk {
@@ -385,31 +407,64 @@ export class EtherspotService {
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
-  getSubmittedBatchByHash(hash: string): Promise<?GatewaySubmittedBatch> {
-    return this.sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
+  getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('getSubmittedBatchByHash failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    return sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
       reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
       return null;
     });
   }
 
-  async getTransactionExplorerLinkByBatch(batchHash: string): Promise<?string> {
-    const submittedBatch = await this.getSubmittedBatchByHash(batchHash);
+  async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {
+    const submittedBatch = await this.getSubmittedBatchByHash(chain, batchHash);
 
     const transactionHash = submittedBatch?.transaction?.hash;
     if (!transactionHash) return null;
 
-    return this.getTransactionExplorerLink(transactionHash);
+    return this.getTransactionExplorerLink(chain, transactionHash);
   }
 
-  getTransactionExplorerLink(transactionHash: string): string {
-    return `${getEnv().TX_DETAILS_URL}${transactionHash}`;
+  getTransactionExplorerLink(chain: Chain, transactionHash: string): string {
+    let transactionExplorerHost;
+
+    switch (chain) {
+      case CHAIN.POLYGON:
+        transactionExplorerHost = getEnv().TX_DETAILS_URL_POLYGON;
+        break;
+      case CHAIN.XDAI:
+        transactionExplorerHost = getEnv().TX_DETAILS_URL_XDAI;
+        break;
+      case CHAIN.BINANCE:
+        transactionExplorerHost = getEnv().TX_DETAILS_URL_BINANCE;
+        break;
+      default:
+        transactionExplorerHost = getEnv().TX_DETAILS_URL_ETHEREUM;
+        break;
+    }
+
+    return `${transactionExplorerHost}${transactionHash}`;
   }
 
-  waitForTransactionHashFromSubmittedBatch(batchHash: string): Promise<string> {
+  waitForTransactionHashFromSubmittedBatch(chain: Chain, batchHash: string): Promise<string> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog(
+        'EtherspotService waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
+        { chain },
+      );
+      // fail gracefully as transaction has been sent anyway
+      return Promise.resolve();
+    }
+
     let temporaryBatchSubscription;
 
     return new Promise((resolve, reject) => {
-      temporaryBatchSubscription = this.sdk.notifications$
+      temporaryBatchSubscription = sdk.notifications$
         .pipe(map(async (notification) => {
           if (notification.type === NotificationTypes.GatewayBatchUpdated) {
             const submittedBatch = await this.sdk.getGatewaySubmittedBatch({ hash: batchHash });
@@ -557,6 +612,22 @@ function networkNameFromChain(chain: Chain): ?string {
       return NetworkNames.Matic;
     case CHAIN.XDAI:
       return NetworkNames.Xdai;
+    default:
+      return null;
+  }
+}
+
+function chainFromNetworkName(networkName: string): ?Chain {
+  switch (networkName) {
+    case NetworkNames.Mainnet:
+    case NetworkNames.Kovan:
+      return CHAIN.ETHEREUM;
+    case NetworkNames.Bsc:
+      return CHAIN.BINANCE;
+    case NetworkNames.Matic:
+      return CHAIN.POLYGON;
+    case NetworkNames.Xdai:
+      return CHAIN.XDAI;
     default:
       return null;
   }

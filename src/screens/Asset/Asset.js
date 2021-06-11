@@ -179,16 +179,14 @@ const AssetScreen = ({
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const { token, chain } = assetData;
 
-  const history = accountHistory[chain] ?? [];
-
   const isSupportedByExchange = useMemo(
     () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
     [exchangeSupportedAssets, token],
   );
 
   const tokenTransactions = useMemo(
-    () => getTokenTransactionsFromHistory(history, accounts, token),
-    [history, accounts, token],
+    () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
+    [accountHistory, accounts, token],
   );
 
   const transactions = useMemo(
@@ -323,7 +321,7 @@ const AssetScreen = ({
               />
             )}
             {/* $FlowFixMe: should be fine after Archanova history mappings are discarded */}
-            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} />}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
           </>
         )}
       </ScrollWrapper>

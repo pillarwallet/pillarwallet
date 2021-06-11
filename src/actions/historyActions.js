@@ -425,13 +425,13 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
   };
 };
 
-export const viewTransactionOnBlockchainAction = (event: Event) => {
+export const viewTransactionOnBlockchainAction = (chain: Chain, event: Event) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { hash = null, batchHash = null, fromAddress = null } = event;
 
     const accounts = accountsSelector(getState());
     const fromAccount = fromAddress ? findAccountByAddress(fromAddress, accounts) : null;
 
-    viewTransactionOnBlockchain({ hash, batchHash, fromAccount });
+    viewTransactionOnBlockchain(chain, { hash, batchHash, fromAccount });
   };
 };
