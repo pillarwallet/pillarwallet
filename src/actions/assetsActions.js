@@ -69,12 +69,8 @@ import {
 // utils
 import { transformBalancesToObject } from 'utils/assets';
 import { getSupportedChains } from 'utils/chains';
-import {
-  parseTokenAmount,
-  reportErrorLog,
-  uniqBy,
-} from 'utils/common';
-import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistoryForChain } from 'utils/history';
+import { parseTokenAmount, reportErrorLog } from 'utils/common';
+import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
   getActiveAccountId,
@@ -164,7 +160,6 @@ export const sendAssetAction = (
     const accountAddress = getAccountAddress(activeAccount);
 
     const accountCollectibles = collectibles[accountId] || [];
-    const accountCollectiblesHistory = collectiblesHistory[accountId]?.[chain] || [];
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
@@ -310,19 +305,14 @@ export const sendAssetAction = (
         },
       });
 
-      const updatedCollectiblesHistory = {
-        ...collectiblesHistory,
-        [accountId]: [...accountCollectiblesHistory, historyTx],
-      };
+      const {
+        collectibles: {
+          data: updatedCollectibles,
+          transactionHistory: updatedCollectiblesHistory,
+        },
+      } = getState();
 
-      await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-
-      const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
-      const updatedCollectibles = {
-        ...collectibles,
-        [accountId]: updatedAccountCollectibles,
-      };
-
+      dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
       dispatch({
@@ -333,11 +323,7 @@ export const sendAssetAction = (
           chain,
         },
       });
-
-      const { history: { data: currentHistory } } = getState();
-      const existingTransactions = currentHistory[accountId]?.[chain] || [];
-      const updatedAccountHistory = uniqBy([historyTx, ...existingTransactions], 'hash');
-      const updatedHistory = updateAccountHistoryForChain(currentHistory, accountId, chain, updatedAccountHistory);
+      const { history: { data: updatedHistory } } = getState();
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
 
