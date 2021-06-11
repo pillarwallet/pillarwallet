@@ -519,11 +519,11 @@ PODS:
   - Sentry (6.1.4):
     - Sentry/Core (= 6.1.4)
   - Sentry/Core (6.1.4)
-  - Storyly (1.10.0):
+  - Storyly (1.11.1):
     - SDWebImage (= 5.10.0)
-  - storyly-react-native (1.10.0):
+  - storyly-react-native (1.11.1):
     - React
-    - Storyly (= 1.10.0)
+    - Storyly (= 1.11.1)
   - SwiftyGif (5.4.0)
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
@@ -904,12 +904,12 @@ SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
-  Storyly: 86fc3288f6b3603b2de885447576e9ea6bb30726
-  storyly-react-native: e7dba6eacb3a2b913913e3147cd4e30129318242
+  Storyly: f606e22e194f14b3bb49c5b2d7cee8549a36d14c
+  storyly-react-native: 729e7332d67fef06c44b6ec8fd6168f44e656cf0
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
 PODFILE CHECKSUM: 1a2fc07fbddaa7f8d84146f5d7394a4c64c5bbee
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1

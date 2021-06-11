@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 
 // Components
 import Icon from 'components/modern/Icon';
@@ -29,6 +28,7 @@ import Text from 'components/modern/Text';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
 
 export type Props = {|
   title: string,
@@ -39,23 +39,25 @@ export type Props = {|
 |};
 
 function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: Props) {
-  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
     <Container onPress={onPress}>
-      <Title>{title}</Title>
-
-      {isDeployed && !!value && (
-        <Value>{value}</Value>
-      )}
-
       {!isDeployed && (
-        <DeployContainer onPress={onPressDeploy}>
-          <DeployValue>{t('button.deploy')}</DeployValue>
-          <Icon name="question" width={14} height={14} color={colors.labelTertiary} />
+        <DeployContainer>
+          <Title onPress={onPress}>{title}</Title>
+          <HazardIcon
+            name="warning"
+            width={16}
+            height={16}
+            color={colors.hazardIconColor}
+            hitSlop={hitSlop20}
+            onPress={onPressDeploy}
+          />
         </DeployContainer>
       )}
+      {isDeployed && <Title style={{ flex: 1 }}>{title}</Title>}
+      {!!value && <Value>{value}</Value>}
     </Container>
   );
 }
@@ -68,8 +70,17 @@ const Container = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const Title = styled(Text)`
+const DeployContainer = styled.View`
   flex: 1;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const HazardIcon = styled(Icon)`
+  margin-left: 8px;
+`;
+
+const Title = styled(Text)`
   margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
   ${fontStyles.medium};
 `;
@@ -77,14 +88,4 @@ const Title = styled(Text)`
 const Value = styled(Text)`
   ${fontStyles.medium};
   font-variant: tabular-nums;
-`;
-
-const DeployContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const DeployValue = styled(Text)`
-  ${fontStyles.medium};
-  margin-right: ${spacing.small}px;
 `;

@@ -58,6 +58,7 @@ const SideWrapper = styled.TouchableOpacity`
 const StyledImage = styled(Image)`
   height: 24px;
   width: 24px;
+  border-radius: 12px;
   resize-mode: contain;
   ${({ source, theme }) => !source && `tint-color: ${theme.colors.text};`}
 `;

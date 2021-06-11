@@ -40,6 +40,12 @@ export const REMOTE_CONFIG = {
   FEATURE_ONBOARDING: 'feature_onboarding',
   ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
   KNOWLEDGE_BASE_URL: 'knowlegebase_url',
+  FEATURE_STORIES_ANDROID_HEIGHT: 'feature_stories_android_height',
+  FEATURE_STORIES_ANDROID_WIDTH: 'feature_stories_android_width',
+  FEATURE_STORIES_ANDROID_CORNER_RADIUS: 'feature_stories_android_corner_radius',
+  FEATURE_STORIES_IOS_HEIGHT: 'feature_stories_ios_height',
+  FEATURE_STORIES_IOS_WIDTH: 'feature_stories_ios_width',
+  FEATURE_STORIES_IOS_CORNER_RADIUS: 'feature_stories_ios_corner_radius',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -62,4 +68,10 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_ONBOARDING]: false,
   [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
   [REMOTE_CONFIG.KNOWLEDGE_BASE_URL]: 'https://help.pillarproject.io/',
+  FEATURE_STORIES_ANDROID_HEIGHT: '200',
+  FEATURE_STORIES_ANDROID_WIDTH: '200',
+  FEATURE_STORIES_ANDROID_CORNER_RADIUS: '40',
+  FEATURE_STORIES_IOS_HEIGHT: '100',
+  FEATURE_STORIES_IOS_WIDTH: '100',
+  FEATURE_STORIES_IOS_CORNER_RADIUS: '20',
 };

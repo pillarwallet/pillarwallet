@@ -182,7 +182,7 @@
     "rn-nodeify": "^10.0.1",
     "rxjs": "^6.6.2",
     "shuffle-array": "^1.0.1",
-    "storyly-react-native": "^1.10.0",
+    "storyly-react-native": "^1.11.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
     "styled-components": "^5.2.1",
