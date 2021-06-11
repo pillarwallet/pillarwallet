@@ -571,7 +571,7 @@
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
-      "invalidRequest": "Invalid Wallet Connect request",
+      "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
       "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
