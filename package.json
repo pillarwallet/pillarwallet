@@ -112,6 +112,7 @@
     "react-native": "0.63.4",
     "react-native-android-badge": "^0.4.3",
     "react-native-appearance": "^0.3.2",
+    "react-native-auto-scale-text": "^1.0.7",
     "react-native-background-timer": "2.1.1",
     "react-native-camera": "^3.17.0",
     "react-native-collapsible": "^1.4.0",
