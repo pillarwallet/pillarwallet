@@ -63,7 +63,7 @@ function MultiChainHistoryEtherspot() {
     return {
       key: chain,
       title,
-      component: () => <ChainHistoryView chain={chain} />,
+      render: () => <ChainHistoryView chain={chain} />,
     };
   });
 

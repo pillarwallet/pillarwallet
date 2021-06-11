@@ -30,10 +30,20 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
+/**
+ * Use `render` prop to pass custom props to tab component.
+ * Creating a new function and assigning it to `component` prop will cause mount/unmount of tab component on every
+ * render.
+ *
+ * Use `component` prop only for passing component **type** (functional or class).
+ *
+ * More details: https://github.com/satya164/react-native-tab-view#renderscene-required
+ */
 export type TabViewItem = {|
   key: string,
   title: string,
-  component: React.ComponentType<mixed>,
+  render?: () => React.Element<any>,
+  component?: React.ComponentType<mixed>,
 |};
 
 type Props = {|
@@ -50,7 +60,15 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
   const [internalIndex, setInternalIndex] = React.useState(0);
 
   const renderScene = ({ route }: { route: TabViewItem }) => {
-    return <route.component />;
+    if (route.render) {
+      return route.render();
+    }
+
+    if (route.component) {
+      return <route.component />;
+    }
+
+    return null;
   };
 
   const index = tabIndex ?? internalIndex;
