@@ -50,10 +50,7 @@ function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: 
       ) : (
         <Title>{title}</Title>
       )}
-      {!!value && (
-        <Value>{value}</Value>
-      )}
-
+      {!!value && <Value>{value}</Value>}
     </Container>
   );
 }
@@ -61,7 +58,6 @@ function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: 
 export default CategoryListItem;
 
 const Container = styled.TouchableOpacity`
-
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -92,4 +88,3 @@ const Value = styled(Text)`
   ${fontStyles.medium};
   font-variant: tabular-nums;
 `;
-
