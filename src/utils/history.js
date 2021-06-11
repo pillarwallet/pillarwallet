@@ -134,13 +134,19 @@ export function updateHistoryRecord(
   let txUpdated = null;
   const accounts = Object.keys(allHistory);
   const updatedHistory = accounts.reduce((history, accountId) => {
-    const accountHistory = mapValues(allHistory[accountId], (transaction) => {
-      if (!isCaseInsensitiveMatch(transaction.hash, hashToUpdate)) {
-        return transaction;
-      }
-      txUpdated = modifier(transaction);
-      return txUpdated;
-    });
+    const accountHistory = mapValues(
+      allHistory[accountId],
+      (transactions) => transactions.map((transaction) => {
+        if (!isCaseInsensitiveMatch(transaction.hash, hashToUpdate)) {
+          return transaction;
+        }
+
+        txUpdated = modifier(transaction);
+
+        return txUpdated;
+      }),
+    );
+
     return { ...history, [accountId]: accountHistory };
   }, {});
 

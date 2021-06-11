@@ -331,7 +331,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     const updatedHistory = accounts.reduce((history, accountId) => {
       const accountHistory = mapValues(
         collectiblesHistory[accountId] ?? {},
-        (transaction) => {
+        (transactions) => transactions.map((transaction) => {
           if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
             return transaction;
           }
@@ -341,7 +341,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
             gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
             gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
           };
-        },
+        }),
       );
       return { ...history, [accountId]: accountHistory };
     }, {});
