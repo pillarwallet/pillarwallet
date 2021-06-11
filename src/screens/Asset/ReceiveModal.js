@@ -26,7 +26,6 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 import { useNavigation } from 'react-navigation-hooks';
-import AutoScaleText from 'react-native-auto-scale-text';
 
 // components
 import Text from 'components/modern/Text';
@@ -129,7 +128,7 @@ const ReceiveModal = ({
             </TextWithCopy>
           )}
           {ensName ? (
-            <WalletAddress maxLines={1} maxFontSize={fontSizes.regular}>
+            <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
               {address}
             </WalletAddress>
           ) : (
@@ -198,7 +197,7 @@ const QRCodeWrapper = styled.View`
   margin: ${spacing.largePlus}px;
 `;
 
-const WalletAddress = styled(AutoScaleText)`
+const WalletAddress = styled(Text)`
   color: ${({ theme }) => theme.colors.basic030};
   margin-top: ${spacing.mediumLarge}px;
   text-align: center;
