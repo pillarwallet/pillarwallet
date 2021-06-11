@@ -88,7 +88,7 @@ import {
   paymentNetworkNonZeroBalancesSelector,
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
@@ -103,7 +103,7 @@ type Props = {
   accounts: Account[],
   smartWalletState: Object,
   PPNTransactions: Transaction[],
-  history: Object[],
+  history: Transaction[],
   fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
@@ -477,7 +477,7 @@ const structuredSelector = createStructuredSelector({
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
-  history: accountHistorySelector,
+  history: archanovaAccountEthereumHistorySelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
 });

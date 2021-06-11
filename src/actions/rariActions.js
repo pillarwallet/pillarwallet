@@ -17,6 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
+// components
+import Toast from 'components/Toast';
+
+// services
 import {
   getRariFundBalanceInUSD,
   getUserInterests,
@@ -29,23 +35,30 @@ import {
   getRtgSupply,
 } from 'services/rari';
 import { GraphQueryError } from 'services/theGraph';
-import t from 'translations/translate';
+
+// constants
 import {
   SET_RARI_USER_DATA,
   SET_FETCHING_RARI_DATA,
   SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// actions
 import { saveDbAction } from 'actions/dbActions';
-import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
-import { getRariClaimRgtTransaction } from 'utils/rari';
 import {
   estimateTransactionAction,
   estimateTransactionsAction,
   setEstimatingTransactionAction,
   setTransactionsEstimateErrorAction,
 } from 'actions/transactionEstimateActions';
-import Toast from 'components/Toast';
+
+// utils
+import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
+import { reportErrorLog } from 'utils/common';
+import { getRariClaimRgtTransaction } from 'utils/rari';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
@@ -122,7 +135,7 @@ export const calculateRariDepositTransactionEstimateAction = (
       data,
     }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionsAction(transactions));
+    dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM));
   };
 };
 
@@ -134,7 +147,7 @@ export const calculateRariWithdrawTransactionEstimateAction = (
 
     const { to, amount: value, data } = rariWithdrawTransaction;
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };
 
@@ -160,6 +173,6 @@ export const calculateRariClaimTransactionEstimateAction = (
 
     const { to, amount: value, data } = transaction;
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };

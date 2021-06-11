@@ -37,6 +37,7 @@ import { BaseText } from 'components/Typography';
 // constants
 import { SABLIER_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getAssetDataByAddress, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -155,10 +156,11 @@ const Withdraw = (props: Props) => {
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

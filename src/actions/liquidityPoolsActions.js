@@ -39,6 +39,7 @@ import {
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import {
@@ -185,7 +186,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
       data,
     }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionsAction(transactions));
+    dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM));
   };
 };
 
@@ -222,7 +223,7 @@ export const calculateStakeTransactionEstimateAction = (
       data,
     }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionsAction(transactions));
+    dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM));
   };
 };
 
@@ -243,7 +244,7 @@ export const calculateUnstakeTransactionEstimateAction = (
       tokenAmount,
     );
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };
 
@@ -284,7 +285,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
       data,
     }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionsAction(transactions));
+    dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM));
   };
 };
 
@@ -302,7 +303,7 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: UnipoolLiqu
       amountToClaim,
     );
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };
 

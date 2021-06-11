@@ -28,6 +28,7 @@ import { saveDbAction } from 'actions/dbActions';
 
 // constants
 import { SET_STREAMS, SET_FETCHING_STREAMS, SET_SABLIER_GRAPH_QUERY_ERROR } from 'constants/sablierConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { findFirstArchanovaAccount, getAccountAddress } from 'utils/accounts';
@@ -93,7 +94,7 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
       stream,
     );
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };
 
@@ -103,6 +104,6 @@ export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) 
 
     const { to, data } = getSablierCancellationTransaction(stream);
 
-    dispatch(estimateTransactionAction({ to, value: 0, data }));
+    dispatch(estimateTransactionAction({ to, value: 0, data }, CHAIN.ETHEREUM));
   };
 };

@@ -67,7 +67,7 @@ const storeState = {
       { symbol: 'sETH', isSynthetixAsset: true },
     ],
   },
-  history: { data: { [ACC_ID]: [] } },
+  history: { data: { [ACC_ID]: { ethereum: [] } } },
   accounts: {
     data: [{
       id: 'id',

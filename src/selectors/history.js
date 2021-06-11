@@ -18,11 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import orderBy from 'lodash.orderby';
+import { orderBy, mapValues } from 'lodash';
 import { createSelector } from 'reselect';
 
 // utils
 import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
+
+// constants
+import { CHAIN } from 'constants/chainConstants';
+
+// types
+import type { ChainRecord } from 'models/Chain';
+import type { Transaction } from 'models/Transaction';
 
 // selectors
 import {
@@ -37,33 +44,28 @@ export const accountHistorySelector = createSelector(
   historySelector,
   activeAccountIdSelector,
   activeBlockchainSelector,
-  (history, activeAccountId) => {
-    if (!activeAccountId) return [];
-    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
+  (history, activeAccountId): ChainRecord<Transaction[]> => {
+    if (!activeAccountId) return { ethereum: [] };
+    return mapValues(
+      history[activeAccountId],
+      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
+    );
   },
 );
 
-export const archanovaAccountHistorySelector = createSelector(
+export const archanovaAccountEthereumHistorySelector = createSelector(
   historySelector,
   accountsSelector,
-  (history, accounts) => {
+  (history, accounts): Transaction[] => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return [];
 
     const archanovaAccountId = getAccountId(archanovaAccount);
     if (!archanovaAccountId) return [];
 
-    return orderBy(history[archanovaAccountId] || [], ['createdAt'], ['desc']);
-  },
-);
+    const accountEthereumHistory = history[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
 
-export const combinedHistorySelector = createSelector(
-  historySelector,
-  (history) => {
-    const combinedHistory = Object.keys(history).reduce((historyArray, account) => {
-      return [...historyArray, ...history[account]];
-    }, []);
-
-    return orderBy(combinedHistory, ['createdAt'], ['desc']);
+    // $FlowFixMe: fix later?
+    return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
   },
 );

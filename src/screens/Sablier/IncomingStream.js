@@ -23,6 +23,9 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+
+// components
+import ArrowIcon from 'components/ArrowIcon/ArrowIcon';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
@@ -32,22 +35,27 @@ import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
 import { BaseText, MediumText } from 'components/Typography';
 import ShadowedCard from 'components/ShadowedCard';
+
+// utils
 import { findEnsNameCaseInsensitive, formatAmount, formatUnits, getDecimalPlaces } from 'utils/common';
 import { SABLIER_WITHDRAW } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isSablierTransactionTag, getTotalStreamed, getTotalWithdrawn, getTimestamp } from 'utils/sablier';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+
+// selectors
 import { sablierEventsSelector } from 'selectors/sablier';
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Asset, Assets } from 'models/Asset';
 import type { Account } from 'models/Account';
-import ArrowIcon from '../../components/ArrowIcon/ArrowIcon';
+import type { Transaction } from 'models/Transaction';
 
 
 type Props = {
@@ -55,7 +63,7 @@ type Props = {
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   assets: Assets,
-  history: Object[],
+  history: Transaction[],
   sablierEvents: Object[],
   accounts: Account[],
 };
@@ -192,7 +200,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
+  history: archanovaAccountEthereumHistorySelector,
   sablierEvents: sablierEventsSelector,
   assets: accountAssetsSelector,
 });

@@ -1110,7 +1110,7 @@
 
   "transactions": {
     "title": {
-      "sendScreen": "Pošalji",
+      "sendScreen": "Pošalji na {{chain}}",
       "valueSelectorModal": "Pošalji",
       "reviewAndConfirmScreen": "Pregledaj i potvrdi",
       "allowanceTransactionSuccess": "Transakcija je na putu",

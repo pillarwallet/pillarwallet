@@ -24,9 +24,11 @@ import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
 import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -38,6 +40,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
@@ -79,12 +82,14 @@ export const buildEthereumTransaction = async (
   tokenType: ?string,
   contractAddress: ?string,
   tokenId: ?string,
+  chain: Chain,
 ): Promise<EthereumTransaction> => {
   let value;
 
   if (tokenType !== COLLECTIBLES) {
+    const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
     value = utils.parseUnits(amount, decimals);
-    if (symbol !== ETH && !data && contractAddress) {
+    if (symbol !== chainNativeSymbol && !data && contractAddress) {
       data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
       to = contractAddress;
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
@@ -121,6 +126,7 @@ export const mapToEthereumTransactions = async (
     tokenId,
     decimals = 18,
     sequentialTransactions = [],
+    chain = CHAIN.ETHEREUM,
   } = transactionPayload;
 
   const transaction = await buildEthereumTransaction(
@@ -133,6 +139,7 @@ export const mapToEthereumTransactions = async (
     tokenType,
     contractAddress,
     tokenId,
+    chain,
   );
 
   let transactions = [transaction];

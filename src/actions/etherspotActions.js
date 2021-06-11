@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
+import { isEmpty, mapValues } from 'lodash';
 import t from 'translations/translate';
 import { NotificationTypes as EtherspotNotificationTypes } from 'etherspot';
 
@@ -27,10 +27,8 @@ import Toast from 'components/Toast';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
-import {
-  SET_HISTORY,
-  TX_CONFIRMED_STATUS,
-} from 'constants/historyConstants';
+import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import { initialAssets } from 'fixtures/assets';
 
 // actions
 import {
@@ -78,7 +76,7 @@ import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { initialAssets } from 'fixtures/assets';
+import type { Chain } from 'models/Chain';
 
 
 export const connectEtherspotAccountAction = (accountId: string) => {
@@ -204,18 +202,25 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
   };
 };
 
-const updateBatchTransactionHashAction = (batchHash: string, transactionHash: string) => {
+const updateBatchTransactionHashAction = (
+  chain: Chain,
+  batchHash: string,
+  transactionHash: string,
+) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const allAccountsHistory = historySelector(getState());
 
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
-      const accountHistory = allAccountsHistory[accountId].map((transaction) => {
-        if (isCaseInsensitiveMatch(transaction.batchHash, batchHash)) {
-          return { ...transaction, hash: transactionHash };
-        }
+      const accountHistory = mapValues(
+        allAccountsHistory[accountId],
+        (transactions = [], accountHistoryChain) => transactions.map((transaction) => {
+          if (isCaseInsensitiveMatch(transaction.batchHash, batchHash) && accountHistoryChain === chain) {
+            return { ...transaction, hash: transactionHash };
+          }
 
-        return transaction;
-      });
+          return transaction;
+        }),
+      );
 
       return { ...history, [accountId]: accountHistory };
     }, {});
@@ -227,12 +232,12 @@ const updateBatchTransactionHashAction = (batchHash: string, transactionHash: st
 
 export const subscribeToEtherspotNotificationsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    etherspotService.subscribe(async (notification) => {
+    etherspotService.subscribe(async (chain: Chain, notification) => {
       let notificationMessage;
 
       if (notification.type === EtherspotNotificationTypes.GatewayBatchUpdated) {
         const { hash: batchHash } = notification.payload;
-        const submittedBatch = await etherspotService.getSubmittedBatchByHash(batchHash);
+        const submittedBatch = await etherspotService.getSubmittedBatchByHash(chain, batchHash);
 
         // check if submitted hash exists within Etherspot otherwise it's a failure
         if (!submittedBatch) {
@@ -241,7 +246,9 @@ export const subscribeToEtherspotNotificationsAction = () => {
         }
 
         const accountHistory = accountHistorySelector(getState());
-        const existingTransaction = accountHistory.find(({
+        const history = accountHistory[chain] ?? [];
+
+        const existingTransaction = history.find(({
           batchHash: existingBatchHash,
         }) => isCaseInsensitiveMatch(existingBatchHash, batchHash));
 
@@ -251,7 +258,7 @@ export const subscribeToEtherspotNotificationsAction = () => {
         // update transaction with actual hash received from batch
         const transactionHash = submittedBatch?.transaction?.hash;
         if (!isCaseInsensitiveMatch(transactionHash, existingTransaction.hash)) {
-          dispatch(updateBatchTransactionHashAction(batchHash, transactionHash));
+          dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
         }
 
         const accountAssets = accountAssetsSelector(getState());
@@ -262,7 +269,8 @@ export const subscribeToEtherspotNotificationsAction = () => {
 
         // checks for confirmed transaction notification
         if (existingTransaction.status !== mappedEtherspotBatchStatus
-          && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS) {
+          && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS
+          && existingTransaction.hash) {
           dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
           dispatch(fetchAssetsBalancesAction());
 

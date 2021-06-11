@@ -35,6 +35,7 @@ import Toast from 'components/Toast';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -220,13 +221,19 @@ const ExchangeConfirmScreen = ({
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const isEnoughForFee = !feeInfo || isEnoughBalanceForTransactionFee(balances, {
+  const balanceCheckTransaction = {
     payQuantity,
     decimals,
     symbol,
-    txFeeInWei: feeInfo.fee,
-    gasToken: feeInfo.gasToken,
-  });
+    txFeeInWei: feeInfo?.fee,
+    gasToken: feeInfo?.gasToken,
+  };
+
+  const isEnoughForFee = !feeInfo || isEnoughBalanceForTransactionFee(
+    balances,
+    balanceCheckTransaction,
+    CHAIN.ETHEREUM,
+  );
 
   const errorMessage = isEnoughForFee
     ? estimateErrorMessage
@@ -310,7 +317,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (
+    transaction: TransactionToEstimate,
+  ) => dispatch(estimateTransactionAction(transaction, CHAIN.ETHEREUM)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

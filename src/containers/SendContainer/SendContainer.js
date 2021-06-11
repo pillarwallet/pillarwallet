@@ -39,6 +39,8 @@ import type { Props as ButtonProps } from 'components/Button';
 
 // utils
 import { spacing } from 'utils/variables';
+import { CHAIN } from 'constants/chainConstants';
+import { useChainsConfig } from 'utils/uiConfig';
 
 type ButtonWithoutTitle = $Diff<ButtonProps, { title: string }>
 
@@ -112,9 +114,16 @@ const SendContainer = (props: Props) => {
     customScreenTitle,
   } = props;
 
+  const chain = customValueSelectorProps?.assetData?.chain ?? CHAIN.ETHEREUM;
+  const { title: chainTitle } = useChainsConfig()[chain];
+
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: customScreenTitle || t('transactions.title.sendScreen') }] }}
+      headerProps={{
+        centerItems: [{
+          title: customScreenTitle || t('transactions.title.sendScreen', { chain: chainTitle }),
+        }],
+      }}
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
       keyboardShouldPersistTaps="handled"

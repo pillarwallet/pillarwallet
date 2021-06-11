@@ -38,20 +38,22 @@ import { spacing } from 'utils/variables';
 
 // Types
 import { type EnsNameRegisteredEvent, EVENT_TYPE } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: EnsNameRegisteredEvent,
+  chain: Chain,
 |};
 
-function EnsNameEventDetails({ event }: Props) {
+function EnsNameEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const colors = useThemeColors();
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   return (
     <BaseEventDetails

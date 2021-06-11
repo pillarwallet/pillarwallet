@@ -338,16 +338,21 @@ export const transactionExtraContainsPaymentHash = (paymentHash: string, extra: 
     || (Array.isArray(extra) && extra.some(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)));
 };
 
+const paymentNetworkHiddenUnsettledTags = [
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+];
+
 // hiding unsettled transactions that were just settled and are pending
 // hiding withdraw payment transaction if withdraw is pending
 export const isHiddenUnsettledTransaction = (
   paymentHash: string,
-  history: Object[],
+  history: Transaction[],
 ): boolean => history
   .filter(({ status }) => status === TX_PENDING_STATUS)
-  .some(({ tag, extra }: { tag: string, extra: TransactionExtra }) =>
-    [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
-      && transactionExtraContainsPaymentHash(paymentHash, extra),
+  .some(({ tag, extra }) => extra
+    && transactionExtraContainsPaymentHash(paymentHash, extra)
+    && paymentNetworkHiddenUnsettledTags.includes(tag),
   );
 
 export const isDeployingArchanovaWallet = (smartWalletState: SmartWalletReducerState, accounts: Account[]) => {
