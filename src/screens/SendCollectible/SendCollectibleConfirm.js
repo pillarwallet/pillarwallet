@@ -21,13 +21,12 @@
 import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -44,12 +43,14 @@ import Toast from 'components/Toast';
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
@@ -65,10 +66,10 @@ import type {
 } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   keyBasedWalletAddress: string,
   balances: WalletAssetsBalances,
   isOnline: boolean,
@@ -76,7 +77,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (transaction: TransactionToEstimate) => void,
+  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
 };
 
 const WarningMessage = styled(Paragraph)`
@@ -88,7 +89,6 @@ const WarningMessage = styled(Paragraph)`
 const SendCollectibleConfirm = ({
   isOnline,
   balances,
-  navigation,
   resetEstimateTransaction,
   estimateTransaction,
   keyBasedWalletAddress,
@@ -96,11 +96,15 @@ const SendCollectibleConfirm = ({
   isEstimating,
   estimateErrorMessage,
 }: Props) => {
+  const navigation = useNavigation();
+
+  const receiverEnsName: ?string = useNavigationParam('receiverEnsName');
+  const assetData = useNavigationParam('assetData');
+  const receiver: string = useNavigationParam('receiver');
+  const navigationSource: ?string = useNavigationParam('source');
+  const chain: Chain = useNavigationParam('chain');
+
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
-  const receiverEnsName = navigation.getParam('receiverEnsName');
-  const assetData = navigation.getParam('assetData', {});
-  const receiver = navigation.getParam('receiver');
-  const navigationSource = navigation.getParam('source');
 
   const {
     name,
@@ -109,15 +113,19 @@ const SendCollectibleConfirm = ({
     contractAddress,
   } = assetData;
 
-  const transactionPayload: CollectibleTransactionPayload = {
+  let transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
-    receiverEnsName,
     name,
     contractAddress,
     tokenType,
     tokenId,
     amount: 0,
+    chain,
   };
+
+  if (receiverEnsName) {
+    transactionPayload = { ...transactionPayload, receiverEnsName };
+  }
 
   /**
    * we're fetching Rinkeby ETH if current network is Kovan because
@@ -135,7 +143,7 @@ const SendCollectibleConfirm = ({
 
   useEffect(() => {
     resetEstimateTransaction();
-    estimateTransaction({ to: receiver, value: 0, assetData });
+    estimateTransaction({ to: receiver, value: 0, assetData }, CHAIN.ETHEREUM);
     if (isKovanNetwork) fetchRinkebyEth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -175,14 +183,19 @@ const SendCollectibleConfirm = ({
 
     // fee
     const balanceCheckTransaction = {
-      txFeeInWei: feeInfo.fee,
+      txFeeInWei: feeInfo?.fee,
       amount: 0,
-      gasToken: feeInfo.gasToken,
+      gasToken: feeInfo?.gasToken,
     };
-    isEnoughForFee = canProceedKovanTesting || isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
+
+    isEnoughForFee = canProceedKovanTesting || isEnoughBalanceForTransactionFee(
+      balances,
+      balanceCheckTransaction,
+      chain,
+    );
   }
 
-  const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
+  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetSymbolPerChain[chain];
   const errorMessage = isEnoughForFee
     ? estimateErrorMessage
     : t('error.notEnoughTokenForFee', { token: feeSymbol });
@@ -272,7 +285,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (
+    transaction: TransactionToEstimate,
+    chain: Chain,
+  ) => dispatch(estimateTransactionAction(transaction, chain)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);

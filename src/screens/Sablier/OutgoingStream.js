@@ -48,7 +48,7 @@ import { getSablierCancellationTransaction } from 'services/sablier';
 
 // selectors
 import { sablierEventsSelector } from 'selectors/sablier';
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 
 // utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
@@ -60,7 +60,7 @@ import type { Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
 import type { Stream } from 'models/Sablier';
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -74,7 +74,7 @@ type Props = {
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
   balances: WalletAssetsBalances,
-  history: Object[],
+  history: Transaction[],
   sablierEvents: Object[],
   accounts: Account[],
   feeInfo: ?TransactionFeeInfo,
@@ -226,7 +226,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
+  history: archanovaAccountEthereumHistorySelector,
   sablierEvents: sablierEventsSelector,
 });
 

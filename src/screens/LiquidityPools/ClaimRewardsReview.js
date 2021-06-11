@@ -37,6 +37,7 @@ import { getPoolStats, getClaimRewardsTransaction } from 'utils/liquidityPools';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -118,13 +119,14 @@ const ClaimRewardReviewScreen = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: 0,
       decimals: 18,
       symbol: ETH,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

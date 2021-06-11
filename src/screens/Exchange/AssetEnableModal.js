@@ -36,6 +36,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { images } from 'utils/images';
@@ -117,11 +118,12 @@ const AssetEnableModal = (props: Props) => {
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       ...transactionPayload,
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

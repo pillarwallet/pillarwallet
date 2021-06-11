@@ -96,7 +96,7 @@ const reduxData = {
   ],
   accountAssets: [],
   isPPNActivated: true,
-  history: [],
+  history: { ethereum: [] },
   collectiblesHistory: [],
 };
 

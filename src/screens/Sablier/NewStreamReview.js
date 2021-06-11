@@ -45,6 +45,7 @@ import Toast from 'components/Toast';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // services
 import { getSablierCreateStreamTransaction } from 'services/sablier';
@@ -187,13 +188,14 @@ class NewStreamReview extends React.Component<Props> {
 
     let notEnoughForFee;
     if (feeInfo) {
-      notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      const balanceCheckTransaction = {
         txFeeInWei: feeInfo?.fee,
         amount: assetValue,
         decimals: asset.decimals,
         symbol: assetSymbol,
         gasToken: feeInfo?.gasToken,
-      });
+      };
+      notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
     }
 
     const errorMessage = notEnoughForFee
@@ -286,7 +288,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransactions: (transactions: TransactionToEstimate[]) => dispatch(estimateTransactionsAction(transactions)),
+  estimateTransactions: (
+    transactions: TransactionToEstimate[],
+  ) => dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

@@ -571,7 +571,8 @@
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
-      "invalidRequest": "Invalid Wallet Connect request"
+      "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
+      "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
@@ -581,7 +582,10 @@
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
       "rari": "Can't connect to Rari service.",
       "liquidityPools": "Can't connect to Liquidity Pools service"
-    }
+    },
+    "unableToSendTransaction": "Unable to send transaction. Please try again.",
+    "unableToSetTransaction": "Unable to set transaction. Please try again.",
+    "unableToResetTransactions": "Unable to reset transactions. Please try again."
   },
 
   "home": {
@@ -1386,7 +1390,7 @@
 
   "transactions": {
     "title": {
-      "sendScreen": "Send",
+      "sendScreen": "Send on {{chain}}",
       "valueSelectorModal": "Choose asset",
       "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",
@@ -1434,7 +1438,8 @@
       "youAreSending": "You are sending",
       "fees": "Fees",
       "allowancePlusEthFee": "Allowance + Ethereum fee",
-      "migratingFrom": "migrating from"
+      "migratingFrom": "migrating from",
+      "network": "Network"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
