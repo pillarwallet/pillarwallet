@@ -38,6 +38,7 @@ import Table, { TableRow, TableLabel } from 'components/Table';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
@@ -173,13 +174,14 @@ const AddLiquidityScreen = ({
   let notEnoughForFee;
   if (feeInfo) {
     notEnoughForFee = tokensData.some((token, i) => {
-      return !isEnoughBalanceForTransactionFee(balances, {
+      const balanceCheckTransaction = {
         txFeeInWei: feeInfo.fee,
         amount: assetsValues[i],
         decimals: token?.decimals,
         symbol: token?.symbol,
         gasToken: feeInfo.gasToken,
-      });
+      };
+      return !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
     });
   }
 

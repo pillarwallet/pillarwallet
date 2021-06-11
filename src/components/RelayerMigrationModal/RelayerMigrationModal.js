@@ -41,11 +41,13 @@ import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // utils
 import { spacing } from 'utils/variables';
+import { getCrossChainAccountHistory } from 'utils/history';
 
 // types
 import type { Assets } from 'models/Asset';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
+import type { ChainRecord } from 'models/Chain';
 
 type DispatchProps = {|
   switchToGasTokenRelayer: () => void,
@@ -53,7 +55,7 @@ type DispatchProps = {|
 
 type OwnProps = {|
   accountAssets: Assets,
-  accountHistory: Transaction[],
+  accountHistory: ChainRecord<Transaction[]>,
   onMigrated?: () => void,
 |};
 
@@ -93,7 +95,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     } = this.props;
     const { switchPressed } = this.state;
     const { iconUrl } = accountAssets[PLR] || {};
-    const isSwitchPending = accountHistory.some(({ tag, status }) => {
+    const isSwitchPending = getCrossChainAccountHistory(accountHistory).some(({ tag, status }) => {
       return tag === ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });
     const buttonTitle = switchPressed || isSwitchPending

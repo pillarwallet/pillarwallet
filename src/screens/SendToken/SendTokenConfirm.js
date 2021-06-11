@@ -19,12 +19,12 @@
 */
 import * as React from 'react';
 import { Keyboard } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
 import t from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
@@ -32,95 +32,86 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+import { BaseText } from 'components/Typography';
+
+// utils
+import { useChainsConfig } from 'utils/uiConfig';
+
+// selectors
+import { useRootSelector } from 'selectors';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { TransactionPayload } from 'models/Transaction';
 
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  session: Object,
-};
+const SendTokenConfirm = () => {
+  const session = useRootSelector(({ session: sessionState }) => sessionState.data);
+  const navigation = useNavigation();
 
-class SendTokenConfirm extends React.Component<Props> {
-  source: string;
+  const source: ?string = useNavigationParam('source');
+  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
-  constructor(props) {
-    super(props);
-    this.source = this.props.navigation.getParam('source', '');
-  }
+  const { chain = CHAIN.ETHEREUM } = transactionPayload;
+  const { title: chainTitle, color: chainColor } = useChainsConfig()[chain];
 
-  handleFormSubmit = () => {
+  const handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}) };
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
-      source: this.source,
-    });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, source });
   };
 
-  render() {
-    const {
-      session,
-      navigation,
-    } = this.props;
-    const {
-      amount,
-      to,
-      receiverEnsName,
-      txFeeInWei,
-      symbol,
-      gasToken,
-    } = navigation.getParam('transactionPayload', {});
+  const {
+    amount,
+    to,
+    receiverEnsName,
+    txFeeInWei,
+    symbol,
+    gasToken,
+  } = transactionPayload;
 
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: t('transactions.title.review') }],
-        }}
+  return (
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [{ title: t('transactions.title.review') }],
+      }}
+    >
+      <ScrollWrapper
+        disableAutomaticScroll
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16 }}
+        disableOnAndroid
       >
-        <ScrollWrapper
-          disableAutomaticScroll
-          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16 }}
-          disableOnAndroid
-        >
-          <TokenReviewSummary assetSymbol={symbol} text={t('transactions.label.youAreSending')} amount={amount} />
-          <Spacing h={32} />
-          <Table>
-            <TableRow>
-              <TableLabel>{t('transactions.label.recipient')}</TableLabel>
-              <TableUser ensName={receiverEnsName} address={to} />
-            </TableRow>
-            <TableRow>
-              <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
-            </TableRow>
-            <TableRow>
-              <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-              <TableAmount amount={0} />
-            </TableRow>
-            <TableRow>
-              <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
-            </TableRow>
-          </Table>
-          <Spacing h={40} />
-          <Button
-            disabled={!session.isOnline}
-            onPress={this.handleFormSubmit}
-            title={t('transactions.button.send')}
-          />
-        </ScrollWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+        <TokenReviewSummary assetSymbol={symbol} text={t('transactions.label.youAreSending')} amount={amount} />
+        <Spacing h={32} />
+        <Table>
+          <TableRow>
+            <TableLabel>{t('transactions.label.network')}</TableLabel>
+            <BaseText color={chainColor} regular>{chainTitle}</BaseText>
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.recipient')}</TableLabel>
+            <TableUser ensName={receiverEnsName} address={to} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+            <TableAmount amount={0} />
+          </TableRow>
+          <TableRow>
+            <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+          </TableRow>
+        </Table>
+        <Spacing h={40} />
+        <Button
+          disabled={!session.isOnline}
+          onPress={handleFormSubmit}
+          title={t('transactions.button.send')}
+        />
+      </ScrollWrapper>
+    </ContainerWithHeader>
+  );
+};
 
-const mapStateToProps = ({
-  session: { data: session },
-}: RootReducerState): $Shape<Props> => ({
-  session,
-});
-
-export default connect(mapStateToProps)(SendTokenConfirm);
+export default SendTokenConfirm;

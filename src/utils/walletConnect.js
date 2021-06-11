@@ -37,6 +37,7 @@ import {
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
+import { chainFromChainId } from 'utils/chains';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -148,6 +149,10 @@ export const mapCallRequestToTransactionPayload = (
     decimals = 18,
   } = assetData;
 
+  // TODO: double check if we should add fallback to mainnet?
+  const { chainId } = callRequest;
+  const chain = chainFromChainId[chainId];
+
   return {
     to,
     amount,
@@ -155,6 +160,7 @@ export const mapCallRequestToTransactionPayload = (
     symbol,
     contractAddress,
     decimals,
+    chain,
   };
 };
 

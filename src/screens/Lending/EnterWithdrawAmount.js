@@ -39,6 +39,7 @@ import ValueInput from 'components/ValueInput';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { LENDING_WITHDRAW_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -111,13 +112,14 @@ const EnterWithdrawAmount = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: depositAmount,
       decimals: depositedAsset?.decimals,
       symbol: selectedAssetSymbol,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

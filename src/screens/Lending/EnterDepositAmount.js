@@ -41,6 +41,7 @@ import Spinner from 'components/Spinner';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { LENDING_DEPOSIT_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -136,13 +137,14 @@ const EnterDepositAmount = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: depositAmount,
       decimals: assetToDeposit?.decimals,
       symbol: selectedAssetSymbol,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

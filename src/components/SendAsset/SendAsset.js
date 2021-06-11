@@ -21,7 +21,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import debounce from 'lodash.debounce';
-import get from 'lodash.get';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -45,7 +44,7 @@ import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
-import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -59,14 +58,15 @@ import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
+import type { Chain } from 'models/Chain';
 
 
 type Props = {
   defaultContact: ?Contact,
   source: string,
   navigation: NavigationScreenProp<*>,
-  balances: WalletAssetsBalances,
+  accountAssetsBalances: CategoryBalancesPerChain,
   session: SessionData,
   useGasToken: boolean,
   assetsWithBalance: AssetOption[],
@@ -75,7 +75,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (transaction: TransactionToEstimate) => void,
+  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
 };
 
 const renderFeeToggle = (
@@ -118,7 +118,7 @@ const mapToAssetDataType = ({
 const SendAsset = ({
   source,
   navigation,
-  balances,
+  accountAssetsBalances,
   session,
   useGasToken,
   assetsWithBalance,
@@ -141,7 +141,10 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  const token = get(assetData, 'token');
+  // $FlowFixMe: Collectible does not contain token, requires more changes to fix, TOOD: fix this later
+  const token = assetData?.token ?? '';
+  const chain = assetData?.chain;
+  const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, token);
   const currentValue = wrapBigNumber(amount || 0);
 
@@ -157,11 +160,13 @@ const SendAsset = ({
       return;
     }
 
-    estimateTransaction({
+    const transactionToEstimate = {
       to: selectedContact.ethAddress,
       value: currentValue.toString(),
       assetData: mapToAssetDataType(assetData),
-    });
+    };
+
+    estimateTransaction(transactionToEstimate, chain);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,6 +209,7 @@ const SendAsset = ({
         receiver: selectedContact.ethAddress,
         source,
         receiverEnsName: selectedContact.ensName,
+        chain,
       });
       return;
     }
@@ -222,6 +228,7 @@ const SendAsset = ({
       contractAddress: assetData.contractAddress,
       // $FlowFixMe: flow update to 0.122
       decimals: assetData.decimals,
+      chain,
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
@@ -240,11 +247,12 @@ const SendAsset = ({
     // update fee only on max balance
     if (percentageModifier === 1.00 && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
-      await estimateTransaction({
+      const transactionToEstimate = {
         to: selectedContact.ethAddress,
         value: calculatedBalanceAmount.toString(),
         assetData: mapToAssetDataType(assetData),
-      });
+      };
+      await estimateTransaction(transactionToEstimate, chain);
     }
 
     return null;
@@ -262,14 +270,19 @@ const SendAsset = ({
   // perform actual balance check only if all values set
   let enoughBalanceForTransaction = true;
   if (feeInfo && assetData && isValidAmount) {
-    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
       // $FlowFixMe: collectible does not have `decimals`
       decimals: assetData.decimals,
       amount,
       symbol: token,
-    });
+    };
+    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(
+      balances,
+      balanceCheckTransaction,
+      chain,
+    );
   }
 
   const errorMessage = !enoughBalanceForTransaction
@@ -329,7 +342,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   useGasToken: useGasTokenSelector,
-  assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
+  assetsWithBalance: accountAssetsWithBalanceSelector,
   contacts: contactsSelector,
 });
 
@@ -340,7 +353,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (
+    transaction: TransactionToEstimate,
+    chain: Chain,
+  ) => dispatch(estimateTransactionAction(transaction, chain)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

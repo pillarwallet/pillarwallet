@@ -43,7 +43,7 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 
 // local
 import { accountsSelector } from './selectors';
-import { archanovaAccountHistorySelector } from './history';
+import { archanovaAccountEthereumHistorySelector } from './history';
 
 export const isArchanovaWalletActivatedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
@@ -78,7 +78,7 @@ export const useGasTokenSelector = createSelector(
  */
 export const isEnsMigrationNeededSelector = createSelector(
   accountsSelector,
-  archanovaAccountHistorySelector,
+  archanovaAccountEthereumHistorySelector,
   (accounts, archanovaAccountHistory): boolean => {
     const isEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.ENS_MIGRATOR_ENABLED);
     if (!isEnabled) return false;

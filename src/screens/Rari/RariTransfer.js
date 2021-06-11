@@ -38,6 +38,7 @@ import { resetEstimateTransactionAction, estimateTransactionAction } from 'actio
 import { ETH, supportedFiatCurrencies, USD } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
@@ -195,13 +196,18 @@ const RariTransferScreen = ({
 
   let enoughBalanceForTransaction = true;
   if (feeInfo && inputIsValid) {
-    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(customBalances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
       decimals: rariTokenData.decimals,
       amount,
       symbol: rariTokenData.symbol,
-    });
+    };
+    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(
+      customBalances,
+      balanceCheckTransaction,
+      CHAIN.ETHEREUM,
+    );
   }
   const errorMessage = !enoughBalanceForTransaction
     ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
@@ -295,7 +301,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate) => dispatch(estimateTransactionAction(transaction)),
+  estimateTransaction: (
+    transaction: TransactionToEstimate,
+  ) => dispatch(estimateTransactionAction(transaction, CHAIN.ETHEREUM)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RariTransferScreen);

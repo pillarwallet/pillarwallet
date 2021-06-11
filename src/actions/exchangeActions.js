@@ -54,6 +54,7 @@ import {
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 import { isOrderAmountTooLow } from 'utils/exchange';
+import { getCrossChainAccountHistory } from 'utils/history';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -341,13 +342,7 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
     } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
     const accountIds = Object.keys(transactionsHistory);
-    const allHistory = accountIds.reduce(
-      (existing = [], accountId) => {
-        const walletAssetsHistory = transactionsHistory[accountId] || [];
-        return [...existing, ...walletAssetsHistory];
-      },
-      [],
-    );
+    const allHistory = accountIds.flatMap((accountId) => getCrossChainAccountHistory(transactionsHistory[accountId]));
 
     const allowances = allAccountsExchangeAllowancesSelector(getState());
     Object.keys(allowances).forEach((accountId) =>

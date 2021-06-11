@@ -86,7 +86,7 @@ function WalletTab() {
     const asset = getAssetFromRegistry(assetRegistry, item.symbol);
     if (!asset) return;
 
-    const assetData = buildAssetDataNavigationParam(asset);
+    const assetData = buildAssetDataNavigationParam(asset, item.chain);
     navigation.navigate(ASSET, { assetData });
   };
 
