@@ -39,19 +39,19 @@ export const getMatchingSortedData: (data: Object[], query: ?string) => Object[]
     ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
   );
 
-export const getFontSize = (value: string | number, numeric?: boolean) => {
+export const getFontSize = (value: ?string | number, numeric?: boolean) => {
   if (numeric) return fontSizes.large;
   if (value || value === 0) return fontSizes.medium;
   return fontSizes.regular;
 };
 
-export const getLineHeight = (value: string | number, numeric?: boolean) => {
+export const getLineHeight = (value: ?string | number, numeric?: boolean) => {
   if (numeric) return lineHeights.large;
   if (value || value === 0) return lineHeights.medium;
   return lineHeights.regular;
 };
 
-export const getFontFamily = (value: string | number, numeric?: boolean) => {
+export const getFontFamily = (value: ?string | number, numeric?: boolean) => {
   if (!(value || value === 0) || numeric) return appFont.medium;
   return appFont.regular;
 };

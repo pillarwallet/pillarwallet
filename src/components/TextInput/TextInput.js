@@ -237,7 +237,7 @@ class TextInput extends React.Component<Props, State> {
   handleBlur = () => {
     const { inputProps: { onBlur, selectorValue = {}, value }, trim } = this.props;
     const { selector } = selectorValue;
-    const trimmedValue = trim ? value.toString().trim() : value;
+    const trimmedValue = trim ? value?.toString().trim() : value;
     if (onBlur) {
       if (selector) {
         onBlur({ selector, input: trimmedValue });
@@ -283,8 +283,8 @@ class TextInput extends React.Component<Props, State> {
       {
         isFocused: true,
         selectionStart: {
-          start: value.toString().length,
-          end: value.toString().length,
+          start: value?.toString().length ?? 0,
+          end: value?.toString().length ?? 0,
         },
       },
       () => {
