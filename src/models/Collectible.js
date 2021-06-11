@@ -23,15 +23,13 @@ import type { Chain, ChainRecord } from 'models/Chain';
 
 export type Collectible = {
   id: string,
-  category: string,
   name: string,
-  description: string,
+  description: ?string,
   icon: ?string,
-  iconUrl?: void,
+  iconUrl: ?string,
   image: ?string,
-  imageUrl?: string,
+  imageUrl: ?string,
   contractAddress: string,
-  assetContract: string,
   tokenType: string,
   symbol?: void,
   decimals?: void,
@@ -69,15 +67,3 @@ export type CollectiblesStore = {
 export type CollectiblesHistoryStore = {
   [accountId: string]: ChainRecord<CollectibleTransaction[]>,
 };
-
-export type CollectibleNavigationAssetData = {|
-  id: string,
-  name: string,
-  description: ?string,
-  tokenType: string,
-  contractAddress: string,
-  tokenId: string,
-  chain: Chain,
-  iconUrl: ?string, // Icon URL
-  imageUrl: ?string, // Image URL
-|};

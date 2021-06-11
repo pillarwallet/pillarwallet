@@ -60,9 +60,9 @@ export const initialState = {
 
 const addAccountTransaction = (
   accountHistory: ChainRecord<Transaction[]>,
-  payload: Object,
+  transactionToAdd: { chain: string, transaction: Transaction },
 ) => {
-  const { chain, transaction } = payload;
+  const { chain, transaction } = transactionToAdd;
   const accountHistoryForChain = accountHistory?.[chain] ?? [];
   return {
     ...accountHistory,

@@ -81,14 +81,14 @@ export const collectibleFromResponse = (responseItem: OpenSeaAsset): Collectible
 
   return {
     id,
-    category,
     name: collectibleName,
     description,
     contractAddress,
-    assetContract: category,
     tokenType: COLLECTIBLES,
     image,
     icon,
+    iconUrl: icon,
+    imageUrl: image,
     chain: CHAIN.ETHEREUM,
   };
 };
@@ -180,13 +180,13 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransacti
 
   const assetData = {
     id: tokenId,
-    category,
     name: collectibleName,
     description,
     image,
     icon,
+    iconUrl: icon,
+    imageUrl: image,
     contractAddress,
-    assetContract: category,
     tokenType: COLLECTIBLES,
     chain: CHAIN.ETHEREUM,
   };

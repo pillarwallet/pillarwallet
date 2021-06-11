@@ -186,7 +186,7 @@ const AssetScreen = ({
 
   const tokenTransactions = useMemo(
     () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
-    [accountHistory, accounts, token],
+    [accountHistory, accounts, token, chain],
   );
 
   const transactions = useMemo(

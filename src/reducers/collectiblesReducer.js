@@ -27,7 +27,7 @@ import {
 } from 'constants/collectiblesConstants';
 
 // utils
-import { addressesEqual } from 'utils/assets';
+import { isMatchingCollectible } from 'utils/assets';
 
 // types
 import type {
@@ -56,19 +56,19 @@ const initialState = {
   updatingTransaction: null,
 };
 
-const removeFromOwnedCollectibles = (
-  accountCollectibles: Collectible[],
-  payload: Object,
+const removeFromCollectibles = (
+  collectibles: Collectible[],
+  collectibleToRemove: { tokenId: string, contractAddress: string },
 ) => {
-  const { contractAddress, tokenId } = payload;
-  return accountCollectibles.filter((
+  const { tokenId: id, contractAddress } = collectibleToRemove;
+  return collectibles.filter((
     existing,
-  ) => !(addressesEqual(existing.contractAddress, contractAddress) && existing.id !== tokenId));
+  ) => !isMatchingCollectible(existing, { id, contractAddress }));
 };
 
 const addAccountCollectibleTransaction = (
   accountHistory: ChainRecord<CollectibleTransaction[]>,
-  payload: Object,
+  payload: { chain: string, transaction: CollectibleTransaction },
 ) => {
   const { chain, transaction } = payload;
   const accountHistoryForChain = accountHistory?.[chain] ?? [];
@@ -107,7 +107,7 @@ const collectiblesReducer = (
         ...state,
         data: {
           ...state.data,
-          [accountId]: removeFromOwnedCollectibles(accountCollectibles, action.payload),
+          [accountId]: removeFromCollectibles(accountCollectibles, action.payload),
         },
         transactionHistory: {
           ...state.transactionHistory,

@@ -50,7 +50,7 @@ import type { Chain } from 'models/Chain';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
-import { buildCollectibleNavigationAssetData } from './utils';
+import { buildCollectibleFromCollectibleItem } from './utils';
 import CollectibleListItem from './CollectibleListItem';
 
 function CollectiblesTab() {
@@ -72,8 +72,8 @@ function CollectiblesTab() {
   };
 
   const navigateToCollectibleDetails = (item: CollectibleItem, chain: Chain) => {
-    const navigationAssetData = buildCollectibleNavigationAssetData(item, chain);
-    navigation.navigate(COLLECTIBLE, { assetData: navigationAssetData });
+    const collectible = buildCollectibleFromCollectibleItem(item, chain);
+    navigation.navigate(COLLECTIBLE, { collectible });
   };
 
   const renderSectionHeader = ({ chain }: Section) => {

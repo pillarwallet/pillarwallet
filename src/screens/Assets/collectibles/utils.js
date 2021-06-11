@@ -22,14 +22,14 @@
 import { COLLECTIBLES } from 'constants/assetsConstants';
 
 // types
-import type { CollectibleNavigationAssetData } from 'models/Collectible';
+import type { Collectible } from 'models/Collectible';
 import type { Chain } from 'models/Chain';
 import type { CollectibleItem } from './selectors';
 
-export function buildCollectibleNavigationAssetData(
+export function buildCollectibleFromCollectibleItem(
   collectibleItem: CollectibleItem,
   chain: Chain,
-): CollectibleNavigationAssetData {
+): Collectible {
   const {
     id,
     title: name,
@@ -44,6 +44,8 @@ export function buildCollectibleNavigationAssetData(
     id,
     name,
     description,
+    image: imageUrl,
+    icon: iconUrl,
     imageUrl,
     iconUrl,
     contractAddress,

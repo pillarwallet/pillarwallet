@@ -478,3 +478,13 @@ export const mergeAccountAssets = (assetsByAccount: AssetsByAccount): Assets => 
   const assetsArray = Object.keys(assetsByAccount).map(accountId => assetsByAccount[accountId]);
   return Object.assign({}, ...assetsArray);
 };
+
+type CollectibleMatch = { contractAddress: string, id: string };
+
+export const isMatchingCollectible = (
+  a: CollectibleMatch,
+  b: CollectibleMatch,
+) => a.contractAddress
+  && addressesEqual(a.contractAddress, b.contractAddress)
+  && a.id
+  && a.id === b.id;

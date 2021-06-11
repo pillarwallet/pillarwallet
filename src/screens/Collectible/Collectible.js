@@ -21,7 +21,6 @@
 import React, { useMemo } from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -49,7 +48,7 @@ import { spacing } from 'utils/variables';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors, useTheme } from 'utils/themes';
 import { images, isSvgImage } from 'utils/images';
-import { addressesEqual } from 'utils/assets';
+import { isMatchingCollectible } from 'utils/assets';
 import {
   getAccountAddress,
   isArchanovaAccount,
@@ -62,11 +61,7 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { activeAccountSelector } from 'selectors';
 
 // types
-import type {
-  Collectible,
-  CollectibleNavigationAssetData,
-  CollectibleTransaction,
-} from 'models/Collectible';
+import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -74,7 +69,6 @@ import type { ChainRecord } from 'models/Chain';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   collectibles: Collectible[],
   accountCollectibleHistory: ChainRecord<CollectibleTransaction[]>,
   accounts: Account[],
@@ -122,18 +116,21 @@ const CollectibleScreen = ({
   const navigation = useNavigation();
   const theme = useTheme();
 
-  const assetData: CollectibleNavigationAssetData = useNavigationParam('assetData');
+  const collectible: Collectible = useNavigationParam('collectible');
 
   const {
     id,
     name,
     description,
     imageUrl,
-    chain,
     contractAddress,
-  } = assetData;
+    chain,
+  } = collectible;
 
-  const goToSendTokenFlow = () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
+  const goToSendTokenFlow = () => navigation.navigate(
+    SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+    { assetData: collectible },
+  );
 
   const openCollectibleImage = () => {
     const colors = getThemeColors(theme);
@@ -169,7 +166,7 @@ const CollectibleScreen = ({
   };
 
   const isOwned = useMemo(
-    () => collectibles.some((collectible) => collectible.id === id),
+    () => collectibles.some((ownedCollectible) => ownedCollectible.id === id),
     [collectibles, id],
   );
 
@@ -188,12 +185,8 @@ const CollectibleScreen = ({
   const transactions = useMemo(
     () => {
       const relatedTransactions = mappedCollectiblesTransactions.filter(({
-        assetData: transactionAssetData,
-      }) => transactionAssetData
-        && transactionAssetData.id
-        && transactionAssetData.contractAddress
-        && transactionAssetData.id === id
-        && addressesEqual(transactionAssetData.contractAddress, contractAddress));
+        assetData,
+      }) => isMatchingCollectible(assetData, { id, contractAddress }));
 
       return isEtherspotAccount(activeAccount)
         ? getHistoryEventsFromCollectiblesTransactions(relatedTransactions, getAccountAddress(activeAccount))
