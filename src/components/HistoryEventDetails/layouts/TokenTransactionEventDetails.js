@@ -48,15 +48,17 @@ import { spacing } from 'utils/variables';
 
 // Types
 import { EVENT_TYPE, type TokenTransactionEvent } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: TokenTransactionEvent,
+  chain: Chain,
 |};
 
-function TokenTransactionEventDetails({ event }: Props) {
+function TokenTransactionEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -65,7 +67,7 @@ function TokenTransactionEventDetails({ event }: Props) {
 
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   const sendTokensToAddress = (address: string) => {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW, {

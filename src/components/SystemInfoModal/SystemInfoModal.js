@@ -45,7 +45,10 @@ const Value = styled(MediumText)`
 
 const SystemInfoModal = () => {
   const {
-    TX_DETAILS_URL,
+    TX_DETAILS_URL_ETHEREUM,
+    TX_DETAILS_URL_BINANCE,
+    TX_DETAILS_URL_POLYGON,
+    TX_DETAILS_URL_XDAI,
     NETWORK_PROVIDER,
     COLLECTIBLES_NETWORK,
     OPEN_SEA_API,
@@ -64,8 +67,20 @@ const SystemInfoModal = () => {
           <Value>{BUILD_NUMBER}</Value>
         </LabeledRow>
         <LabeledRow>
-          <Label>TX_DETAILS_URL</Label>
-          <Value>{TX_DETAILS_URL}</Value>
+          <Label>TX_DETAILS_URL_ETHEREUM</Label>
+          <Value>{TX_DETAILS_URL_ETHEREUM}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>TX_DETAILS_URL_POLYGON</Label>
+          <Value>{TX_DETAILS_URL_POLYGON}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>TX_DETAILS_URL_BINANCE</Label>
+          <Value>{TX_DETAILS_URL_BINANCE}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>TX_DETAILS_URL_XDAI</Label>
+          <Value>{TX_DETAILS_URL_XDAI}</Value>
         </LabeledRow>
         <LabeledRow>
           <Label>NETWORK_PROVIDER</Label>

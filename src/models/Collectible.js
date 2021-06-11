@@ -19,26 +19,24 @@
 */
 
 // Types
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export type Collectible = {
   id: string,
-  category: string,
   name: string,
-  description: string,
+  description: ?string,
   icon: ?string,
-  iconUrl?: void,
+  iconUrl: ?string,
   image: ?string,
-  imageUrl?: string,
+  imageUrl: ?string,
   contractAddress: string,
-  assetContract: string,
   tokenType: string,
   symbol?: void,
   decimals?: void,
   chain: Chain;
 };
 
-export type CollectibleTrx = {
+export type CollectibleTransaction = {
   asset: string,
   assetData: Collectible,
   blockNumber: string,
@@ -67,5 +65,5 @@ export type CollectiblesStore = {
 };
 
 export type CollectiblesHistoryStore = {
-  [accountId: string]: CollectibleTrx[],
+  [accountId: string]: ChainRecord<CollectibleTransaction[]>,
 };

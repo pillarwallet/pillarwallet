@@ -86,6 +86,7 @@ import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { CategoryBalancesPerChain } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
+import type { ChainRecord } from 'models/Chain';
 
 
 type Props = {
@@ -97,7 +98,7 @@ type Props = {
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,
-  history: Transaction[],
+  accountHistory: ChainRecord<Transaction[]>,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   isFetchingUniswapTokens: boolean,
@@ -161,7 +162,7 @@ const AssetScreen = ({
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  history,
+  accountHistory,
   isFetchingUniswapTokens,
   uniswapTokensGraphQueryFailed,
   accountAssetsBalances,
@@ -184,8 +185,8 @@ const AssetScreen = ({
   );
 
   const tokenTransactions = useMemo(
-    () => getTokenTransactionsFromHistory(history, accounts, token),
-    [history, accounts, token],
+    () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
+    [accountHistory, accounts, token, chain],
   );
 
   const transactions = useMemo(
@@ -320,7 +321,7 @@ const AssetScreen = ({
               />
             )}
             {/* $FlowFixMe: should be fine after Archanova history mappings are discarded */}
-            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} />}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
           </>
         )}
       </ScrollWrapper>
@@ -356,7 +357,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
-  history: accountHistorySelector,
+  accountHistory: accountHistorySelector,
   accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,

@@ -53,7 +53,7 @@ export async function migrate(
       break;
 
     case 'collectiblesHistory':
-      data = loadAndMigrateCollectiblesHistory(storageData);
+      data = loadAndMigrateCollectiblesHistory(storageData, dispatch);
       break;
 
     case 'exchangeAllowances':

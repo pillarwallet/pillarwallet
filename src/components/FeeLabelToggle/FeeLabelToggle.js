@@ -55,6 +55,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { Rates, Assets } from 'models/Asset';
 import type { GasToken, Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { ChainRecord } from 'models/Chain';
 
 
 type Props = {
@@ -66,7 +67,7 @@ type Props = {
   labelText?: string,
   isGasTokenSupported: boolean,
   accountAssets: Assets,
-  accountHistory: Transaction[],
+  accountHistory: ChainRecord<Transaction[]>,
   showRelayerMigration?: boolean,
   hasError?: boolean,
 };

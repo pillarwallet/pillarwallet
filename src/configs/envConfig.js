@@ -44,7 +44,10 @@ type CurrentEnvironment = {
 const envVars = {
   production: {
     ENVIRONMENT: PRODUCTION,
-    TX_DETAILS_URL: 'https://etherscan.io/tx/',
+    TX_DETAILS_URL_ETHEREUM: 'https://etherscan.io/tx/',
+    TX_DETAILS_URL_BINANCE: 'https://bscscan.com/tx/',
+    TX_DETAILS_URL_POLYGON: 'https://polygonscan.com/tx/',
+    TX_DETAILS_URL_XDAI: 'https://blockscout.com/xdai/mainnet/tx/',
     NETWORK_PROVIDER: 'homestead',
     COLLECTIBLES_NETWORK: 'homestead',
     OPEN_SEA_API: 'https://api.opensea.io/api/v1',
@@ -78,7 +81,10 @@ const envVars = {
   },
   staging: {
     ENVIRONMENT: STAGING,
-    TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
+    TX_DETAILS_URL_ETHEREUM: 'https://kovan.etherscan.io/tx/',
+    TX_DETAILS_URL_BINANCE: 'https://bscscan.com/tx/',
+    TX_DETAILS_URL_POLYGON: 'https://polygonscan.com/tx/',
+    TX_DETAILS_URL_XDAI: 'https://blockscout.com/xdai/mainnet/tx/',
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
