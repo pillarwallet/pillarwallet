@@ -119,7 +119,7 @@ const AddCash = () => {
           </Text>
           <TextInput
             inputProps={{
-              value: value ? `${currencySymbol}${value}` : undefined,
+              value: `${currencySymbol}${value}`,
               autoCapitalize: 'none',
               disabled: false,
               onChangeText: handleChangeText,
