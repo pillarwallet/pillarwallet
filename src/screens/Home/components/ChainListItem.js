@@ -28,6 +28,7 @@ import Text from 'components/modern/Text';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
 
 export type Props = {|
   title: string,
@@ -42,14 +43,20 @@ function CategoryListItem({ title, onPress, value, isDeployed, onPressDeploy }: 
 
   return (
     <Container onPress={onPress}>
-      {!isDeployed ? (
+      {!isDeployed && (
         <DeployContainer>
-          <TitleWithIcon onPress={onPress}>{title}</TitleWithIcon>
-          <HazardIcon name="warning" width={16} height={16} color={colors.hazardIconColor} onPress={onPressDeploy} />
+          <Title onPress={onPress}>{title}</Title>
+          <HazardIcon
+            name="warning"
+            width={16}
+            height={16}
+            color={colors.hazardIconColor}
+            hitSlop={hitSlop20}
+            onPress={onPressDeploy}
+          />
         </DeployContainer>
-      ) : (
-        <Title>{title}</Title>
       )}
+      {isDeployed && <Title style={{ flex: 1 }}>{title}</Title>}
       {!!value && <Value>{value}</Value>}
     </Container>
   );
@@ -74,12 +81,6 @@ const HazardIcon = styled(Icon)`
 `;
 
 const Title = styled(Text)`
-  flex: 1;
-  margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
-  ${fontStyles.medium};
-`;
-
-const TitleWithIcon = styled(Text)`
   margin: ${spacing.mediumLarge}px 0 ${spacing.mediumLarge}px 36px;
   ${fontStyles.medium};
 `;
