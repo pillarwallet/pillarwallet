@@ -38,7 +38,6 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual } from './assets';
-import { uniqBy } from './common';
 
 
 export function mapTransactionsHistory(
@@ -73,49 +72,48 @@ export function mapTransactionsHistory(
       };
     });
 
-  if (keepHashDuplicatesIfBetweenAccounts) {
-    const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
-    const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
+  if (!keepHashDuplicatesIfBetweenAccounts) return orderBy(concatedHistory, ['createdAt'], ['desc']);
 
-    const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
-      const { from: fromAddress, to: toAddress, hash } = historyItem;
-      const isTransactionFromUsersAccount = accountsAddresses
-        .some((userAddress) => addressesEqual(fromAddress, userAddress));
-      const isTransactionToUsersAccount = accountsAddresses
-        .some((userAddress) => addressesEqual(toAddress, userAddress));
-      const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+  const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
+  const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
 
-      if (eventWithSameHashExists) {
-        if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
-          return [...alteredHistory, {
-            ...historyItem,
-            accountType: getAccountTypeByAddress(toAddress, accounts),
-            isReceived: true,
-            betweenAccTrxDuplicate: true,
-            _id: `${historyItem._id}_duplicate`,
-            createdAt: historyItem.createdAt + 1,
-          }];
-        }
-        return alteredHistory;
-      } else if (duplicatePPN) {
-        const itemTag = get(historyItem, 'tag');
-        if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-          const duplicate = {
-            ...historyItem,
-            smartWalletEvent: true,
-            _id: `${historyItem._id}_duplicate`,
-            createdAt: historyItem.createdAt - 1,
-          };
-          return [...alteredHistory, duplicate, historyItem];
-        }
-        return [...alteredHistory, historyItem];
+  const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
+    const { from: fromAddress, to: toAddress, hash } = historyItem;
+    const isTransactionFromUsersAccount = accountsAddresses
+      .some((userAddress) => addressesEqual(fromAddress, userAddress));
+    const isTransactionToUsersAccount = accountsAddresses
+      .some((userAddress) => addressesEqual(toAddress, userAddress));
+    const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+
+    if (eventWithSameHashExists) {
+      if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
+        return [...alteredHistory, {
+          ...historyItem,
+          accountType: getAccountTypeByAddress(toAddress, accounts),
+          isReceived: true,
+          betweenAccTrxDuplicate: true,
+          _id: `${historyItem._id}_duplicate`,
+          createdAt: historyItem.createdAt + 1,
+        }];
+      }
+      return alteredHistory;
+    } else if (duplicatePPN) {
+      const itemTag = get(historyItem, 'tag');
+      if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        const duplicate = {
+          ...historyItem,
+          smartWalletEvent: true,
+          _id: `${historyItem._id}_duplicate`,
+          createdAt: historyItem.createdAt - 1,
+        };
+        return [...alteredHistory, duplicate, historyItem];
       }
       return [...alteredHistory, historyItem];
-    }, []);
-    return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
-  }
+    }
+    return [...alteredHistory, historyItem];
+  }, []);
 
-  return uniqBy(concatedHistory, 'hash');
+  return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
 }
 
 export type TransactionsGroup = {
