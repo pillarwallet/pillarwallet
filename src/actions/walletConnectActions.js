@@ -362,6 +362,13 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
 
     const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
 
-    dispatch(estimateTransactionAction({ value, to, data }));
+    const { chainId } = callRequest;
+    const chain = chainFromChainId[chainId];
+    if (!chain) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineEthereumChain')));
+      return;
+    }
+
+    dispatch(estimateTransactionAction({ value, to, data }, chain));
   };
 };

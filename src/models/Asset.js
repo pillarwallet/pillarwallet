@@ -137,3 +137,16 @@ export type AssetOptionBalance = {|
   value?: string,
   syntheticBalance?: string,
 |};
+
+export type AssetDataNavigationParam = {
+  id: string,
+  name: string,
+  token: string,
+  contractAddress: string,
+  icon: string,
+  iconColor: string,
+  imageUrl: string,
+  patternIcon: string,
+  decimals: number,
+  chain: Chain,
+}

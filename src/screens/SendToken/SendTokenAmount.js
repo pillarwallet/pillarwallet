@@ -26,47 +26,35 @@ import SendAsset from 'components/SendAsset';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { Transaction } from 'models/Transaction';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
 
 // selectors
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
-import { accountHistorySelector } from 'selectors/history';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  balances: WalletAssetsBalances,
+  accountAssetsBalances: CategoryBalancesPerChain,
   session: SessionData,
-  accountAssets: Assets,
-  accountHistory: Transaction[],
 };
 
 const SendTokenAmount = ({
   navigation,
-  balances,
+  accountAssetsBalances,
   session,
-  accountAssets,
-  accountHistory,
 }: Props) => {
   const defaultContact = navigation.getParam('contact');
-  const assetData = navigation.getParam('assetData', {});
   const source = navigation.getParam('source', '');
 
   return (
     <SendAsset
       navigation={navigation}
-      assetData={assetData}
       defaultContact={defaultContact}
       source={source}
-      balances={balances}
+      accountAssetsBalances={accountAssetsBalances}
       session={session}
-      accountAssets={accountAssets}
-      accountHistory={accountHistory}
     />
   );
 };
@@ -78,9 +66,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletAssetsBalancesSelector,
-  accountAssets: accountAssetsSelector,
-  accountHistory: accountHistorySelector,
+  accountAssetsBalances: accountAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -46,6 +46,7 @@ import type { Rates } from 'models/Asset';
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -150,6 +151,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
       symbol: this.assetData.symbol,
       contractAddress: this.assetData.address,
       decimals: this.assetData.decimals,
+      chain: CHAIN.ETHEREUM,
     };
 
     Keyboard.dismiss();
