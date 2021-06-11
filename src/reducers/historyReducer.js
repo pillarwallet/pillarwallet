@@ -66,7 +66,7 @@ const addAccountTransaction = (
   const accountHistoryForChain = accountHistory?.[chain] ?? [];
   return {
     ...accountHistory,
-    [chain]: [...accountHistoryForChain, transaction],
+    [chain]: accountHistoryForChain.concat(transaction),
   };
 };
 
