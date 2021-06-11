@@ -179,6 +179,46 @@ export const importEtherspotAccountsAction = () => {
   };
 };
 
+export const refreshEtherspotAccountsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: session },
+      user: { data: user },
+    } = getState();
+
+    console.log("REFRESH ETHERSPOT ACCOUNT");
+
+    if (!session.isOnline) return; // offline, nothing to dp
+
+    if (!etherspotService?.sdk) {
+      reportErrorLog('refreshEtherspotAccountsAction failed: action dispatched when Etherspot SDK was not initialized');
+      return;
+    }
+
+    if (!user) {
+      reportErrorLog('refreshEtherspotAccountsAction failed: no user');
+      return;
+    }
+
+    const etherspotAccounts = await etherspotService.getAccounts();
+    if (!etherspotAccounts) {
+      // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
+      reportErrorLog('refreshEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
+      return;
+    }
+
+    // sync accounts with app
+    await Promise.all(
+      etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
+        const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
+        dispatch(updateAccountExtraIfNeededAction(etherspotAccountAddress, extra));
+      }),
+    );
+
+    console.log('REFRESH ETHERSPOT ACCOUNT DONE');
+  };
+};
+
 export const reserveEtherspotEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {

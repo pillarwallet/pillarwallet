@@ -94,6 +94,7 @@ import {
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
 import {
   importEtherspotAccountsAction,
+  refreshEtherspotAccountsAction,
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
@@ -226,6 +227,8 @@ export const loginAction = (
         const etherspotAccount = findFirstEtherspotAccount(accounts);
         if (!etherspotAccount) {
           await dispatch(importEtherspotAccountsAction()); // imports and sets as active
+        } else {
+          await dispatch(refreshEtherspotAccountsAction());
         }
 
         dispatch(setEnsNameIfNeededAction());
