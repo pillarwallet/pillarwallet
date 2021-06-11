@@ -26,6 +26,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 import { useNavigation } from 'react-navigation-hooks';
+import AutoScaleText from 'react-native-auto-scale-text';
 
 // components
 import Text from 'components/modern/Text';
@@ -37,7 +38,7 @@ import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getAccountEnsName } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
@@ -50,6 +51,7 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { activeAccountSelector } from 'selectors';
 
+// Constants
 import {
   ETHERSPOT_DEPLOYMENT_INTERJECTION,
 } from 'constants/navigationConstants';
@@ -117,24 +119,35 @@ const ReceiveModal = ({
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
           {!!ensName && (
-            <TextWithCopy textToCopy={ensName} toastText={t('toast.ensNameCopiedToClipboard')} iconColor={colors.link}>
+            <TextWithCopy
+              textToCopy={ensName}
+              toastText={t('toast.ensNameCopiedToClipboard')}
+              iconColor={colors.link}
+              textStyle={{ fontSize: fontSizes.big }}
+            >
               {ensName}
             </TextWithCopy>
           )}
           {ensName ? (
-            <WalletAddress>{address}</WalletAddress>
+            <WalletAddress maxLines={1} maxFontSize={fontSizes.regular}>
+              {address}
+            </WalletAddress>
           ) : (
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
-              textStyle={{ color: colors.basic030 }}
+              textStyle={{ color: colors.basic030, fontSize: fontSizes.regular }}
               iconColor={colors.link}
             >
               {address}
             </TextWithCopy>
           )}
         </InfoView>
-        {!!address && <QRCodeWrapper><QRCodeWithTheme value={address} size={104} /></QRCodeWrapper>}
+        {!!address && (
+          <QRCodeWrapper>
+            <QRCodeWithTheme value={address} size={104} />
+          </QRCodeWrapper>
+        )}
         <WarningText center small>
           {t('paragraph.cautionMessage', {
             chain: t('chains.ethereum'),
@@ -185,10 +198,9 @@ const QRCodeWrapper = styled.View`
   margin: ${spacing.largePlus}px;
 `;
 
-const WalletAddress = styled(Text)`
-  ${fontStyles.regular};
+const WalletAddress = styled(AutoScaleText)`
   color: ${({ theme }) => theme.colors.basic030};
-  margin: ${spacing.mediumLarge}px;
+  margin-top: ${spacing.mediumLarge}px;
   text-align: center;
 `;
 
