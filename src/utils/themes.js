@@ -148,7 +148,7 @@ export const semanticDarkThemeColors = {
   pieChartCenter: darkThemeColors.basic050,
   pieChartEmpty: darkThemeColors.basic060,
   homeEnsNameIcon: darkThemeColors.basic010,
-  buttonPrimaryBackground: darkThemeColors.primaryAccent130,
+  buttonPrimaryBackground: darkThemeColors.primaryAccent220,
   buttonPrimaryTitle: darkThemeColors.basic090,
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
