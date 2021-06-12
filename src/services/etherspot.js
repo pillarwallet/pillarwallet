@@ -131,7 +131,7 @@ export class EtherspotService {
     this.sdk = this.instances[primaryNetworkName];
   }
 
-  subscribe(callback: (chain: Chain, notification: EtherspotNotification) => Promise<void>) {
+  subscribe(callback: (chain: Chain, notification: EtherspotNotification) => mixed) {
     this.supportedNetworks.forEach((networkName) => {
       const sdk = this.instances[networkName];
       if (!sdk) {
