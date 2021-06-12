@@ -120,20 +120,20 @@ const VARIANT = {
 // THEME
 const backgroundColor = themeVariant.variants('current', 'variant', {
   [VARIANT.DEFAULT]: {
-    lightTheme: props => props.theme.colors.primaryAccent130,
-    darkTheme: props => props.theme.colors.primaryAccent130,
+    lightTheme: (props) => props.theme.colors.buttonPrimaryBackground,
+    darkTheme: (props) => props.theme.colors.buttonPrimaryBackground,
   },
   [VARIANT.PRIMARY_SECOND]: {
-    lightTheme: props => props.theme.colors.secondaryAccent140,
-    darkTheme: props => props.theme.colors.primaryAccent220,
+    lightTheme: (props) => props.theme.colors.secondaryAccent140,
+    darkTheme: (props) => props.theme.colors.primaryAccent220,
   },
   [VARIANT.SECONDARY]: {
-    lightTheme: props => props.theme.colors.basic060,
-    darkTheme: props => props.theme.colors.basic020,
+    lightTheme: (props) => props.theme.colors.basic060,
+    darkTheme: (props) => props.theme.colors.basic020,
   },
   [VARIANT.DANGER]: {
-    lightTheme: props => props.theme.colors.secondaryAccent240,
-    darkTheme: props => props.theme.colors.secondaryAccent240,
+    lightTheme: (props) => props.theme.colors.secondaryAccent240,
+    darkTheme: (props) => props.theme.colors.secondaryAccent240,
   },
   [VARIANT.TRANSPARENT]: {
     lightTheme: 'transparent',
@@ -147,28 +147,28 @@ const backgroundColor = themeVariant.variants('current', 'variant', {
 
 const contentColor = themeVariant.variants('current', 'variant', {
   [VARIANT.DEFAULT]: {
-    lightTheme: props => props.theme.colors.basic050,
-    darkTheme: props => props.theme.colors.basic090,
+    lightTheme: (props) => props.theme.colors.buttonPrimaryTitle,
+    darkTheme: (props) => props.theme.colors.buttonPrimaryTitle,
   },
   [VARIANT.PRIMARY_SECOND]: {
-    lightTheme: props => props.theme.colors.basic050,
-    darkTheme: props => props.theme.colors.basic090,
+    lightTheme: (props) => props.theme.colors.basic050,
+    darkTheme: (props) => props.theme.colors.basic090,
   },
   [VARIANT.SECONDARY]: {
-    lightTheme: props => props.theme.colors.primaryAccent130,
-    darkTheme: props => props.theme.colors.basic090,
+    lightTheme: (props) => props.theme.colors.primaryAccent130,
+    darkTheme: (props) => props.theme.colors.basic090,
   },
   [VARIANT.DANGER]: {
-    lightTheme: props => props.theme.colors.basic050,
-    darkTheme: props => props.theme.colors.basic090,
+    lightTheme: (props) => props.theme.colors.basic050,
+    darkTheme: (props) => props.theme.colors.basic090,
   },
   [VARIANT.TRANSPARENT]: {
-    lightTheme: props => props.theme.colors.primaryAccent130,
-    darkTheme: props => props.theme.colors.basic000,
+    lightTheme: (props) => props.theme.colors.primaryAccent130,
+    darkTheme: (props) => props.theme.colors.basic000,
   },
   [VARIANT.TRANSPARENT_DANGER]: {
-    lightTheme: props => props.theme.colors.secondaryAccent240,
-    darkTheme: props => props.theme.colors.secondaryAccent240,
+    lightTheme: (props) => props.theme.colors.secondaryAccent240,
+    darkTheme: (props) => props.theme.colors.secondaryAccent240,
   },
 });
 

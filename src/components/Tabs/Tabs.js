@@ -48,7 +48,7 @@ const Underline = styled.View`
   border-top-width: 6px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  border-color: ${({ theme }) => theme.colors.primaryAccent130};
+  border-color: ${({ theme }) => theme.colors.tabUnderline};
 `;
 
 const TabContainer = styled.TouchableOpacity`

@@ -53,27 +53,16 @@ export const semanticLightThemeColors = {
   control: '#FCFDFF',
   separator: lightThemeColors.basic080,
   inputField: lightThemeColors.basic060,
-  warning: '#ECA93A',
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
-  userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
-  legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
-  smartWalletText: '#1D24D8',
-  smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
-  notice: '#ea480e',
   activeTabBarIcon: '#007AFF',
-  inactiveTabBarIcon: '#D4D9DB',
-  synthetic: '#2329d6',
   transactionReceivedIcon: '#497391',
-  iconBackground: '#ebf0f5',
   link: '#007aff',
-  avatarPlaceholderBackground: '#e0eeff',
-  avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
@@ -90,6 +79,7 @@ export const semanticLightThemeColors = {
   buttonSecondaryBackground: lightThemeColors.basic060,
   buttonSecondaryTitle: lightThemeColors.basic000,
   buttonTextTitle: lightThemeColors.basic000,
+  tabUnderline: lightThemeColors.basic000,
   pagerActive: '#000000',
   pagerInactive: '#d4d9db',
   recieveModalWarningText: '#62688f',
@@ -116,27 +106,16 @@ export const semanticDarkThemeColors = {
   control: '#FCFDFF',
   separator: darkThemeColors.basic040,
   inputField: darkThemeColors.basic080,
-  warning: 'blue', // TODO: add correct one when added to Design System
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
-  userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
-  legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
-  smartWalletText: '#1D24D8',
-  smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
-  notice: '#ea480e',
   activeTabBarIcon: '#FFFFFF',
-  inactiveTabBarIcon: '#818eb3',
-  synthetic: '#9396ff',
   transactionReceivedIcon: '#00E097',
-  iconBackground: '#222c46',
   link: '#fcfdff',
-  avatarPlaceholderBackground: '#181f31',
-  avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
@@ -148,11 +127,12 @@ export const semanticDarkThemeColors = {
   pieChartCenter: darkThemeColors.basic050,
   pieChartEmpty: darkThemeColors.basic060,
   homeEnsNameIcon: darkThemeColors.basic010,
-  buttonPrimaryBackground: darkThemeColors.primaryAccent130,
+  buttonPrimaryBackground: darkThemeColors.primaryAccent220,
   buttonPrimaryTitle: darkThemeColors.basic090,
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
+  tabUnderline: darkThemeColors.primaryAccent220,
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
   recieveModalWarningText: '#62688f',
@@ -204,21 +184,9 @@ export const themedColors = {
     lightTheme: semanticLightThemeColors.control,
     darkTheme: semanticDarkThemeColors.control,
   }),
-  warning: theme('current', {
-    lightTheme: semanticLightThemeColors.warning,
-    darkTheme: semanticDarkThemeColors.warning,
-  }),
   indicator: theme('current', {
     lightTheme: semanticLightThemeColors.indicator,
     darkTheme: semanticDarkThemeColors.indicator,
-  }),
-  userAvatar: theme('current', {
-    lightTheme: semanticLightThemeColors.userAvatar,
-    darkTheme: semanticDarkThemeColors.userAvatar,
-  }),
-  legacyWallet: theme('current', {
-    lightTheme: semanticLightThemeColors.legacyWallet,
-    darkTheme: semanticDarkThemeColors.legacyWallet,
   }),
   smartWallet: theme('current', {
     lightTheme: semanticLightThemeColors.smartWallet,
@@ -236,14 +204,6 @@ export const themedColors = {
     lightTheme: semanticLightThemeColors.PPNSurface,
     darkTheme: semanticDarkThemeColors.PPNSurface,
   }),
-  smartWalletText: theme('current', {
-    lightTheme: semanticLightThemeColors.smartWalletText,
-    darkTheme: semanticDarkThemeColors.smartWalletText,
-  }),
-  smartWalletSurface: theme('current', {
-    lightTheme: semanticLightThemeColors.smartWalletSurface,
-    darkTheme: semanticDarkThemeColors.smartWalletSurface,
-  }),
   danger: theme('current', {
     lightTheme: semanticLightThemeColors.danger,
     darkTheme: semanticDarkThemeColors.danger,
@@ -252,45 +212,21 @@ export const themedColors = {
     lightTheme: semanticLightThemeColors.helpIcon,
     darkTheme: semanticDarkThemeColors.helpIcon,
   }),
-  notice: theme('current', {
-    lightTheme: semanticLightThemeColors.notice,
-    darkTheme: semanticDarkThemeColors.notice,
-  }),
   activeTabBarIcon: theme('current', {
     lightTheme: semanticLightThemeColors.activeTabBarIcon,
     darkTheme: semanticDarkThemeColors.activeTabBarIcon,
-  }),
-  inactiveTabBarIcon: theme('current', {
-    lightTheme: semanticLightThemeColors.inactiveTabBarIcon,
-    darkTheme: semanticDarkThemeColors.inactiveTabBarIcon,
   }),
   buttonSecondaryBackground: theme('current', {
     lightTheme: semanticLightThemeColors.buttonSecondaryBackground,
     darkTheme: semanticDarkThemeColors.buttonSecondaryBackground,
   }),
-  synthetic: theme('current', {
-    lightTheme: semanticLightThemeColors.synthetic,
-    darkTheme: semanticDarkThemeColors.synthetic,
-  }),
   transactionReceivedIcon: theme('current', {
     lightTheme: semanticLightThemeColors.transactionReceivedIcon,
     darkTheme: semanticDarkThemeColors.transactionReceivedIcon,
   }),
-  iconBackground: theme('current', {
-    lightTheme: semanticLightThemeColors.iconBackground,
-    darkTheme: semanticDarkThemeColors.iconBackground,
-  }),
   link: theme('current', {
     lightTheme: semanticLightThemeColors.link,
     darkTheme: semanticDarkThemeColors.link,
-  }),
-  avatarPlaceholderBackground: theme('current', {
-    lightTheme: semanticLightThemeColors.avatarPlaceholderBackground,
-    darkTheme: semanticDarkThemeColors.avatarPlaceholderBackground,
-  }),
-  avatarPlaceholderText: theme('current', {
-    lightTheme: semanticLightThemeColors.avatarPlaceholderText,
-    darkTheme: semanticDarkThemeColors.avatarPlaceholderText,
   }),
   labelTertiary: theme('current', {
     lightTheme: semanticLightThemeColors.labelTertiary,
