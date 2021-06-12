@@ -87,22 +87,22 @@ export const accountWalletBalancePerChainSelector: Selector<ChainRecord<BigNumbe
 
 export const accountDepositsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
-  return root.totalBalances.data[accountId].deposits ?? {};
+  return root.totalBalances.data[accountId]?.deposits ?? {};
 };
 
 export const accountInvestmentsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
-  return root.totalBalances.data[accountId].investments ?? {};
+  return root.totalBalances.data[accountId]?.investments ?? {};
 };
 
 export const accountLiquidityPoolsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
-  return root.totalBalances.data[accountId].liquidityPools ?? {};
+  return root.totalBalances.data[accountId]?.liquidityPools ?? {};
 };
 
 export const accountRewardsBalancePerChainSelector = (root: RootReducerState) => {
   const accountId = activeAccountIdSelector(root);
-  return root.totalBalances.data[accountId].rewards ?? {};
+  return root.totalBalances.data[accountId]?.rewards ?? {};
 };
 
 const calculateWalletAssetsFiatValue = (
