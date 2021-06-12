@@ -42,6 +42,7 @@ import { getReceiverWithEnsName } from 'utils/contacts';
 // constants
 import { PLR } from 'constants/assetsConstants';
 import { ACCOUNTS, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // models, types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -220,6 +221,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         symbol: assetCode,
         contractAddress,
         decimals: decimals || 18,
+        chain: CHAIN.ETHEREUM,
       };
 
       this.formSubmitComplete(() => {

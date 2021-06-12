@@ -55,6 +55,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -208,13 +209,14 @@ class FundTank extends React.Component<Props, State> {
     // fee
     const gasToken = getGasToken(useGasToken, feeInfo);
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
-    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       amount: currentValue,
       decimals,
       symbol: token,
       txFeeInWei,
       gasToken,
-    });
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // max amount

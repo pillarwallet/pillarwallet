@@ -45,6 +45,7 @@ import {
   SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT,
   SET_FETCHING_LENDING_DEPOSITED_ASSETS,
 } from 'constants/lendingConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -156,7 +157,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
       data,
     }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionsAction(transactions));
+    dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM));
   };
 };
 
@@ -178,6 +179,6 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
       depositedAsset,
     );
 
-    dispatch(estimateTransactionAction({ to, value, data }));
+    dispatch(estimateTransactionAction({ to, value, data }, CHAIN.ETHEREUM));
   };
 };

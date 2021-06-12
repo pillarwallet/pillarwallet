@@ -17,22 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import * as React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl } from 'react-native';
-import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Image from 'components/Image';
 import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
@@ -49,54 +46,65 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
 import { spacing, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
-import { getBalance, getRate } from 'utils/assets';
+import {
+  getAssetsAsList,
+  getBalance,
+  getRate,
+} from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
-import { getTokenTransactionsFromHistory } from 'utils/history';
+import {
+  getHistoryEventsFromTransactions,
+  getTokenTransactionsFromHistory,
+} from 'utils/history';
+import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
 // selectors
-import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+  supportedAssetsSelector,
+} from 'selectors';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets, Asset, Rates, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
+import type { Transaction } from 'models/Transaction';
+import type { ChainRecord } from 'models/Chain';
+
 
 type Props = {
   fetchAssetsBalances: () => void,
-  assets: Assets,
-  balances: WalletAssetsBalances,
-  rates: Object,
-  navigation: NavigationScreenProp<*>,
+  accountAssets: Assets,
+  accountAssetsBalances: CategoryBalancesPerChain,
+  rates: Rates,
   baseFiatCurrency: ?string,
-  resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,
-  paymentNetworkBalances: WalletAssetsBalances,
-  history: Object[],
-  availableStake: number,
+  accountHistory: ChainRecord<Transaction[]>,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
   activeAccountAddress: string,
+  supportedAssets: Asset[],
 };
 
 const AssetCardWrapper = styled.View`
@@ -126,7 +134,7 @@ const ValueWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.basic000 : theme.colors.basic010};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -145,217 +153,187 @@ const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
 
-const SyntheticAssetIcon = styled(Image)`
-  width: 12px;
-  height: 24px;
-  margin-right: 4px;
-  margin-top: 1px;
-  tint-color: ${({ theme }) => theme.colors.basic000};
-`;
+const AssetScreen = ({
+  getExchangeSupportedAssets,
+  exchangeSupportedAssets,
+  activeAccountAddress,
+  rates,
+  fetchAssetsBalances,
+  baseFiatCurrency,
+  smartWalletState,
+  accounts,
+  accountHistory,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
+  accountAssetsBalances,
+  activeAccount,
+  accountAssets,
+  supportedAssets,
+}: Props) => {
+  const navigation = useNavigation();
 
-const lightningIcon = require('assets/icons/icon_lightning.png');
-
-class AssetScreen extends React.Component<Props> {
-  forceRender = false;
-
-  componentDidMount() {
-    const {
-      navigation,
-      getExchangeSupportedAssets,
-      exchangeSupportedAssets,
-    } = this.props;
-    const { resetHideRemoval } = navigation.state.params;
-    if (resetHideRemoval) resetHideRemoval();
+  useEffect(() => {
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
-  }
+  }, []);
 
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqual(this.props, nextProps);
-    const isFocused = this.props.navigation.isFocused();
+  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const { token, chain } = assetData;
 
-    if (!isFocused) {
-      if (!isEq) this.forceRender = true;
-      return false;
-    }
+  const isSupportedByExchange = useMemo(
+    () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
+    [exchangeSupportedAssets, token],
+  );
 
-    if (this.forceRender) {
-      this.forceRender = false;
-      return true;
-    }
+  const tokenTransactions = useMemo(
+    () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
+    [accountHistory, accounts, token, chain],
+  );
 
-    return !isEq;
-  }
+  const transactions = useMemo(
+    () => {
+      if (isArchanovaAccount(activeAccount)) {
+        return tokenTransactions.filter(({
+          isPPNTransaction = false,
+          from,
+          to,
+          tag,
+        }) => {
+          const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
+            && isArchanovaAccountAddress(to, accounts);
 
-  goToSendTokenFlow = () => {
-    const { navigation } = this.props;
-    const { assetData } = navigation.state.params;
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
-  };
+          return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+            && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
+            && !isAaveTransactionTag(tag);
+        });
+      }
 
-  goToExchangeFlow = (fromAssetCode: ?string, toAssetCode?: string) => {
-    this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
-  };
+      if (isEtherspotAccount(activeAccount)) {
+        return getHistoryEventsFromTransactions(
+          tokenTransactions,
+          activeAccountAddress,
+          getAssetsAsList(accountAssets),
+          supportedAssets,
+        );
+      }
 
-  openAddFundsModal = () => {
-    const { navigation, activeAccountAddress } = this.props;
-    const { assetData: { token } } = navigation.state.params;
-
-    Modal.open(() => (
-      <AddFundsModal
-        token={token}
-        receiveAddress={activeAccountAddress}
-      />
-    ));
-  }
-
-  render() {
-    const {
-      rates,
-      balances,
-      paymentNetworkBalances,
-      fetchAssetsBalances,
-      baseFiatCurrency,
-      navigation,
-      smartWalletState,
+      return [];
+    },
+    [
+      tokenTransactions,
       accounts,
-      history,
-      availableStake,
-      exchangeSupportedAssets,
-      isFetchingUniswapTokens,
-      uniswapTokensGraphQueryFailed,
-      getExchangeSupportedAssets,
-    } = this.props;
-    const { assetData } = this.props.navigation.state.params;
-    const { token, isSynthetic = false } = assetData;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const tokenRate = getRate(rates, token, fiatCurrency);
-    const balance = getBalance(balances, token);
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const isWalletEmpty = !isSynthetic
-      ? balance <= 0
-      : (paymentNetworkBalance <= 0 && availableStake < 0);
-    const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const displayAmount = !isSynthetic
-      ? balance
-      : paymentNetworkBalance;
-    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
+      activeAccount,
+      accountAssets,
+      activeAccountAddress,
+      supportedAssets,
+    ],
+  );
 
-    const {
-      listed: isListed = true,
-      send: isAssetConfigSendActive = true,
-      receive: isReceiveActive = true,
-      disclaimer,
-    } = assetsConfig[token] || {};
+  const goToSendTokenFlow = () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
 
-    const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
-    const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
+  const goToExchangeFlowIfAvailable = () => {
+    if (!isSupportedByExchange) return;
+    navigation.navigate(EXCHANGE, { fromAssetCode: token });
+  };
 
-    const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);
+  const openAddFundsModal = () => Modal.open(() => (
+    <AddFundsModal
+      token={token}
+      receiveAddress={activeAccountAddress}
+    />
+  ));
 
-    const mainnetTransactions = tokenTransactions
-      .filter(({
-        isPPNTransaction = false,
-        from,
-        to,
-        tag,
-      }) => {
-        const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
-          && isArchanovaAccountAddress(to, accounts);
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const tokenRate = getRate(rates, token, fiatCurrency);
+  const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
+  const balance = getBalance(walletBalances, token);
+  const isWalletEmpty = balance <= 0;
+  const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
+  const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
-        return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-          && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
-          && !isAaveTransactionTag(tag);
-      });
+  const {
+    listed: isListed = true,
+    send: isAssetConfigSendActive = true,
+    receive: isReceiveActive = true,
+    disclaimer,
+  } = assetsConfig[token] || {};
 
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
-    const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
-    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
+  const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
+  const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
+  const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
-    // TODO: Here provide Etherspot transactions history.
-    const historyItems = [];
-
-    return (
-      <ContainerWithHeader
-        navigation={navigation}
-        headerProps={{
-          centerItems: [{ title: assetData.name }],
-        }}
-        inset={{ bottom: 0 }}
-      >
-        <ScrollWrapper
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { fetchAssetsBalances(); }}
-            />
-          }
-        >
-          <AssetPattern
-            token={assetData.token}
-            icon={assetData.patternIcon}
-            isListed={isListed}
+  return (
+    <ContainerWithHeader
+      navigation={navigation}
+      headerProps={{
+        centerItems: [{ title: assetData.name }],
+      }}
+      inset={{ bottom: 0 }}
+    >
+      <ScrollWrapper
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => { fetchAssetsBalances(); }}
           />
-          <DataWrapper>
-            <ValueWrapper>
-              {!!isSynthetic &&
-                <SyntheticAssetIcon source={lightningIcon} />
-              }
-              <TokenValue isSynthetic={isSynthetic}>
-                {t('tokenValue', { value: displayAmount, token })}
-              </TokenValue>
-            </ValueWrapper>
-            {!!isListed &&
-              <ValuesWrapper>
-                <ValueInFiat>
-                  {fiatAmount}
-                </ValueInFiat>
-              </ValuesWrapper>
-            }
-            {!isListed &&
-            <Disclaimer>
-              {disclaimer}
-            </Disclaimer>
-            }
-          </DataWrapper>
-          <AssetCardWrapper>
-            <AssetButtons
-              onPressReceive={this.openAddFundsModal}
-              onPressSend={this.goToSendTokenFlow}
-              onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
-              noBalance={isWalletEmpty}
-              isSendDisabled={!isSendActive}
-              isReceiveDisabled={!isReceiveActive}
-              showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
-            />
-            {!isSendActive && <SWActivationCard />}
-          </AssetCardWrapper>
-
-          {!!relatedTransactions.length && (
-            <ActivityFeed
-              feedTitle={t('title.transactions')}
-              navigation={navigation}
-              feedData={relatedTransactions}
-              isAssetView
-            />
-          )}
-
-          {!!historyItems.length && (
-            <HistoryList items={historyItems} />
-          )}
-        </ScrollWrapper>
-        <RetryGraphQueryBox
-          message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
-          hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
-          isFetching={isFetchingUniswapTokens}
-          onRetry={getExchangeSupportedAssets}
+        }
+      >
+        <AssetPattern
+          token={assetData.token}
+          icon={assetData.patternIcon}
+          isListed={isListed}
         />
-      </ContainerWithHeader>
-    );
-  }
-}
+        <DataWrapper>
+          <ValueWrapper>
+            <TokenValue>{t('tokenValue', { value: balance, token })}</TokenValue>
+          </ValueWrapper>
+          {!!isListed &&
+            <ValuesWrapper>
+              <ValueInFiat>
+                {fiatAmount}
+              </ValueInFiat>
+            </ValuesWrapper>
+          }
+          {!isListed &&
+          <Disclaimer>
+            {disclaimer}
+          </Disclaimer>
+          }
+        </DataWrapper>
+        <AssetCardWrapper>
+          <AssetButtons
+            onPressReceive={openAddFundsModal}
+            onPressSend={goToSendTokenFlow}
+            onPressExchange={goToExchangeFlowIfAvailable}
+            noBalance={isWalletEmpty}
+            isSendDisabled={!isSendActive}
+            isReceiveDisabled={!isReceiveActive}
+          />
+          {!isSendActive && <SWActivationCard />}
+        </AssetCardWrapper>
+        {!!transactions.length && (
+          <>
+            {isArchanovaAccount(activeAccount) && (
+              <ActivityFeed
+                feedTitle={t('title.transactions')}
+                navigation={navigation}
+                feedData={transactions}
+                isAssetView
+              />
+            )}
+            {/* $FlowFixMe: should be fine after Archanova history mappings are discarded */}
+            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
+          </>
+        )}
+      </ScrollWrapper>
+      <RetryGraphQueryBox
+        message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
+        hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
+        isFetching={isFetchingUniswapTokens}
+        onRetry={getExchangeSupportedAssets}
+      />
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   rates: { data: rates },
@@ -378,13 +356,12 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletAssetsBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
-  history: accountHistorySelector,
-  availableStake: availableStakeSelector,
-  assets: accountAssetsSelector,
+  accountAssetsBalances: accountAssetsBalancesSelector,
+  accountHistory: accountHistorySelector,
+  accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
+  supportedAssets: supportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -393,9 +370,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAssetsBalances: () => {
-    dispatch(fetchAssetsBalancesAction());
-  },
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 

@@ -44,15 +44,17 @@ import { spacing } from 'utils/variables';
 
 // Types
 import { type CollectibleTransactionEvent, EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: CollectibleTransactionEvent,
+  chain: Chain,
 |};
 
-function CollectibleTransactionEventDetails({ event }: Props) {
+function CollectibleTransactionEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const colors = useThemeColors();
@@ -60,7 +62,7 @@ function CollectibleTransactionEventDetails({ event }: Props) {
   const ensRegistry = useRootSelector((root) => root.ensRegistry.data);
   const isPending = event.status === TRANSACTION_STATUS.PENDING;
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   if (event.type === EVENT_TYPE.COLLECTIBLE_RECEIVED) {
     const ensName = findEnsNameCaseInsensitive(ensRegistry, event.fromAddress);

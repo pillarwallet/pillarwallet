@@ -135,7 +135,7 @@ const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Pro
     <>
       <FlatList
         data={collectibles}
-        keyExtractor={(it) => `${it.assetContract}${it.id}`}
+        keyExtractor={(it) => `${it.contractAddress}-${it.id}`}
         renderItem={renderCollectible}
         numColumns={2}
         style={{ flexGrow: 1 }}

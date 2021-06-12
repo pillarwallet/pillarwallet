@@ -22,6 +22,7 @@ import * as React from 'react';
 
 // Types
 import { type Event, EVENT_TYPE } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
@@ -34,25 +35,26 @@ import BadgeReceivedEventDetails from './layouts/BadgeReceivedEventDetails';
 
 type Props = {|
   event: Event,
+  chain: Chain,
 |};
 
-function HistoryEventDetails({ event }: Props) {
+function HistoryEventDetails({ event, chain }: Props) {
   switch (event.type) {
     case EVENT_TYPE.TOKEN_RECEIVED:
     case EVENT_TYPE.TOKEN_SENT:
-      return <TokenTransactionEventDetails event={event} />;
+      return <TokenTransactionEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.COLLECTIBLE_RECEIVED:
     case EVENT_TYPE.COLLECTIBLE_SENT:
-      return <CollectibleTransactionEventDetails event={event} />;
+      return <CollectibleTransactionEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.TOKEN_EXCHANGE:
-      return <TokenExchangeEventDetails event={event} />;
+      return <TokenExchangeEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.EXCHANGE_FROM_FIAT:
-      return <ExchangeFromFiatEventDetails event={event} />;
+      return <ExchangeFromFiatEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.WALLET_CREATED:
     case EVENT_TYPE.WALLET_ACTIVATED:
-      return <WalletEventDetails event={event} />;
+      return <WalletEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.ENS_NAME_REGISTERED:
-      return <EnsNameEventDetails event={event} />;
+      return <EnsNameEventDetails event={event} chain={chain} />;
     case EVENT_TYPE.BADGE_RECEIVED:
       return <BadgeReceivedEventDetails event={event} />;
     default:

@@ -564,14 +564,15 @@
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
       "unsupportedAction": "We are sorry, but we do not support this action yet",
-      "noMatchingConnector": "No matching Wallet Connect connectors found",
+      "noMatchingConnector": "No matching WalletConnect connectors found",
       "requestNotFound": "Request not found",
       "requestRejected": "Call Request Rejected",
-      "invalidSession": "Invalid Wallet Connect session",
+      "invalidSession": "Invalid WalletConnect session",
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
-      "invalidRequest": "Invalid Wallet Connect request"
+      "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
+      "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
@@ -581,7 +582,10 @@
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
       "rari": "Can't connect to Rari service.",
       "liquidityPools": "Can't connect to Liquidity Pools service"
-    }
+    },
+    "unableToSendTransaction": "Unable to send transaction. Please try again.",
+    "unableToSetTransaction": "Unable to set transaction. Please try again.",
+    "unableToResetTransactions": "Unable to reset transactions. Please try again."
   },
 
   "home": {
@@ -629,7 +633,7 @@
 
   "walletConnect": {
     "home": {
-      "title": "Wallet Connect",
+      "title": "WalletConnect",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}."
     },
@@ -1257,7 +1261,7 @@
       "activeConnections": "Active сonnections",
       "connect": "Connect",
       "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "Wallet Connect",
+      "walletConnect": "WalletConnect",
       "requestType": {
         "call": "Call Request",
         "transaction": "Transaction Request",
@@ -1386,7 +1390,7 @@
 
   "transactions": {
     "title": {
-      "sendScreen": "Send",
+      "sendScreen": "Send on {{chain}}",
       "valueSelectorModal": "Choose asset",
       "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",
@@ -1434,7 +1438,8 @@
       "youAreSending": "You are sending",
       "fees": "Fees",
       "allowancePlusEthFee": "Allowance + Ethereum fee",
-      "migratingFrom": "migrating from"
+      "migratingFrom": "migrating from",
+      "network": "Network"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1496,7 +1501,7 @@
     "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
     "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
     "walletConnectSessionTimedOut": "Request timeout. Give it another try.",
-    "walletConnectSmartWalletNotActive": "Can't use Wallet Connect without Smart Wallet activated",
+    "walletConnectSmartWalletNotActive": "Can't use WalletConnect without Smart Wallet activated",
     "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
     "incorrectQRCode": "QR code is incorrect.",
     "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",
@@ -1569,11 +1574,11 @@
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
     "noActiveAccountFound": "No active account found.",
-    "walletConnectFailed": "Wallet Connect failed.",
+    "walletConnectFailed": "WalletConnect failed.",
     "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
     "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
-    "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
-    "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
+    "walletConnectRequestRejected": "WalletConnect Call Request rejected.",
+    "walletConnectRequestApproved": "WalletConnect Call Request approved.",
     "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed.",
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",

@@ -140,7 +140,8 @@
         "uniqBy",
         "useTranslationWithPrefix",
         "updateAppSettingsAction",
-        "variants"
+        "variants",
+        "useNavigationParam"
       ],
       "ignoreAttribute": [
         "align",

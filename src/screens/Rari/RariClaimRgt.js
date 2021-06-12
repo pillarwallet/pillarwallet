@@ -40,6 +40,7 @@ import { resetEstimateTransactionAction } from 'actions/transactionEstimateActio
 import { ETH } from 'constants/assetsConstants';
 import { RARI_CLAIM_RGT_REVIEW } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
@@ -101,13 +102,14 @@ const RariClaimRgtScreen = ({
 
   let notEnoughForFee = false;
   if (feeInfo && parseFloat(assetValue)) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       amount: assetValue,
       decimals: RARI_GOVERNANCE_TOKEN_DATA.decimals,
       symbol: RARI_GOVERNANCE_TOKEN_DATA.symbol,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

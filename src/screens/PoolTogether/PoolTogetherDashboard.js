@@ -48,9 +48,10 @@ import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Transaction } from 'models/Transaction';
 
 // selectors
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // utils
@@ -92,7 +93,7 @@ type Props = {
   fetchPoolStats: (symbol: string) => void,
   isFetchingPoolStats: boolean,
   theme: Theme,
-  history: Object[],
+  history: Transaction[],
   poolStatsGraphQueryFailed: { [symbol: string]: boolean },
 };
 
@@ -343,7 +344,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
+  history: archanovaAccountEthereumHistorySelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
 });
 

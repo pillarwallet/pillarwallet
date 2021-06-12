@@ -19,7 +19,14 @@
 */
 
 import { createSelector } from 'reselect';
+
+// types
+import type { ChainRecord } from 'models/Chain';
+import type { CollectibleTransaction } from 'models/Collectible';
+
+// selectors
 import { collectiblesSelector, collectiblesHistorySelector, activeAccountIdSelector } from './selectors';
+
 
 export const accountCollectiblesSelector = createSelector(
   collectiblesSelector,
@@ -33,18 +40,9 @@ export const accountCollectiblesSelector = createSelector(
 export const accountCollectiblesHistorySelector = createSelector(
   collectiblesHistorySelector,
   activeAccountIdSelector,
-  (history, activeAccountId) => {
-    if (!activeAccountId) return [];
-    return history[activeAccountId] || [];
-  },
-);
-
-export const combinedCollectiblesHistorySelector = createSelector(
-  collectiblesHistorySelector,
-  (history) => {
-    return Object.keys(history).reduce((historyArray, account) => {
-      return [...historyArray, ...history[account]];
-    }, []);
+  (history, activeAccountId): ChainRecord<CollectibleTransaction[]> => {
+    if (!activeAccountId) return { ethereum: [] };
+    return history[activeAccountId];
   },
 );
 

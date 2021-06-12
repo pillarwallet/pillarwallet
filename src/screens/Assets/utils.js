@@ -25,13 +25,13 @@ import { LayoutAnimation } from 'react-native';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 
 // Types
-import type { Asset } from 'models/Asset';
+import type { Asset, AssetDataNavigationParam } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 
 /**
  * Extracted from AssetList.js. Asset screen expects specific but untyped format of data as navigation param.
  */
-export function buildAssetDataNavigationParam(asset: Asset) {
+export function buildAssetDataNavigationParam(asset: Asset, chain: Chain): AssetDataNavigationParam {
   const { symbol, name, iconUrl, decimals } = asset;
 
   return {
@@ -44,6 +44,7 @@ export function buildAssetDataNavigationParam(asset: Asset) {
     imageUrl: iconUrl,
     patternIcon: iconUrl,
     decimals,
+    chain,
   };
 }
 

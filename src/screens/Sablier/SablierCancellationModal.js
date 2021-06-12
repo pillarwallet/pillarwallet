@@ -28,6 +28,7 @@ import { createStructuredSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -99,11 +100,12 @@ const SablierCancellationModal = ({
 
   let notEnoughForFee;
   if (feeInfo) {
-    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+    const balanceCheckTransaction = {
       ...transactionPayload,
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
-    });
+    };
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
   }
 
   const errorMessage = notEnoughForFee

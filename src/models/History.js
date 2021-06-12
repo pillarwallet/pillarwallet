@@ -18,7 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { TokenValue, FiatValue } from 'models/Value';
+// types
+import type { FiatValue, TokenValue } from 'models/Value';
+import type { Transaction } from 'models/Transaction';
+import type { ChainRecord } from 'models/Chain';
 
 /**
  * Enum of all supported event types.
@@ -177,3 +180,11 @@ export type BadgeReceivedEvent = {|
   title?: string,
   iconUrl: ?string,
 |};
+
+export type TransactionsStore = {
+  [accountId: string]: ChainRecord<Transaction[]>,
+};
+
+export type HistoryLastSyncIds = {
+  [accountId: string]: string,
+};

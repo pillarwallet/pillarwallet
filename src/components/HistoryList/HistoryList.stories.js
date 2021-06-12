@@ -22,6 +22,9 @@ import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import { storiesOf } from '@storybook/react-native';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Types
 import { EVENT_TYPE, TRANSACTION_STATUS, type Event } from 'models/History';
 
@@ -31,7 +34,7 @@ import HistoryList from './HistoryList';
 const stories = storiesOf('HistoryList', module).addDecorator(WithThemeDecorator);
 
 stories.add('basic transactions', () => {
-  return <HistoryList items={basicItems} />;
+  return <HistoryList items={basicItems} chain={CHAIN.ETHEREUM} />;
 });
 
 const basicItems: Event[] = [

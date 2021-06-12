@@ -25,6 +25,7 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { Migrator } from '@etherspot/archanova-migrator';
 
 // components
 import Toast from 'components/Toast';
@@ -54,7 +55,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
-  ADD_TRANSACTION,
+  ADD_HISTORY_TRANSACTION,
   SET_HISTORY,
   TX_CONFIRMED_STATUS,
 } from 'constants/historyConstants';
@@ -98,7 +99,7 @@ import {
   activeAccountIdSelector,
   supportedAssetsSelector,
 } from 'selectors';
-import { accountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
@@ -110,16 +111,18 @@ import type {
 } from 'models/ArchanovaWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { SyntheticTransactionExtra, TransactionStatus } from 'models/Transaction';
+import type { TransactionStatus } from 'models/Transaction';
 
 // utils
 import {
   buildHistoryTransaction,
-  updateAccountHistory,
+  getCrossChainAccountHistory,
+  updateAccountHistoryForChain,
   updateHistoryRecord,
 } from 'utils/history';
 import {
   findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
   getAccountAddress,
   getAccountId,
   getActiveAccount,
@@ -431,8 +434,8 @@ export const fetchVirtualAccountBalanceAction = () => {
 
 export const managePPNInitFlagAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountHistory = accountHistorySelector(getState());
-    const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+    const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
+    const hasPpnPayments = accountEthereumHistory.some(({ isPPNTransaction }) => isPPNTransaction);
     if (!hasPpnPayments) return;
 
     await dispatch(fetchVirtualAccountBalanceAction());
@@ -462,11 +465,13 @@ export const syncVirtualAccountTransactionsAction = () => {
 
     // filter out already stored payments
     const { history: { data: currentHistory } } = getState();
-    const accountHistory = currentHistory[accountId] || [];
+
+    // Archanova is Ethereum only
+    const existingTransactions = currentHistory[accountId]?.[CHAIN.ETHEREUM] || [];
 
     // new or updated payment is one that doesn't exist in history contain or its payment state was updated
     const newOrUpdatedPayments = payments.filter(
-      ({ hash: paymentHash, state: prevStateInPPN }) => !accountHistory.some(
+      ({ hash: paymentHash, state: prevStateInPPN }) => existingTransactions.some(
         ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
       ),
     );
@@ -480,7 +485,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       const paymentHash = get(payment, 'hash');
       const paymentType = get(payment, 'paymentType');
       const paymentExtra = get(payment, 'extra');
-      let additionalTransactionData = {};
+      let transactionExtra;
 
       if (isValidSyntheticExchangePayment(paymentType, paymentExtra)) {
         const {
@@ -500,14 +505,13 @@ export const syncVirtualAccountTransactionsAction = () => {
           if (!isEmpty(syntheticAsset)) {
             const { decimals, symbol: syntheticSymbol } = syntheticAsset;
             const syntheticToAmount = formatUnits(syntheticValue, decimals);
-            const syntheticTransactionExtra: SyntheticTransactionExtra = {
+            transactionExtra = {
               syntheticTransaction: {
                 toAmount: Number(syntheticToAmount),
                 toAssetCode: syntheticSymbol,
                 toAddress: syntheticRecipient,
               },
             };
-            additionalTransactionData = { extra: syntheticTransactionExtra };
           } else {
             // there shouldn't be any case where synthetic asset address is not supported by wallet
             reportLog('Unable to get wallet supported asset from synthetic asset address', { syntheticAssetAddress });
@@ -521,7 +525,9 @@ export const syncVirtualAccountTransactionsAction = () => {
       }
 
       // if transaction exists this will update only its status and stateInPPN
-      const existingTransaction = accountHistory.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      const existingTransaction = existingTransactions.find(({
+        hash,
+      }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -534,7 +540,7 @@ export const syncVirtualAccountTransactionsAction = () => {
         ...existingTransaction,
         status: TX_CONFIRMED_STATUS,
         stateInPPN,
-        ...additionalTransactionData,
+        extra: transactionExtra,
       });
     });
 
@@ -548,8 +554,13 @@ export const syncVirtualAccountTransactionsAction = () => {
     }
 
     // combine with account history & save
-    const updatedAccountHistory = [...transformedNewPayments, ...accountHistory];
-    const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    const updatedAccountHistory = [...transformedNewPayments, ...existingTransactions];
+    const updatedHistory = updateAccountHistoryForChain(
+      currentHistory,
+      accountId,
+      CHAIN.ETHEREUM,
+      updatedAccountHistory,
+    );
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
@@ -664,7 +675,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
-      const txFromHistory = currentHistory[archanovaAccountAddress].find(tx => tx.hash === txHash);
+      const allAccountHistory = getCrossChainAccountHistory(currentHistory[archanovaAccountAddress]);
+      const txFromHistory = allAccountHistory.find(tx => tx.hash === txHash);
+
       const getPaymentFromHistory = () => {
         const symbol = get(txFromHistory, 'extra.symbol', '');
         const amount = get(txFromHistory, 'extra.amount');
@@ -787,7 +800,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             payload: updatedHistory,
           });
           dispatch(afterHistoryUpdatedAction());
-          currentHistory = getState().history.data;
         }
       }
     }
@@ -976,7 +988,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
       });
 
     if (txHash) {
-      const historyTx = buildHistoryTransaction({
+      const transaction = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
@@ -986,10 +998,11 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
       });
 
       dispatch({
-        type: ADD_TRANSACTION,
+        type: ADD_HISTORY_TRANSACTION,
         payload: {
           accountId,
-          historyTx,
+          transaction,
+          chain: CHAIN.ETHEREUM,
         },
       });
 
@@ -1088,7 +1101,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
       });
 
     if (txHash) {
-      const historyTx = buildHistoryTransaction({
+      const transaction = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
@@ -1098,10 +1111,11 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
       });
 
       dispatch({
-        type: ADD_TRANSACTION,
+        type: ADD_HISTORY_TRANSACTION,
         payload: {
           accountId,
-          historyTx,
+          transaction,
+          chain: CHAIN.ETHEREUM,
         },
       });
 
@@ -1146,14 +1160,14 @@ export const fetchAvailableTxToSettleAction = () => {
     }
 
     const activeAccountAddress = activeAccountAddressSelector(getState());
-    const accountHistory = accountHistorySelector(getState());
+    const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
     const accountAssets = accountAssetsSelector(getState());
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await archanovaService.getAccountPaymentsToSettle(activeAccountAddress);
 
     const txToSettle = payments
-      .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountHistory))
+      .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountEthereumHistory))
       .map((item) => {
         const { decimals = 18 } = accountAssets[item.token] || {};
         let senderAddress = get(item, 'sender.account.address', '');
@@ -1268,7 +1282,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
         return { symbol, value: parsedValue, hash };
       });
 
-      const historyTx = buildHistoryTransaction({
+      const transaction = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
@@ -1279,10 +1293,11 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       });
 
       dispatch({
-        type: ADD_TRANSACTION,
+        type: ADD_HISTORY_TRANSACTION,
         payload: {
           accountId,
-          historyTx,
+          transaction,
+          chain: CHAIN.ETHEREUM,
         },
       });
 
@@ -1291,7 +1306,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
         payload: txHash,
       });
 
-      // history state is updated with ADD_TRANSACTION, update in storage
+      // history state is updated with ADD_HISTORY_TRANSACTION, update in storage
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
@@ -1411,7 +1426,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
       asset: ETH,
       tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
     });
-    dispatch(insertTransactionAction(historyTx, accountId));
+    dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
 
     dispatch(fetchConnectedArchanovaAccountAction());
   };
@@ -1447,7 +1462,7 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
       asset: ETH,
       tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
     });
-    dispatch(insertTransactionAction(historyTx, accountId));
+    dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
 
     await dispatch(fetchConnectedArchanovaAccountAction());
   };
@@ -1493,7 +1508,7 @@ export const switchToGasTokenRelayerAction = () => {
       asset: ETH,
       tag: ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
     });
-    dispatch(insertTransactionAction(historyTx, accountId));
+    dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
     dispatch(fetchConnectedArchanovaAccountAction());
   };
 };
@@ -1627,9 +1642,14 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
 
     const activeAccount = getActiveAccount(accounts);
     const archanovaAccount = findFirstArchanovaAccount(accounts);
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
     const { transactionEstimate: { feeInfo } } = getState();
 
-    if (!rawTransactions || !activeAccount || !archanovaAccount || !feeInfo) {
+    if (!rawTransactions
+      || !activeAccount
+      || !archanovaAccount
+      || !etherspotAccount
+      || !feeInfo) {
       Toast.show({
         message: t('toast.ensMigrationCannotProceed'),
         emoji: 'hushed',
@@ -1664,13 +1684,19 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
       return;
     }
 
-    // archanova
-    const accountAddress = getAccountAddress(activeAccount);
-    const accountId = getAccountAddress(activeAccount);
+    // active is archanova at this point
+    const etherspotAccountAddress = getAccountAddress(etherspotAccount);
+    const archanovaAccountAddress = getAccountAddress(activeAccount);
 
-    const historyTx = buildHistoryTransaction({
-      from: accountAddress,
-      to: accountAddress, // TODO: self?
+    const { migratorAddress } = new Migrator({
+      chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
+      archanovaAccount: archanovaAccountAddress,
+      etherspotAccount: etherspotAccountAddress,
+    });
+
+    const transaction = buildHistoryTransaction({
+      from: archanovaAccountAddress,
+      to: migratorAddress,
       hash,
       asset: ETH,
       value: 0,
@@ -1678,8 +1704,12 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
     });
 
     dispatch({
-      type: ADD_TRANSACTION,
-      payload: { accountId, historyTx },
+      type: ADD_HISTORY_TRANSACTION,
+      payload: {
+        accountId: getAccountId(activeAccount),
+        transaction,
+        chain: CHAIN.ETHEREUM,
+      },
     });
 
     statusCallback({ isSuccess: true, hash, error: null });

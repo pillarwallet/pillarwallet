@@ -49,7 +49,7 @@ import {
   paymentNetworkBalancesSelector,
   supportedAssetsSelector,
 } from './selectors';
-import { accountHistorySelector, archanovaAccountHistorySelector } from './history';
+import { archanovaAccountEthereumHistorySelector } from './history';
 import { accountAssetsSelector } from './assets';
 
 const ppnTrxTags = [
@@ -73,7 +73,7 @@ export const availableStakeSelector =
   ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => Number(paymentNetwork.availableStake);
 
 export const PPNIncomingTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
-  accountHistorySelector,
+  archanovaAccountEthereumHistorySelector,
   activeAccountAddressSelector,
   (history: Transaction[], activeAccountAddress: string) => {
     return history.filter(({ isPPNTransaction, to }) => !!isPPNTransaction && addressesEqual(to, activeAccountAddress));
@@ -81,14 +81,14 @@ export const PPNIncomingTransactionsSelector: ((state: RootReducerState) => Tran
 );
 
 export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
-  accountHistorySelector,
+  archanovaAccountEthereumHistorySelector,
   (history: Transaction[]) => {
     return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
   },
 );
 
 export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
-  archanovaAccountHistorySelector,
+  archanovaAccountEthereumHistorySelector,
   (history: Transaction[]) => {
     return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
   },
@@ -98,7 +98,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
   state: RootReducerState,
 ) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
-  accountHistorySelector,
+  archanovaAccountEthereumHistorySelector,
   supportedAssetsSelector,
   accountAssetsSelector,
   (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {

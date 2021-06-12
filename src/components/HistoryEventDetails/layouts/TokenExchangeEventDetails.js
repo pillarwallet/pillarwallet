@@ -43,15 +43,17 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { TokenExchangeEvent } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: TokenExchangeEvent,
+  chain: Chain,
 |};
 
-function TokenExchangeEventDetails({ event }: Props) {
+function TokenExchangeEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -62,7 +64,7 @@ function TokenExchangeEventDetails({ event }: Props) {
     navigation.navigate(EXCHANGE, { fromAssetCode: event.fromValue.symbol, toAssetCode: event.toValue.symbol });
   };
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   return (
     <BaseEventDetails

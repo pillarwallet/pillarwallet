@@ -34,6 +34,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import { ScrollWrapper, Spacing } from 'components/Layout';
@@ -102,10 +103,12 @@ const EnsMigrationConfirm = () => {
 
   const showFees = isEstimating || !!feeInfo;
 
-  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+  const balanceCheckTransaction = {
     txFeeInWei: feeInfo?.fee,
     gasToken: feeInfo?.gasToken,
-  });
+  };
+
+  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
 
   let errorMessage = isEnoughForFee
     ? estimateErrorMessage

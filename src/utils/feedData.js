@@ -24,7 +24,6 @@ import get from 'lodash.get';
 
 import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
-import type { CollectibleTrx } from 'models/Collectible';
 
 import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS, TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
@@ -39,7 +38,6 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual } from './assets';
-import { isCaseInsensitiveMatch, uniqBy } from './common';
 
 
 export function mapTransactionsHistory(
@@ -74,72 +72,48 @@ export function mapTransactionsHistory(
       };
     });
 
-  if (keepHashDuplicatesIfBetweenAccounts) {
-    const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
-    const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
+  if (!keepHashDuplicatesIfBetweenAccounts) return orderBy(concatedHistory, ['createdAt'], ['desc']);
 
-    const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
-      const { from: fromAddress, to: toAddress, hash } = historyItem;
-      const isTransactionFromUsersAccount = accountsAddresses
-        .some((userAddress) => addressesEqual(fromAddress, userAddress));
-      const isTransactionToUsersAccount = accountsAddresses
-        .some((userAddress) => addressesEqual(toAddress, userAddress));
-      const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+  const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
+  const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
 
-      if (eventWithSameHashExists) {
-        if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
-          return [...alteredHistory, {
-            ...historyItem,
-            accountType: getAccountTypeByAddress(toAddress, accounts),
-            isReceived: true,
-            betweenAccTrxDuplicate: true,
-            _id: `${historyItem._id}_duplicate`,
-            createdAt: historyItem.createdAt + 1,
-          }];
-        }
-        return alteredHistory;
-      } else if (duplicatePPN) {
-        const itemTag = get(historyItem, 'tag');
-        if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-          const duplicate = {
-            ...historyItem,
-            smartWalletEvent: true,
-            _id: `${historyItem._id}_duplicate`,
-            createdAt: historyItem.createdAt - 1,
-          };
-          return [...alteredHistory, duplicate, historyItem];
-        }
-        return [...alteredHistory, historyItem];
+  const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
+    const { from: fromAddress, to: toAddress, hash } = historyItem;
+    const isTransactionFromUsersAccount = accountsAddresses
+      .some((userAddress) => addressesEqual(fromAddress, userAddress));
+    const isTransactionToUsersAccount = accountsAddresses
+      .some((userAddress) => addressesEqual(toAddress, userAddress));
+    const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+
+    if (eventWithSameHashExists) {
+      if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
+        return [...alteredHistory, {
+          ...historyItem,
+          accountType: getAccountTypeByAddress(toAddress, accounts),
+          isReceived: true,
+          betweenAccTrxDuplicate: true,
+          _id: `${historyItem._id}_duplicate`,
+          createdAt: historyItem.createdAt + 1,
+        }];
+      }
+      return alteredHistory;
+    } else if (duplicatePPN) {
+      const itemTag = get(historyItem, 'tag');
+      if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+        const duplicate = {
+          ...historyItem,
+          smartWalletEvent: true,
+          _id: `${historyItem._id}_duplicate`,
+          createdAt: historyItem.createdAt - 1,
+        };
+        return [...alteredHistory, duplicate, historyItem];
       }
       return [...alteredHistory, historyItem];
-    }, []);
-    return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
-  }
+    }
+    return [...alteredHistory, historyItem];
+  }, []);
 
-  return uniqBy(concatedHistory, 'hash');
-}
-
-// extending OpenSea transaction data with BCX data
-export function mapOpenSeaAndBCXTransactionsHistory(
-  openSeaHistory: CollectibleTrx[],
-  BCXHistory: Object[],
-  keepDuplicates?: boolean,
-): CollectibleTrx[] {
-  const concatedCollectiblesHistory = openSeaHistory
-    .map(({ hash, ...rest }) => {
-      const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
-        return hash && isCaseInsensitiveMatch(hash, bcxHash);
-      });
-
-      return {
-        hash,
-        ...rest,
-        ...historyEntry,
-      };
-    }).sort((a, b) => b.createdAt - a.createdAt);
-
-  if (keepDuplicates) return concatedCollectiblesHistory;
-  return uniqBy(concatedCollectiblesHistory, 'hash');
+  return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
 }
 
 export type TransactionsGroup = {

@@ -21,9 +21,15 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { withTheme } from 'styled-components/native';
-import { GBP } from 'constants/assetsConstants';
 
+// constants
+import { GBP } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// components
 import { ValueInputComponent } from 'components/ValueInput';
+
+
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
@@ -74,15 +80,18 @@ const reduxMock = {
       icos: [],
     },
   ],
-  syntheticAssets: [],
-  balances: {
-    ETH: {
-      balance: '0.512345',
-      symbol: 'ETH',
-    },
-    PLR: {
-      balance: '54321',
-      symbol: 'ETH',
+  accountAssetsBalances: {
+    [CHAIN.ETHEREUM]: {
+      wallet: {
+        ETH: {
+          balance: '0.512345',
+          symbol: 'ETH',
+        },
+        PLR: {
+          balance: '54321',
+          symbol: 'ETH',
+        },
+      },
     },
   },
   rates: {

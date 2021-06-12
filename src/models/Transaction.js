@@ -19,11 +19,15 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+
+// types
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import type { AssetData } from 'models/Asset';
 import type { Value } from 'utils/common';
+import type { Chain } from 'models/Chain';
+
 
 export type TxSettlementItem = {
   symbol: string,
@@ -170,16 +174,7 @@ export type Transaction = {
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
   type?: string,
-  tranType?: string,
 }
-
-export type TransactionsStore = {
-  [accountId: string]: Transaction[],
-};
-
-export type HistoryLastSyncIds = {
-  [accountId: string]: string,
-};
 
 export type TransactionPayload = {
   gasLimit?: number,
@@ -204,6 +199,7 @@ export type TransactionPayload = {
   extra?: Object,
   usePPN?: boolean,
   sequentialTransactions?: TransactionPayload[],
+  chain?: Chain,
 };
 
 export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
