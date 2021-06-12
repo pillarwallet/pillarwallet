@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
+import { isEmpty } from 'lodash';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
@@ -42,8 +42,8 @@ import {
   SET_ACCOUNT_ASSETS_BALANCES,
   SET_FETCHING_ASSETS_BALANCES,
 } from 'constants/assetsBalancesConstants';
-import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
-import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { ADD_HISTORY_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { ADD_COLLECTIBLE_HISTORY_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import {
@@ -69,12 +69,8 @@ import {
 // utils
 import { transformBalancesToObject } from 'utils/assets';
 import { getSupportedChains } from 'utils/chains';
-import {
-  parseTokenAmount,
-  reportErrorLog,
-  uniqBy,
-} from 'utils/common';
-import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
+import { parseTokenAmount, reportErrorLog } from 'utils/common';
+import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
   getActiveAccountId,
@@ -131,6 +127,7 @@ export const sendAssetAction = (
       receiverEnsName,
       gasToken,
       txFeeInWei,
+      chain = CHAIN.ETHEREUM,
     } = transaction;
 
     const to = toChecksumAddress(transaction.to);
@@ -149,7 +146,7 @@ export const sendAssetAction = (
 
     const {
       accounts: { data: accounts },
-      collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
+      collectibles: { data: collectibles },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -163,7 +160,6 @@ export const sendAssetAction = (
     const accountAddress = getAccountAddress(activeAccount);
 
     const accountCollectibles = collectibles[accountId] || [];
-    const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
@@ -183,31 +179,21 @@ export const sendAssetAction = (
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
       : null;
 
-    let activeWalletService;
-    switch (getAccountType(activeAccount)) {
-      case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        activeWalletService = archanovaService;
-        break;
-      case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-        activeWalletService = etherspotService;
-        break;
-      default:
-        break;
-    }
-
-    if (!activeWalletService) {
-      callback({
-        isSuccess: false,
-        error: t('error.transactionFailed.default'),
-      });
-      return;
-    }
 
     let transactionResult: ?TransactionResult;
     let transactionErrorMessage: ?string;
 
     try {
-      transactionResult = await activeWalletService.sendTransaction(transaction, accountAddress, usePPN);
+      switch (getAccountType(activeAccount)) {
+        case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+          transactionResult = await archanovaService.sendTransaction(transaction, accountAddress, usePPN);
+          break;
+        case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+          transactionResult = await etherspotService.sendTransaction(transaction, accountAddress, chain, usePPN);
+          break;
+        default:
+          break;
+      }
     } catch (error) {
       ({ error: transactionErrorMessage } = catchTransactionError(error, logTransactionType, transaction));
     }
@@ -224,13 +210,13 @@ export const sendAssetAction = (
     const transactionBatchHash = transactionResult?.batchHash;
 
     /**
-     * This (waitForTransactionHashFromSubmittedBatch) covers edge case for Wallet Connect alone,
+     * This (waitForTransactionHashFromSubmittedBatch) covers edge case for WalletConnect alone,
      * but might be used for other scenarios where transaction hash is needed on submit callback.
      *
      * If transaction is sent through Etherspot then transaction will be submitted asynchronously
      * along with batch which won't provide actual transaction hash instantaneously.
      *
-     * Wallet Connect approve request expects actual transaction hash to be sent back to Dapp
+     * WalletConnect approve request expects actual transaction hash to be sent back to Dapp
      * for it to track the status of it or etc. on Dapp side.
      *
      * The only approach here that makes sense is to subscribe for submitted batch updates
@@ -245,7 +231,7 @@ export const sendAssetAction = (
       && !transactionHash
       && transactionBatchHash) {
       try {
-        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(transactionBatchHash);
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
       } catch (error) {
         reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
       }
@@ -307,36 +293,37 @@ export const sendAssetAction = (
 
     // update transaction history
     if (isCollectibleTransaction) {
+      const { contractAddress, tokenId } = transaction;
       dispatch({
-        type: ADD_COLLECTIBLE_TRANSACTION,
+        type: ADD_COLLECTIBLE_HISTORY_TRANSACTION,
         payload: {
-          transactionData: { ...historyTx },
-          tokenId: transaction.tokenId,
+          transaction: historyTx,
+          tokenId,
+          contractAddress,
           accountId,
+          chain,
         },
       });
 
-      const updatedCollectiblesHistory = {
-        ...collectiblesHistory,
-        [accountId]: [...accountCollectiblesHistory, historyTx],
-      };
+      const {
+        collectibles: {
+          data: updatedCollectibles,
+          transactionHistory: updatedCollectiblesHistory,
+        },
+      } = getState();
 
-      await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-
-      const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
-      const updatedCollectibles = {
-        ...collectibles,
-        [accountId]: updatedAccountCollectibles,
-      };
-
+      dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
-      dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
-
-      const { history: { data: currentHistory } } = getState();
-      const accountHistory = currentHistory[accountId] || [];
-      const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-      const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+      dispatch({
+        type: ADD_HISTORY_TRANSACTION,
+        payload: {
+          accountId,
+          transaction: historyTx,
+          chain,
+        },
+      });
+      const { history: { data: updatedHistory } } = getState();
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
 

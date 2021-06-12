@@ -19,6 +19,7 @@
 */
 
 import { getEnv } from 'configs/envConfig';
+import { mapValues } from 'lodash';
 
 // Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
@@ -27,7 +28,7 @@ import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
-  UPDATING_COLLECTIBLE_TRANSACTION,
+  SET_UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 
 // Services
@@ -44,7 +45,7 @@ import { getTrxInfo } from 'utils/history';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // types
-import type { Collectible, CollectibleTrx } from 'models/Collectible';
+import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
@@ -80,21 +81,21 @@ export const collectibleFromResponse = (responseItem: OpenSeaAsset): Collectible
 
   return {
     id,
-    category,
     name: collectibleName,
     description,
     contractAddress,
-    assetContract: category,
     tokenType: COLLECTIBLES,
     image,
     icon,
+    iconUrl: icon,
+    imageUrl: image,
     chain: CHAIN.ETHEREUM,
   };
 };
 
 const collectibleTransactionUpdate = (hash: string) => {
   return {
-    type: UPDATING_COLLECTIBLE_TRANSACTION,
+    type: SET_UPDATING_COLLECTIBLE_TRANSACTION,
     payload: hash,
   };
 };
@@ -145,7 +146,7 @@ export const fetchCollectiblesAction = (account?: Account) => {
   };
 };
 
-const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTrx => {
+const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransaction => {
   const {
     asset,
     transaction,
@@ -178,14 +179,14 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTrx => {
   const { image, icon } = parseCollectibleMedia(asset);
 
   const assetData = {
-    id: transactionId,
-    category,
+    id: tokenId,
     name: collectibleName,
     description,
     image,
     icon,
+    iconUrl: icon,
+    imageUrl: image,
     contractAddress,
-    assetContract: category,
     tokenType: COLLECTIBLES,
     chain: CHAIN.ETHEREUM,
   };
@@ -259,9 +260,10 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       .filter(isCollectibleTransaction)
       .map(collectibleTransaction);
 
+    // TODO: implement multichain when available
     const updatedCollectiblesHistory = {
       ...collectiblesHistory,
-      [accountId]: accountCollectiblesHistory,
+      [accountId]: { ethereum: accountCollectiblesHistory },
     };
 
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
@@ -327,17 +329,20 @@ export const updateCollectibleTransactionAction = (hash: string) => {
 
     const accounts = Object.keys(collectiblesHistory);
     const updatedHistory = accounts.reduce((history, accountId) => {
-      const accountHistory = collectiblesHistory[accountId].map(transaction => {
-        if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
-          return transaction;
-        }
-        return {
-          ...transaction,
-          status,
-          gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
-          gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
-        };
-      });
+      const accountHistory = mapValues(
+        collectiblesHistory[accountId] ?? {},
+        (transactions = []) => transactions.map((transaction) => {
+          if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
+            return transaction;
+          }
+          return {
+            ...transaction,
+            status,
+            gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
+            gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+          };
+        }),
+      );
       return { ...history, [accountId]: accountHistory };
     }, {});
 

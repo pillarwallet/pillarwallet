@@ -42,6 +42,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import { ASSETS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { images } from 'utils/images';
@@ -106,7 +107,7 @@ const SWActivationModal = ({
 
   const txFeeInfo = buildArchanovaTxFeeInfo(deploymentEstimate?.formatted, false);
   const isEnoughETH = paidByPillar || (
-    txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee })
+    txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee }, CHAIN.ETHEREUM)
   );
 
   const submitButtonDisabled = !isEnoughETH || !isOnline;

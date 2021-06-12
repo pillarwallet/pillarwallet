@@ -19,7 +19,7 @@
 */
 
 export const SET_HISTORY = 'SET_HISTORY';
-export const ADD_TRANSACTION = 'ADD_TRANSACTION';
+export const ADD_HISTORY_TRANSACTION = 'ADD_HISTORY_TRANSACTION';
 export const PENDING = 'PENDING';
 export const TRANSACTION_EVENT = 'transactionEvent';
 export const TRANSACTION_PENDING_EVENT = 'transactionPendingEvent';
@@ -31,7 +31,7 @@ export const TX_PENDING_STATUS = 'pending';
 export const TX_CONFIRMED_STATUS = 'confirmed';
 export const TX_FAILED_STATUS = 'failed';
 export const TX_TIMEDOUT_STATUS = 'timedout';
-export const UPDATING_TRANSACTION = 'UPDATING_TRANSACTION';
+export const SET_UPDATING_TRANSACTION = 'SET_UPDATING_TRANSACTION';
 export const SET_HISTORY_LAST_SYNC_IDS = 'SET_HISTORY_LAST_SYNC_IDS';
 export const SET_ACCOUNT_HISTORY_LAST_SYNC_ID = 'SET_ACCOUNT_HISTORY_LAST_SYNC_ID';
 export const SET_FETCHING_HISTORY = 'SET_FETCHING_HISTORY';

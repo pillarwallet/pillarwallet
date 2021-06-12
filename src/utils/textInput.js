@@ -24,12 +24,10 @@ const isMatchingSearch = (query, text) => query && text && text.toUpperCase().in
 
 const isCaseInsensitiveMatch = (query, text) => query && text && text.toLowerCase() === query.toLowerCase();
 
-export const resolveAssetSource = (uri?: string | number) => {
+export const resolveAssetSource = (uri: ?(string | number)) => {
   if (!uri) return { uri: null };
   if (typeof uri === 'number') return uri;
-  return {
-    uri,
-  };
+  return { uri };
 };
 
 // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)

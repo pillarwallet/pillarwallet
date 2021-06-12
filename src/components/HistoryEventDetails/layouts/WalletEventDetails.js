@@ -46,15 +46,17 @@ import { spacing } from 'utils/variables';
 
 // Types
 import { EVENT_TYPE, type WalletEvent } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
 
 type Props = {|
   event: WalletEvent,
+  chain: Chain,
 |};
 
-function WalletEventDetails({ event }: Props) {
+function WalletEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
 
   const accounts = useSmartWalletAccounts();
@@ -77,7 +79,7 @@ function WalletEventDetails({ event }: Props) {
     Modal.open(() => <ReceiveModal address={activeAccountAddress} />);
   };
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(event));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     return (

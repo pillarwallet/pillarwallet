@@ -37,6 +37,7 @@ import {
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
 import { POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -198,11 +199,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const winChance = getWinChance(numberOfTickets + userTickets, totalPoolTicketsCount);
 
-    if (feeInfo && purchasePayload && !isEnoughBalanceForTransactionFee(balances, {
-      ...purchasePayload,
-      txFeeInWei: feeInfo.fee,
-      gasToken: feeInfo.gasToken,
-    })) {
+    const balanceCheckTransaction = {
+      ...(purchasePayload ?? {}),
+      txFeeInWei: feeInfo?.fee,
+      gasToken: feeInfo?.gasToken,
+    };
+    if (feeInfo
+      && purchasePayload
+      && !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM)) {
       errorMessage = t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
     }
 
@@ -328,7 +332,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  estimateTransactions: (transactions: TransactionToEstimate[]) => dispatch(estimateTransactionsAction(transactions)),
+  estimateTransactions: (
+    transactions: TransactionToEstimate[],
+  ) => dispatch(estimateTransactionsAction(transactions, CHAIN.ETHEREUM)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

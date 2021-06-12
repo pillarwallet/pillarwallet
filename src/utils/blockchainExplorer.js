@@ -33,6 +33,7 @@ import etherspotService from 'services/etherspot';
 
 // Types
 import type { Account } from 'models/Account';
+import type { Chain } from 'models/Chain';
 
 type ViewableTransaction = {
   hash: ?string,
@@ -40,7 +41,10 @@ type ViewableTransaction = {
   fromAccount: ?Account,
 };
 
-export async function viewTransactionOnBlockchain(transaction: ViewableTransaction) {
+export async function viewTransactionOnBlockchain(
+  chain: Chain,
+  transaction: ViewableTransaction,
+) {
   const { hash, batchHash, fromAccount } = transaction;
 
   if (!hash && !batchHash) {
@@ -56,11 +60,11 @@ export async function viewTransactionOnBlockchain(transaction: ViewableTransacti
   let explorerLink;
 
   if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
-    explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(batchHash);
+    explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(chain, batchHash);
   } else if (hash) {
     explorerLink = isArchanovaAccount(fromAccount)
       ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
-      : etherspotService.getTransactionExplorerLink(hash);
+      : etherspotService.getTransactionExplorerLink(chain, hash);
   }
 
   if (!explorerLink) {

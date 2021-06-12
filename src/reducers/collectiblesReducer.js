@@ -18,13 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
-  ADD_COLLECTIBLE_TRANSACTION,
-  UPDATING_COLLECTIBLE_TRANSACTION,
+  ADD_COLLECTIBLE_HISTORY_TRANSACTION,
+  SET_UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collectible';
+
+// utils
+import { isMatchingCollectible } from 'utils/assets';
+
+// types
+import type {
+  CollectiblesStore,
+  CollectiblesHistoryStore,
+  Collectible,
+  CollectibleTransaction,
+} from 'models/Collectible';
+import type { ChainRecord } from 'models/Chain';
 
 
 export type CollectiblesReducerState = {
@@ -44,6 +56,27 @@ const initialState = {
   updatingTransaction: null,
 };
 
+const removeFromCollectibles = (
+  collectibles: Collectible[],
+  collectibleToRemove: { tokenId: string, contractAddress: string },
+) => {
+  const { tokenId: id, contractAddress } = collectibleToRemove;
+  return collectibles.filter((
+    existing,
+  ) => !isMatchingCollectible(existing, { id, contractAddress }));
+};
+
+const addAccountCollectibleTransaction = (
+  accountHistory: ChainRecord<CollectibleTransaction[]>,
+  payload: { chain: string, transaction: CollectibleTransaction },
+) => {
+  const { chain, transaction } = payload;
+  const accountHistoryForChain = accountHistory?.[chain] ?? [];
+  return {
+    ...accountHistory,
+    [chain]: accountHistoryForChain.concat(transaction),
+  };
+};
 
 const collectiblesReducer = (
   state: CollectiblesReducerState = initialState,
@@ -61,24 +94,24 @@ const collectiblesReducer = (
         transactionHistory: action.payload || {},
         updatingTransaction: null,
       };
-    case UPDATING_COLLECTIBLE_TRANSACTION:
+    case SET_UPDATING_COLLECTIBLE_TRANSACTION:
       return {
         ...state,
         updatingTransaction: action.payload,
       };
-    case ADD_COLLECTIBLE_TRANSACTION:
-      const { accountId, tokenId, transactionData } = action.payload;
-      const accountCollectibles = state.data[accountId] || [];
-      const accountTransactionHistory = state.transactionHistory[accountId] || [];
+    case ADD_COLLECTIBLE_HISTORY_TRANSACTION:
+      const { accountId } = action.payload;
+      const accountCollectibles = state.data[accountId] ?? [];
+      const accountHistory = state.transactionHistory[accountId] ?? {};
       return {
         ...state,
         data: {
           ...state.data,
-          [accountId]: [...accountCollectibles].filter(({ id }) => id !== tokenId),
+          [accountId]: removeFromCollectibles(accountCollectibles, action.payload),
         },
         transactionHistory: {
           ...state.transactionHistory,
-          [accountId]: [...accountTransactionHistory, transactionData],
+          [accountId]: addAccountCollectibleTransaction(accountHistory, action.payload),
         },
       };
     default:

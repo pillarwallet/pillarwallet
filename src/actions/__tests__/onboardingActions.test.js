@@ -332,7 +332,7 @@ describe('Onboarding actions', () => {
         type: SET_FETCHING_HISTORY,
         payload: true,
       },
-      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: [] } },
+      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
       {
         type: SET_FETCHING_HISTORY,
         payload: false,

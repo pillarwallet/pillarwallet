@@ -21,9 +21,6 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // utils
 import {
   findFirstArchanovaAccount,
@@ -31,7 +28,14 @@ import {
   getAccountId,
   getEnabledAssets,
 } from 'utils/accounts';
-import { getAssetData, getAssetsAsList, getBalance, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
+import {
+  getAssetData,
+  getAssetsAsList,
+  getBalanceBN,
+  getBalanceInFiat,
+  getFormattedBalanceInFiat,
+} from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 // constants
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
@@ -39,9 +43,9 @@ import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 // types
 import type { Asset, Assets, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type { CategoryBalancesPerChain } from 'models/Balances';
 
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -146,35 +150,47 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
   },
 );
 
-export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
+export const accountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  accountEthereumWalletAssetsBalancesSelector,
   ratesSelector,
   baseFiatCurrencySelector,
-  accountAssetsSelector,
+  accountAssetsBalancesSelector,
+  supportedAssetsSelector,
   (
     activeAccountId: string,
-    balances: WalletAssetsBalances,
     rates: Rates,
     baseFiatCurrency: ?string,
-    assets: Assets,
+    accountAssetsBalances: CategoryBalancesPerChain,
+    supportedAssets: Assets[],
   ) => {
-    if (!activeAccountId || !balances || !assets) return {};
+    if (!activeAccountId || !supportedAssets?.length) return {};
 
-    return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
-      const relatedAsset = assets[symbol];
-      const assetBalance = getBalance(balances, symbol);
-      if (assetBalance) {
+    return Object.keys(accountAssetsBalances).reduce((assetsWithBalance, chain) => {
+      const balances = accountAssetsBalances[chain]?.wallet ?? {};
+
+      Object.keys(balances).forEach((symbol) => {
+        const assetBalanceBN = getBalanceBN(balances, symbol);
+        if (assetBalanceBN.isZero()) return;
+
+        const relatedAsset = supportedAssets.find(({ symbol: supportedSymbol }) => supportedSymbol === symbol);
+        if (!relatedAsset) {
+          reportErrorLog(
+            'accountAssetsWithBalanceSelector failed: no supported asset found for existing balance',
+            { symbol },
+          );
+          return;
+        }
+
         const { iconUrl: imageUrl, address } = relatedAsset;
-        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
 
         assetsWithBalance.push({
           ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
           balance: !!formattedBalanceInFiat && {
-            balance: assetBalance,
+            balance: assetBalanceBN,
             balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
@@ -182,9 +198,10 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
           token: symbol,
           value: symbol,
           contractAddress: address,
-          chain: CHAIN.ETHEREUM,
+          chain,
         });
-      }
+      });
+
       return assetsWithBalance;
     }, []);
   },

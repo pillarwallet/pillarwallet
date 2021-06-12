@@ -52,7 +52,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
 
 // selectors
-import { archanovaAccountHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -281,7 +281,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  archanovaAccountHistory: archanovaAccountHistorySelector,
+  archanovaAccountHistory: archanovaAccountEthereumHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -32,7 +32,6 @@ import Text from 'components/modern/Text';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
@@ -67,7 +66,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfigs = useChainsConfig();
 
   const { title, iconUrl, chain, errorMessage } = useViewData(request);
-  const { fee, gasSymbol, hasNotEnoughtGas, isEstimating, estimationErrorMessage } = useTransactionFee(request);
+  const { fee, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage } = useTransactionFee(request);
   const transactionPayload = useTransactionPayload(request);
 
   const handleConfirm = () => {
@@ -78,8 +77,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfig = chainConfigs[chain];
   const value = wrapBigNumberOrNil(transactionPayload?.amount);
   const symbol = transactionPayload?.symbol;
-  const confirmTitle = !hasNotEnoughtGas ? t('button.confirm') : t('label.notEnoughGas');
-  const isConfirmDisabled = isEstimating || hasNotEnoughtGas || !!errorMessage;
+  const confirmTitle = !hasNotEnoughGas ? t('button.confirm') : t('label.notEnoughGas');
+  const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage;
 
   return (
     <>
@@ -96,7 +95,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
           value={fee}
           symbol={gasSymbol}
           isLoading={isEstimating}
-          isNotEnough={hasNotEnoughtGas}
+          isNotEnough={hasNotEnoughGas}
           style={styles.fee}
         />
       )}
@@ -124,9 +123,10 @@ const useTransactionPayload = (request: WalletConnectCallRequest) => {
 };
 
 const useTransactionFee = (request: WalletConnectCallRequest) => {
+  const { t } = useTranslation();
   const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
   const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
-  const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
+  let estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   const feeInWei = feeInfo?.fee;
   const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
@@ -134,34 +134,44 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
   const { amount, symbol, decimals } = useTransactionPayload(request);
-  const hasNotEnoughtGas = !isEnoughBalanceForTransactionFee(balances, {
+
+  const chain = chainFromChainId[request.chainId];
+  if (!chain && !estimationErrorMessage) {
+    estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
+  }
+
+  const balanceCheckTransaction = {
     amount,
     symbol,
     decimals,
     txFeeInWei: feeInWei,
     gasToken: feeInfo?.gasToken,
-  });
+  };
+  const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, chain);
 
   const { estimateCallRequestTransaction } = useWalletConnect();
 
   React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
 
-  return { fee, feeInWei, gasSymbol, hasNotEnoughtGas, isEstimating, estimationErrorMessage };
+  return { fee, feeInWei, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
 
-  const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
+  let errorMessage = null;
+  const chain = chainFromChainId[request.chainId];
+  if (!chain) {
+    errorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
+  }
 
   const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
-  let errorMessage = null;
-  if (!isDeployedOnChain[chain]) {
-    errorMessage = t('walletConnectContent.error.smartWalletNeedToBeActivated');
-  } else if (estimationErrorMessage) {
-    errorMessage = estimationErrorMessage;
+  if (!errorMessage) {
+    errorMessage = !isDeployedOnChain[chain]
+      ? t('walletConnectContent.error.smartWalletNeedToBeActivated')
+      : estimationErrorMessage;
   }
 
   const title = parsePeerName(request.name);
