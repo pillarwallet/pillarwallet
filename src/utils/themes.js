@@ -309,8 +309,8 @@ export const themedColors = {
     darkTheme: semanticDarkThemeColors.recieveModalWarningText,
   }),
   hazardIconColor: theme('current', {
-    lightTheme: lightThemeColorsOld.hazardIconColor,
-    darkTheme: darkThemeColorsOld.hazardIconColor,
+    lightTheme: semanticLightThemeColors.hazardIconColor,
+    darkTheme: semanticDarkThemeColors.hazardIconColor,
   }),
 };
 

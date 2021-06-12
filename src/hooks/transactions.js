@@ -42,6 +42,7 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { AssetCore } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, TransactionFeeInfo } from 'models/Transaction';
 
 type UseTransactionEstimateResult = {|
@@ -50,12 +51,15 @@ type UseTransactionEstimateResult = {|
   isEstimating: boolean,
 |};
 
-export function useTransactionsEstimate(transactions: ?(EthereumTransaction[])): UseTransactionEstimateResult {
+export function useTransactionsEstimate(
+  chain: Chain,
+  transactions: ?(EthereumTransaction[]),
+): UseTransactionEstimateResult {
   const enabled = !!transactions?.length;
 
   const query: QueryResult<TransactionFeeInfo> = useQuery(
     ['TransactionsEstimate', transactions],
-    () => etherspotService.setTransactionsBatchAndEstimate(transactions ?? []),
+    () => etherspotService.setTransactionsBatchAndEstimate(chain, transactions ?? []),
     { enabled, cacheTime: 0 },
   );
 
@@ -84,6 +88,7 @@ type UseTransactionFeeCheckResult = {|
 |};
 
 export function useTransactionFeeCheck(
+  chain: Chain,
   feeInfo: ?TransactionFeeInfo,
   txAsset?: ?AssetCore,
   txValue?: ?BigNumber,
@@ -100,7 +105,7 @@ export function useTransactionFeeCheck(
     amount: txValue,
   };
 
-  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, transaction);
+  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, transaction, chain);
 
   const errorMessage = !isEnoughForFee
     ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })

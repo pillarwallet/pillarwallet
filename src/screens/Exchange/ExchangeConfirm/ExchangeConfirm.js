@@ -66,9 +66,13 @@ const ExchangeConfirmScreen = () => {
   const fiatCurrency = useFiatCurrency();
   const rates = useRates();
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
+  const chain = CHAIN.ETHEREUM;
 
-  const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(offer.transactions);
-  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(feeInfo, fromAsset, fromAmount);
+  const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
+    chain,
+    offer.transactions,
+  );
+  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(chain, feeInfo, fromAsset, fromAmount);
 
   const providerConfig = useProviderConfig(provider);
 
@@ -115,7 +119,7 @@ const ExchangeConfirmScreen = () => {
 
           <Spacing h={24} />
 
-          <TransactionDeploymentWarning chain={CHAIN.ETHEREUM} style={styles.transactionDeploymentWarning} />
+          <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />
 
           {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
