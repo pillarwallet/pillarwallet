@@ -48,6 +48,7 @@ import { noop } from 'utils/common';
 import { images } from 'utils/images';
 import { resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
 
+import type { ChangeEvent } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
@@ -89,10 +90,6 @@ type Props = {
 type State = {
   isFocused: boolean,
   selectionStart: Object,
-};
-
-type EventLike = {
-  nativeEvent: Object,
 };
 
 const InputField = styled(Input)`
@@ -237,12 +234,12 @@ class TextInput extends React.Component<Props, State> {
   handleBlur = () => {
     const { inputProps: { onBlur, selectorValue = {}, value }, trim } = this.props;
     const { selector } = selectorValue;
-    const trimmedValue = trim ? value.toString().trim() : value;
+    const trimmedValue = trim ? value?.toString().trim() : value;
     if (onBlur) {
       if (selector) {
         onBlur({ selector, input: trimmedValue });
       } else {
-        onBlur(trimmedValue);
+        onBlur(trimmedValue ?? '');
       }
     }
 
@@ -259,7 +256,7 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
-  handleChange = (e: EventLike) => {
+  handleChange = (e: ChangeEvent) => {
     const { inputProps: { onChange, selectorValue = {} } } = this.props;
     const value = e.nativeEvent.text;
     const { selector } = selectorValue;
@@ -283,8 +280,8 @@ class TextInput extends React.Component<Props, State> {
       {
         isFocused: true,
         selectionStart: {
-          start: value.toString().length,
-          end: value.toString().length,
+          start: value?.toString().length ?? 0,
+          end: value?.toString().length ?? 0,
         },
       },
       () => {

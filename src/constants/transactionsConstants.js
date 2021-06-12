@@ -18,6 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export const TRANSACTION_TYPE = {
+  EXCHANGE: ('EXCHANGE': 'EXCHANGE'),
+};
+
 export const ERROR_TYPE = {
   CANT_BE_TRANSFERRED: 'can not be transferred',
   NOT_OWNED: 'is not owned',

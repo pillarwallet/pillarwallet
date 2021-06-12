@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';
-import { clearWebViewCookies } from 'utils/exchange';
+import { clearWebViewCookies } from 'utils/webview';
 import { reportErrorLog, reportLog } from 'utils/common';
 import { firebaseIid } from 'services/firebase';
 import { DEVELOPMENT, STAGING, PRODUCTION } from 'constants/envConstants';

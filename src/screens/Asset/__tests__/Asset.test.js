@@ -39,7 +39,6 @@ import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
-import { initialState as exchangeState } from 'reducers/exchangeReducer';
 
 import { defaultTheme } from 'utils/themes';
 
@@ -56,7 +55,6 @@ const initialStore = mockStore({
   accounts: accountsState,
   appSettings: appSettingsState,
   userSettings: userSettingsState,
-  exchange: exchangeState,
 });
 
 jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => ({

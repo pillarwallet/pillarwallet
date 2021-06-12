@@ -34,14 +34,14 @@ import { TouchableOpacity, ScrollView } from 'react-native';
 // Props
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
 export type { TextProps } from 'react-native/Libraries/Text/TextProps';
-export type { Props as TextInputProps } from 'react-native/Libraries/Components/TextInput/TextInput';
+export type { Props as TextInputProps, ChangeEvent } from 'react-native/Libraries/Components/TextInput/TextInput';
 export type { ImageProps } from 'react-native/Libraries/Image/ImageProps';
 
 export type TouchableOpacityProps = React.ElementConfig<typeof TouchableOpacity>;
 
 export type { Props as SectionListProps, SectionBase } from 'react-native/Libraries/Lists/SectionList';
 
-export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+export type { ViewStyleProp, TextStyleProp, ImageStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 export type FontVariant = 'small-caps' | 'oldstyle-nums' | 'lining-nums' | 'tabular-nums' | 'proportional-nums';
 

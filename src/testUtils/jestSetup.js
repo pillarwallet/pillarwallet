@@ -39,7 +39,6 @@ import {
   TEST_TRANSLATIONS_BASE_URL,
   TEST_TRANSLATIONS_TIME_STAMP,
 } from 'constants/localesConstants';
-import { PROVIDER_1INCH, PROVIDER_SYNTHETIX, PROVIDER_UNISWAP } from 'constants/exchangeConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
@@ -415,29 +414,6 @@ jest.setMock('utils/cache', {
     if (ns) formatted[ns] = getMockedTranslations(url);
     return formatted;
   }, {}),
-});
-
-jest.setMock('services/synthetix', {
-  getSynthetixOffer: () => Promise.resolve({
-    provider: PROVIDER_SYNTHETIX,
-  }),
-  createSynthetixOrder: () => Promise.resolve({}),
-});
-
-jest.setMock('services/uniswap', {
-  getUniswapOffer: () => Promise.resolve({
-    provider: PROVIDER_UNISWAP,
-  }),
-  createUniswapOrder: () => Promise.resolve({}),
-  fetchUniswapSupportedTokens: jest.fn(() => Promise.resolve([ETH])),
-});
-
-jest.setMock('services/1inch', {
-  get1inchOffer: () => Promise.resolve({
-    provider: PROVIDER_1INCH,
-  }),
-  create1inchOrder: () => Promise.resolve({}),
-  fetch1inchSupportedTokens: jest.fn(() => Promise.resolve([])),
 });
 
 export const mockEtherspotAccount = {

@@ -39,7 +39,6 @@ import {
 import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
-import { addExchangeAllowanceIfNeededAction } from 'actions/exchangeActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // services
@@ -180,6 +179,42 @@ export const importEtherspotAccountsAction = () => {
   };
 };
 
+export const refreshEtherspotAccountsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: session },
+      user: { data: user },
+    } = getState();
+
+    if (!session.isOnline) return; // offline, nothing to dp
+
+    if (!etherspotService?.sdk) {
+      reportErrorLog('refreshEtherspotAccountsAction failed: action dispatched when Etherspot SDK was not initialized');
+      return;
+    }
+
+    if (!user) {
+      reportErrorLog('refreshEtherspotAccountsAction failed: no user');
+      return;
+    }
+
+    const etherspotAccounts = await etherspotService.getAccounts();
+    if (!etherspotAccounts) {
+      // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
+      reportErrorLog('refreshEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
+      return;
+    }
+
+    // sync accounts with app
+    await Promise.all(
+      etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
+        const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
+        dispatch(updateAccountExtraIfNeededAction(etherspotAccountAddress, extra));
+      }),
+    );
+  };
+};
+
 export const reserveEtherspotEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -232,70 +267,26 @@ const updateBatchTransactionHashAction = (
 
 export const subscribeToEtherspotNotificationsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    etherspotService.subscribe(async (chain: Chain, notification) => {
-      let notificationMessage;
-
-      if (notification.type === EtherspotNotificationTypes.GatewayBatchUpdated) {
-        const { hash: batchHash } = notification.payload;
-        const submittedBatch = await etherspotService.getSubmittedBatchByHash(chain, batchHash);
-
-        // check if submitted hash exists within Etherspot otherwise it's a failure
-        if (!submittedBatch) {
-          reportErrorLog('subscribeToEtherspotNotificationsAction failed: no matching batch', { notification });
-          return;
+    etherspotService.subscribe((chain: Chain, notification) => {
+      try {
+        switch (notification.type) {
+          case EtherspotNotificationTypes.AccountUpdated:
+            handleAccountUpdatedNotification(notification, chain, dispatch);
+            break;
+          case EtherspotNotificationTypes.GatewayBatchUpdated:
+            handleGatewayBatchUpdatedNotification(notification, chain, dispatch, getState);
+            break;
+          default:
+            break;
         }
-
-        const accountHistory = accountHistorySelector(getState());
-        const history = accountHistory[chain] ?? [];
-
-        const existingTransaction = history.find(({
-          batchHash: existingBatchHash,
-        }) => isCaseInsensitiveMatch(existingBatchHash, batchHash));
-
-        // check if matching transaction exists in history, if not – nothing to update
-        if (!existingTransaction) return;
-
-        // update transaction with actual hash received from batch
-        const transactionHash = submittedBatch?.transaction?.hash;
-        if (!isCaseInsensitiveMatch(transactionHash, existingTransaction.hash)) {
-          dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
-        }
-
-        const accountAssets = accountAssetsSelector(getState());
-        const supportedAssets = supportedAssetsSelector(getState());
-        const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, existingTransaction.asset);
-
-        const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
-
-        // checks for confirmed transaction notification
-        if (existingTransaction.status !== mappedEtherspotBatchStatus
-          && mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS
-          && existingTransaction.hash) {
-          dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
-          dispatch(fetchAssetsBalancesAction());
-
-          if (!isEmpty(assetData)) {
-            const { symbol, decimals } = assetData;
-            const { value } = existingTransaction;
-            const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
-            notificationMessage = t('toast.transactionSent', { paymentInfo });
-          }
-        }
-
-        // updates to perform once actual tx submitted from batch
-        if (transactionHash) {
-          dispatch(addExchangeAllowanceIfNeededAction(existingTransaction));
-        }
+      } catch (error) {
+        reportErrorLog('Etherspot notificaiton handler failed', {
+          error,
+          chain,
+          notificationType: notification.type,
+          notification,
+        });
       }
-
-      // check if any notification needs to be shown
-      if (!notificationMessage) return;
-
-      Toast.show({
-        message: notificationMessage,
-        emoji: 'ok_hand',
-        autoClose: true,
-      });
     });
   };
 };
@@ -304,4 +295,77 @@ export const unsubscribeToEtherspotNotificationsAction = () => {
   return () => {
     etherspotService.unsubscribe();
   };
+};
+
+const handleAccountUpdatedNotification = (
+  notification: any,
+  chain: Chain,
+  dispatch: Dispatch,
+) => {
+  dispatch(refreshEtherspotAccountsAction());
+};
+
+const handleGatewayBatchUpdatedNotification = async (
+  notification: any,
+  chain: Chain,
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const { hash: batchHash } = notification.payload;
+  const submittedBatch = await etherspotService.getSubmittedBatchByHash(chain, batchHash);
+
+  // check if submitted hash exists within Etherspot otherwise it's a failure
+  if (!submittedBatch) {
+    reportErrorLog('handleGatewayBatchUpdatedNotification failed: no matching batch', { notification });
+    return;
+  }
+
+  const accountHistory = accountHistorySelector(getState());
+  const history = accountHistory[chain] ?? [];
+
+  const existingTransaction = history.find(({ batchHash: existingBatchHash }) =>
+    isCaseInsensitiveMatch(existingBatchHash, batchHash),
+  );
+
+  // check if matching transaction exists in history, if not – nothing to update
+  if (!existingTransaction) return;
+
+  // update transaction with actual hash received from batch
+  const transactionHash = submittedBatch?.transaction?.hash;
+  if (!isCaseInsensitiveMatch(transactionHash, existingTransaction.hash)) {
+    dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
+  }
+
+  const accountAssets = accountAssetsSelector(getState());
+  const supportedAssets = supportedAssetsSelector(getState());
+  const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, existingTransaction.asset);
+
+  const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
+
+  let notificationMessage;
+
+  // checks for confirmed transaction notification
+  if (
+    existingTransaction.status !== mappedEtherspotBatchStatus &&
+    mappedEtherspotBatchStatus === TX_CONFIRMED_STATUS &&
+    existingTransaction.hash
+  ) {
+    dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
+    dispatch(fetchAssetsBalancesAction());
+
+    if (!isEmpty(assetData)) {
+      const { symbol, decimals } = assetData;
+      const { value } = existingTransaction;
+      const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
+      notificationMessage = t('toast.transactionSent', { paymentInfo });
+    }
+  }
+
+  if (!notificationMessage) return;
+
+  Toast.show({
+    message: notificationMessage,
+    emoji: 'ok_hand',
+    autoClose: true,
+  });
 };

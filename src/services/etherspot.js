@@ -51,6 +51,7 @@ import {
   reportErrorLog,
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
+import { parseTokenListToken, buildExchangeOffer, buildTransactionFeeInfo } from 'utils/etherspot';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
@@ -61,11 +62,21 @@ import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // types
-import type { Asset, Assets } from 'models/Asset';
-import type { Chain, ChainRecord } from 'models/Chain';
-import type { EthereumTransaction, TransactionPayload, TransactionResult } from 'models/Transaction';
-import type { EtherspotTransactionEstimate } from 'models/Etherspot';
+import type {
+  TokenListToken,
+  ExchangeOffer as EtherspotExchangeOffer,
+  GatewayEstimatedBatch,
+} from 'utils/types/etherspot';
+import type { AssetCore, Asset, Assets } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
+import type { Chain, ChainRecord } from 'models/Chain';
+import type { ExchangeOffer } from 'models/Exchange';
+import type {
+  EthereumTransaction,
+  TransactionPayload,
+  TransactionResult,
+  TransactionFeeInfo,
+} from 'models/Transaction';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -120,7 +131,7 @@ export class EtherspotService {
     this.sdk = this.instances[primaryNetworkName];
   }
 
-  subscribe(callback: (chain: Chain, notification: EtherspotNotification) => Promise<void>) {
+  subscribe(callback: (chain: Chain, notification: EtherspotNotification) => mixed) {
     this.supportedNetworks.forEach((networkName) => {
       const sdk = this.instances[networkName];
       if (!sdk) {
@@ -322,7 +333,7 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  estimateTransactionsBatch(useGasTokenAddress?: string, chain: Chain): Promise<?$Shape<EtherspotTransactionEstimate>> {
+  estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       reportErrorLog('estimateTransactionsBatch failed: no SDK for chain set', { chain });
@@ -337,7 +348,7 @@ export class EtherspotService {
         try {
           // parsing etherspot estimate error based on return scheme
           const errorMessageJson = JSON.parse(error.message.trim());
-          ([etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints));
+          [etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints);
         } catch (e) {
           // unable to parse json
         }
@@ -346,6 +357,54 @@ export class EtherspotService {
         reportErrorLog('estimateTransactionsBatch -> estimateGatewayBatch failed', { errorMessage, chain });
         throw new Error(errorMessage);
       });
+  }
+
+  /** High-level method to estimate etherspot-format transaction data. */
+  async setTransactionsBatchAndEstimate(
+    chain: Chain,
+    transactions: EthereumTransaction[],
+    useGasTokenAddress?: string,
+  ): Promise<?TransactionFeeInfo> {
+    try {
+      this.clearTransactionsBatch(chain);
+    } catch (error) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> clearTransactionsBatch failed', {
+        error,
+        chain,
+        transactions,
+      });
+      throw error;
+    }
+
+    try {
+      await this.setTransactionsBatch(chain, transactions);
+    } catch (error) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> setTransactionsBatch failed', { error, chain, transactions });
+      throw error;
+    }
+
+    let batch: ?GatewayEstimatedBatch = null;
+    try {
+      batch = await this.estimateTransactionsBatch(chain, useGasTokenAddress);
+    } catch (error) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch failed', {
+        error,
+        chain,
+        transactions,
+      });
+      throw error;
+    }
+
+    if (!batch) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch returned null', {
+        batch,
+        chain,
+        transactions,
+      });
+      return null;
+    }
+
+    return buildTransactionFeeInfo(batch);
   }
 
   async setTransactionsBatchAndSend(
@@ -363,7 +422,7 @@ export class EtherspotService {
     });
 
     // estimate current batch
-    await this.estimateTransactionsBatch(useGasTokenAddress, chain);
+    await this.estimateTransactionsBatch(chain, useGasTokenAddress);
 
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
@@ -515,29 +574,16 @@ export class EtherspotService {
       });
   }
 
-  async getSupportedAssets(): Promise<?Asset[]> {
+  async getSupportedAssets(): Promise<?(Asset[])> {
     try {
       // eslint-disable-next-line i18next/no-literal-string
-      const tokens = await this.sdk.getTokenListTokens();
+      const tokens: TokenListToken[] = await this.sdk.getTokenListTokens();
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;
       }
 
-      const supportedAssets = tokens.map(({
-        address,
-        name,
-        symbol,
-        decimals,
-        logoURI,
-      }) => ({
-        symbol,
-        name,
-        address,
-        decimals,
-        iconUrl: logoURI,
-        iconMonoUrl: logoURI,
-      }));
+      const supportedAssets = tokens.map(parseTokenListToken);
 
       // add ETH if not within tokens list (most of the time since it's not a token)
       const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);
@@ -583,6 +629,31 @@ export class EtherspotService {
 
     await this.sdk.destroy();
     this.sdk = null;
+  }
+
+  async getExchangeOffers(
+    chain: Chain,
+    fromAsset: ?AssetCore,
+    toAsset: ?AssetCore,
+    fromAmount: BigNumber,
+  ): Promise<ExchangeOffer[]> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk || !fromAsset || !toAsset) return [];
+
+    const fromAmountEthers = EthersUtils.parseUnits(fromAmount.toString(), fromAsset.decimals);
+
+    try {
+      const offers: EtherspotExchangeOffer[] = await sdk.getExchangeOffers({
+        fromTokenAddress: fromAsset.address,
+        toTokenAddress: toAsset.address,
+        fromAmount: fromAmountEthers,
+      });
+
+      return offers.map((offer) => buildExchangeOffer(fromAsset, toAsset, fromAmount, offer));
+    } catch (error) {
+      reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
+      return [];
+    }
   }
 }
 

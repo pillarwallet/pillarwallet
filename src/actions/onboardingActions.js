@@ -80,7 +80,6 @@ import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigAc
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
@@ -323,10 +322,6 @@ export const finishOnboardingAction = (retry?: boolean) => {
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: setupAppServicesAction');
     await dispatch(setupAppServicesAction(walletData?.privateKey));
-
-
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching exchange action: getExchangeSupportedAssetsAction');
-    dispatch(getExchangeSupportedAssetsAction());
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking if there were error at the time of onboarding ');
     const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
