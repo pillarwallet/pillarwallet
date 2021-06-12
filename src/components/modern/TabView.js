@@ -132,5 +132,5 @@ const TabIndicator = styled.View`
   border-top-width: ${Platform.OS === 'android' ? '3px' : '6px'};
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  border-color: ${({ theme }) => theme.colors.primaryAccent130};
+  border-color: ${({ theme }) => theme.colors.tabUnderline};
 `;
