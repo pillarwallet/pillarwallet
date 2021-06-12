@@ -44920,11 +44920,11 @@ exports[`Storyshots ReviewSummary token 1`] = `
         }
       >
         <View
-          h={16}
+          h={32}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 32,
                 "width": 0,
               },
             ]
@@ -44947,11 +44947,11 @@ exports[`Storyshots ReviewSummary token 1`] = `
           You are sending
         </Text>
         <View
-          h={16}
+          h={4}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 4,
                 "width": 0,
               },
             ]
@@ -44963,7 +44963,7 @@ exports[`Storyshots ReviewSummary token 1`] = `
             Array [
               Object {
                 "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
+                "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 36,
                 "lineHeight": 54,
                 "textAlignVertical": "center",
@@ -44990,17 +44990,6 @@ exports[`Storyshots ReviewSummary token 1`] = `
             PLR
           </Text>
         </Text>
-        <View
-          h={7}
-          style={
-            Array [
-              Object {
-                "height": 7,
-                "width": 0,
-              },
-            ]
-          }
-        />
         <Text
           secondary={true}
           small={true}
