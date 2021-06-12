@@ -50,7 +50,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
@@ -82,7 +82,7 @@ function Exchange() {
   const [rawFromAmount, setFromAmount] = React.useState('');
   const [fromAmount]: [string] = useDebounce(rawFromAmount, 500);
 
-  const chainConfig = useChainsConfig().ethereum;
+  const chainConfig = useChainConfig(CHAIN.ETHEREUM);
 
   const fromOptions = React.useMemo(
     () => getExchangeFromAssetOptions(assets, supportedAssets, balances, fiatCurrency, rates),

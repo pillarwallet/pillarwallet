@@ -36,7 +36,7 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Utils
 import { formatFiatValue } from 'utils/format';
 import { fontStyles, spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import { type Chain } from 'models/Chain';
@@ -49,7 +49,7 @@ type Props = {|
 
 function ChainListHeader({ chain, onPress, balance }: Props) {
   const { t } = useTranslation();
-  const { title, color } = useChainsConfig()[chain];
+  const { title, color } = useChainConfig(chain);
 
   const currency = useFiatCurrency();
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();

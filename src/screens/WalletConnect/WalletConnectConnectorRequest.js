@@ -41,7 +41,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { chainFromChainId, mapChainToChainId } from 'utils/chains';
 import { useThemedImages } from 'utils/images';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
@@ -60,7 +60,7 @@ const WalletConnectConnectorRequestScreen = () => {
 
   // Note: this will map chain id to testnet in test env.
   const chainId = mapChainToChainId(chain);
-  const chainConfig = useChainsConfig()[chain];
+  const chainConfig = useChainConfig(chain);
 
   const onApprovePress = () => {
     Keyboard.dismiss();

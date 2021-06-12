@@ -32,6 +32,7 @@ import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -49,6 +50,7 @@ type Props = {|
 function TransactionDeploymentWarning({ chain, style }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const chainConfig = useChainConfig(chain);
 
   const isDeployed = useRootSelector(isDeployedOnChainSelector)[chain];
 
@@ -57,7 +59,9 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
   return (
     <Container style={style}>
       <Icon name="warning" color={colors.negative} />
-      <Title color={colors.negative}>{t('label.transactionDeploymentWarning')}</Title>
+      <Title color={colors.negative}>
+        {t('label.transactionDeploymentWarning', { chain: chainConfig.titleShort })}
+      </Title>
     </Container>
   );
 }

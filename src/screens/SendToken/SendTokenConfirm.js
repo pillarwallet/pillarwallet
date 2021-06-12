@@ -27,15 +27,17 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // components
+import { Container, Content, Spacing } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { Spacing, ScrollWrapper } from 'components/Layout';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
+import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // utils
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
+import { spacing } from 'utils/variables';
 
 // selectors
 import { useRootSelector } from 'selectors';
@@ -52,7 +54,7 @@ const SendTokenConfirm = () => {
   const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
   const { chain = CHAIN.ETHEREUM } = transactionPayload;
-  const { title: chainTitle, color: chainColor } = useChainsConfig()[chain];
+  const { title: chainTitle, color: chainColor } = useChainConfig(chain);
 
   const handleFormSubmit = () => {
     Keyboard.dismiss();
@@ -69,18 +71,14 @@ const SendTokenConfirm = () => {
   } = transactionPayload;
 
   return (
-    <ContainerWithHeader
-      headerProps={{
-        centerItems: [{ title: t('transactions.title.review') }],
-      }}
-    >
-      <ScrollWrapper
-        disableAutomaticScroll
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16 }}
-        disableOnAndroid
-      >
+    <Container>
+      <HeaderBlock centerItems={[{ title: t('transactions.title.review') }]} navigation={navigation} noPaddingTop />
+
+      <Content contentContainerStyle={styles.contentContainerStyle}>
         <TokenReviewSummary assetSymbol={symbol} text={t('transactions.label.youAreSending')} amount={amount} />
+
         <Spacing h={32} />
+
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.network')}</TableLabel>
@@ -103,15 +101,29 @@ const SendTokenConfirm = () => {
             <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
           </TableRow>
         </Table>
-        <Spacing h={40} />
+
+        <Spacing h={spacing.largePlus} />
+
+        <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />
+
         <Button
           disabled={!session.isOnline}
           onPress={handleFormSubmit}
           title={t('transactions.button.send')}
         />
-      </ScrollWrapper>
-    </ContainerWithHeader>
+      </Content>
+    </Container>
   );
 };
 
 export default SendTokenConfirm;
+
+const styles = {
+  contentContainerStyle: {
+    paddingTop: spacing.mediumLarge,
+  },
+  transactionDeploymentWarning: {
+    paddingBottom: spacing.largePlus,
+    paddingRight: 40,
+  },
+};

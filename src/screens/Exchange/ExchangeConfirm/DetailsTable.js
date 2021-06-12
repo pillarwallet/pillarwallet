@@ -29,11 +29,12 @@ import { BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
 // Constants
+import { CHAIN } from 'constants/chainConstants';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 // Utils
 import { useProviderConfig } from 'utils/exchange';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
@@ -47,7 +48,7 @@ type Props = {
 const DetailsTable = ({ offer, feeInfo }: Props) => {
   const { exchangeRate, fromAsset, toAsset } = offer;
 
-  const chainConfig = useChainsConfig().ethereum;
+  const chainConfig = useChainConfig(CHAIN.ETHEREUM);
   const providerConfig = useProviderConfig(offer.provider);
   const providerName = providerConfig?.title ?? offer.provider;
 

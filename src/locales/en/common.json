@@ -186,7 +186,7 @@
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
     "started": "Started",
-    "transactionDeploymentWarning": "Don't proceed if you don't want to deploy Mainnet Smart Wallet.",
+    "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
