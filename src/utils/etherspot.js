@@ -198,7 +198,7 @@ export const buildExchangeOffer = (
 ): ExchangeOffer => {
   const { exchangeRate, transactions } = offer;
   const provider = parseExchangeProvider(offer.provider);
-  const toAmount = fromEthersBigNumber(offer.receiveAmount, 18);
+  const toAmount = fromEthersBigNumber(offer.receiveAmount, toAsset.decimals);
 
   // Note: etherspot exchange rate is quoted as FROM / TO, so we need to reverse it.
   return { provider, fromAsset, toAsset, fromAmount, toAmount, exchangeRate: 1 / exchangeRate, transactions };
