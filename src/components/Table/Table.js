@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 import { getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
-import { formatUnits } from 'utils/common';
+import { formatUnits, hitSlop20 } from 'utils/common';
 
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -62,7 +62,7 @@ export const TableRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 9px 0;
 `;
 
 const Row = styled.View`
@@ -89,6 +89,7 @@ export const TableLabel = withTheme(({ children, tooltip, theme }) => {
               fontSize={16}
               onPress={() => setTooltipVisible(!isTooltipVisible)}
               color={colors.labelTertiary}
+              hitSlop={hitSlop20}
             />
           </Tooltip>
         </>
@@ -144,7 +145,7 @@ const Table = ({ children, title }: Props) => {
       {!!title && (
         <>
           <MediumText big>{title}</MediumText>
-          <Spacing h={16} />
+          <Spacing h={8} />
         </>
       )}
       {React.Children.map(children, (child, index) => {

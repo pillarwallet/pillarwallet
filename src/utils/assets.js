@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { keyBy, orderBy } from 'lodash';
 
 // constants
-import { COLLECTIBLES, ETH, PLR, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -352,11 +352,6 @@ export const mapCollectibleToAssetData = ({
   icon: icon || '',
   tokenType: COLLECTIBLES,
 });
-
-const isSynthetixAsset = (asset: Asset): boolean => !!asset.isSynthetixAsset && asset.symbol !== SNX;
-
-export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
-  isSynthetixAsset(fromAsset) && isSynthetixAsset(toAsset);
 
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,

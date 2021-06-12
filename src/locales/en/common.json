@@ -41,7 +41,7 @@
   "lessThanSignValue": "<{{value}}",
   "moreThanSignValue": ">{{value}}",
   "rangeValues": "{{fromValue}} - {{toValue}}",
-
+  "exchangeRate": "{{rate}} {{toSymbol}}/{{fromSymbol}}",
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
   "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
@@ -186,6 +186,7 @@
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
     "started": "Started",
+    "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -219,6 +220,7 @@
     "mainAccount": "Main Account",
     "free": "Free",
     "estimatedFee": "Est. fee",
+    "estFee": "Est. fee",
     "nothingFound": "Nothing found",
     "verified": "Verified",
     "select": "Select",
@@ -1437,7 +1439,7 @@
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Ethereum fee",
+      "allowancePlusEthFee": "Allowance + Max. Ethereum fee",
       "migratingFrom": "migrating from",
       "network": "Network"
     },
@@ -1586,6 +1588,11 @@
   },
 
   "exchangeContent": {
+    "providers": {
+      "uniswap": "Uniswap",
+      "oneInch": "1 Inch",
+      "synthetix": "Synthetix"
+    },
     "modal": {
       "smartWalletIsNotActive": {
         "title": "Use Smart Wallet account",
@@ -1593,47 +1600,26 @@
         "button": {
           "selectAccount": "Select account"
         }
-      },
-      "enableAsset": {
-        "title": "Enable {{asset}}",
-        "paragraph": "Once enabled, it will be available for exchanging on {{providerName}}",
-        "button": {
-          "enable": "Enable"
-        }
-      },
-      "intro": {
-        "title": "Exchange.",
-        "paragraph": "Pillar Exchange or Offers Engine, as we call it, aggregates offers from multiple providers vetted by Pillar. \n\nBuy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.",
-        "button": {
-          "next": "Next"
-        }
       }
     },
     "title": {
-      "confirmScreen": "Details",
-      "settingsScreen": "Settings",
-      "activateSmartWalletScreen": "Activate Smart Wallet"
-    },
-    "button": {
-      "enableAsset": "Enable Asset",
-      "allowExchange": "Allow this exchange"
-    },
-    "paragraph": {
-      "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
+      "exchange": "Swap on {{chain}}",
+      "confirm": "Review"
     },
     "label": {
-      "enabledAssets": "Enabled exchange assets:",
+      "exchangeDetails": "Exchange details",
+      "network": "Network",
       "exchangeRate": "Exchange rate",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
-      "availableAmount": "Available",
-      "updatedRealTime": "Updated in realtime",
-      "exchangeDetails": "Exchange details",
       "maxSlippage": "Max. slippage"
     },
+    "tooltip": {
+      "feeFormat": "{{provider}} will be allowed to automate transactions on your behalf. Ethereum fee could be lower."
+    },
     "emptyState": {
-      "noOffers": {
+      "offers": {
         "title": "No live offers",
-        "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
+        "paragraph": "Currently no matching offers from exchange services are provided."
       }
     }
   },

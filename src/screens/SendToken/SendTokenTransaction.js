@@ -18,13 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, MediumText } from 'components/Typography';
@@ -41,9 +39,6 @@ import { isSablierTransactionTag } from 'utils/sablier';
 import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
 import { isRariTransactionTag } from 'utils/rari';
 import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
-
-// actions
-import { setDismissTransactionAction } from 'actions/exchangeActions';
 
 // constants
 import {
@@ -62,10 +57,9 @@ import {
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
 } from 'constants/liquidityPoolsConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
-import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
-import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { TRANSACTION_TYPE, ERROR_TYPE } from 'constants/transactionsConstants';
 import {
   RARI_DEPOSIT_TRANSACTION, RARI_WITHDRAW_TRANSACTION, RARI_TRANSFER_TRANSACTION, RARI_CLAIM_TRANSACTION,
 } from 'constants/rariConstants';
@@ -73,8 +67,6 @@ import {
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  executingExchangeTransaction: boolean,
-  setDismissExchangeTransaction: Function,
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -93,7 +85,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const getTransactionSuccessMessage = (transactionType: ?string, extra?: Object) => {
-  if (transactionType === EXCHANGE) {
+  if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     return t('transactions.paragraph.exchangeTransactionSuccess');
   } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
     return t('transactions.paragraph.poolTogetherDepositTransactionSuccess');
@@ -107,7 +99,7 @@ const getTransactionSuccessMessage = (transactionType: ?string, extra?: Object) 
 
 const getTransactionSuccessTitle = (props) => {
   const { transactionTokenType, transactionType, isAllowanceTransaction } = props;
-  if (transactionType === EXCHANGE) {
+  if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     if (isAllowanceTransaction) {
       return t('transactions.title.allowanceTransactionSuccess');
     }
@@ -141,14 +133,7 @@ const FailureButtonsWrapper = styled.View`
 
 class SendTokenTransaction extends React.Component<Props> {
   handleDismissal = () => {
-    const {
-      navigation,
-      executingExchangeTransaction,
-      setDismissExchangeTransaction,
-    } = this.props;
-    if (executingExchangeTransaction) {
-      setDismissExchangeTransaction();
-    }
+    const { navigation } = this.props;
 
     const { isSuccess, transactionPayload } = navigation.state.params;
 
@@ -259,7 +244,7 @@ class SendTokenTransaction extends React.Component<Props> {
 
   renderSuccessButton = () => {
     const { transactionType } = this.props.navigation.state.params;
-    const successButtonText = transactionType === EXCHANGE
+    const successButtonText = transactionType === TRANSACTION_TYPE.EXCHANGE
       ? t('button.finish')
       : t('button.magic', { exclamation: true });
     return (
@@ -330,14 +315,4 @@ class SendTokenTransaction extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  exchange: { data: { executingTransaction: executingExchangeTransaction } },
-}: RootReducerState): $Shape<Props> => ({
-  executingExchangeTransaction,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);
+export default SendTokenTransaction;

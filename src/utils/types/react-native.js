@@ -41,7 +41,7 @@ export type TouchableOpacityProps = React.ElementConfig<typeof TouchableOpacity>
 
 export type { Props as SectionListProps, SectionBase } from 'react-native/Libraries/Lists/SectionList';
 
-export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+export type { ViewStyleProp, TextStyleProp, ImageStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 export type FontVariant = 'small-caps' | 'oldstyle-nums' | 'lining-nums' | 'tabular-nums' | 'proportional-nums';
 

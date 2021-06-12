@@ -23,7 +23,6 @@ import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateAssets from './assets';
-import loadAndMigrateExchangeAllowances from './exchangeAllowances';
 
 export async function migrate(
   collection: string,
@@ -54,10 +53,6 @@ export async function migrate(
 
     case 'collectiblesHistory':
       data = loadAndMigrateCollectiblesHistory(storageData, dispatch);
-      break;
-
-    case 'exchangeAllowances':
-      data = loadAndMigrateExchangeAllowances(storageData);
       break;
 
     default: break;

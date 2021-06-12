@@ -82,7 +82,7 @@ function TokenList({ items, onSelectItem }: Props) {
       renderSectionHeader={({ section }) => renderSectionHeader(section)}
       renderSectionFooter={() => <ChainListFooter />}
       renderItem={({ item }) => renderItem(item)}
-      keyExtractor={(option) => option.symbol}
+      keyExtractor={(option) => `${option.chain}-${option.address}`}
       keyboardShouldPersistTaps="always"
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"

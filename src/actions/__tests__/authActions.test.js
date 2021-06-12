@@ -28,10 +28,6 @@ import {
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import {
-  SET_UNISWAP_TOKENS_QUERY_STATUS,
-  UNISWAP_TOKENS_QUERY_STATUS,
-} from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 
@@ -86,7 +82,6 @@ describe('Auth actions', () => {
 
   beforeEach(() => {
     store = mockStore({
-      exchange: { exchangeSupportedAssets: [] },
       assets: { data: {} },
       navigation: {},
       wallet: {
@@ -113,8 +108,6 @@ describe('Auth actions', () => {
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
-      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },

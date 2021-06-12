@@ -19,64 +19,53 @@
 */
 
 import React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
-import type { TransactionFeeInfo } from 'models/Transaction';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
-import Button from 'components/Button';
-import Icon from 'components/Icon';
+
+// Components
+import ExchangeRateText from 'components/modern/ExchangeRateText';
+import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
 import { BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import type { OfferOrder } from 'models/Offer';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
-import type { Theme } from 'models/Theme';
+
+// Utils
+import { useProviderConfig } from 'utils/exchange';
+import { useChainConfig } from 'utils/uiConfig';
+
+// Types
+import type { ExchangeOffer } from 'models/Exchange';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 type Props = {
-  errorMessage: ?string,
-  isOnline: boolean,
+  offer: ExchangeOffer,
   feeInfo: ?TransactionFeeInfo,
-  isEstimating: boolean,
-  onPress: () => void,
-  offerOrder: OfferOrder,
-  theme: Theme,
 };
 
-export const TableWrapper = styled.View`
-  padding: 0 20px;
-`;
+const DetailsTable = ({ offer, feeInfo }: Props) => {
+  const { exchangeRate, fromAsset, toAsset } = offer;
 
-export const ExchangeIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.primaryAccent130};
-  font-size: 16px;
-  margin-right: 4px;
-`;
+  const chainConfig = useChainConfig(CHAIN.ETHEREUM);
+  const providerConfig = useProviderConfig(offer.provider);
+  const providerName = providerConfig?.title ?? offer.provider;
 
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const ConfirmationTable = (props: Props) => {
-  const {
-    errorMessage, isOnline, feeInfo, isEstimating, onPress, offerOrder,
-  } = props;
-  const {
-    payQuantity, receiveQuantity, fromAsset, toAsset,
-  } = offerOrder;
   return (
-    <TableWrapper>
+    <>
       <Table title={t('exchangeContent.label.exchangeDetails')}>
+        <TableRow>
+          <TableLabel>{t('exchangeContent.label.network')}</TableLabel>
+          <BaseText regular color={chainConfig.color}>
+            {' '}
+            {chainConfig.title}
+          </BaseText>
+        </TableRow>
         <TableRow>
           <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
           <Row>
-            <ExchangeIcon name="exchange" />
-            <BaseText regular>
-              {t('exchangeContent.label.exchangeRateLayout', {
-                rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
-                toAssetCode: toAsset.code || toAsset.symbol,
-                fromAssetCode: fromAsset.code || fromAsset.symbol,
-              })}
-            </BaseText>
+            <ExchangeRateText rate={exchangeRate} fromSymbol={fromAsset.symbol} toSymbol={toAsset.symbol} />
           </Row>
         </TableRow>
         <TableRow>
@@ -84,10 +73,14 @@ const ConfirmationTable = (props: Props) => {
           <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
         </TableRow>
       </Table>
+
       <Spacing h={20} />
+
       <Table title={t('transactions.label.fees')}>
         <TableRow>
-          <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+          <TableLabel tooltip={t('exchangeContent.tooltip.feeFormat', { provider: providerName })}>
+            {t('transactions.label.allowancePlusEthFee')}
+          </TableLabel>
           <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
         </TableRow>
         <TableRow>
@@ -99,15 +92,13 @@ const ConfirmationTable = (props: Props) => {
           <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
         </TableRow>
       </Table>
-      <Spacing h={48} />
-      {!!errorMessage && <BaseText style={{ marginBottom: 15 }} center secondary>{errorMessage}</BaseText>}
-      <Button
-        disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
-        onPress={onPress}
-        title={isEstimating ? t('label.gettingFee') : t('button.confirm')}
-      />
-    </TableWrapper>
+    </>
   );
 };
 
-export default withTheme(ConfirmationTable);
+export default DetailsTable;
+
+const Row = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;

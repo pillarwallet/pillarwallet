@@ -40,7 +40,7 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useFiatCurrency, useIsExchangeAvailable, activeAccountAddressSelector } from 'selectors';
 import { assetRegistrySelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
@@ -72,6 +72,7 @@ function WalletTab() {
   const currency = useFiatCurrency();
   const assetRegistry = useRootSelector(assetRegistrySelector);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const isExchangeAvailable = useIsExchangeAvailable();
   const isPillarPaySupported = useIsPillarPaySupported();
 
   const showReceiveModal = () => {
@@ -122,13 +123,14 @@ function WalletTab() {
   };
 
   const hasPositiveBalance = totalBalance.value.gt(0);
+
   const buttons = [
     hasPositiveBalance && {
       title: tRoot('button.receive'),
       iconName: 'qrcode',
       onPress: showReceiveModal,
     },
-    hasPositiveBalance && {
+    isExchangeAvailable && hasPositiveBalance && {
       title: tRoot('button.swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(EXCHANGE_FLOW),

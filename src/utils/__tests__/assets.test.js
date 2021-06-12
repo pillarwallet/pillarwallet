@@ -24,10 +24,8 @@ import {
   getBalance,
   balanceInEth,
   getRate,
-  isSynthetixTx,
   convertUSDToFiat,
 } from 'utils/assets';
-import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 // types
 import type { Rates } from 'models/Asset';
@@ -173,28 +171,6 @@ describe('Assets utils', () => {
           });
         });
       });
-    });
-
-    describe('recognize Synthetix transactions', () => {
-      const ETH = mockSupportedAssets[0];
-      const SNX = {
-        ...ETH,
-        symbol: 'SNX',
-        isSynthetixAsset: true,
-      };
-      const sUSD = {
-        ...ETH,
-        symbol: 'sUSD',
-        isSynthetixAsset: true,
-      };
-      const sETH = {
-        ...ETH,
-        symbol: 'sETH',
-        isSynthetixAsset: true,
-      };
-      expect(isSynthetixTx(SNX, sUSD)).toBeFalsy();
-      expect(isSynthetixTx(ETH, sUSD)).toBeFalsy();
-      expect(isSynthetixTx(sETH, sUSD)).toBeTruthy();
     });
   });
 

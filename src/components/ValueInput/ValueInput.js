@@ -48,10 +48,9 @@ import {
 } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
+import { calculateMaxAmount, getFormattedBalanceInFiat, getRate, getBalanceInFiat } from 'utils/assets';
 
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
-import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 import { CHAIN } from 'constants/chainConstants';
 
 import { accountAssetsBalancesSelector } from 'selectors/balances';
@@ -394,3 +393,14 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
+
+const getAssetBalanceFromFiat = (
+  baseFiatCurrency: ?string,
+  fiatBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): number => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceFromFiat = fiatBalance ? parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
+  return assetBalanceFromFiat || 0;
+};

@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // Utils
 import { recordValues } from 'utils/object';
@@ -33,6 +34,14 @@ export const wrapBigNumber = (value: BigNumber | number | string): BigNumber => 
 
 export const wrapBigNumberOrNil = (value: ?BigNumber | number | string): ?BigNumber => {
   return value != null ? wrapBigNumber(value) : null;
+};
+
+export const fromEthersBigNumber = (value: EthersBigNumber, decimals: number): BigNumber => {
+  return BigNumber(utils.formatUnits(value, decimals));
+};
+
+export const toEthersBigNumber = (value: BigNumber, decimals: number): EthersBigNumber => {
+  return utils.parseUnits(value.toString(), decimals);
 };
 
 /**

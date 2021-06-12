@@ -44,7 +44,7 @@ const EmptySectionTitle = styled(MediumText)`
 `;
 
 const EmptySectionText = styled(BaseText)`
-  ${fontStyles.regular};
+  ${fontStyles.medium};
   text-align: center;
   flex-wrap: wrap;
   color: ${themedColors.secondaryText};

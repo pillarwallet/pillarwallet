@@ -158,13 +158,6 @@ export const handleSystemDefaultThemeChangeAction = () => {
   };
 };
 
-export const hasSeenExchangeIntroAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { hasSeenExchangeIntro: true } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenExchangeIntro: true } });
-  };
-};
-
 export const hasSeenTutorialAction = () => (dispatch: Dispatch) => {
   dispatch(saveDbAction('app_settings', { appSettings: { hasSeenTutorial: true } }));
   dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenTutorial: true } });

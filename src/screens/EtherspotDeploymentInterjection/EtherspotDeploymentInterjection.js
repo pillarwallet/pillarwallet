@@ -38,7 +38,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -54,7 +54,7 @@ function EtherspotDeploymentInterjection() {
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
 
   const address = useRootSelector(activeAccountAddressSelector);
-  const chainConfig = useChainsConfig()[chain];
+  const chainConfig = useChainConfig(chain);
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={address} />);

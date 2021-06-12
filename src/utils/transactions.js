@@ -28,6 +28,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
+import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // services
@@ -158,4 +159,26 @@ export const mapToEthereumTransactions = async (
   });
 
   return transactions;
+};
+
+// TODO: gasToken support
+export const mapTransactionsToTransactionPayload = (transactions: EthereumTransaction[]): TransactionPayload => {
+  let transactionPayload = mapTransactionToTransactionPayload(transactions[0]);
+
+  if (transactions.length > 1) {
+    transactionPayload = {
+      ...transactionPayload,
+      sequentialTransactions: transactions.slice(1).map(mapTransactionToTransactionPayload),
+    };
+  }
+
+  return transactionPayload;
+};
+
+// TODO: gas token support
+const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): TransactionPayload => {
+  const { to, value, data } = transaction;
+  const amount = fromEthersBigNumber(value, 18).toFixed();
+
+  return { to, amount, symbol: ETH, data, decimals: 18 };
 };

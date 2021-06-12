@@ -39,7 +39,6 @@ import {
 import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
-import { addExchangeAllowanceIfNeededAction } from 'actions/exchangeActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // services
@@ -280,11 +279,6 @@ export const subscribeToEtherspotNotificationsAction = () => {
             const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
             notificationMessage = t('toast.transactionSent', { paymentInfo });
           }
-        }
-
-        // updates to perform once actual tx submitted from batch
-        if (transactionHash) {
-          dispatch(addExchangeAllowanceIfNeededAction(existingTransaction));
         }
       }
 
