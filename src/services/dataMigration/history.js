@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isEmpty } from 'lodash';
+import { isEmpty, mapValues } from 'lodash';
 
 // constants
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -54,7 +54,6 @@ export default async function (storageData: Object, dispatch: Function, getState
     reportLog('Possible redux-persist crash');
   }
 
-  // check for migration to history per account per chain, tx were ethereum only per migration moment
   if (transactionStoreHasOldStructure(history)) {
     history = Object.keys(history).reduce((
       updated,
@@ -63,6 +62,26 @@ export default async function (storageData: Object, dispatch: Function, getState
       ...updated,
       [accountId]: { ethereum: history[accountId] ?? [] },
     }), {});
+    dispatch({ type: SET_HISTORY, payload: history });
+    dispatch(saveDbAction('history', { history }, true));
+  }
+
+  // checks history if wrong was written during initial migration for per chain history
+  const chainsKeys = Object.values(CHAIN);
+  const historyHasWrongKeys = Object.keys(history).some((accountId) => {
+    const accountHistory = history[accountId] ?? {};
+    return Object.keys(accountHistory).some((chainKey) => !chainsKeys.includes(chainKey));
+  });
+  if (historyHasWrongKeys) {
+    history = mapValues(
+      history,
+      (accountHistory) => Object.keys(accountHistory ?? {}).reduce((fixedChainsHistory, chainKey) => {
+        // drop key if it's not chain
+        if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
+
+        return {  ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
+      })
+    );
     dispatch({ type: SET_HISTORY, payload: history });
     dispatch(saveDbAction('history', { history }, true));
   }
