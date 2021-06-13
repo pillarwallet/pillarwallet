@@ -76,7 +76,10 @@ export default async function (storageData: Object, dispatch: Function, getState
     history = Object.keys(history).reduce((fixedHistory, accountId) => {
       const accountHistory = history[accountId] ?? {};
 
-      const fixedAccountHistory = Object.keys(accountHistory).reduce((fixedChainsHistory, chainKey) => {
+      const fixedAccountHistory = Object.keys(accountHistory).reduce((
+        fixedChainsHistory,
+        chainKey,
+      ) => {
         // drop key if it's not chain
         if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
 
