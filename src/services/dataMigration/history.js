@@ -84,7 +84,7 @@ export default async function (storageData: Object, dispatch: Function, getState
         if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
 
         // $FlowFixMe
-        return {  ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
+        return { ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
       }, {});
 
       return { ...fixedHistory, [accountId]: fixedAccountHistory };
