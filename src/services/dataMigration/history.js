@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isEmpty, mapValues } from 'lodash';
+import { isEmpty } from 'lodash';
 
 // constants
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -80,6 +80,7 @@ export default async function (storageData: Object, dispatch: Function, getState
         // drop key if it's not chain
         if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
 
+        // $FlowFixMe
         return {  ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
       }, {});
 
