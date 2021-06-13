@@ -73,15 +73,18 @@ export default async function (storageData: Object, dispatch: Function, getState
     return Object.keys(accountHistory).some((chainKey) => !chainsKeys.includes(chainKey));
   });
   if (historyHasWrongKeys) {
-    history = mapValues(
-      history,
-      (accountHistory) => Object.keys(accountHistory ?? {}).reduce((fixedChainsHistory, chainKey) => {
+    history = Object.keys(history).reduce((fixedHistory, accountId) => {
+      const accountHistory = history[accountId] ?? {};
+
+      const fixedAccountHistory = Object.keys(accountHistory).reduce((fixedChainsHistory, chainKey) => {
         // drop key if it's not chain
         if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
 
         return {  ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
-      })
-    );
+      }, {});
+
+      return { ...fixedHistory, [accountId]: fixedAccountHistory };
+    }, {});
     dispatch({ type: SET_HISTORY, payload: history });
     dispatch(saveDbAction('history', { history }, true));
   }
