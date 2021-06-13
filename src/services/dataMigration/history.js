@@ -54,6 +54,19 @@ export default async function (storageData: Object, dispatch: Function, getState
     reportLog('Possible redux-persist crash');
   }
 
+  // check for migration to history per account per chain, tx were ethereum only per migration moment
+  if (transactionStoreHasOldStructure(history)) {
+    history = Object.keys(history).reduce((
+      updated,
+      accountId,
+    ) => ({
+      ...updated,
+      [accountId]: { ethereum: history[accountId] ?? [] },
+    }), {});
+    dispatch({ type: SET_HISTORY, payload: history });
+    dispatch(saveDbAction('history', { history }, true));
+  }
+
   // legacy cleanup migration used by Archanova accounts
   if (activeAccount && isArchanovaAccount(activeAccount)) {
     const accountAddress = getActiveAccountAddress(accounts);
@@ -69,16 +82,6 @@ export default async function (storageData: Object, dispatch: Function, getState
       dispatch(saveDbAction('history', { history }, true));
       dispatch({ type: SET_HISTORY, payload: history });
     }
-  }
-
-  // check for migration to history per account per chain, tx were ethereum only per migration moment
-  if (transactionStoreHasOldStructure(history)) {
-    Object.keys(history).forEach((accountId) => {
-      // $FlowFixMe: flow fails because of wrong mapping using prev type
-      history = updateAccountHistoryForChain(history, accountId, CHAIN.ETHEREUM, history[accountId]);
-    });
-    dispatch({ type: SET_HISTORY, payload: history });
-    dispatch(saveDbAction('history', { history }, true));
   }
 
   // data migrated, no need to do anything

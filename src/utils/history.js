@@ -32,6 +32,7 @@ import {
 import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
 import { EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type {
@@ -350,4 +351,12 @@ export const getCrossChainAccountCollectiblesHistory = (
 
 export const transactionStoreHasOldStructure = (
   transactionStore: TransactionsStore | CollectiblesHistoryStore,
-) => Object.values(transactionStore).some((history) => history && Array.isArray(history));
+) => Object.keys(transactionStore).some((accountId) => {
+  const history = transactionStore[accountId] ?? {};
+
+  // checks if migration needed for history being transactions array and needed to be per chain based
+  if (Array.isArray(history)) return true;
+
+  // checks history if wrong was written during initial migration for per chain history
+  return Object.keys(history).some((chain) => !Object.values(CHAIN).includes(chain));
+});
