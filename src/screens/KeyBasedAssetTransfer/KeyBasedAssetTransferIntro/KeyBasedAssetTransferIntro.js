@@ -60,7 +60,6 @@ function KeyBasedAssetTransferIntro() {
     <ThemeProvider theme={darkTheme}>
       <Container>
         <HeaderBlock
-          wrapperStyle={{ backgroundColor: darkTheme.colors.background }}
           navigation={navigation}
           noPaddingTop
         />
@@ -98,6 +97,7 @@ function KeyBasedAssetTransferIntro() {
 }
 
 export default KeyBasedAssetTransferIntro;
+
 
 const Content = styled.ScrollView`
   padding-horizontal: ${spacing.large}px;
