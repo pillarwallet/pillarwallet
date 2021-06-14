@@ -36,7 +36,7 @@ import { ETH } from 'constants/assetsConstants';
 // Selectors
 import { useRootSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Hooks
@@ -132,13 +132,15 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
   const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
 
-  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
-  const { amount, symbol, decimals } = useTransactionPayload(request);
-
   const chain = chainFromChainId[request.chainId];
   if (!chain && !estimationErrorMessage) {
     estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
+
+  const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
+  const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
+
+  const { amount, symbol, decimals } = useTransactionPayload(request);
 
   const balanceCheckTransaction = {
     amount,
@@ -147,7 +149,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     txFeeInWei: feeInWei,
     gasToken: feeInfo?.gasToken,
   };
-  const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, chain);
+  const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
 
   const { estimateCallRequestTransaction } = useWalletConnect();
 
