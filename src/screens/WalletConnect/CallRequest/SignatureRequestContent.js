@@ -61,11 +61,11 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const config = configs[chain];
 
   /**
-   * Archanova account needs to be deployed regardless of the action,
-   * Etherspot account must to be deployed for signature requests only
+   * Archanova account needs to be deployed for all types call requests.
+   * Etherspot account needs to be deployed for signature type call requests only.
    */
   const requiresDeployedAccount = (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed)
-    || isEtherspotAccountDeployed(activeAccount, chain);
+    || !isEtherspotAccountDeployed(activeAccount, chain);
 
   return (
     <>

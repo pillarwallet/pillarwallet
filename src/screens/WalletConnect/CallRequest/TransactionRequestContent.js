@@ -29,6 +29,7 @@ import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
 import LargeTokenValueView from 'components/modern/LargeTokenValueView';
 import Text from 'components/modern/Text';
+import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
@@ -108,6 +109,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
+      {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
+
       <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
       <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
     </>
@@ -184,8 +187,8 @@ const useViewData = (request: WalletConnectCallRequest) => {
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
   /**
-   * Archanova account needs to be deployed regardless of the action,
-   * Etherspot account must to be deployed for signature requests only
+   * Archanova account needs to be deployed for all types call requests.
+   * Etherspot account doesn't need to be deployed for transaction type call requests only.
    */
   const requiresDeployedAccount = isArchanovaAccountActive && !isArchanovaAccountDeployed;
 
@@ -217,6 +220,9 @@ const styles = {
   },
   button: {
     marginVertical: spacing.small / 2,
+  },
+  transactionDeploymentWarning: {
+    marginBottom: spacing.mediumLarge,
   },
 };
 
