@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -71,6 +72,7 @@ import { getThemeByType, defaultTheme } from 'utils/themes';
 import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
 import { initInstabug, setInstabugTheme } from 'utils/monitoring';
+import { logBreadcrumb, reportOrWarn } from 'utils/common';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
@@ -165,9 +167,11 @@ class App extends React.Component<Props, *> {
       updateTranslationResourceOnContextChange,
     } = this.props;
 
+    logBreadcrumb('App.js', 'Setting up environment...');
     const env = await setupEnv();
     log.info('Environment: ', env);
     this.setState({ env });
+    logBreadcrumb('App.js', 'Done setting up environment.');
 
     /**
      * First, we need to set the defaults for Remote Config.
@@ -177,12 +181,19 @@ class App extends React.Component<Props, *> {
      * @url https://rnfirebase.io/reference/remote-config#setDefaults
      */
 
+    logBreadcrumb('App.js', 'Remote Config: Setting up default values...');
     remoteConfig()
       .setDefaults(INITIAL_REMOTE_CONFIG)
-      .then(() => log.info('Firebase Config: Defaults loaded and available.'))
-      .catch(e => log.error('Firebase Config: An error occurred loading defaults:', e));
+      .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
+      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+    logBreadcrumb('App.js', 'Remote Config: Finished setting up default values.');
 
-    await remoteConfig().ensureInitialized();
+    logBreadcrumb('App.js', 'Remote Config: Ensuring last activated values are available...');
+    remoteConfig()
+      .ensureInitialized()
+      .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
+      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+    logBreadcrumb('App.js', 'Remote Config: Finished ensuring last activated values are available.');
 
     /**
      * Secondly, we need to activate any remotely fetched values
@@ -193,15 +204,18 @@ class App extends React.Component<Props, *> {
      * @url https://rnfirebase.io/reference/remote-config#activate
      */
 
+    logBreadcrumb('App.js', 'Remote Config: Activating latest values, if any...');
     remoteConfig()
       .activate()
-      .then((r) => {
-        log.info('Firebase Config: Activation result was:', r);
+      .then((activationResult) => {
+        logBreadcrumb('App.js', `Remote Config: Activation result was ${activationResult}`);
         if (sessionLanguageVersion !== firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP)) {
+          logBreadcrumb('App.js', 'Remote Config: Triggering i18n update...');
           updateTranslationResourceOnContextChange();
         }
       })
-      .catch(e => log.error('Firebase Config: An error occurred while activating:', e));
+      .catch(e => reportOrWarn('Remote Config: An error occurred while activating:', e));
+    logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
