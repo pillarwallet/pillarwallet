@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
+import styled from 'styled-components/native';
 
 // Components
 import Button from 'components/modern/Button';
@@ -34,6 +35,12 @@ import { chainFromChainId } from 'utils/chains';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
+import { isEtherspotAccountDeployed } from 'utils/etherspot';
+import { isArchanovaAccount } from 'utils/accounts';
+
+// Selectors
+import { useActiveAccount, useRootSelector } from 'selectors';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -47,9 +54,18 @@ type Props = {|
 function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
   const configs = useChainsConfig();
+  const activeAccount = useActiveAccount();
+  const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
   const { title, iconUrl, chain } = getViewData(request);
   const config = configs[chain];
+
+  /**
+   * Archanova account needs to be deployed regardless of the action,
+   * Etherspot account must to be deployed for signature requests only
+   */
+  const requiresDeployedAccount = (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed)
+    || isEtherspotAccountDeployed(activeAccount, chain);
 
   return (
     <>
@@ -59,8 +75,25 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
       <Image source={{ uri: iconUrl }} style={styles.icon} />
 
-      <Button title={t('button.confirm')} onPress={onConfirm} style={styles.button} />
-      <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
+      {requiresDeployedAccount && (
+        <ErrorMessage variant="small">
+          {t('walletConnectContent.error.smartWalletNeedToBeActivated')}
+        </ErrorMessage>
+      )}
+
+      <Button
+        title={t('button.confirm')}
+        onPress={onConfirm}
+        disabled={requiresDeployedAccount}
+        style={styles.button}
+      />
+
+      <Button
+        title={t('button.reject')}
+        onPress={onReject}
+        variant="text-destructive"
+        style={styles.button}
+      />
     </>
   );
 }
@@ -86,3 +119,10 @@ const styles = {
     marginVertical: spacing.small / 2,
   },
 };
+
+const ErrorMessage = styled(Text)`
+  margin: ${spacing.extraSmall}px 0 ${spacing.mediumLarge}px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
+`;
+

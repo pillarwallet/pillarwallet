@@ -32,12 +32,17 @@ import Text from 'components/modern/Text';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, supportedAssetsSelector } from 'selectors';
+import {
+  useRootSelector,
+  supportedAssetsSelector,
+  useActiveAccount,
+} from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
-import { isDeployedOnChainSelector } from 'selectors/chains';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -50,6 +55,7 @@ import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -160,6 +166,10 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
+  const activeAccount = useActiveAccount();
+  const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
+
+  const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
 
   let errorMessage = null;
   const chain = chainFromChainId[request.chainId];
@@ -167,11 +177,20 @@ const useViewData = (request: WalletConnectCallRequest) => {
     errorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
 
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
+  if (isArchanovaAccountActive && chain === CHAIN.ETHEREUM) {
+    errorMessage = t('error.walletConnect.activeAccountDoesNotSupportSelectedChain');
+  }
+
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
+  /**
+   * Archanova account needs to be deployed regardless of the action,
+   * Etherspot account must to be deployed for signature requests only
+   */
+  const requiresDeployedAccount = isArchanovaAccountActive && !isArchanovaAccountDeployed;
+
   if (!errorMessage) {
-    errorMessage = !isDeployedOnChain[chain]
+    errorMessage = requiresDeployedAccount
       ? t('walletConnectContent.error.smartWalletNeedToBeActivated')
       : estimationErrorMessage;
   }

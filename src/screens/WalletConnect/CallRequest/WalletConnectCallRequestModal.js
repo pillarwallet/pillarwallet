@@ -21,14 +21,13 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import { NavigationActions } from 'react-navigation';
 
 // Components
 import BottomModal from 'components/modern/BottomModal';
 import Toast from 'components/Toast';
 
 // Constants
-import { ASSETS, WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
+import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // Hooks
@@ -36,11 +35,6 @@ import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { getWalletConnectCallRequestType, formatRequestType } from 'utils/walletConnect';
-import { chainFromChainId } from 'utils/chains';
-import { isEtherspotAccountDeployed } from 'utils/etherspot';
-
-// Selectors
-import { useActiveAccount } from 'selectors';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -58,7 +52,6 @@ type Props = {|
 function WalletConnectCallRequestModal({ request }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const activeAccount = useActiveAccount();
 
   const ref = React.useRef();
 
@@ -68,30 +61,6 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const title = formatRequestType(type);
 
   const handleConfirm = (transactionPayload?: TransactionPayload) => {
-    const chain = chainFromChainId[request.chainId];
-    if (!chain) {
-      Toast.show({
-        message: t('error.walletConnect.cannotDetermineEthereumChain'),
-        emoji: 'eyes',
-        supportLink: true,
-      });
-      return;
-    }
-
-    // account must to be deployed for signature requests
-    const isAccountDeployed = isEtherspotAccountDeployed(activeAccount, chain);
-    if (type === REQUEST_TYPE.MESSAGE && !isAccountDeployed) {
-      Toast.show({
-        message: t('toast.walletConnectSmartWalletNotActive'),
-        emoji: 'point_up',
-        link: t('label.activateSmartWallet'),
-        autoClose: false,
-        // contains sw activation card
-        onLinkPress: () => navigation.navigate(NavigationActions.navigate({ routeName: ASSETS })),
-      });
-      return;
-    }
-
     if (!request) {
       Toast.show({
         message: t('toast.walletConnectCallRequestApproveFailed'),
