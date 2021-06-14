@@ -110,7 +110,7 @@ import {
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // types
 import type { ColorKey, Theme } from 'models/Theme';
@@ -1009,7 +1009,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });
 

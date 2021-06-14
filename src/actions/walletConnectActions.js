@@ -31,7 +31,6 @@ import {
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
 } from 'constants/walletConnectConstants';
 import {
-  ASSETS,
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
@@ -53,7 +52,6 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // selectors
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
@@ -158,20 +156,6 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
         message: t('toast.noActiveAccountFound'),
         emoji: 'hushed',
         supportLink: true,
-        autoClose: false,
-      });
-      return;
-    }
-
-    const chain = chainFromChainId[chainId];
-    const requiresSmartWalletDeployment = !isDeployedOnChainSelector(getState())[chain];
-
-    if (requiresSmartWalletDeployment) {
-      Toast.show({
-        message: t('toast.walletConnectSmartWalletNotActive'),
-        emoji: 'point_up',
-        link: t('label.activateSmartWallet'),
-        onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })), // contains sw activation card
         autoClose: false,
       });
       return;
