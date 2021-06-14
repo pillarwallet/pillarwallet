@@ -53,7 +53,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // relative
 import { SettingsSection } from './SettingsSection';
@@ -276,7 +276,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

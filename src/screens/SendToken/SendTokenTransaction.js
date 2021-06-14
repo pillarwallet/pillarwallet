@@ -135,7 +135,7 @@ class SendTokenTransaction extends React.Component<Props> {
   handleDismissal = () => {
     const { navigation } = this.props;
 
-    const { isSuccess, transactionPayload } = navigation.state.params;
+    const { isSuccess, transactionPayload, goBackDismiss } = navigation.state.params;
 
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
@@ -218,7 +218,11 @@ class SendTokenTransaction extends React.Component<Props> {
       return;
     }
 
-    navigation.dismiss();
+    if (goBackDismiss) {
+      navigation.goBack(null);
+    } else {
+      navigation.dismiss();
+    }
 
     if (transactionPayload.usePPN && isSuccess) {
       const { amount, symbol } = transactionPayload;
