@@ -41,6 +41,8 @@ type Props = {|
   iconColor?: string,
   toastText: string,
   textStyle?: TextStyleProp,
+  adjustsFontSizeToFit?: boolean,
+  numberOfLines?: number,
 |};
 
 const TextWithCopy = ({
@@ -50,6 +52,8 @@ const TextWithCopy = ({
   iconColor,
   toastText,
   textStyle,
+  adjustsFontSizeToFit,
+  numberOfLines,
 }: Props) => {
   const copyToClipboard = () => {
     if (!textToCopy) return;
@@ -60,7 +64,13 @@ const TextWithCopy = ({
 
   return (
     <TouchableContainer onPress={copyToClipboard} disabled={!textToCopy} hitSlop={hitSlop20} style={style}>
-      {typeof children === 'string' ? <Text style={textStyle}>{children}</Text> : children}
+      {typeof children === 'string' ? (
+        <Text adjustsFontSizeToFit={adjustsFontSizeToFit} numberOfLines={numberOfLines} style={textStyle}>
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
       {!!textToCopy && <CopyIcon name="copy" color={iconColor} width={18} height={18} />}
     </TouchableContainer>
   );
