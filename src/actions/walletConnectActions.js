@@ -52,7 +52,6 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // selectors
 import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';

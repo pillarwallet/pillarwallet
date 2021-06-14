@@ -526,7 +526,7 @@ export class EtherspotService {
       temporaryBatchSubscription = sdk.notifications$
         .pipe(map(async (notification) => {
           if (notification.type === NotificationTypes.GatewayBatchUpdated) {
-            const submittedBatch = await this.sdk.getGatewaySubmittedBatch({ hash: batchHash });
+            const submittedBatch = await sdk.getGatewaySubmittedBatch({ hash: batchHash });
 
             const failedStates = [
               GatewayTransactionStates.Canceling,
