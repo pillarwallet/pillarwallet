@@ -45,7 +45,7 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import { accountsSelector } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
 
-export const isArchanovaWalletActivatedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
+export const isArchanovaAccountDeployedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
   return archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };

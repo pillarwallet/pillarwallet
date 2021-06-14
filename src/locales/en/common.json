@@ -574,7 +574,8 @@
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
       "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
-      "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again"
+      "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again",
+      "activeAccountDoesNotSupportSelectedChain": "Active account does not support selected Ethereum chain"
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {

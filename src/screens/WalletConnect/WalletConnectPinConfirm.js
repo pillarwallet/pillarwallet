@@ -103,6 +103,7 @@ const WalletConnectPinConfirmScreeen = ({
       navigation.navigate(SEND_TOKEN_TRANSACTION, {
         ...transactionStatus,
         noRetry: true,
+        goBackDismiss: true,
         transactionPayload,
       });
     };

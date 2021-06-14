@@ -25,7 +25,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { activeAccountSelector, useRootSelector } from 'selectors';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // utils
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
@@ -47,7 +47,7 @@ export const useSupportedChains = (): Chain[] => useRootSelector(supportedChains
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
   activeAccountSelector,
-  isArchanovaWalletActivatedSelector,
+  isArchanovaAccountDeployedSelector,
   (account: ?Account, isArchanovaDeployed): ChainRecord<boolean> => {
     if (isEtherspotAccount(account)) {
       return {
