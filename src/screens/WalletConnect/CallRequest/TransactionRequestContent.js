@@ -177,7 +177,7 @@ const useViewData = (request: WalletConnectCallRequest) => {
     errorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
 
-  if (isArchanovaAccountActive && chain === CHAIN.ETHEREUM) {
+  if (isArchanovaAccountActive && chain !== CHAIN.ETHEREUM) {
     errorMessage = t('error.walletConnect.activeAccountDoesNotSupportSelectedChain');
   }
 
