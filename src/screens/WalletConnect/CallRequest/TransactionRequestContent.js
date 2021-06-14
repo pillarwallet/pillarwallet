@@ -29,15 +29,21 @@ import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
 import LargeTokenValueView from 'components/modern/LargeTokenValueView';
 import Text from 'components/modern/Text';
+import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, supportedAssetsSelector } from 'selectors';
+import {
+  useRootSelector,
+  supportedAssetsSelector,
+  useActiveAccount,
+} from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { isDeployedOnChainSelector } from 'selectors/chains';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -50,6 +56,7 @@ import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -102,6 +109,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
+      {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
+
       <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
       <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
     </>
@@ -132,13 +141,15 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
   const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
 
-  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
-  const { amount, symbol, decimals } = useTransactionPayload(request);
-
   const chain = chainFromChainId[request.chainId];
   if (!chain && !estimationErrorMessage) {
     estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
+
+  const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
+  const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
+
+  const { amount, symbol, decimals } = useTransactionPayload(request);
 
   const balanceCheckTransaction = {
     amount,
@@ -147,7 +158,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     txFeeInWei: feeInWei,
     gasToken: feeInfo?.gasToken,
   };
-  const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, chain);
+  const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
 
   const { estimateCallRequestTransaction } = useWalletConnect();
 
@@ -158,6 +169,10 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
+  const activeAccount = useActiveAccount();
+  const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
+
+  const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
 
   let errorMessage = null;
   const chain = chainFromChainId[request.chainId];
@@ -165,11 +180,20 @@ const useViewData = (request: WalletConnectCallRequest) => {
     errorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
 
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
+  if (isArchanovaAccountActive && chain !== CHAIN.ETHEREUM) {
+    errorMessage = t('error.walletConnect.activeAccountDoesNotSupportSelectedChain');
+  }
+
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
+  /**
+   * Archanova account needs to be deployed for all types call requests.
+   * Etherspot account doesn't need to be deployed for transaction type call requests only.
+   */
+  const requiresDeployedAccount = isArchanovaAccountActive && !isArchanovaAccountDeployed;
+
   if (!errorMessage) {
-    errorMessage = !isDeployedOnChain[chain]
+    errorMessage = requiresDeployedAccount
       ? t('walletConnectContent.error.smartWalletNeedToBeActivated')
       : estimationErrorMessage;
   }
@@ -196,6 +220,9 @@ const styles = {
   },
   button: {
     marginVertical: spacing.small / 2,
+  },
+  transactionDeploymentWarning: {
+    marginBottom: spacing.mediumLarge,
   },
 };
 

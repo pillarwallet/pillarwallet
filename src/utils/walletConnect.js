@@ -22,7 +22,6 @@ import { orderBy, isEmpty } from 'lodash';
 import t from 'translations/translate';
 
 // Constants
-import { ETH } from 'constants/assetsConstants';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import {
   ETH_SEND_TX,
@@ -37,7 +36,11 @@ import {
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
-import { chainFromChainId } from 'utils/chains';
+import {
+  chainFromChainId,
+  nativeAssetDecimalsPerChain,
+  nativeAssetSymbolPerChain,
+} from 'utils/chains';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -141,17 +144,18 @@ export const mapCallRequestToTransactionPayload = (
     to = methodToAddress;
   }
 
-  const ethAssetData = getAssetData(accountAssets, supportedAssets, ETH);
-
-  const {
-    symbol = ETH,
-    address: contractAddress = ethAssetData.address,
-    decimals = 18,
-  } = assetData;
-
-  // TODO: double check if we should add fallback to mainnet?
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
+  const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
+  const chainNativeDecimals = nativeAssetDecimalsPerChain[chain];
+
+  const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
+
+  const {
+    symbol = chainNativeSymbol,
+    address: contractAddress = nativeAssetData.address,
+    decimals = chainNativeDecimals,
+  } = assetData;
 
   return {
     to,

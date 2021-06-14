@@ -162,7 +162,7 @@ import {
   collectiblesHistorySelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // actions
 import { lookupAddressAction } from 'actions/ensRegistryActions';
@@ -1675,7 +1675,7 @@ const mapStateToProps = ({
 const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   mergedPPNTransactions: combinedPPNTransactionsSelector,
-  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,

@@ -54,7 +54,7 @@ import {
 } from 'utils/accounts';
 
 // selectors
-import { isArchanovaWalletActivatedSelector } from 'selectors/archanova';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -284,7 +284,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isArchanovaWalletActivated: isArchanovaWalletActivatedSelector,
+  isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

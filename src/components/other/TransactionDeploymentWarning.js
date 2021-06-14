@@ -27,13 +27,14 @@ import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
 import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -51,10 +52,12 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const chainConfig = useChainConfig(chain);
+  const activeAccount = useActiveAccount();
 
   const isDeployed = useRootSelector(isDeployedOnChainSelector)[chain];
 
-  if (isDeployed) return null;
+  // no warning for Archanova as it won't deploy on transaction
+  if (isDeployed || isArchanovaAccount(activeAccount)) return null;
 
   return (
     <Container style={style}>
