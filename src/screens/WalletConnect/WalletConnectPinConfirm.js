@@ -70,7 +70,7 @@ type Props = {
   activeAccount: ?Account,
 };
 
-const WalletConnectPinConfirmScreeen = ({
+const WalletConnectPinConfirmScreen = ({
   resetIncorrectPassword,
   useBiometrics,
   sendAsset,
@@ -84,10 +84,10 @@ const WalletConnectPinConfirmScreeen = ({
   const callRequest = navigation.getParam('callRequest');
   const transactionPayload = navigation.getParam('transactionPayload');
 
-  const dismissScreen = () => {
+  const onSuccess = (dismissNavigation: boolean = false) => {
     resetIncorrectPassword();
     setIsChecking(false);
-    navigation.dismiss();
+    if (dismissNavigation) navigation.dismiss();
   };
 
   const handleSendTransaction = (): void => {
@@ -98,7 +98,7 @@ const WalletConnectPinConfirmScreeen = ({
         rejectCallRequest(callRequest);
       }
 
-      dismissScreen();
+      onSuccess();
 
       navigation.navigate(SEND_TOKEN_TRANSACTION, {
         ...transactionStatus,
@@ -171,7 +171,7 @@ const WalletConnectPinConfirmScreeen = ({
       });
     }
 
-    dismissScreen();
+    onSuccess(true);
   };
 
   const onNavigationBack = () => {
@@ -213,4 +213,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreeen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectPinConfirmScreen);
