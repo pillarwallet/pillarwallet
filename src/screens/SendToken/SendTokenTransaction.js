@@ -137,11 +137,6 @@ class SendTokenTransaction extends React.Component<Props> {
 
     const { isSuccess, transactionPayload, goBackDismiss } = navigation.state.params;
 
-    if (goBackDismiss) {
-      navigation.goBack(null);
-      return;
-    }
-
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
       const { extra: { symbol = DAI, amount, decimals = 18 } = {} } = transactionPayload;
@@ -223,7 +218,11 @@ class SendTokenTransaction extends React.Component<Props> {
       return;
     }
 
-    navigation.dismiss();
+    if (goBackDismiss) {
+      navigation.goBack(null);
+    } else {
+      navigation.dismiss();
+    }
 
     if (transactionPayload.usePPN && isSuccess) {
       const { amount, symbol } = transactionPayload;
