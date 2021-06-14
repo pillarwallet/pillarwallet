@@ -33,7 +33,7 @@ import { KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 // Components
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
-import { Container } from 'components/modern/Layout';
+import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
@@ -64,8 +64,6 @@ function KeyBasedAssetTransferIntro() {
           noPaddingTop
         />
         <Content showsVerticalScrollIndicator={false}>
-          <Spacing h={top} />
-
           <Title>{t('title')}</Title>
           <Spacing h={spacing.largePlus} />
           <Body>{t('header')}</Body>
@@ -98,10 +96,6 @@ function KeyBasedAssetTransferIntro() {
 
 export default KeyBasedAssetTransferIntro;
 
-
-const Content = styled.ScrollView`
-  padding-horizontal: ${spacing.large}px;
-`;
 
 const Title = styled(Text)`
   font-family: "${appFont.medium}";
