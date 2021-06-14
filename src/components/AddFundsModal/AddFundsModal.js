@@ -18,67 +18,34 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useCallback, useMemo, useEffect } from 'react';
-import type { AbstractComponent } from 'react';
+import * as React from 'react';
 import { Platform } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 import t from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
 
-// components
+// Components
 import Modal from 'components/Modal';
 import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-// constants
+// Constants
 import { EXCHANGE, SERVICES } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 
-// actions
-import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-
-// types
-import type { RootReducerState } from 'reducers/rootReducer';
-
+// Selectors
+import { useIsExchangeAvailable } from 'selectors';
 
 type Props = {|
   token?: string,
   receiveAddress: string,
 |};
 
-const exchangeSupportedAssetsSelector = ({
-  exchange: {
-    exchangeSupportedAssets,
-    isFetchingUniswapTokens,
-    uniswapTokensGraphQueryFailed,
-  },
-}: RootReducerState) => ({
-  exchangeSupportedAssets,
-  isFetchingUniswapTokens,
-  uniswapTokensGraphQueryFailed,
-});
-
 const AddFundsModal = ({ token, receiveAddress }: Props) => {
-  const dispatch = useDispatch();
-  const {
-    exchangeSupportedAssets,
-    isFetchingUniswapTokens,
-    uniswapTokensGraphQueryFailed,
-  } = useSelector(exchangeSupportedAssetsSelector);
   const navigation = useNavigation();
 
-  const isSupportedByExchange = useMemo(() =>
-    !!token && exchangeSupportedAssets.some(({ symbol }) => symbol === token),
-  [exchangeSupportedAssets, token]);
+  const isExchangeAvailable = useIsExchangeAvailable();
 
-  useEffect(() => {
-    if (exchangeSupportedAssets.length === 0) {
-      dispatch(getExchangeSupportedAssetsAction());
-    }
-  }, [dispatch, exchangeSupportedAssets.length]);
-
-  const openReceiveModal = useCallback(() => {
+  const openReceiveModal = React.useCallback(() => {
     Modal.open(() => (
       <ReceiveModal
         address={receiveAddress}
@@ -86,8 +53,6 @@ const AddFundsModal = ({ token, receiveAddress }: Props) => {
       />
     ));
   }, [token, receiveAddress]);
-
-  const hideExchangeOption = !!token && !isSupportedByExchange;
 
   const options = [
     {
@@ -102,31 +67,15 @@ const AddFundsModal = ({ token, receiveAddress }: Props) => {
       iconName: 'qrDetailed',
       onPress: openReceiveModal,
     },
-    {
+    isExchangeAvailable && {
       key: 'exchange',
       label: t('button.exchange'),
       iconName: 'flip',
       onPress: () => navigation.navigate(EXCHANGE, token && { toAssetCode: token }),
-      hide: hideExchangeOption,
     },
   ];
 
-  const retryBox = (
-    <RetryGraphQueryBox
-      message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
-      hasFailed={hideExchangeOption && uniswapTokensGraphQueryFailed}
-      isFetching={isFetchingUniswapTokens}
-      onRetry={() => dispatch(getExchangeSupportedAssetsAction())}
-    />
-  );
-
-  return (
-    <ActionOptionsModal
-      items={options}
-      title={t('title.addFundsToWallet')}
-      footer={retryBox}
-    />
-  );
+  return <ActionOptionsModal items={options} title={t('title.addFundsToWallet')} />;
 };
 
-export default (AddFundsModal: AbstractComponent<Props>);
+export default AddFundsModal;

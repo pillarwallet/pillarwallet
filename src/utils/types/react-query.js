@@ -18,6 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type QueryStatus = 'loading' | 'success' | 'error' | 'idle';
+
 export type QueryResult<T> = {|
   data: ?T,
+  error?: any,
+  status: QueryStatus,
+  isLoading: boolean,
+  isSuccess: boolean,
+  isError: boolean,
+  isIdle: boolean,
+  isFetching: boolean,
 |};

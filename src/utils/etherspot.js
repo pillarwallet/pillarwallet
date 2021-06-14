@@ -19,15 +19,16 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber } from 'ethers';
+import { BigNumber as EthersBigNumber, constants as EthersConstants } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
-  type GatewayEstimatedBatch,
   type Transaction as EtherspotTransaction,
   type Account as EtherspotAccount,
+  ExchangeProviders as EtherspotExchangeProviders,
   AccountStates,
   GatewayBatchStates,
 } from 'etherspot';
+import { uniqBy, orderBy } from 'lodash';
 
 // constants
 import {
@@ -36,19 +37,26 @@ import {
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { ETH } from 'constants/assetsConstants';
+import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
 import { getAssetDataByAddress } from 'utils/assets';
+import { fromEthersBigNumber } from 'utils/bigNumber';
 import { buildHistoryTransaction } from 'utils/history';
 
 // types
+import type {
+  TokenListToken,
+  ExchangeOffer as EtherspotExchangeOffer,
+  GatewayEstimatedBatch,
+} from 'utils/types/etherspot';
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset } from 'models/Asset';
+import type { Asset, AssetCore } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
-
+import type { ExchangeProvider, ExchangeOffer } from 'models/Exchange';
 
 const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   COMPLETED: 'Completed',
@@ -141,7 +149,7 @@ export const buildEtherspotTxFeeInfo = (
 ): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
 
-  // TODO: revisit etherspot gasToken once it's fully implemented
+  // $FlowFixMe: revisit etherspot gasToken once it's fully implemented
   const { estimatedGas, estimatedGasPrice, gasToken = null } = estimated;
 
   const ethCost = new BigNumber(estimatedGasPrice.mul(estimatedGas).toString());
@@ -167,4 +175,78 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
     case GatewayBatchStates.Reverted: return TX_FAILED_STATUS;
     default: return null;
   }
+};
+
+export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI }: TokenListToken): Asset => {
+  const hasValidIconUrl = logoURI?.startsWith('https://') || logoURI?.startsWith('http://');
+
+  return {
+    address,
+    name,
+    symbol,
+    decimals,
+    iconUrl: hasValidIconUrl ? logoURI : '',
+    iconMonoUrl: hasValidIconUrl ? logoURI : '',
+  };
+};
+
+export const buildExchangeOffer = (
+  fromAsset: AssetCore,
+  toAsset: AssetCore,
+  fromAmount: BigNumber,
+  offer: EtherspotExchangeOffer,
+): ExchangeOffer => {
+  const { exchangeRate, transactions } = offer;
+  const provider = parseExchangeProvider(offer.provider);
+  const toAmount = fromEthersBigNumber(offer.receiveAmount, toAsset.decimals);
+
+  // Note: etherspot exchange rate is quoted as FROM / TO, so we need to reverse it.
+  return { provider, fromAsset, toAsset, fromAmount, toAmount, exchangeRate: 1 / exchangeRate, transactions };
+};
+
+export const prepareAssets = (assets: Asset[]): Asset[] => {
+  let result = assets;
+  result = appendEthIfNeeded(result);
+  result = orderBy(result, [(asset) => (asset.iconUrl ? 0 : 1)]);
+  result = uniqBy(result, (asset) => asset.address.toUpperCase());
+
+  return result;
+};
+
+const appendEthIfNeeded = (assets: Asset[]): Asset[] => {
+  const hasEth = assets.some(({ symbol }) => symbol === ETH);
+  if (hasEth) return assets;
+
+  // eslint-disable-next-line i18next/no-literal-string
+  const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
+  const eth = {
+    address: EthersConstants.AddressZero,
+    name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
+    symbol: ETH,
+    decimals: 18,
+    iconUrl,
+    iconMonoUrl: iconUrl,
+  };
+
+  return [eth, ...assets];
+};
+
+// TODO: handle gas token
+export const buildTransactionFeeInfo = (estimated: ?GatewayEstimatedBatch): TransactionFeeInfo => {
+  if (!estimated) return { fee: null };
+
+  const { estimatedGas, estimatedGasPrice } = estimated;
+
+  const nativeFee = fromEthersBigNumber(estimatedGasPrice, 0).times(estimatedGas);
+  return { fee: nativeFee };
+};
+
+const exchangeProviderFromEtherspot = {
+  [EtherspotExchangeProviders.OneInch]: EXCHANGE_PROVIDER.ONE_INCH,
+  [EtherspotExchangeProviders.Uniswap]: EXCHANGE_PROVIDER.UNISWAP,
+  [EtherspotExchangeProviders.Synthetix]: EXCHANGE_PROVIDER.SYNTHETIX,
+};
+
+export const parseExchangeProvider = (provider: string): ?ExchangeProvider => {
+  return exchangeProviderFromEtherspot[provider];
 };

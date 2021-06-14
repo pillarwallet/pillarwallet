@@ -25,6 +25,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
+import { compactFalsy } from 'utils/array';
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -39,7 +40,7 @@ type ItemType = {
 }
 
 type Props = {|
-  items: ItemType[],
+  items: (?ItemType | false)[],
   title?: string,
   footer?: React.Node,
 |};
@@ -76,7 +77,8 @@ class ActionOptionsModal extends React.Component<Props> {
   };
 
   render() {
-    const { items, title, footer } = this.props;
+    const { title, footer } = this.props;
+    const items = compactFalsy(this.props.items);
 
     return (
       <SlideModal

@@ -26,11 +26,10 @@ import { get } from 'lodash';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
-import { getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
+import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Allowance, AccountAllowances } from 'models/Offer';
 import type { Asset, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
 
@@ -42,6 +41,7 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRates = () => useRootSelector(ratesSelector);
+export const useSupportedAssets = () => useRootSelector(supportedAssetsSelector);
 
 //
 // Global selectors here
@@ -81,8 +81,7 @@ export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => syn
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
 
-export const supportedAssetsSelector = ({ assets }: RootReducerState): Asset[] =>
-  get(assets, 'supportedAssets', []);
+export const supportedAssetsSelector = (root: RootReducerState): Asset[] => root.assets.supportedAssets ?? [];
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
@@ -109,15 +108,9 @@ export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
 
 export const useSmartWalletAccounts = (): Account[] => useAccounts().filter(isNotKeyBasedType);
 
-export const allAccountsExchangeAllowancesSelector = ({ exchange }: RootReducerState) => exchange.data.allowances;
-
-export const activeAccountExchangeAllowancesSelector = createSelector(
-  allAccountsExchangeAllowancesSelector,
-  activeAccountIdSelector,
-  (allAllowances: AccountAllowances, activeAccountId: ?string): Allowance[] => {
-    if (activeAccountId) return allAllowances[activeAccountId] ?? [];
-    return [];
-  },
-);
-
 export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);
+
+export const useIsExchangeAvailable = (): boolean => {
+  const account = useActiveAccount();
+  return isEtherspotAccount(account);
+};

@@ -136,7 +136,7 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
 export default AssetSelectorModal;
 
 const getAssets = (options: AssetOption[] = [], query: ?string): AssetOption[] => {
-  const filteredOptions = options.filter((option) => isMatchingAsset(option, query));
+  const filteredOptions = query ? options.filter((option) => isMatchingAsset(option, query)) : options;
   return defaultSortAssetOptions(filteredOptions);
 };
 

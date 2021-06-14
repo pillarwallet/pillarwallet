@@ -17,169 +17,82 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import CookieManager from 'react-native-cookies';
-import { Platform } from 'react-native';
-import get from 'lodash.get';
-import { constants } from 'ethers';
-import { BigNumber } from 'bignumber.js';
-import { getEnv } from 'configs/envConfig';
 
-// models
-import type { Offer } from 'models/Offer';
-import type { Asset, AssetOption } from 'models/Asset';
-import type { Theme } from 'models/Theme';
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
-import type { AllowanceTransaction } from 'models/Transaction';
+import { useTranslation } from 'translations/translate';
 
-import { fiatCurrencies } from 'fixtures/assets';
-import PROVIDERS_META from 'assets/exchange/providersMeta.json';
+// Constants
+import { EXCHANGE_PROVIDER as PROVIDER } from 'constants/exchangeConstants';
 
-// services, utils
-import { encodeContractMethod } from 'services/assets';
-import { getThemeName } from './themes';
-import { staticImages } from './images';
-import { reportOrWarn, getEthereumProvider } from './common';
+// Utils
+import { useIsDarkTheme } from 'utils/themes';
+
+// Types
+import type { ImageSource } from 'utils/types/react-native';
+import type { AssetOption } from 'models/Asset';
+import type { ExchangeProvider } from 'models/Exchange';
+
+// Images
+const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
+const uniswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png');
+const uniswapLightMonochrome = require('assets/images/exchangeProviders/uniswapLightMonochrome.png');
+const uniswapDarkVertical = require('assets/images/exchangeProviders/uniswapDarkVertical.png');
+const uniswapDarkHorizontal = require('assets/images/exchangeProviders/uniswapDarkHorizontal.png');
+const uniswapDarkMonochrome = require('assets/images/exchangeProviders/uniswapDarkMonochrome.png');
+const oneInchLightVertical = require('assets/images/exchangeProviders/oneinchLightVertical.png');
+const oneInchLightHorizontal = require('assets/images/exchangeProviders/oneinchLightHorizontal.png');
+const oneInchLightMonochrome = require('assets/images/exchangeProviders/oneinchLightMonochrome.png');
+const oneInchDarkVertical = require('assets/images/exchangeProviders/oneinchDarkVertical.png');
+const oneInchDarkHorizontal = require('assets/images/exchangeProviders/oneinchDarkHorizontal.png');
+const oneInchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDarkMonochrome.png');
+const synthetixLightVertical = require('assets/images/exchangeProviders/synthetixLightVertical.png');
+const synthetixLightHorizontal = require('assets/images/exchangeProviders/synthetixLightHorizontal.png');
+const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthetixLightMonochrome.png');
+const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
+const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
+const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
   toOptions: AssetOption[],
 };
 
-export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
+type ProviderConfig = {|
+  title: string,
+  iconVertical: ImageSource,
+  iconHorizontal: ImageSource,
+  iconMonochrome: ImageSource,
+|};
 
-export const getOfferProviderLogo = (provider?: string, theme: Theme, type: string) => {
-  if (!provider) return staticImages[`exchangeDefaultLogo${theme.current === LIGHT_THEME ? 'Light' : 'Dark'}`];
-  const providerInfo = getProviderInfo(provider);
-  const themeName = getThemeName(theme);
-  if (providerInfo) {
-    const providerIconName = get(providerInfo, `img.${type}.${themeName}`, '');
-    const image = staticImages[providerIconName] || '';
-    return image;
-  }
-  return '';
-};
+/**
+ * Returns common UI aspects (texts, icons, color) for displaying main Ethereum chain and side chains.
+ */
+export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig } {
+  const { t } = useTranslation();
+  const isDarkTheme = useIsDarkTheme();
 
-export const getCryptoProviderName = (provider: string) => {
-  const providerInfo = getProviderInfo(provider);
-  const { name } = providerInfo;
-  return name;
-};
-
-export const isFiatCurrency = (symbol: string) => {
-  return !!fiatCurrencies.find(currency => currency.symbol === symbol);
-};
-
-export const clearWebViewCookies = () => {
-  if (Platform.OS === 'ios') {
-    CookieManager.clearAll(true).then(() => {}).catch(() => null);
-    CookieManager.clearAll(false).then(() => {}).catch(() => null);
-  } else {
-    CookieManager.clearAll().then(() => {}).catch(() => null);
-  }
-};
-
-export const parseOffer = (
-  fromAsset: Asset,
-  toAsset: Asset,
-  allowanceSet: boolean,
-  askRate: string,
-  provider: string,
-): Offer => {
   return {
-    fromAsset,
-    toAsset,
-    allowanceSet,
-    askRate,
-    maxQuantity: '0',
-    minQuantity: '0',
-    extra: undefined,
-    _id: provider,
-    description: '',
-    provider,
+    [PROVIDER.UNISWAP]: {
+      title: t('exchangeContent.providers.uniswap'),
+      iconVertical: isDarkTheme ? uniswapDarkVertical : uniswapLightVertical,
+      iconHorizontal: isDarkTheme ? uniswapDarkHorizontal : uniswapLightHorizontal,
+      iconMonochrome: isDarkTheme ? uniswapDarkMonochrome : uniswapLightMonochrome,
+    },
+    [PROVIDER.ONE_INCH]: {
+      title: t('exchangeContent.providers.oneInch'),
+      iconVertical: isDarkTheme ? oneInchDarkVertical : oneInchLightVertical,
+      iconHorizontal: isDarkTheme ? oneInchDarkHorizontal : oneInchLightHorizontal,
+      iconMonochrome: isDarkTheme ? oneInchDarkMonochrome : oneInchLightMonochrome,
+    },
+    [PROVIDER.SYNTHETIX]: {
+      title: t('exchangeContent.providers.synthetix'),
+      iconVertical: isDarkTheme ? synthetixDarkVertical : synthetixLightVertical,
+      iconHorizontal: isDarkTheme ? synthetixDarkHorizontal : synthetixLightHorizontal,
+      iconMonochrome: isDarkTheme ? synthetixDarkMonochrome : synthetixLightMonochrome,
+    },
   };
-};
+}
 
-/* eslint-disable i18next/no-literal-string */
-const setAllowanceAbiFunction = [{
-  name: 'approve',
-  outputs: [{ type: 'bool', name: 'out' }],
-  inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
-  constant: false,
-  payable: false,
-  type: 'function',
-  gas: 38769,
-}];
-
-const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
-
-export const createAllowanceTx = async (
-  fromAssetAddress: string,
-  clientAddress: string,
-  contractAddress: string,
-): Promise<AllowanceTransaction | null> => {
-  if (!clientAddress) {
-    reportOrWarn('Unable to set allowance, no client address provided', null, 'error');
-    return null;
-  }
-  try {
-    const encodedContractFunction = encodeContractMethod(
-      setAllowanceAbiFunction,
-      'approve',
-      [contractAddress, constants.MaxUint256.toString()],
-    );
-
-    const txCount = await ethProvider().getTransactionCount(clientAddress);
-
-    return {
-      nonce: txCount.toString(),
-      to: fromAssetAddress,
-      chainId: '1',
-      data: encodedContractFunction,
-    };
-  } catch (e) {
-    reportOrWarn('Unable to set allowance', e, 'error');
-    return null;
-  }
-};
-
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: string): string =>
-  new BigNumber(askRate).multipliedBy(new BigNumber(amountToSell)).toFixed();
-
-// check if the re-calculated order amount doesn't diverge from offer amount
-export const isOrderAmountTooLow = (
-  askRate: string | number,
-  fromAmount: string,
-  order: { expectedOutput?: string },
-): boolean => {
-  // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
-  if (!order.expectedOutput) return false;
-  try {
-    // askRate is provided by offer
-    const offerAmount = calculateAmountToBuy(askRate, fromAmount);
-    // fix and round down because offer and order can have different decimals
-    const offerAmountFixed = new BigNumber(offerAmount).toFixed(8, 1);
-    // $FlowExpectedError: checked above
-    const orderAmountFixed = new BigNumber(order.expectedOutput).toFixed(8, 1);
-    // stop swap if order < offer
-    return new BigNumber(offerAmountFixed).isGreaterThan(orderAmountFixed);
-  } catch {
-    return true;
-  }
-};
-
-export const isAmountToSellBelowMin = (minQuantity: string | number, amountToSell: string): boolean => {
-  const minQuantityBN = new BigNumber(minQuantity);
-  const amountToSellBN = new BigNumber(amountToSell);
-  return !minQuantityBN.isZero() && amountToSellBN.isLessThan(minQuantityBN);
-};
-
-export const isAmountToSellAboveMax = (maxQuantity: string | number, amountToSell: string): boolean => {
-  const maxQuantityBN = new BigNumber(maxQuantity);
-  const amountToSellBN = new BigNumber(amountToSell);
-  return !maxQuantityBN.isZero() && amountToSellBN.isGreaterThan(maxQuantityBN);
-};
-
-export const getFixedQuantity = (quantity: string, decimals?: number | string): string => {
-  if (!!decimals && quantity.split('.')[1]?.length <= Number(decimals)) return quantity;
-  return new BigNumber(quantity).toFixed(Number(decimals) || 18, 1);
-};
+export function useProviderConfig(provider: ?ExchangeProvider): ?ProviderConfig {
+  const configs = useProvidersConfig();
+  return provider ? configs[provider] : undefined;
+}

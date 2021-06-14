@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import Text from 'components/modern/Text';
 
 // Utils
-import { fontStyles, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -59,14 +59,14 @@ const TouchableContainer = styled(TouchableOpacity)`
   ${({ disabled }) => disabled && 'opacity: 0.5;'}
   ${({ $compact }) => !$compact && 'width: 100%;'}
   ${({ $compact }) =>
-    !$compact ? `padding: 14px ${spacing.large}px;` : `padding: ${spacing.small}px ${spacing.medium}px;`}
+    !$compact ? `padding: 14px ${spacing.large}px;` : `padding: 6px ${spacing.medium}px;`}
   ${({ theme, $variant }) => $variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, $variant }) => $variant === 'primary-destructive' && `background-color: ${theme.colors.negative}`};
   ${({ theme, $variant }) => $variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
 const Title = styled(Text)`
-  ${fontStyles.medium}
+  font-size: ${fontSizes.medium}px;
   ${({ theme, $variant }) => ($variant === 'primary' && `color: ${theme.colors.buttonPrimaryTitle};`)};
   ${({ theme, $variant }) => ($variant === 'primary-destructive' && `color: ${theme.colors.buttonPrimaryTitle};`)};
   ${({ theme, $variant }) => ($variant === 'secondary' && `color: ${theme.colors.buttonSecondaryTitle};`)};

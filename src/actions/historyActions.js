@@ -94,16 +94,8 @@ import type { Chain } from 'models/Chain';
 import { fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
-import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchCollectiblesHistoryAction } from './collectiblesActions';
-
-
-export const afterHistoryUpdatedAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(checkEnableExchangeAllowanceTransactionsAction());
-  };
-};
 
 export const syncAccountHistoryAction = (
   apiHistory: Transaction[],
@@ -126,7 +118,6 @@ export const syncAccountHistoryAction = (
 
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
-    dispatch(afterHistoryUpdatedAction());
 
     if (lastSyncId) {
       dispatch({ type: SET_ACCOUNT_HISTORY_LAST_SYNC_ID, payload: { accountId, lastSyncId } });
@@ -381,7 +372,6 @@ export const updateTransactionStatusAction = (hash: string) => {
     });
 
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch(afterHistoryUpdatedAction());
     dispatch(fetchAssetsBalancesAction());
   };
 };

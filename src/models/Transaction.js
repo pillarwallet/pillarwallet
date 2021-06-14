@@ -181,12 +181,12 @@ export type TransactionPayload = {
   to: string,
   receiverEnsName?: string,
   name?: string,
-  contractAddress: string,
+  contractAddress?: string,
   tokenId?: string,
   tokenType?: string,
   txSpeed?: string,
   gasPrice?: number,
-  txFeeInWei: ?Value,
+  txFeeInWei?: ?Value,
   signOnly?: ?boolean,
   signedHash?: ?string,
   note?: ?string,
@@ -227,13 +227,6 @@ export type TransactionEthers = {
 export type TransactionFeeInfo = {
   fee: ?BigNumber,
   gasToken?: ?GasToken,
-};
-
-export type AllowanceTransaction = {
-  nonce: string,
-  to: string,
-  chainId: string,
-  data: string,
 };
 
 export type EthereumTransaction = {

@@ -86,6 +86,11 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
   };
 }
 
+export function useChainConfig(chain: Chain): ChainConfig {
+  const configs = useChainsConfig();
+  return configs[chain];
+}
+
 type AssetCategoryConfig = {|
   title: string,
   titleShort: string,

@@ -24,12 +24,12 @@ import type { Option } from './Selector';
 type Value = string | number;
 
 type SelectorValueType = {
-  input: string | number,
+  input: ?Value,
   selector: {
     icon?: string,
     iconFallback?: string,
-    value: string | number,
-  }
+    value: ?Value,
+  },
 };
 
 export type InputPropsType = {
@@ -38,7 +38,7 @@ export type InputPropsType = {
   onBlur?: (Value | SelectorValueType) => void,
   onFocus?: () => void,
   onSubmit?: () => void,
-  value: Value,
+  value: ?Value,
   selectorValue: SelectorValueType,
   onSelectorClose: () => void,
   multiline?: boolean,

@@ -35,7 +35,7 @@ import * as parse from 'utils/parse';
 const TYPE_CATEGORIES = 'dapp_showcase_categories';
 
 /**
- * Fetch and parse Wallet Connect categories from Prismic CMS as React Query.
+ * Fetch and parse WalletConnect categories from Prismic CMS as React Query.
  */
 export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnectCmsCategory[]> {
   return useQuery('WalletConnectCategories', () => fetchWalletConnectCategoriesApiCall());

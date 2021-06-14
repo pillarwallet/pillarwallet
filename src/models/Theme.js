@@ -19,10 +19,10 @@
 */
 
 import lightThemeColors from 'utils/themes/lightTheme';
-import { lightThemeColorsOld } from 'utils/themes';
+import { semanticLightThemeColors } from 'utils/themes';
 
 export type ColorKeyModern = $Keys<typeof lightThemeColors>;
-export type ColorKeyOld = $Keys<typeof lightThemeColorsOld>;
+export type ColorKeyOld = $Keys<typeof semanticLightThemeColors>;
 
 export type ColorKey = ColorKeyOld | ColorKeyModern;
 export type ThemeColors = {

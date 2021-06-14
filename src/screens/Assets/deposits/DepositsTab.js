@@ -69,7 +69,7 @@ function DepositsTab() {
   const currency = useFiatCurrency();
 
   const navigateToServices = () => {
-    // TODO: navigate to new Wallet Connect screen when available
+    // TODO: navigate to new WalletConnect screen when available
     navigation.navigate(SERVICES_FLOW);
   };
 
