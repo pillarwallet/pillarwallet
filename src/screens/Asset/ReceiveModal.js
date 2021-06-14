@@ -123,6 +123,8 @@ const ReceiveModal = ({
               toastText={t('toast.ensNameCopiedToClipboard')}
               iconColor={colors.link}
               textStyle={styles.ensName}
+              adjustsFontSizeToFit
+              numberOfLines={1}
             >
               {ensName}
             </TextWithCopy>
@@ -137,6 +139,8 @@ const ReceiveModal = ({
               textToCopy={address}
               textStyle={styles.address}
               iconColor={colors.link}
+              adjustsFontSizeToFit
+              numberOfLines={1}
             >
               {address}
             </TextWithCopy>
@@ -191,6 +195,7 @@ const styles = {
   },
   address: {
     color: getThemeColors().basic030,
+    fontSize: fontSizes.small,
   },
 };
 
@@ -210,6 +215,7 @@ const WalletAddress = styled(Text)`
   color: ${({ theme }) => theme.colors.basic030};
   margin-top: ${spacing.mediumLarge}px;
   text-align: center;
+  font-size: ${fontSizes.small}px;
 `;
 
 const CopyButton = styled.View`
