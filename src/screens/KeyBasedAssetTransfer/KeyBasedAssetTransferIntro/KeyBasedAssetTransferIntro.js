@@ -23,7 +23,6 @@ import * as React from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled, { ThemeProvider } from 'styled-components/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Contants
@@ -50,7 +49,6 @@ function KeyBasedAssetTransferIntro() {
   const darkTheme = getThemeByType(DARK_THEME);
 
   const { t } = useTranslationWithPrefix('smartWalletContent.intro');
-  const { top } = useSafeAreaInsets();
 
   const navigateToMigration = () => {
     navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE);
