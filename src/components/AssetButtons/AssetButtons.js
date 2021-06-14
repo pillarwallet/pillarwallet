@@ -22,7 +22,11 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
+// Components
 import CircleButton from 'components/CircleButton';
+
+// Selectors
+import { useIsExchangeAvailable } from 'selectors';
 
 
 type Props = {
@@ -43,11 +47,13 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const AssetButtons = (props: Props) => {
+  const isExchangeAvailable = useIsExchangeAvailable();
+
   // eslint-disable-next-line i18next/no-literal-string
   const showButtons = props.showButtons || ['send', 'receive', 'exchange'];
   const showSend = showButtons.includes('send');
   const showReceive = showButtons.includes('receive');
-  const showExchange = showButtons.includes('exchange');
+  const showExchange = isExchangeAvailable && showButtons.includes('exchange');
   return (
     <AssetButtonsWrapper>
       {showReceive &&

@@ -18,20 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import OverlayModal from 'components/OverlayModal/OverlayModal';
-import t from 'translations/translate';
+import { Platform } from 'react-native';
+import CookieManager from 'react-native-cookies';
 
-
-type Props = {|
-  onButtonPress: () => void,
-|};
-
-export default (props: Props) => (
-  <OverlayModal
-    onButtonPress={props.onButtonPress}
-    title={t('exchangeContent.modal.intro.title')}
-    content={t('exchangeContent.modal.intro.paragraph')}
-    buttonText={t('exchangeContent.modal.intro.button.next')}
-  />
-);
+export const clearWebViewCookies = () => {
+  if (Platform.OS === 'ios') {
+    CookieManager.clearAll(true)
+      .then(() => {})
+      .catch(() => null);
+    CookieManager.clearAll(false)
+      .then(() => {})
+      .catch(() => null);
+  } else {
+    CookieManager.clearAll()
+      .then(() => {})
+      .catch(() => null);
+  }
+};

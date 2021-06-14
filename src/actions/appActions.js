@@ -41,11 +41,6 @@ import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'const
 import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
-import {
-  SET_EXCHANGE_ALLOWANCES,
-  SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
-} from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   SET_ARCHANOVA_WALLET_ACCOUNTS,
@@ -100,7 +95,6 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
-      storageData = await migrate('exchangeAllowances', storageData, dispatch, getState, 'allowances');
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -110,12 +104,6 @@ export const initAppAndRedirectAction = () => {
 
       const { supportedAssets = [] } = get(storageData, 'supportedAssets', {});
       dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
-
-      const { exchangeSupportedAssets = [] } = get(storageData, 'exchangeSupportedAssets', {});
-      dispatch({ type: SET_EXCHANGE_SUPPORTED_ASSETS, payload: exchangeSupportedAssets });
-
-      const { fiatExchangeSupportedAssets = [] } = get(storageData, 'fiatExchangeSupportedAssets', {});
-      dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
@@ -153,9 +141,6 @@ export const initAppAndRedirectAction = () => {
       const { offlineQueue = [] } = get(storageData, 'offlineQueue', {});
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
-
-      const { allowances = {} } = get(storageData, 'exchangeAllowances', {});
-      dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });

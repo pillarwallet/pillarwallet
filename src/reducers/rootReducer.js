@@ -41,7 +41,6 @@ import sessionReducer from './sessionReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
 import badgesReducer from './badgesReducer';
-import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
 import assetsBalancesReducer from './assetsBalancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
@@ -83,7 +82,6 @@ import type { SessionReducerState } from './sessionReducer';
 import type { TxCountReducerState } from './txCountReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
-import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
 import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './assetsBalancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
@@ -125,7 +123,6 @@ export type RootReducerState = {|
   txCount: TxCountReducerState,
   collectibles: CollectiblesReducerState,
   badges: BadgesReducerState,
-  exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
   assetsBalances: AssetsBalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
@@ -156,7 +153,6 @@ type RootReducerAction =
   | AssetsBalancesReducerAction
   | BlockchainNetworkAction
   | CollectiblesAction
-  | ExchangeReducerAction
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
@@ -209,7 +205,6 @@ const appReducer = combineReducers({
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
   badges: badgesReducer,
-  exchange: exchangeReducer,
   accounts: accountsReducer,
   assetsBalances: assetsBalancesReducer,
   paymentNetwork: paymentNetworkReducer,

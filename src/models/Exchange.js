@@ -17,22 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
 
-import { getAccountId, isArchanovaAccount } from 'utils/accounts';
+// Types
+import type { ExchangeProviders, TransactionData } from 'utils/types/etherspot';
+import type { AssetCore } from 'models/Asset';
 
-export default function (storageData: Object) {
-  const accounts = storageData?.accounts?.data ?? [];
-  const { allowances: currentAllowances } = storageData?.exchangeAllowances ?? {};
+export type ExchangeProvider = ExchangeProviders;
 
-  if (!Array.isArray(currentAllowances)) return currentAllowances || {};
-
-  // migrate from single account allowances (array of allowances) to multiple account based (array per account)
-  return accounts.reduce((updated, account) => {
-    const accountId = getAccountId(account);
-
-    // migration happened after Etherspot account is added so existing allowances can be moved to Archanova
-    const allowances = isArchanovaAccount(account) ? currentAllowances : [];
-
-    return { ...updated, [accountId]: allowances };
-  }, {});
-}
+export type ExchangeOffer = {
+  provider: ?ExchangeProvider,
+  fromAsset: AssetCore,
+  toAsset: AssetCore,
+  fromAmount: BigNumber,
+  toAmount: BigNumber,
+  exchangeRate: number,
+  transactions: TransactionData[],
+};

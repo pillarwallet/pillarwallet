@@ -33,8 +33,7 @@ const commonColors = {
   polygon: '#8247e5',
 };
 
-// will be removed after transition
-export const lightThemeColorsOld = {
+export const semanticLightThemeColors = {
   ...commonColors,
   text: '#0A1427',
   accent: '#818EB3',
@@ -52,28 +51,18 @@ export const lightThemeColorsOld = {
   card: '#FFFFFF',
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
+  separator: lightThemeColors.basic080,
   inputField: lightThemeColors.basic060,
-  warning: '#ECA93A',
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
-  userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
-  legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
-  smartWalletText: '#1D24D8',
-  smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
-  notice: '#ea480e',
   activeTabBarIcon: '#007AFF',
-  inactiveTabBarIcon: '#D4D9DB',
-  synthetic: '#2329d6',
   transactionReceivedIcon: '#497391',
-  iconBackground: '#ebf0f5',
   link: '#007aff',
-  avatarPlaceholderBackground: '#e0eeff',
-  avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
@@ -90,14 +79,14 @@ export const lightThemeColorsOld = {
   buttonSecondaryBackground: lightThemeColors.basic060,
   buttonSecondaryTitle: lightThemeColors.basic000,
   buttonTextTitle: lightThemeColors.basic000,
+  tabUnderline: lightThemeColors.basic000,
   pagerActive: '#000000',
   pagerInactive: '#d4d9db',
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
 };
 
-// will be removed after transition
-export const darkThemeColorsOld = {
+export const semanticDarkThemeColors = {
   ...commonColors,
   text: darkThemeColors.basic010,
   accent: '#818EB3',
@@ -105,38 +94,28 @@ export const darkThemeColorsOld = {
   secondaryAccent: '#EBF0F5',
   secondaryText: darkThemeColors.basic030,
   background: darkThemeColors.basic070,
-  border: '#181F30',
+  border: darkThemeColors.basic080,
   positive: '#00E097',
   positiveWeak: '#80ff924c',
   negative: '#FF367F',
   negativeWeak: '#ff80aa4c',
   neutral: darkThemeColors.basic020,
   neutralWeak: '#9999994c',
-  card: '#32426B',
+  card: darkThemeColors.basic050,
   tertiary: '#171F31',
   control: '#FCFDFF',
+  separator: darkThemeColors.basic040,
   inputField: darkThemeColors.basic080,
-  warning: 'blue', // TODO: add correct one when added to Design System
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
-  userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
-  legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
-  smartWalletText: '#1D24D8',
-  smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
-  notice: '#ea480e',
   activeTabBarIcon: '#FFFFFF',
-  inactiveTabBarIcon: '#818eb3',
-  synthetic: '#9396ff',
   transactionReceivedIcon: '#00E097',
-  iconBackground: '#222c46',
   link: '#fcfdff',
-  avatarPlaceholderBackground: '#181f31',
-  avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
@@ -148,11 +127,12 @@ export const darkThemeColorsOld = {
   pieChartCenter: darkThemeColors.basic050,
   pieChartEmpty: darkThemeColors.basic060,
   homeEnsNameIcon: darkThemeColors.basic010,
-  buttonPrimaryBackground: darkThemeColors.primaryAccent130,
+  buttonPrimaryBackground: darkThemeColors.primaryAccent220,
   buttonPrimaryTitle: darkThemeColors.basic090,
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
+  tabUnderline: darkThemeColors.primaryAccent220,
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
   recieveModalWarningText: '#62688f',
@@ -161,167 +141,123 @@ export const darkThemeColorsOld = {
 
 export const themedColors = {
   text: theme('current', {
-    lightTheme: lightThemeColorsOld.text,
-    darkTheme: darkThemeColorsOld.text,
+    lightTheme: semanticLightThemeColors.text,
+    darkTheme: semanticDarkThemeColors.text,
   }),
   accent: theme('current', {
-    lightTheme: lightThemeColorsOld.accent,
-    darkTheme: darkThemeColorsOld.accent,
+    lightTheme: semanticLightThemeColors.accent,
+    darkTheme: semanticDarkThemeColors.accent,
   }),
   primary: theme('current', {
-    lightTheme: lightThemeColorsOld.primary,
-    darkTheme: darkThemeColorsOld.primary,
+    lightTheme: semanticLightThemeColors.primary,
+    darkTheme: semanticDarkThemeColors.primary,
   }),
   secondaryAccent: theme('current', {
-    lightTheme: lightThemeColorsOld.secondaryAccent,
-    darkTheme: darkThemeColorsOld.secondaryAccent,
+    lightTheme: semanticLightThemeColors.secondaryAccent,
+    darkTheme: semanticDarkThemeColors.secondaryAccent,
   }),
   secondaryText: theme('current', {
-    lightTheme: lightThemeColorsOld.secondaryText,
-    darkTheme: darkThemeColorsOld.secondaryText,
+    lightTheme: semanticLightThemeColors.secondaryText,
+    darkTheme: semanticDarkThemeColors.secondaryText,
   }),
   border: theme('current', {
-    lightTheme: lightThemeColorsOld.border,
-    darkTheme: darkThemeColorsOld.border,
+    lightTheme: semanticLightThemeColors.border,
+    darkTheme: semanticDarkThemeColors.border,
   }),
   positive: theme('current', {
-    lightTheme: lightThemeColorsOld.positive,
-    darkTheme: darkThemeColorsOld.positive,
+    lightTheme: semanticLightThemeColors.positive,
+    darkTheme: semanticDarkThemeColors.positive,
   }),
   negative: theme('current', {
-    lightTheme: lightThemeColorsOld.negative,
-    darkTheme: darkThemeColorsOld.negative,
+    lightTheme: semanticLightThemeColors.negative,
+    darkTheme: semanticDarkThemeColors.negative,
   }),
   card: theme('current', {
-    lightTheme: lightThemeColorsOld.card,
-    darkTheme: darkThemeColorsOld.card,
+    lightTheme: semanticLightThemeColors.card,
+    darkTheme: semanticDarkThemeColors.card,
   }),
   tertiary: theme('current', {
-    lightTheme: lightThemeColorsOld.tertiary,
-    darkTheme: darkThemeColorsOld.tertiary,
+    lightTheme: semanticLightThemeColors.tertiary,
+    darkTheme: semanticDarkThemeColors.tertiary,
   }),
   control: theme('current', {
-    lightTheme: lightThemeColorsOld.control,
-    darkTheme: darkThemeColorsOld.control,
-  }),
-  warning: theme('current', {
-    lightTheme: lightThemeColorsOld.warning,
-    darkTheme: darkThemeColorsOld.warning,
+    lightTheme: semanticLightThemeColors.control,
+    darkTheme: semanticDarkThemeColors.control,
   }),
   indicator: theme('current', {
-    lightTheme: lightThemeColorsOld.indicator,
-    darkTheme: darkThemeColorsOld.indicator,
-  }),
-  userAvatar: theme('current', {
-    lightTheme: lightThemeColorsOld.userAvatar,
-    darkTheme: darkThemeColorsOld.userAvatar,
-  }),
-  legacyWallet: theme('current', {
-    lightTheme: lightThemeColorsOld.legacyWallet,
-    darkTheme: darkThemeColorsOld.legacyWallet,
+    lightTheme: semanticLightThemeColors.indicator,
+    darkTheme: semanticDarkThemeColors.indicator,
   }),
   smartWallet: theme('current', {
-    lightTheme: lightThemeColorsOld.smartWallet,
-    darkTheme: darkThemeColorsOld.smartWallet,
+    lightTheme: semanticLightThemeColors.smartWallet,
+    darkTheme: semanticDarkThemeColors.smartWallet,
   }),
   orange: theme('current', {
-    lightTheme: lightThemeColorsOld.orange,
-    darkTheme: darkThemeColorsOld.orange,
+    lightTheme: semanticLightThemeColors.orange,
+    darkTheme: semanticDarkThemeColors.orange,
   }),
   PPNText: theme('current', {
-    lightTheme: lightThemeColorsOld.PPNText,
-    darkTheme: darkThemeColorsOld.PPNText,
+    lightTheme: semanticLightThemeColors.PPNText,
+    darkTheme: semanticDarkThemeColors.PPNText,
   }),
   PPNSurface: theme('current', {
-    lightTheme: lightThemeColorsOld.PPNSurface,
-    darkTheme: darkThemeColorsOld.PPNSurface,
-  }),
-  smartWalletText: theme('current', {
-    lightTheme: lightThemeColorsOld.smartWalletText,
-    darkTheme: darkThemeColorsOld.smartWalletText,
-  }),
-  smartWalletSurface: theme('current', {
-    lightTheme: lightThemeColorsOld.smartWalletSurface,
-    darkTheme: darkThemeColorsOld.smartWalletSurface,
+    lightTheme: semanticLightThemeColors.PPNSurface,
+    darkTheme: semanticDarkThemeColors.PPNSurface,
   }),
   danger: theme('current', {
-    lightTheme: lightThemeColorsOld.danger,
-    darkTheme: darkThemeColorsOld.danger,
+    lightTheme: semanticLightThemeColors.danger,
+    darkTheme: semanticDarkThemeColors.danger,
   }),
   helpIcon: theme('current', {
-    lightTheme: lightThemeColorsOld.helpIcon,
-    darkTheme: darkThemeColorsOld.helpIcon,
-  }),
-  notice: theme('current', {
-    lightTheme: lightThemeColorsOld.notice,
-    darkTheme: darkThemeColorsOld.notice,
+    lightTheme: semanticLightThemeColors.helpIcon,
+    darkTheme: semanticDarkThemeColors.helpIcon,
   }),
   activeTabBarIcon: theme('current', {
-    lightTheme: lightThemeColorsOld.activeTabBarIcon,
-    darkTheme: darkThemeColorsOld.activeTabBarIcon,
-  }),
-  inactiveTabBarIcon: theme('current', {
-    lightTheme: lightThemeColorsOld.inactiveTabBarIcon,
-    darkTheme: darkThemeColorsOld.inactiveTabBarIcon,
+    lightTheme: semanticLightThemeColors.activeTabBarIcon,
+    darkTheme: semanticDarkThemeColors.activeTabBarIcon,
   }),
   buttonSecondaryBackground: theme('current', {
-    lightTheme: lightThemeColorsOld.buttonSecondaryBackground,
-    darkTheme: darkThemeColorsOld.buttonSecondaryBackground,
-  }),
-  synthetic: theme('current', {
-    lightTheme: lightThemeColorsOld.synthetic,
-    darkTheme: darkThemeColorsOld.synthetic,
+    lightTheme: semanticLightThemeColors.buttonSecondaryBackground,
+    darkTheme: semanticDarkThemeColors.buttonSecondaryBackground,
   }),
   transactionReceivedIcon: theme('current', {
-    lightTheme: lightThemeColorsOld.transactionReceivedIcon,
-    darkTheme: darkThemeColorsOld.transactionReceivedIcon,
-  }),
-  iconBackground: theme('current', {
-    lightTheme: lightThemeColorsOld.iconBackground,
-    darkTheme: darkThemeColorsOld.iconBackground,
+    lightTheme: semanticLightThemeColors.transactionReceivedIcon,
+    darkTheme: semanticDarkThemeColors.transactionReceivedIcon,
   }),
   link: theme('current', {
-    lightTheme: lightThemeColorsOld.link,
-    darkTheme: darkThemeColorsOld.link,
-  }),
-  avatarPlaceholderBackground: theme('current', {
-    lightTheme: lightThemeColorsOld.avatarPlaceholderBackground,
-    darkTheme: darkThemeColorsOld.avatarPlaceholderBackground,
-  }),
-  avatarPlaceholderText: theme('current', {
-    lightTheme: lightThemeColorsOld.avatarPlaceholderText,
-    darkTheme: darkThemeColorsOld.avatarPlaceholderText,
+    lightTheme: semanticLightThemeColors.link,
+    darkTheme: semanticDarkThemeColors.link,
   }),
   labelTertiary: theme('current', {
-    lightTheme: lightThemeColorsOld.labelTertiary,
-    darkTheme: darkThemeColorsOld.labelTertiary,
+    lightTheme: semanticLightThemeColors.labelTertiary,
+    darkTheme: semanticDarkThemeColors.labelTertiary,
   }),
   toastCloseIcon: theme('current', {
-    lightTheme: lightThemeColorsOld.toastCloseIcon,
-    darkTheme: darkThemeColorsOld.toastCloseIcon,
+    lightTheme: semanticLightThemeColors.toastCloseIcon,
+    darkTheme: semanticDarkThemeColors.toastCloseIcon,
   }),
   graphPrimaryColor: theme('current', {
-    lightTheme: lightThemeColorsOld.graphPrimaryColor,
-    darkTheme: darkThemeColorsOld.graphPrimaryColor,
+    lightTheme: semanticLightThemeColors.graphPrimaryColor,
+    darkTheme: semanticDarkThemeColors.graphPrimaryColor,
   }),
   recieveModalWarningText: theme('current', {
-    lightTheme: lightThemeColorsOld.recieveModalWarningText,
-    darkTheme: darkThemeColorsOld.recieveModalWarningText,
+    lightTheme: semanticLightThemeColors.recieveModalWarningText,
+    darkTheme: semanticDarkThemeColors.recieveModalWarningText,
   }),
   hazardIconColor: theme('current', {
-    lightTheme: lightThemeColorsOld.hazardIconColor,
-    darkTheme: darkThemeColorsOld.hazardIconColor,
+    lightTheme: semanticLightThemeColors.hazardIconColor,
+    darkTheme: semanticDarkThemeColors.hazardIconColor,
   }),
 };
 
 export const defaultTheme = {
   current: LIGHT_THEME,
-  colors: { ...lightThemeColors, ...lightThemeColorsOld },
+  colors: { ...lightThemeColors, ...semanticLightThemeColors },
 };
 
 const darkTheme = {
   current: DARK_THEME,
-  colors: { ...darkThemeColors, ...darkThemeColorsOld },
+  colors: { ...darkThemeColors, ...semanticDarkThemeColors },
 };
 
 export function getThemeByType(themeType?: string) {
@@ -335,6 +271,10 @@ export function getThemeByType(themeType?: string) {
 
 export function useTheme(): Theme {
   return useThemeSC();
+}
+
+export function useIsDarkTheme(): boolean {
+  return useTheme().current === DARK_THEME;
 }
 
 export function getThemeColors(currentTheme: Theme = defaultTheme) {

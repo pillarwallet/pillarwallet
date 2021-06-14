@@ -17,10 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl } from 'react-native';
-import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -37,11 +36,9 @@ import { BaseText, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
-import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -99,10 +96,6 @@ type Props = {
   accounts: Account[],
   activeAccount: ?Account,
   accountHistory: ChainRecord<Transaction[]>,
-  getExchangeSupportedAssets: () => void,
-  exchangeSupportedAssets: Asset[],
-  isFetchingUniswapTokens: boolean,
-  uniswapTokensGraphQueryFailed: boolean,
   activeAccountAddress: string,
   supportedAssets: Asset[],
 };
@@ -154,8 +147,6 @@ const ValuesWrapper = styled.View`
 `;
 
 const AssetScreen = ({
-  getExchangeSupportedAssets,
-  exchangeSupportedAssets,
   activeAccountAddress,
   rates,
   fetchAssetsBalances,
@@ -163,8 +154,6 @@ const AssetScreen = ({
   smartWalletState,
   accounts,
   accountHistory,
-  isFetchingUniswapTokens,
-  uniswapTokensGraphQueryFailed,
   accountAssetsBalances,
   activeAccount,
   accountAssets,
@@ -172,17 +161,8 @@ const AssetScreen = ({
 }: Props) => {
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
-  }, []);
-
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const { token, chain } = assetData;
-
-  const isSupportedByExchange = useMemo(
-    () => exchangeSupportedAssets.some(({ symbol }) => symbol === token),
-    [exchangeSupportedAssets, token],
-  );
 
   const tokenTransactions = useMemo(
     () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
@@ -230,8 +210,7 @@ const AssetScreen = ({
 
   const goToSendTokenFlow = () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
 
-  const goToExchangeFlowIfAvailable = () => {
-    if (!isSupportedByExchange) return;
+  const goToExchangeFlow = () => {
     navigation.navigate(EXCHANGE, { fromAssetCode: token });
   };
 
@@ -303,7 +282,7 @@ const AssetScreen = ({
           <AssetButtons
             onPressReceive={openAddFundsModal}
             onPressSend={goToSendTokenFlow}
-            onPressExchange={goToExchangeFlowIfAvailable}
+            onPressExchange={goToExchangeFlow}
             noBalance={isWalletEmpty}
             isSendDisabled={!isSendActive}
             isReceiveDisabled={!isReceiveActive}
@@ -325,12 +304,6 @@ const AssetScreen = ({
           </>
         )}
       </ScrollWrapper>
-      <RetryGraphQueryBox
-        message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
-        hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
-        isFetching={isFetchingUniswapTokens}
-        onRetry={getExchangeSupportedAssets}
-      />
     </ContainerWithHeader>
   );
 };
@@ -340,19 +313,11 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  exchange: {
-    exchangeSupportedAssets,
-    isFetchingUniswapTokens,
-    uniswapTokensGraphQueryFailed,
-  },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  exchangeSupportedAssets,
-  isFetchingUniswapTokens,
-  uniswapTokensGraphQueryFailed,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -371,7 +336,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

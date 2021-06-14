@@ -35,6 +35,7 @@ import IconArrowRight from 'assets/icons/svg/icon-24-arrow-right.svg';
 import IconArrowDown from 'assets/icons/svg/icon-24-arrow-down.svg';
 import IconArrowLeft from 'assets/icons/svg/icon-24-arrow-left.svg';
 import IconArrowUp from 'assets/icons/svg/icon-24-arrow-up.svg';
+import IconArrowUpDown from 'assets/icons/svg/icon-24-arrow-up-down.svg';
 import IconBullet from 'assets/icons/svg/icon-24-bullet.svg';
 import IconCancel from 'assets/icons/svg/icon-24-cancel.svg';
 import IconCheckmark from 'assets/icons/svg/icon-24-checkmark.svg';
@@ -107,6 +108,7 @@ const components = {
   'arrow-down': IconArrowDown,
   'arrow-left': IconArrowLeft,
   'arrow-up': IconArrowUp,
+  'arrow-up-down': IconArrowUpDown,
   bullet: IconBullet,
   cancel: IconCancel,
   checkmark: IconCheckmark,

@@ -29,7 +29,7 @@ import Image from 'components/Image';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -45,7 +45,7 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const colors = useThemeColors();
 
-  const config = useChainsConfig()[chain];
+  const config = useChainConfig(chain);
 
   return (
     <TouchableContainer onPress={onPress}>

@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -68,7 +69,10 @@ function Home() {
   const totalBalance = sumRecord(balancePerCategory);
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
-  const onRefresh = () => dispatch(fetchAllAccountsTotalBalancesAction());
+  const onRefresh = () => {
+    dispatch(refreshEtherspotAccountsAction());
+    dispatch(fetchAllAccountsTotalBalancesAction());
+  };
 
   return (
     <Container>

@@ -226,3 +226,40 @@ export function formatHexAddress(address: string) {
 
   return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
 }
+
+export function formatExchangeRate(
+  rate: ?BigNumber | number,
+  fromSymbol: string,
+  toSymbol: string,
+  reverse: boolean = false,
+) {
+  rate = wrapBigNumber(rate);
+  if (!rate || !rate.isFinite()) return null;
+
+  if (reverse) {
+    rate = BigNumber(1).dividedBy(rate);
+    return formatExchangeRate(rate, toSymbol, fromSymbol);
+  }
+
+  const rateString = formatExchangeRateWithoutSymbol(rate);
+  return t('exchangeRate', { rate: rateString, fromSymbol, toSymbol });
+}
+
+export function formatExchangeRateWithoutSymbol(rate: ?BigNumber | number) {
+  rate = wrapBigNumber(rate);
+  if (!rate || !rate.isFinite()) return null;
+
+  if (rate.gt(1000)) {
+    return formatValue(rate, { decimalPlaces: 0 });
+  }
+
+  if (rate.gt(1)) {
+    return formatValue(rate, { decimalPlaces: 2 });
+  }
+
+  if (rate.gt(0.00001)) {
+    return formatValue(rate, { decimalPlaces: 5 });
+  }
+
+  return '<0.00001';
+}

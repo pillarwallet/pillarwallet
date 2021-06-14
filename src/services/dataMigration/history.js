@@ -54,6 +54,45 @@ export default async function (storageData: Object, dispatch: Function, getState
     reportLog('Possible redux-persist crash');
   }
 
+  if (transactionStoreHasOldStructure(history)) {
+    history = Object.keys(history).reduce((
+      updated,
+      accountId,
+    ) => ({
+      ...updated,
+      [accountId]: { ethereum: history[accountId] ?? [] },
+    }), {});
+    dispatch({ type: SET_HISTORY, payload: history });
+    dispatch(saveDbAction('history', { history }, true));
+  }
+
+  // checks history if wrong was written during initial migration for per chain history
+  const chainsKeys = Object.values(CHAIN);
+  const historyHasWrongKeys = Object.keys(history).some((accountId) => {
+    const accountHistory = history[accountId] ?? {};
+    return Object.keys(accountHistory).some((chainKey) => !chainsKeys.includes(chainKey));
+  });
+  if (historyHasWrongKeys) {
+    history = Object.keys(history).reduce((fixedHistory, accountId) => {
+      const accountHistory = history[accountId] ?? {};
+
+      const fixedAccountHistory = Object.keys(accountHistory).reduce((
+        fixedChainsHistory,
+        chainKey,
+      ) => {
+        // drop key if it's not chain
+        if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
+
+        // $FlowFixMe
+        return { ...fixedChainsHistory, [chainKey]: accountHistory[chainKey] };
+      }, {});
+
+      return { ...fixedHistory, [accountId]: fixedAccountHistory };
+    }, {});
+    dispatch({ type: SET_HISTORY, payload: history });
+    dispatch(saveDbAction('history', { history }, true));
+  }
+
   // legacy cleanup migration used by Archanova accounts
   if (activeAccount && isArchanovaAccount(activeAccount)) {
     const accountAddress = getActiveAccountAddress(accounts);
@@ -69,16 +108,6 @@ export default async function (storageData: Object, dispatch: Function, getState
       dispatch(saveDbAction('history', { history }, true));
       dispatch({ type: SET_HISTORY, payload: history });
     }
-  }
-
-  // check for migration to history per account per chain, tx were ethereum only per migration moment
-  if (transactionStoreHasOldStructure(history)) {
-    Object.keys(history).forEach((accountId) => {
-      // $FlowFixMe: flow fails because of wrong mapping using prev type
-      history = updateAccountHistoryForChain(history, accountId, CHAIN.ETHEREUM, history[accountId]);
-    });
-    dispatch({ type: SET_HISTORY, payload: history });
-    dispatch(saveDbAction('history', { history }, true));
   }
 
   // data migrated, no need to do anything

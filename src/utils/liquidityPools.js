@@ -28,9 +28,9 @@ import {
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
   UNIPOOL_LIQUIDITY_POOLS,
+  UNISWAP_ROUTER_ADDRESS,
   UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
-import { UNISWAP_ROUTER_ADDRESS } from 'constants/exchangeConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';

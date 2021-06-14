@@ -30,9 +30,15 @@ export type Currency = typeof USD | typeof EUR | typeof GBP;
 
 export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
 
+export type AssetCore = {
+  address: string,
+  symbol: string,
+  decimals: number,
+};
+
 export type AssetData = {|
   token: string,
-  contractAddress?: string,
+  contractAddress: string,
   tokenType?: TokenType,
   name?: string,
   decimals: number,
@@ -106,9 +112,9 @@ export type KeyBasedAssetTransfer = {|
 
 export type AssetOption = {
   // Core props
-  address?: string,
+  address: string,
   balance?: ?AssetOptionBalance,
-  decimals?: number,
+  decimals: number,
   imageUrl: string,
   name: string,
   symbol: string,

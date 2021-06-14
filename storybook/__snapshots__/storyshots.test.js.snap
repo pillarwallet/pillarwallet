@@ -44920,11 +44920,11 @@ exports[`Storyshots ReviewSummary token 1`] = `
         }
       >
         <View
-          h={16}
+          h={32}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 32,
                 "width": 0,
               },
             ]
@@ -44947,11 +44947,11 @@ exports[`Storyshots ReviewSummary token 1`] = `
           You are sending
         </Text>
         <View
-          h={16}
+          h={4}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 4,
                 "width": 0,
               },
             ]
@@ -44963,7 +44963,7 @@ exports[`Storyshots ReviewSummary token 1`] = `
             Array [
               Object {
                 "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
+                "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 36,
                 "lineHeight": 54,
                 "textAlignVertical": "center",
@@ -44990,17 +44990,6 @@ exports[`Storyshots ReviewSummary token 1`] = `
             PLR
           </Text>
         </Text>
-        <View
-          h={7}
-          style={
-            Array [
-              Object {
-                "height": 7,
-                "width": 0,
-              },
-            ]
-          }
-        />
         <Text
           secondary={true}
           small={true}
@@ -47398,11 +47387,11 @@ exports[`Storyshots Table default 1`] = `
           Table
         </Text>
         <View
-          h={16}
+          h={8}
           style={
             Array [
               Object {
-                "height": 16,
+                "height": 8,
                 "width": 0,
               },
             ]
@@ -47415,10 +47404,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47526,10 +47515,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47626,10 +47615,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47698,10 +47687,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }
@@ -47809,10 +47798,10 @@ exports[`Storyshots Table default 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
-                "paddingBottom": 10,
+                "paddingBottom": 9,
                 "paddingLeft": 0,
                 "paddingRight": 0,
-                "paddingTop": 10,
+                "paddingTop": 9,
               },
             ]
           }

@@ -32,7 +32,7 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { hitSlop20 } from 'utils/common';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -50,7 +50,7 @@ const DeployBanner = ({ chain, style }: Props) => {
   const [isVisible, setIsVisible] = useState(true);
 
   const { showDeploymentInterjection } = useDeploymentStatus();
-  const chainConfig = useChainsConfig()[chain];
+  const chainConfig = useChainConfig(chain);
 
   if (!isVisible) return null;
 

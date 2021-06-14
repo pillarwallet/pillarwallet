@@ -22,14 +22,14 @@ import * as React from 'react';
 import { Image as RNImage } from 'react-native';
 import Image from 'components/Image';
 
-
-type ImageSource = ?string | { [uri: string]: string };
+// Types
+import type { ImageSource, ImageStyleProp } from 'utils/types/react-native';
 
 type Props = {
   imageSource: ImageSource,
   fallbackWidth: number,
   fallbackHeight: number,
-  style?: Object,
+  style?: ImageStyleProp,
 };
 
 type State = {
@@ -62,6 +62,7 @@ class DynamicSizeImage extends React.Component<Props, State> {
     const { imageSource } = this.props;
 
     if (!!imageSource && typeof imageSource === 'object' && imageSource.uri) {
+      // $FlowFixMe: legacy code
       RNImage.getSize(imageSource.uri, (width, height) => {
         if (width && height) this.setImageSize(width, height);
       });
@@ -79,7 +80,7 @@ class DynamicSizeImage extends React.Component<Props, State> {
       <Image
         source={imageSource}
         resizeMode="contain"
-        style={{ ...style, width, height }}
+        style={[style, { width, height }]}
       />
     );
   }

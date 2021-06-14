@@ -31,9 +31,8 @@ import { withTranslation } from 'react-i18next';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import AssetSearchScreen from 'screens/AssetSearch/AssetSearch';
-import ExchangeScreen from 'screens/Exchange';
+import ExchangeScreen from 'screens/Exchange/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
-import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -156,7 +155,6 @@ import {
   SERVICES_FLOW,
   EXCHANGE,
   EXCHANGE_CONFIRM,
-  EXCHANGE_INFO,
   HOME,
   HOME_FLOW,
   HOME_HISTORY,
@@ -337,7 +335,6 @@ const exchangeFlow = createStackNavigator(
   {
     [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-    [EXCHANGE_INFO]: ExchangeInfoScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
@@ -360,7 +357,7 @@ const addCashFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-// WALLET CONNECT CALL REQUEST FLOW
+// WALLETCONNECT CALL REQUEST FLOW
 const walletConnectCallRequestFlow = createStackNavigator(
   {
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
@@ -369,7 +366,7 @@ const walletConnectCallRequestFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-// WALLET CONNECT FLOW
+// WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,

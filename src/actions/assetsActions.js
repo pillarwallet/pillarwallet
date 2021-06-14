@@ -108,7 +108,6 @@ import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
-import { addExchangeAllowanceIfNeededAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
@@ -210,13 +209,13 @@ export const sendAssetAction = (
     const transactionBatchHash = transactionResult?.batchHash;
 
     /**
-     * This (waitForTransactionHashFromSubmittedBatch) covers edge case for Wallet Connect alone,
+     * This (waitForTransactionHashFromSubmittedBatch) covers edge case for WalletConnect alone,
      * but might be used for other scenarios where transaction hash is needed on submit callback.
      *
      * If transaction is sent through Etherspot then transaction will be submitted asynchronously
      * along with batch which won't provide actual transaction hash instantaneously.
      *
-     * Wallet Connect approve request expects actual transaction hash to be sent back to Dapp
+     * WalletConnect approve request expects actual transaction hash to be sent back to Dapp
      * for it to track the status of it or etc. on Dapp side.
      *
      * The only approach here that makes sense is to subscribe for submitted batch updates
@@ -330,8 +329,6 @@ export const sendAssetAction = (
     if (receiverEnsName) {
       dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
     }
-
-    dispatch(addExchangeAllowanceIfNeededAction(historyTx));
 
     callback({
       isSuccess: true,

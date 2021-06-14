@@ -41,7 +41,7 @@
   "lessThanSignValue": "<{{value}}",
   "moreThanSignValue": ">{{value}}",
   "rangeValues": "{{fromValue}} - {{toValue}}",
-
+  "exchangeRate": "{{rate}} {{toSymbol}}/{{fromSymbol}}",
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
   "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
@@ -186,6 +186,7 @@
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
     "started": "Started",
+    "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -219,6 +220,7 @@
     "mainAccount": "Main Account",
     "free": "Free",
     "estimatedFee": "Est. fee",
+    "estFee": "Est. fee",
     "nothingFound": "Nothing found",
     "verified": "Verified",
     "select": "Select",
@@ -564,10 +566,10 @@
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
       "unsupportedAction": "We are sorry, but we do not support this action yet",
-      "noMatchingConnector": "No matching Wallet Connect connectors found",
+      "noMatchingConnector": "No matching WalletConnect connectors found",
       "requestNotFound": "Request not found",
       "requestRejected": "Call Request Rejected",
-      "invalidSession": "Invalid Wallet Connect session",
+      "invalidSession": "Invalid WalletConnect session",
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
@@ -633,7 +635,7 @@
 
   "walletConnect": {
     "home": {
-      "title": "Wallet Connect",
+      "title": "WalletConnect",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}."
     },
@@ -1261,7 +1263,7 @@
       "activeConnections": "Active сonnections",
       "connect": "Connect",
       "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "Wallet Connect",
+      "walletConnect": "WalletConnect",
       "requestType": {
         "call": "Call Request",
         "transaction": "Transaction Request",
@@ -1437,7 +1439,7 @@
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Ethereum fee",
+      "allowancePlusEthFee": "Allowance + Max. Ethereum fee",
       "migratingFrom": "migrating from",
       "network": "Network"
     },
@@ -1501,7 +1503,7 @@
     "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
     "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
     "walletConnectSessionTimedOut": "Request timeout. Give it another try.",
-    "walletConnectSmartWalletNotActive": "Can't use Wallet Connect without Smart Wallet activated",
+    "walletConnectSmartWalletNotActive": "Can't use WalletConnect without Smart Wallet activated",
     "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
     "incorrectQRCode": "QR code is incorrect.",
     "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",
@@ -1574,11 +1576,11 @@
     "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
     "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed.",
     "noActiveAccountFound": "No active account found.",
-    "walletConnectFailed": "Wallet Connect failed.",
+    "walletConnectFailed": "WalletConnect failed.",
     "walletConnectCallRequestApproveFailed": "Failed to approve Call Request.",
     "walletConnectCallRequestRejectFailed": "Failed to reject Call Request.",
-    "walletConnectRequestRejected": "Wallet Connect Call Request rejected.",
-    "walletConnectRequestApproved": "Wallet Connect Call Request approved.",
+    "walletConnectRequestRejected": "WalletConnect Call Request rejected.",
+    "walletConnectRequestApproved": "WalletConnect Call Request approved.",
     "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed.",
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
@@ -1586,6 +1588,11 @@
   },
 
   "exchangeContent": {
+    "providers": {
+      "uniswap": "Uniswap",
+      "oneInch": "1 Inch",
+      "synthetix": "Synthetix"
+    },
     "modal": {
       "smartWalletIsNotActive": {
         "title": "Use Smart Wallet account",
@@ -1593,47 +1600,26 @@
         "button": {
           "selectAccount": "Select account"
         }
-      },
-      "enableAsset": {
-        "title": "Enable {{asset}}",
-        "paragraph": "Once enabled, it will be available for exchanging on {{providerName}}",
-        "button": {
-          "enable": "Enable"
-        }
-      },
-      "intro": {
-        "title": "Exchange.",
-        "paragraph": "Pillar Exchange or Offers Engine, as we call it, aggregates offers from multiple providers vetted by Pillar. \n\nBuy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.",
-        "button": {
-          "next": "Next"
-        }
       }
     },
     "title": {
-      "confirmScreen": "Details",
-      "settingsScreen": "Settings",
-      "activateSmartWalletScreen": "Activate Smart Wallet"
-    },
-    "button": {
-      "enableAsset": "Enable Asset",
-      "allowExchange": "Allow this exchange"
-    },
-    "paragraph": {
-      "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
+      "exchange": "Swap on {{chain}}",
+      "confirm": "Review"
     },
     "label": {
-      "enabledAssets": "Enabled exchange assets:",
+      "exchangeDetails": "Exchange details",
+      "network": "Network",
       "exchangeRate": "Exchange rate",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
-      "availableAmount": "Available",
-      "updatedRealTime": "Updated in realtime",
-      "exchangeDetails": "Exchange details",
       "maxSlippage": "Max. slippage"
     },
+    "tooltip": {
+      "feeFormat": "{{provider}} will be allowed to automate transactions on your behalf. Ethereum fee could be lower."
+    },
     "emptyState": {
-      "noOffers": {
+      "offers": {
         "title": "No live offers",
-        "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
+        "paragraph": "Currently no matching offers from exchange services are provided."
       }
     }
   },

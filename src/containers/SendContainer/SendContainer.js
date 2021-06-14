@@ -40,7 +40,7 @@ import type { Props as ButtonProps } from 'components/Button';
 // utils
 import { spacing } from 'utils/variables';
 import { CHAIN } from 'constants/chainConstants';
-import { useChainsConfig } from 'utils/uiConfig';
+import { useChainConfig } from 'utils/uiConfig';
 
 type ButtonWithoutTitle = $Diff<ButtonProps, { title: string }>
 
@@ -115,7 +115,7 @@ const SendContainer = (props: Props) => {
   } = props;
 
   const chain = customValueSelectorProps?.assetData?.chain ?? CHAIN.ETHEREUM;
-  const { title: chainTitle } = useChainsConfig()[chain];
+  const { title: chainTitle } = useChainConfig(chain);
 
   return (
     <ContainerWithHeader
