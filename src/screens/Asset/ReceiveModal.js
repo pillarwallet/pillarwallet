@@ -37,7 +37,7 @@ import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { getAccountEnsName } from 'utils/accounts';
+import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
 // models and types
@@ -54,7 +54,6 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 type StateProps = {|
   user: User,
@@ -152,14 +151,14 @@ const ReceiveModal = ({
             <QRCodeWithTheme value={address} size={104} />
           </QRCodeWrapper>
         )}
-        {activeAccount?.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET && (
-          <WarningText style={{ marginTop: spacing.medium }} center small>
-            {t('receiveModal.message')}
+        {isEtherspotAccount(activeAccount) && (
+          <WarningText style={styles.singleAddressInfo}>
+            {t('receiveModal.etherspotSingleAddressInfo')}
           </WarningText>
         )}
-        {!isDeployedOnChain[CHAIN.ETHEREUM] && (
-          <WarningText center small>
-            {t('receiveModal.cautionMessage', {
+        {!isDeployedOnChain.ethereum && (
+          <WarningText>
+            {t('receiveModal.notDeployedWarning', {
               chain: t('chains.ethereum'),
               mediumText: true,
               color: colors.recieveModalWarningText,
@@ -203,6 +202,9 @@ const styles = {
   },
   address: {
     fontSize: fontSizes.small,
+  },
+  singleAddressInfo: {
+    marginTop: spacing.medium,
   },
 };
 

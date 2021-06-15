@@ -1908,8 +1908,8 @@
     }
   },
   "receiveModal": {
-    "message": "All chains use single wallet address.",
-    "cautionMessage": "Receive <0>{{chain}}</0> assets",
+    "etherspotSingleAddressInfo": "All chains use single wallet address.",
+    "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
     "withCaution": "with caution."
   }
 }
