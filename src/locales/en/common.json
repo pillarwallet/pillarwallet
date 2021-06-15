@@ -810,7 +810,9 @@
         "betterApp": "Enjoy a refreshed user interface and improved app performance."
       },
       "footer": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new Pillar Smart Wallet. The fee will be extremely small thanks to Pillar Etherspot technology.",
-      "migrate": "Migrate"
+      "button": {
+        "upgrade": "Upgrade"
+      }
     },
     "confirm": {
       "title": "Review",
