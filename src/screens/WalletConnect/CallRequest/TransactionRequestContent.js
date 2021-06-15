@@ -32,7 +32,6 @@ import Text from 'components/modern/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
-import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
@@ -57,6 +56,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
+import { getGasTokenSymbol } from 'utils/transactions';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -137,14 +137,14 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
   let estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
-  const feeInWei = feeInfo?.fee;
-  const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
-  const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
-
   const chain = chainFromChainId[request.chainId];
   if (!chain && !estimationErrorMessage) {
     estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
+
+  const feeInWei = feeInfo?.fee;
+  const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
+  const gasSymbol = getGasTokenSymbol(chain, feeInfo?.gasToken);
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};

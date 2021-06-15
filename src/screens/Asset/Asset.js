@@ -190,6 +190,7 @@ const AssetScreen = ({
       if (isEtherspotAccount(activeAccount)) {
         return getHistoryEventsFromTransactions(
           tokenTransactions,
+          chain,
           activeAccountAddress,
           getAssetsAsList(accountAssets),
           supportedAssets,
@@ -200,6 +201,7 @@ const AssetScreen = ({
     },
     [
       tokenTransactions,
+      chain,
       accounts,
       activeAccount,
       accountAssets,

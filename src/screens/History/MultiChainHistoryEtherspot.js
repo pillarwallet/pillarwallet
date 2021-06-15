@@ -131,6 +131,7 @@ function useHistoryEvents(chain: Chain): Event[] {
 
   const mappedTransactionsHistory = getHistoryEventsFromTransactions(
     transactionsHistory,
+    chain,
     activeAccountAddress,
     accountAssets,
     supportedAssets,

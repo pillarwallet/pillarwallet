@@ -30,7 +30,6 @@ import {
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT } from 'constants/paymentNetworkConstants';
-import { ETH } from 'constants/assetsConstants';
 import { EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
 
 // types
@@ -45,13 +44,14 @@ import type { Value } from 'utils/common';
 import type { TokenValue } from 'models/Value';
 import type { Event, TransactionsStore } from 'models/History';
 import type { Asset } from 'models/Asset';
-import type { ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Collectible';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 import { addressesEqual, getAssetData } from 'utils/assets';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // services
 import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
@@ -221,6 +221,7 @@ export const getTokenTransactionsFromHistory = (
 };
 
 export const parseHistoryEventFee = (
+  chain: Chain,
   feeWithGasToken: ?FeeWithGasToken,
   gasUsed: ?number,
   gasPrice: ?number,
@@ -240,7 +241,7 @@ export const parseHistoryEventFee = (
     const feeValue = wrapBigNumber(gasPrice).multipliedBy(gasPrice);
     return {
       value: wrapBigNumber(formatUnits(feeValue, 18)),
-      symbol: ETH,
+      symbol: nativeAssetSymbolPerChain[chain],
     };
   }
 
@@ -249,6 +250,7 @@ export const parseHistoryEventFee = (
 
 export const getHistoryEventsFromTransactions = (
   transactions: Transaction[],
+  chain: Chain,
   activeAccountAddress: string,
   accountAssets: Asset[],
   supportedAssets: Asset[],
@@ -267,7 +269,7 @@ export const getHistoryEventsFromTransactions = (
   feeWithGasToken,
   status,
 }) => {
-  const fee = parseHistoryEventFee(feeWithGasToken, gasUsed, gasPrice);
+  const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
   const { decimals } = getAssetData(accountAssets, supportedAssets, symbol);
   const value = {
     value: wrapBigNumber(formatUnits(rawValue, decimals)),
@@ -301,6 +303,7 @@ export const getHistoryEventsFromTransactions = (
 
 export const getHistoryEventsFromCollectiblesTransactions = (
   transactions: CollectibleTransaction[],
+  chain: Chain,
   activeAccountAddress: string,
 ): Event[] => transactions.map(({
   _id,
@@ -314,7 +317,7 @@ export const getHistoryEventsFromCollectiblesTransactions = (
   status,
   assetData,
 }) => {
-  const fee = parseHistoryEventFee(null, gasUsed, gasPrice);
+  const fee = parseHistoryEventFee(chain, null, gasUsed, gasPrice);
 
   const { name: title, image: imageUrl } = assetData;
 
