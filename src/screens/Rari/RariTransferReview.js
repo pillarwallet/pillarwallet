@@ -29,6 +29,7 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee, TableUs
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
@@ -106,7 +107,7 @@ const RariTransferReviewScreen = ({
         <Table title={t('transactions.label.fees')}>
           <TableRow>
             <TableLabel>{t('transactions.label.allowancePlusEthFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -114,7 +115,7 @@ const RariTransferReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />

@@ -81,7 +81,7 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
           <TableLabel tooltip={t('exchangeContent.tooltip.feeFormat', { provider: providerName })}>
             {t('transactions.label.allowancePlusEthFee')}
           </TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -89,7 +89,7 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
         </TableRow>
       </Table>
     </>

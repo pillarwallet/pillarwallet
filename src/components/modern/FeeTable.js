@@ -26,9 +26,6 @@ import { useTranslationWithPrefix, useTranslation } from 'translations/translate
 import * as Table from 'components/modern/Table';
 import Tooltip from 'components/Tooltip';
 
-// Contansts
-import { ETH } from 'constants/assetsConstants';
-
 // Selectors
 import { useRates, useFiatCurrency } from 'selectors';
 

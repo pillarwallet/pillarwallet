@@ -33,6 +33,7 @@ import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 import { formatUnits, formatFiat } from 'utils/common';
@@ -145,7 +146,7 @@ const RariWithdrawReviewScreen = ({
         <Table title={t('transactions.label.fees')}>
           <TableRow>
             <TableLabel>{t('transactions.label.allowancePlusEthFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
