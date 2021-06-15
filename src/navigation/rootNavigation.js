@@ -34,7 +34,6 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
-import WalletRecoveryOptionsScreen from 'screens/ImportWallet/WalletRecoveryOptions';
 
 import { modalTransition } from 'utils/common';
 import { ModalProvider } from 'components/Modal';
