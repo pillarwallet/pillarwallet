@@ -38,8 +38,8 @@ import { spacing } from 'utils/variables';
 type Props = {|
   title: ?string,
   iconUrl: ?string,
-  value: BigNumber,
-  change?: BigNumber,
+  value: ?BigNumber,
+  change?: ?BigNumber,
   onPress?: () => mixed,
 |};
 

@@ -21,12 +21,8 @@
 import { createSelector } from 'reselect';
 import { mapValues } from 'lodash';
 
-// utils
-import {
-  findFirstArchanovaAccount,
-  findFirstEtherspotAccount,
-  getAccountId,
-} from 'utils/accounts';
+// Utils
+import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
 import {
   getAssetData,
   getAssetsAsList,
@@ -37,35 +33,27 @@ import {
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 
-// types
-import type {
-  AssetsPerChain,
-  AssetsBySymbol,
-  Asset,
-} from 'models/Asset';
-import type {
-  AssetBalancesPerAccount,
-  CategoryBalancesPerChain,
-  WalletAssetsBalances,
-} from 'models/Balances';
-import type { ChainRecord } from 'models/Chain';
-import type { Account } from 'models/Account';
-import type { RatesPerChain } from 'models/Rates';
-
-// selectors
-import {
-  accountAssetsBalancesSelector,
-  accountEthereumWalletAssetsBalancesSelector,
-} from 'selectors/balances';
+// Selectors
 import {
   activeAccountIdSelector,
   supportedAssetsPerChainSelector,
   accountsSelector,
   ratesPerChainSelector,
-  baseFiatCurrencySelector,
-  assetsBalancesSelector,
   type Selector,
-} from './selectors';
+  fiatCurrencySelector,
+} from 'selectors';
+import {
+  assetsBalancesPerAccountSelector,
+  accountAssetsBalancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
+} from 'selectors/balances';
+
+// Types
+import type { Account } from 'models/Account';
+import type { AssetsPerChain, AssetsBySymbol, Asset } from 'models/Asset';
+import type { AssetBalancesPerAccount, CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
+import type { RatesPerChain, Currency } from 'models/Rates';
 
 
 export const ethereumSupportedAssetsSelector: Selector<Asset[]> = createSelector(
@@ -102,7 +90,7 @@ export const accountEthereumAssetsSelector: Selector<AssetsBySymbol> = createSel
 );
 
 export const archanovaAccountEthereumAssetsSelector: Selector<AssetsBySymbol> = createSelector(
-  assetsBalancesSelector,
+  assetsBalancesPerAccountSelector,
   ethereumSupportedAssetsSelector,
   accountsSelector,
   (
@@ -125,7 +113,7 @@ export const archanovaAccountEthereumAssetsSelector: Selector<AssetsBySymbol> = 
 );
 
 export const etherspotAccountAssetsSelector: Selector<ChainRecord<AssetsBySymbol>> = createSelector(
-  assetsBalancesSelector,
+  assetsBalancesPerAccountSelector,
   supportedAssetsPerChainSelector,
   accountsSelector,
   (
@@ -169,13 +157,13 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
 export const accountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
   ratesPerChainSelector,
-  baseFiatCurrencySelector,
+  fiatCurrencySelector,
   accountAssetsBalancesSelector,
   supportedAssetsPerChainSelector,
   (
     activeAccountId: string,
     ratesPerChain: RatesPerChain,
-    baseFiatCurrency: ?string,
+    baseFiatCurrency: Currency,
     accountAssetsBalances: CategoryBalancesPerChain,
     supportedAssetsPerChain: AssetsPerChain,
   ) => {

@@ -23,18 +23,16 @@ import { createSelector } from 'reselect';
 import { map, merge } from 'lodash';
 
 // Selectors
-import {
-  assetsBalancesSelector,
-  activeAccountIdSelector,
-  ratesPerChainSelector,
-  fiatCurrencySelector,
-} from 'selectors';
+import { activeAccountIdSelector, ratesPerChainSelector, fiatCurrencySelector, usdToFiatRateSelector } from 'selectors';
+import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
 import { getRate } from 'utils/assets';
 import { sum } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { mapRecordValues } from 'utils/object';
+import { getFiatValueFromUsd } from 'utils/rates';
+import { mapAccountCategoryChainRecordValues } from 'utils/totalBalances';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
@@ -49,25 +47,25 @@ import type {
   ChainRecord,
 } from 'models/Chain';
 import type {
+  TotalBalancesPerAccount,
   TotalBalances,
-  AccountTotalBalances,
-  StoreTotalBalances,
-  WalletTotalBalances,
+  WalletTotalBalancesPerAccount,
 } from 'models/TotalBalances';
 import type {
   RatesBySymbol,
   RatesPerChain,
+  Currency,
 } from 'models/Rates';
 
-export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = createSelector(
-  assetsBalancesSelector,
+export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalancesPerAccount> = createSelector(
+  assetsBalancesPerAccountSelector,
   ratesPerChainSelector,
   fiatCurrencySelector,
   (
     assetsBalancesPerAccount: AssetBalancesPerAccount,
     ratesPerChain: RatesPerChain,
-    currency: string,
-  ): WalletTotalBalances => mapRecordValues(
+    currency: Currency,
+  ): WalletTotalBalancesPerAccount => mapRecordValues(
     assetsBalancesPerAccount,
     (assetsBalancesPerChain: CategoryBalancesPerChain) => mapChainRecordValues(
       assetsBalancesPerChain,
@@ -80,19 +78,33 @@ export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = create
   ),
 );
 
-export const totalBalancesSelector: Selector<TotalBalances> = createSelector(
-  walletTotalBalancesSelector,
+const storeTotalBalancesPerAccountSelector: Selector<TotalBalancesPerAccount> = createSelector(
   (root: RootReducerState) => root.totalBalances.data,
-  (walletBalances: WalletTotalBalances, storeBalances: StoreTotalBalances): TotalBalances => {
-    const wrappedWalletBalances = mapRecordValues(walletBalances, (wallet: ChainRecord<BigNumber>) => ({ wallet }));
-    return merge({}, storeBalances, wrappedWalletBalances);
+  usdToFiatRateSelector,
+  (storeBalancesPerAccount: TotalBalancesPerAccount, usdToFiatRate: ?number): TotalBalancesPerAccount => {
+    return mapAccountCategoryChainRecordValues(
+      storeBalancesPerAccount,
+      (value) => getFiatValueFromUsd(value, usdToFiatRate) ?? BigNumber(0),
+    );
   },
 );
 
-export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = createSelector(
+export const totalBalancesPerAccountSelector: Selector<TotalBalancesPerAccount> = createSelector(
+  walletTotalBalancesPerAccountSelector,
+  storeTotalBalancesPerAccountSelector,
+  (
+    walletBalancesPerAccount: WalletTotalBalancesPerAccount,
+    storeBalancesPerAccount: TotalBalancesPerAccount,
+  ): TotalBalancesPerAccount => {
+    const wrappedWalletBalancesPerAccount = mapRecordValues(walletBalancesPerAccount, (wallet) => ({ wallet }));
+    return merge({}, storeBalancesPerAccount, wrappedWalletBalancesPerAccount);
+  },
+);
+
+export const accountTotalBalancesSelector: Selector<TotalBalances> = createSelector(
   activeAccountIdSelector,
-  totalBalancesSelector,
-  (accountId: ?string, totalBalancesPerAccount: TotalBalances): AccountTotalBalances => {
+  totalBalancesPerAccountSelector,
+  (accountId: ?string, totalBalancesPerAccount: TotalBalances): TotalBalances => {
     if (!accountId) return {};
     return totalBalancesPerAccount[accountId] ?? {};
   },
@@ -100,8 +112,8 @@ export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = crea
 
 export const accountWalletBalancePerChainSelector: Selector<ChainRecord<BigNumber>> = createSelector(
   activeAccountIdSelector,
-  walletTotalBalancesSelector,
-  (accountId: string, walletBalances: WalletTotalBalances): ChainRecord<BigNumber> => {
+  walletTotalBalancesPerAccountSelector,
+  (accountId: string, walletBalances: WalletTotalBalancesPerAccount): ChainRecord<BigNumber> => {
     return walletBalances[accountId] ?? {};
   },
 );

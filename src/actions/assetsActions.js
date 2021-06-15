@@ -24,13 +24,7 @@ import { BigNumber } from 'bignumber.js';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import {
-  ETH,
-  COLLECTIBLES,
-  USD,
-  ASSET_CATEGORY,
-  SET_CHAIN_SUPPORTED_ASSETS,
-} from 'constants/assetsConstants';
+import { ETH, COLLECTIBLES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
   SET_ACCOUNT_ASSETS_BALANCES,
@@ -53,7 +47,6 @@ import archanovaService from 'services/archanova';
 import {
   getZapperAvailableChainProtocols,
   getZapperProtocolBalanceOnNetwork,
-  getZapperFiatRates,
   mapZapperProtocolIdToBalanceCategory,
 } from 'services/zapper';
 
@@ -77,12 +70,7 @@ import { catchTransactionError } from 'utils/wallet';
 import { sumBy } from 'utils/bigNumber';
 
 // selectors
-import {
-  accountsSelector,
-  supportedAssetsPerChainSelector,
-  assetsBalancesSelector,
-  fiatCurrencySelector,
-} from 'selectors';
+import { accountsSelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // types
 import type { Account } from 'models/Account';
@@ -405,26 +393,6 @@ export const fetchAllAccountsTotalBalancesAction = () => {
       return;
     }
 
-    const currency = fiatCurrencySelector(getState());
-
-    const zapperUsdBasedRates = await getZapperFiatRates();
-    if (!zapperUsdBasedRates) {
-      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
-      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no zapperUSDBasedRates', { accountsAddresses });
-      return;
-    }
-
-    const usdRate = zapperUsdBasedRates[currency.toUpperCase()];
-    if (currency !== USD && !usdRate) {
-      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
-      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no USD rate for app currency', {
-        accountsAddresses,
-        zapperUsdBasedRates,
-        currency,
-      });
-      return;
-    }
-
     try {
       await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
         // we don't need to pull multi chain balances for Archanova account, only Ethereum
@@ -478,10 +446,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                   supply: tokensSupply,
                 } = asset;
 
-                const balanceUsdBN = BigNumber(balanceUSD);
-                const value = currency === USD
-                  ? balanceUsdBN
-                  : balanceUsdBN.times(usdRate ?? 0);
+                const valueInUsd = BigNumber(balanceUSD);
 
                 const share = tokensShare && tokensSupply
                   ? BigNumber(tokensShare).dividedBy(tokensSupply)
@@ -493,12 +458,12 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                   title: label,
                   iconUrl: img ? `https://zapper.fi/images/${img}` : null,
                   share,
-                  value,
+                  valueInUsd,
                 };
               });
 
               // add to total balance
-              const totalValue = sumBy(assetsBalances, (balance) => balance.value);
+              const totalValue = sumBy(assetsBalances, (balance) => balance.valueInUsd);
               categoryTotalBalance = categoryTotalBalance.plus(totalValue);
 
               return [...combinedBalances, ...assetsBalances];
@@ -535,7 +500,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
 
-    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    const assetsBalancesPerAccount = getState().assetsBalances.data;
     dispatch(saveDbAction('assetsBalances', { data: assetsBalancesPerAccount }, true));
   };
 };
@@ -571,7 +536,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     dispatch({ type: RESET_ACCOUNT_ASSETS_BALANCES, payload: accountId });
     dispatch({ type: RESET_ACCOUNT_TOTAL_BALANCES, payload: accountId });
 
-    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    const assetsBalancesPerAccount = getState().assetsBalances.data;
     dispatch(saveDbAction('assetsBalances', { data: assetsBalancesPerAccount }, true));
 
     const updatedTotalBalances = getState().totalBalances.data;

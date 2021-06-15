@@ -17,16 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
 
-// constants
-import { CHAIN } from 'constants/chainConstants';
+// Constants
+import { ETH, USD } from 'constants/assetsConstants';
 
-export type Chain = $Values<typeof CHAIN>;
+// Types
+import type { RatesBySymbol, Currency } from 'models/Rates';
 
-export type ChainRecord<T> = {
-  polygon?: T,
-  binance?: T,
-  xdai?: T,
-  ethereum?: T,
-};
+export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?number {
+  // No need to calculate rate for USD/USD.
+  if (currency === USD) return 1;
 
+  const ethRates = rates[ETH];
+  if (!ethRates) {
+    return null;
+  }
+
+  return ethRates[currency] / ethRates[USD];
+}
+
+export function getFiatValueFromUsd(valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber {
+  return valueInUsd && usdToFiatRate != null ? BigNumber(valueInUsd).times(usdToFiatRate) : null;
+}

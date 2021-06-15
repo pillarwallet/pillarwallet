@@ -25,37 +25,21 @@ import type { ChainRecord } from 'models/Chain';
 
 export type CategoryAssetsBalances = {|
   wallet?: WalletAssetsBalances,
-  deposits?: DepositAssetBalance[],
-  investments?: InvestmentAssetBalance[],
-  liquidityPools?: LiquidityPoolAssetBalance[],
-  rewards?: RewardAssetBalance[],
+  deposits?: ServiceAssetBalance[],
+  investments?: ServiceAssetBalance[],
+  liquidityPools?: ServiceAssetBalance[],
+  rewards?: ServiceAssetBalance[],
 |};
 
 export type ServiceAssetBalance = {|
   key: string,
   service: string,
   title: string,
-  value: BigNumber,
+  valueInUsd: BigNumber,
+  changeInUsd?: BigNumber,
   iconUrl: ?string,
-  change?: BigNumber,
-|};
-
-export type LiquidityPoolAssetBalance = {|
-  ...ServiceAssetBalance,
-  share: ?BigNumber,
-|};
-
-export type InvestmentAssetBalance = {|
-  ...ServiceAssetBalance,
-|};
-
-export type DepositAssetBalance = {|
-  ...ServiceAssetBalance,
-  currentApy: ?BigNumber,
-|};
-
-export type RewardAssetBalance = {|
-  ...ServiceAssetBalance,
+  share?: ?BigNumber,
+  currentApy?: ?BigNumber,
 |};
 
 export type WalletAssetBalance = {|
