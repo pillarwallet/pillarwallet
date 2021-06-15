@@ -84,7 +84,7 @@ function KeyBasedAssetTransferIntro() {
 
           <Spacing h={48} />
 
-          <Button title={t('migrate')} onPress={navigateToMigration} />
+          <Button title={t('button.upgrade')} onPress={navigateToMigration} />
 
           <Spacing h={spacing.large} />
         </Content>
