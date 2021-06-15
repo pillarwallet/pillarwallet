@@ -308,9 +308,7 @@
     "backupPhraseRevealedPurpose": "እባክዎት ባለ 12 ቃላት የመጠባበቂያ ቃላቶችዎን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
     "privateKeyRevealedPurpose": "እባክዎት ይሄንን የግል ቁልፍዎትን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
     "doNotShareBackup": "ቦርሳዎ አደጋ ቢያጋጥመው ያለዎት የማስመለሻ አማራጭ ይሄ ብቻ ስለሆነ በጥንቃቄ ያስቅምጡት። ኢሜል አያድርጉ ወይም የማያ ገጹን ግልባጭ አይውሰዱ።",
-    "sessionExpiredReEnterPin": "የገቡበት ክፍለ ግዜ አልቋል። እባክዎ የይለፍ ቃሎትን አስገብተው ይቀጥሉ።",
-    "cautionMessage": "ሁሉም ሰንሰለቶች ነጠላ የኪስ ቦርሳ አድራሻ ይጠቀማሉ ፡፡\nተቀበል <0>{{chain}}</0> ንብረቶች",
-    "withCaution": "በጥንቃቄ።"
+    "sessionExpiredReEnterPin": "የገቡበት ክፍለ ግዜ አልቋል። እባክዎ የይለፍ ቃሎትን አስገብተው ይቀጥሉ።"
   },
 
   "insight": {
@@ -1385,5 +1383,11 @@
     "transactionSentConfirmed": "{{tokenValue}} ተልኳል።",
     "receivedCollectible": "ተሰብሳቢው ደርሶታል።",
     "collectibleSentAndReceived": "ተሰብሳዎቢዎ ደርሷል"
+  },
+
+  "receiveModal": {
+    "etherspotSingleAddressInfo": "ሁሉም ሰንሰለቶች ነጠላ የኪስ ቦርሳ አድራሻ ይጠቀማሉ ፡፡",
+    "notDeployedWarning": "ተቀበል <0>{{chain}}</0> ንብረቶች",
+    "withCaution": "በጥንቃቄ።"
   }
 }

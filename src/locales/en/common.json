@@ -384,9 +384,7 @@
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
-    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
-    "cautionMessage": "All chains use single wallet address.\nReceive <0>{{chain}}</0> assets",
-    "withCaution": "with caution."
+    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets."
   },
 
   "insight": {
@@ -810,7 +808,9 @@
         "betterApp": "Enjoy a refreshed user interface and improved app performance."
       },
       "footer": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new Pillar Smart Wallet. The fee will be extremely small thanks to Pillar Etherspot technology.",
-      "migrate": "Migrate"
+      "button": {
+        "upgrade": "Upgrade"
+      }
     },
     "confirm": {
       "title": "Review",
@@ -1908,5 +1908,10 @@
         "laterButton": "Later"
       }
     }
+  },
+  "receiveModal": {
+    "etherspotSingleAddressInfo": "All chains use single wallet address.",
+    "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
+    "withCaution": "with caution."
   }
 }
