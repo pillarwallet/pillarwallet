@@ -1386,8 +1386,8 @@
   }, 
 
   "receiveModal": {
-    "message": "Svi lanci koriste jednu adresu novčanika.",
-    "cautionMessage": "Primite <0>{{chain}}</0> imovina",
+    "etherspotSingleAddressInfo": "Svi lanci koriste jednu adresu novčanika.",
+    "notDeployedWarning": "Primite <0>{{chain}}</0> imovina",
     "withCaution": "s oprezom."
   }
 }

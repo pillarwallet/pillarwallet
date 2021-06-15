@@ -1386,8 +1386,8 @@
   },
 
   "receiveModal": {
-    "message": "ሁሉም ሰንሰለቶች ነጠላ የኪስ ቦርሳ አድራሻ ይጠቀማሉ ፡፡",
-    "cautionMessage": "ተቀበል <0>{{chain}}</0> ንብረቶች",
+    "etherspotSingleAddressInfo": "ሁሉም ሰንሰለቶች ነጠላ የኪስ ቦርሳ አድራሻ ይጠቀማሉ ፡፡",
+    "notDeployedWarning": "ተቀበል <0>{{chain}}</0> ንብረቶች",
     "withCaution": "በጥንቃቄ።"
   }
 }
