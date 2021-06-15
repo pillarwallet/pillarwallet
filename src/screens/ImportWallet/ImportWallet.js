@@ -212,7 +212,12 @@ class ImportWallet extends React.Component<Props, State> {
         <Label>{t('auth:seedWord', { wordNumber: currentWordIndex })}</Label>
         <TextInput
           getInputRef={(ref) => { this.backupPhraseInput = ref; }}
-          inputProps={inputProps}
+          inputProps={{
+            ...inputProps,
+            returnKeyType: 'next',
+            blurOnSubmit: false,
+            onSubmit: this.showNextWord,
+          }}
           additionalStyle={{ textAlign: 'center' }}
           errorMessage={errorMessage}
           onLayout={() => {

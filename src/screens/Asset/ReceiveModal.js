@@ -25,7 +25,6 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
-import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import Text from 'components/modern/Text';
@@ -37,8 +36,8 @@ import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
-import { getAccountEnsName } from 'utils/accounts';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
 // models and types
@@ -50,9 +49,11 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { activeAccountSelector } from 'selectors';
 
-import {
-  ETHERSPOT_DEPLOYMENT_INTERJECTION,
-} from 'constants/navigationConstants';
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 type StateProps = {|
   user: User,
@@ -88,7 +89,7 @@ const ReceiveModal = ({
   }, [address]);
 
   const colors = getThemeColors(theme);
-  const navigation = useNavigation();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -117,34 +118,56 @@ const ReceiveModal = ({
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
           {!!ensName && (
-            <TextWithCopy textToCopy={ensName} toastText={t('toast.ensNameCopiedToClipboard')} iconColor={colors.link}>
+            <TextWithCopy
+              textToCopy={ensName}
+              toastText={t('toast.ensNameCopiedToClipboard')}
+              iconColor={colors.link}
+              textStyle={styles.ensName}
+              adjustsFontSizeToFit
+              numberOfLines={1}
+            >
               {ensName}
             </TextWithCopy>
           )}
           {ensName ? (
-            <WalletAddress>{address}</WalletAddress>
+            <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
+              {address}
+            </WalletAddress>
           ) : (
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
-              textStyle={{ color: colors.basic030 }}
+              textStyle={[styles.address, { color: colors.secondaryText }]}
               iconColor={colors.link}
+              adjustsFontSizeToFit
+              numberOfLines={1}
             >
               {address}
             </TextWithCopy>
           )}
         </InfoView>
-        {!!address && <QRCodeWrapper><QRCodeWithTheme value={address} size={104} /></QRCodeWrapper>}
-        <WarningText center small>
-          {t('paragraph.cautionMessage', {
-            chain: t('chains.ethereum'),
-            mediumText: true,
-            color: colors.recieveModalWarningText,
-          })}{' '}
-          <Text color={colors.link} onPress={() => navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION)}>
-            {t('paragraph.withCaution')}
-          </Text>
-        </WarningText>
+        {!!address && (
+          <QRCodeWrapper>
+            <QRCodeWithTheme value={address} size={104} />
+          </QRCodeWrapper>
+        )}
+        {isEtherspotAccount(activeAccount) && (
+          <WarningText style={styles.singleAddressInfo}>
+            {t('receiveModal.etherspotSingleAddressInfo')}
+          </WarningText>
+        )}
+        {!isDeployedOnChain.ethereum && (
+          <WarningText>
+            {t('receiveModal.notDeployedWarning', {
+              chain: t('chains.ethereum'),
+              mediumText: true,
+              color: colors.recieveModalWarningText,
+            })}{' '}
+            <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
+              {t('receiveModal.withCaution')}
+            </Text>
+          </WarningText>
+        )}
         <CopyButton>
           <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
         </CopyButton>
@@ -173,6 +196,18 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<StateProps> =>
 
 export default (connect(combinedMapStateToProps)(ReceiveModal): AbstractComponent<OwnProps>);
 
+const styles = {
+  ensName: {
+    fontSize: fontSizes.big,
+  },
+  address: {
+    fontSize: fontSizes.small,
+  },
+  singleAddressInfo: {
+    marginTop: spacing.medium,
+  },
+};
+
 const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px 30px;
   align-items: center;
@@ -186,10 +221,10 @@ const QRCodeWrapper = styled.View`
 `;
 
 const WalletAddress = styled(Text)`
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
-  margin: ${spacing.mediumLarge}px;
+  color: ${({ theme }) => theme.colors.secondaryText};
+  margin-top: ${spacing.mediumLarge}px;
   text-align: center;
+  font-size: ${fontSizes.small}px;
 `;
 
 const CopyButton = styled.View`
@@ -219,7 +254,6 @@ const ImageWrapper = styled.View`
 
 const WarningText = styled(Text)`
   ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
-  margin-top: ${spacing.medium}px;
+  color: ${({ theme }) => theme.colors.secondaryText};
   text-align: center;
 `;
