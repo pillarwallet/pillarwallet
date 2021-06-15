@@ -25,7 +25,6 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
-import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import Text from 'components/modern/Text';
@@ -50,10 +49,12 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { activeAccountSelector } from 'selectors';
 
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
 // Constants
-import {
-  ETHERSPOT_DEPLOYMENT_INTERJECTION,
-} from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 type StateProps = {|
   user: User,
@@ -89,7 +90,7 @@ const ReceiveModal = ({
   }, [address]);
 
   const colors = getThemeColors(theme);
-  const navigation = useNavigation();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -137,7 +138,7 @@ const ReceiveModal = ({
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
-              textStyle={styles.address}
+              textStyle={[styles.address, { color: colors.secondaryText }]}
               iconColor={colors.link}
               adjustsFontSizeToFit
               numberOfLines={1}
@@ -151,16 +152,23 @@ const ReceiveModal = ({
             <QRCodeWithTheme value={address} size={104} />
           </QRCodeWrapper>
         )}
-        <WarningText center small>
-          {t('paragraph.cautionMessage', {
-            chain: t('chains.ethereum'),
-            mediumText: true,
-            color: colors.recieveModalWarningText,
-          })}{' '}
-          <Text color={colors.link} onPress={() => navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION)}>
-            {t('paragraph.withCaution')}
-          </Text>
-        </WarningText>
+        {activeAccount?.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET && (
+          <WarningText style={{ marginTop: spacing.medium }} center small>
+            {t('receiveModal.message')}
+          </WarningText>
+        )}
+        {!isDeployedOnChain[CHAIN.ETHEREUM] && (
+          <WarningText center small>
+            {t('receiveModal.cautionMessage', {
+              chain: t('chains.ethereum'),
+              mediumText: true,
+              color: colors.recieveModalWarningText,
+            })}{' '}
+            <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
+              {t('receiveModal.withCaution')}
+            </Text>
+          </WarningText>
+        )}
         <CopyButton>
           <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
         </CopyButton>
@@ -194,7 +202,6 @@ const styles = {
     fontSize: fontSizes.big,
   },
   address: {
-    color: getThemeColors().basic030,
     fontSize: fontSizes.small,
   },
 };
@@ -212,7 +219,7 @@ const QRCodeWrapper = styled.View`
 `;
 
 const WalletAddress = styled(Text)`
-  color: ${({ theme }) => theme.colors.basic030};
+  color: ${({ theme }) => theme.colors.secondaryText};
   margin-top: ${spacing.mediumLarge}px;
   text-align: center;
   font-size: ${fontSizes.small}px;
@@ -245,7 +252,6 @@ const ImageWrapper = styled.View`
 
 const WarningText = styled(Text)`
   ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.basic030};
-  margin-top: ${spacing.medium}px;
+  color: ${({ theme }) => theme.colors.secondaryText};
   text-align: center;
 `;
