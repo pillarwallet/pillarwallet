@@ -563,13 +563,15 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+export const getFormattedTransactionFeeValue = (
+  feeInWei: ?BigNumber | string | number,
+  gasToken: ?GasToken,
+): string => {
   if (!feeInWei) return '';
   // fixes exponential values with BigNumber.toPrecision()
   // TODO: fix with BigNumber.toFixed() when updating BigNumber lib
-  const parsedFeeInWei = typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei)
-    ? feeInWei.toPrecision()
-    : feeInWei.toString();
+  const parsedFeeInWei =
+    typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei) ? feeInWei.toPrecision() : feeInWei.toString();
 
   if (gasToken && !isEmpty(gasToken)) {
     return formatAmount(utils.formatUnits(parsedFeeInWei, gasToken.decimals), 2);
@@ -578,7 +580,7 @@ export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigN
   return formatAmount(utils.formatEther(parsedFeeInWei));
 };
 
-export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+export const formatTransactionFee = (feeInWei: ?BigNumber | string | number, gasToken: ?GasToken): string => {
   if (!feeInWei) return '';
 
   const token = gasToken?.symbol || ETH;

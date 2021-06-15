@@ -20,12 +20,9 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { connect } from 'react-redux';
-import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
 import Emoji from 'react-native-emoji';
-import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
@@ -36,14 +33,15 @@ import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import Modal from 'components/Modal';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
+import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
+import { getGasTokenSymbol } from 'utils/transactions';
 
 // selectors
+import { useRootSelector, useRates, useFiatCurrency } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { isGasTokenSupportedSelector } from 'selectors/archanova';
@@ -52,63 +50,44 @@ import { isGasTokenSupportedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Rates, Assets } from 'models/Asset';
-import type { GasToken, Transaction } from 'models/Transaction';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { ChainRecord } from 'models/Chain';
-
+import type { Chain } from 'models/Chain';
+import type { GasToken } from 'models/Transaction';
 
 type Props = {
-  baseFiatCurrency: ?string,
-  rates: Rates,
-  txFeeInWei: BigNumber | number | string,
+  txFeeInWei: ?BigNumber | number | string,
   gasToken: ?GasToken,
+  chain: Chain,
   isLoading?: boolean,
   labelText?: string,
-  isGasTokenSupported: boolean,
-  accountAssets: Assets,
-  accountHistory: ChainRecord<Transaction[]>,
   showRelayerMigration?: boolean,
   hasError?: boolean,
 };
 
-const LabelWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const FeePill = styled.TouchableOpacity`
-  ${({ hasError, theme: { colors: { negative, labelTertiary } } }) => `
-    background-color: ${hasError ? negative : labelTertiary};
-  `}
-  padding: 0 8px;
-  border-radius: 12px;
-  justify-content: center;
-`;
-
-export const FeeLabelToggleComponent = ({
+const FeeLabelToggle = ({
   txFeeInWei,
   gasToken,
-  baseFiatCurrency,
-  rates,
+  chain,
   isLoading,
   labelText,
   showRelayerMigration = true,
-  accountAssets,
-  accountHistory,
-  isGasTokenSupported,
   hasError,
 }: Props) => {
+  const rates = useRates();
+  const fiatCurrency = useFiatCurrency();
+  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountHistory = useRootSelector(accountHistorySelector);
+  const isGasTokenSupported = useRootSelector(isGasTokenSupportedSelector);
+
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(true);
 
   if (isLoading) {
     return <Spinner size={20} trackWidth={2} />;
   }
 
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
   const feeValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
-  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
+
+  const gasTokenSymbol = getGasTokenSymbol(chain, gasToken);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
   const feeInFiat = parseFloat(feeValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
@@ -146,23 +125,23 @@ export const FeeLabelToggleComponent = ({
   );
 };
 
-const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
-}: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
-  rates,
-});
+export default FeeLabelToggle;
 
-const structuredSelector = createStructuredSelector({
-  accountAssets: accountAssetsSelector,
-  accountHistory: accountHistorySelector,
-  isGasTokenSupported: isGasTokenSupportedSelector,
-});
+const LabelWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
 
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default connect(combinedMapStateToProps)(FeeLabelToggleComponent);
+const FeePill = styled.TouchableOpacity`
+  ${({
+    hasError,
+    theme: {
+      colors: { negative, labelTertiary },
+    },
+  }) => `
+    background-color: ${hasError ? negative : labelTertiary};
+  `}
+  padding: 0 8px;
+  border-radius: 12px;
+  justify-content: center;
+`;
