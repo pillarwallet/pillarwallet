@@ -56,8 +56,9 @@ function KeyBasedAssetTransferIntro() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <Container>
+      <Container style={{ backgroundColor: darkTheme.colors.basic090 }}>
         <HeaderBlock
+          wrapperStyle={{ backgroundColor: darkTheme.colors.basic090 }}
           navigation={navigation}
           noPaddingTop
         />
