@@ -46,6 +46,7 @@ export const REMOTE_CONFIG = {
   FEATURE_STORIES_IOS_HEIGHT: 'feature_stories_ios_height',
   FEATURE_STORIES_IOS_WIDTH: 'feature_stories_ios_width',
   FEATURE_STORIES_IOS_CORNER_RADIUS: 'feature_stories_ios_corner_radius',
+  FEATURE_TOKEN_LIST_ETHEREUM: 'app_tokenlist_name',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -74,4 +75,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_STORIES_IOS_HEIGHT]: '100',
   [REMOTE_CONFIG.FEATURE_STORIES_IOS_WIDTH]: '100',
   [REMOTE_CONFIG.FEATURE_STORIES_IOS_CORNER_RADIUS]: '20',
+  [REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM]: 'PillarTokens',
 };

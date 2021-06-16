@@ -43,6 +43,9 @@ import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // utils
 import {
   BigNumber,
@@ -65,6 +68,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type {
@@ -581,10 +585,10 @@ export class EtherspotService {
 
   async getSupportedAssets(): Promise<?(Asset[])> {
     try {
-      // eslint-disable-next-line i18next/no-literal-string
-      const tokens: TokenListToken[] = await this.sdk.getTokenListTokens();
+      const tokenListEthereum = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
+      const tokens: TokenListToken[] = await this.sdk.getTokenListTokens({ name: tokenListEthereum });
       if (!tokens) {
-        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
+        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListEthereum });
         return null;
       }
 
