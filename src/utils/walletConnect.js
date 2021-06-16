@@ -143,6 +143,7 @@ export const mapCallRequestToTransactionPayload = (
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
 
+  // TODO: review after implementing supported assets per chain
   const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
   const chainNativeDecimals = nativeAssetPerChain[chain].decimals;
   const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
