@@ -83,6 +83,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
+import { initialDeeplinkExecutedAction } from 'actions/appSettingsActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -336,6 +337,16 @@ export const finishOnboardingAction = (retry?: boolean) => {
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching cms action: getTutorialDataAction');
     await dispatch(getTutorialDataAction());
+
+    /**
+     * initial deep link executed setting is used to prevent deep links from execution before PIN screen,
+     * at this point user us authorized and we can let deep links to go through safely
+     */
+    logBreadcrumb(
+      'onboarding',
+      'onboardingAction.js: Dispatching initialDeeplinkExecutedAction',
+    );
+    dispatch(initialDeeplinkExecutedAction());
 
     logBreadcrumb('onboarding', 'checking for FEATURE_ONBOARDING flag for enable onboarding');
     const enableOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
