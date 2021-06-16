@@ -28,19 +28,10 @@ import t from 'translations/translate';
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
-import Toast from 'components/Toast';
-import Modal from 'components/Modal';
 
 // constants
 import {
-  EXCHANGE,
-  LENDING_CHOOSE_DEPOSIT,
-  POOLTOGETHER_DASHBOARD,
-  SABLIER_STREAMS,
-  RARI_DEPOSIT,
   LIQUIDITY_POOLS,
-  ADD_CASH,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -48,8 +39,6 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { spacing } from 'utils/variables';
 import {
   getActiveAccount,
-  getAccountAddress,
-  isSmartWalletAccount,
   isArchanovaAccount,
 } from 'utils/accounts';
 
@@ -64,12 +53,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
 // Config constants, to be overwritten in componentDidMount
-let isOffersEngineEnabled = true;
-let isAaveEnabled = true;
-let isPoolTogetherEnabled = true;
-let isRampEnabled = true;
-let isSablierEnabled = true;
-let isRariEnabled = true;
 let areLiquidityPoolsEnabled = true;
 
 type Props = {
@@ -92,12 +75,6 @@ class ServicesScreen extends React.Component<Props> {
     /**
      * Retrieve boolean flags for services from Remote Config.
      */
-    isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_OFFERS_ENGINE);
-    isAaveEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_AAVE);
-    isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_POOL_TOGETHER);
-    isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
-    isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
-    isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
     areLiquidityPoolsEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_LIQUIDITY_POOLS);
   }
 
@@ -134,109 +111,18 @@ class ServicesScreen extends React.Component<Props> {
       });
     }
 
-    if (isAaveEnabled) {
-      archanovaSupportedServices.push({
-        key: 'depositPool',
-        title: t('servicesContent.aaveDeposit.title'),
-        body: t('servicesContent.aaveDeposit.description'),
-        disabled: servicesDisabled,
-        label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(LENDING_CHOOSE_DEPOSIT),
-      });
-    }
-
-    if (isPoolTogetherEnabled) {
-      archanovaSupportedServices.push({
-        key: 'poolTogether',
-        title: t('servicesContent.poolTogether.title'),
-        body: t('servicesContent.poolTogether.description'),
-        disabled: servicesDisabled,
-        label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(POOLTOGETHER_DASHBOARD),
-      });
-    }
-
-    if (isSablierEnabled) {
-      archanovaSupportedServices.push({
-        key: 'sablier',
-        title: t('servicesContent.sablier.title'),
-        body: t('servicesContent.sablier.description'),
-        disabled: servicesDisabled,
-        label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(SABLIER_STREAMS),
-      });
-    }
-
-    if (isRariEnabled) {
-      archanovaSupportedServices.push({
-        key: 'rari',
-        title: t('servicesContent.rari.title'),
-        body: t('servicesContent.rari.description'),
-        disabled: servicesDisabled,
-        label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(RARI_DEPOSIT),
-      });
-    }
-
     return archanovaSupportedServices;
   };
 
   getServices = (): Service[] => {
-    const { navigation, accounts } = this.props;
+    const { accounts } = this.props;
 
     // services are left for archanova only and will be decommissioned later
     const services = isArchanovaAccount(getActiveAccount(accounts)) ? this.getArchanovaSupportedServices() : [];
 
-    if (isOffersEngineEnabled) {
-      services.push({
-        key: 'offersEngine',
-        title: t('servicesContent.exchange.title'),
-        body: t('servicesContent.exchange.description'),
-        action: () => navigation.navigate(EXCHANGE),
-      });
-    }
-
-    services.push(...this.getBuyCryptoServices());
-
     return services;
   };
 
-  getBuyCryptoServices = () => {
-    const buyCryptoServices = [];
-    const { navigation } = this.props;
-
-    if (isRampEnabled) {
-      buyCryptoServices.push({
-        key: 'ramp',
-        title: t('servicesContent.ramp.title'),
-        body: t('servicesContent.ramp.description'),
-        action: () => navigation.navigate(ADD_CASH),
-      });
-    }
-
-    return buyCryptoServices;
-  };
-
-  getCryptoPurchaseAddress = (): string | null => {
-    const { accounts } = this.props;
-
-    const activeAccount = getActiveAccount(accounts);
-
-    if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
-      Modal.open(() => <BuyCryptoAccountNotActiveModal />);
-      return null;
-    }
-
-    return getAccountAddress(activeAccount);
-  };
-
-  showServiceLaunchError = () => {
-    Toast.show({
-      message: t('toast.cryptoPurchaseLaunchFailed'),
-      emoji: 'hushed',
-      supportLink: true,
-    });
-  };
 
   renderServicesItem = ({ item }) => {
     const { title, body, action, disabled, label, hidden = false } = item;
