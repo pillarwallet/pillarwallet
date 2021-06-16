@@ -142,16 +142,7 @@ export const mapCallRequestToTransactionPayload = (
 
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
-  const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
-  const chainNativeDecimals = nativeAssetPerChain[chain].decimals;
-
-  const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
-
-  const {
-    symbol = chainNativeSymbol,
-    address: contractAddress = nativeAssetData.address,
-    decimals = chainNativeDecimals,
-  } = assetData;
+  const { address: contractAddress, symbol, decimals } = nativeAssetPerChain[chain];
 
   return {
     to,
