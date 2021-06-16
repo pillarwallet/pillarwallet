@@ -49,7 +49,11 @@ import {
 // services
 import etherspotService from 'services/etherspot';
 
+// utils
+import { nativeAssetSymbolPerChain } from 'utils/chains';
+
 // types
+import type { Chain } from 'models/Chain';
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -564,6 +568,7 @@ export const getDeviceWidth = () => {
 };
 
 export const getFormattedTransactionFeeValue = (
+  chain: ?Chain,
   feeInWei: ?BigNumber | string | number,
   gasToken: ?GasToken,
 ): string => {
@@ -580,11 +585,15 @@ export const getFormattedTransactionFeeValue = (
   return formatAmount(utils.formatEther(parsedFeeInWei));
 };
 
-export const formatTransactionFee = (feeInWei: ?BigNumber | string | number, gasToken: ?GasToken): string => {
+export const formatTransactionFee = (
+  chain: Chain,
+  feeInWei: ?BigNumber | string | number,
+  gasToken: ?GasToken,
+): string => {
   if (!feeInWei) return '';
 
-  const token = gasToken?.symbol || ETH;
-  const value = getFormattedTransactionFeeValue(feeInWei, gasToken);
+  const token = gasToken?.symbol || nativeAssetSymbolPerChain[chain];
+  const value = getFormattedTransactionFeeValue(chain, feeInWei, gasToken);
 
   return t('tokenValue', { value, token });
 };

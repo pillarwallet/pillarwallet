@@ -143,7 +143,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   }
 
   const txFeeInWei = feeInfo?.fee;
-  const fee = BigNumber(getFormattedTransactionFeeValue(txFeeInWei, feeInfo?.gasToken)) || null;
+  const fee = BigNumber(getFormattedTransactionFeeValue(chain, txFeeInWei, feeInfo?.gasToken)) || null;
   const gasSymbol = getGasSymbol(chain, feeInfo?.gasToken);
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);

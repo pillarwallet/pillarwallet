@@ -84,10 +84,9 @@ const FeeLabelToggle = ({
     return <Spinner size={20} trackWidth={2} />;
   }
 
-  const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-  const feeValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
-
   const gasSymbol = getGasSymbol(chain, gasToken);
+  const feeDisplayValue = formatTransactionFee(chain, txFeeInWei, gasToken);
+  const feeValue = getFormattedTransactionFeeValue(chain, txFeeInWei, gasToken);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
   const feeInFiat = parseFloat(feeValue) * getRate(rates, gasSymbol, fiatCurrency);

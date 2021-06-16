@@ -157,7 +157,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       || settleButtonSubmitted;
 
     const gasToken = getGasToken(useGasToken, feeInfo);
-    const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
+    const feeDisplayValue = formatTransactionFee(CHAIN.ETHEREUM, getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     const txToSettle = this.txToSettle.map((asset: Object) =>
       `${formatAmount(asset.value.toNumber())} ${asset.symbol}`);
