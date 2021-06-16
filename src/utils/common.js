@@ -50,7 +50,7 @@ import {
 import etherspotService from 'services/etherspot';
 
 // utils
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetSymbolPerChain, nativeAssetDecimalsPerChain } from 'utils/chains';
 
 // types
 import type { Chain } from 'models/Chain';
@@ -568,7 +568,7 @@ export const getDeviceWidth = () => {
 };
 
 export const getFormattedTransactionFeeValue = (
-  chain: ?Chain,
+  chain: Chain,
   feeInWei: ?BigNumber | string | number,
   gasToken: ?GasToken,
 ): string => {
@@ -582,7 +582,8 @@ export const getFormattedTransactionFeeValue = (
     return formatAmount(utils.formatUnits(parsedFeeInWei, gasToken.decimals), 2);
   }
 
-  return formatAmount(utils.formatEther(parsedFeeInWei));
+  const nativeAssetDecimals = nativeAssetDecimalsPerChain[chain];
+  return formatAmount(utils.formatUnits(parsedFeeInWei, nativeAssetDecimals));
 };
 
 export const formatTransactionFee = (
