@@ -29,7 +29,7 @@ import { CHAIN } from 'constants/chainConstants';
 // utils
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -88,7 +88,7 @@ export const buildEthereumTransaction = async (
   let value;
 
   if (tokenType !== COLLECTIBLES) {
-    const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
+    const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {
       data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);

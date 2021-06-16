@@ -50,7 +50,7 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
@@ -195,7 +195,7 @@ const SendCollectibleConfirm = ({
     );
   }
 
-  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetSymbolPerChain[chain];
+  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetPerChain[chain].symbol;
   const errorMessage = isEnoughForFee
     ? estimateErrorMessage
     : t('error.notEnoughTokenForFee', { token: feeSymbol });
