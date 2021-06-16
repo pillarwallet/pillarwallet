@@ -85,7 +85,6 @@ const mockAssetsByAccount: Assets = {
     balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
 };
@@ -101,7 +100,6 @@ const mockFullAssetsListByAccount: Assets = {
     balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
   PLR: {
@@ -110,7 +108,6 @@ const mockFullAssetsListByAccount: Assets = {
     balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
 };

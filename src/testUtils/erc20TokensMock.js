@@ -24,7 +24,6 @@ export default [
     name: 'Pillar',
     address: 'tokenAddress',
     iconUrl: 'tokenIconUrl',
-    iconMonoUrl: 'tokenIconMonoUrl',
     decimals: 18,
   },
   {
@@ -32,7 +31,6 @@ export default [
     name: 'Token A',
     address: 'tokenAddress',
     iconUrl: 'tokenIconUrl',
-    iconMonoUrl: 'tokenIconMonoUrl',
     decimals: 18,
   },
   {
@@ -40,7 +38,6 @@ export default [
     name: 'Token B',
     address: 'tokenAddress',
     iconUrl: 'tokenIconUrl',
-    iconMonoUrl: 'tokenIconMonoUrl',
     decimals: 18,
   },
   {
@@ -48,7 +45,6 @@ export default [
     name: 'Token C',
     address: 'tokenAddress',
     iconUrl: 'tokenIconUrl',
-    iconMonoUrl: 'tokenIconMonoUrl',
     decimals: 18,
   },
   {
@@ -56,7 +52,6 @@ export default [
     name: 'Token D',
     address: 'tokenAddress',
     iconUrl: 'tokenIconUrl',
-    iconMonoUrl: 'tokenIconMonoUrl',
     decimals: 18,
   },
 ];

@@ -41,7 +41,6 @@ const plrAsset = {
   symbol: 'PLR',
   value: 'PLR',
   iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png',
-  iconMonoUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/plr.png',
   email: 'info@pillarproject.io',
   telegram: 'https://t.me/pillarofficial',
   twitter: 'https://twitter.com/PillarWallet',

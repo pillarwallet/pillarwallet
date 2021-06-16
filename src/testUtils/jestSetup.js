@@ -373,7 +373,6 @@ export const mockSupportedAssets = [
     balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
   {
@@ -382,7 +381,6 @@ export const mockSupportedAssets = [
     balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
 ];
