@@ -370,7 +370,6 @@ export const mockSupportedAssets = [
   {
     symbol: ETH,
     name: 'ethereum',
-    balance: 1,
     address: '',
     iconUrl: '',
     decimals: 18,
@@ -378,7 +377,6 @@ export const mockSupportedAssets = [
   {
     symbol: PLR,
     name: 'ethereum',
-    balance: 1,
     address: '',
     iconUrl: '',
     decimals: 18,

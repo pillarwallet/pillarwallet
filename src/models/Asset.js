@@ -53,8 +53,6 @@ export type Asset = {
   address: string,
   iconUrl: string,
   decimals: number,
-  amount?: number,
-  code?: string,
 };
 
 export type Assets = {
