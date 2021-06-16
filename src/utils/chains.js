@@ -64,13 +64,6 @@ export function getSupportedChains(account: ?Account): Chain[] {
   return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
 }
 
-export const nativeAssetSymbolPerChain = {
-  ethereum: ETH,
-  polygon: MATIC,
-  binance: BNB,
-  xdai: DAI,
-};
-
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {
   ethereum: {

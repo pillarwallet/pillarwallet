@@ -36,7 +36,7 @@ import {
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
-import { chainFromChainId, nativeAssetPerChain, nativeAssetSymbolPerChain } from 'utils/chains';
+import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -142,7 +142,7 @@ export const mapCallRequestToTransactionPayload = (
 
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
-  const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
+  const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
   const chainNativeDecimals = nativeAssetPerChain[chain].decimals;
 
   const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
