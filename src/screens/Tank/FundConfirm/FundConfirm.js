@@ -29,7 +29,7 @@ import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'ac
 
 // constants
 import { ASSETS } from 'constants/navigationConstants';
-import { CHAIN } from 'constants/chainConstants'; 
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
