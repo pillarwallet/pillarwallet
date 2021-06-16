@@ -33,7 +33,7 @@ import {
 } from 'constants/walletConnectConstants';
 
 // utils
-import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
@@ -142,7 +142,16 @@ export const mapCallRequestToTransactionPayload = (
 
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
-  const { address: contractAddress, symbol, decimals } = nativeAssetPerChain[chain];
+
+  const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
+  const chainNativeDecimals = nativeAssetPerChain[chain].decimals;
+  const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
+
+  const {
+    symbol = chainNativeSymbol,
+    address: contractAddress = nativeAssetData.address,
+    decimals = chainNativeDecimals,
+  } = assetData;
 
   return {
     to,

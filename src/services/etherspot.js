@@ -592,8 +592,6 @@ export class EtherspotService {
 
       // TODO: replace by single invocation per chain:
       supportedAssets = appendNativeAssetIfNeeded(CHAIN.ETHEREUM, supportedAssets);
-      supportedAssets = appendNativeAssetIfNeeded(CHAIN.POLYGON, supportedAssets);
-      supportedAssets = appendNativeAssetIfNeeded(CHAIN.XDAI, supportedAssets);
       supportedAssets = appendNativeAssetIfNeeded(CHAIN.BINANCE, supportedAssets);
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
