@@ -19,7 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber} from 'ethers';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
   type Transaction as EtherspotTransaction,
@@ -28,7 +28,6 @@ import {
   AccountStates,
   GatewayBatchStates,
 } from 'etherspot';
-import { uniqBy, orderBy } from 'lodash';
 
 // constants
 import {

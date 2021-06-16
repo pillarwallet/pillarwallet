@@ -33,7 +33,7 @@ import {
 } from 'constants/walletConnectConstants';
 
 // utils
-import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
+import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
