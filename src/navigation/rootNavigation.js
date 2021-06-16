@@ -34,7 +34,6 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
-import WalletRecoveryOptionsScreen from 'screens/ImportWallet/WalletRecoveryOptions';
 
 import { modalTransition } from 'utils/common';
 import { ModalProvider } from 'components/Modal';
@@ -54,7 +53,6 @@ import {
   PERMISSIONS,
   IMPORT_WALLET_LEGALS,
   BIOMETRICS_PROMPT,
-  WALLET_RECOVERY_OPTIONS,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -88,7 +86,6 @@ const onBoardingFlow = createStackNavigator({
   },
   [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
   [IMPORT_WALLET]: ImportWalletScreen,
-  [WALLET_RECOVERY_OPTIONS]: WalletRecoveryOptionsScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
