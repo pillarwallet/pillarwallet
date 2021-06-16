@@ -71,13 +71,6 @@ export const nativeAssetSymbolPerChain = {
   xdai: DAI,
 };
 
-export const nativeAssetDecimalsPerChain = {
-  ethereum: 18,
-  polygon: 18,
-  binance: 18,
-  xdai: 18,
-};
-
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {
   ethereum: {
