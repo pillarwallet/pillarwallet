@@ -51,7 +51,12 @@ import {
   reportErrorLog,
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
-import { parseTokenListToken, buildExchangeOffer, buildTransactionFeeInfo } from 'utils/etherspot';
+import {
+  parseTokenListToken,
+  appendNativeAssetIfNeeded,
+  buildExchangeOffer,
+  buildTransactionFeeInfo,
+} from 'utils/etherspot';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetSymbolPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
@@ -583,22 +588,13 @@ export class EtherspotService {
         return null;
       }
 
-      const supportedAssets = tokens.map(parseTokenListToken);
+      let supportedAssets = tokens.map(parseTokenListToken);
 
-      // add ETH if not within tokens list (most of the time since it's not a token)
-      const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);
-      if (!supportedAssetsHaveEth) {
-        // eslint-disable-next-line i18next/no-literal-string
-        const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
-        supportedAssets.push({
-          address: EthersConstants.AddressZero,
-          name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
-          symbol: ETH,
-          decimals: 18,
-          iconUrl,
-          iconMonoUrl: iconUrl,
-        });
-      }
+      // TODO: replace by single invocation per chain:
+      supportedAssets = appendNativeAssetIfNeeded(CHAIN.ETHEREUM, supportedAssets);
+      supportedAssets = appendNativeAssetIfNeeded(CHAIN.POLYGON, supportedAssets);
+      supportedAssets = appendNativeAssetIfNeeded(CHAIN.XDAI, supportedAssets);
+      supportedAssets = appendNativeAssetIfNeeded(CHAIN.BINANCE, supportedAssets);
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({
