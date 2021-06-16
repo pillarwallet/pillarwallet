@@ -208,7 +208,7 @@ export const buildExchangeOffer = (
 export const appendNativeAssetIfNeeded = (chain: Chain, assets: Asset[]): Asset[] => {
   const nativeAsset = nativeAssetPerChain[chain];
 
-  // TODO: Switch to address check when supported assets per chain are implemented.
+  // TODO: Switch to zero address check when supported assets per chain are implemented.
   const hasNativeAsset = assets.some((asset) => asset.symbol === nativeAsset.symbol);
   return hasNativeAsset ? assets : [nativeAsset, ...assets];
 };
