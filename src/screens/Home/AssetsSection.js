@@ -43,7 +43,7 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
-import { isEtherspotAccount } from 'utils/accounts';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { AssetCategory } from 'models/AssetCategory';
@@ -177,7 +177,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
       {renderCollectiblesCategory()}
 
       {/* Temporary entry until other UI provided */}
-      {!isEtherspotAccount(activeAccount) && (
+      {isArchanovaAccount(activeAccount) && (
         <CategoryListItem
           key="services"
           title={t('services')}
