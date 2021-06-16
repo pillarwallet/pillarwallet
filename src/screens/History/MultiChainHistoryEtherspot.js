@@ -58,11 +58,11 @@ function MultiChainHistoryEtherspot() {
   ];
 
   const items = chains.map((chain) => {
-    const { title } = chainsConfig[chain];
+    const { titleShort } = chainsConfig[chain];
 
     return {
       key: chain,
-      title,
+      title: titleShort,
       render: () => <ChainHistoryView chain={chain} />,
     };
   });
