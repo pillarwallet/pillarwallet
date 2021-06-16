@@ -56,7 +56,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
-import { getGasTokenSymbol } from 'utils/transactions';
+import { getGasSymbol } from 'utils/transactions';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -142,9 +142,9 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
 
-  const feeInWei = feeInfo?.fee;
-  const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
-  const gasSymbol = getGasTokenSymbol(chain, feeInfo?.gasToken);
+  const txFeeInWei = feeInfo?.fee;
+  const fee = BigNumber(getFormattedTransactionFeeValue(txFeeInWei, feeInfo?.gasToken)) || null;
+  const gasSymbol = getGasSymbol(chain, feeInfo?.gasToken);
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
@@ -155,7 +155,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     amount,
     symbol,
     decimals,
-    txFeeInWei: feeInWei,
+    txFeeInWei,
     gasToken: feeInfo?.gasToken,
   };
   const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
@@ -164,7 +164,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
 
-  return { fee, feeInWei, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
+  return { fee, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {

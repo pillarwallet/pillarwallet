@@ -23,10 +23,11 @@ import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
+import { nativeAssetDecimalsPerChain } from 'utils/chains';
 import { getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatUnits, hitSlop20 } from 'utils/common';
-import { getGasTokenSymbol } from 'utils/transactions';
+import { getGasSymbol } from 'utils/transactions';
 
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -128,10 +129,10 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
 };
 
 export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
-  const decimals = gasToken?.decimals || 18;
+  const decimals = gasToken?.decimals || nativeAssetDecimalsPerChain[chain];
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
-  const feeTokenSymbol = getGasTokenSymbol(chain, gasToken);
-  return <TableAmount amount={formattedFee} token={feeTokenSymbol} />;
+  const gasSymbol = getGasSymbol(chain, gasToken);
+  return <TableAmount amount={formattedFee} token={gasSymbol} />;
 };
 
 const Divider = styled.View`
