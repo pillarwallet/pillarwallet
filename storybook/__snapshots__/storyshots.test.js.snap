@@ -50974,7 +50974,6 @@ exports[`Storyshots Value Input default 1`] = `
                             "isDefault": true,
                             "isPreferred": false,
                             "name": "Ethereum",
-                            "patternUrl": "https://api-core.pillarproject.io/asset/images/patternIcons/eth.png",
                             "socialMedia": Array [],
                             "symbol": "ETH",
                             "telegram": "",

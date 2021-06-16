@@ -47,7 +47,6 @@ const plrAsset = {
   website: 'https://pillarproject.io/',
   whitepaper: 'https://pillarproject.io/documents/Pillar-Gray-Paper.pdf',
   isDefault: true,
-  patternUrl: 'https://api-core.pillarproject.io/asset/images/patternIcons/plr.png',
   updatedAt: '2019-07-19T12:43:23.540Z',
   id: '5c65a07d000204d2f9481c1d',
   totalSupply: '',
