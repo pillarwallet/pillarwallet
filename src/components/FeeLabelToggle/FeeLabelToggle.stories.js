@@ -20,12 +20,15 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+
+// constants
+import { CHAIN } from 'constants/chainConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
+// local
 import { FeeLabelToggleComponent } from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
-import { CHAIN } from 'constants/chainConstants';
 
 const reduxData = {
   accountAssets: {},

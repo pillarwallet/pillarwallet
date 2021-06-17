@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isEmpty, mapValues } from 'lodash';
+import { isEmpty } from 'lodash';
 
 // constants
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -65,13 +65,13 @@ export const fetchAssetsRatesAction = () => {
     const allAccountsCrossChainAssets = Object.keys(assetsBalances).reduce((combinedAssets, accountId) => {
       const accountAssetsBalances = assetsBalances[accountId] ?? {};
 
-      const accountAssets = mapValues(
-        accountAssetsBalances,
-        (chainBalances, chain) => {
-          const chainSupportedAssets = supportedAssets[chain] ?? [];
-          return mapWalletAssetsBalancesIntoAssets(chainBalances?.wallet ?? {}, chainSupportedAssets);
-        },
-      );
+      const accountAssets = Object.keys(accountAssetsBalances).reduce((assets, chain) => {
+        const chainSupportedAssets = supportedAssets[chain] ?? [];
+        const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
+        const mapped = mapWalletAssetsBalancesIntoAssets(walletAssets, chainSupportedAssets);
+        // $FlowFixMe
+        return { ...assets, ...mapped };
+      }, {});
 
       return { ...combinedAssets, ...accountAssets };
     }, {});

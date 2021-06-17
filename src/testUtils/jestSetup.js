@@ -39,6 +39,7 @@ import {
   TEST_TRANSLATIONS_BASE_URL,
   TEST_TRANSLATIONS_TIME_STAMP,
 } from 'constants/localesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
@@ -441,10 +442,8 @@ export const mockEtherspotAccountExtra: Etherspot.Account = {
 jest.setMock('instabug-reactnative', {});
 
 const mockEtherspotGetBalances = (chain, address, assets) => {
-  // mock positive balances for mocked archanova account
-  const balances = address === mockArchanovaAccount.extra.address
-    ? assets.map(({ symbol }) => ({ symbol, balance: 1 }))
-    : [];
+  // mock positive balances
+  const balances = assets.map(({ symbol }) => ({ symbol, balance: 1 }));
 
   return Promise.resolve(balances);
 };
@@ -454,6 +453,6 @@ jest.setMock('services/etherspot', {
   init: jest.fn(),
   getAccounts: jest.fn(),
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
-  getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
+  getChainSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
   getBalances: mockEtherspotGetBalances,
 });

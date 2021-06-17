@@ -244,14 +244,14 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     );
     await dispatch(importEtherspotAccountsAction());
 
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: fetchAssetsRatesAction');
-    dispatch(fetchAssetsRatesAction());
-
     logBreadcrumb(
       'onboarding',
       'onboardingAction.js: Dispatching historyActions action: fetchTransactionsHistoryAction',
     );
     await dispatch(fetchTransactionsHistoryAction());
+
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: fetchAssetsRatesAction');
+    await dispatch(fetchAssetsRatesAction());
 
     logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching smart wallet action: managePPNInitFlagAction');
     dispatch(managePPNInitFlagAction());
