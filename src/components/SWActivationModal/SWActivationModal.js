@@ -148,6 +148,7 @@ const SWActivationModal = ({
                 labelText={t('label.fee')}
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
+                chain={CHAIN.ETHEREUM}
                 isLoading={gettingDeploymentEstimate}
               />
             </Centered>

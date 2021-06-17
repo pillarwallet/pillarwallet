@@ -158,7 +158,7 @@ const KeyBasedAssetTransferConfirm = () => {
         <Table.Header>{t('assets.header')}</Table.Header>
         {sortedAssetTransfers.map(renderItem)}
 
-        <FeeTable fee={totalFee} />
+        <FeeTable fee={totalFee} symbol={ETH} />
       </Content>
     </ContainerWithHeader>
   );
