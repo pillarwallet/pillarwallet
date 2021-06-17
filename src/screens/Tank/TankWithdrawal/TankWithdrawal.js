@@ -252,6 +252,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               txFeeInWei={txFeeInWei}
               gasToken={gasToken}
               isLoading={!withdrawalFee.isFetched}
+              chain={CHAIN.ETHEREUM}
             />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button

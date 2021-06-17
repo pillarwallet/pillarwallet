@@ -26,9 +26,6 @@ import { useTranslationWithPrefix, useTranslation } from 'translations/translate
 import * as Table from 'components/modern/Table';
 import Tooltip from 'components/Tooltip';
 
-// Contansts
-import { ETH } from 'constants/assetsConstants';
-
 // Selectors
 import { useRates, useFiatCurrency } from 'selectors';
 
@@ -42,19 +39,20 @@ import type { Value } from 'utils/common';
 
 type Props = {|
   fee: Value,
+  symbol: string,
   style?: ViewStyleProp,
 |};
 
-function FeeTable({ fee, style }: Props) {
+function FeeTable({ fee, symbol, style }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('transactions.label');
 
   return (
     <View style={style}>
       <Table.Header>{t('fees')}</Table.Header>
 
-      <FeeRow title={t('ethFee')} symbol={ETH} fee={fee} separator={false} />
+      <FeeRow title={t('ethFee')} symbol={symbol} fee={fee} separator={false} />
       <Table.Row title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
-      <FeeRow title={t('totalFee')} symbol={ETH} fee={fee} separator={false} />
+      <FeeRow title={t('totalFee')} symbol={symbol} fee={fee} separator={false} />
     </View>
   );
 }

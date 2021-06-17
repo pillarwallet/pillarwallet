@@ -49,7 +49,11 @@ import {
 // services
 import etherspotService from 'services/etherspot';
 
+// utils
+import { nativeAssetPerChain } from 'utils/chains';
+
 // types
+import type { Chain } from 'models/Chain';
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -563,26 +567,32 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+export const getFormattedTransactionFeeValue = (
+  chain: Chain,
+  feeInWei: ?Value,
+  gasToken: ?GasToken,
+): string => {
   if (!feeInWei) return '';
-  // fixes exponential values with BigNumber.toPrecision()
-  // TODO: fix with BigNumber.toFixed() when updating BigNumber lib
-  const parsedFeeInWei = typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei)
-    ? feeInWei.toPrecision()
-    : feeInWei.toString();
+
+  const parsedFeeInWei = wrapBigNumber(feeInWei).toFixed();
 
   if (gasToken && !isEmpty(gasToken)) {
     return formatAmount(utils.formatUnits(parsedFeeInWei, gasToken.decimals), 2);
   }
 
-  return formatAmount(utils.formatEther(parsedFeeInWei));
+  const nativeAssetDecimals = nativeAssetPerChain[chain].decimals;
+  return formatAmount(utils.formatUnits(parsedFeeInWei, nativeAssetDecimals));
 };
 
-export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+export const formatTransactionFee = (
+  chain: Chain,
+  feeInWei: ?BigNumber | string | number,
+  gasToken: ?GasToken,
+): string => {
   if (!feeInWei) return '';
 
-  const token = gasToken?.symbol || ETH;
-  const value = getFormattedTransactionFeeValue(feeInWei, gasToken);
+  const token = gasToken?.symbol || nativeAssetPerChain[chain].symbol;
+  const value = getFormattedTransactionFeeValue(chain, feeInWei, gasToken);
 
   return t('tokenValue', { value, token });
 };

@@ -37,6 +37,7 @@ import { getFormattedRate, getRate } from 'utils/assets';
 import { getRemoveLiquidityTransactions } from 'utils/liquidityPools';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
@@ -151,7 +152,7 @@ const RemoveLiquidityReviewScreen = ({
         <Table title={t('transactions.label.fees')}>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -159,7 +160,7 @@ const RemoveLiquidityReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />

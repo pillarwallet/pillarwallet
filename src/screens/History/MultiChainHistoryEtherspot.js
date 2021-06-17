@@ -58,11 +58,11 @@ function MultiChainHistoryEtherspot() {
   ];
 
   const items = chains.map((chain) => {
-    const { title } = chainsConfig[chain];
+    const { titleShort } = chainsConfig[chain];
 
     return {
       key: chain,
-      title,
+      title: titleShort,
       render: () => <ChainHistoryView chain={chain} />,
     };
   });
@@ -109,7 +109,7 @@ function useHistoryEvents(chain: Chain): Event[] {
     gasUsed,
     gasPrice,
   }) => {
-    const fee = parseHistoryEventFee(feeWithGasToken, gasUsed, gasPrice);
+    const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
     const eventType = addressesEqual(fromAddress, activeAccountAddress)
       ? EVENT_TYPE.COLLECTIBLE_SENT
       : EVENT_TYPE.COLLECTIBLE_RECEIVED;
@@ -131,6 +131,7 @@ function useHistoryEvents(chain: Chain): Event[] {
 
   const mappedTransactionsHistory = getHistoryEventsFromTransactions(
     transactionsHistory,
+    chain,
     activeAccountAddress,
     accountAssets,
     supportedAssets,

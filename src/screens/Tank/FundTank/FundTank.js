@@ -251,6 +251,7 @@ class FundTank extends React.Component<Props, State> {
               txFeeInWei={txFeeInWei}
               gasToken={gasToken}
               isLoading={!topUpFee.isFetched && balance > 0}
+              chain={CHAIN.ETHEREUM}
             />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
