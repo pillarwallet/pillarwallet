@@ -30,6 +30,7 @@ import { createStructuredSelector } from 'reselect';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
+import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
@@ -200,7 +201,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -208,7 +209,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
               </TableRow>
             </Table>
             <Spacing h={50} />

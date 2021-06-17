@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { WALLET_RECOVERY_OPTIONS } from 'constants/navigationConstants';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
@@ -159,7 +159,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
             <StyledButton
               disabled={!canGoNext}
               title={t('auth:button.proceed')}
-              onPress={() => navigation.navigate(WALLET_RECOVERY_OPTIONS)}
+              onPress={() => navigation.navigate(IMPORT_WALLET)}
             />
           </ButtonWrapper>
         </Wrapper>

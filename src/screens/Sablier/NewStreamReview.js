@@ -245,7 +245,7 @@ class NewStreamReview extends React.Component<Props> {
           <Table title={t('transactions.label.fees')}>
             <TableRow>
               <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -253,7 +253,7 @@ class NewStreamReview extends React.Component<Props> {
             </TableRow>
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
             </TableRow>
           </Table>
           <Spacing h={50} />

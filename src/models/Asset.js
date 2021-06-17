@@ -52,12 +52,7 @@ export type Asset = {
   name: string,
   address: string,
   iconUrl: string,
-  iconMonoUrl: string,
-  patternUrl?: string,
   decimals: number,
-  amount?: number,
-  code?: string,
-  isSynthetixAsset?: boolean,
 };
 
 export type Assets = {

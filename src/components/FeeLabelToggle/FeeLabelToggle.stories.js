@@ -19,57 +19,60 @@
 */
 
 import * as React from 'react';
+import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react-native';
 
-// constants
+// Constants
 import { CHAIN } from 'constants/chainConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-// local
-import { FeeLabelToggleComponent } from './FeeLabelToggle';
+// Test utils
+import { createTestStore, initialTestState } from 'testUtils/store';
+
+import FeeLabelToggle from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const reduxData = {
-  accountAssets: {},
-  accountHistory: { ethereum: [] },
-  baseFiatCurrency: defaultFiatCurrency,
-  isGasTokenSupported: true,
+const store = createTestStore({
+  ...initialTestState,
   rates: {
-    ETH: {
-      ETH: 1,
-      EUR: 2017.2,
-      GBP: 1756.24,
-      USD: 2407.1,
+    data: {
+      ETH: {
+        ETH: 1,
+        EUR: 2017.2,
+        GBP: 1756.24,
+        USD: 2407.1,
+      },
     },
   },
-};
+});
 
 storiesOf('FeeLabelToggle', module)
   .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <FeeLabelToggleComponent
-      {...reduxData}
-      txFeeInWei="10000000000000000000"
-      gasToken={{
-        address: '0x0',
-        decimals: 18,
-        symbol: 'ETH',
-      }}
-      chain={CHAIN.ETHEREUM}
-    />
+    <Provider store={store}>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+        chain={CHAIN.ETHEREUM}
+      />
+    </Provider>
   ))
   .add('not enough token', () => (
-    <FeeLabelToggleComponent
-      {...reduxData}
-      txFeeInWei="10000000000000000000"
-      gasToken={{
-        address: '0x0',
-        decimals: 18,
-        symbol: 'ETH',
-      }}
-      chain={CHAIN.ETHEREUM}
-      hasError
-    />
+    <Provider store={store}>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+        chain={CHAIN.ETHEREUM}
+        hasError
+      />
+    </Provider>
   ));

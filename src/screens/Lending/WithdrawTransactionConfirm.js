@@ -33,6 +33,7 @@ import { Spacing } from 'components/Layout';
 import Toast from 'components/Toast';
 
 // constants
+import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
@@ -112,7 +113,7 @@ const WithdrawTransactionConfirm = ({
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -120,7 +121,7 @@ const WithdrawTransactionConfirm = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={50} />

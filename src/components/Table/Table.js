@@ -23,9 +23,11 @@ import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
+import { nativeAssetPerChain } from 'utils/chains';
 import { getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatUnits, hitSlop20 } from 'utils/common';
+import { getGasSymbol } from 'utils/transactions';
 
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -33,8 +35,7 @@ import ProfileImage from 'components/ProfileImage';
 import IconButton from 'components/IconButton';
 import Tooltip from 'components/Tooltip';
 
-import { ETH } from 'constants/assetsConstants';
-
+import type { Chain } from 'models/Chain';
 import type { GasToken } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
 import TableAmount from './TableAmount';
@@ -56,6 +57,7 @@ type TableUserProps = {
 type TableFeeProps = {
   txFeeInWei: ?(BigNumber | string | number),
   gasToken: ?GasToken,
+  chain: Chain,
 };
 
 export const TableRow = styled.View`
@@ -126,11 +128,11 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
   );
 };
 
-export const TableFee = ({ txFeeInWei, gasToken }: TableFeeProps) => {
-  const decimals = gasToken?.decimals || 18;
+export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
+  const decimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
-  const feeTokenSymbol = gasToken?.symbol || ETH;
-  return <TableAmount amount={formattedFee} token={feeTokenSymbol} />;
+  const gasSymbol = getGasSymbol(chain, gasToken);
+  return <TableAmount amount={formattedFee} token={gasSymbol} />;
 };
 
 const Divider = styled.View`

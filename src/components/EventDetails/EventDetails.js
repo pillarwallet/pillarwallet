@@ -465,7 +465,7 @@ export class EventDetail extends React.Component<Props> {
 
     if (!isEmpty(feeWithGasToken)) {
       return t('label.feeToken', {
-        tokenValue: formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken')),
+        tokenValue: formatTransactionFee(CHAIN.ETHEREUM, feeWithGasToken.feeInWei, feeWithGasToken?.gasToken),
       });
     }
 

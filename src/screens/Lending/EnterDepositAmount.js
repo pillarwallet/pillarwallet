@@ -175,6 +175,7 @@ const EnterDepositAmount = ({
                 labelText={t('label.fee')}
                 txFeeInWei={feeInfo?.fee}
                 gasToken={feeInfo?.gasToken}
+                chain={CHAIN.ETHEREUM}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
                 chain={CHAIN.ETHEREUM}

@@ -87,7 +87,9 @@ const SendTokenConfirm = () => {
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.network')}</TableLabel>
-            <BaseText color={chainColor} regular>{chainTitle}</BaseText>
+            <BaseText color={chainColor} regular>
+              {chainTitle}
+            </BaseText>
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.recipient')}</TableLabel>
@@ -95,7 +97,7 @@ const SendTokenConfirm = () => {
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -103,7 +105,7 @@ const SendTokenConfirm = () => {
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
           </TableRow>
         </Table>
 

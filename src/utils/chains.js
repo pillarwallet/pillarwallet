@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { constants as EthersConstants } from 'ethers';
+
 // Utils
 import { isProdEnv } from 'utils/environment';
 
@@ -62,18 +64,36 @@ export function getSupportedChains(account: ?Account): Chain[] {
   return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
 }
 
-export const nativeAssetSymbolPerChain = {
-  ethereum: ETH,
-  polygon: MATIC,
-  binance: BNB,
-  xdai: DAI,
-};
-
-export const nativeAssetDecimalsPerChain = {
-  ethereum: 18,
-  polygon: 18,
-  binance: 18,
-  xdai: 18,
+/* eslint-disable i18next/no-literal-string */
+export const nativeAssetPerChain = {
+  ethereum: {
+    address: EthersConstants.AddressZero,
+    name: 'Ethereum',
+    symbol: ETH,
+    decimals: 18,
+    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+  },
+  polygon: {
+    address: EthersConstants.AddressZero,
+    name: 'Matic',
+    symbol: MATIC,
+    decimals: 18,
+    iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
+  },
+  binance: {
+    address: EthersConstants.AddressZero,
+    name: 'BNB',
+    symbol: BNB,
+    decimals: 18,
+    iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
+  },
+  xdai: {
+    address: EthersConstants.AddressZero,
+    name: 'Dai',
+    symbol: DAI,
+    decimals: 18,
+    iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+  },
 };
 
 /**

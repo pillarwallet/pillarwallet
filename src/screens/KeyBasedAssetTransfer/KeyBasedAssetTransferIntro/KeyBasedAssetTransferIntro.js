@@ -23,7 +23,6 @@ import * as React from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled, { ThemeProvider } from 'styled-components/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Contants
@@ -33,7 +32,8 @@ import { KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 // Components
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Container, Content } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
 // Utils
@@ -49,7 +49,6 @@ function KeyBasedAssetTransferIntro() {
   const darkTheme = getThemeByType(DARK_THEME);
 
   const { t } = useTranslationWithPrefix('smartWalletContent.intro');
-  const { top } = useSafeAreaInsets();
 
   const navigateToMigration = () => {
     navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE);
@@ -57,14 +56,13 @@ function KeyBasedAssetTransferIntro() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <ContainerWithHeader
-        putContentInScrollView
-        headerProps={{ floating: true }}
-        backgroundColor={darkTheme.colors.basic090}
-      >
-        <Content>
-          <Spacing h={top} />
-
+      <Container style={{ backgroundColor: darkTheme.colors.basic090 }}>
+        <HeaderBlock
+          wrapperStyle={{ backgroundColor: darkTheme.colors.basic090 }}
+          navigation={navigation}
+          noPaddingTop
+        />
+        <Content showsVerticalScrollIndicator={false}>
           <Title>{t('title')}</Title>
           <Spacing h={spacing.largePlus} />
           <Body>{t('header')}</Body>
@@ -86,20 +84,17 @@ function KeyBasedAssetTransferIntro() {
 
           <Spacing h={48} />
 
-          <Button title={t('migrate')} onPress={navigateToMigration} />
+          <Button title={t('button.upgrade')} onPress={navigateToMigration} />
 
           <Spacing h={spacing.large} />
         </Content>
-      </ContainerWithHeader>
+      </Container>
     </ThemeProvider>
   );
 }
 
 export default KeyBasedAssetTransferIntro;
 
-const Content = styled.View`
-  padding-horizontal: ${spacing.large}px;
-`;
 
 const Title = styled(Text)`
   font-family: "${appFont.medium}";

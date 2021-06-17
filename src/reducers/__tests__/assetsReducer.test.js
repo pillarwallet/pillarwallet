@@ -35,7 +35,6 @@ describe('Assets reducer', () => {
       name: symbol,
       address: '0x0000',
       iconUrl: '',
-      iconMonoUrl: '',
       decimals: 10,
     });
 

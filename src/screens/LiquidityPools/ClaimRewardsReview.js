@@ -153,7 +153,7 @@ const ClaimRewardReviewScreen = ({
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -161,7 +161,7 @@ const ClaimRewardReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />

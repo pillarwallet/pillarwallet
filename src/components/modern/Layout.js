@@ -45,6 +45,7 @@ type ContentProps = {|
   refreshControl?: React.Element<any>,
   onScroll?: ?(event: ScrollEvent) => void,
   scrollEventThrottle?: number,
+  showsVerticalScrollIndicator?: boolean,
 |};
 
 /**
@@ -60,6 +61,7 @@ export function Content({
   refreshControl,
   onScroll,
   scrollEventThrottle = 0,
+  showsVerticalScrollIndicator,
 }: ContentProps) {
   const styles = [contentStyles.safeArea, { paddingHorizontal, paddingVertical }];
 
@@ -69,6 +71,7 @@ export function Content({
       contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
       onScroll={onScroll}
       scrollEventThrottle={scrollEventThrottle}
+      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
     >
       <SafeAreaView style={styles}>{children}</SafeAreaView>
     </ScrollView>

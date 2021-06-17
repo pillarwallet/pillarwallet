@@ -43,6 +43,9 @@ import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // utils
 import {
   BigNumber,
@@ -51,15 +54,21 @@ import {
   reportErrorLog,
 } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
-import { parseTokenListToken, buildExchangeOffer, buildTransactionFeeInfo } from 'utils/etherspot';
+import {
+  parseTokenListToken,
+  appendNativeAssetIfNeeded,
+  buildExchangeOffer,
+  buildTransactionFeeInfo,
+} from 'utils/etherspot';
 import { addressesEqual } from 'utils/assets';
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type {
@@ -242,7 +251,7 @@ export class EtherspotService {
       return []; // logged above, no balances
     }
 
-    const nativeSymbol = nativeAssetSymbolPerChain[chain];
+    const nativeSymbol = nativeAssetPerChain[chain].symbol;
 
     return accountBalances.items.reduce((positiveBalances, asset) => {
       const { balance, token } = asset;
@@ -566,31 +575,21 @@ export class EtherspotService {
     }
 
     try {
-      // eslint-disable-next-line i18next/no-literal-string
-      const tokens: TokenListToken[] = await sdk.getTokenListTokens();
+      const tokenListEthereum = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
+      const tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListEthereum });
       if (!tokens) {
-        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
+        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListEthereum });
         return null;
       }
 
-      const supportedAssets = tokens.map(parseTokenListToken);
+      let supportedAssets = tokens.map(parseTokenListToken);
 
+      if (chain === CHAIN.BINANCE) supportedAssets = appendNativeAssetIfNeeded(CHAIN.BINANCE, supportedAssets);
+
+      // rest of checks are Ethereum only
       if (chain !== CHAIN.ETHEREUM) return supportedAssets;
 
-      // add ETH if not within tokens list (most of the time since it's not a token)
-      const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);
-      if (!supportedAssetsHaveEth) {
-        // eslint-disable-next-line i18next/no-literal-string
-        const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
-        supportedAssets.push({
-          address: EthersConstants.AddressZero,
-          name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
-          symbol: ETH,
-          decimals: 18,
-          iconUrl,
-          iconMonoUrl: iconUrl,
-        });
-      }
+      supportedAssets = appendNativeAssetIfNeeded(CHAIN.ETHEREUM, supportedAssets);
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({
@@ -605,7 +604,6 @@ export class EtherspotService {
           symbol,
           decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
           iconUrl,
-          iconMonoUrl: iconUrl,
         });
       });
 

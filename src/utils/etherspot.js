@@ -19,7 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber, constants as EthersConstants } from 'ethers';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import {
   type Transaction as EtherspotTransaction,
@@ -28,7 +28,6 @@ import {
   AccountStates,
   GatewayBatchStates,
 } from 'etherspot';
-import { uniqBy, orderBy } from 'lodash';
 
 // constants
 import {
@@ -44,6 +43,7 @@ import { TRANSACTION_STATUS } from 'models/History';
 import { isEtherspotAccount } from 'utils/accounts';
 import { getAssetDataByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
+import { nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
 
 // types
@@ -186,7 +186,6 @@ export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI }
     symbol,
     decimals,
     iconUrl: hasValidIconUrl ? logoURI : '',
-    iconMonoUrl: hasValidIconUrl ? logoURI : '',
   };
 };
 
@@ -204,31 +203,12 @@ export const buildExchangeOffer = (
   return { provider, fromAsset, toAsset, fromAmount, toAmount, exchangeRate: 1 / exchangeRate, transactions };
 };
 
-export const prepareAssets = (assets: Asset[]): Asset[] => {
-  let result = assets;
-  result = appendEthIfNeeded(result);
-  result = orderBy(result, [(asset) => (asset.iconUrl ? 0 : 1)]);
-  result = uniqBy(result, (asset) => asset.address.toUpperCase());
+export const appendNativeAssetIfNeeded = (chain: Chain, assets: Asset[]): Asset[] => {
+  const nativeAsset = nativeAssetPerChain[chain];
 
-  return result;
-};
-
-const appendEthIfNeeded = (assets: Asset[]): Asset[] => {
-  const hasEth = assets.some(({ symbol }) => symbol === ETH);
-  if (hasEth) return assets;
-
-  // eslint-disable-next-line i18next/no-literal-string
-  const iconUrl = 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
-  const eth = {
-    address: EthersConstants.AddressZero,
-    name: 'Ethereum', // eslint-disable-line i18next/no-literal-string
-    symbol: ETH,
-    decimals: 18,
-    iconUrl,
-    iconMonoUrl: iconUrl,
-  };
-
-  return [eth, ...assets];
+  // TODO: Switch to zero address check when supported assets per chain are implemented.
+  const hasNativeAsset = assets.some((asset) => asset.symbol === nativeAsset.symbol);
+  return hasNativeAsset ? assets : [nativeAsset, ...assets];
 };
 
 // TODO: handle gas token

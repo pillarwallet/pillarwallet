@@ -32,7 +32,6 @@ import Text from 'components/modern/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
-import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
@@ -57,6 +56,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
+import { getGasSymbol } from 'utils/transactions';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -137,14 +137,14 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
   let estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
-  const feeInWei = feeInfo?.fee;
-  const fee = BigNumber(getFormattedTransactionFeeValue(feeInWei ?? '', feeInfo?.gasToken)) || null;
-  const gasSymbol = feeInfo?.gasToken?.symbol || ETH;
-
   const chain = chainFromChainId[request.chainId];
   if (!chain && !estimationErrorMessage) {
     estimationErrorMessage = t('error.walletConnect.cannotDetermineEthereumChain');
   }
+
+  const txFeeInWei = feeInfo?.fee;
+  const fee = BigNumber(getFormattedTransactionFeeValue(chain, txFeeInWei, feeInfo?.gasToken)) || null;
+  const gasSymbol = getGasSymbol(chain, feeInfo?.gasToken);
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
@@ -155,7 +155,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     amount,
     symbol,
     decimals,
-    txFeeInWei: feeInWei,
+    txFeeInWei,
     gasToken: feeInfo?.gasToken,
   };
   const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
@@ -164,7 +164,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
 
-  return { fee, feeInWei, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
+  return { fee, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {

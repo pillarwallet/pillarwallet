@@ -30,6 +30,9 @@ import { Spacing } from 'components/Layout';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
+import { CHAIN } from 'constants/chainConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+
 import { findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import {
@@ -37,7 +40,6 @@ import {
   ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { getSablierWithdrawTransaction } from 'services/sablier';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -115,7 +117,7 @@ const WithdrawReview = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -123,7 +125,7 @@ const WithdrawReview = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={50} />

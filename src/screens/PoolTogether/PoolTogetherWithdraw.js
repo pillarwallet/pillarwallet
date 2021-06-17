@@ -272,6 +272,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
+                  chain={CHAIN.ETHEREUM}
                   isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}

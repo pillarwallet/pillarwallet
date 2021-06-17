@@ -78,50 +78,6 @@ type Props = {
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
 };
 
-const renderFeeToggle = (
-  txFeeInfo: ?TransactionFeeInfo,
-  showFee: boolean,
-  feeError: ?string,
-  isLoading: boolean,
-  enoughBalance: boolean,
-  chain: Chain,
-) => {
-  if (!showFee || !txFeeInfo) return null;
-
-  const { fee, gasToken } = txFeeInfo;
-
-  return (
-    <>
-      <FeeLabelToggle
-        txFeeInWei={fee}
-        gasToken={gasToken}
-        isLoading={isLoading}
-        hasError={!enoughBalance}
-        chain={chain}
-      />
-      {!!feeError && <Button disabled title={feeError} style={{ marginTop: 15 }} />}
-    </>
-  );
-};
-
-// TODO: map collectible params
-const mapToAssetDataType = ({
-  contractAddress,
-  address,
-  symbol: token,
-  decimals,
-  tokenType,
-  tokenId,
-  name,
-}: Object): AssetData => ({
-  contractAddress: address || contractAddress,
-  token,
-  decimals,
-  tokenType,
-  id: tokenId,
-  name,
-});
-
 const SendAsset = ({
   source,
   navigation,
@@ -329,10 +285,10 @@ const SendAsset = ({
         footerTopAddon: !!selectedContact && renderFeeToggle(
           feeInfo,
           showFee,
+          chain,
           errorMessage,
           isEstimating,
           enoughBalanceForTransaction,
-          chain,
         ),
         isLoading: isEstimating,
       }}
@@ -372,3 +328,47 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);
+
+const renderFeeToggle = (
+  txFeeInfo: ?TransactionFeeInfo,
+  showFee: boolean,
+  chain: Chain,
+  feeError: ?string,
+  isLoading: boolean,
+  enoughBalance: boolean,
+) => {
+  if (!showFee || !txFeeInfo) return null;
+
+  const { fee, gasToken } = txFeeInfo;
+
+  return (
+    <>
+      <FeeLabelToggle
+        txFeeInWei={fee}
+        gasToken={gasToken}
+        chain={chain}
+        isLoading={isLoading}
+        hasError={!enoughBalance}
+      />
+      {!!feeError && <Button disabled title={feeError} style={{ marginTop: 15 }} />}
+    </>
+  );
+};
+
+// TODO: map collectible params
+const mapToAssetDataType = ({
+  contractAddress,
+  address,
+  symbol: token,
+  decimals,
+  tokenType,
+  tokenId,
+  name,
+}: Object): AssetData => ({
+  contractAddress: address || contractAddress,
+  token,
+  decimals,
+  tokenType,
+  id: tokenId,
+  name,
+});

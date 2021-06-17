@@ -50,7 +50,7 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
@@ -195,7 +195,7 @@ const SendCollectibleConfirm = ({
     );
   }
 
-  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetSymbolPerChain[chain];
+  const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetPerChain[chain].symbol;
   const errorMessage = isEnoughForFee
     ? estimateErrorMessage
     : t('error.notEnoughTokenForFee', { token: feeSymbol });
@@ -226,7 +226,7 @@ const SendCollectibleConfirm = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -243,7 +243,7 @@ const SendCollectibleConfirm = ({
           )}
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
         </Table>
         <Spacing h={40} />

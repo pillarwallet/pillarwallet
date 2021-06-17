@@ -31,7 +31,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useActiveAccount } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
@@ -43,6 +43,7 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { AssetCategory } from 'models/AssetCategory';
@@ -70,6 +71,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
+  const activeAccount = useActiveAccount();
 
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
@@ -175,12 +177,14 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
       {renderCollectiblesCategory()}
 
       {/* Temporary entry until other UI provided */}
-      <CategoryListItem
-        key="services"
-        title={t('services')}
-        iconName="info"
-        onPress={() => navigation.navigate(SERVICES_FLOW)}
-      />
+      {isArchanovaAccount(activeAccount) && (
+        <CategoryListItem
+          key="services"
+          title={t('services')}
+          iconName="info"
+          onPress={() => navigation.navigate(SERVICES_FLOW)}
+        />
+      )}
     </Container>
   );
 }

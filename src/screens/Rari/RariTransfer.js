@@ -85,11 +85,15 @@ const renderFeeToggle = (
       <FeeLabelToggle
         txFeeInWei={fee}
         gasToken={gasToken}
+        chain={CHAIN.ETHEREUM}
         isLoading={isLoading}
         hasError={!enoughBalance}
-        chain={CHAIN.ETHEREUM}
       />
-      {!!feeError && <BaseText style={{ marginTop: 15 }} center secondary>{feeError}</BaseText>}
+      {!!feeError && (
+        <BaseText style={{ marginTop: 15 }} center secondary>
+          {feeError}
+        </BaseText>
+      )}
     </>
   );
 };
