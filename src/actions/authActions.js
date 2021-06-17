@@ -99,7 +99,10 @@ import {
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
-import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
+import {
+  fetchAllAccountsTotalBalancesAction,
+  fetchSupportedAssetsAction,
+} from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 
 
@@ -242,6 +245,7 @@ export const loginAction = (
 
       // user is registered
       if (isOnline) {
+        dispatch(fetchSupportedAssetsAction());
         dispatch(fetchTransactionsHistoryAction());
         firebaseCrashlytics.setUserId(user.username);
       }
