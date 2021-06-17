@@ -39,7 +39,7 @@
         android:cropToPadding="false"
 
         android:scaleType="fitStart"
-        android:src="@drawable/onboarding_pattern_top"
+        android:src="@drawable/splash_pattern_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_max="162dp"
         app:layout_constraintHeight_percent="0.35"
