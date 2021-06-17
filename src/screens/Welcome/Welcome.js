@@ -35,9 +35,13 @@ import Image from 'components/Image';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
+// constants
+import { DARK_THEME } from 'constants/appSettingsConstants';
+
 // utils
 import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
+import { getThemeByType } from 'utils/themes';
 
 // constants
 import { IMPORT_WALLET_LEGALS, NEW_PROFILE } from 'constants/navigationConstants';
@@ -116,6 +120,8 @@ const Welcome = ({
   theme,
   resetOnboardingAndNavigate,
 }: Props) => {
+  const darkTheme = getThemeByType(DARK_THEME);
+
   useEffect(() => {
     Animated.timing(translateY, {
       toValue: -20,
@@ -128,6 +134,7 @@ const Welcome = ({
   const { pillarLogo, landingPattern } = images(theme);
 
   return (
+    <ThemeProvider theme={darkTheme}>
     <Background>
       <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
         <PillarLogo source={pillarLogo} />
@@ -157,6 +164,7 @@ const Welcome = ({
         </Wrapper>
       </ContainerWithHeader>
     </Background>
+    </ThemeProvider>
   );
 };
 
