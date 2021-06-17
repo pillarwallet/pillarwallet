@@ -51,7 +51,7 @@ import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Co
 import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 import { addressesEqual, getAssetData } from 'utils/assets';
-import { nativeAssetSymbolPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // services
 import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
@@ -241,7 +241,7 @@ export const parseHistoryEventFee = (
     const feeValue = wrapBigNumber(gasPrice).multipliedBy(gasPrice);
     return {
       value: wrapBigNumber(formatUnits(feeValue, 18)),
-      symbol: nativeAssetSymbolPerChain[chain],
+      symbol: nativeAssetPerChain[chain].symbol,
     };
   }
 

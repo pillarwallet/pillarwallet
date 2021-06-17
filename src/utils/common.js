@@ -50,7 +50,7 @@ import {
 import etherspotService from 'services/etherspot';
 
 // utils
-import { nativeAssetSymbolPerChain, nativeAssetDecimalsPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // types
 import type { Chain } from 'models/Chain';
@@ -580,7 +580,7 @@ export const getFormattedTransactionFeeValue = (
     return formatAmount(utils.formatUnits(parsedFeeInWei, gasToken.decimals), 2);
   }
 
-  const nativeAssetDecimals = nativeAssetDecimalsPerChain[chain];
+  const nativeAssetDecimals = nativeAssetPerChain[chain].decimals;
   return formatAmount(utils.formatUnits(parsedFeeInWei, nativeAssetDecimals));
 };
 
@@ -591,7 +591,7 @@ export const formatTransactionFee = (
 ): string => {
   if (!feeInWei) return '';
 
-  const token = gasToken?.symbol || nativeAssetSymbolPerChain[chain];
+  const token = gasToken?.symbol || nativeAssetPerChain[chain].symbol;
   const value = getFormattedTransactionFeeValue(chain, feeInWei, gasToken);
 
   return t('tokenValue', { value, token });

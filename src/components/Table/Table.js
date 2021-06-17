@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
-import { nativeAssetDecimalsPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 import { getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatUnits, hitSlop20 } from 'utils/common';
@@ -129,7 +129,7 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
 };
 
 export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
-  const decimals = gasToken?.decimals || nativeAssetDecimalsPerChain[chain];
+  const decimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
   const gasSymbol = getGasSymbol(chain, gasToken);
   return <TableAmount amount={formattedFee} token={gasSymbol} />;
