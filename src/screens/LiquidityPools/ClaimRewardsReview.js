@@ -144,7 +144,7 @@ const ClaimRewardReviewScreen = ({
     >
       <MainWrapper>
         <TokenReviewSummary
-          assetSymbol={pool.rewards?.[0].symbol}
+          assetSymbol={pool.rewards?.[0]?.symbol ?? ''}
           text={t('liquidityPoolsContent.label.youAreClaiming')}
           amount={rewardsToClaim}
           chain={CHAIN.ETHEREUM}

@@ -20,18 +20,21 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { withTheme } from 'styled-components/native';
+import { Provider } from 'react-redux';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { EUR, PLR } from 'constants/assetsConstants';
 
+// Utils
+import { createTestStore, initialTestState } from 'testUtils/store';
+
+// Local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 import { TokenReviewSummaryComponent } from './TokenReviewSummary';
 import CollectibleReviewSummary from './CollectibleReviewSummary';
 
-const PLR_SYMBOL = 'PLR';
-const EUR_CURRENCY = 'EUR';
 
 const plrAsset = {
   isPreferred: false,
@@ -54,16 +57,6 @@ const plrAsset = {
   icos: [],
 };
 
-const reduxMock = {
-  supportedAssets: [plrAsset],
-  rates: {
-    [PLR_SYMBOL]: {
-      [EUR_CURRENCY]: 0.25,
-    },
-  },
-  baseFiatCurrency: EUR_CURRENCY,
-};
-
 const collectible = {
   id: '5191',
   name: 'CryptoKittiesRinkeby 5191',
@@ -77,13 +70,25 @@ const collectible = {
   chain: CHAIN.ETHEREUM,
 };
 
-const TokenReviewSummaryComponentWithTheme = withTheme(TokenReviewSummaryComponent);
+const store = createTestStore({
+  ...initialTestState,
+  assets: { supportedAssets: { ethereum: [plrAsset] } },
+  rates: { data: { [PLR]: { [EUR]: 0.25 } } },
+  appSettings: { data: { baseFiatCurrency: EUR } },
+});
 
 storiesOf('ReviewSummary', module)
   .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('token', () => (
-    <TokenReviewSummaryComponentWithTheme assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
+    <Provider store={store}>
+      <TokenReviewSummaryComponent
+        assetSymbol={PLR}
+        text="You are sending"
+        amount={102.1}
+        chain={CHAIN.ETHEREUM}
+      />
+    </Provider>
   ))
   .add('collectible', () => (
     <CollectibleReviewSummary collectible={collectible} text="You are sending" />
