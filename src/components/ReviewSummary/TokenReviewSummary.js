@@ -31,12 +31,12 @@ import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
 
-// constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-
 // selectors
-import { useChainSupportedAssets, useRates } from 'selectors';
-import { useBaseFiatCurrency } from 'selectors/appSettings';
+import {
+  useChainSupportedAssets,
+  useFiatCurrency,
+  useRates,
+} from 'selectors';
 
 // types
 import type { Chain } from 'models/Chain';
@@ -71,7 +71,7 @@ export const TokenReviewSummaryComponent = ({
 }: Props) => {
   const theme = useTheme();
   const rates = useRates();
-  const baseFiatCurrency = useBaseFiatCurrency();
+  const fiatCurrency = useFiatCurrency();
   const supportedAssets = useChainSupportedAssets(chain);
 
   const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
@@ -81,7 +81,7 @@ export const TokenReviewSummaryComponent = ({
     assetIcon = { uri: asset.iconUrl };
     const amountBN = wrapBigNumber(amount);
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(rates, amountBN.toNumber(), asset.symbol, baseFiatCurrency || defaultFiatCurrency);
+      fiatAmount = getFormattedRate(rates, amountBN.toNumber(), asset.symbol, fiatCurrency);
     }
   }
 

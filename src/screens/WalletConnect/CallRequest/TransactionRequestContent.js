@@ -37,7 +37,7 @@ import { CHAIN } from 'constants/chainConstants';
 // Selectors
 import {
   useRootSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   useActiveAccount,
 } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -120,7 +120,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 export default TransactionRequestContent;
 
 const useTransactionPayload = (request: WalletConnectCallRequest) => {
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
   const accountAssets = useRootSelector(accountAssetsSelector);
 
   const transactionPayload = React.useMemo(

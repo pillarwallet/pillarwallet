@@ -54,7 +54,7 @@ import {
 } from 'selectors/balances';
 import {
   activeAccountIdSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   accountsSelector,
   ratesSelector,
   baseFiatCurrencySelector,
@@ -63,14 +63,14 @@ import {
 
 
 export const ethereumSupportedAssetsSelector = createSelector(
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   (supportedAssets: SupportedAssetsPerChain): Asset[] => supportedAssets?.ethereum ?? [],
 );
 
 
 export const accountAssetsSelector = createSelector(
   accountAssetsBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   (
     accountAssetsBalances: CategoryBalancesPerChain,
     supportedAssets: SupportedAssetsPerChain,
@@ -120,7 +120,7 @@ export const archanovaAccountEthereumAssetsSelector = createSelector(
 
 export const etherspotAccountAssetsSelector = createSelector(
   assetsBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   accountsSelector,
   (
     assetsBalances: AssetBalancesPerAccount,
@@ -165,7 +165,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
   ratesSelector,
   baseFiatCurrencySelector,
   accountAssetsBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   (
     activeAccountId: string,
     rates: Rates,

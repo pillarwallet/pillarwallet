@@ -46,7 +46,7 @@ import etherspotService from 'services/etherspot';
 import {
   accountsSelector,
   historySelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -325,7 +325,7 @@ const handleGatewayBatchUpdatedNotification = async (
   const accountAssets = accountAssetsSelector(getState());
   const chainAccountAssets = accountAssets[chain] ?? {};
 
-  const supportedAssets = supportedAssetsSelector(getState());
+  const supportedAssets = supportedAssetsPerChainSelector(getState());
   const chainSupportedAssets = supportedAssets[chain] ?? [];
 
   const assetData = getAssetData(

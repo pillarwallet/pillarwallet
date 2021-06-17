@@ -70,7 +70,7 @@ import assetsConfig from 'configs/assetsConfig';
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
@@ -331,7 +331,7 @@ const structuredSelector = createStructuredSelector({
   accountAssets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  supportedAssets: supportedAssetsSelector,
+  supportedAssets: supportedAssetsPerChainSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

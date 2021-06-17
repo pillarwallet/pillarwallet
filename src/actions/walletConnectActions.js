@@ -50,7 +50,7 @@ import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // selectors
-import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
@@ -341,7 +341,7 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
     dispatch(resetEstimateTransactionAction());
 
     const accountAssets = accountAssetsSelector(getState());
-    const supportedAssets = supportedAssetsSelector(getState());
+    const supportedAssets = supportedAssetsPerChainSelector(getState());
 
     const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
 

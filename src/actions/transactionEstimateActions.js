@@ -35,7 +35,7 @@ import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 
 // selectors
-import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
+import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -143,7 +143,7 @@ export const estimateTransactionsAction = (
     const accountAssets = accountAssetsSelector(getState());
     const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
 
-    const supportedAssets = supportedAssetsSelector(getState());
+    const supportedAssets = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssets[chain] ?? [];
 
     const gasToken = useGasToken

@@ -46,7 +46,7 @@ import {
   useFiatCurrency,
   useIsExchangeAvailable,
   activeAccountAddressSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
@@ -79,7 +79,7 @@ function WalletTab() {
   const currency = useFiatCurrency();
 
   const accountAssets = useRootSelector(accountAssetsSelector);
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 

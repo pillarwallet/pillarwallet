@@ -17,16 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { mapValues } from 'lodash';
-
 // constants
 import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 
 // utils
-import { sortAssetsArray } from 'utils/assets';
+import { sortAssetsArray, sortSupportedAssets } from 'utils/assets';
 
 // types
-import type { Asset, SupportedAssetsPerChain } from 'models/Asset';
+import type { SupportedAssetsPerChain } from 'models/Asset';
 
 export type AssetsReducerState = {
   supportedAssets: SupportedAssetsPerChain,
@@ -40,12 +38,6 @@ export type AssetsReducerAction = {
 export const initialState = {
   supportedAssets: { ethereum: [] },
 };
-
-const sortSupportedAssets = (
-  supportedChainAssets: SupportedAssetsPerChain,
-) => mapValues(supportedChainAssets, sortChainSupportedAssets);
-
-const sortChainSupportedAssets = (assets: Asset[]) => sortAssetsArray(assets);
 
 export default function assetsReducer(
   state: AssetsReducerState = initialState,
@@ -64,7 +56,7 @@ export default function assetsReducer(
         ...state,
         supportedAssets: {
           ...state.supportedAssets,
-          [chain]: sortChainSupportedAssets(assets),
+          [chain]: sortAssetsArray(assets),
         },
       };
 

@@ -25,16 +25,17 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import { ASSET_CATEGORY } from 'constants/assetsConstants';
-import {
-  SET_ACCOUNT_ASSETS_BALANCES,
-  SET_FETCHING_ASSETS_BALANCES,
-} from 'constants/assetsBalancesConstants';
+import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_ACCOUNT_ASSETS_BALANCES, SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
 import etherspotService from 'services/etherspot';
+
+// tet utils
+import { mockSupportedAssets } from 'testUtils/jestSetup';
+
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -74,6 +75,7 @@ const initialState = {
   rates: { data: {} },
   appSettings: { data: {} },
   totalBalances: { data: {} },
+  session: { data: { isOnline: true } },
 };
 
 describe('Assets actions', () => {
@@ -89,11 +91,19 @@ describe('Assets actions', () => {
       category: ASSET_CATEGORY.WALLET,
       balances: { ETH: mockEthBalance },
     };
+
+    const supportedAssetsPayload = {
+      chain: CHAIN.ETHEREUM,
+      assets: mockSupportedAssets,
+    };
+
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
+      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
+
     return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {
         const actualActions = store.getActions();

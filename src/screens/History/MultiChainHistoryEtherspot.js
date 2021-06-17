@@ -26,7 +26,7 @@ import TabView from 'components/modern/TabView';
 // Selectors
 import {
   activeAccountAddressSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   useRootSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
@@ -90,7 +90,7 @@ function useHistoryEvents(chain: Chain): Event[] {
   const accountHistory = useRootSelector(accountHistorySelector);
   const accountAssets = useRootSelector(accountAssetsSelector);
   const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
   const chainSupportedAssets = supportedAssets[chain] ?? [];
   const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
 

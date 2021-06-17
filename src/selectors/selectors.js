@@ -42,7 +42,7 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRates = () => useRootSelector(ratesSelector);
-export const useSupportedAssets = () => useRootSelector(supportedAssetsSelector);
+export const useSupportedAssets = () => useRootSelector(supportedAssetsPerChainSelector);
 export const useChainSupportedAssets = (chain: Chain) => useSupportedAssets()[chain] ?? [];
 
 //
@@ -78,7 +78,7 @@ export const activeAccountAddressSelector = createSelector(
 
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
-export const supportedAssetsSelector = (
+export const supportedAssetsPerChainSelector = (
   root: RootReducerState,
 ): SupportedAssetsPerChain => root.assets.supportedAssets ?? {};
 

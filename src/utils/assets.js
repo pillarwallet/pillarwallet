@@ -39,12 +39,13 @@ import type {
   AssetOption,
   AssetOptionBalance,
   Rates,
+  SupportedAssetsPerChain,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
-import type { Chain, ChainRecord } from 'models/Chain';
+import type { Chain } from 'models/Chain';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -463,16 +464,6 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
   return 0;
 };
 
-export const getCrossChainAccountAssets = (
-  accountAssets: ChainRecord<Assets>,
-): Assets => Object.keys(accountAssets).reduce((
-  assets: Assets,
-  chain: string,
-) => {
-  const chainAccountAssets = accountAssets[chain] ?? {};
-  return { ...assets, ...chainAccountAssets };
-}, {});
-
 type CollectibleMatch = { contractAddress: string, id: string };
 
 export const isMatchingCollectible = (
@@ -490,3 +481,7 @@ export const mapWalletAssetsBalancesIntoAssets = (
   walletAssetsBalances,
   ({ symbol }) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
 );
+
+export const sortSupportedAssets = (
+  supportedChainAssets: SupportedAssetsPerChain,
+) => mapValues(supportedChainAssets, sortAssetsArray);

@@ -79,7 +79,7 @@ import { sumBy } from 'utils/bigNumber';
 // selectors
 import {
   accountsSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   assetsBalancesSelector,
   fiatCurrencySelector,
 } from 'selectors';
@@ -353,7 +353,7 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
     if (!walletAddress || !accountId) return;
 
     const chains = getSupportedChains(account);
-    const supportedAssets = supportedAssetsSelector(getState());
+    const supportedAssets = supportedAssetsPerChainSelector(getState());
 
     await Promise.all(chains.map(async (chain) => {
       let newBalances = [];
@@ -543,12 +543,18 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
 export const fetchAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+      assetsBalances: { isFetching },
+      session: { data: { isOnline } },
+    } = getState();
 
     const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
+    if (!activeAccount || isFetching || !isOnline) return;
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
+
+    await dispatch(fetchSupportedAssetsAction());
 
     await dispatch(fetchAccountWalletBalancesAction(activeAccount));
     dispatch(fetchAssetsRatesAction());
@@ -622,7 +628,7 @@ export const fetchSupportedAssetsAction = () => {
       });
     }));
 
-    const updatedSupportedAssets = supportedAssetsSelector(getState());
+    const updatedSupportedAssets = supportedAssetsPerChainSelector(getState());
     dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
   };
 };

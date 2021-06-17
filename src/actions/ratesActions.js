@@ -35,7 +35,7 @@ import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { assetsBalancesSelector, supportedAssetsSelector } from 'selectors';
+import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // models, types
 import type { Rates } from 'models/Asset';
@@ -60,7 +60,7 @@ export const setRatesAction = (newRates: Rates) => {
 export const fetchAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const assetsBalances = assetsBalancesSelector(getState());
-    const supportedAssets = supportedAssetsSelector(getState());
+    const supportedAssets = supportedAssetsPerChainSelector(getState());
 
     const allAccountsCrossChainAssets = Object.keys(assetsBalances).reduce((combinedAssets, accountId) => {
       const accountAssetsBalances = assetsBalances[accountId] ?? {};
@@ -94,7 +94,7 @@ export const fetchSingleChainAssetRatesAction = (
     const accountAssets = accountAssetsSelector(getState());
     const chainAccountAssets = accountAssets[chain] ?? {};
 
-    const supportedAssets = supportedAssetsSelector(getState());
+    const supportedAssets = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssets[chain] ?? [];
 
     const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);

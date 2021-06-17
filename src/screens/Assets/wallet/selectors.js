@@ -21,7 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 
 // Selectors
-import { useRootSelector, supportedAssetsSelector } from 'selectors';
+import { useRootSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 
@@ -60,7 +60,7 @@ export type WalletItem = {|
 
 export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
   const walletAssetsPerChain = getChainWalletAssetsBalances(useRootSelector(accountAssetsBalancesSelector));
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
   return mapChainRecordValues(walletAssetsPerChain, (balancesRecord: WalletAssetsBalances, chain: Chain) => {
     const balanceList = recordValues(balancesRecord);

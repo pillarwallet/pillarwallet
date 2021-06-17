@@ -47,7 +47,7 @@ import {
   activeAccountAddressSelector,
   activeAccountIdSelector,
   paymentNetworkBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
 import { accountEthereumAssetsSelector } from './assets';
@@ -99,7 +99,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
 ) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
   archanovaAccountEthereumHistorySelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   accountEthereumAssetsSelector,
   (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
     return PPNTransactions

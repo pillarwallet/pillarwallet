@@ -370,15 +370,15 @@ jest.setMock('configs/envConfig', envConfigMock);
 export const mockSupportedAssets = [
   {
     symbol: ETH,
-    name: 'ethereum',
-    address: '',
+    name: 'Ethereum',
+    address: '0x',
     iconUrl: '',
     decimals: 18,
   },
   {
     symbol: PLR,
-    name: 'ethereum',
-    address: '',
+    name: 'Pillar',
+    address: '0x',
     iconUrl: '',
     decimals: 18,
   },
