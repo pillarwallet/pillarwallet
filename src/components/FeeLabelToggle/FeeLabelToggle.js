@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
 import Emoji from 'react-native-emoji';
 import t from 'translations/translate';
@@ -50,11 +49,12 @@ import { isGasTokenSupportedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
+import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 import type { GasToken } from 'models/Transaction';
 
 type Props = {
-  txFeeInWei: ?BigNumber | number | string,
+  txFeeInWei: ?Value,
   gasToken: ?GasToken,
   chain: Chain,
   isLoading?: boolean,
