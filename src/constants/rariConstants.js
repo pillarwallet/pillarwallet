@@ -117,6 +117,5 @@ export const RARI_GOVERNANCE_TOKEN_DATA = {
   contractAddress: getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
   address: getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
   imageUrl: rariLogo,
-  iconMonoUrl: '',
   iconUrl: rariLogo,
 };
