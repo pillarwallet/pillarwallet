@@ -20,11 +20,10 @@
 
 import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import { useDispatch } from 'react-redux';
+import styled, { ThemeProvider } from 'styled-components/native';
 import t from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
-import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
 
 // actions
 import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
@@ -35,9 +34,6 @@ import Image from 'components/Image';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
-// constants
-import { DARK_THEME } from 'constants/appSettingsConstants';
-
 // utils
 import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
@@ -45,21 +41,70 @@ import { getThemeByType } from 'utils/themes';
 
 // constants
 import { IMPORT_WALLET_LEGALS, NEW_PROFILE } from 'constants/navigationConstants';
-import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
-
-// types
-import type { Theme } from 'models/Theme';
-import type { Dispatch } from 'reducers/rootReducer';
-
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  theme: Theme,
-  resetOnboardingAndNavigate: (routeName: string) => void,
-};
+import { LIGHT_CONTENT, LIGHT_THEME, DARK_THEME } from 'constants/appSettingsConstants';
 
 const LOGO_HEIGHT = 56;
 const INITIAL_TOP_MARGIN = LOGO_HEIGHT / 2;
+
+const translateY = new Animated.Value(0);
+
+let clickCount = 0;
+const handleSecretClick = () => {
+  clickCount++;
+  if (clickCount === 16) {
+    // on the 16th click switch network and reset.
+    clickCount = 0;
+    switchEnvironments();
+  }
+};
+
+const Welcome = () => {
+  const darkTheme = getThemeByType(DARK_THEME);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    Animated.timing(translateY, {
+      toValue: -20,
+      easing: Easing.elastic(1),
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const { pillarLogo, landingPattern } = images(darkTheme);
+
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <Background>
+        <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
+          <PillarLogo source={pillarLogo} />
+        </AnimatedLogoWrapper>
+        <Pattern source={landingPattern} />
+        <ContainerWithHeader backgroundColor="transparent" statusbarColor={{ [LIGHT_THEME]: LIGHT_CONTENT }}>
+          <Wrapper fullScreen>
+            <Spacer onPress={handleSecretClick} />
+
+            <ButtonsWrapper>
+              <Button
+                title={t('auth:button.createAccount')}
+                onPress={() => dispatch(resetOnboardingAndNavigateAction(NEW_PROFILE))}
+                marginBottom={4}
+              />
+              <Button
+                title={t('auth:button.recoverWallet')}
+                onPress={() => dispatch(resetOnboardingAndNavigateAction(IMPORT_WALLET_LEGALS))}
+                transparent
+              />
+            </ButtonsWrapper>
+          </Wrapper>
+        </ContainerWithHeader>
+      </Background>
+    </ThemeProvider>
+  );
+};
+
+export default Welcome;
 
 const Background = styled.View`
   background-color: #1a1a1a;
@@ -104,72 +149,3 @@ const ButtonsWrapper = styled.View`
 `;
 
 const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
-
-const translateY = new Animated.Value(0);
-
-let clickCount = 0;
-const handleSecretClick = () => {
-  clickCount++;
-  if (clickCount === 16) { // on the 16th click switch network and reset.
-    clickCount = 0;
-    switchEnvironments();
-  }
-};
-
-const Welcome = ({
-  theme,
-  resetOnboardingAndNavigate,
-}: Props) => {
-  const darkTheme = getThemeByType(DARK_THEME);
-
-  useEffect(() => {
-    Animated.timing(translateY, {
-      toValue: -20,
-      easing: Easing.elastic(1),
-      duration: 2000,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const { pillarLogo, landingPattern } = images(theme);
-
-  return (
-    <ThemeProvider theme={darkTheme}>
-    <Background>
-      <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
-        <PillarLogo source={pillarLogo} />
-      </AnimatedLogoWrapper>
-      <Pattern source={landingPattern} />
-      <ContainerWithHeader
-        backgroundColor="transparent"
-        statusbarColor={{ [LIGHT_THEME]: LIGHT_CONTENT }}
-      >
-        <Wrapper fullScreen>
-          <Spacer onPress={handleSecretClick} />
-          <ButtonsWrapper>
-            <Button
-              marginBottom={4}
-              onPress={() => resetOnboardingAndNavigate(NEW_PROFILE)}
-              title={t('auth:button.createAccount')}
-              style={{ backgroundColor: '#00ff24' }}
-              textStyle={{ color: '#000000' }}
-            />
-            <Button
-              onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET_LEGALS)}
-              title={t('auth:button.recoverWallet')}
-              textStyle={{ color: '#fafafa' }}
-              transparent
-            />
-          </ButtonsWrapper>
-        </Wrapper>
-      </ContainerWithHeader>
-    </Background>
-    </ThemeProvider>
-  );
-};
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  resetOnboardingAndNavigate: (routeName: string) => dispatch(resetOnboardingAndNavigateAction(routeName)),
-});
-
-export default withTheme(connect(null, mapDispatchToProps)(Welcome));
