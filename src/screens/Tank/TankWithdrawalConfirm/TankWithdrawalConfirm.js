@@ -31,6 +31,7 @@ import {
 
 // constants
 import { ASSETS } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
@@ -105,7 +106,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const formattedAmount = formatTokenAmount(amount, PPN_TOKEN);
 
     const gasToken = getGasToken(useGasToken, feeInfo);
-    const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
+    const feeDisplayValue = formatTransactionFee(CHAIN.ETHEREUM, getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     const submitButtonTitle = buttonSubmitted
       ? t('label.processing')

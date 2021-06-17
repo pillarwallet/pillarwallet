@@ -611,7 +611,6 @@ export class EtherspotService {
           symbol,
           decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
           iconUrl,
-          iconMonoUrl: iconUrl,
         });
       });
 

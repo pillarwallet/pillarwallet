@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,40 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export default [
-  {
-    symbol: 'PLR',
-    name: 'Pillar',
-    address: 'tokenAddress',
-    iconUrl: 'tokenIconUrl',
-    decimals: 18,
-  },
-  {
-    symbol: 'TOA',
-    name: 'Token A',
-    address: 'tokenAddress',
-    iconUrl: 'tokenIconUrl',
-    decimals: 18,
-  },
-  {
-    symbol: 'TOB',
-    name: 'Token B',
-    address: 'tokenAddress',
-    iconUrl: 'tokenIconUrl',
-    decimals: 18,
-  },
-  {
-    symbol: 'TOC',
-    name: 'Token C',
-    address: 'tokenAddress',
-    iconUrl: 'tokenIconUrl',
-    decimals: 18,
-  },
-  {
-    symbol: 'TOD',
-    name: 'Token D',
-    address: 'tokenAddress',
-    iconUrl: 'tokenIconUrl',
-    decimals: 18,
-  },
-];
+import { createStore } from 'redux';
+
+// Reducer
+import rootReducer, { initialState } from 'reducers/rootReducer';
+
+// Types
+import type { RootReducerState } from 'reducers/rootReducer';
+
+export type PartialRootReducerState = $Shape<RootReducerState>;
+
+export const initialTestState = {
+  ...initialState,
+};
+
+export const createTestStore = (partialState: ?PartialRootReducerState) => {
+  const state = { ...initialState, ...partialState };
+  return createStore(rootReducer, state);
+};

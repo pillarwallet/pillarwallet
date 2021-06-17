@@ -186,7 +186,6 @@ export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI }
     symbol,
     decimals,
     iconUrl: hasValidIconUrl ? logoURI : '',
-    iconMonoUrl: hasValidIconUrl ? logoURI : '',
   };
 };
 

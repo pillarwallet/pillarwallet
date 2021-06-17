@@ -40,6 +40,7 @@ import {
 } from 'utils/common';
 
 import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 const gasToken = {
   address: '0x0',
@@ -278,30 +279,30 @@ describe('Common utils', () => {
   describe('getFormattedTransactionFeeValue', () => {
     it('should parse from BigNumber', () => {
       const txFeeInWei = new BigNumber(1234500000000000000);
-      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+      const formattedEth = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });
     it('should parse from BigNumber that has exponential value', () => {
       const txFeeInWei = new BigNumber(0x41d1d9bfc6ee79e9e9); // parses from hex
-      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+      const formattedEth = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei, gasToken);
       expect(txFeeInWei.toString()).toBe('1.2141596928761193e+21'); // exponential
       expect(formattedEth).toBe('1214.159692');
       expect(formattedGasToken).toBe('1214.15'); // method has 2 decimals precision for gasToken
     });
     it('should parse from numeric', () => {
       const txFeeInWei = 1234500000000000000;
-      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+      const formattedEth = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });
     it('should parse from string', () => {
       const txFeeInWei = '1234500000000000000';
-      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+      const formattedEth = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(CHAIN.ETHEREUM, txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });

@@ -182,23 +182,15 @@ const CollectibleScreen = ({
     [accountCollectibleHistory, accounts, chain],
   );
 
-  const transactions = useMemo(
-    () => {
-      const relatedTransactions = mappedCollectiblesTransactions.filter(({
-        assetData,
-      }) => isMatchingCollectible(assetData, { id, contractAddress }));
+  const transactions = useMemo(() => {
+    const relatedTransactions = mappedCollectiblesTransactions.filter(({ assetData }) =>
+      isMatchingCollectible(assetData, { id, contractAddress }),
+    );
 
-      return isEtherspotAccount(activeAccount)
-        ? getHistoryEventsFromCollectiblesTransactions(relatedTransactions, getAccountAddress(activeAccount))
-        : relatedTransactions;
-    },
-    [
-      mappedCollectiblesTransactions,
-      id,
-      contractAddress,
-      activeAccount,
-    ],
-  );
+    return isEtherspotAccount(activeAccount)
+      ? getHistoryEventsFromCollectiblesTransactions(relatedTransactions, chain, getAccountAddress(activeAccount))
+      : relatedTransactions;
+  }, [mappedCollectiblesTransactions, chain, id, contractAddress, activeAccount]);
 
   const { towellie: genericCollectible } = images(theme);
 

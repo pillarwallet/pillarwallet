@@ -82,10 +82,8 @@ const mockAssetsByAccount: Assets = {
   ETH: {
     symbol: ETH,
     name: 'ethereum',
-    balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
 };
@@ -98,19 +96,15 @@ const mockFullAssetsListByAccount: Assets = {
   ETH: {
     symbol: ETH,
     name: 'ethereum',
-    balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
   PLR: {
     symbol: PLR,
     name: 'ethereum',
-    balance: 1,
     address: '',
     iconUrl: '',
-    iconMonoUrl: '',
     decimals: 18,
   },
 };
