@@ -26,6 +26,7 @@ import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
+// configs
 import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -36,17 +37,21 @@ import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 
+// utils
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
 import { reportErrorLog, formatUnits, formatApy } from 'utils/common';
 
+// actions
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
+// selectors
 import {
   accountEthereumAssetsSelector,
   accountAssetsWithBalanceSelector,
@@ -55,15 +60,18 @@ import {
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
+// services
 import { NotEnoughLiquidityError } from 'services/0x';
 import { usePoolCurrentApy } from 'services/rariSdk';
 
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates, Asset, Assets, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
+
 
 type Props = {
   assets: Assets,
@@ -237,7 +245,6 @@ const RariAddDepositScreen = ({
               chain={CHAIN.ETHEREUM}
               isLoading={isEstimating}
               hasError={!!errorMessage}
-              chain={CHAIN.ETHEREUM}
             />
           )}
           <Spacing h={16} />

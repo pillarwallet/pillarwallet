@@ -265,7 +265,6 @@ const RemoveLiquidityScreen = ({
                 chain={CHAIN.ETHEREUM}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
-                chain={CHAIN.ETHEREUM}
               />
             )}
             {!!errorMessage && (

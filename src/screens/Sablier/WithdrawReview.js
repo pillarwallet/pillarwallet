@@ -24,29 +24,37 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
+// constants
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// utils
 import { findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+
+// selectors
 import {
   accountEthereumAssetsSelector,
   ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
+
+// services
 import { getSablierWithdrawTransaction } from 'services/sablier';
+
+// types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {

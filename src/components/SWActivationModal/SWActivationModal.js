@@ -150,7 +150,6 @@ const SWActivationModal = ({
                 gasToken={txFeeInfo?.gasToken}
                 chain={CHAIN.ETHEREUM}
                 isLoading={gettingDeploymentEstimate}
-                chain={CHAIN.ETHEREUM}
               />
             </Centered>
           )}

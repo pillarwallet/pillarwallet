@@ -210,7 +210,6 @@ const AssetScreen = ({
       accountAssets,
       activeAccountAddress,
       supportedAssets,
-      chain,
     ],
   );
 

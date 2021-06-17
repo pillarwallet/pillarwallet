@@ -147,7 +147,6 @@ const SablierCancellationModal = ({
             isLoading={isEstimating}
             gasToken={feeInfo?.gasToken}
             hasError={!!errorMessage}
-            chain={CHAIN.ETHEREUM}
           />
         )}
         {!!errorMessage && (

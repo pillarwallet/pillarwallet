@@ -35,7 +35,6 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 // constants
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS_STAKE_REVIEW } from 'constants/navigationConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // models
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
@@ -169,7 +168,6 @@ const StakeTokensScreen = ({
                 chain={CHAIN.ETHEREUM}
                 isLoading={isEstimating}
                 hasError={!!estimateErrorMessage}
-                chain={CHAIN.ETHEREUM}
               />
             )}
             {!!estimateErrorMessage && (

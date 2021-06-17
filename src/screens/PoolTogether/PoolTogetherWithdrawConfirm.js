@@ -45,7 +45,6 @@ import Toast from 'components/Toast';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import { CHAIN } from 'constants/chainConstants';
 
 const ContentWrapper = styled.View`
   padding: 16px 20px;

@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
@@ -31,16 +32,18 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from '
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// utils
 import { formatUnits } from 'utils/common';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {

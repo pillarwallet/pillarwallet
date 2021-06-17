@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
@@ -31,16 +32,19 @@ import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 
+// utils
 import { getUnstakeTransaction } from 'utils/liquidityPools';
 
+// constants
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// selectors
 import { activeAccountAddressSelector } from 'selectors';
 
+// types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
-import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {

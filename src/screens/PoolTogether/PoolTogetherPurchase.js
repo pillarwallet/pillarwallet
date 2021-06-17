@@ -279,7 +279,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}
-                  chain={CHAIN.ETHEREUM}
                 />
               </ContentRow>
             )}

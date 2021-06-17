@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
@@ -32,19 +33,21 @@ import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
+// constants
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// utils
 import { formatUnits, formatFiat } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { getWithdrawalFeeRate } from 'utils/rari';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {

@@ -22,27 +22,30 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee, TableUser } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
+// utils
 import { formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
-import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {

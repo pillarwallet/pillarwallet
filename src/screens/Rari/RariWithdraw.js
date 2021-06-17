@@ -26,8 +26,10 @@ import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
+// configs
 import { blockedTokenAddresses } from 'configs/rariConfig';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import ValueInput from 'components/ValueInput';
@@ -35,18 +37,22 @@ import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 
+// utils
 import { getRariWithdrawTransaction, getMaxWithdrawAmount } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
 import { reportErrorLog, formatUnits } from 'utils/common';
 
+// actions
 import { calculateRariWithdrawTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
+// selectors
 import {
   accountEthereumAssetsSelector,
   ethereumSupportedAssetsSelector,
@@ -54,14 +60,17 @@ import {
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
+// services
 import { NotEnoughLiquidityError } from 'services/0x';
 
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, AssetOption, Assets } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
+
 
 type Props = {
   assets: Assets,
@@ -257,7 +266,6 @@ const RariWithdrawScreen = ({
               chain={CHAIN.ETHEREUM}
               isLoading={isEstimating}
               hasError={!!errorMessage}
-              chain={CHAIN.ETHEREUM}
             />
           )}
           <Spacing h={16} />
