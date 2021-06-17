@@ -44,6 +44,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -152,6 +153,7 @@ const RariClaimRgtReview = ({
           text={t('rariContent.label.youAreClaiming')}
           assetIcon={rariLogo}
           fiatAmount={formattedFiatAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {!!claimFee && (

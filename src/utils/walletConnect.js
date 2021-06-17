@@ -33,7 +33,12 @@ import {
 } from 'constants/walletConnectConstants';
 
 // utils
-import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
+import {
+  addressesEqual,
+  getAssetData,
+  getAssetDataByAddress,
+  getAssetsAsList,
+} from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
 import {
@@ -52,7 +57,8 @@ import type {
   WalletConnectSession,
 } from 'models/WalletConnect';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Asset } from 'models/Asset';
+import type { Assets, SupportedAssetsPerChain } from 'models/Asset';
+import type { ChainRecord } from 'models/Chain';
 
 
 // urls of dapps that don't support smart accounts
@@ -115,15 +121,21 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
 
 export const mapCallRequestToTransactionPayload = (
   callRequest: WalletConnectCallRequest,
-  accountAssets: Asset[],
-  supportedAssets: Asset[],
+  accountAssets: ChainRecord<Assets>,
+  supportedAssets: SupportedAssetsPerChain,
 ): $Shape<TransactionPayload> => {
   const [{ value = 0, data }] = callRequest.params;
   let [{ to }] = callRequest.params;
 
+  const { chainId } = callRequest;
+  const chain = chainFromChainId[chainId];
+
+  const chainSupportedAssets = supportedAssets[chain] ?? [];
+  const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
+
   // to address can be either token contract (transfer data) or other kind of contract
   const assetData = isTokenTransfer(data) && to
-    ? getAssetDataByAddress(accountAssets, supportedAssets, to)
+    ? getAssetDataByAddress(chainAccountAssets, chainSupportedAssets, to)
     : {};
 
   let amount;
@@ -144,12 +156,10 @@ export const mapCallRequestToTransactionPayload = (
     to = methodToAddress;
   }
 
-  const { chainId } = callRequest;
-  const chain = chainFromChainId[chainId];
   const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
   const chainNativeDecimals = nativeAssetDecimalsPerChain[chain];
 
-  const nativeAssetData = getAssetData(accountAssets, supportedAssets, chainNativeSymbol);
+  const nativeAssetData = getAssetData(chainAccountAssets, chainSupportedAssets, chainNativeSymbol);
 
   const {
     symbol = chainNativeSymbol,

@@ -147,6 +147,7 @@ const ClaimRewardReviewScreen = ({
           assetSymbol={pool.rewards?.[0].symbol}
           text={t('liquidityPoolsContent.label.youAreClaiming')}
           amount={rewardsToClaim}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={26} />
         <Table>

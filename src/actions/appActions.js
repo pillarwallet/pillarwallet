@@ -33,7 +33,7 @@ import { migrate } from 'services/dataMigration';
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -91,19 +91,16 @@ export const initAppAndRedirectAction = () => {
 
     if (walletTimestamp) {
       // migrations
-      storageData = await migrate('assets', storageData, dispatch, getState);
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
+      storageData = await migrate('supportedAssets', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const { assets = {} } = get(storageData, 'assets', {});
-      dispatch({ type: UPDATE_ASSETS, payload: assets });
-
-      const { supportedAssets = [] } = get(storageData, 'supportedAssets', {});
-      dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
+      const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
+      dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });

@@ -22,7 +22,7 @@ import loadAndMigrateAppSettings from './appSettings';
 import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
-import loadAndMigrateAssets from './assets';
+import loadAndMigrateSupportedAssets from './supportedAssets';
 
 export async function migrate(
   collection: string,
@@ -39,10 +39,6 @@ export async function migrate(
       data = await loadAndMigrateAppSettings(storageData, dispatch);
       break;
 
-    case 'assets':
-      data = loadAndMigrateAssets(storageData);
-      break;
-
     case 'history':
       await loadAndMigrateHistory(storageData, dispatch, getState);
       return storageData;
@@ -53,6 +49,10 @@ export async function migrate(
 
     case 'collectiblesHistory':
       data = loadAndMigrateCollectiblesHistory(storageData, dispatch);
+      break;
+
+    case 'supportedAssets':
+      data = loadAndMigrateSupportedAssets(storageData);
       break;
 
     default: break;

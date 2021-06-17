@@ -157,6 +157,7 @@ const EnterWithdrawAmount = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
+                chain={CHAIN.ETHEREUM}
               />
             )}
             {!!errorMessage && (

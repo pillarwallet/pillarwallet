@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { GasPriceOracle } from 'gas-price-oracle';
 import t from 'translations/translate';
 
@@ -74,14 +74,14 @@ import etherspotService from 'services/etherspot';
 
 // selectors
 import {
-  archanovaAccountAssetsSelector,
+  archanovaAccountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
   etherspotAccountAssetsSelector,
 } from 'selectors/assets';
 import {
   accountsSelector,
   activeAccountSelector,
   historySelector,
-  supportedAssetsSelector,
 } from 'selectors';
 
 // models, types
@@ -132,6 +132,7 @@ export const setFetchingHistoryAction = (fetching: boolean) => ({
   payload: fetching,
 });
 
+// TODO: fetch cross chain history when available on Etherspot SDK
 export const fetchEtherspotTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
@@ -144,7 +145,7 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const accountAddress = getAccountAddress(etherspotAccount);
     const accountAssets = etherspotAccountAssetsSelector(getState());
     const accountId = getAccountId(etherspotAccount);
-    const supportedAssets = supportedAssetsSelector(getState());
+    const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
     if (!etherspotTransactions?.length) {
@@ -155,7 +156,7 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const etherspotTransactionsHistory = parseEtherspotTransactions(
       etherspotTransactions,
       getAssetsAsList(accountAssets),
-      supportedAssets,
+      ethereumSupportedAssets,
     );
 
     // TODO: repeat for each chain when available on Etherspot SDK
@@ -197,11 +198,13 @@ export const fetchTransactionsHistoryAction = () => {
     dispatch(setFetchingHistoryAction(true));
 
     let newHistoryTransactions = [];
-    const supportedAssets = supportedAssetsSelector(getState());
 
     // archanova history
     const achanovaAccount = findFirstArchanovaAccount(accounts);
     if (achanovaAccount && connectedAccount) {
+      // Archanova supports Ethereum only
+      const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
+
       const devices = connectedAccount?.devices || [];
 
       await dispatch(syncVirtualAccountTransactionsAction());
@@ -212,19 +215,19 @@ export const fetchTransactionsHistoryAction = () => {
       const lastSyncedId = historyLastSyncIds?.[accountId] || lastSyncedArchanovaTransactionId;
       const archanovaTransactions = await archanovaService.getAccountTransactions(+lastSyncedId);
 
-      const accountAssets = archanovaAccountAssetsSelector(getState());
+      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
       const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
       const assetsList = getAssetsAsList(accountAssets);
+
       const archanovaTransactionsHistory = parseArchanovaTransactions(
         archanovaTransactions,
-        supportedAssets,
         assetsList,
         relayerExtensionDevice?.address,
       );
       const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, archanovaTransactionsHistory);
       const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
       const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
-      const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
+      const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, ethereumSupportedAssets);
       const finalArchanovaTransactionsHistory = await mapTransactionsHistoryWithLiquidityPools(
         accountAddress,
         rariHistory,
@@ -339,9 +342,9 @@ export const updateTransactionStatusAction = (hash: string) => {
       const gasTokenAddress = sdkTransactionInfo.gasToken;
       const transactionFee = sdkTransactionInfo.fee;
       if (!isEmpty(gasTokenAddress) && transactionFee) {
-        const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-        const accountAssets = getAssetsAsList(archanovaAccountAssetsSelector(getState()));
-        const gasToken = getGasTokenDetails(accountAssets, supportedAssets, gasTokenAddress);
+        const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
+        const accountAssets = getAssetsAsList(archanovaAccountEthereumAssetsSelector(getState()));
+        const gasToken = getGasTokenDetails(accountAssets, ethereumSupportedAssets, gasTokenAddress);
         if (!isEmpty(gasToken)) {
           feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         }

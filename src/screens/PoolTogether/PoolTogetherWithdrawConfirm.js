@@ -44,6 +44,7 @@ import Toast from 'components/Toast';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import { CHAIN } from 'constants/chainConstants';
 
 const ContentWrapper = styled.View`
   padding: 16px 20px;
@@ -129,6 +130,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
               assetSymbol={poolToken}
               text={t('poolTogetherContent.label.youAreWithdrawing')}
               amount={tokenValue}
+              chain={CHAIN.ETHEREUM}
             />
             <Spacing h={42} />
             <Table>

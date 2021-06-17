@@ -25,6 +25,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { FeeLabelToggleComponent } from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import { CHAIN } from 'constants/chainConstants';
 
 const reduxData = {
   accountAssets: {},
@@ -53,6 +54,7 @@ storiesOf('FeeLabelToggle', module)
         decimals: 18,
         symbol: 'ETH',
       }}
+      chain={CHAIN.ETHEREUM}
     />
   ))
   .add('not enough token', () => (
@@ -64,6 +66,7 @@ storiesOf('FeeLabelToggle', module)
         decimals: 18,
         symbol: 'ETH',
       }}
+      chain={CHAIN.ETHEREUM}
       hasError
     />
   ));

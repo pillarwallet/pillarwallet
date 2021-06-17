@@ -30,8 +30,9 @@ import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Asset, AssetsByAccount } from 'models/Asset';
+import type { SupportedAssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
+import type { Chain } from 'models/Chain';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -42,6 +43,7 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRates = () => useRootSelector(ratesSelector);
 export const useSupportedAssets = () => useRootSelector(supportedAssetsSelector);
+export const useChainSupportedAssets = (chain: Chain) => useSupportedAssets()[chain] ?? [];
 
 //
 // Global selectors here
@@ -74,14 +76,11 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
-
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
-export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
-  get(userSettings, 'data.hiddenAssets', {});
-
-export const supportedAssetsSelector = (root: RootReducerState): Asset[] => root.assets.supportedAssets ?? [];
+export const supportedAssetsSelector = (
+  root: RootReducerState,
+): SupportedAssetsPerChain => root.assets.supportedAssets ?? {};
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

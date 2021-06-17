@@ -45,7 +45,10 @@ import { formatUnits } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // actions
@@ -187,6 +190,7 @@ const Withdraw = (props: Props) => {
               gasToken={feeInfo?.gasToken}
               isLoading={isEstimating}
               hasError={!!errorMessage}
+              chain={CHAIN.ETHEREUM}
             />
           )}
           {!!errorMessage && (
@@ -219,18 +223,17 @@ const Withdraw = (props: Props) => {
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -64,7 +64,8 @@ export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
 
   return mapChainRecordValues(walletAssetsPerChain, (balancesRecord: WalletAssetsBalances, chain: Chain) => {
     const balanceList = recordValues(balancesRecord);
-    return mapNotNil(balanceList, (balance) => buildWalletItem(balance, chain, supportedAssets));
+    const chainSupportedAssets = supportedAssets[chain] ?? [];
+    return mapNotNil(balanceList, (balance) => buildWalletItem(balance, chain, chainSupportedAssets));
   });
 };
 

@@ -39,6 +39,7 @@ import { activeAccountAddressSelector } from 'selectors';
 
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -98,6 +99,7 @@ const StakeTokensReviewScreen = ({
           assetSymbol={poolToken.symbol}
           text={t('liquidityPoolsContent.label.youAreUnstaking')}
           amount={amount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={26} />
         <Table>

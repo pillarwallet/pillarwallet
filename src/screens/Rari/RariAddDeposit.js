@@ -48,8 +48,9 @@ import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 import {
-  accountAssetsSelector,
+  accountEthereumAssetsSelector,
   accountAssetsWithBalanceSelector,
+  ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -235,6 +236,7 @@ const RariAddDepositScreen = ({
               gasToken={feeInfo?.gasToken}
               isLoading={isEstimating}
               hasError={!!errorMessage}
+              chain={CHAIN.ETHEREUM}
             />
           )}
           <Spacing h={16} />
@@ -268,21 +270,20 @@ const RariAddDepositScreen = ({
 
 const mapStateToProps = ({
   rates: { data: rates },
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   rates,
-  supportedAssets,
   feeInfo,
   estimateErrorMessage,
   isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   visibleAssets: accountAssetsWithBalanceSelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

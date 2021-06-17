@@ -68,6 +68,8 @@ import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asse
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import { useChainSupportedAssets } from 'selectors';
+import { CHAIN } from 'constants/chainConstants';
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
@@ -88,7 +90,6 @@ type Props = {
 
 const KeyBasedAssetTransferChoose = ({
   walletAddress,
-  supportedAssets,
   rates,
   baseFiatCurrency,
   isFetchingAvailableBalances,
@@ -102,6 +103,7 @@ const KeyBasedAssetTransferChoose = ({
   keyBasedAssetsToTransfer,
   calculateTransactionsGas,
 }: Props) => {
+  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const navigation = useNavigation();
 
   const onAvailableBalancesRefresh = () => {
@@ -241,7 +243,6 @@ const mapStateToProps = ({
   appSettings: {
     data: { baseFiatCurrency },
   },
-  assets: { supportedAssets },
   rates: { data: rates },
   keyBasedAssetTransfer: {
     data: keyBasedAssetsToTransfer,
@@ -253,7 +254,6 @@ const mapStateToProps = ({
   wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
   walletAddress: walletData?.address,
-  supportedAssets,
   rates,
   baseFiatCurrency,
   keyBasedAssetsToTransfer,

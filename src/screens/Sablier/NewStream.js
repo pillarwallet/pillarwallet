@@ -52,10 +52,18 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector, accountAssetsWithBalanceSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  accountAssetsWithBalanceSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 
 // types
-import type { Asset, Assets, AssetOption } from 'models/Asset';
+import type {
+  Assets,
+  AssetOption,
+  Asset,
+} from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Contact } from 'models/Contact';
@@ -64,7 +72,7 @@ import type { Contact } from 'models/Contact';
 import SablierDatePicker from './SablierDatePicker';
 
 type Props = {
-  supportedAssets: Asset[],
+  ethereumSupportedAssets: Asset[],
   activeAccountAddress: string,
   assets: Assets,
   assetsWithBalance: AssetOption[],
@@ -97,7 +105,7 @@ const InputWrapper = styled.View`
 class NewStream extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const daiAsset = props.supportedAssets.find(asset => asset.symbol === DAI);
+    const daiAsset = props.ethereumSupportedAssets.find(asset => asset.symbol === DAI);
     this.state = {
       startDate: this.getMinimalDate(),
       endDate: null,
@@ -280,21 +288,15 @@ class NewStream extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  assets: { supportedAssets },
-}: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
-});
-
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   assetsWithBalance: accountAssetsWithBalanceSelector,
+  ethereumSupportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
-  ...mapStateToProps(state),
 });
 
 export default connect(combinedMapStateToProps)(NewStream);

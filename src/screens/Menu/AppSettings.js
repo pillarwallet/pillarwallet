@@ -49,7 +49,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 
 // selectors
 import { isGasTokenSupportedSelector, preferredGasTokenSelector } from 'selectors/archanova';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountSelector } from 'selectors';
 
@@ -234,7 +234,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
-  accountAssets: accountAssetsSelector,
+  accountAssets: accountEthereumAssetsSelector,
   accountHistory: accountHistorySelector,
   preferredGasToken: preferredGasTokenSelector,
   activeAccount: activeAccountSelector,

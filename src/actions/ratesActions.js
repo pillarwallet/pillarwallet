@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import isEmpty from 'lodash.isempty';
+import { isEmpty, mapValues } from 'lodash';
 
 // constants
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -26,19 +25,26 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 // services
 import { getExchangeRates } from 'services/assets';
 
-// selectors
-import { assetsCompatSelector, accountAssetsCompatSelector } from 'selectors/balances';
-
 // utils
-import { mergeAccountAssets } from 'utils/assets';
-import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import {
+  getAssetData,
+  getAssetsAsList,
+  mapWalletAssetsBalancesIntoAssets,
+} from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
+
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
+import { assetsBalancesSelector, supportedAssetsSelector } from 'selectors';
 
 // models, types
 import type { Rates } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Chain } from 'models/Chain';
 
 // actions
 import { saveDbAction } from './dbActions';
+
 
 export const setRatesAction = (newRates: Rates) => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -51,35 +57,49 @@ export const setRatesAction = (newRates: Rates) => {
   };
 };
 
-export const fetchAccountAssetsRatesAction = () => {
+export const fetchAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsCompatSelector(getState());
-    const rates = await getExchangeRates(accountAssets);
-    dispatch(setRatesAction(rates));
-  };
-};
+    const assetsBalances = assetsBalancesSelector(getState());
+    const supportedAssets = supportedAssetsSelector(getState());
 
-export const fetchAllAccountsAssetsRatesAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const allAccountsAssets = assetsCompatSelector(getState());
+    const allAccountsCrossChainAssets = Object.keys(assetsBalances).reduce((combinedAssets, accountId) => {
+      const accountAssetsBalances = assetsBalances[accountId] ?? {};
 
-    // check if not empty just in case
-    if (isEmpty(allAccountsAssets)) {
-      reportErrorLog('fetchAllAccountsAssetsRatesAction failed: empty all account assets', { allAccountsAssets });
+      const accountAssets = mapValues(
+        accountAssetsBalances,
+        (chainBalances, chain) => {
+          const chainSupportedAssets = supportedAssets[chain] ?? [];
+          return mapWalletAssetsBalancesIntoAssets(chainBalances?.wallet ?? {}, chainSupportedAssets);
+        },
+      );
+
+      return { ...combinedAssets, ...accountAssets };
+    }, {});
+
+    if (isEmpty(allAccountsCrossChainAssets)) {
+      reportErrorLog('fetchAssetsRatesAction failed: allAccountsCrossChainAssets is empty');
       return;
     }
 
-    const allAssets = mergeAccountAssets(allAccountsAssets);
-    const rates = await getExchangeRates(allAssets);
+    const rates = await getExchangeRates(allAccountsCrossChainAssets);
     dispatch(setRatesAction(rates));
   };
 };
 
-export const fetchSingleAssetRatesAction = (assetCode: string) => {
+export const fetchSingleChainAssetRatesAction = (
+  chain: Chain,
+  assetCode: string,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const asset = getState().assets.supportedAssets.find(({ symbol }) => isCaseInsensitiveMatch(assetCode, symbol));
+    const accountAssets = accountAssetsSelector(getState());
+    const chainAccountAssets = accountAssets[chain] ?? {};
+
+    const supportedAssets = supportedAssetsSelector(getState());
+    const chainSupportedAssets = supportedAssets[chain] ?? [];
+
+    const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
     if (!asset) {
-      reportErrorLog('fetchSingleAssetRatesAction failed: cannot find asset', { assetCode });
+      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });
       return;
     }
 

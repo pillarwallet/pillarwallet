@@ -17,30 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  UPDATE_ASSET,
-  UPDATE_ASSETS,
-  UPDATE_ASSETS_STATE,
-  SET_INITIAL_ASSETS,
-  FETCHING,
-  FETCHED,
-  FETCHED_INITIAL,
-  UPDATE_SUPPORTED_ASSETS,
-  UPDATE_ASSETS_SEARCH_RESULT,
-  START_ASSETS_SEARCH,
-  RESET_ASSETS_SEARCH_RESULT,
-} from 'constants/assetsConstants';
-import merge from 'lodash.merge';
+import { mapValues } from 'lodash';
+
+// constants
+import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+
+// utils
 import { sortAssetsArray } from 'utils/assets';
 
-import type { Asset, AssetsByAccount } from 'models/Asset';
+// types
+import type { Asset, SupportedAssetsPerChain } from 'models/Asset';
 
 export type AssetsReducerState = {
-  data: AssetsByAccount,
-  supportedAssets: Asset[],
-  assetsState: ?string,
-  assetsSearchState: ?string,
-  assetsSearchResults: Object[],
+  supportedAssets: SupportedAssetsPerChain,
 };
 
 export type AssetsReducerAction = {
@@ -49,68 +38,34 @@ export type AssetsReducerAction = {
 };
 
 export const initialState = {
-  data: {},
-  supportedAssets: [],
-  assetsState: null,
-  assetsSearchResults: [],
-  assetsSearchState: null,
+  supportedAssets: { ethereum: [] },
 };
+
+const sortSupportedAssets = (
+  supportedChainAssets: SupportedAssetsPerChain,
+) => mapValues(supportedChainAssets, sortChainSupportedAssets);
+
+const sortChainSupportedAssets = (assets: Asset[]) => sortAssetsArray(assets);
 
 export default function assetsReducer(
   state: AssetsReducerState = initialState,
   action: AssetsReducerAction,
 ) {
   switch (action.type) {
-    case UPDATE_ASSETS_STATE:
-      return { ...state, assetsState: action.payload };
-
-    case UPDATE_ASSET:
-      const { symbol } = action.payload;
-      const updatedState = {
-        data: { [symbol]: { ...state.data[symbol], ...action.payload } },
-      };
-      return merge(
-        {},
-        state,
-        updatedState,
-      );
-
-    case UPDATE_SUPPORTED_ASSETS:
-      return { ...state, supportedAssets: sortAssetsArray(action.payload) };
-
-    case UPDATE_ASSETS:
-      const assetsState = Object.keys(action.payload).length ? FETCHED : initialState.assetsState;
-      return { ...state, data: action.payload || {}, assetsState };
-
-    case SET_INITIAL_ASSETS:
+    case SET_SUPPORTED_ASSETS:
       return {
         ...state,
-        data: {
-          ...state.data,
-          [action.payload.accountId]: action.payload.assets || {},
+        supportedAssets: sortSupportedAssets(action.payload),
+      };
+
+    case SET_CHAIN_SUPPORTED_ASSETS:
+      const { chain, assets } = action.payload;
+      return {
+        ...state,
+        supportedAssets: {
+          ...state.supportedAssets,
+          [chain]: sortChainSupportedAssets(assets),
         },
-        assetsState: FETCHED_INITIAL,
-      };
-
-    case START_ASSETS_SEARCH:
-      return {
-        ...state,
-        assetsSearchState: FETCHING,
-        assetsSearchResults: [],
-      };
-
-    case UPDATE_ASSETS_SEARCH_RESULT:
-      return {
-        ...state,
-        assetsSearchState: FETCHED,
-        assetsSearchResults: action.payload,
-      };
-
-    case RESET_ASSETS_SEARCH_RESULT:
-      return {
-        ...state,
-        assetsSearchState: null,
-        assetsSearchResults: [],
       };
 
     default:

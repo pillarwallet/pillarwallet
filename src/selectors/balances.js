@@ -26,20 +26,17 @@ import { PLR } from 'constants/assetsConstants';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
-import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
-import { getWalletAssetsSymbols } from 'utils/balances';
-import { mapRecordValues } from 'utils/object';
+import { getTotalBalanceInFiat } from 'utils/assets';
 
 // types
-import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Rates, Asset, Assets, AssetsByAccount } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { Rates } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
 
 // selectors
 import {
   assetsBalancesSelector,
-  supportedAssetsSelector,
   fiatCurrencySelector,
   ratesSelector,
   activeAccountIdSelector,
@@ -76,34 +73,5 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
 
     const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
     return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
-  },
-);
-
-/**
- * Compat function for providing array of assets represening all accounts assets across all chains.
- * Intended to be used in place of `assetsSelector` from 'selectors`.
- */
-export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
-  assetsBalancesSelector,
-  supportedAssetsSelector,
-  (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    return mapRecordValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
-      const symbols = getWalletAssetsSymbols(accountAssetsBalances);
-      return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
-    });
-  },
-);
-
-/**
- * Compat function for providing array of assets represening active account assets across all chains.
- * Intended to be used in place of `accountAssetsSelector` from 'selectors`.
- */
-export const accountAssetsCompatSelector: Selector<Assets> = createSelector(
-  activeAccountIdSelector,
-  assetsBalancesSelector,
-  supportedAssetsSelector,
-  (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    const symbols = getWalletAssetsSymbols(assetsBalances[accountId]);
-    return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
   },
 );

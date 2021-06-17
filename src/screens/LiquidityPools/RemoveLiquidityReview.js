@@ -44,6 +44,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import type { Rates } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -131,6 +132,7 @@ const RemoveLiquidityReviewScreen = ({
           text={t('liquidityPoolsContent.label.youAreRemovingLiquidity')}
           amount={poolTokenValue}
           fiatValue={formatFiat(totalValue)}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={28} />
         <Table title={t('liquidityPoolsContent.label.youWillReceive')}>

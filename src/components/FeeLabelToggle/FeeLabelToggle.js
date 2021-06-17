@@ -21,7 +21,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
 import Emoji from 'react-native-emoji';
@@ -36,12 +35,13 @@ import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import Modal from 'components/Modal';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
+import { nativeAssetSymbolPerChain } from 'utils/chains';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -55,7 +55,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { Rates, Assets } from 'models/Asset';
 import type { GasToken, Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 
 type Props = {
@@ -66,10 +66,11 @@ type Props = {
   isLoading?: boolean,
   labelText?: string,
   isGasTokenSupported: boolean,
-  accountAssets: Assets,
+  accountAssets: ChainRecord<Assets>,
   accountHistory: ChainRecord<Transaction[]>,
   showRelayerMigration?: boolean,
   hasError?: boolean,
+  chain: Chain,
 };
 
 const LabelWrapper = styled.View`
@@ -98,6 +99,7 @@ export const FeeLabelToggleComponent = ({
   accountHistory,
   isGasTokenSupported,
   hasError,
+  chain,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(true);
 
@@ -108,8 +110,13 @@ export const FeeLabelToggleComponent = ({
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
   const feeValue = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
-  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
+
+  const chainNativeSymbol = nativeAssetSymbolPerChain[chain];
+  const gasTokenSymbol = gasToken?.symbol ?? chainNativeSymbol;
+
   const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+  const chainAccountAssets = accountAssets[chain] ?? {};
 
   const feeInFiat = parseFloat(feeValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
@@ -123,7 +130,7 @@ export const FeeLabelToggleComponent = ({
     if (!showRelayerMigration) return;
     Modal.open(() => (
       <RelayerMigrationModal
-        accountAssets={accountAssets}
+        accountAssets={chainAccountAssets}
         accountHistory={accountHistory}
       />
     ));

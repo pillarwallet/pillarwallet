@@ -25,6 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { isEmpty } from 'lodash';
 
 // Components
 import BalanceView from 'components/BalanceView';
@@ -40,13 +41,19 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useIsExchangeAvailable, activeAccountAddressSelector } from 'selectors';
-import { assetRegistrySelector } from 'selectors/assets';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useIsExchangeAvailable,
+  activeAccountAddressSelector,
+  supportedAssetsSelector,
+} from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { getAssetFromRegistry } from 'utils/assets';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -70,8 +77,12 @@ function WalletTab() {
   const totalBalance = useWalletTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
-  const assetRegistry = useRootSelector(assetRegistrySelector);
+
+  const accountAssets = useRootSelector(accountAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsSelector);
+
   const accountAddress = useRootSelector(activeAccountAddressSelector);
+
   const isExchangeAvailable = useIsExchangeAvailable();
   const isPillarPaySupported = useIsPillarPaySupported();
 
@@ -84,10 +95,15 @@ function WalletTab() {
   };
 
   const navigateToAssetDetails = (item: WalletItem) => {
-    const asset = getAssetFromRegistry(assetRegistry, item.symbol);
-    if (!asset) return;
+    const { chain, symbol } = item;
 
-    const assetData = buildAssetDataNavigationParam(asset, item.chain);
+    const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
+    const chainSupportedAssets = supportedAssets[chain] ?? [];
+
+    const asset = getAssetData(chainAccountAssetsList, chainSupportedAssets, symbol);
+    if (isEmpty(asset)) return;
+
+    const assetData = buildAssetDataNavigationParam(asset, chain);
     navigation.navigate(ASSET, { assetData });
   };
 

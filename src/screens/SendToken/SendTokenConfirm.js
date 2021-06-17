@@ -75,7 +75,12 @@ const SendTokenConfirm = () => {
       <HeaderBlock centerItems={[{ title: t('transactions.title.review') }]} navigation={navigation} noPaddingTop />
 
       <Content contentContainerStyle={styles.contentContainerStyle}>
-        <TokenReviewSummary assetSymbol={symbol} text={t('transactions.label.youAreSending')} amount={amount} />
+        <TokenReviewSummary
+          assetSymbol={symbol}
+          text={t('transactions.label.youAreSending')}
+          amount={amount}
+          chain={chain}
+        />
 
         <Spacing h={32} />
 

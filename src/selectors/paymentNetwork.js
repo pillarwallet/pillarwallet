@@ -50,7 +50,7 @@ import {
   supportedAssetsSelector,
 } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
-import { accountAssetsSelector } from './assets';
+import { accountEthereumAssetsSelector } from './assets';
 
 const ppnTrxTags = [
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -100,7 +100,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
   PPNIncomingTransactionsSelector,
   archanovaAccountEthereumHistorySelector,
   supportedAssetsSelector,
-  accountAssetsSelector,
+  accountEthereumAssetsSelector,
   (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
     return PPNTransactions
       .filter(({

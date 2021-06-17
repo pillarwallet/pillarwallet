@@ -42,7 +42,10 @@ import { getThemeColors } from 'utils/themes';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { hasStreamEnded, getStreamProgress, streamCountDownDHMS } from 'utils/sablier';
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { SABLIER_INCOMING_STREAM, SABLIER_OUTGOING_STREAM } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -194,16 +197,15 @@ class SablierStream extends React.Component<Props> {
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
-  supportedAssets,
 });
 
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props) => ({

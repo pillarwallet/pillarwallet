@@ -50,6 +50,7 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
@@ -58,9 +59,12 @@ import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
+// selectors
+import { useChainSupportedAssets } from 'selectors';
+
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Asset } from 'models/Asset';
+import type { Rates } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -77,7 +81,6 @@ type Props = {
   poolDataGraphQueryFailed: boolean,
   isFetchingLiquidityPoolsData: boolean,
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
-  supportedAssets: Asset[],
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   shownStakingEnabledModal: {[string]: boolean},
   setShownStakingEnabledModal: string => void,
@@ -155,12 +158,13 @@ const LiquidityPoolDashboard = ({
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
   fetchLiquidityPoolsData,
-  supportedAssets,
   liquidityPoolsReducer,
   rates,
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
+  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
@@ -490,14 +494,12 @@ const mapStateToProps = ({
     poolDataGraphQueryFailed,
     shownStakingEnabledModal,
   },
-  assets: { supportedAssets },
   liquidityPools: liquidityPoolsReducer,
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
-  supportedAssets,
   liquidityPoolsReducer,
   rates,
   shownStakingEnabledModal,

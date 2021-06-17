@@ -43,6 +43,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -110,6 +111,7 @@ const RariWithdrawReviewScreen = ({
           assetSymbol={assetSymbol}
           amount={amount}
           text={summaryTitles[rariPool]}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {(slippage || exchangeFeeBN.gt(0) || withdrawalFeeRate) && (

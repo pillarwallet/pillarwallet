@@ -148,6 +148,7 @@ const RariClaimRgtScreen = ({
               gasToken={feeInfo?.gasToken}
               isLoading={isEstimating}
               hasError={!!errorMessage}
+              chain={CHAIN.ETHEREUM}
             />
           )}
           <Spacing h={16} />

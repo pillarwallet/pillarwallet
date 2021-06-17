@@ -77,7 +77,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset, Rates, AssetDataNavigationParam } from 'models/Asset';
+import type { Assets, SupportedAssetsPerChain, Rates, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -88,7 +88,7 @@ import type { ChainRecord } from 'models/Chain';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssets: Assets,
+  accountAssets: ChainRecord<Assets>,
   accountAssetsBalances: CategoryBalancesPerChain,
   rates: Rates,
   baseFiatCurrency: ?string,
@@ -97,7 +97,7 @@ type Props = {
   activeAccount: ?Account,
   accountHistory: ChainRecord<Transaction[]>,
   activeAccountAddress: string,
-  supportedAssets: Asset[],
+  supportedAssets: SupportedAssetsPerChain,
 };
 
 const AssetCardWrapper = styled.View`
@@ -171,6 +171,9 @@ const AssetScreen = ({
 
   const transactions = useMemo(
     () => {
+      const chainSupportedAssets = supportedAssets[chain] ?? [];
+      const chainAccountAssets = accountAssets[chain] ?? {};
+
       if (isArchanovaAccount(activeAccount)) {
         return tokenTransactions.filter(({
           isPPNTransaction = false,
@@ -191,8 +194,8 @@ const AssetScreen = ({
         return getHistoryEventsFromTransactions(
           tokenTransactions,
           activeAccountAddress,
-          getAssetsAsList(accountAssets),
-          supportedAssets,
+          getAssetsAsList(chainAccountAssets),
+          chainSupportedAssets,
         );
       }
 
@@ -205,6 +208,7 @@ const AssetScreen = ({
       accountAssets,
       activeAccountAddress,
       supportedAssets,
+      chain,
     ],
   );
 

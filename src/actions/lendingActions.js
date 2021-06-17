@@ -31,7 +31,10 @@ import {
 import aaveService from 'services/aave';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 
 // utils
 import { getAssetData, getAssetsAsList } from 'utils/assets';
@@ -58,8 +61,8 @@ export const fetchAssetsToDepositAction = () => {
     if (isFetchingAssetsToDeposit) return;
     dispatch({ type: SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT });
 
-    const { assets: { supportedAssets } } = getState();
-    const currentAccountAssets = accountAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+    const currentAccountAssets = accountEthereumAssetsSelector(getState());
     const assets = await aaveService.getAssetsToDeposit(getAssetsAsList(currentAccountAssets), supportedAssets);
     dispatch({ type: SET_LENDING_ASSETS_TO_DEPOSIT, payload: assets });
   };
@@ -76,17 +79,18 @@ export const setDepositedAssetsAction = (depositedAssets: DepositedAsset[]) => {
 export const fetchDepositedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      assets: { supportedAssets },
       accounts: { data: accounts },
       lending: { isFetchingDepositedAssets },
     } = getState();
 
-    const currentAccountAssets = accountAssetsSelector(getState());
+    const currentAccountAssets = accountEthereumAssetsSelector(getState());
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
     dispatch({ type: SET_FETCHING_LENDING_DEPOSITED_ASSETS });
+
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const depositedAssets = await aaveService.getAccountDepositedAssets(
       getAccountAddress(smartWalletAccount),
@@ -100,16 +104,17 @@ export const fetchDepositedAssetsAction = () => {
 export const fetchDepositedAssetAction = (symbol: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      assets: { supportedAssets },
       accounts: { data: accounts },
       lending: { depositedAssets, isFetchingDepositedAssets },
     } = getState();
-    const currentAccountAssets = accountAssetsSelector(getState());
+    const currentAccountAssets = accountEthereumAssetsSelector(getState());
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
 
     if (isFetchingDepositedAssets) return;
     dispatch({ type: SET_FETCHING_LENDING_DEPOSITED_ASSETS });
+
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const asset = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
     const accountAddress = getAccountAddress(smartWalletAccount);

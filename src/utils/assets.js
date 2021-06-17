@@ -20,8 +20,7 @@
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
-import get from 'lodash.get';
-import { keyBy, orderBy } from 'lodash';
+import { keyBy, orderBy, mapValues, get } from 'lodash';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -39,14 +38,13 @@ import type {
   Assets,
   AssetOption,
   AssetOptionBalance,
-  AssetsByAccount,
   Rates,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -306,10 +304,6 @@ export const getAssetDataByAddress = (
   || {};
 };
 
-export const getAssetFromRegistry = (assetRegistry: Asset[], symbol: string): ?Asset => {
-  return assetRegistry.find((asset) => asset.symbol === symbol);
-};
-
 export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
   let assetSymbol = null;
   if (!address) return assetSymbol;
@@ -469,10 +463,15 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
   return 0;
 };
 
-export const mergeAccountAssets = (assetsByAccount: AssetsByAccount): Assets => {
-  const assetsArray = Object.keys(assetsByAccount).map(accountId => assetsByAccount[accountId]);
-  return Object.assign({}, ...assetsArray);
-};
+export const getCrossChainAccountAssets = (
+  accountAssets: ChainRecord<Assets>,
+): Assets => Object.keys(accountAssets).reduce((
+  assets: Assets,
+  chain: string,
+) => {
+  const chainAccountAssets = accountAssets[chain] ?? {};
+  return { ...assets, ...chainAccountAssets };
+}, {});
 
 type CollectibleMatch = { contractAddress: string, id: string };
 
@@ -483,3 +482,11 @@ export const isMatchingCollectible = (
   && addressesEqual(a.contractAddress, b.contractAddress)
   && a.id
   && a.id === b.id;
+
+export const mapWalletAssetsBalancesIntoAssets = (
+  walletAssetsBalances: WalletAssetsBalances,
+  chainSupportedAssets: Asset[],
+): Assets => mapValues(
+  walletAssetsBalances,
+  ({ symbol }) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
+);

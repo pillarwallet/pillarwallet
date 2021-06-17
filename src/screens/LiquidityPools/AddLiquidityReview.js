@@ -44,6 +44,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import type { Rates } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -130,6 +131,7 @@ const AddLiquidityReviewScreen = ({
           text={t('liquidityPoolsContent.label.youAreAddingLiquidity')}
           amount={poolTokenValue}
           fiatAmount={formatFiat(totalValue)}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={8} />
         <BaseText regular secondary center>

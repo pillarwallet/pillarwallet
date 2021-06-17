@@ -67,7 +67,7 @@ import type {
   ExchangeOffer as EtherspotExchangeOffer,
   GatewayEstimatedBatch,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset, Assets } from 'models/Asset';
+import type { AssetCore, Asset } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -278,22 +278,6 @@ export class EtherspotService {
         { symbol, balance: positiveBalance },
       ];
     }, []);
-  }
-
-  async getOwnedAssets(
-    chain: Chain,
-    accountAddress: string,
-    supportedAssets: Asset[],
-  ): Promise<Assets> {
-    const balances = await this.getBalances(chain, accountAddress, supportedAssets);
-
-    return balances.reduce((ownedAssets, { symbol }) => {
-      const supportedAsset = supportedAssets.find((asset) => asset.symbol === symbol);
-
-      if (supportedAsset) return { ...ownedAssets, [symbol]: supportedAsset };
-
-      return ownedAssets;
-    }, {});
   }
 
   reserveEnsName(username: string): Promise<?ENSNode> {
@@ -574,16 +558,24 @@ export class EtherspotService {
       });
   }
 
-  async getSupportedAssets(): Promise<?(Asset[])> {
+  async getChainSupportedAssets(chain: Chain): Promise<?(Asset[])> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
+      return null;
+    }
+
     try {
       // eslint-disable-next-line i18next/no-literal-string
-      const tokens: TokenListToken[] = await this.sdk.getTokenListTokens();
+      const tokens: TokenListToken[] = await sdk.getTokenListTokens();
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned');
         return null;
       }
 
       const supportedAssets = tokens.map(parseTokenListToken);
+
+      if (chain !== CHAIN.ETHEREUM) return supportedAssets;
 
       // add ETH if not within tokens list (most of the time since it's not a token)
       const supportedAssetsHaveEth = supportedAssets.some(({ symbol }) => symbol === ETH);

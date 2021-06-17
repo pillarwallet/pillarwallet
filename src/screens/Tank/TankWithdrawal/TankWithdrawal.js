@@ -62,7 +62,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 
@@ -252,6 +252,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               txFeeInWei={txFeeInWei}
               gasToken={gasToken}
               isLoading={!withdrawalFee.isFetched}
+              chain={CHAIN.ETHEREUM}
             />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
@@ -313,7 +314,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   availableStake: availableStakeSelector,
   useGasToken: useGasTokenSelector,
 });

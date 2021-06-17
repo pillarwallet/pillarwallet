@@ -161,7 +161,11 @@ import {
   activeBlockchainSelector,
   collectiblesHistorySelector,
 } from 'selectors';
-import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
+import {
+  assetDecimalsSelector,
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // actions
@@ -193,7 +197,6 @@ type StateProps = {|
   user: Object,
   accounts: Account[],
   ensRegistry: EnsRegistry,
-  supportedAssets: Asset[],
   updatingTransaction: ?string,
   updatingCollectibleTransaction: ?string,
   depositedAssets: DepositedAsset[],
@@ -213,6 +216,7 @@ type SelectorProps = {|
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectiblesHistoryStore,
+  supportedAssets: Asset[],
 |};
 
 type DispatchProps = {|
@@ -1650,7 +1654,6 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
   history: { data: history, updatingTransaction },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
@@ -1662,7 +1665,6 @@ const mapStateToProps = ({
   user,
   accounts,
   ensRegistry,
-  supportedAssets,
   history,
   updatingTransaction,
   updatingCollectibleTransaction,
@@ -1678,10 +1680,11 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
-  accountAssets: accountAssetsSelector,
+  accountAssets: accountEthereumAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: collectiblesHistorySelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({

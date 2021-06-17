@@ -62,7 +62,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 
@@ -251,6 +251,7 @@ class FundTank extends React.Component<Props, State> {
               txFeeInWei={txFeeInWei}
               gasToken={gasToken}
               isLoading={!topUpFee.isFetched && balance > 0}
+              chain={CHAIN.ETHEREUM}
             />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
@@ -312,7 +313,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   useGasToken: useGasTokenSelector,
 });
 

@@ -47,7 +47,10 @@ import { CHAIN } from 'constants/chainConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
@@ -253,6 +256,7 @@ const RariWithdrawScreen = ({
               gasToken={feeInfo?.gasToken}
               isLoading={isEstimating}
               hasError={!!errorMessage}
+              chain={CHAIN.ETHEREUM}
             />
           )}
           <Spacing h={16} />
@@ -282,19 +286,18 @@ const RariWithdrawScreen = ({
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   feeInfo,
   estimateErrorMessage,
   isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

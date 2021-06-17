@@ -22,18 +22,10 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 
 // actions
-import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import {
-  UPDATE_ASSET,
-  UPDATE_ASSETS_STATE,
-  FETCHED,
-  FETCHING,
-  ETH,
-  PLR,
-  ASSET_CATEGORY,
-} from 'constants/assetsConstants';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 import {
   SET_ACCOUNT_ASSETS_BALANCES,
   SET_FETCHING_ASSETS_BALANCES,
@@ -43,13 +35,6 @@ import { CHAIN } from 'constants/chainConstants';
 
 // services
 import etherspotService from 'services/etherspot';
-
-// utils
-import { mockSupportedAssets } from 'testUtils/jestSetup';
-
-// types
-import type { Assets, AssetsByAccount } from 'models/Asset';
-
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -70,51 +55,6 @@ const mockAccounts: Object[] = [{
   isActive: true,
 }];
 
-const mockTransaction: Object = {
-  gasLimit: 2000000,
-  amount: 0.5,
-  address: '000x124',
-  gasPrice: 15000,
-  note: 'test note',
-};
-
-const mockAssetsByAccount: Assets = {
-  ETH: {
-    symbol: ETH,
-    name: 'ethereum',
-    balance: 1,
-    address: '',
-    iconUrl: '',
-    iconMonoUrl: '',
-    decimals: 18,
-  },
-};
-
-const mockAssets: AssetsByAccount = {
-  '0x9c': mockAssetsByAccount,
-};
-
-const mockFullAssetsListByAccount: Assets = {
-  ETH: {
-    symbol: ETH,
-    name: 'ethereum',
-    balance: 1,
-    address: '',
-    iconUrl: '',
-    iconMonoUrl: '',
-    decimals: 18,
-  },
-  PLR: {
-    symbol: PLR,
-    name: 'ethereum',
-    balance: 1,
-    address: '',
-    iconUrl: '',
-    iconMonoUrl: '',
-    decimals: 18,
-  },
-};
-
 const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH' };
 
 jest.spyOn(etherspotService, 'getBalances').mockImplementation(() => [mockEthBalance]);
@@ -124,7 +64,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  assets: { data: mockAssets, supportedAssets: [] },
+  assets: { supportedAssets: {} },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
@@ -140,20 +80,6 @@ describe('Assets actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore(initialState);
-  });
-
-  xit('should expect series of actions with payload to be dispatch on sendAssetAction execution', () => {
-    const expectedActions = [
-      { type: UPDATE_ASSETS_STATE, payload: FETCHING },
-      { type: UPDATE_ASSET, payload: { symbol: ETH, balance: 9.5 } },
-      { type: UPDATE_ASSETS_STATE, payload: FETCHED },
-    ];
-
-    return store.dispatch(sendAssetAction(mockTransaction, mockWallet))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
@@ -173,10 +99,5 @@ describe('Assets actions', () => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
       });
-  });
-
-  it('should add missing PLR and/or ETH to asset list on checkForMissedAssetsAction execution', () => {
-    expect(getSupportedTokens(mockSupportedAssets, mockAssets, mockAccounts[0]))
-      .toEqual({ ...mockFullAssetsListByAccount, id: mockAccounts[0].id });
   });
 });

@@ -53,7 +53,10 @@ import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 
 // utils
 import { themedColors } from 'utils/themes';
@@ -272,6 +275,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}
+                  chain={CHAIN.ETHEREUM}
                 />
               </ContentRow>
             )}
@@ -304,13 +308,11 @@ const mapStateToProps = ({
   poolTogether: {
     poolStats: poolPrizeInfo,
   },
-  assets: { supportedAssets },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
@@ -318,7 +320,8 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

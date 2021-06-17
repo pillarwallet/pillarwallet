@@ -88,8 +88,10 @@ function ChainHistoryView({ chain }: { chain: Chain }) {
 function useHistoryEvents(chain: Chain): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
-  const accountAssets = getAssetsAsList(useRootSelector(accountAssetsSelector));
+  const accountAssets = useRootSelector(accountAssetsSelector);
+  const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
   const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const chainSupportedAssets = supportedAssets[chain] ?? [];
   const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
 
   const transactionsHistory = accountHistory[chain] ?? [];
@@ -132,8 +134,8 @@ function useHistoryEvents(chain: Chain): Event[] {
   const mappedTransactionsHistory = getHistoryEventsFromTransactions(
     transactionsHistory,
     activeAccountAddress,
-    accountAssets,
-    supportedAssets,
+    chainAccountAssets,
+    chainSupportedAssets,
   );
 
   return [

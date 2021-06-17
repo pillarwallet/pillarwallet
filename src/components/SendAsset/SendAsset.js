@@ -84,6 +84,7 @@ const renderFeeToggle = (
   feeError: ?string,
   isLoading: boolean,
   enoughBalance: boolean,
+  chain: Chain,
 ) => {
   if (!showFee || !txFeeInfo) return null;
 
@@ -91,7 +92,13 @@ const renderFeeToggle = (
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
+      <FeeLabelToggle
+        txFeeInWei={fee}
+        gasToken={gasToken}
+        isLoading={isLoading}
+        hasError={!enoughBalance}
+        chain={chain}
+      />
       {!!feeError && <Button disabled title={feeError} style={{ marginTop: 15 }} />}
     </>
   );
@@ -319,9 +326,14 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon:
-          !!selectedContact &&
-          renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating, enoughBalanceForTransaction),
+        footerTopAddon: !!selectedContact && renderFeeToggle(
+          feeInfo,
+          showFee,
+          errorMessage,
+          isEstimating,
+          enoughBalanceForTransaction,
+          chain,
+        ),
         isLoading: isEstimating,
       }}
     />

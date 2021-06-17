@@ -177,6 +177,7 @@ const EnsMigrationConfirm = () => {
               isLoading={isEstimating}
               gasToken={feeInfo?.gasToken}
               hasError={!!errorMessage}
+              chain={CHAIN.ETHEREUM}
               showFiatDefault
             />
           </FeesWrapper>

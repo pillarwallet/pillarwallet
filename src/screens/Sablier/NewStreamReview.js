@@ -58,7 +58,10 @@ import { themedColors } from 'utils/themes';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
@@ -217,6 +220,7 @@ class NewStreamReview extends React.Component<Props> {
             assetSymbol={assetSymbol}
             text={t('sablierContent.label.youAreStreaming')}
             amount={formatUnits(assetValue, asset.decimals)}
+            chain={CHAIN.ETHEREUM}
           />
           <Spacing h={36} />
           <Table title={t('sablierContent.label.streamDetails')}>
@@ -265,11 +269,9 @@ class NewStreamReview extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   ensRegistry,
   isEstimating,
   feeInfo,
@@ -278,8 +280,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

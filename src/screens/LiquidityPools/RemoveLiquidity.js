@@ -58,6 +58,7 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
@@ -263,6 +264,7 @@ const RemoveLiquidityScreen = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!errorMessage}
+                chain={CHAIN.ETHEREUM}
               />
             )}
             {!!errorMessage && (
@@ -299,11 +301,9 @@ const RemoveLiquidityScreen = ({
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
   liquidityPools: liquidityPoolsState,
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
@@ -312,6 +312,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

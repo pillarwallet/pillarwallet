@@ -59,7 +59,6 @@ import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList } from 'utils/assets';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
@@ -341,7 +340,7 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
   return (dispatch: Dispatch, getState: GetState) => {
     dispatch(resetEstimateTransactionAction());
 
-    const accountAssets = getAssetsAsList(accountAssetsSelector(getState()));
+    const accountAssets = accountAssetsSelector(getState());
     const supportedAssets = supportedAssetsSelector(getState());
 
     const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);

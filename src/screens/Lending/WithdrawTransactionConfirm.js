@@ -45,6 +45,7 @@ import { getAaveWithdrawTransaction } from 'utils/aave';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -105,6 +106,7 @@ const WithdrawTransactionConfirm = ({
           assetSymbol={depositedAssetSymbol}
           text={t('aaveContent.label.youAreWithdrawing')}
           amount={withdrawAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={42} />
         <Table>

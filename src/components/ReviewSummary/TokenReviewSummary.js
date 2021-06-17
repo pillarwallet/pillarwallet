@@ -20,16 +20,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Image from 'components/Image';
+
+// utils
 import { formatTokenAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
+
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+
+// selectors
+import { useChainSupportedAssets } from 'selectors';
+
+// types
 import type { Rates, Asset } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { Chain } from 'models/Chain';
+
 
 type Props = {
   amount: number,
@@ -41,6 +54,7 @@ type Props = {
   theme: Theme,
   assetIcon?: {uri: string} | number,
   fiatAmount?: string,
+  chain: Chain,
 };
 
 const Container = styled.View`
@@ -53,8 +67,17 @@ const TokenImage = styled(Image)`
 `;
 
 export const TokenReviewSummaryComponent = ({
-  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme, assetIcon, fiatAmount,
+  assetSymbol,
+  amount,
+  rates,
+  baseFiatCurrency,
+  text,
+  theme,
+  assetIcon,
+  fiatAmount,
+  chain,
 }: Props) => {
+  const supportedAssets = useChainSupportedAssets(chain);
   const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
   const formattedAmount = formatTokenAmount(amount, assetSymbol);
 
@@ -82,11 +105,9 @@ export const TokenReviewSummaryComponent = ({
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  supportedAssets,
 });
 
 export default withTheme(connect(mapStateToProps)(TokenReviewSummaryComponent));

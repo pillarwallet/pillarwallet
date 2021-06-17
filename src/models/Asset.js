@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { COLLECTIBLES, TOKENS, ETH, USD, EUR, GBP } from 'constants/assetsConstants';
 
 // Types
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export type Currency = typeof USD | typeof EUR | typeof GBP;
 
@@ -62,10 +62,6 @@ export type Asset = {
 
 export type Assets = {
   [symbol: string]: Asset,
-};
-
-export type AssetsByAccount = {
-  [accountId: string]: Assets,
 };
 
 export type AssetsStore = {
@@ -156,3 +152,5 @@ export type AssetDataNavigationParam = {
   decimals: number,
   chain: Chain,
 }
+
+export type SupportedAssetsPerChain = ChainRecord<Asset[]>

@@ -49,7 +49,7 @@ import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
-import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { chainFromChainId } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
@@ -124,7 +124,7 @@ const useTransactionPayload = (request: WalletConnectCallRequest) => {
   const accountAssets = useRootSelector(accountAssetsSelector);
 
   const transactionPayload = React.useMemo(
-    () => mapCallRequestToTransactionPayload(request, getAssetsAsList(accountAssets), supportedAssets),
+    () => mapCallRequestToTransactionPayload(request, accountAssets, supportedAssets),
     [request, accountAssets, supportedAssets],
   );
 

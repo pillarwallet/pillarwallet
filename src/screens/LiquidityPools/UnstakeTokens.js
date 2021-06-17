@@ -34,6 +34,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
 import { LIQUIDITY_POOLS_UNSTAKE_REVIEW } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // models
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
@@ -46,8 +47,10 @@ import { getPoolStats } from 'utils/liquidityPools';
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { calculateUnstakeTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
+// selectors
+import { useChainSupportedAssets } from 'selectors';
+
 // types
-import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
@@ -56,7 +59,6 @@ import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  supportedAssets: Asset[],
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -86,7 +88,6 @@ const FooterInner = styled.View`
 
 const UnstakeTokensScreen = ({
   navigation,
-  supportedAssets,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -94,6 +95,8 @@ const UnstakeTokensScreen = ({
   calculateUnstakeTransactionEstimate,
   liquidityPoolsReducer,
 }: Props) => {
+  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+
   useEffect(() => {
     resetEstimateTransaction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,6 +158,7 @@ const UnstakeTokensScreen = ({
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
                 hasError={!!estimateErrorMessage}
+                chain={CHAIN.ETHEREUM}
               />
             )}
             {!!estimateErrorMessage && (
@@ -187,11 +191,9 @@ const UnstakeTokensScreen = ({
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
   liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,

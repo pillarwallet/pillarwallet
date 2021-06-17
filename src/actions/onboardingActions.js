@@ -45,7 +45,6 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
-import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
@@ -60,12 +59,10 @@ import {
   getEnsPrefix,
   extractUsernameFromEnsName,
 } from 'utils/common';
-import { transformAssetsToObject } from 'utils/assets';
 import { getAccountEnsName } from 'utils/accounts';
 
 // services
 import { navigate } from 'services/navigation';
-import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
 
@@ -77,15 +74,12 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
-import { setRatesAction } from 'actions/ratesActions';
+import { fetchAssetsRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
-import { loadSupportedAssetsAction } from 'actions/assetsActions';
+import { fetchSupportedAssetsAction } from 'actions/assetsActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
-
-// other
-import { initialAssets } from 'fixtures/assets';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -221,17 +215,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       return;
     }
 
-    // set default in case account cannot be created offline
-    const defaultInitialAssets = transformAssetsToObject(initialAssets);
-
-    const defaultAssets = { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: defaultInitialAssets };
-
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching action: ${UPDATE_ASSETS}');
-    dispatch({ type: UPDATE_ASSETS, payload: defaultAssets });
-
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching Db action: saveDbAction for saving assets');
-    dispatch(saveDbAction('assets', { assets: defaultAssets }, true));
-
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
     // all the calls below require user to be online
@@ -245,12 +228,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
-    await dispatch(loadSupportedAssetsAction());
-
-    const rates = await getExchangeRates(defaultInitialAssets);
-
-    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: setRatesAction');
-    dispatch(setRatesAction(rates));
+    await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed
     logBreadcrumb(
@@ -265,6 +243,9 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       'onboardingAction.js: Dispatching etherspotActions action: importEtherspotAccountsAction',
     );
     await dispatch(importEtherspotAccountsAction());
+
+    logBreadcrumb('onboarding', 'onboardingAction.js: Dispatching rates action: fetchAssetsRatesAction');
+    dispatch(fetchAssetsRatesAction());
 
     logBreadcrumb(
       'onboarding',

@@ -39,6 +39,7 @@ import { formatUnits } from 'utils/common';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -81,6 +82,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
           assetSymbol={assetSymbol}
           amount={amount}
           text={summaryTitles[rariPool]}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {(slippage || exchangeFeeBN.gt(0)) && (

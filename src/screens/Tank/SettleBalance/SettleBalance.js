@@ -61,7 +61,7 @@ import { getRate } from 'utils/assets';
 import { getThemeColors } from 'utils/themes';
 
 import { createStructuredSelector } from 'reselect';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -318,7 +318,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

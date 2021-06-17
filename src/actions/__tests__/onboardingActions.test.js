@@ -29,12 +29,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import {
-  DEFAULT_ACCOUNTS_ASSETS_DATA_KEY,
-  SET_INITIAL_ASSETS,
-  UPDATE_ASSETS,
-  UPDATE_SUPPORTED_ASSETS,
-} from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 
@@ -45,15 +40,9 @@ import {
   setupWalletAction,
 } from 'actions/onboardingActions';
 
-// utils
-import { transformAssetsToObject } from 'utils/assets';
-
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
-
-// other
-import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 // test utils
 import {
@@ -236,24 +225,13 @@ describe('Onboarding actions', () => {
     });
 
     const expectedActions = [
-      {
-        type: UPDATE_ASSETS,
-        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
-      },
-      { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
+      { type: SET_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: UPDATE_RATES, payload: mockExchangeRates },
 
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
       { type: UPDATE_ACCOUNTS, payload: [mockNewEtherspotAccount] },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockEtherspotAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
 
       {
         type: SET_FETCHING_HISTORY,
@@ -298,11 +276,7 @@ describe('Onboarding actions', () => {
     });
 
     const expectedActions = [
-      {
-        type: UPDATE_ASSETS,
-        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
-      },
-      { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
+      { type: SET_SUPPORTED_ASSETS, payload: mockSupportedAssets },
       { type: UPDATE_RATES, payload: mockExchangeRates },
 
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
@@ -310,23 +284,9 @@ describe('Onboarding actions', () => {
       // archanova
       { type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: [mockArchanovaAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount] },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockArchanovaAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
 
       // etherspot
       { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount, mockNewEtherspotAccount] },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockEtherspotAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
 
       {
         type: SET_FETCHING_HISTORY,
@@ -360,12 +320,7 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
     });
 
-    const expectedActions = [
-      {
-        type: UPDATE_ASSETS,
-        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
-      },
-    ];
+    const expectedActions = [];
 
     return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {

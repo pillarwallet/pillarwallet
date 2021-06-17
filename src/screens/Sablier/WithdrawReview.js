@@ -32,7 +32,10 @@ import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
 import { findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { getSablierWithdrawTransaction } from 'services/sablier';
@@ -41,6 +44,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -101,6 +105,7 @@ const WithdrawReview = ({
           assetSymbol={assetData.symbol}
           text={t('sablierContent.label.youAreWithdrawing')}
           amount={withdrawAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={42} />
         <Table>
@@ -130,15 +135,14 @@ const WithdrawReview = ({
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
-  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   accountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

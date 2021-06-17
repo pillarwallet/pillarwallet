@@ -25,17 +25,11 @@ import { BigNumber } from 'bignumber.js';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
-  UPDATE_ASSETS,
-  START_ASSETS_SEARCH,
-  UPDATE_ASSETS_SEARCH_RESULT,
-  RESET_ASSETS_SEARCH_RESULT,
   ETH,
-  UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
-  PLR,
-  BTC,
   USD,
   ASSET_CATEGORY,
+  SET_CHAIN_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
@@ -52,9 +46,6 @@ import {
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
-
-// components
-import Toast from 'components/Toast';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -73,7 +64,6 @@ import { parseTokenAmount, reportErrorLog } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
-  getActiveAccountId,
   getAccountAddress,
   getAccountId,
   isNotKeyBasedType,
@@ -87,7 +77,6 @@ import { catchTransactionError } from 'utils/wallet';
 import { sumBy } from 'utils/bigNumber';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
 import {
   accountsSelector,
   supportedAssetsSelector,
@@ -96,7 +85,6 @@ import {
 } from 'selectors';
 
 // types
-import type { Asset, AssetsByAccount } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
@@ -104,12 +92,10 @@ import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
 // actions
-import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
-import { showAssetAction } from './userSettingsActions';
-import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
+import { fetchAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 
@@ -372,7 +358,8 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
     await Promise.all(chains.map(async (chain) => {
       let newBalances = [];
       try {
-        newBalances = await etherspotService.getBalances(chain, walletAddress, supportedAssets);
+        const chainSupportedAssets = supportedAssets[chain] ?? [];
+        newBalances = await etherspotService.getBalances(chain, walletAddress, chainSupportedAssets);
       } catch (error) {
         reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
           accountId,
@@ -564,7 +551,7 @@ export const fetchAssetsBalancesAction = () => {
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     await dispatch(fetchAccountWalletBalancesAction(activeAccount));
-    dispatch(fetchAccountAssetsRatesAction());
+    dispatch(fetchAssetsRatesAction());
 
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
@@ -608,7 +595,7 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
       dispatch(resetAccountAssetsBalancesAction(getAccountId(keyBasedAccount)));
     }
 
-    dispatch(fetchAllAccountsAssetsRatesAction());
+    dispatch(fetchAssetsRatesAction());
 
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
@@ -616,210 +603,26 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
   };
 };
 
-export const addMultipleAssetsAction = (assetsToAdd: Asset[]) => {
-  return async (dispatch: Dispatch, getState: () => Object) => {
-    const {
-      assets: { data: assets },
-      accounts: { data: accounts },
-    } = getState();
-
-    const accountId = getActiveAccountId(accounts);
-    if (!accountId) return;
-
-    const accountAssets = accountAssetsSelector(getState());
-    const updatedAssets = {
-      ...assets,
-      [accountId]: {
-        ...accountAssets,
-        ...assetsToAdd.reduce((newAssets, asset) => ({ ...newAssets, [asset.symbol]: { ...asset } }), {}),
-      },
-    };
-
-    assetsToAdd.forEach(asset => {
-      dispatch(showAssetAction(asset));
-    });
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-
-    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
-
-    dispatch(fetchAssetsBalancesAction());
-
-    assetsToAdd.forEach(asset => {
-      dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
-    });
-  };
-};
-
-export const addAssetAction = (asset: Asset) => {
-  return async (dispatch: Dispatch, getState: () => Object) => {
-    const {
-      assets: { data: assets },
-      accounts: { data: accounts },
-    } = getState();
-
-    const accountId = getActiveAccountId(accounts);
-    if (!accountId) return;
-
-    const accountAssets = accountAssetsSelector(getState());
-    const updatedAssets = {
-      ...assets,
-      [accountId]: { ...accountAssets, [asset.symbol]: { ...asset } },
-    };
-
-    dispatch(showAssetAction(asset));
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-
-    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
-
-    Toast.show({
-      message: t('toast.assetAdded', { assetName: asset.name, assetSymbol: asset.symbol }),
-      emoji: 'ok_hand',
-      autoClose: true,
-    });
-
-    dispatch(fetchAssetsBalancesAction());
-
-    dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
-  };
-};
-
-export const updateAssetsSearchResultAction = (assets: Asset[]) => ({
-  type: UPDATE_ASSETS_SEARCH_RESULT,
-  payload: assets,
-});
-
-export const searchAssetsAction = (query: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { assets: { supportedAssets } } = getState();
-    const search = query.toUpperCase();
-
-    let matchingAssets = supportedAssets.filter(({
-      name,
-      symbol,
-    }) => name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search));
-
-    if (matchingAssets?.length > 0) {
-      dispatch(updateAssetsSearchResultAction(matchingAssets));
-      return;
-    }
-
-    dispatch({ type: START_ASSETS_SEARCH });
-
-    const latestSupportedAssets = await etherspotService.getSupportedAssets();
-    if (!latestSupportedAssets) {
-      reportErrorLog('searchAssetsAction failed: no latestSupportedAssets', { query });
-      dispatch(updateAssetsSearchResultAction([]));
-      return;
-    }
-
-    matchingAssets = latestSupportedAssets.filter(({
-      name,
-      symbol,
-    }) => name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search));
-
-    dispatch(updateAssetsSearchResultAction(matchingAssets));
-  };
-};
-
-export const resetSearchAssetsResultAction = () => ({
-  type: RESET_ASSETS_SEARCH_RESULT,
-});
-
-export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
-  const accountId = getAccountId(account);
-  const accountAssets = accountsAssets[accountId] ?? {};
-  const accountAssetsTickers = Object.keys(accountAssets);
-
-  // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
-  if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
-  if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-  // remove BTC if it is already shown in SW/KW
-  const updatedAccountAssets = supportedAssets
-    .filter(({ symbol }) => accountAssetsTickers.includes(symbol) && symbol !== BTC)
-    .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-  // $FlowFixMe: flow update to 0.122
-  return { id: accountId, ...updatedAccountAssets };
-};
-
-export const loadSupportedAssetsAction = () => {
+export const fetchSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isOnline } } } = getState();
 
     // nothing to do if offline
     if (!isOnline) return;
 
-    const supportedAssets = await etherspotService.getSupportedAssets();
+    await Promise.all(Object.keys(CHAIN).map(async (chainKey) => {
+      const chain = CHAIN[chainKey];
+      const chainSupportedAssets = await etherspotService.getChainSupportedAssets(chain);
+      // nothing to do if returned empty
+      if (isEmpty(chainSupportedAssets)) return;
 
-    // nothing to do if returned empty
-    if (isEmpty(supportedAssets)) return;
-
-    dispatch({
-      type: UPDATE_SUPPORTED_ASSETS,
-      payload: supportedAssets,
-    });
-    dispatch(saveDbAction('supportedAssets', { supportedAssets }, true));
-  };
-};
-
-// TODO: handle side chain balances
-export const checkForMissedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      assets: { data: accountsAssets },
-    } = getState();
-
-    await dispatch(loadSupportedAssetsAction());
-    const supportedAssets = supportedAssetsSelector(getState());
-
-    const accountUpdatedAssets = accounts
-      .filter(isNotKeyBasedType)
-      .map((acc) => getSupportedTokens(supportedAssets, accountsAssets, acc))
-      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
-
-    // check tx history if some assets are not enabled
-    const ownedAssetsByAccounts = await Promise.all(
-      accounts
-        .filter(isNotKeyBasedType)
-        .map(async (account) => {
-          const accountAddress = getAccountAddress(account);
-          const accountId = getAccountId(account);
-          // TODO: refactor whole checkForMissedAssetsAction
-          // $FlowFixMe: didn't refactor existing code, flow is messing up due obvious reasons
-          const ownedAssets = await etherspotService.getOwnedAssets(CHAIN.ETHEREUM, accountAddress, supportedAssets);
-          return { id: accountId, ...ownedAssets };
-        }),
-    );
-
-    const allAccountAssets = ownedAssetsByAccounts
-      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
-
-    const updatedAssets = Object.keys(accountUpdatedAssets)
-      .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
-      .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
-
-    let newAssetsFound = false;
-    Object.keys(updatedAssets).forEach(account => {
-      if (!accountsAssets[account] || !updatedAssets[account]) {
-        newAssetsFound = true;
-        return;
-      }
-
-      const assetsInAccountBefore = Object.keys(accountsAssets[account]).length;
-      const assetsInAccountAfter = Object.keys(updatedAssets[account]).length;
-
-      if (assetsInAccountBefore !== assetsInAccountAfter) {
-        newAssetsFound = true;
-      }
-    });
-
-    if (newAssetsFound) {
       dispatch({
-        type: UPDATE_ASSETS,
-        payload: updatedAssets,
+        type: SET_CHAIN_SUPPORTED_ASSETS,
+        payload: { chain, assets: chainSupportedAssets },
       });
-      dispatch(fetchAssetsBalancesAction());
-      dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-    }
+    }));
+
+    const updatedSupportedAssets = supportedAssetsSelector(getState());
+    dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
   };
 };

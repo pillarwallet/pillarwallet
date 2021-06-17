@@ -82,7 +82,13 @@ const renderFeeToggle = (
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
+      <FeeLabelToggle
+        txFeeInWei={fee}
+        gasToken={gasToken}
+        isLoading={isLoading}
+        hasError={!enoughBalance}
+        chain={CHAIN.ETHEREUM}
+      />
       {!!feeError && <BaseText style={{ marginTop: 15 }} center secondary>{feeError}</BaseText>}
     </>
   );

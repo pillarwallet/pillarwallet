@@ -41,6 +41,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -93,6 +94,7 @@ const RariTransferReviewScreen = ({
           text={t('rariContent.label.youAreTransferring')}
           assetIcon={rariLogo}
           fiatAmount={formattedFiatAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         <Table title={t('rariContent.label.transferDetails')}>

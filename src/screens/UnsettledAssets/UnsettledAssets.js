@@ -45,7 +45,7 @@ import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
 import type { Assets } from 'models/Asset';
@@ -142,7 +142,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

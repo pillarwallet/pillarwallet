@@ -45,6 +45,7 @@ import { getAaveDepositTransactions } from 'utils/aave';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetToDeposit } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import { CHAIN } from 'constants/chainConstants';
 
 
 type Props = {
@@ -115,6 +116,7 @@ const DepositTransactionConfirm = ({
           assetSymbol={depositAssetSymbol}
           text={t('aaveContent.label.youAreAdding')}
           amount={depositAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={42} />
         <Table>
