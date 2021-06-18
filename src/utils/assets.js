@@ -20,14 +20,13 @@
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
-import { keyBy, orderBy, mapValues, get } from 'lodash';
+import { orderBy, mapValues, get } from 'lodash';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 

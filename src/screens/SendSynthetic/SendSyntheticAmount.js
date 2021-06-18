@@ -56,7 +56,6 @@ import archanovaService from 'services/archanova';
 
 // selectors
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
-import type { Chain } from 'models/Chain';
 
 type Props = {
   navigation: NavigationScreenProp<any>,
