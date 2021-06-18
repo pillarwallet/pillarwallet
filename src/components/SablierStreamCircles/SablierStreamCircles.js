@@ -83,10 +83,10 @@ const SablierStreamCircles = ({ stream }: Props) => {
   const theme = useTheme();
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const assets = useRootSelector(accountEthereumAssetsSelector);
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const colors = getThemeColors(theme);
 
-  const assetData = getAssetDataByAddress(getAssetsAsList(assets), supportedAssets, stream.token.id);
+  const assetData = getAssetDataByAddress(getAssetsAsList(assets), ethereumSupportedAssets, stream.token.id);
   const decimalPlaces = getDecimalPlaces(assetData.symbol);
 
   const streamProgress = getStreamProgress(stream);

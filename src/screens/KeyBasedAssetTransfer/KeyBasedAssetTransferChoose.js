@@ -103,7 +103,7 @@ const KeyBasedAssetTransferChoose = ({
   keyBasedAssetsToTransfer,
   calculateTransactionsGas,
 }: Props) => {
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const navigation = useNavigation();
 
   const onAvailableBalancesRefresh = () => {
@@ -135,7 +135,7 @@ const KeyBasedAssetTransferChoose = ({
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => getAssetData(supportedAssets, [], symbol))
+      .map((symbol) => getAssetData(ethereumSupportedAssets, [], symbol))
       .filter((assetData) => !isEmpty(assetData))
       .map(mapAssetToAssetData);
 

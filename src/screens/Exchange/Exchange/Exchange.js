@@ -82,20 +82,20 @@ function Exchange() {
   const [fromAmount]: [string] = useDebounce(rawFromAmount, 500);
 
   const chainConfig = useChainConfig(CHAIN.ETHEREUM);
-  const chainSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
   const fromOptions = React.useMemo(
-    () => getExchangeFromAssetOptions(assets, chainSupportedAssets, balances, fiatCurrency, rates),
-    [assets, chainSupportedAssets, balances, fiatCurrency, rates],
+    () => getExchangeFromAssetOptions(assets, ethereumSupportedAssets, balances, fiatCurrency, rates),
+    [assets, ethereumSupportedAssets, balances, fiatCurrency, rates],
   );
 
   const toOptions = React.useMemo(() => getExchangeToAssetOptions(
-    chainSupportedAssets,
+    ethereumSupportedAssets,
     balances,
     fiatCurrency,
     rates,
   ), [
-    chainSupportedAssets,
+    ethereumSupportedAssets,
     balances,
     fiatCurrency,
     rates,
