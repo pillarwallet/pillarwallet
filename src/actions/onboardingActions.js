@@ -101,12 +101,12 @@ export const setupUserAction = (username: ?string) => {
       return;
     }
 
-    logBreadcrumb('onboarding', 'setupUserAction: dispatching ${SET_REGISTERING_USER}');
+    logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_REGISTERING_USER');
     dispatch({ type: SET_REGISTERING_USER, payload: true });
 
     logBreadcrumb(
       'onboarding',
-      'setupUserAction: dispatching ${SET_ONBOARDING_USERNAME_REGISTRATION_FAILED}',
+      'setupUserAction: dispatching SET_ONBOARDING_USERNAME_REGISTRATION_FAILED',
     );
     dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false }); // reset
 
