@@ -65,14 +65,15 @@ export const totalBalancesSelector: Selector<TotalBalances> = createSelector(
   (root: RootReducerState) => root.totalBalances.data,
   (walletBalances: WalletTotalBalances, storeBalances: StoreTotalBalances): TotalBalances => {
     const wrappedWalletBalances = mapRecordValues(walletBalances, (wallet: ChainRecord<BigNumber>) => ({ wallet }));
-    return merge(storeBalances, wrappedWalletBalances);
+    return merge({}, storeBalances, wrappedWalletBalances);
   },
 );
 
 export const accountTotalBalancesSelector: Selector<AccountTotalBalances> = createSelector(
   activeAccountIdSelector,
   totalBalancesSelector,
-  (accountId: string, totalBalancesPerAccount: TotalBalances): AccountTotalBalances => {
+  (accountId: ?string, totalBalancesPerAccount: TotalBalances): AccountTotalBalances => {
+    if (!accountId) return {};
     return totalBalancesPerAccount[accountId] ?? {};
   },
 );
