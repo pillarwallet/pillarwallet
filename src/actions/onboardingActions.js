@@ -269,12 +269,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     logBreadcrumb(
       'onboarding',
-      'setupAppServicesAction: dispatching importEtherspotAccountsAction',
-    );
-    await dispatch(importEtherspotAccountsAction());
-
-    logBreadcrumb(
-      'onboarding',
       'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction',
     );
     await dispatch(fetchAllAccountsTotalBalancesAction());
