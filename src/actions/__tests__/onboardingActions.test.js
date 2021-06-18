@@ -233,6 +233,7 @@ describe('Onboarding actions', () => {
       assetsBalances: { data: {} },
       rates: { data: {} },
       badges: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
@@ -295,6 +296,7 @@ describe('Onboarding actions', () => {
       rates: { data: {} },
       badges: { data: [] },
       userEvents: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
