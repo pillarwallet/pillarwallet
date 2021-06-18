@@ -48,7 +48,7 @@ import {
   activeAccountAddressSelector,
   supportedAssetsPerChainSelector,
 } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
@@ -78,7 +78,7 @@ function WalletTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
   const accountAddress = useRootSelector(activeAccountAddressSelector);

@@ -30,7 +30,7 @@ import {
   useRootSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // Constants
@@ -88,7 +88,7 @@ function ChainHistoryView({ chain }: { chain: Chain }) {
 function useHistoryEvents(chain: Chain): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
   const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
   const chainSupportedAssets = supportedAssets[chain] ?? [];

@@ -40,7 +40,7 @@ import {
   supportedAssetsPerChainSelector,
   useActiveAccount,
 } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
@@ -121,7 +121,7 @@ export default TransactionRequestContent;
 
 const useTransactionPayload = (request: WalletConnectCallRequest) => {
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
 
   const transactionPayload = React.useMemo(
     () => mapCallRequestToTransactionPayload(request, accountAssets, supportedAssets),

@@ -34,7 +34,7 @@ import {
 import { reportErrorLog } from 'utils/common';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // models, types
@@ -91,7 +91,7 @@ export const fetchSingleChainAssetRatesAction = (
   assetCode: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountAssetsPerChainSelector(getState());
     const chainAccountAssets = accountAssets[chain] ?? {};
 
     const supportedAssets = supportedAssetsPerChainSelector(getState());

@@ -49,7 +49,7 @@ import {
   supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -322,7 +322,7 @@ const handleGatewayBatchUpdatedNotification = async (
     dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
   }
 
-  const accountAssets = accountAssetsSelector(getState());
+  const accountAssets = accountAssetsPerChainSelector(getState());
   const chainAccountAssets = accountAssets[chain] ?? {};
 
   const supportedAssets = supportedAssetsPerChainSelector(getState());

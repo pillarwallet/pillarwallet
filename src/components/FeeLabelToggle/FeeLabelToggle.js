@@ -41,7 +41,7 @@ import { getGasSymbol } from 'utils/transactions';
 
 // selectors
 import { useRootSelector, useRates, useFiatCurrency } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { isGasTokenSupportedSelector } from 'selectors/archanova';
 
@@ -74,7 +74,7 @@ const FeeLabelToggle = ({
 }: Props) => {
   const rates = useRates();
   const fiatCurrency = useFiatCurrency();
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
   const isGasTokenSupported = useRootSelector(isGasTokenSupportedSelector);
 

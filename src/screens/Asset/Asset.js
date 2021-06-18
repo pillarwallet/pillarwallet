@@ -74,7 +74,7 @@ import {
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // models, types
 import type { AssetsBySymbol, AssetsPerChain, Rates, AssetDataNavigationParam } from 'models/Asset';
@@ -88,7 +88,7 @@ import type { ChainRecord } from 'models/Chain';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssets: ChainRecord<AssetsBySymbol>,
+  accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
   accountAssetsBalances: CategoryBalancesPerChain,
   rates: Rates,
   baseFiatCurrency: ?string,
@@ -97,7 +97,7 @@ type Props = {
   activeAccount: ?Account,
   accountHistory: ChainRecord<Transaction[]>,
   activeAccountAddress: string,
-  supportedAssets: AssetsPerChain,
+  supportedAssetsPerChain: AssetsPerChain,
 };
 
 const AssetCardWrapper = styled.View`
@@ -156,8 +156,8 @@ const AssetScreen = ({
   accountHistory,
   accountAssetsBalances,
   activeAccount,
-  accountAssets,
-  supportedAssets,
+  accountAssetsPerChain,
+  supportedAssetsPerChain,
 }: Props) => {
   const navigation = useNavigation();
 
@@ -171,8 +171,8 @@ const AssetScreen = ({
 
   const transactions = useMemo(
     () => {
-      const chainSupportedAssets = supportedAssets[chain] ?? [];
-      const chainAccountAssets = accountAssets[chain] ?? {};
+      const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+      const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
 
       if (isArchanovaAccount(activeAccount)) {
         return tokenTransactions.filter(({
@@ -207,9 +207,9 @@ const AssetScreen = ({
       chain,
       accounts,
       activeAccount,
-      accountAssets,
+      accountAssetsPerChain,
       activeAccountAddress,
-      supportedAssets,
+      supportedAssetsPerChain,
     ],
   );
 
@@ -328,10 +328,10 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
   accountHistory: accountHistorySelector,
-  accountAssets: accountAssetsSelector,
+  accountAssetsPerChain: accountAssetsPerChainSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  supportedAssets: supportedAssetsPerChainSelector,
+  supportedAssetsPerChain: supportedAssetsPerChainSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

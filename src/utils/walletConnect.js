@@ -117,8 +117,8 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
 
 export const mapCallRequestToTransactionPayload = (
   callRequest: WalletConnectCallRequest,
-  accountAssets: ChainRecord<AssetsBySymbol>,
-  supportedAssets: AssetsPerChain,
+  accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
+  supportedAssetsPerChain: AssetsPerChain,
 ): $Shape<TransactionPayload> => {
   const [{ value = 0, data }] = callRequest.params;
   let [{ to }] = callRequest.params;
@@ -126,8 +126,8 @@ export const mapCallRequestToTransactionPayload = (
   const { chainId } = callRequest;
   const chain = chainFromChainId[chainId];
 
-  const chainSupportedAssets = supportedAssets[chain] ?? [];
-  const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
+  const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+  const chainAccountAssets = getAssetsAsList(accountAssetsPerChain[chain] ?? {});
 
   // to address can be either token contract (transfer data) or other kind of contract
   const assetData = isTokenTransfer(data) && to

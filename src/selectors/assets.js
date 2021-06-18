@@ -68,7 +68,7 @@ export const ethereumSupportedAssetsSelector = createSelector(
 );
 
 
-export const accountAssetsSelector = createSelector(
+export const accountAssetsPerChainSelector = createSelector(
   accountAssetsBalancesSelector,
   supportedAssetsPerChainSelector,
   (

@@ -51,7 +51,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 
 // selectors
 import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
@@ -340,7 +340,7 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
   return (dispatch: Dispatch, getState: GetState) => {
     dispatch(resetEstimateTransactionAction());
 
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountAssetsPerChainSelector(getState());
     const supportedAssets = supportedAssetsPerChainSelector(getState());
 
     const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
