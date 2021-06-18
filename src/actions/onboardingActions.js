@@ -81,7 +81,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
-import { loadSupportedAssetsAction } from 'actions/assetsActions';
+import { loadSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { getTutorialDataAction } from 'actions/cmsActions';
 import { initialDeeplinkExecutedAction } from 'actions/appSettingsActions';
 
@@ -272,6 +272,12 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       'setupAppServicesAction: dispatching importEtherspotAccountsAction',
     );
     await dispatch(importEtherspotAccountsAction());
+
+    logBreadcrumb(
+      'onboarding',
+      'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction',
+    );
+    await dispatch(fetchAllAccountsTotalBalancesAction());
 
     logBreadcrumb(
       'onboarding',
