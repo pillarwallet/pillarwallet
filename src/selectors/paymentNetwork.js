@@ -36,7 +36,7 @@ import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, AssetsBySymbol } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
@@ -101,7 +101,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
   archanovaAccountEthereumHistorySelector,
   supportedAssetsPerChainSelector,
   accountEthereumAssetsSelector,
-  (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
+  (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: AssetsBySymbol) => {
     return PPNTransactions
       .filter(({
         hash,

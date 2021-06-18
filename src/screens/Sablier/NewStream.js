@@ -60,7 +60,7 @@ import {
 
 // types
 import type {
-  Assets,
+  AssetsBySymbol,
   AssetOption,
   Asset,
 } from 'models/Asset';
@@ -74,7 +74,7 @@ import SablierDatePicker from './SablierDatePicker';
 type Props = {
   ethereumSupportedAssets: Asset[],
   activeAccountAddress: string,
-  assets: Assets,
+  assets: AssetsBySymbol,
   assetsWithBalance: AssetOption[],
   navigation: NavigationScreenProp<*>,
 };

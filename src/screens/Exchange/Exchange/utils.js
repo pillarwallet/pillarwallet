@@ -27,11 +27,11 @@ import { ETH } from 'constants/assetsConstants';
 import { getBalance, sortAssets, getAssetOption } from 'utils/assets';
 
 // Types
-import type { Rates, Asset, Assets, AssetOption, Currency } from 'models/Asset';
+import type { Rates, Asset, AssetsBySymbol, AssetOption, Currency } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 export const getExchangeFromAssetOptions = (
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   balances: WalletAssetsBalances,
   currency: Currency,

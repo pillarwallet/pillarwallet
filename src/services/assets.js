@@ -51,7 +51,7 @@ import {
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Assets } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 
 
 type Address = string;
@@ -338,7 +338,7 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
     });
 }
 
-export async function getExchangeRates(assets: Assets): Promise<?Object> {
+export async function getExchangeRates(assets: AssetsBySymbol): Promise<?Object> {
   const assetSymbols = Object.keys(assets);
 
   if (isEmpty(assetSymbols)) {

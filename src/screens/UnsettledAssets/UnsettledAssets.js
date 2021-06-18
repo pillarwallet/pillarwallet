@@ -48,14 +48,14 @@ import {
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
-import type { Assets } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
   baseFiatCurrency: string,
-  assets: Assets,
+  assets: AssetsBySymbol,
   rates: Object,
   paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,

@@ -29,7 +29,7 @@ import { getExchangeRates } from 'services/assets';
 import {
   getAssetData,
   getAssetsAsList,
-  mapWalletAssetsBalancesIntoAssets,
+  mapWalletAssetsBalancesIntoAssetsBySymbol,
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 
@@ -68,7 +68,7 @@ export const fetchAssetsRatesAction = () => {
       const accountAssets = Object.keys(accountAssetsBalances).reduce((assets, chain) => {
         const chainSupportedAssets = supportedAssets[chain] ?? [];
         const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
-        const mapped = mapWalletAssetsBalancesIntoAssets(walletAssets, chainSupportedAssets);
+        const mapped = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
         // $FlowFixMe
         return { ...assets, ...mapped };
       }, {});

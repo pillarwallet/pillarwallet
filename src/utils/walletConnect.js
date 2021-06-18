@@ -53,7 +53,7 @@ import type {
   WalletConnectSession,
 } from 'models/WalletConnect';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Assets, SupportedAssetsPerChain } from 'models/Asset';
+import type { AssetsBySymbol, AssetsPerChain } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
 
 
@@ -117,8 +117,8 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
 
 export const mapCallRequestToTransactionPayload = (
   callRequest: WalletConnectCallRequest,
-  accountAssets: ChainRecord<Assets>,
-  supportedAssets: SupportedAssetsPerChain,
+  accountAssets: ChainRecord<AssetsBySymbol>,
+  supportedAssets: AssetsPerChain,
 ): $Shape<TransactionPayload> => {
   const [{ value = 0, data }] = callRequest.params;
   let [{ to }] = callRequest.params;

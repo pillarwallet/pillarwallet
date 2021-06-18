@@ -567,7 +567,7 @@ export class EtherspotService {
       });
   }
 
-  async getChainSupportedAssets(chain: Chain): Promise<?(Asset[])> {
+  async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });

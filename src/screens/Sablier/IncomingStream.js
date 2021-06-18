@@ -56,7 +56,7 @@ import {
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, AssetsBySymbol } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 
@@ -65,7 +65,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
-  assets: Assets,
+  assets: AssetsBySymbol,
   history: Transaction[],
   sablierEvents: Object[],
   accounts: Account[],

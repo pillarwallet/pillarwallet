@@ -175,7 +175,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
+import type { Rates, AssetsBySymbol, Asset, DepositedAsset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
@@ -212,7 +212,7 @@ type SelectorProps = {|
   isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
-  accountAssets: Assets,
+  accountAssets: AssetsBySymbol,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectiblesHistoryStore,

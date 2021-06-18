@@ -67,13 +67,13 @@ import { NotEnoughLiquidityError } from 'services/0x';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetOption, Assets } from 'models/Asset';
+import type { Asset, AssetOption, AssetsBySymbol } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
-  assets: Assets,
+  assets: AssetsBySymbol,
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,

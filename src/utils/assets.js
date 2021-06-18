@@ -35,11 +35,11 @@ import { nativeAssetPerChain } from 'utils/chains';
 import type {
   Asset,
   AssetData,
-  Assets,
+  AssetsBySymbol,
   AssetOption,
   AssetOptionBalance,
   Rates,
-  SupportedAssetsPerChain,
+  AssetsPerChain,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
@@ -56,7 +56,7 @@ export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
 };
 
-export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
+export const transformAssetsToObject = (assetsArray: Asset[] = []): AssetsBySymbol => {
   return assetsArray.reduce((memo, asset) => {
     memo[asset.symbol] = asset;
     return memo;
@@ -70,11 +70,11 @@ export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = 
   }, {});
 };
 
-export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
+export const getAssetsAsList = (assetsObject: AssetsBySymbol): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
 };
 
-export const sortAssets = (assets: Assets): Asset[] => {
+export const sortAssets = (assets: AssetsBySymbol): Asset[] => {
   const assetsList = getAssetsAsList(assets);
 
   return sortAssetsArray(assetsList);
@@ -246,7 +246,7 @@ export const getTotalBalanceInFiat = (balances: WalletAssetsBalances, rates: Rat
   return get(ethRates, currency, 0) * balanceInEth(balances, rates);
 };
 
-export const getPPNTokenAddress = (token: string, assets: Assets): ?string => {
+export const getPPNTokenAddress = (token: string, assets: AssetsBySymbol): ?string => {
   if (token === ETH) return null;
 
   return get(assets[token], 'address', '');
@@ -270,11 +270,6 @@ export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?str
 
 export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
   return supportedAssets.find((asset) => asset.symbol === symbol);
-};
-
-export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
-  const assets = mapNotNil(symbols, symbol => findSupportedAssetBySymbol(supportedAssets, symbol));
-  return keyBy(assets, (asset) => asset.symbol);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -474,14 +469,14 @@ export const isMatchingCollectible = (
   && a.id
   && a.id === b.id;
 
-export const mapWalletAssetsBalancesIntoAssets = (
+export const mapWalletAssetsBalancesIntoAssetsBySymbol = (
   walletAssetsBalances: WalletAssetsBalances,
   chainSupportedAssets: Asset[],
-): Assets => mapValues(
+): AssetsBySymbol => mapValues(
   walletAssetsBalances,
   ({ symbol }) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
 );
 
 export const sortSupportedAssets = (
-  supportedChainAssets: SupportedAssetsPerChain,
+  supportedChainAssets: AssetsPerChain,
 ) => mapValues(supportedChainAssets, sortAssetsArray);

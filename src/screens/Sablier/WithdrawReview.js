@@ -52,7 +52,7 @@ import { getSablierWithdrawTransaction } from 'services/sablier';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
@@ -62,7 +62,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
   ensRegistry: EnsRegistry,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
 };
 

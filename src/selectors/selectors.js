@@ -30,7 +30,7 @@ import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { SupportedAssetsPerChain } from 'models/Asset';
+import type { AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 
@@ -80,7 +80,7 @@ export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => syn
 
 export const supportedAssetsPerChainSelector = (
   root: RootReducerState,
-): SupportedAssetsPerChain => root.assets.supportedAssets ?? {};
+): AssetsPerChain => root.assets.supportedAssets ?? {};
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

@@ -24,10 +24,10 @@ import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/asse
 import { sortAssetsArray, sortSupportedAssets } from 'utils/assets';
 
 // types
-import type { SupportedAssetsPerChain } from 'models/Asset';
+import type { AssetsPerChain } from 'models/Asset';
 
 export type AssetsReducerState = {
-  supportedAssets: SupportedAssetsPerChain,
+  supportedAssets: AssetsPerChain,
 };
 
 export type AssetsReducerAction = {

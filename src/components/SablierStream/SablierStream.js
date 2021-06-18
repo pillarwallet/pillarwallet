@@ -53,7 +53,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Stream } from 'models/Sablier';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 
 
@@ -63,7 +63,7 @@ type Props = {
   activeAccountAddress: string,
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
-  assets: Assets,
+  assets: AssetsBySymbol,
   theme: Theme,
 };
 

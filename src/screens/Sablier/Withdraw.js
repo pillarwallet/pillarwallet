@@ -60,7 +60,7 @@ import { fetchStreamBalance } from 'services/sablier';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -68,7 +68,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   calculateSablierWithdrawTransactionEstimate: (stream: Stream, amount: EthersBigNumber, asset: Asset) => void,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,

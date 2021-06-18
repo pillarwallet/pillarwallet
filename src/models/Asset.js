@@ -55,7 +55,7 @@ export type Asset = {
   decimals: number,
 };
 
-export type Assets = {
+export type AssetsBySymbol = {
   [symbol: string]: Asset,
 };
 
@@ -148,4 +148,4 @@ export type AssetDataNavigationParam = {
   chain: Chain,
 }
 
-export type SupportedAssetsPerChain = ChainRecord<Asset[]>
+export type AssetsPerChain = ChainRecord<Asset[]>

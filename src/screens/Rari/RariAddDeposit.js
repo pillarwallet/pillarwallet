@@ -68,13 +68,13 @@ import { usePoolCurrentApy } from 'services/rariSdk';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates, Asset, Assets, AssetOption } from 'models/Asset';
+import type { Rates, Asset, AssetsBySymbol, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 
 type Props = {
-  assets: Assets,
+  assets: AssetsBySymbol,
   visibleAssets: AssetOption[],
   navigation: NavigationScreenProp<*>,
   calculateRariDepositTransactionEstimate: (Object[]) => void,

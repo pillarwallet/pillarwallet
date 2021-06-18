@@ -31,7 +31,7 @@ import httpRequest from 'utils/httpRequest';
 import { type Record, mapRecordKeys } from 'utils/object';
 
 // Types
-import type { Asset, Assets, Rates, RateEntry, RateKey } from 'models/Asset';
+import type { Asset, AssetsBySymbol, Rates, RateEntry, RateKey } from 'models/Asset';
 
 // { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
 type CoinGeckoPriceEntry = Record<number>;
@@ -65,7 +65,7 @@ const mapWalletAndCoinGeckoAssetsPrices = (
   return mappedResponseData;
 }, {});
 
-export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Rates> => {
+export const getCoinGeckoTokenPrices = async (assets: AssetsBySymbol): Promise<?Rates> => {
   const assetsList = getAssetsAsList(assets);
 
   // ether does not fit into token price endpoint

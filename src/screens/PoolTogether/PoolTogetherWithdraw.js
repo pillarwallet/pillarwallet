@@ -46,7 +46,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // models
 import type { Account } from 'models/Account';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -100,7 +100,7 @@ type Props = {
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,

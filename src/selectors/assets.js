@@ -29,15 +29,15 @@ import {
   getBalanceBN,
   getBalanceInFiat,
   getFormattedBalanceInFiat,
-  mapWalletAssetsBalancesIntoAssets,
+  mapWalletAssetsBalancesIntoAssetsBySymbol,
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 
 // types
 import type {
-  SupportedAssetsPerChain,
+  AssetsPerChain,
   Rates,
-  Assets,
+  AssetsBySymbol,
   Asset,
 } from 'models/Asset';
 import type {
@@ -64,7 +64,7 @@ import {
 
 export const ethereumSupportedAssetsSelector = createSelector(
   supportedAssetsPerChainSelector,
-  (supportedAssets: SupportedAssetsPerChain): Asset[] => supportedAssets?.ethereum ?? [],
+  (supportedAssets: AssetsPerChain): Asset[] => supportedAssets?.ethereum ?? [],
 );
 
 
@@ -73,10 +73,10 @@ export const accountAssetsSelector = createSelector(
   supportedAssetsPerChainSelector,
   (
     accountAssetsBalances: CategoryBalancesPerChain,
-    supportedAssets: SupportedAssetsPerChain,
-  ): ChainRecord<Assets> => mapValues(
+    supportedAssets: AssetsPerChain,
+  ): ChainRecord<AssetsBySymbol> => mapValues(
     accountAssetsBalances,
-    ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssets(
+    ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssetsBySymbol(
       accountWalletBalances,
       supportedAssets?.[chain] ?? [],
     ),
@@ -89,7 +89,7 @@ export const accountEthereumAssetsSelector = createSelector(
   (
     accountEthereumWalletBalances: WalletAssetsBalances,
     ethereumSupportedAssets: Asset[],
-  ): Assets => mapWalletAssetsBalancesIntoAssets(
+  ): AssetsBySymbol => mapWalletAssetsBalancesIntoAssetsBySymbol(
     accountEthereumWalletBalances,
     ethereumSupportedAssets,
   ),
@@ -103,7 +103,7 @@ export const archanovaAccountEthereumAssetsSelector = createSelector(
     assetsBalances: AssetBalancesPerAccount,
     ethereumSupportedAssets: Asset[],
     accounts: Account[],
-  ): Assets => {
+  ): AssetsBySymbol => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return {};
 
@@ -111,7 +111,7 @@ export const archanovaAccountEthereumAssetsSelector = createSelector(
     const accountEthereumAssets = assetsBalances?.[accountId]?.ethereum ?? {};
     const accountEthereumWalletBalances = accountEthereumAssets?.wallet ?? {};
 
-    return mapWalletAssetsBalancesIntoAssets(
+    return mapWalletAssetsBalancesIntoAssetsBySymbol(
       accountEthereumWalletBalances,
       ethereumSupportedAssets,
     );
@@ -124,9 +124,9 @@ export const etherspotAccountAssetsSelector = createSelector(
   accountsSelector,
   (
     assetsBalances: AssetBalancesPerAccount,
-    supportedAssets: SupportedAssetsPerChain,
+    supportedAssets: AssetsPerChain,
     accounts: Account[],
-  ): ChainRecord<Assets> => {
+  ): ChainRecord<AssetsBySymbol> => {
     const etherspotAccount = findFirstArchanovaAccount(accounts);
     if (!etherspotAccount) return { ethereum: {} };
 
@@ -135,7 +135,7 @@ export const etherspotAccountAssetsSelector = createSelector(
 
     return mapValues(
       accountAssetsBalances,
-      ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssets(
+      ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssetsBySymbol(
         accountWalletBalances,
         supportedAssets?.[chain] ?? [],
       ),
@@ -151,7 +151,7 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
   ethereumSupportedAssetsSelector,
   assetSelector,
   (
-    assets: Assets,
+    assets: AssetsBySymbol,
     ethereumSupportedAssets: Asset[],
     asset: string,
   ) => {
@@ -171,7 +171,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
     rates: Rates,
     baseFiatCurrency: ?string,
     accountAssetsBalances: CategoryBalancesPerChain,
-    supportedAssets: SupportedAssetsPerChain,
+    supportedAssets: AssetsPerChain,
   ) => {
     if (!activeAccountId) return {};
 

@@ -77,7 +77,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, SupportedAssetsPerChain, Rates, AssetDataNavigationParam } from 'models/Asset';
+import type { AssetsBySymbol, AssetsPerChain, Rates, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -88,7 +88,7 @@ import type { ChainRecord } from 'models/Chain';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssets: ChainRecord<Assets>,
+  accountAssets: ChainRecord<AssetsBySymbol>,
   accountAssetsBalances: CategoryBalancesPerChain,
   rates: Rates,
   baseFiatCurrency: ?string,
@@ -97,7 +97,7 @@ type Props = {
   activeAccount: ?Account,
   accountHistory: ChainRecord<Transaction[]>,
   activeAccountAddress: string,
-  supportedAssets: SupportedAssetsPerChain,
+  supportedAssets: AssetsPerChain,
 };
 
 const AssetCardWrapper = styled.View`

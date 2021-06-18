@@ -618,7 +618,7 @@ export const fetchSupportedAssetsAction = () => {
 
     await Promise.all(Object.keys(CHAIN).map(async (chainKey) => {
       const chain = CHAIN[chainKey];
-      const chainSupportedAssets = await etherspotService.getChainSupportedAssets(chain);
+      const chainSupportedAssets = await etherspotService.getSupportedAssets(chain);
       // nothing to do if returned empty
       if (isEmpty(chainSupportedAssets)) return;
 

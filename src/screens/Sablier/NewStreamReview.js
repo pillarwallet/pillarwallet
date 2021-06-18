@@ -65,7 +65,7 @@ import {
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -76,7 +76,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 type Props = {
   navigation: NavigationScreenProp<*>,
   activeAccountAddress: string,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
   balances: WalletAssetsBalances,
