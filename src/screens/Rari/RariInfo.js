@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Image from 'components/Image';
@@ -32,16 +33,22 @@ import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
 import Stats from 'components/Stats';
 
+// utils
 import { fontStyles } from 'utils/variables';
 import { getDeviceWidth, formatFiat, commify } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 import { RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
+// selectors
+import { useChainRates } from 'selectors';
+
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -49,7 +56,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 type Props = {
   rariFundBalance: {[RariPool]: number},
   baseFiatCurrency: ?string,
-  rates: Rates,
   rtgPrice: {
     [string]: number,
   },
@@ -96,15 +102,16 @@ const RariLogo = styled(Image)`
 
 const RariInfoScreen = ({
   baseFiatCurrency,
-  rates,
   rariFundBalance,
   rtgPrice,
   rtgSupply,
   navigation,
 }: Props) => {
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalRariFundBalance = (Object.values(rariFundBalance): any).reduce((sum, balance) => sum + balance, 0);
-  const totalRariFundBalanceInFiat = convertUSDToFiat(totalRariFundBalance, rates, fiatCurrency);
+  const totalRariFundBalanceInFiat = convertUSDToFiat(totalRariFundBalance, ethereumRates, fiatCurrency);
 
   const renderParagraph = (subtitle, paragraph) => {
     return (
@@ -248,10 +255,8 @@ const mapStateToProps = ({
     rtgPrice,
     rtgSupply,
   },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
-  rates,
   rariFundBalance,
   rtgPrice,
   rtgSupply,

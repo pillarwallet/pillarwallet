@@ -104,6 +104,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
           isLoading={isEstimating}
           isNotEnough={hasNotEnoughGas}
           style={styles.fee}
+          chain={chain}
         />
       )}
 

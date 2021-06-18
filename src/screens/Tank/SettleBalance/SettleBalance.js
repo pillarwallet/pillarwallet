@@ -25,6 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
@@ -42,13 +43,15 @@ import Toast from 'components/Toast';
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
-import type { AssetsBySymbol, Rates } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { RatesPerChain } from 'models/RatesByAssetSymbol';
 
 // utils
 import {
@@ -60,15 +63,16 @@ import { formatFiat, formatAmount, groupSectionsByDate } from 'utils/common';
 import { getRate } from 'utils/assets';
 import { getThemeColors } from 'utils/themes';
 
-import { createStructuredSelector } from 'reselect';
+// selectors
 import { accountEthereumAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
   paymentNetworkBalances: WalletAssetsBalances,
   baseFiatCurrency: ?string,
-  rates: Rates,
+  ratesPerChain: RatesPerChain,
   assets: AssetsBySymbol,
   session: Object,
   estimateSettleBalance: Function,
@@ -153,7 +157,7 @@ class SettleBalance extends React.Component<Props, State> {
     const {
       baseFiatCurrency,
       assets,
-      rates,
+      ratesPerChain,
       theme,
     } = this.props;
     const { txToSettle } = this.state;
@@ -162,6 +166,8 @@ class SettleBalance extends React.Component<Props, State> {
     const tokenSymbol = get(item, 'token.symbol', ETH);
     const value = get(item, 'value', new BigNumber(0));
     const senderAddress = get(item, 'senderAddress', '');
+
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
     const assetInfo = {
       ...(assets[tokenSymbol] || {}),
@@ -177,7 +183,7 @@ class SettleBalance extends React.Component<Props, State> {
     });
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
+    const totalInFiat = assetInfo.value.toNumber() * getRate(ethereumRates, assetInfo.symbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const isChecked = txToSettle.some(({ hash }) => hash === assetInfo.hash);
     const isDisabled = !isChecked && txToSettle.length === MAX_TX_TO_SETTLE;
@@ -305,12 +311,12 @@ class SettleBalance extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
+  ratesPerChain,
   baseFiatCurrency,
   session,
   availableToSettleTx,

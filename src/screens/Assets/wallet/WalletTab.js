@@ -134,6 +134,7 @@ function WalletTab() {
         change={item.change}
         symbol={item.symbol}
         onPress={() => navigateToAssetDetails(item)}
+        chain={item.chain}
       />
     );
   };

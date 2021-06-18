@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_RATES = 'SET_RATES';
-export const SET_CHAIN_RATES = 'SET_CHAIN_RATES';
-export const SET_FETCHING_RATES = 'SET_FETCHING_RATES';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// types
+import type { ChainRecord } from 'models/Chain';
+import type { Currency } from 'models/Asset';
+
+
+export type RateByCurrencySymbol = { [currencySymbol: string]: number };
+
+export type RatesByAssetSymbol = { [assetSymbol: string]: RateByCurrencySymbol };
+
+export type RatesPerChain = ChainRecord<RatesByAssetSymbol>;
+
+// TODO: migrate to strongly typed keys: USD, EUR, GBP, ETH.
+export type RateKey = Currency | typeof ETH;

@@ -20,7 +20,10 @@
 import { isEmpty } from 'lodash';
 
 // constants
-import { UPDATE_RATES } from 'constants/ratesConstants';
+import {
+  SET_CHAIN_RATES,
+  SET_FETCHING_RATES,
+} from 'constants/ratesConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
@@ -35,54 +38,74 @@ import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { accountAssetsPerChainSelector } from 'selectors/assets';
-import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
+import {
+  assetsBalancesSelector,
+  ratesPerChainSelector,
+  supportedAssetsPerChainSelector,
+} from 'selectors';
 
 // models, types
-import type { Rates } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
+import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
 
 // actions
 import { saveDbAction } from './dbActions';
 
 
-export const setRatesAction = (newRates: Rates) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    if (isEmpty(newRates)) return;
-    const { rates: { data: currentRates = {} } } = getState();
-    // $FlowFixMe: flow update to 0.122
-    const rates = { ...currentRates, ...newRates };
-    dispatch(saveDbAction('rates', { rates }, true));
-    dispatch({ type: UPDATE_RATES, payload: rates });
+export const setIsFetchingRatesAction = (isFetching: boolean) => ({
+  type: SET_FETCHING_RATES,
+  payload: isFetching,
+});
+
+export const setRatesAction = (
+  chain: Chain,
+  rates: RatesByAssetSymbol,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (isEmpty(rates)) return;
+
+    const ratesPerChain = ratesPerChainSelector(getState());
+    const currentChainRates = ratesPerChain[chain] ?? {};
+
+    const updatedRates = { ...currentChainRates, ...rates };
+
+    dispatch({ type: SET_CHAIN_RATES, payload: { chain, rates: updatedRates } });
+
+    const updatedRatesPerChain = ratesPerChainSelector(getState());
+    await dispatch(saveDbAction('rates', { rates: updatedRatesPerChain }, true));
   };
 };
 
 export const fetchAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      rates: { isFetching },
+      session: { data: { isOnline } },
+    } = getState();
+
+    if (isFetching || !isOnline) return;
+
+    dispatch(setIsFetchingRatesAction(true));
+
     const assetsBalances = assetsBalancesSelector(getState());
     const supportedAssets = supportedAssetsPerChainSelector(getState());
 
-    const allAccountsCrossChainAssets = Object.keys(assetsBalances).reduce((combinedAssets, accountId) => {
+    await Promise.all(Object.keys(assetsBalances).map(async (accountId) => {
       const accountAssetsBalances = assetsBalances[accountId] ?? {};
 
-      const accountAssets = Object.keys(accountAssetsBalances).reduce((assets, chain) => {
+      await Promise.all(Object.keys(accountAssetsBalances).map(async (chain) => {
         const chainSupportedAssets = supportedAssets[chain] ?? [];
         const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
-        const mapped = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
-        // $FlowFixMe
-        return { ...assets, ...mapped };
-      }, {});
 
-      return { ...combinedAssets, ...accountAssets };
-    }, {});
+        const accountAssets = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
+        const rates = await getExchangeRates(chain, accountAssets);
 
-    if (isEmpty(allAccountsCrossChainAssets)) {
-      reportErrorLog('fetchAssetsRatesAction failed: allAccountsCrossChainAssets is empty');
-      return;
-    }
+        await dispatch(setRatesAction(chain, rates));
+      }));
+    }));
 
-    const rates = await getExchangeRates(allAccountsCrossChainAssets);
-    dispatch(setRatesAction(rates));
+    dispatch(setIsFetchingRatesAction(false));
   };
 };
 
@@ -91,11 +114,20 @@ export const fetchSingleChainAssetRatesAction = (
   assetCode: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsPerChainSelector(getState());
-    const chainAccountAssets = accountAssets[chain] ?? {};
+    const {
+      rates: { isFetching },
+      session: { data: { isOnline } },
+    } = getState();
 
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
-    const chainSupportedAssets = supportedAssets[chain] ?? [];
+    if (isFetching || !isOnline) return;
+
+    dispatch(setIsFetchingRatesAction(true));
+
+    const accountAssetsPerChain = accountAssetsPerChainSelector(getState());
+    const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
+
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
     const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
     if (!asset) {
@@ -103,12 +135,12 @@ export const fetchSingleChainAssetRatesAction = (
       return;
     }
 
-    const rates = await getExchangeRates({ [asset.symbol]: asset });
+    const rates = await getExchangeRates(chain, { [asset.symbol]: asset });
 
     if (isEmpty(rates)) return;
 
-    const { rates: { data: currentRates } } = getState();
-    const updatedRates = { ...currentRates, ...rates };
-    dispatch(setRatesAction(updatedRates));
+    await dispatch(setRatesAction(chain, rates));
+
+    dispatch(setIsFetchingRatesAction(false));
   };
 };

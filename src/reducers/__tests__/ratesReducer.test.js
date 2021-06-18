@@ -17,31 +17,69 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_RATES } from 'constants/ratesConstants';
-import reducer from '../ratesReducer';
 
-describe('Rates reducer', () => {
-  it('should handle UPDATE_RATES', () => {
+// constants
+import { SET_CHAIN_RATES, SET_RATES } from 'constants/ratesConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// reducer
+import ratesReducer from 'reducers/ratesReducer';
+
+describe('RatesByAssetSymbol ratesReducer', () => {
+  it('should handle SET_RATES', () => {
     const updateAction = {
-      type: UPDATE_RATES,
+      type: SET_RATES,
       payload: {
-        ETH: {
-          EUR: 624.21,
-          GBP: 544.57,
-          USD: 748.92,
+        ethereum: {
+          ETH: {
+            EUR: 624.21,
+            GBP: 544.57,
+            USD: 748.92,
+          },
         },
       },
     };
     const expectedRates = {
       data: {
-        ETH: {
-          EUR: 624.21,
-          GBP: 544.57,
-          USD: 748.92,
+        ethereum: {
+          ETH: {
+            EUR: 624.21,
+            GBP: 544.57,
+            USD: 748.92,
+          },
         },
       },
-      isFetched: true,
+      isFetching: false,
     };
-    expect(reducer(undefined, updateAction)).toMatchObject(expectedRates);
+    expect(ratesReducer(undefined, updateAction)).toMatchObject(expectedRates);
+  });
+
+  it('should handle SET_CHAIN_RATES', () => {
+    const updateAction = {
+      type: SET_CHAIN_RATES,
+      payload: {
+        chain: CHAIN.ETHEREUM,
+        rates: {
+          ETH: {
+            EUR: 624.21,
+            GBP: 544.57,
+            USD: 748.92,
+          },
+        },
+      },
+    };
+    const expectedRates = {
+      data: {
+        ethereum: {
+          ETH: {
+            EUR: 624.21,
+            GBP: 544.57,
+            USD: 748.92,
+          },
+        },
+      },
+      isFetching: false,
+    };
+    expect(ratesReducer(undefined, updateAction)).toMatchObject(expectedRates);
   });
 });

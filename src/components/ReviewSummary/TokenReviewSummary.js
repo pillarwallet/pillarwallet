@@ -33,9 +33,9 @@ import { useTheme } from 'utils/themes';
 
 // selectors
 import {
+  useChainRates,
   useChainSupportedAssets,
   useFiatCurrency,
-  useRates,
 } from 'selectors';
 
 // types
@@ -70,18 +70,18 @@ export const TokenReviewSummaryComponent = ({
   chain,
 }: Props) => {
   const theme = useTheme();
-  const rates = useRates();
   const fiatCurrency = useFiatCurrency();
-  const supportedAssets = useChainSupportedAssets(chain);
+  const chainSupportedAssets = useChainSupportedAssets(chain);
+  const chainRates = useChainRates(chain);
 
-  const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
+  const asset = chainSupportedAssets.find(({ symbol }) => assetSymbol === symbol);
   const formattedAmount = formatTokenAmount(amount, assetSymbol);
 
   if (asset) {
     assetIcon = { uri: asset.iconUrl };
     const amountBN = wrapBigNumber(amount);
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(rates, amountBN.toNumber(), asset.symbol, fiatCurrency);
+      fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), asset.symbol, fiatCurrency);
     }
   }
 

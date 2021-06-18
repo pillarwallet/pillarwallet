@@ -132,7 +132,8 @@ export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
   const decimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
   const gasSymbol = getGasSymbol(chain, gasToken);
-  return <TableAmount amount={formattedFee} token={gasSymbol} />;
+
+  return <TableAmount amount={formattedFee} token={gasSymbol} chain={chain} />;
 };
 
 const Divider = styled.View`

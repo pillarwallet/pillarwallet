@@ -45,7 +45,12 @@ import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainSupportedAssets, useRates } from 'selectors';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useChainSupportedAssets,
+  useChainRates,
+} from 'selectors';
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
@@ -68,7 +73,7 @@ function Exchange() {
   const fromInputRef = React.useRef();
 
   const fiatCurrency = useFiatCurrency();
-  const rates = useRates();
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
   const assets = useRootSelector(accountEthereumAssetsSelector);
 
@@ -85,20 +90,20 @@ function Exchange() {
   const chainSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
   const fromOptions = React.useMemo(
-    () => getExchangeFromAssetOptions(assets, chainSupportedAssets, balances, fiatCurrency, rates),
-    [assets, chainSupportedAssets, balances, fiatCurrency, rates],
+    () => getExchangeFromAssetOptions(assets, chainSupportedAssets, balances, fiatCurrency, ethereumRates),
+    [assets, chainSupportedAssets, balances, fiatCurrency, ethereumRates],
   );
 
   const toOptions = React.useMemo(() => getExchangeToAssetOptions(
     chainSupportedAssets,
     balances,
     fiatCurrency,
-    rates,
+    ethereumRates,
   ), [
     chainSupportedAssets,
     balances,
     fiatCurrency,
-    rates,
+    ethereumRates,
   ]);
 
   const fromAsset = React.useMemo(() => fromOptions.find((a) => a.symbol === fromSymbol), [fromOptions, fromSymbol]);

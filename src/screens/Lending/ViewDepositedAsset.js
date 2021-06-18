@@ -42,6 +42,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmountDisplay, formatFiat, formatTokenAmount } from 'utils/common';
@@ -53,10 +54,11 @@ import { isAaveTransactionTag } from 'utils/aave';
 
 // selectors
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
+import { useChainRates } from 'selectors';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { DepositedAsset, Rates } from 'models/Asset';
+import type { DepositedAsset } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { BadgeRewardEvent } from 'models/Badge';
 
@@ -65,7 +67,6 @@ type Props = {
   isFetchingDepositedAssets: boolean,
   fetchDepositedAsset: (symbol: string) => void,
   baseFiatCurrency: ?string,
-  rates: Rates,
   accounts: Account[],
   archanovaAccountHistory: Object[],
   navigation: NavigationScreenProp<*>,
@@ -137,7 +138,6 @@ const ViewDepositedAsset = ({
   navigation,
   isFetchingDepositedAssets,
   fetchDepositedAsset,
-  rates,
   baseFiatCurrency,
   accounts,
   archanovaAccountHistory,
@@ -153,11 +153,13 @@ const ViewDepositedAsset = ({
     earningsPercentageGain,
   } = depositedAsset;
 
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   // always fetch balance from what's latest updated while also keep the screen present if whole asset was withdrawn
   const { currentBalance = 0 } = depositedAssets.find(({ symbol }) => symbol === depositedAsset.symbol) || {};
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const valueInFiat = parseFloat(currentBalance) * getRate(rates, assetSymbol, fiatCurrency);
+  const valueInFiat = parseFloat(currentBalance) * getRate(ethereumRates, assetSymbol, fiatCurrency);
   const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
   const aaveTransactions = mapTransactionsHistory(
     archanovaAccountHistory.filter(({ tag }) => isAaveTransactionTag(tag)),
@@ -267,14 +269,12 @@ const ViewDepositedAsset = ({
 
 const mapStateToProps = ({
   lending: { depositedAssets, isFetchingDepositedAssets },
-  rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   accounts: { data: accounts },
   badges: { badgesEvents },
 }: RootReducerState): $Shape<Props> => ({
   depositedAssets,
   isFetchingDepositedAssets,
-  rates,
   baseFiatCurrency,
   accounts,
   badgesEvents,

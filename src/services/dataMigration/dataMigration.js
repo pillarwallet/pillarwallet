@@ -23,6 +23,7 @@ import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateSupportedAssets from './supportedAssets';
+import loadAndMigrateRates from './rates';
 
 export async function migrate(
   collection: string,
@@ -53,6 +54,10 @@ export async function migrate(
 
     case 'supportedAssets':
       data = loadAndMigrateSupportedAssets(storageData);
+      break;
+
+    case 'rates':
+      data = loadAndMigrateRates(storageData);
       break;
 
     default: break;

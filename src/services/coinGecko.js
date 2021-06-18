@@ -31,7 +31,12 @@ import httpRequest from 'utils/httpRequest';
 import { type Record, mapRecordKeys } from 'utils/object';
 
 // Types
-import type { Asset, AssetsBySymbol, Rates, RateEntry, RateKey } from 'models/Asset';
+import type { Asset, AssetsBySymbol } from 'models/Asset';
+import type {
+  RateByCurrencySymbol,
+  RateKey,
+  RatesByAssetSymbol,
+} from 'models/RatesByAssetSymbol';
 
 // { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
 type CoinGeckoPriceEntry = Record<number>;
@@ -56,7 +61,7 @@ const currenciesParam = rateKeys.map(key => key.toLocaleString()).join(',');
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
   assetsList: Asset[],
-): Rates => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
+): RatesByAssetSymbol => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
   const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
   if (walletAsset) {
     const { symbol } = walletAsset;
@@ -65,7 +70,7 @@ const mapWalletAndCoinGeckoAssetsPrices = (
   return mappedResponseData;
 }, {});
 
-export const getCoinGeckoTokenPrices = async (assets: AssetsBySymbol): Promise<?Rates> => {
+export const getCoinGeckoTokenPrices = async (assets: AssetsBySymbol): Promise<?RatesByAssetSymbol> => {
   const assetsList = getAssetsAsList(assets);
 
   // ether does not fit into token price endpoint
@@ -102,7 +107,7 @@ export const getCoinGeckoTokenPrices = async (assets: AssetsBySymbol): Promise<?
     });
 };
 
-export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?RateEntry)[]> => {
+export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?RateByCurrencySymbol)[]> => {
   const params = {
     ids: coinIds.join(','),
     vs_currencies: currenciesParam,
@@ -125,7 +130,7 @@ export const getCoinGeckoPricesByCoinIds = async (coinIds: string[]): Promise<(?
   }
 };
 
-const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateEntry => {
+const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateByCurrencySymbol => {
   if (isEmpty(prices)) return null;
   return mapRecordKeys(prices, findRateKeyFromCoinGeckoCurrency);
 };

@@ -28,7 +28,7 @@ import { accountRewardsBalancePerChainSelector } from 'selectors/totalBalances';
 import { sumRecord } from 'utils/bigNumber';
 
 // Types
-import type { ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export function useRewardsTotalBalance(): BigNumber {
   return sumRecord(useRewardsBalancePerChain());
@@ -44,6 +44,7 @@ export type RewardItem = {|
   iconUrl?: string,
   value: BigNumber,
   symbol: string,
+  chain: Chain,
 |};
 
 export function useRewardsAssets(): ChainRecord<RewardItem[]> {

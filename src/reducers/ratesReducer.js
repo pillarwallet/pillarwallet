@@ -17,17 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_RATES } from 'constants/ratesConstants';
 
-type Rates = {
-  [key: string]: {
-    [key: string]: number,
-  },
-};
+// constants
+import { SET_CHAIN_RATES, SET_RATES } from 'constants/ratesConstants';
+
+// types
+import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+
 
 export type RatesReducerState = {
-  data: Rates,
-  isFetched: boolean,
+  data: RatesPerChain,
+  isFetching: boolean,
 };
 
 export type RatesReducerAction = {
@@ -36,8 +36,8 @@ export type RatesReducerAction = {
 };
 
 export const initialState = {
-  data: {},
-  isFetched: false,
+  data: { ethereum: {} },
+  isFetching: false,
 };
 
 const ratesReducer = (
@@ -45,8 +45,20 @@ const ratesReducer = (
   action: RatesReducerAction,
 ): RatesReducerState => {
   switch (action.type) {
-    case UPDATE_RATES:
-      return { ...state, data: action.payload, isFetched: true };
+    case SET_RATES:
+      return {
+        ...state,
+        data: action.payload,
+      };
+    case SET_CHAIN_RATES:
+      const { chain, rates } = action.payload;
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [chain]: rates,
+        },
+      };
     default:
       return state;
   }

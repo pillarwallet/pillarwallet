@@ -57,7 +57,7 @@ import {
   accountAssetsWithBalanceSelector,
   ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
-import { activeAccountAddressSelector } from 'selectors/selectors';
+import { activeAccountAddressSelector, useChainRates } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // services
@@ -68,7 +68,7 @@ import { usePoolCurrentApy } from 'services/rariSdk';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates, Asset, AssetsBySymbol, AssetOption } from 'models/Asset';
+import type { Asset, AssetsBySymbol, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
 
@@ -84,7 +84,6 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   activeAccountAddress: string,
-  rates: Rates,
   setEstimatingTransaction: (boolean) => void,
   balances: WalletAssetsBalances,
 };
@@ -111,7 +110,6 @@ const RariAddDepositScreen = ({
   estimateErrorMessage,
   resetEstimateTransaction,
   activeAccountAddress,
-  rates,
   setEstimatingTransaction,
   balances,
 }: Props) => {
@@ -126,6 +124,8 @@ const RariAddDepositScreen = ({
   const [exchangeFeeBN, setExchangeFee] = useState(null);
   const [slippage, setSlippage] = useState(null);
   const [inputValid, setInputValid] = useState(false);
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
@@ -160,7 +160,7 @@ const RariAddDepositScreen = ({
       assetValue,
       selectedAsset,
       supportedAssets,
-      rates,
+      ethereumRates,
     ).then((txsAndExchangeFee) => {
       if (!txsAndExchangeFee) {
         Toast.show({
@@ -277,10 +277,8 @@ const RariAddDepositScreen = ({
 };
 
 const mapStateToProps = ({
-  rates: { data: rates },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
   feeInfo,
   estimateErrorMessage,
   isEstimating,

@@ -63,6 +63,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Account } from 'models/Account';
@@ -70,8 +71,8 @@ import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { Rates } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { RatesPerChain } from 'models/RatesByAssetSymbol';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
@@ -95,7 +96,7 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 
 type Props = {
   baseFiatCurrency: ?string,
-  rates: Rates,
+  ratesPerChain: RatesPerChain,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
   assetsOnNetwork: Object,
@@ -260,7 +261,7 @@ class PPNView extends React.Component<Props, State> {
       smartWalletState,
       PPNTransactions,
       baseFiatCurrency,
-      rates,
+      ratesPerChain,
       history,
       fetchTransactionsHistory,
       theme,
@@ -268,6 +269,7 @@ class PPNView extends React.Component<Props, State> {
       activeAccountAddress,
     } = this.props;
     const colors = getThemeColors(theme);
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
     let incomingBalanceInFiat = 0;
     const assetsOnNetworkArray = Object.values(assetsOnNetwork);
@@ -276,7 +278,7 @@ class PPNView extends React.Component<Props, State> {
         const tokenSymbol = get(incomingAsset, 'symbol', ETH);
         const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
         const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const tokenRate = getRate(rates, tokenSymbol, fiatCurrency);
+        const tokenRate = getRate(ethereumRates, tokenSymbol, fiatCurrency);
         return totalInFiat + (tokenBalance * tokenRate);
       }, 0);
     }
@@ -462,12 +464,12 @@ class PPNView extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
+  ratesPerChain,
   baseFiatCurrency,
   smartWalletState,
   accounts,

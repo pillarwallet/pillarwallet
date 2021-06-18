@@ -52,6 +52,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { AssetsBySymbol } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 
 type Address = string;
@@ -338,7 +339,10 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
     });
 }
 
-export async function getExchangeRates(assets: AssetsBySymbol): Promise<?Object> {
+export async function getExchangeRates(
+  chain: Chain,
+  assets: AssetsBySymbol,
+): Promise<?Object> {
   const assetSymbols = Object.keys(assets);
 
   if (isEmpty(assetSymbols)) {
@@ -353,22 +357,14 @@ export async function getExchangeRates(assets: AssetsBySymbol): Promise<?Object>
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assets);
 
-  if (!useLegacyCryptoCompare) {
-    if (isEmpty(rates)) {
-      // by any mean if CoinGecko failed let's try legacy way
-      rates = await getLegacyExchangeRates(assetSymbols);
+  if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
+    const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
+    if (!isEmpty(ethPrice)) {
+      rates = { ...rates, [ETH]: ethPrice };
+    }
 
-    // ETH & BNB require special handling as they are native tokens for Ethereum & BSC.
-    // MATIC and DAI do not require such handling since they are also ERC20 tokens on Ethereum.
-    } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
-      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
-      if (!isEmpty(ethPrice)) {
-        rates = { ...rates, [ETH]: ethPrice };
-      }
-
-      if (!isEmpty(bnbPrice)) {
-        rates = { ...rates, [BNB]: bnbPrice };
-      }
+    if (!isEmpty(bnbPrice)) {
+      rates = { ...rates, [BNB]: bnbPrice };
     }
   }
 

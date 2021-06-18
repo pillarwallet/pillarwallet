@@ -43,10 +43,12 @@ import { formatUnits, formatFiat } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { getWithdrawalFeeRate } from 'utils/rari';
 
+// selectors
+import { useChainRates } from 'selectors';
+
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
@@ -54,7 +56,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   baseFiatCurrency: ?string,
-  rates: Rates,
 };
 
 const MainContainer = styled.View`
@@ -62,11 +63,13 @@ const MainContainer = styled.View`
 `;
 
 const RariWithdrawReviewScreen = ({
-  navigation, feeInfo, baseFiatCurrency, rates,
+  navigation, feeInfo, baseFiatCurrency,
 }: Props) => {
   const {
     transactionPayload, assetSymbol, amount, exchangeFeeBN, slippage, rariPool,
   } = navigation.state.params;
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const [withdrawalFeeRate, setWithdrawalFeeRate] = useState(null);
   useEffect(() => {
@@ -101,7 +104,11 @@ const RariWithdrawReviewScreen = ({
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
   const withdrawalFee = assetSymbol && getFormattedRate(
-    rates, amount * parseFloat(formatUnits(withdrawalFeeRate || '0', 18)), assetSymbol, fiatCurrency);
+    ethereumRates,
+    amount * parseFloat(formatUnits(withdrawalFeeRate || '0', 18)),
+    assetSymbol,
+    fiatCurrency,
+  );
 
   return (
     <ContainerWithHeader
@@ -132,7 +139,7 @@ const RariWithdrawReviewScreen = ({
                   <TableLabel tooltip={t('rariContent.tooltip.rariExchangeFee')}>
                     {t('rariContent.label.rariExchangeFee')}
                   </TableLabel>
-                  <TableAmount amount={formattedExchangeFee} token={ETH} />
+                  <TableAmount amount={formattedExchangeFee} token={ETH} chain={CHAIN.ETHEREUM} />
                 </TableRow>
               )}
               {withdrawalFeeRate && (
@@ -155,11 +162,11 @@ const RariWithdrawReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} />
+            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />
@@ -172,11 +179,9 @@ const RariWithdrawReviewScreen = ({
 const mapStateToProps = ({
   transactionEstimate: { feeInfo },
   appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   baseFiatCurrency,
-  rates,
 });
 
 export default connect(mapStateToProps)(RariWithdrawReviewScreen);

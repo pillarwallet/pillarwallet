@@ -36,7 +36,14 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useRates } from 'selectors';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useChainRates,
+} from 'selectors';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { mapAssetDataToAssetOption } from 'utils/assets';
@@ -59,7 +66,7 @@ function KeyBasedAssetTransferEditAmount() {
   const dispatch = useDispatch();
   const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
   const fiatCurrency = useFiatCurrency();
-  const rates = useRates();
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
@@ -84,7 +91,9 @@ function KeyBasedAssetTransferEditAmount() {
     navigation.goBack(null);
   };
 
-  const assetOption = assetData ? mapAssetDataToAssetOption(assetData, keyWalletBalances, rates, fiatCurrency) : null;
+  const assetOption = assetData
+    ? mapAssetDataToAssetOption(assetData, keyWalletBalances, ethereumRates, fiatCurrency)
+    : null;
 
   return (
     <ContainerWithHeader

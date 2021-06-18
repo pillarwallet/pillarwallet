@@ -44,10 +44,9 @@ import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, useChainRates } from 'selectors';
 
 // types
-import type { Rates } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -56,7 +55,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   baseFiatCurrency: ?string,
-  rates: Rates,
   accountAddress: string,
 };
 
@@ -68,10 +66,11 @@ const AddLiquidityReviewScreen = ({
   navigation,
   feeInfo,
   baseFiatCurrency,
-  rates,
   accountAddress,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const {
     tokensData, poolToken, tokensValues, poolTokenValue, shareOfPool, pool,
@@ -79,12 +78,12 @@ const AddLiquidityReviewScreen = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalValue = tokensData.reduce((sum, token, i) => {
-    sum += tokensValues[i] * getRate(rates, token.symbol, fiatCurrency);
+    sum += tokensValues[i] * getRate(ethereumRates, token.symbol, fiatCurrency);
     return sum;
   }, 0);
 
   const tokensValuesInFiat = tokensData.map((token, i) => {
-    return getFormattedRate(rates, tokensValues[i], token.symbol, fiatCurrency);
+    return getFormattedRate(ethereumRates, tokensValues[i], token.symbol, fiatCurrency);
   });
 
   const onNextButtonPress = async () => {
@@ -163,7 +162,7 @@ const AddLiquidityReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -183,11 +182,9 @@ const AddLiquidityReviewScreen = ({
 const mapStateToProps = ({
   transactionEstimate: { feeInfo },
   appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   baseFiatCurrency,
-  rates,
 });
 
 const structuredSelector = createStructuredSelector({

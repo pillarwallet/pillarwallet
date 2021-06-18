@@ -60,11 +60,10 @@ import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // selectors
-import { useChainSupportedAssets } from 'selectors';
+import { useChainRates, useChainSupportedAssets } from 'selectors';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -77,7 +76,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
   baseFiatCurrency: ?string,
-  rates: Rates,
   poolDataGraphQueryFailed: boolean,
   isFetchingLiquidityPoolsData: boolean,
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
@@ -159,11 +157,11 @@ const LiquidityPoolDashboard = ({
   poolDataGraphQueryFailed,
   fetchLiquidityPoolsData,
   liquidityPoolsReducer,
-  rates,
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
   const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
@@ -209,10 +207,13 @@ const LiquidityPoolDashboard = ({
   const hasBalance = balance > 0;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
+  const fiatBalance = formatFiat(
+    convertUSDToFiat(balance * poolStats.currentPrice, ethereumRates, fiatCurrency),
+    fiatCurrency,
+  );
   const stakedAmountInFiat = convertUSDToFiat(
     poolStats.stakedAmount.toNumber() * poolStats.currentPrice,
-    rates,
+    ethereumRates,
     fiatCurrency,
   );
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
@@ -235,15 +236,24 @@ const LiquidityPoolDashboard = ({
   const stats = [
     {
       title: t('liquidityPoolsContent.label.24hFees'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyFees, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.dailyFees, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.totalLiquidity, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyVolume, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.dailyVolume, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
   ];
 
@@ -422,7 +432,11 @@ const LiquidityPoolDashboard = ({
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
               const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
-              const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
+              const tokenPriceInFiat = convertUSDToFiat(
+                poolStats.tokensPricesUSD[tokenSymbol],
+                ethereumRates,
+                fiatCurrency,
+              );
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
@@ -495,13 +509,11 @@ const mapStateToProps = ({
     shownStakingEnabledModal,
   },
   liquidityPools: liquidityPoolsReducer,
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
   liquidityPoolsReducer,
-  rates,
   shownStakingEnabledModal,
 });
 

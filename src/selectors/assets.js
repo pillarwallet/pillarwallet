@@ -36,7 +36,6 @@ import { reportErrorLog } from 'utils/common';
 // types
 import type {
   AssetsPerChain,
-  Rates,
   AssetsBySymbol,
   Asset,
 } from 'models/Asset';
@@ -47,7 +46,9 @@ import type {
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { Account } from 'models/Account';
+import type { RatesPerChain } from 'models/RatesByAssetSymbol';
 
+// selectors
 import {
   accountAssetsBalancesSelector,
   accountEthereumWalletAssetsBalancesSelector,
@@ -56,7 +57,7 @@ import {
   activeAccountIdSelector,
   supportedAssetsPerChainSelector,
   accountsSelector,
-  ratesSelector,
+  ratesPerChainSelector,
   baseFiatCurrencySelector,
   assetsBalancesSelector,
 } from './selectors';
@@ -162,16 +163,16 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
 
 export const accountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  ratesSelector,
+  ratesPerChainSelector,
   baseFiatCurrencySelector,
   accountAssetsBalancesSelector,
   supportedAssetsPerChainSelector,
   (
     activeAccountId: string,
-    rates: Rates,
+    ratesPerChain: RatesPerChain,
     baseFiatCurrency: ?string,
     accountAssetsBalances: CategoryBalancesPerChain,
-    supportedAssets: AssetsPerChain,
+    supportedAssetsPerChain: AssetsPerChain,
   ) => {
     if (!activeAccountId) return {};
 
@@ -182,7 +183,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
         const assetBalanceBN = getBalanceBN(balances, symbol);
         if (assetBalanceBN.isZero()) return;
 
-        const chainSupportedAssets = supportedAssets[chain];
+        const chainSupportedAssets = supportedAssetsPerChain[chain];
         if (!chainSupportedAssets?.length) return;
 
         const relatedAsset = chainSupportedAssets.find(({ symbol: supportedSymbol }) => supportedSymbol === symbol);
@@ -194,9 +195,11 @@ export const accountAssetsWithBalanceSelector = createSelector(
           return;
         }
 
+        const chainRates = ratesPerChain[chain] ?? {};
+
         const { iconUrl: imageUrl, address } = relatedAsset;
-        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
-        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
 
         assetsWithBalance.push({
           ...relatedAsset,

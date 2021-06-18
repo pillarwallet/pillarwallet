@@ -31,9 +31,9 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import type { RariPool } from 'models/RariPool';
-import type { Rates } from 'models/Asset';
+import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
 
-const hasEthUsdPrice = (rates: Rates) => !!rates?.[ETH]?.USD;
+const hasEthUsdPrice = (rates: RatesByAssetSymbol) => !!rates?.[ETH]?.USD;
 
 const mapPools = (resultsArray: Object[]) => {
   return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
@@ -42,7 +42,7 @@ const mapPools = (resultsArray: Object[]) => {
   }, {});
 };
 
-export const getRariFundBalanceInUSD = async (rates: Rates) => {
+export const getRariFundBalanceInUSD = async (rates: RatesByAssetSymbol) => {
   const balancePerPool = await Promise.all(RARI_POOLS_ARRAY.map(async rariPool => {
     const rariContract = getContract(
       getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
@@ -104,7 +104,11 @@ export const getAccountDeposit = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string, rates: Rates) => {
+export const getAccountDepositInUSDBN = async (
+  rariPool: RariPool,
+  accountAddress: string,
+  rates: RatesByAssetSymbol,
+) => {
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
@@ -124,7 +128,7 @@ export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddres
   return balanceBN;
 };
 
-export const getAccountDepositInUSD = async (accountAddress: string, rates: Rates) => {
+export const getAccountDepositInUSD = async (accountAddress: string, rates: RatesByAssetSymbol) => {
   const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
     const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress, rates);
     return parseFloat(utils.formatUnits(balanceBN, 18));
@@ -149,7 +153,7 @@ export const getAccountDepositInPoolToken = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getUserInterests = async (accountAddress: string, rates: Rates) => {
+export const getUserInterests = async (accountAddress: string, rates: RatesByAssetSymbol) => {
   const userBalanceUSD = await getAccountDeposit(accountAddress);
   const userBalanceInPoolToken = await getAccountDepositInPoolToken(accountAddress);
 

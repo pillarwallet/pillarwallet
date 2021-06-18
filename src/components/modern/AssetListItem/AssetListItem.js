@@ -23,11 +23,13 @@ import * as React from 'react';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
+import type { Chain } from 'models/Chain';
 
 // Local
 import { Container, LeftAddOn, Icon, Name, Balance } from './components';
 
 type Props = {|
+  chain: Chain,
   name: ?string,
   iconUrl: ?string,
   symbol?: string,
@@ -45,6 +47,7 @@ type Props = {|
  * low-level building blocks exported from `./components` file in order to assemble the required item layout.
  */
 function AssetListItem({
+  chain,
   name,
   symbol,
   iconUrl,
@@ -60,7 +63,15 @@ function AssetListItem({
 
       <Icon url={iconUrl} />
       <Name>{name}</Name>
-      {!!symbol && balance != null && <Balance symbol={symbol} balance={balance} onPress={onPressBalance} />}
+
+      {!!symbol && balance != null && (
+        <Balance
+          chain={chain}
+          symbol={symbol}
+          balance={balance}
+          onPress={onPressBalance}
+        />
+      )}
     </Container>
   );
 }
