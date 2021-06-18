@@ -21,8 +21,17 @@
 
 import { useTheme as useThemeSC } from 'styled-components/native';
 import theme from 'styled-theming';
+
+// Constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
+// Utils
+import { baseColors } from 'utils/variables';
+
+// Types
 import type { Theme, ColorsByThemeProps } from 'models/Theme';
+
+// Local
 import lightThemeColors from './themes/lightTheme';
 import darkThemeColors from './themes/darkTheme';
 
@@ -127,12 +136,12 @@ export const semanticDarkThemeColors = {
   pieChartCenter: darkThemeColors.basic050,
   pieChartEmpty: darkThemeColors.basic060,
   homeEnsNameIcon: darkThemeColors.basic010,
-  buttonPrimaryBackground: darkThemeColors.primaryAccent220,
-  buttonPrimaryTitle: darkThemeColors.basic090,
+  buttonPrimaryBackground: baseColors.electricViolet,
+  buttonPrimaryTitle: baseColors.white,
   buttonSecondaryBackground: darkThemeColors.basic020,
   buttonSecondaryTitle: darkThemeColors.basic090,
   buttonTextTitle: darkThemeColors.basic000,
-  tabUnderline: darkThemeColors.primaryAccent220,
+  tabUnderline: baseColors.electricViolet,
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
   recieveModalWarningText: '#62688f',
@@ -296,16 +305,11 @@ export function getThemeName(currentTheme: Theme = defaultTheme) {
 // in case there's no color by the key
 const FALLBACK_COLOR = '#808080';
 
-const generateColorsByTheme = ({
-  lightKey,
-  darkKey,
-  lightCustom,
-  darkCustom,
-}: ColorsByThemeProps) => {
-  return ({
+const generateColorsByTheme = ({ lightKey, darkKey, lightCustom, darkCustom }: ColorsByThemeProps) => {
+  return {
     lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
     darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),
-  });
+  };
 };
 
 export const getColorByTheme = (props: ColorsByThemeProps) => {
