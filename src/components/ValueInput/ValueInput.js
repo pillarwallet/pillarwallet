@@ -115,7 +115,7 @@ const SelectorChevron = styled(Icon)`
   color: ${({ theme }) => theme.colors.basic030};
 `;
 
-export const getErrorMessage = (
+const getErrorMessage = (
   amount: string,
   assetBalance: string,
   assetSymbol: string,
@@ -133,7 +133,7 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInputComponent = ({
+const ValueInputComponent = ({
   disabled,
   assets,
   customAssets,

@@ -31,11 +31,7 @@ import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
-import {
-  SET_CHAIN_RATES,
-  SET_FETCHING_RATES,
-  SET_RATES,
-} from 'constants/ratesConstants';
+import { SET_CHAIN_RATES, SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
