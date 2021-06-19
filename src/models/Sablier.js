@@ -51,9 +51,3 @@ export type Stream = {
   token: Token,
   withdrawals: Withdrawal[],
 };
-
-export type Streams = {
-  incomingStreams: Stream[],
-  outgoingStreams: Stream[],
-};
-

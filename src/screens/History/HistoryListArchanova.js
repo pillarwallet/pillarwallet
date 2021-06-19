@@ -34,7 +34,6 @@ import { CHAIN } from 'constants/chainConstants';
 import { useRootSelector } from 'selectors';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
-import { sablierEventsSelector } from 'selectors/sablier';
 
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -62,8 +61,6 @@ export default HistoryListArchanova;
 function useHistoryFeedItems(): any[] {
   const accounts = useRootSelector((root) => root.accounts.data);
   const userEvents = useRootSelector((root) => root.userEvents.data);
-  const badgesEvents = useRootSelector((root) => root.badges.badgesEvents);
-  const sablierEvents = useRootSelector(sablierEventsSelector);
 
   const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
   const mappedTransactions = mapTransactionsHistory(
@@ -88,7 +85,5 @@ function useHistoryFeedItems(): any[] {
     ...mappedTransactions,
     ...mappedCollectiblesTransactions,
     ...userEvents,
-    ...badgesEvents,
-    ...sablierEvents,
   ];
 }

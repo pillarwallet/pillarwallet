@@ -91,16 +91,7 @@ export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => a
 
 export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 
-export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
-  get(poolTogether, 'poolStats', {});
-
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
-
-export const lendingSelector = ({ lending }: RootReducerState) => lending;
-
-export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
-
-export const rariSelector = ({ rari }: RootReducerState) => rari;
 
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
 

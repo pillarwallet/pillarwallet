@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
-import * as ethUtil from 'ethereumjs-util';
 import {
   Dimensions,
   Platform,
@@ -43,7 +42,6 @@ import {
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
   HIGH_VALUE_TOKENS,
-  VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 
 // services
@@ -121,10 +119,6 @@ export const reportOrWarn = (
     return;
   }
   reportLog(message, extra, level);
-};
-
-export const stringWithoutSpaces = (s: string): string => {
-  return s.replace(/\s/g, '');
 };
 
 export const delay = async (ms: number) => {
@@ -411,58 +405,6 @@ export const lookupAddress = async (address: string): Promise<?string> => {
   return resolved?.name;
 };
 
-export const padWithZeroes = (value: string, length: number): string => {
-  let myString = value;
-
-  while (myString.length < length) {
-    myString = `0${myString}`;
-  }
-
-  return myString;
-};
-
-type ConcatSigParams = {
-  v: Buffer | Uint8Array,
-  r: Buffer | Uint8Array,
-  s: Buffer | Uint8Array,
-};
-
-export const concatSig = ({ v, r, s }: ConcatSigParams): string => {
-  const rSig = ethUtil.fromSigned(r);
-  const sSig = ethUtil.fromSigned(s);
-  const vSig = ethUtil.bufferToInt(v);
-  const rStr = padWithZeroes(ethUtil.toUnsigned(rSig).toString('hex'), 64);
-  const sStr = padWithZeroes(ethUtil.toUnsigned(sSig).toString('hex'), 64);
-  const vStr = ethUtil.stripHexPrefix(ethUtil.intToHex(vSig));
-
-  return ethUtil.addHexPrefix(rStr.concat(sStr, vStr)).toString('hex');
-};
-
-export const ethSign = (msgHex: String, privateKeyHex: string): string => {
-  const message = ethUtil.toBuffer(msgHex);
-  const privateKey = ethUtil.toBuffer(privateKeyHex);
-  const sigParams = ethUtil.ecsign(message, privateKey);
-  const result = concatSig(sigParams);
-
-  return result;
-};
-
-export const getRandomString = (): string => {
-  return EthersBigNumber.from(utils.randomBytes(32)).toHexString().slice(2);
-};
-
-export const extractJwtPayload = (jwtToken: string): Object => {
-  // extract: header (not needed), payload, signature (not needed)
-  const [, encodedPayload] = jwtToken.split('.');
-
-  try {
-    // do not use Buffer.toJSON
-    return JSON.parse(Buffer.from(encodedPayload, 'base64').toString());
-  } catch (e) {
-    return {};
-  }
-};
-
 export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   const gasPrice = get(gasInfo, 'gasPrice.max', 0);
 
@@ -538,27 +480,6 @@ export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
   return a.toLowerCase() === b.toLowerCase();
 };
 
-// number with decimals is valid if it has decimals else if not then it should not contain any decimal pointer
-export const isValidNumberDecimals = (
-  number: number | string,
-  decimals: number,
-) => decimals !== 0 || !number.toString().includes('.');
-
-/**
- * helps to avoid text overlapping on many decimals,
- * full amount will be displayed in confirm screen
- * also show only 2 decimals for amounts above 1.00
- * to avoid same text overlapping in the other side
- */
-export const formatAmountDisplay = (value: number | string) => {
-  if (!value) return 0;
-  const amount = parseFloat(value);
-  if (amount > 1) {
-    return formatMoney(amount, 2);
-  }
-  return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
-};
-
 export const getDeviceHeight = () => {
   return Dimensions.get('window').height;
 };
@@ -597,13 +518,6 @@ export const formatTransactionFee = (
   return t('tokenValue', { value, token });
 };
 
-/** Apy is provided as fractional number, i.e. 0.5 => 50% */
-export const formatApy = (apy: ?Value): string => {
-  if (!apy) return '';
-
-  return t('percentValue', { value: wrapBigNumber(apy).multipliedBy(100).toFixed(2) });
-};
-
 export const humanizeHexString = (hexString: ?string) => {
   if (!hexString) return '';
 
@@ -621,32 +535,6 @@ export const humanizeHexString = (hexString: ?string) => {
   }
 
   return hexString;
-};
-
-export const convertToBaseUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
-  // $FlowFixMe: inexact bignumber.js typings
-  return quantity.multipliedBy(new BigNumber(10).pow(decimals));
-};
-
-export const convertToNominalUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
-  // $FlowFixMe: inexact bignumber.js typings
-  return quantity.dividedBy(new BigNumber(10).pow(decimals));
-};
-
-export const countDownDHMS = (remainingTimeMs: number) => {
-  const seconds = remainingTimeMs / 1000;
-  const days = Math.floor(seconds / 24 / 60 / 60);
-  const hoursLeft = Math.floor((seconds) - (days * 86400));
-  const hours = Math.floor(hoursLeft / 3600);
-  const minutesLeft = Math.floor((hoursLeft) - (hours * 3600));
-  const minutes = Math.floor(minutesLeft / 60);
-  const remainingSeconds = seconds % 60;
-  return {
-    days,
-    hours,
-    minutes,
-    remainingSeconds,
-  };
 };
 
 export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: string): ?string => {
@@ -672,8 +560,6 @@ export const hitSlop20 = {
   left: 20,
   right: 20,
 };
-
-export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
@@ -704,15 +590,6 @@ export const formatBigAmount = (value: Value) => {
 export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol}${formatBigAmount(value)}`;
-};
-
-export const removeTrailingZeros = (amount: string) => {
-  if (!amount.includes('.')) return amount;
-  return amount.replace(/0+$/, '').replace(/\.$/, '');
-};
-
-export const toFixedString = (amount: number) => {
-  return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
 
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;

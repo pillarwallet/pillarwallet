@@ -35,7 +35,6 @@ export const EVENT_TYPE = {
   EXCHANGE_FROM_FIAT: ('exchangeFromFiat', 'exchangeFromFiat'),
   WALLET_CREATED: ('walletCreated': 'walletCreated'),
   WALLET_ACTIVATED: ('walletActivated': 'walletActivated'),
-  BADGE_RECEIVED: ('badgeReceived': 'badgeReceived'),
   ENS_NAME_REGISTERED: ('ensNameRegistered': 'ensNameRegistered'),
 };
 
@@ -62,8 +61,7 @@ export type Event =
   | TokenExchangeEvent
   | ExchangeFromFiatEvent
   | WalletEvent
-  | EnsNameRegisteredEvent
-  | BadgeReceivedEvent;
+  | EnsNameRegisteredEvent;
 
 /**
  * Common fields in all events.
@@ -171,14 +169,6 @@ export type EnsNameRegisteredEvent = {|
   ensName: string,
   hash: string,
   fee: TokenValue,
-|};
-
-export type BadgeReceivedEvent = {|
-  ...EventCommon,
-  type: typeof EVENT_TYPE.BADGE_RECEIVED,
-  badgeId: string,
-  title?: string,
-  iconUrl: ?string,
 |};
 
 export type TransactionsStore = {
