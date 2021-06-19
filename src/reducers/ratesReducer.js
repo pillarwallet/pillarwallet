@@ -19,7 +19,11 @@
 */
 
 // constants
-import { SET_CHAIN_RATES, SET_RATES } from 'constants/ratesConstants';
+import {
+  SET_CHAIN_RATES,
+  SET_FETCHING_RATES,
+  SET_RATES,
+} from 'constants/ratesConstants';
 
 // types
 import type { RatesPerChain } from 'models/RatesByAssetSymbol';
@@ -50,6 +54,7 @@ const ratesReducer = (
         ...state,
         data: action.payload,
       };
+
     case SET_CHAIN_RATES:
       const { chain, rates } = action.payload;
       return {
@@ -59,6 +64,13 @@ const ratesReducer = (
           [chain]: rates,
         },
       };
+
+    case SET_FETCHING_RATES:
+      return {
+        ...state,
+        isFetching: action.payload,
+      };
+
     default:
       return state;
   }

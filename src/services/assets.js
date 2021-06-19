@@ -23,10 +23,9 @@ import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, BNB, HOT, HOLO, rateKeys } from 'constants/assetsConstants';
+import { ETH, HOT, HOLO, rateKeys } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { COIN_ID } from 'constants/coinGeckoServiceConstants';
 
 // utils
 import {
@@ -36,6 +35,7 @@ import {
   reportErrorLog,
   reportLog,
 } from 'utils/common';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -46,7 +46,8 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 // services
 import {
   getCoinGeckoTokenPrices,
-  getCoinGeckoPricesByCoinIds,
+  getCoinGeckoPricesByCoinId,
+  nativeAssetSymbolToCoinGeckoCoinId,
 } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
@@ -355,16 +356,16 @@ export async function getExchangeRates(
 
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
-    : await getCoinGeckoTokenPrices(assets);
+    : await getCoinGeckoTokenPrices(chain, assets);
 
-  if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
-    const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
-    if (!isEmpty(ethPrice)) {
-      rates = { ...rates, [ETH]: ethPrice };
-    }
 
-    if (!isEmpty(bnbPrice)) {
-      rates = { ...rates, [BNB]: bnbPrice };
+  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
+
+  if (assetSymbols.includes(nativeAssetSymbol)) {
+    const coinId = nativeAssetSymbolToCoinGeckoCoinId[nativeAssetSymbol];
+    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
+    if (!isEmpty(nativeAssetPrice)) {
+      rates = { ...rates, [nativeAssetSymbol]: nativeAssetPrice };
     }
   }
 

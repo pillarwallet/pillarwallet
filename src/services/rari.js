@@ -19,19 +19,33 @@
 */
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import maxBy from 'lodash.maxby';
+
+// services
 import { getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+
+// configs
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
+
+// utils
 import { reportErrorLog } from 'utils/common';
+
+// constants
 import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// abis
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
+
+// types
 import type { RariPool } from 'models/RariPool';
 import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+
 
 const hasEthUsdPrice = (rates: RatesByAssetSymbol) => !!rates?.[ETH]?.USD;
 
@@ -239,7 +253,7 @@ export const getUnclaimedRgt = async (accountAddress: string) => {
 };
 
 export const getRtgPrice = async () => {
-  const price = await getCoinGeckoTokenPrices({
+  const price = await getCoinGeckoTokenPrices(CHAIN.ETHEREUM, {
     // $FlowFixMe: react-native types
     [RARI_GOVERNANCE_TOKEN_DATA.symbol]: RARI_GOVERNANCE_TOKEN_DATA,
   });
