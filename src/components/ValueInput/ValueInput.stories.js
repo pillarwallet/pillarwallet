@@ -24,25 +24,39 @@ import { Provider } from 'react-redux';
 
 // constants
 import { ETH, GBP, PLR } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import ValueInputComponent from 'components/ValueInput';
 
 // test utils
 import { createTestStore, initialTestState } from 'testUtils/store';
-import { mockEtherspotAccount, mockSupportedAssets } from 'testUtils/jestSetup';
 
 // local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 
+const activeAccount = {
+  id: '0x',
+  isActive: true,
+  type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+};
+
+const ethAsset = {
+  symbol: ETH,
+  name: 'Ethereum',
+  address: '0x',
+  iconUrl: '',
+  decimals: 18,
+};
+
 const store = createTestStore({
   ...initialTestState,
-  accounts: { data: [{ ...mockEtherspotAccount, isActive: true }] },
+  accounts: { data: [activeAccount] },
   assetsBalances: {
     data: {
-      [mockEtherspotAccount.id]: {
+      [activeAccount.id]: {
         ethereum: {
           wallet: {
             [ETH]: {
@@ -68,10 +82,8 @@ const store = createTestStore({
   },
   appSettings: { data: { baseFiatCurrency: GBP } },
   collectibles: { data: [] },
-  assets: { supportedAssets: { ethereum: mockSupportedAssets } },
+  assets: { supportedAssets: { ethereum: [ethAsset] } },
 });
-
-const ethAsset = mockSupportedAssets.find(({ symbol }) => symbol === ETH);
 
 storiesOf('Value Input', module)
   .addDecorator(CenterViewStretchDecorator)

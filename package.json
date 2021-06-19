@@ -61,7 +61,6 @@
     "buffer": "^4.9.1",
     "coinselect": "^3.1.11",
     "crypto-js": "^4.0.0",
-    "cryptocompare": "^0.5.0",
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "eth-sig-util": "^3.0.0",

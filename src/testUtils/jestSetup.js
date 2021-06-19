@@ -250,10 +250,6 @@ export const mockExchangeRates = {
   ETH: mockEtherExchangeRates,
 };
 
-jest.setMock('cryptocompare', {
-  priceMulti: () => Promise.resolve(mockExchangeRates),
-});
-
 jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);

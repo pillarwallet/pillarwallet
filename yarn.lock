@@ -6410,10 +6410,6 @@ crypto-random-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
 
-cryptocompare@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/cryptocompare/-/cryptocompare-0.5.0.tgz#e3b377b31d0f309039cda0dc9292c7dfb085c2ae"
-
 css-color-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"
