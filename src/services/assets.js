@@ -311,6 +311,7 @@ export async function getExchangeRates(
     return null;
   }
 
+  // $FlowFixMe
   let rates = await getCoinGeckoTokenPrices(chain, assets);
 
   const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
