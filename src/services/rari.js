@@ -44,7 +44,7 @@ import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributo
 
 // types
 import type { RariPool } from 'models/RariPool';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 
 const hasEthUsdPrice = (rates: RatesByAssetSymbol) => !!rates?.[ETH]?.USD;

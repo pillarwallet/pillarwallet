@@ -44,7 +44,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {

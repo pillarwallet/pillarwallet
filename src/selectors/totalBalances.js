@@ -57,7 +57,7 @@ import type {
 import type {
   RatesByAssetSymbol,
   RatesPerChain,
-} from 'models/RatesByAssetSymbol';
+} from 'models/Rates';
 
 export const walletTotalBalancesSelector: Selector<WalletTotalBalances> = createSelector(
   assetsBalancesSelector,

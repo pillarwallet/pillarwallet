@@ -26,7 +26,7 @@ import {
 } from 'constants/ratesConstants';
 
 // types
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 
 export type RatesReducerState = {

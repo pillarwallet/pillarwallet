@@ -47,7 +47,7 @@ import {
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -65,12 +65,7 @@ export const setRatesAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
 
-    const ratesPerChain = ratesPerChainSelector(getState());
-    const currentChainRates = ratesPerChain[chain] ?? {};
-
-    const updatedRates = { ...currentChainRates, ...rates };
-
-    dispatch({ type: SET_CHAIN_RATES, payload: { chain, rates: updatedRates } });
+    dispatch({ type: SET_CHAIN_RATES, payload: { chain, rates } });
 
     const updatedRatesPerChain = ratesPerChainSelector(getState());
     await dispatch(saveDbAction('rates', { rates: updatedRatesPerChain }, true));

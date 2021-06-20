@@ -51,7 +51,7 @@ import type { TopUpFee } from 'models/PaymentNetwork';
 import type { AssetsBySymbol } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';

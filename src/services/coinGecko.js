@@ -44,7 +44,7 @@ import type {
   RateByCurrencySymbol,
   RateKey,
   RatesByAssetSymbol,
-} from 'models/RatesByAssetSymbol';
+} from 'models/Rates';
 import type { Chain } from 'models/Chain';
 
 // { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }

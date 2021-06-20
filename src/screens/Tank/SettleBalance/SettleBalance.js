@@ -51,7 +51,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 // utils
 import {

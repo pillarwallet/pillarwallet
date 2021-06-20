@@ -189,7 +189,7 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { TransactionsStore } from 'models/History';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 
 type StateProps = {|

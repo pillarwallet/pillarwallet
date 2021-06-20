@@ -32,7 +32,7 @@ import { getTotalBalanceInFiat } from 'utils/assets';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 // selectors
 import {

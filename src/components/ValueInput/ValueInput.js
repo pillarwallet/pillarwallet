@@ -68,7 +68,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 // local
 import ValueInputHeader from './ValueInputHeader';

@@ -29,7 +29,7 @@ import {
 
 // types
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 
 describe('Assets utils', () => {

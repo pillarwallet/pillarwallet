@@ -51,6 +51,14 @@ const ethAsset = {
   decimals: 18,
 };
 
+const plrAsset = {
+  symbol: PLR,
+  name: 'Pillar',
+  address: '0x',
+  iconUrl: '',
+  decimals: 18,
+};
+
 const store = createTestStore({
   ...initialTestState,
   accounts: { data: [activeAccount] },
@@ -82,7 +90,7 @@ const store = createTestStore({
   },
   appSettings: { data: { baseFiatCurrency: GBP } },
   collectibles: { data: [] },
-  assets: { supportedAssets: { ethereum: [ethAsset] } },
+  assets: { supportedAssets: { ethereum: [ethAsset, plrAsset] } },
 });
 
 storiesOf('Value Input', module)

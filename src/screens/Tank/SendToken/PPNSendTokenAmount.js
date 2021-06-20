@@ -41,7 +41,7 @@ import { themedColors } from 'utils/themes';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';

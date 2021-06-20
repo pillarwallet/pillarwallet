@@ -582,10 +582,18 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
 
 export const fetchAllAccountsAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      assetsBalances: { isFetching },
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+    } = getState();
 
     const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
+    if (!activeAccount || isFetching || !isOnline) return;
+
+    dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
+
+    await dispatch(fetchSupportedAssetsAction());
 
     const promises = accounts
       .filter(isNotKeyBasedType)
@@ -606,6 +614,8 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
+
+    dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: false });
   };
 };
 

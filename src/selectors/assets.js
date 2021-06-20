@@ -46,7 +46,7 @@ import type {
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { Account } from 'models/Account';
-import type { RatesPerChain } from 'models/RatesByAssetSymbol';
+import type { RatesPerChain } from 'models/Rates';
 
 // selectors
 import {

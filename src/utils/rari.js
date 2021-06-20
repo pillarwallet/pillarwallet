@@ -49,7 +49,7 @@ import RARI_FUND_MANAGER_CONTRACT_ABI_ETH from 'abi/rariFundManagerEth.json';
 import type { Asset } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
-import type { RatesByAssetSymbol } from 'models/RatesByAssetSymbol';
+import type { RatesByAssetSymbol } from 'models/Rates';
 
 
 const MSTABLE_TOKENS = [USDC, USDT, TUSD];
