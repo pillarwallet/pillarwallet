@@ -63,26 +63,9 @@ export type AssetsBySymbol = {
   [symbol: string]: Asset,
 };
 
-export type AssetsStore = {
-  [accountId: string]: Asset[],
-};
-
 export type SyntheticAsset = Asset & {
   availableBalance: number,
   exchangeRate?: number,
-};
-
-export type AssetToDeposit = Asset & {
-  earnInterestRate: number,
-};
-
-export type DepositedAsset = Asset & {
-  earnInterestRate: number,
-  earnedAmount: number,
-  earningsPercentageGain: number,
-  currentBalance: number,
-  initialBalance: number,
-  aaveTokenAddress: string,
 };
 
 export type KeyBasedAssetTransfer = {|

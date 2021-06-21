@@ -34,19 +34,12 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { isPoolTogetherTag } from 'utils/poolTogether';
-import { isSablierTransactionTag } from 'utils/sablier';
-import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
-import { isRariTransactionTag } from 'utils/rari';
 import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
 
 // constants
 import {
   SEND_TOKEN_CONFIRM,
   SEND_COLLECTIBLE_CONFIRM,
-  POOLTOGETHER_DASHBOARD,
-  SABLIER_STREAMS,
-  RARI_DEPOSIT,
   LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import {
@@ -56,13 +49,8 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
 } from 'constants/liquidityPoolsConstants';
-import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
-import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
-import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import { TRANSACTION_TYPE, ERROR_TYPE } from 'constants/transactionsConstants';
-import {
-  RARI_DEPOSIT_TRANSACTION, RARI_WITHDRAW_TRANSACTION, RARI_TRANSFER_TRANSACTION, RARI_CLAIM_TRANSACTION,
-} from 'constants/rariConstants';
 
 
 type Props = {
@@ -84,15 +72,9 @@ const getTransactionErrorMessage = (error: string): string => {
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
-const getTransactionSuccessMessage = (transactionType: ?string, extra?: Object) => {
+const getTransactionSuccessMessage = (transactionType: ?string) => {
   if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     return t('transactions.paragraph.exchangeTransactionSuccess');
-  } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-    return t('transactions.paragraph.poolTogetherDepositTransactionSuccess');
-  } else if (transactionType === SABLIER_CREATE_STREAM) {
-    return t('transactions.paragraph.sablierStreamTransactionSuccess', {
-      address: extra?.contactAddress || '',
-    });
   }
   return t('transactions.paragraph.transactionSuccess');
 };
@@ -106,10 +88,6 @@ const getTransactionSuccessTitle = (props) => {
     return t('transactions.title.exchangeTransactionSuccess');
   } else if (transactionTokenType === COLLECTIBLES) {
     return t('transactions.title.collectibleTransactionSuccess');
-  } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-    return t('transactions.title.poolTogetherTransactionSuccess');
-  } else if (transactionType === SABLIER_CREATE_STREAM) {
-    return t('transactions.title.sablierTransactionSuccess');
   }
   return t('transactions.title.transactionSuccess');
 };
@@ -138,53 +116,6 @@ class SendTokenTransaction extends React.Component<Props> {
     const { isSuccess, transactionPayload, goBackDismiss } = navigation.state.params;
 
     const txTag = transactionPayload?.tag || '';
-    if (isSuccess && isPoolTogetherTag(txTag)) {
-      const { extra: { symbol = DAI, amount, decimals = 18 } = {} } = transactionPayload;
-      navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
-      const ticketsCount = parseFloat(formatUnits(amount, decimals));
-      if (txTag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-        Toast.show({
-          message: t('toast.purchasedPoolTogetherTickets', { count: ticketsCount }),
-          emoji: 'ok_hand',
-          autoClose: true,
-        });
-      }
-      return;
-    }
-
-    if (isSablierTransactionTag(txTag)) {
-      navigation.navigate(SABLIER_STREAMS);
-      return;
-    }
-
-    if (isRariTransactionTag(txTag)) {
-      navigation.navigate(RARI_DEPOSIT);
-      let toastMessage = null;
-      const {
-        extra: {
-          symbol, decimals, amount, recipient,
-        } = {},
-      } = transactionPayload;
-      const formattedAmount = formatAmount(formatUnits(amount, decimals), symbol ? getDecimalPlaces(symbol) : 6);
-      if (txTag === RARI_DEPOSIT_TRANSACTION) {
-        toastMessage = t('toast.rariDeposit', { amount: formattedAmount, token: symbol });
-      } else if (txTag === RARI_WITHDRAW_TRANSACTION) {
-        toastMessage = t('toast.rariWithdraw', { amount: formattedAmount, token: symbol });
-      } else if (txTag === RARI_TRANSFER_TRANSACTION) {
-        toastMessage = t('toast.rariTransfer', { amount: formattedAmount, token: symbol, recipient });
-      } else if (txTag === RARI_CLAIM_TRANSACTION) {
-        toastMessage = t('toast.rariClaimRgt', { amount: formattedAmount });
-      }
-
-      if (toastMessage) {
-        Toast.show({
-          message: toastMessage,
-          emoji: 'ok_hand',
-          autoClose: true,
-        });
-      }
-      return;
-    }
 
     if (isLiquidityPoolsTransactionTag(txTag)) {
       let toastMessage = null;
@@ -284,14 +215,13 @@ class SendTokenTransaction extends React.Component<Props> {
         extra: {
           allowance = {},
         } = {},
-        extra,
       },
       transactionType,
     } = navigation.state.params;
 
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess
-      ? getTransactionSuccessMessage(transactionType, extra)
+      ? getTransactionSuccessMessage(transactionType)
       : getTransactionErrorMessage(error);
     const isAllowanceTransaction = Object.keys(allowance).length;
     const transactionStatusTitle = isSuccess

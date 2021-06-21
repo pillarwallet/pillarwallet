@@ -56,29 +56,6 @@ const infoIconDark = require('assets/icons/icon_info_dark.png');
 const copyIconLight = require('assets/icons/icon_copy.png');
 const copyIconDark = require('assets/icons/icon_copy_dark.png');
 
-
-// exchange providers
-const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
-const uniswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png');
-const uniswapLightMonochrome = require('assets/images/exchangeProviders/uniswapLightMonochrome.png');
-const oneinchLightVertical = require('assets/images/exchangeProviders/oneinchLightVertical.png');
-const oneinchLightHorizontal = require('assets/images/exchangeProviders/oneinchLightHorizontal.png');
-const oneinchLightMonochrome = require('assets/images/exchangeProviders/oneinchLightMonochrome.png');
-const uniswapDarkVertical = require('assets/images/exchangeProviders/uniswapDarkVertical.png');
-const uniswapDarkHorizontal = require('assets/images/exchangeProviders/uniswapDarkHorizontal.png');
-const uniswapDarkMonochrome = require('assets/images/exchangeProviders/uniswapDarkMonochrome.png');
-const oneinchDarkVertical = require('assets/images/exchangeProviders/oneinchDarkVertical.png');
-const oneinchDarkHorizontal = require('assets/images/exchangeProviders/oneinchDarkHorizontal.png');
-const oneinchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDarkMonochrome.png');
-const synthetixLightVertical = require('assets/images/exchangeProviders/synthetixLightVertical.png');
-const synthetixLightHorizontal = require('assets/images/exchangeProviders/synthetixLightHorizontal.png');
-const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthetixLightMonochrome.png');
-const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
-const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
-const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
-const exchangeDefaultLogoDark = require('assets/icons/exchange_default_dark.png');
-const exchangeDefaultLogoLight = require('assets/icons/exchange_default_light.png');
-
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
 
@@ -161,29 +138,6 @@ export const images = (theme: Theme) => {
 };
 
 export const useThemedImages = () => images(useTheme());
-
-export const staticImages = {
-  uniswapLightVertical,
-  uniswapLightHorizontal,
-  uniswapLightMonochrome,
-  oneinchLightVertical,
-  oneinchLightHorizontal,
-  oneinchLightMonochrome,
-  uniswapDarkVertical,
-  uniswapDarkHorizontal,
-  uniswapDarkMonochrome,
-  oneinchDarkVertical,
-  oneinchDarkHorizontal,
-  oneinchDarkMonochrome,
-  synthetixLightVertical,
-  synthetixLightHorizontal,
-  synthetixLightMonochrome,
-  synthetixDarkVertical,
-  synthetixDarkHorizontal,
-  synthetixDarkMonochrome,
-  exchangeDefaultLogoDark,
-  exchangeDefaultLogoLight,
-};
 
 export const isSvgImage = (uri: ?string) => {
   return uri && uri.endsWith('.svg');

@@ -31,7 +31,6 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNT_ENS } from 'constants/archanovaConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
@@ -144,14 +143,6 @@ storiesOf('ActivityFeedItem', module)
         icon: placeholderImage,
         asset: 'CryptoKitty',
         assetData: { image: placeholderImage },
-      }}
-    />
-  ))
-  .add('Badge reward', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: BADGE_REWARD_EVENT, name: 'Super kitty badge!', imageUrl: placeholderImage,
       }}
     />
   ))

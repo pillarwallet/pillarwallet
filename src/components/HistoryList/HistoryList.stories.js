@@ -397,15 +397,6 @@ const basicItems: Event[] = [
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
   {
-    type: EVENT_TYPE.BADGE_RECEIVED,
-    id: '5ca21c49754407000644f73b',
-    badgeId: '5ca21c49754407000644f73b',
-    date: new Date('2021-04-13'),
-    title: 'Coin Collector',
-    iconUrl:
-      'https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png',
-  },
-  {
     type: EVENT_TYPE.ENS_NAME_REGISTERED,
     id: 'ensName-1',
     date: new Date('2021-04-10'),

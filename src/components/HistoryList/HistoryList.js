@@ -51,7 +51,6 @@ import TokenExchangeItem from './items/TokenExchangeItem';
 import ExchangeFromFiatItem from './items/ExchangeFromFiatItem';
 import WalletEventItem from './items/WalletEventItem';
 import EnsNameItem from './items/EnsNameItem';
-import BadgeReceivedItem from './items/BadgeReceivedItem';
 
 type Props = {|
   items: ?(Event[]),
@@ -92,8 +91,6 @@ function HistoryList({ items, chain }: Props) {
         return <WalletEventItem event={event} onPress={() => showEventDetails(event)} />;
       case EVENT_TYPE.ENS_NAME_REGISTERED:
         return <EnsNameItem event={event} onPress={() => showEventDetails(event)} />;
-      case EVENT_TYPE.BADGE_RECEIVED:
-        return <BadgeReceivedItem event={event} onPress={() => showEventDetails(event)} />;
       default:
         return null;
     }

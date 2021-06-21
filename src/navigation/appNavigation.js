@@ -53,7 +53,6 @@ import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletCon
 import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/WalletConnectCallRequestScreen';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
-import BadgeScreen from 'screens/Badge';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
@@ -75,18 +74,6 @@ import WebViewScreen from 'screens/WebView/WebViewScreen';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
-import PoolTogetherDashboardScreen from 'screens/PoolTogether/PoolTogetherDashboard';
-import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
-import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
-import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
-import PoolTogetherWithdrawConfirmScreen from 'screens/PoolTogether/PoolTogetherWithdrawConfirm';
-import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
-import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
-import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
-import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
-import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
-import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
-import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
 import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
@@ -94,23 +81,6 @@ import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/Ke
 import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
 import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
-import SablierStreamsScreen from 'screens/Sablier/SablierStreams';
-import SablierNewStreamScreen from 'screens/Sablier/NewStream';
-import SablierNewStreamReviewScreen from 'screens/Sablier/NewStreamReview';
-import SablierIncomingStreamScreen from 'screens/Sablier/IncomingStream';
-import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
-import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
-import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
-import RariDepositScreen from 'screens/Rari/RariDeposit';
-import RariInfoScreen from 'screens/Rari/RariInfo';
-import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
-import RariAddDepositReviewScreen from 'screens/Rari/RariAddDepositReview';
-import RariWithdrawScreen from 'screens/Rari/RariWithdraw';
-import RariWithdrawReviewScreen from 'screens/Rari/RariWithdrawReview';
-import RariTransferScreen from 'screens/Rari/RariTransfer';
-import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
-import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
-import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
 import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
 import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
 import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
@@ -180,7 +150,6 @@ import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
-  BADGE,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -212,21 +181,6 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   WALLET_ACTIVATED,
-  LENDING_CHOOSE_DEPOSIT,
-  LENDING_DEPOSITED_ASSETS_LIST,
-  LENDING_ADD_DEPOSIT_FLOW,
-  LENDING_VIEW_DEPOSITED_ASSET,
-  LENDING_ENTER_DEPOSIT_AMOUNT,
-  LENDING_DEPOSIT_TRANSACTION_CONFIRM,
-  LENDING_ENTER_WITHDRAW_AMOUNT,
-  LENDING_WITHDRAW_DEPOSIT_FLOW,
-  LENDING_WITHDRAW_TRANSACTION_CONFIRM,
-  POOLTOGETHER_FLOW,
-  POOLTOGETHER_DASHBOARD,
-  POOLTOGETHER_PURCHASE,
-  POOLTOGETHER_PURCHASE_CONFIRM,
-  POOLTOGETHER_WITHDRAW,
-  POOLTOGETHER_WITHDRAW_CONFIRM,
   KEY_BASED_ASSET_TRANSFER_INTRO,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT,
@@ -236,26 +190,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_LIST,
   CONTACTS_FLOW,
-  SABLIER_FLOW,
-  SABLIER_STREAMS,
-  SABLIER_NEW_STREAM,
-  SABLIER_NEW_STREAM_REVIEW,
-  SABLIER_INCOMING_STREAM,
-  SABLIER_OUTGOING_STREAM,
-  SABLIER_WITHDRAW,
-  SABLIER_WITHDRAW_REVIEW,
   EXCHANGE_FLOW,
-  RARI_FLOW,
-  RARI_DEPOSIT,
-  RARI_INFO,
-  RARI_ADD_DEPOSIT,
-  RARI_ADD_DEPOSIT_REVIEW,
-  RARI_WITHDRAW,
-  RARI_WITHDRAW_REVIEW,
-  RARI_TRANSFER,
-  RARI_TRANSFER_REVIEW,
-  RARI_CLAIM_RGT,
-  RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
   LIQUIDITY_POOLS_FLOW,
   LIQUIDITY_POOLS,
@@ -378,14 +313,9 @@ const homeFlow = createStackNavigator(
     [HOME]: HomeScreen,
     [HOME_HISTORY]: HistoryScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [BADGE]: BadgeScreen,
     [STORYBOOK]: StorybookScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-    [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-    [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-    [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
@@ -509,31 +439,6 @@ const menuFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-// POOLTOGETHER FLOW
-const poolTogetherFlow = createStackNavigator({
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
-  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
-  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
-
-const lendingAddDepositsFlow = createStackNavigator({
-  [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
-  [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
-
-const lendingWithdrawDepositsFlow = createStackNavigator({
-  [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
-  [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
-
 const keyBasedAssetTransferFlow = createStackNavigator({
   [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
   [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
@@ -546,34 +451,6 @@ const keyBasedAssetTransferFlow = createStackNavigator({
 const contactsFlow = createStackNavigator({
   [CONTACTS_LIST]: ContactsListScreen,
 }, StackNavigatorConfig);
-
-const sablierFlow = createStackNavigator({
-  [SABLIER_STREAMS]: SablierStreamsScreen,
-  [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
-  [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
-  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
-  [SABLIER_WITHDRAW]: SablierWithdrawScreen,
-  [SABLIER_WITHDRAW_REVIEW]: SablierWithdrawReviewScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
-
-const rariFlow = createStackNavigator({
-  [RARI_DEPOSIT]: RariDepositScreen,
-  [RARI_INFO]: RariInfoScreen,
-  [RARI_ADD_DEPOSIT]: RariAddDepositScreen,
-  [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
-  [RARI_WITHDRAW]: RariWithdrawScreen,
-  [RARI_WITHDRAW_REVIEW]: RariWithdrawReviewScreen,
-  [RARI_TRANSFER]: RariTransferScreen,
-  [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
-  [RARI_CLAIM_RGT]: RariClaimRgtScreen,
-  [RARI_CLAIM_RGT_REVIEW]: RariClaimRgtReviewScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
-
 
 const ensMigrationFlow = createStackNavigator({
   [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
@@ -628,22 +505,14 @@ const AppFlowNavigation = createStackNavigator(
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
-    [POOLTOGETHER_FLOW]: poolTogetherFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
-    [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
-    [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
-    [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
-    [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
-    [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
     [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
     [CONTACTS_FLOW]: contactsFlow,
-    [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
-    [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
     [TUTORIAL_FLOW]: tutorialFlow,
     [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,

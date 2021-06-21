@@ -262,260 +262,6 @@ exports[`Storyshots ActionModal default 1`] = `
 </View>
 `;
 
-exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
-<View
-  style={
-    Object {
-      "height": "100%",
-    }
-  }
->
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "stretch",
-          "height": "100%",
-          "justifyContent": "flex-start",
-        },
-      ]
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "flexDirection": "column",
-            "width": "100%",
-          },
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "opacity": 1,
-            "paddingBottom": 14,
-            "paddingLeft": 20,
-            "paddingRight": 20,
-            "paddingTop": 14,
-            "width": "100%",
-          }
-        }
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "paddingRight": 12,
-              },
-            ]
-          }
-        >
-          <View
-            backgroundColor={null}
-            diameter={48}
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "backgroundColor": "#EBF0F6",
-                  "borderColor": "#EBF0F6",
-                  "borderRadius": 24,
-                  "borderWidth": 0,
-                  "height": 48,
-                  "justifyContent": "center",
-                  "overflow": "hidden",
-                  "textAlign": "center",
-                  "width": 48,
-                },
-              ]
-            }
-          />
-        </View>
-        <View
-          style={
-            Object {
-              "flex": 1,
-            }
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                  "width": "100%",
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "flex-start",
-                    "flexBasis": 0,
-                    "flexDirection": "column",
-                    "flexGrow": 1,
-                    "flexShrink": 1,
-                    "justifyContent": "center",
-                    "minHeight": 54,
-                  },
-                  Object {
-                    "flexGrow": 1,
-                  },
-                ]
-              }
-              type="ACTION"
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                      "justifyContent": "space-between",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  ellipsizeMode="tail"
-                  numberOfLines={2}
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "textAlignVertical": "center",
-                        "width": "100%",
-                      },
-                    ]
-                  }
-                  type="ACTION"
-                >
-                  Super kitty badge!
-                </Text>
-              </View>
-              <View
-                h={2}
-                style={
-                  Array [
-                    Object {
-                      "height": 2,
-                      "width": 0,
-                    },
-                  ]
-                }
-              />
-              <Text
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "textAlignVertical": "center",
-                    },
-                  ]
-                }
-              >
-                label.badge
-              </Text>
-            </View>
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "flex-end",
-                    "flexDirection": "column",
-                    "justifyContent": "center",
-                    "marginLeft": 10,
-                    "minHeight": 54,
-                  },
-                  Object {
-                    "maxWidth": "50%",
-                  },
-                ]
-              }
-              type="ACTION"
-            >
-              <View
-                style={
-                  Array [
-                    undefined,
-                    Object {
-                      "flexWrap": "wrap",
-                    },
-                  ]
-                }
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "center",
-                        "borderColor": "#EBF0F6",
-                        "borderWidth": 0,
-                        "justifyContent": "center",
-                      },
-                    ]
-                  }
-                >
-                  <Text
-                    color="#8B939E"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#8B939E",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "marginBottom": 0,
-                          "marginLeft": "auto",
-                          "paddingBottom": 6,
-                          "paddingLeft": 0,
-                          "paddingRight": 0,
-                          "paddingTop": 6,
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                  >
-                    label.received
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
 exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
 <View
   style={
@@ -31675,11 +31421,11 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
               }
             >
               <View
-                last={false}
+                last={true}
                 style={
                   Array [
                     Object {
-                      "marginBottom": 8,
+                      "marginBottom": 0,
                     },
                   ]
                 }
@@ -31731,67 +31477,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
                       ]
                     }
                     variant="secondary"
-                  >
-                    button.purchaseMore
-                  </Text>
-                </View>
-              </View>
-              <View
-                last={true}
-                style={
-                  Array [
-                    Object {
-                      "marginBottom": 0,
-                    },
-                  ]
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "alignSelf": "auto",
-                      "backgroundColor": "transparent",
-                      "borderRadius": 6,
-                      "flexDirection": "row",
-                      "height": 52,
-                      "justifyContent": "center",
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 0,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      Array [
-                        Object {
-                          "color": "#007AFF",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 16,
-                          "lineHeight": 16,
-                          "marginTop": 2.88,
-                          "textAlign": "center",
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                    variant="transparent"
                   >
                     button.viewOnBlockchain
                   </Text>
@@ -32032,11 +31717,11 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
               }
             >
               <View
-                last={false}
+                last={true}
                 style={
                   Array [
                     Object {
-                      "marginBottom": 8,
+                      "marginBottom": 0,
                     },
                   ]
                 }
@@ -32088,67 +31773,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
                       ]
                     }
                     variant="secondary"
-                  >
-                    button.purchaseMore
-                  </Text>
-                </View>
-              </View>
-              <View
-                last={true}
-                style={
-                  Array [
-                    Object {
-                      "marginBottom": 0,
-                    },
-                  ]
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "alignSelf": "auto",
-                      "backgroundColor": "transparent",
-                      "borderRadius": 6,
-                      "flexDirection": "row",
-                      "height": 52,
-                      "justifyContent": "center",
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 0,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      Array [
-                        Object {
-                          "color": "#007AFF",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 16,
-                          "lineHeight": 16,
-                          "marginTop": 2.88,
-                          "textAlign": "center",
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                    variant="transparent"
                   >
                     button.viewOnBlockchain
                   </Text>
@@ -32389,11 +32013,11 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
               }
             >
               <View
-                last={false}
+                last={true}
                 style={
                   Array [
                     Object {
-                      "marginBottom": 8,
+                      "marginBottom": 0,
                     },
                   ]
                 }
@@ -32445,67 +32069,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
                       ]
                     }
                     variant="secondary"
-                  >
-                    button.withdrawMore
-                  </Text>
-                </View>
-              </View>
-              <View
-                last={true}
-                style={
-                  Array [
-                    Object {
-                      "marginBottom": 0,
-                    },
-                  ]
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "alignSelf": "auto",
-                      "backgroundColor": "transparent",
-                      "borderRadius": 6,
-                      "flexDirection": "row",
-                      "height": 52,
-                      "justifyContent": "center",
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 0,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      Array [
-                        Object {
-                          "color": "#007AFF",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 16,
-                          "lineHeight": 16,
-                          "marginTop": 2.88,
-                          "textAlign": "center",
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                    variant="transparent"
                   >
                     button.viewOnBlockchain
                   </Text>
@@ -32746,11 +32309,11 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
               }
             >
               <View
-                last={false}
+                last={true}
                 style={
                   Array [
                     Object {
-                      "marginBottom": 8,
+                      "marginBottom": 0,
                     },
                   ]
                 }
@@ -32802,67 +32365,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
                       ]
                     }
                     variant="secondary"
-                  >
-                    button.withdrawMore
-                  </Text>
-                </View>
-              </View>
-              <View
-                last={true}
-                style={
-                  Array [
-                    Object {
-                      "marginBottom": 0,
-                    },
-                  ]
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "alignSelf": "auto",
-                      "backgroundColor": "transparent",
-                      "borderRadius": 6,
-                      "flexDirection": "row",
-                      "height": 52,
-                      "justifyContent": "center",
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "opacity": 1,
-                      "paddingBottom": 0,
-                      "paddingLeft": 20,
-                      "paddingRight": 20,
-                      "paddingTop": 0,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      Array [
-                        Object {
-                          "color": "#007AFF",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 16,
-                          "lineHeight": 16,
-                          "marginTop": 2.88,
-                          "textAlign": "center",
-                          "textAlignVertical": "center",
-                        },
-                      ]
-                    }
-                    variant="transparent"
                   >
                     button.viewOnBlockchain
                   </Text>
@@ -40250,14 +39752,6 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                   "symbol": "PLR",
                   "value": "100",
                 },
-              },
-              Object {
-                "badgeId": "5ca21c49754407000644f73b",
-                "date": 2021-04-13T00:00:00.000Z,
-                "iconUrl": "https://s3.eu-west-2.amazonaws.com/pillar-prod-badges-images-eu-west-2-304069782345/transaction-in_180%403x.png",
-                "id": "5ca21c49754407000644f73b",
-                "title": "Coin Collector",
-                "type": "badgeReceived",
               },
             ],
             "date": 2021-04-13T00:00:00.000Z,

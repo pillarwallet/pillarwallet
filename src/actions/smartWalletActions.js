@@ -78,7 +78,6 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
-import { SABLIER_CANCEL_STREAM, SABLIER_WITHDRAW } from 'constants/sablierConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -87,7 +86,6 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 // services
 import archanovaService, { formatEstimated, parseEstimatePayload } from 'services/archanova';
 import { navigate } from 'services/navigation';
-import aaveService from 'services/aave';
 import etherspotService from 'services/etherspot';
 
 // selectors
@@ -173,9 +171,7 @@ import { fetchAssetsBalancesAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction, insertTransactionAction } from './historyActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
-import { fetchUserStreamsAction } from './sablierActions';
 import { lockScreenAction } from './authActions';
 import {
   setEstimatingTransactionAction,
@@ -690,11 +686,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         }
 
         if (!skipNotifications.includes(txType)) {
-          const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
-          const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
-
           let notificationMessage;
-          let toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
+          const toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
 
           if ([transactionTypes.TopUp, transactionTypes.Withdrawal].includes(txType)) {
             const tokenValue = get(event, 'payload.tokenValue');
@@ -722,23 +715,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             } else {
               notificationMessage = t('toast.transactionSent', { paymentInfo });
             }
-          } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
-            notificationMessage = t('toast.lendingDepositSuccess', { paymentInfo: getPaymentFromHistory() });
-            dispatch(fetchDepositedAssetsAction());
-          } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
-            notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
-            dispatch(fetchDepositedAssetsAction());
-          } else if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
-            if (txFromHistory?.tag === SABLIER_WITHDRAW) {
-              const symbol = get(txFromHistory, 'extra.symbol', '');
-              const archanovaAccountAssets = accountEthereumAssetsSelector(getState());
-              const assetData = getAssetData(getAssetsAsList(archanovaAccountAssets), supportedAssets, symbol);
-              notificationMessage = t('toast.sablierWithdraw', { assetName: assetData.name, assetSymbol: symbol });
-            } else if (txFromHistory?.tag === SABLIER_CANCEL_STREAM) {
-              notificationMessage = t('toast.sablierCancelStream');
-              toastEmoji = 'x'; // eslint-disable-line i18next/no-literal-string
-            }
-            dispatch(fetchUserStreamsAction());
           } else if (addressesEqual(archanovaAccountAddress, txSenderAddress)) {
             notificationMessage = t('toast.transactionSent', { paymentInfo: getPaymentFromHistory() });
           }
