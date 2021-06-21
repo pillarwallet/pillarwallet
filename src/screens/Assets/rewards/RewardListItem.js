@@ -29,12 +29,15 @@ import TokenValueView from 'components/modern/TokenValueView';
 import TokenIcon from 'components/modern/TokenIcon';
 
 // Selectors
-import { useRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { getRate } from 'utils/assets';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+
+// Types
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   title: ?string,
@@ -42,16 +45,17 @@ type Props = {|
   iconUrl: ?string,
   value: BigNumber,
   symbol: string,
+  chain: Chain,
   onPress?: () => mixed,
 |};
 
-function RewardListItem({ title, subtitle, iconUrl, value, symbol, onPress }: Props) {
+function RewardListItem({ title, subtitle, iconUrl, value, symbol, onPress, chain }: Props) {
   const colors = useThemeColors();
 
-  const rates = useRates();
+  const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const fiatValue = value.times(getRate(rates, symbol, currency));
+  const fiatValue = value.times(getRate(chainRates, symbol, currency));
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>

@@ -41,7 +41,8 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
-export const useRates = () => useRootSelector(ratesSelector);
+export const useRatesPerChain = () => useRootSelector(ratesPerChainSelector);
+export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? {};
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
 export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? [];
 
@@ -88,7 +89,7 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 
-export const ratesSelector = ({ rates }: RootReducerState) => rates.data;
+export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 
 export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
   get(poolTogether, 'poolStats', {});

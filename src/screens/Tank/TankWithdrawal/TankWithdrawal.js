@@ -48,8 +48,9 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WithdrawalFee } from 'models/PaymentNetwork';
-import type { AssetsBySymbol, Rates } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { RatesPerChain } from 'models/Rates';
 
 // constants
 import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
@@ -108,7 +109,7 @@ type Props = {
   session: Object,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawalFee: WithdrawalFee,
-  rates: Rates,
+  ratesPerChain: RatesPerChain,
   baseFiatCurrency: string,
   useGasToken: boolean,
 };
@@ -190,7 +191,7 @@ class TankWithdrawal extends React.Component<Props, State> {
       session,
       balances,
       withdrawalFee,
-      rates,
+      ratesPerChain,
       baseFiatCurrency,
       useGasToken,
       withdrawalFee: { feeInfo },
@@ -199,12 +200,14 @@ class TankWithdrawal extends React.Component<Props, State> {
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
+
     // balance
     const balance = availableStake;
     const formattedBalance = formatTokenAmount(balance, token);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
@@ -224,7 +227,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     const maxAmount = parseFloat(calculateMaxAmount(token, availableStake, txFeeInWei));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
@@ -302,11 +305,11 @@ class TankWithdrawal extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   paymentNetwork: { withdrawalFee },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  rates,
+  ratesPerChain,
   session,
   withdrawalFee,
   baseFiatCurrency,

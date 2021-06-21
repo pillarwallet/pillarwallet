@@ -250,10 +250,6 @@ export const mockExchangeRates = {
   ETH: mockEtherExchangeRates,
 };
 
-jest.setMock('cryptocompare', {
-  priceMulti: () => Promise.resolve(mockExchangeRates),
-});
-
 jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);
@@ -388,7 +384,8 @@ jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
-  getCoinGeckoPricesByCoinIds: () => Promise.resolve([mockEtherExchangeRates, null]),
+  getCoinGeckoPricesByCoinId: () => Promise.resolve(mockEtherExchangeRates),
+  chainToCoinGeckoCoinId: {},
 });
 
 const getMockedTranslations = (url) => {

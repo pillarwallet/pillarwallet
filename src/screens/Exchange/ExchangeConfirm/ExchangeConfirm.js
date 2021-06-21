@@ -40,7 +40,11 @@ import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useRates } from 'selectors';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useChainRates,
+} from 'selectors';
 
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
@@ -64,9 +68,10 @@ const ExchangeConfirmScreen = () => {
   const { fromAsset, toAsset, fromAmount, toAmount, provider } = offer;
 
   const fiatCurrency = useFiatCurrency();
-  const rates = useRates();
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
   const chain = CHAIN.ETHEREUM;
+
+  const chainRates = useChainRates(chain);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
     chain,
@@ -96,7 +101,7 @@ const ExchangeConfirmScreen = () => {
     });
   };
 
-  const formattedToValueInFiat = getFormattedBalanceInFiat(fiatCurrency, toAmount, rates, toAsset.symbol);
+  const formattedToValueInFiat = getFormattedBalanceInFiat(fiatCurrency, toAmount, chainRates, toAsset.symbol);
 
   const errorMessage = estimationErrorMessage || notEnoughForFeeErrorMessage;
 

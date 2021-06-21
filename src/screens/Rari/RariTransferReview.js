@@ -39,12 +39,14 @@ import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 import { formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
+// selectors
+import { useChainRates } from 'selectors';
+
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 
@@ -54,7 +56,6 @@ type Props = {
   ensRegistry: EnsRegistry,
   rariFundBalance: {[RariPool]: number},
   rariTotalSupply: {[RariPool]: number},
-  rates: Rates,
   baseFiatCurrency: ?string,
 };
 
@@ -70,18 +71,19 @@ const RariTransferReviewScreen = ({
   ensRegistry,
   rariFundBalance,
   rariTotalSupply,
-  rates,
   baseFiatCurrency,
 }: Props) => {
   const {
     transactionPayload, amount, rariPool, receiverAddress,
   } = navigation.state.params;
 
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   const onNextButtonPress = () => navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
   const amountInUSD = (rariFundBalance[rariPool] / rariTotalSupply[rariPool]) * amount;
-  const fiatAmount = convertUSDToFiat(amountInUSD, rates, fiatCurrency);
+  const fiatAmount = convertUSDToFiat(amountInUSD, ethereumRates, fiatCurrency);
   const formattedFiatAmount = formatFiat(fiatAmount, fiatCurrency);
 
   return (
@@ -116,7 +118,7 @@ const RariTransferReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -137,14 +139,12 @@ const mapStateToProps = ({
     rariFundBalance,
     rariTotalSupply,
   },
-  rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   ensRegistry,
   rariFundBalance,
   rariTotalSupply,
-  rates,
   baseFiatCurrency,
 });
 

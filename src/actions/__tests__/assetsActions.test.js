@@ -25,16 +25,22 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import {
+  ASSET_CATEGORY,
+  ETH,
+  PLR,
+  SET_CHAIN_SUPPORTED_ASSETS,
+} from 'constants/assetsConstants';
 import { SET_ACCOUNT_ASSETS_BALANCES, SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { SET_FETCHING_RATES, UPDATE_CHAIN_RATES } from 'constants/ratesConstants';
 
 // services
 import etherspotService from 'services/etherspot';
 
 // tet utils
-import { mockSupportedAssets } from 'testUtils/jestSetup';
+import { mockExchangeRates, mockSupportedAssets } from 'testUtils/jestSetup';
 
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
@@ -58,6 +64,19 @@ const mockAccounts: Object[] = [{
 
 const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH' };
 
+const mockPlrBalance = { balance: '1', symbol: 'PLR' };
+
+const mockAccountsBalances = {
+  [mockAccounts[0].id]: {
+    ethereum: {
+      wallet: {
+        [ETH]: mockEthBalance,
+        [PLR]: mockPlrBalance,
+      },
+    },
+  },
+};
+
 jest.spyOn(etherspotService, 'getBalances').mockImplementation(() => [mockEthBalance]);
 
 Object.defineProperty(mockWallet, 'sendTransaction', {
@@ -65,12 +84,12 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  assets: { supportedAssets: {} },
+  assets: { supportedAssets: { ethereum: mockSupportedAssets } },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
-  assetsBalances: { data: {} },
+  assetsBalances: { data: mockAccountsBalances },
   featureFlags: { data: INITIAL_REMOTE_CONFIG },
   rates: { data: {} },
   appSettings: { data: {} },
@@ -101,6 +120,9 @@ describe('Assets actions', () => {
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
+      { type: SET_FETCHING_RATES, payload: true },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
+      { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
 

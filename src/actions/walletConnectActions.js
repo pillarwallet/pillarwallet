@@ -341,9 +341,13 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
     dispatch(resetEstimateTransactionAction());
 
     const accountAssets = accountAssetsPerChainSelector(getState());
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
-    const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
+    const {
+      amount: value,
+      to,
+      data,
+    } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssetsPerChain);
 
     const { chainId } = callRequest;
     const chain = chainFromChainId[chainId];

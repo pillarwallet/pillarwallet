@@ -36,11 +36,13 @@ const store = createTestStore({
   ...initialTestState,
   rates: {
     data: {
-      ETH: {
-        ETH: 1,
-        EUR: 2017.2,
-        GBP: 1756.24,
-        USD: 2407.1,
+      ethereum: {
+        ETH: {
+          ETH: 1,
+          EUR: 2017.2,
+          GBP: 1756.24,
+          USD: 2407.1,
+        },
       },
     },
   },

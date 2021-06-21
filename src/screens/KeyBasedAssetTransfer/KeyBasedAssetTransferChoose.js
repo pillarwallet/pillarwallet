@@ -65,13 +65,14 @@ import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT 
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useChainSupportedAssets } from 'selectors';
+import { useChainRates, useChainSupportedAssets } from 'selectors';
 
 // Types
-import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
+import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
@@ -82,17 +83,14 @@ type Props = {
   availableCollectibles: Collectibles,
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
-  supportedAssets: Asset[],
   walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
-  rates: ?Rates,
   baseFiatCurrency: ?string,
 };
 
 const KeyBasedAssetTransferChoose = ({
   walletAddress,
-  rates,
   baseFiatCurrency,
   isFetchingAvailableBalances,
   isFetchingAvailableCollectibles,
@@ -106,6 +104,7 @@ const KeyBasedAssetTransferChoose = ({
   calculateTransactionsGas,
 }: Props) => {
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const navigation = useNavigation();
 
   const onAvailableBalancesRefresh = () => {
@@ -168,6 +167,7 @@ const KeyBasedAssetTransferChoose = ({
           iconUrl={item.icon}
           onPress={onCheck}
           leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}
+          chain={CHAIN.ETHEREUM}
         />
       );
     }
@@ -193,13 +193,19 @@ const KeyBasedAssetTransferChoose = ({
           })
         }
         leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
+        chain={CHAIN.ETHEREUM}
       />
     );
   };
 
   let totalValue = 0;
   keyBasedAssetsToTransfer.forEach((asset) => {
-    totalValue += getBalanceInFiat(baseFiatCurrency, asset.draftAmount, rates || {}, asset.assetData.token);
+    totalValue += getBalanceInFiat(
+      baseFiatCurrency,
+      asset.draftAmount,
+      ethereumRates,
+      asset.assetData.token,
+    );
   });
 
   return (
@@ -245,7 +251,6 @@ const mapStateToProps = ({
   appSettings: {
     data: { baseFiatCurrency },
   },
-  rates: { data: rates },
   keyBasedAssetTransfer: {
     data: keyBasedAssetsToTransfer,
     availableBalances,
@@ -256,7 +261,6 @@ const mapStateToProps = ({
   wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
   walletAddress: walletData?.address,
-  rates,
   baseFiatCurrency,
   keyBasedAssetsToTransfer,
   isFetchingAvailableBalances,

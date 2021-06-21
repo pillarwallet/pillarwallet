@@ -66,11 +66,13 @@ export const fetchRariDataAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      rates: { data: rates },
+      rates: { data: ratesPerChain },
     } = getState();
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const smartWalletAddress = getAccountAddress(smartWalletAccount);
+
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
     dispatch({ type: SET_FETCHING_RARI_DATA });
 
@@ -78,10 +80,10 @@ export const fetchRariDataAction = () => {
       userDepositInUSD, userDepositInRariToken, userInterests, rariFundBalance, rariTotalSupply,
       userRgtBalance, userUnclaimedRgt, rtgPrice, rtgSupply,
     ] = await Promise.all([
-      getAccountDepositInUSD(smartWalletAddress, rates),
+      getAccountDepositInUSD(smartWalletAddress, ethereumRates),
       getAccountDepositInPoolToken(smartWalletAddress),
-      getUserInterests(smartWalletAddress, rates),
-      getRariFundBalanceInUSD(rates),
+      getUserInterests(smartWalletAddress, ethereumRates),
+      getRariFundBalanceInUSD(ethereumRates),
       getRariTokenTotalSupply(),
       getUserRgtBalance(smartWalletAddress),
       getUnclaimedRgt(smartWalletAddress),

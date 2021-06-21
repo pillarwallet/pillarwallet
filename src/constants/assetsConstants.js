@@ -35,8 +35,6 @@ export const MATIC = 'MATIC';
 export const BNB = 'BNB';
 export const XDAI = 'xDAI';
 
-export const HOT = 'HOT';
-export const HOLO = 'HOLO';
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';

@@ -325,8 +325,8 @@ const handleGatewayBatchUpdatedNotification = async (
   const accountAssets = accountAssetsPerChainSelector(getState());
   const chainAccountAssets = accountAssets[chain] ?? {};
 
-  const supportedAssets = supportedAssetsPerChainSelector(getState());
-  const chainSupportedAssets = supportedAssets[chain] ?? [];
+  const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+  const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
   const assetData = getAssetData(
     getAssetsAsList(chainAccountAssets),

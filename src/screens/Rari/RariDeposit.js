@@ -25,6 +25,7 @@ import { RefreshControl, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import { Spacing, ScrollWrapper } from 'components/Layout';
@@ -36,10 +37,12 @@ import Table, { TableRow, TableLabel } from 'components/Table';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Button from 'components/Button';
 
+// utils
 import { getThemeColors } from 'utils/themes';
 import { formatFiat, formatAmount, formatApy } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   RARI_INFO,
@@ -49,15 +52,22 @@ import {
   RARI_CLAIM_RGT,
 } from 'constants/navigationConstants';
 import { RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
+import { CHAIN } from 'constants/chainConstants';
 
+// services
 import { usePoolCurrentApy } from 'services/rariSdk';
 
+// actions
 import { fetchRariDataAction } from 'actions/rariActions';
 
+// Selectors
+import { useChainRates } from 'selectors';
+
+// types
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates } from 'models/Asset';
 import type { RariPool, Interests } from 'models/RariPool';
+
 
 type Props = {
   theme: Theme,
@@ -70,7 +80,6 @@ type Props = {
   userUnclaimedRgt: number,
   isFetchingRariData: boolean,
   rariDataFetchFailed: boolean,
-  rates: Rates,
 };
 
 const rariLogo = require('assets/images/rari_logo.png');
@@ -121,11 +130,12 @@ const RariDepositScreen = ({
   userInterests,
   isFetchingRariData,
   rariDataFetchFailed,
-  rates,
   userRgtBalance,
   userUnclaimedRgt,
 }: Props) => {
   const [activeTab, setActiveTab] = useState(RARI_POOLS.STABLE_POOL);
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   useEffect(() => {
     fetchRariData();
@@ -194,7 +204,7 @@ const RariDepositScreen = ({
         <BaseText regular secondary center>{t('rariContent.label.poolBalance')}</BaseText>
         <Spacing h={4} />
         <BalanceView
-          balance={convertUSDToFiat(userDepositInUSD[activeTab], rates, fiatCurrency)}
+          balance={convertUSDToFiat(userDepositInUSD[activeTab], ethereumRates, fiatCurrency)}
           style={{ fontSize: 24, lineHeight: 24 }}
         />
         <Spacing h={60} />
@@ -222,7 +232,7 @@ const RariDepositScreen = ({
   };
 
   const renderEarnedInterests = (interestsInUSD: number) => {
-    const interestsInUserCurrency = convertUSDToFiat(Math.abs(interestsInUSD), rates, fiatCurrency);
+    const interestsInUserCurrency = convertUSDToFiat(Math.abs(interestsInUSD), ethereumRates, fiatCurrency);
     const formattedFiatValue = formatFiat(interestsInUserCurrency, fiatCurrency);
     let earnedFiatTranslation = formattedFiatValue;
 
@@ -315,7 +325,7 @@ const RariDepositScreen = ({
           <RariLogo source={rariLogo} size={64} />
           <Spacing h={32} />
           <BalanceView
-            balance={convertUSDToFiat(summedUserDepositsInUSD, rates, fiatCurrency)}
+            balance={convertUSDToFiat(summedUserDepositsInUSD, ethereumRates, fiatCurrency)}
           />
           <Spacing h={58} />
           {summedUserDepositsInUSD > 0 && (
@@ -377,14 +387,12 @@ const mapStateToProps = ({
     userRgtBalance,
     userUnclaimedRgt,
   },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   userDepositInUSD,
   userInterests,
   isFetchingRariData,
   rariDataFetchFailed,
-  rates,
   userRgtBalance,
   userUnclaimedRgt,
 });

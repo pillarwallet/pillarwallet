@@ -19,21 +19,35 @@
 */
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import maxBy from 'lodash.maxby';
+
+// services
 import { getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+
+// configs
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
+
+// utils
 import { reportErrorLog } from 'utils/common';
+
+// constants
 import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { ETH } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// abis
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
-import type { RariPool } from 'models/RariPool';
-import type { Rates } from 'models/Asset';
 
-const hasEthUsdPrice = (rates: Rates) => !!rates?.[ETH]?.USD;
+// types
+import type { RariPool } from 'models/RariPool';
+import type { RatesBySymbol } from 'models/Rates';
+
+
+const hasEthUsdPrice = (rates: RatesBySymbol) => !!rates?.[ETH]?.USD;
 
 const mapPools = (resultsArray: Object[]) => {
   return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
@@ -42,7 +56,7 @@ const mapPools = (resultsArray: Object[]) => {
   }, {});
 };
 
-export const getRariFundBalanceInUSD = async (rates: Rates) => {
+export const getRariFundBalanceInUSD = async (rates: RatesBySymbol) => {
   const balancePerPool = await Promise.all(RARI_POOLS_ARRAY.map(async rariPool => {
     const rariContract = getContract(
       getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
@@ -104,7 +118,11 @@ export const getAccountDeposit = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string, rates: Rates) => {
+export const getAccountDepositInUSDBN = async (
+  rariPool: RariPool,
+  accountAddress: string,
+  rates: RatesBySymbol,
+) => {
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
@@ -124,7 +142,7 @@ export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddres
   return balanceBN;
 };
 
-export const getAccountDepositInUSD = async (accountAddress: string, rates: Rates) => {
+export const getAccountDepositInUSD = async (accountAddress: string, rates: RatesBySymbol) => {
   const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
     const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress, rates);
     return parseFloat(utils.formatUnits(balanceBN, 18));
@@ -149,7 +167,7 @@ export const getAccountDepositInPoolToken = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getUserInterests = async (accountAddress: string, rates: Rates) => {
+export const getUserInterests = async (accountAddress: string, rates: RatesBySymbol) => {
   const userBalanceUSD = await getAccountDeposit(accountAddress);
   const userBalanceInPoolToken = await getAccountDepositInPoolToken(accountAddress);
 
@@ -235,7 +253,7 @@ export const getUnclaimedRgt = async (accountAddress: string) => {
 };
 
 export const getRtgPrice = async () => {
-  const price = await getCoinGeckoTokenPrices({
+  const price = await getCoinGeckoTokenPrices(CHAIN.ETHEREUM, {
     // $FlowFixMe: react-native types
     [RARI_GOVERNANCE_TOKEN_DATA.symbol]: RARI_GOVERNANCE_TOKEN_DATA,
   });

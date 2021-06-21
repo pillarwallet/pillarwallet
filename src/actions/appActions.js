@@ -39,7 +39,7 @@ import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/wall
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
+import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -95,6 +95,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
+      storageData = await migrate('rates', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -105,8 +106,8 @@ export const initAppAndRedirectAction = () => {
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
 
-      const { rates = {} } = get(storageData, 'rates', {});
-      dispatch({ type: UPDATE_RATES, payload: rates });
+      const rates = storageData?.rates?.rates ?? {};
+      dispatch({ type: SET_RATES, payload: rates });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });

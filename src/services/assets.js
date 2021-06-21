@@ -18,15 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
-import cryptocompare from 'cryptocompare';
 import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH, BNB, HOT, HOLO, rateKeys } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { COIN_ID } from 'constants/coinGeckoServiceConstants';
 
 // utils
 import {
@@ -36,6 +33,7 @@ import {
   reportErrorLog,
   reportLog,
 } from 'utils/common';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -46,12 +44,13 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 // services
 import {
   getCoinGeckoTokenPrices,
-  getCoinGeckoPricesByCoinIds,
+  getCoinGeckoPricesByCoinId,
+  chainToCoinGeckoCoinId,
 } from 'services/coinGecko';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { AssetsBySymbol } from 'models/Asset';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 type Address = string;
@@ -301,44 +300,10 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchERC20Balance(
-  walletAddress: Address,
-  contractAddress: Address,
-  decimals: number = 18,
-): Promise<string> {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
-  return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
-}
-
-export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
-  if (!assets.length) return Promise.resolve({});
-
-  assets = assets.map(token => {
-    // rename HOT to HOLO
-    if (token.toUpperCase() === HOT) {
-      return HOLO;
-    }
-    return token;
-  });
-
-  return cryptocompare
-    .priceMulti(assets, rateKeys)
-    .then(data => {
-      // rename HOLO to HOT
-      if (data[HOLO]) {
-        data[HOT] = { ...data[HOLO] };
-        delete data[HOLO];
-      }
-      return data;
-    })
-    .catch(() => {
-      reportErrorLog('getLegacyExchangeRates cryptocompare.cryptocompare failed', { assets });
-      return null;
-    });
-}
-
-export async function getExchangeRates(assets: AssetsBySymbol): Promise<?Object> {
+export async function getExchangeRates(
+  chain: string,
+  assets: AssetsBySymbol,
+): Promise<?RatesBySymbol> {
   const assetSymbols = Object.keys(assets);
 
   if (isEmpty(assetSymbols)) {
@@ -346,40 +311,28 @@ export async function getExchangeRates(assets: AssetsBySymbol): Promise<?Object>
     return null;
   }
 
-  // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
-  const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
+  // $FlowFixMe
+  let rates = await getCoinGeckoTokenPrices(chain, assets);
 
-  let rates = useLegacyCryptoCompare
-    ? await getLegacyExchangeRates(assetSymbols)
-    : await getCoinGeckoTokenPrices(assets);
+  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
 
-  if (!useLegacyCryptoCompare) {
-    if (isEmpty(rates)) {
-      // by any mean if CoinGecko failed let's try legacy way
-      rates = await getLegacyExchangeRates(assetSymbols);
-
-    // ETH & BNB require special handling as they are native tokens for Ethereum & BSC.
-    // MATIC and DAI do not require such handling since they are also ERC20 tokens on Ethereum.
-    } else if (assetSymbols.includes(ETH) || assetSymbols.includes(BNB)) {
-      const [ethPrice, bnbPrice] = await getCoinGeckoPricesByCoinIds([COIN_ID.ETH, COIN_ID.BNB]);
-      if (!isEmpty(ethPrice)) {
-        rates = { ...rates, [ETH]: ethPrice };
-      }
-
-      if (!isEmpty(bnbPrice)) {
-        rates = { ...rates, [BNB]: bnbPrice };
-      }
+  if (assetSymbols.includes(nativeAssetSymbol)) {
+    const coinId = chainToCoinGeckoCoinId[chain];
+    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
+    if (!isEmpty(nativeAssetPrice)) {
+      // $FlowFixMe
+      rates = { ...rates, [nativeAssetSymbol]: nativeAssetPrice };
     }
   }
 
   if (!rates) {
-    reportErrorLog('getExchangeRates failed: no rates data', { rates, useLegacyCryptoCompare, assetSymbols });
+    reportErrorLog('getExchangeRates failed: no rates data', { rates, assetSymbols });
     return null;
   }
 
   /**
    * sometimes symbols have different symbol case and mismatch
-   * between our back-end and crypto compare returned result
+   * between our back-end and rates service returned result
    */
   return Object.keys(rates).reduce((mappedData, returnedSymbol: string) => {
     const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));

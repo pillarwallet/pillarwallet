@@ -71,13 +71,14 @@ import {
   activeAccountAddressSelector,
   activeAccountSelector,
   supportedAssetsPerChainSelector,
+  useChainRates,
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // models, types
-import type { AssetsBySymbol, AssetsPerChain, Rates, AssetDataNavigationParam } from 'models/Asset';
+import type { AssetsBySymbol, AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -90,7 +91,6 @@ type Props = {
   fetchAssetsBalances: () => void,
   accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
   accountAssetsBalances: CategoryBalancesPerChain,
-  rates: Rates,
   baseFiatCurrency: ?string,
   smartWalletState: Object,
   accounts: Account[],
@@ -148,7 +148,6 @@ const ValuesWrapper = styled.View`
 
 const AssetScreen = ({
   activeAccountAddress,
-  rates,
   fetchAssetsBalances,
   baseFiatCurrency,
   smartWalletState,
@@ -163,6 +162,8 @@ const AssetScreen = ({
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const { token, chain } = assetData;
+
+  const chainRates = useChainRates(chain);
 
   const tokenTransactions = useMemo(
     () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
@@ -227,7 +228,7 @@ const AssetScreen = ({
   ));
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const tokenRate = getRate(rates, token, fiatCurrency);
+  const tokenRate = getRate(chainRates, token, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, token);
   const isWalletEmpty = balance <= 0;
@@ -314,12 +315,10 @@ const AssetScreen = ({
 };
 
 const mapStateToProps = ({
-  rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,

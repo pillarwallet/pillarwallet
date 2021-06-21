@@ -29,7 +29,7 @@ import FiatChangeView from 'components/modern/FiatChangeView';
 import TokenIcon from 'components/modern/TokenIcon';
 
 // Selectors
-import { useRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { getRate } from 'utils/assets';
@@ -37,22 +37,34 @@ import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
+// Types
+import type { Chain } from 'models/Chain';
+
 type Props = {|
   title: ?string,
   iconUrl: ?string,
   value: BigNumber,
   change?: BigNumber,
   symbol: string,
+  chain: Chain,
   onPress?: () => mixed,
 |};
 
-function WalletListItem({ title, iconUrl, value, change, symbol, onPress }: Props) {
+function WalletListItem({
+  title,
+  iconUrl,
+  value,
+  change,
+  symbol,
+  onPress,
+  chain,
+}: Props) {
   const colors = useThemeColors();
 
-  const rates = useRates();
+  const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const rate = getRate(rates, symbol, currency);
+  const rate = getRate(chainRates, symbol, currency);
   const fiatValue = value.times(rate);
   const tokenValue = formatTokenValue(value, symbol);
   const unitPrice = formatFiatValue(rate, currency);

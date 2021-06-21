@@ -103,7 +103,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
                   <TableLabel tooltip={t('rariContent.tooltip.rariExchangeFee')}>
                     {t('rariContent.label.rariExchangeFee')}
                   </TableLabel>
-                  <TableAmount amount={formattedExchangeFee} token={ETH} />
+                  <TableAmount amount={formattedExchangeFee} token={ETH} chain={CHAIN.ETHEREUM} />
                 </TableRow>
               )}
             </Table>
@@ -118,11 +118,11 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} />
+            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />

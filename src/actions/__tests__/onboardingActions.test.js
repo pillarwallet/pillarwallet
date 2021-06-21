@@ -31,7 +31,7 @@ import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
+import { UPDATE_CHAIN_RATES, SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
@@ -246,8 +246,10 @@ describe('Onboarding actions', () => {
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_HISTORY, payload: false },
+      { type: SET_FETCHING_RATES, payload: true },
 
-      { type: UPDATE_RATES, payload: mockExchangeRates },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
+      { type: SET_FETCHING_RATES, payload: false },
 
       // TODO: etherspot history update tba with separate PR
     ];
@@ -294,8 +296,10 @@ describe('Onboarding actions', () => {
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
       { type: SET_FETCHING_HISTORY, payload: false },
+      { type: SET_FETCHING_RATES, payload: true },
 
-      { type: UPDATE_RATES, payload: mockExchangeRates },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
+      { type: SET_FETCHING_RATES, payload: false },
 
       // TODO: etherspot history update tba with separate PR
     ];

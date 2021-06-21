@@ -20,7 +20,11 @@
 import { isEmpty } from 'lodash';
 
 // constants
-import { UPDATE_RATES } from 'constants/ratesConstants';
+import {
+  UPDATE_CHAIN_RATES,
+  SET_FETCHING_RATES,
+} from 'constants/ratesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
@@ -38,51 +42,88 @@ import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // models, types
-import type { Rates } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
+import type { RatesBySymbol } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
 
 
-export const setRatesAction = (newRates: Rates) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    if (isEmpty(newRates)) return;
-    const { rates: { data: currentRates = {} } } = getState();
-    // $FlowFixMe: flow update to 0.122
-    const rates = { ...currentRates, ...newRates };
-    dispatch(saveDbAction('rates', { rates }, true));
-    dispatch({ type: UPDATE_RATES, payload: rates });
+export const setIsFetchingRatesAction = (isFetching: boolean) => ({
+  type: SET_FETCHING_RATES,
+  payload: isFetching,
+});
+
+export const updateRatesAction = (
+  chain: string,
+  rates: RatesBySymbol,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (isEmpty(rates)) return;
+
+    dispatch({ type: UPDATE_CHAIN_RATES, payload: { chain, rates } });
+
+    const updatedRatesPerChain = getState().rates.data;
+    await dispatch(saveDbAction('rates', { rates: updatedRatesPerChain }, true));
   };
 };
 
 export const fetchAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const assetsBalances = assetsBalancesSelector(getState());
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
+    const {
+      rates: { isFetching },
+      session: { data: { isOnline } },
+    } = getState();
 
-    const allAccountsCrossChainAssets = Object.keys(assetsBalances).reduce((combinedAssets, accountId) => {
-      const accountAssetsBalances = assetsBalances[accountId] ?? {};
+    if (isFetching || !isOnline) return;
 
-      const accountAssets = Object.keys(accountAssetsBalances).reduce((assets, chain) => {
-        const chainSupportedAssets = supportedAssets[chain] ?? [];
-        const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
-        const mapped = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
+    dispatch(setIsFetchingRatesAction(true));
+
+    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+
+    // combine assets balances from all accounts
+    const assetsBySymbolPerChain = Object.keys(CHAIN).reduce((
+      combinedAssetsBySymbolPerChain,
+      chainKey,
+    ) => {
+      const chain = CHAIN[chainKey];
+
+      const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+
+      const chainAccountsAssetsBySymbol = Object.keys(assetsBalancesPerAccount).reduce((
+        combinedAssetsBySymbol,
+        accountId,
+      ) => {
+        const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
+        const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
+
+        const assetsBySymbol = mapWalletAssetsBalancesIntoAssetsBySymbol(
+          accountWalletAssetsBalances,
+          chainSupportedAssets,
+        );
+
         // $FlowFixMe
-        return { ...assets, ...mapped };
+        return { ...combinedAssetsBySymbol, ...assetsBySymbol };
       }, {});
 
-      return { ...combinedAssets, ...accountAssets };
+      // $FlowFixMe
+      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsBySymbol };
     }, {});
 
-    if (isEmpty(allAccountsCrossChainAssets)) {
-      reportErrorLog('fetchAssetsRatesAction failed: allAccountsCrossChainAssets is empty');
-      return;
-    }
+    await Promise.all(Object.keys(assetsBySymbolPerChain).map(async (chain) => {
+      const chainAssetsBySymbol = assetsBySymbolPerChain[chain] ?? {};
 
-    const rates = await getExchangeRates(allAccountsCrossChainAssets);
-    dispatch(setRatesAction(rates));
+      try {
+        const rates = await getExchangeRates(chain, chainAssetsBySymbol);
+        await dispatch(updateRatesAction(chain, rates));
+      } catch (error) {
+        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsBySymbol });
+      }
+    }));
+
+    dispatch(setIsFetchingRatesAction(false));
   };
 };
 
@@ -91,24 +132,37 @@ export const fetchSingleChainAssetRatesAction = (
   assetCode: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const accountAssets = accountAssetsPerChainSelector(getState());
-    const chainAccountAssets = accountAssets[chain] ?? {};
+    const {
+      rates: { isFetching },
+      session: { data: { isOnline } },
+    } = getState();
 
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
-    const chainSupportedAssets = supportedAssets[chain] ?? [];
+    if (isFetching || !isOnline) return;
+
+    dispatch(setIsFetchingRatesAction(true));
+
+    const accountAssetsPerChain = accountAssetsPerChainSelector(getState());
+    const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
+
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
     const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
     if (!asset) {
+      dispatch(setIsFetchingRatesAction(false));
       reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });
       return;
     }
 
-    const rates = await getExchangeRates({ [asset.symbol]: asset });
+    const rates = await getExchangeRates(chain, { [asset.symbol]: asset });
 
-    if (isEmpty(rates)) return;
+    if (isEmpty(rates)) {
+      dispatch(setIsFetchingRatesAction(false));
+      return;
+    }
 
-    const { rates: { data: currentRates } } = getState();
-    const updatedRates = { ...currentRates, ...rates };
-    dispatch(setRatesAction(updatedRates));
+    await dispatch(updateRatesAction(chain, rates));
+
+    dispatch(setIsFetchingRatesAction(false));
   };
 };

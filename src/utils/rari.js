@@ -46,9 +46,10 @@ import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import MSTABLE_VALIDATION_HELPER_CONTRACT_ABI from 'abi/mAssetValidationHelper.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import RARI_FUND_MANAGER_CONTRACT_ABI_ETH from 'abi/rariFundManagerEth.json';
-import type { Asset, Rates } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 const MSTABLE_TOKENS = [USDC, USDT, TUSD];
@@ -117,7 +118,7 @@ const getMStableRedeemValidity = (inputAmountBN: EthersBigNumber, outputTokenAdd
 };
 
 const getRariDepositTransactionData = async (
-  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: RatesBySymbol,
 ) => {
   const acceptedCurrencies = await getRariAcceptedCurrencies(rariPool);
   if (!acceptedCurrencies) return null;
@@ -248,7 +249,12 @@ const getRariDepositTransactionData = async (
 };
 
 export const getRariDepositTransactionsAndExchangeFee = async (
-  rariPool: RariPool, senderAddress: string, amount: string, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool,
+  senderAddress: string,
+  amount: string,
+  token: Asset,
+  supportedAssets: Asset[],
+  rates: RatesBySymbol,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   let data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
