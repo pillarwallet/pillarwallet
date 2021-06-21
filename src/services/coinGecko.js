@@ -22,13 +22,7 @@ import querystring from 'querystring';
 import { isEmpty } from 'lodash';
 
 // Constants
-import {
-  BNB,
-  ETH,
-  MATIC,
-  rateKeys,
-  XDAI,
-} from 'constants/assetsConstants';
+import { rateKeys } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
@@ -40,11 +34,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { Asset, AssetsBySymbol } from 'models/Asset';
-import type {
-  RateBySymbol,
-  RateKey,
-  RatesBySymbol,
-} from 'models/Rates';
+import type { Rates, RateKey, RatesBySymbol } from 'models/Rates';
 import type { Chain } from 'models/Chain';
 
 // { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
@@ -68,11 +58,11 @@ const requestConfig = {
 const currenciesParam = rateKeys.map(key => key.toLocaleString()).join(',');
 
 /* eslint-disable i18next/no-literal-string */
-export const nativeAssetSymbolToCoinGeckoCoinId = {
-  [ETH]: 'ethereum',
-  [MATIC]: 'matic-network',
-  [BNB]: 'binancecoin',
-  [XDAI]: 'xdai',
+export const chainToCoinGeckoCoinId = {
+  [CHAIN.ETHEREUM]: 'ethereum',
+  [CHAIN.POLYGON]: 'matic-network',
+  [CHAIN.BINANCE]: 'binancecoin',
+  [CHAIN.XDAI]: 'xdai',
 };
 
 const chainToCoinGeckoNetwork = {
@@ -138,7 +128,7 @@ export const getCoinGeckoTokenPrices = async (
     });
 };
 
-export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?RateBySymbol> => {
+export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?Rates> => {
   const params = {
     ids: coinId,
     vs_currencies: currenciesParam,
@@ -161,7 +151,7 @@ export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?RateB
   }
 };
 
-const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateBySymbol => {
+const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?Rates => {
   if (isEmpty(prices)) return null;
   return mapRecordKeys(prices, findRateKeyFromCoinGeckoCurrency);
 };

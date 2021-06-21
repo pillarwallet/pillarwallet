@@ -143,8 +143,8 @@ export const estimateTransactionsAction = (
     const accountAssets = accountAssetsPerChainSelector(getState());
     const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
 
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
-    const chainSupportedAssets = supportedAssets[chain] ?? [];
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
     const gasToken = useGasToken
       ? getAssetData(chainAccountAssetsList, chainSupportedAssets, preferredGasTokenSelector(getState()))

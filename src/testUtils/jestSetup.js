@@ -385,7 +385,7 @@ jest.setMock('configs/localeConfig', localeConfigMock);
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
   getCoinGeckoPricesByCoinId: () => Promise.resolve(mockEtherExchangeRates),
-  nativeAssetSymbolToCoinGeckoCoinId: {},
+  chainToCoinGeckoCoinId: {},
 });
 
 const getMockedTranslations = (url) => {

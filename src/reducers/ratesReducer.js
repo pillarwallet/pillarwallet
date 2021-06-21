@@ -20,7 +20,7 @@
 
 // constants
 import {
-  SET_CHAIN_RATES,
+  UPDATE_CHAIN_RATES,
   SET_FETCHING_RATES,
   SET_RATES,
 } from 'constants/ratesConstants';
@@ -44,8 +44,8 @@ export type SetRatesAction = {|
   payload: RatesPerChain,
 |};
 
-export type SetChainRatesAction = {|
-  type: typeof SET_CHAIN_RATES,
+export type UpdateChainRatesAction = {|
+  type: typeof UPDATE_CHAIN_RATES,
   payload: {
     chain: string,
     rates: RatesBySymbol,
@@ -54,7 +54,7 @@ export type SetChainRatesAction = {|
 
 export type RatesReducerAction = SetFetchingRatesAction
   | SetRatesAction
-  | SetChainRatesAction;
+  | UpdateChainRatesAction;
 
 export const initialState = {
   data: { ethereum: {} },
@@ -72,13 +72,16 @@ const ratesReducer = (
         data: action.payload,
       };
 
-    case SET_CHAIN_RATES:
+    case UPDATE_CHAIN_RATES:
       const { chain, rates } = action.payload;
       return {
         ...state,
         data: {
           ...state.data,
-          [chain]: rates,
+          [chain]: {
+            ...(state.data[chain] ?? {}),
+            ...rates,
+          },
         },
       };
 

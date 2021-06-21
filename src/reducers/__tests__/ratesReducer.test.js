@@ -19,7 +19,7 @@
 */
 
 // constants
-import { SET_CHAIN_RATES, SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_CHAIN_RATES, SET_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // reducer
@@ -54,9 +54,9 @@ describe('RatesBySymbol ratesReducer', () => {
     expect(ratesReducer(undefined, updateAction)).toMatchObject(expectedRates);
   });
 
-  it('should handle SET_CHAIN_RATES', () => {
+  it('should handle UPDATE_CHAIN_RATES', () => {
     const updateAction = {
-      type: SET_CHAIN_RATES,
+      type: UPDATE_CHAIN_RATES,
       payload: {
         chain: CHAIN.ETHEREUM,
         rates: {

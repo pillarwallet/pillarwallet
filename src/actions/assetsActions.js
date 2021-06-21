@@ -353,12 +353,12 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
     if (!walletAddress || !accountId) return;
 
     const chains = getSupportedChains(account);
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     await Promise.all(chains.map(async (chain) => {
       let newBalances = [];
       try {
-        const chainSupportedAssets = supportedAssets[chain] ?? [];
+        const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
         newBalances = await etherspotService.getBalances(chain, walletAddress, chainSupportedAssets);
       } catch (error) {
         reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
@@ -536,8 +536,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
 
-    const accountsAssetsBalances = assetsBalancesSelector(getState());
-    dispatch(saveDbAction('assetsBalances', { data: accountsAssetsBalances }, true));
+    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    dispatch(saveDbAction('assetsBalances', { data: assetsBalancesPerAccount }, true));
   };
 };
 
@@ -572,8 +572,8 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
     dispatch({ type: RESET_ACCOUNT_ASSETS_BALANCES, payload: accountId });
     dispatch({ type: RESET_ACCOUNT_TOTAL_BALANCES, payload: accountId });
 
-    const updatedBalances = assetsBalancesSelector(getState());
-    dispatch(saveDbAction('assetsBalances', { data: updatedBalances }, true));
+    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    dispatch(saveDbAction('assetsBalances', { data: assetsBalancesPerAccount }, true));
 
     const updatedTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: updatedTotalBalances }, true));

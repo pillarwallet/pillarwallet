@@ -45,12 +45,12 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import {
   getCoinGeckoTokenPrices,
   getCoinGeckoPricesByCoinId,
-  nativeAssetSymbolToCoinGeckoCoinId,
+  chainToCoinGeckoCoinId,
 } from 'services/coinGecko';
 
 // types
 import type { AssetsBySymbol } from 'models/Asset';
-import type { Chain } from 'models/Chain';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 type Address = string;
@@ -301,9 +301,9 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
 }
 
 export async function getExchangeRates(
-  chain: Chain,
+  chain: string,
   assets: AssetsBySymbol,
-): Promise<?Object> {
+): Promise<?RatesBySymbol> {
   const assetSymbols = Object.keys(assets);
 
   if (isEmpty(assetSymbols)) {
@@ -317,7 +317,7 @@ export async function getExchangeRates(
   const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
 
   if (assetSymbols.includes(nativeAssetSymbol)) {
-    const coinId = nativeAssetSymbolToCoinGeckoCoinId[nativeAssetSymbol];
+    const coinId = chainToCoinGeckoCoinId[chain];
     const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe

@@ -21,9 +21,10 @@ import { isEmpty } from 'lodash';
 
 // constants
 import {
-  SET_CHAIN_RATES,
+  UPDATE_CHAIN_RATES,
   SET_FETCHING_RATES,
 } from 'constants/ratesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
@@ -38,11 +39,7 @@ import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { accountAssetsPerChainSelector } from 'selectors/assets';
-import {
-  assetsBalancesSelector,
-  ratesPerChainSelector,
-  supportedAssetsPerChainSelector,
-} from 'selectors';
+import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -58,16 +55,16 @@ export const setIsFetchingRatesAction = (isFetching: boolean) => ({
   payload: isFetching,
 });
 
-export const setRatesAction = (
-  chain: Chain,
+export const updateRatesAction = (
+  chain: string,
   rates: RatesBySymbol,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
 
-    dispatch({ type: SET_CHAIN_RATES, payload: { chain, rates } });
+    dispatch({ type: UPDATE_CHAIN_RATES, payload: { chain, rates } });
 
-    const updatedRatesPerChain = ratesPerChainSelector(getState());
+    const updatedRatesPerChain = getState().rates.data;
     await dispatch(saveDbAction('rates', { rates: updatedRatesPerChain }, true));
   };
 };
@@ -83,24 +80,48 @@ export const fetchAssetsRatesAction = () => {
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const assetsBalances = assetsBalancesSelector(getState());
-    const supportedAssets = supportedAssetsPerChainSelector(getState());
+    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
-    await Promise.all(Object.keys(assetsBalances).map(async (accountId) => {
-      const accountAssetsBalances = assetsBalances[accountId] ?? {};
-      await Promise.all(Object.keys(accountAssetsBalances).map(async (chain) => {
-        try {
-          const chainSupportedAssets = supportedAssets[chain] ?? [];
-          const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
+    // combine assets balances from all accounts
+    const assetsBySymbolPerChain = Object.keys(CHAIN).reduce((
+      combinedAssetsBySymbolPerChain,
+      chainKey,
+    ) => {
+      const chain = CHAIN[chainKey];
 
-          const accountAssets = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
-          const rates = await getExchangeRates(chain, accountAssets);
+      const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-          await dispatch(setRatesAction(chain, rates));
-        } catch (error) {
-          reportErrorLog('fetchAssetsRatesAction failed', { error, chain, accountId, accountAssetsBalances });
-        }
-      }));
+      const chainAccountsAssetsBySymbol = Object.keys(assetsBalancesPerAccount).reduce((
+        combinedAssetsBySymbol,
+        accountId,
+      ) => {
+        const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
+        const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
+
+        const assetsBySymbol = mapWalletAssetsBalancesIntoAssetsBySymbol(
+          accountWalletAssetsBalances,
+          chainSupportedAssets,
+        );
+
+        // $FlowFixMe
+        return { ...combinedAssetsBySymbol, ...assetsBySymbol };
+      }, {});
+
+      // $FlowFixMe
+      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsBySymbol };
+    }, {});
+
+    await Promise.all(Object.keys(assetsBySymbolPerChain).map(async (chain) => {
+      const chainAssetsBySymbol = assetsBySymbolPerChain[chain] ?? {};
+
+      try {
+        const rates = await getExchangeRates(chain, chainAssetsBySymbol);
+
+        await dispatch(updateRatesAction(chain, rates));
+      } catch (error) {
+        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsBySymbol });
+      }
     }));
 
     dispatch(setIsFetchingRatesAction(false));
@@ -141,7 +162,7 @@ export const fetchSingleChainAssetRatesAction = (
       return;
     }
 
-    await dispatch(setRatesAction(chain, rates));
+    await dispatch(updateRatesAction(chain, rates));
 
     dispatch(setIsFetchingRatesAction(false));
   };

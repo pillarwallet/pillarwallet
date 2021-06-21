@@ -18,5 +18,5 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 export const SET_RATES = 'SET_RATES';
-export const SET_CHAIN_RATES = 'SET_CHAIN_RATES';
+export const UPDATE_CHAIN_RATES = 'UPDATE_CHAIN_RATES';
 export const SET_FETCHING_RATES = 'SET_FETCHING_RATES';
