@@ -67,6 +67,7 @@ import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import { parseEtherspotTransactions } from 'utils/etherspot';
 import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
+import { recordValues } from 'utils/object';
 
 // services
 import archanovaService from 'services/archanova';
@@ -143,8 +144,11 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     dispatch(setFetchingHistoryAction(true));
 
     const accountAddress = getAccountAddress(etherspotAccount);
-    const accountAssets = etherspotAccountAssetsSelector(getState());
     const accountId = getAccountId(etherspotAccount);
+
+    const accountAssets = etherspotAccountAssetsSelector(getState());
+    const accountEthereumAssets = accountAssets[CHAIN.ETHEREUM] ?? {};
+
     const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
@@ -155,7 +159,7 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
 
     const etherspotTransactionsHistory = parseEtherspotTransactions(
       etherspotTransactions,
-      getAssetsAsList(accountAssets),
+      recordValues(accountEthereumAssets),
       ethereumSupportedAssets,
     );
 

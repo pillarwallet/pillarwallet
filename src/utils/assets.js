@@ -20,7 +20,7 @@
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
-import { orderBy, mapValues, get } from 'lodash';
+import { orderBy, get, mapValues } from 'lodash';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -477,7 +477,7 @@ export const mapWalletAssetsBalancesIntoAssetsBySymbol = (
   chainSupportedAssets: Asset[],
 ): AssetsBySymbol => mapValues(
   walletAssetsBalances,
-  ({ symbol }) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
+  ({ symbol }: WalletAssetBalance) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
 );
 
 export const sortSupportedAssets = (

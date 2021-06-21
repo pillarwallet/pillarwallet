@@ -132,12 +132,12 @@ const LiquidityPoolsScreen = ({
   poolDataGraphQueryFailed,
   theme,
 }) => {
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
-  const supportedPools = useMemo(() => supportedLiquidityPools(supportedAssets), [supportedAssets]);
+  const supportedPools = useMemo(() => supportedLiquidityPools(ethereumSupportedAssets), [ethereumSupportedAssets]);
   const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
 
   useEffect(() => {
@@ -249,7 +249,7 @@ const LiquidityPoolsScreen = ({
                 <Spacing w={16} />
                 <Rewards>
                   {pool.rewards?.map((reward) => {
-                    const asset = supportedAssets.find(
+                    const asset = ethereumSupportedAssets.find(
                       ({ symbol }) => symbol === reward.symbol,
                     );
                     return (

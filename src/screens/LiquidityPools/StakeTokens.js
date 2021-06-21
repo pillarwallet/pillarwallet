@@ -97,7 +97,7 @@ const StakeTokensScreen = ({
   calculateStakeTransactionEstimate,
   liquidityPoolsReducer,
 }: Props) => {
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
   useEffect(() => {
     resetEstimateTransaction();
@@ -113,7 +113,7 @@ const StakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
+  const assetData = findSupportedAsset(ethereumSupportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 

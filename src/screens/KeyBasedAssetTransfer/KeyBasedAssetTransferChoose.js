@@ -49,12 +49,12 @@ import TextWithCopy from 'components/TextWithCopy';
 import { compactFalsy } from 'utils/array';
 import {
   addressesEqual,
-  getAssetData,
   getBalance,
   getBalanceBN,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
+  findSupportedAssetBySymbol,
 } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -136,8 +136,8 @@ const KeyBasedAssetTransferChoose = ({
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => getAssetData(ethereumSupportedAssets, [], symbol))
-      .filter((assetData) => !isEmpty(assetData))
+      .map((symbol) => findSupportedAssetBySymbol(ethereumSupportedAssets, symbol))
+      .filter(Boolean)
       .map(mapAssetToAssetData);
 
     const collectibles = availableCollectibles.map(mapCollectibleToAssetData);

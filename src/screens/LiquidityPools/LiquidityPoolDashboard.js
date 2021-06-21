@@ -160,7 +160,7 @@ const LiquidityPoolDashboard = ({
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const { pool } = navigation.state.params;
@@ -170,7 +170,7 @@ const LiquidityPoolDashboard = ({
 
   useEffect(() => {
     if (!poolStats) {
-      fetchLiquidityPoolsData(supportedLiquidityPools(supportedAssets));
+      fetchLiquidityPoolsData(supportedLiquidityPools(ethereumSupportedAssets));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -199,7 +199,7 @@ const LiquidityPoolDashboard = ({
   if (!poolStats) return <Loader />;
 
   const rewardAssetData = pool.rewards?.[0]
-    ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
+    ? ethereumSupportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
     : undefined;
 
   const balance = poolStats.userLiquidityTokenBalance.toNumber();
@@ -258,7 +258,7 @@ const LiquidityPoolDashboard = ({
   ];
 
   pool.tokensProportions.forEach(({ symbol: tokenSymbol }) => {
-    const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+    const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
     if (!tokenData) return;
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
@@ -430,7 +430,7 @@ const LiquidityPoolDashboard = ({
             </MediumText>
             <Spacing h={22} />
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
-              const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+              const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
               const tokenPriceInFiat = convertUSDToFiat(
                 poolStats.tokensPricesUSD[tokenSymbol],
