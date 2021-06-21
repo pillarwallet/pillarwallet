@@ -102,7 +102,7 @@ export const getBalance = (balances: ?WalletAssetsBalances, asset: string): numb
 
 const baseRate = (rates: RatesBySymbol, asset: string, fiatCurrency: Currency): number => {
   const rate = rates[asset];
-  if (!rate) {
+  if (!rate || !rate[fiatCurrency]) {
     return 0;
   }
 
@@ -433,7 +433,7 @@ export const mapAssetDataToAssetOption = (
 
 export const convertUSDToFiat = (value: number, rates: RatesBySymbol = {}, fiatCurrency: Currency) => {
   const ethRates = rates[ETH];
-  if (!ethRates) {
+  if (!ethRates || !ethRates[fiatCurrency] || !ethRates[USD]) {
     return 0;
   }
   return value * (ethRates[fiatCurrency] / ethRates[USD]);

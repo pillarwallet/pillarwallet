@@ -30,7 +30,7 @@ export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?num
   if (currency === USD) return 1;
 
   const ethRates = rates[ETH];
-  if (!ethRates) {
+  if (!ethRates || !ethRates[currency] || !ethRates[USD]) {
     return null;
   }
 

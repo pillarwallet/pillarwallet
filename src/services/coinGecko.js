@@ -41,10 +41,10 @@ type CoinGeckoAssetsPrices = {
 };
 
 type CoinGeckoPriceEntry = {
-  usd: number,
-  eur: number,
-  gbp: number,
-  eth: number,
+  usd?: number,
+  eur?: number,
+  gbp?: number,
+  eth?: number,
 };
 
 // does not change between envs
