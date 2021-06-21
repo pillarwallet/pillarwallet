@@ -38,9 +38,15 @@ import Text from 'components/modern/Text';
 // Constants
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, useRates, useFiatCurrency, activeAccountAddressSelector } from 'selectors';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  activeAccountAddressSelector,
+  useChainRates,
+} from 'selectors';
 
 // Utils
 import { getBalanceBN, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
@@ -49,14 +55,15 @@ import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { Rates, KeyBasedAssetTransfer } from 'models/Asset';
+import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { RatesBySymbol } from 'models/Rates';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
   const navigation = useNavigation();
 
-  const rates = useRates();
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const fiatCurrency = useFiatCurrency();
 
   const assetTransfers = useRootSelector((root) => root.keyBasedAssetTransfer.data);
@@ -96,7 +103,7 @@ const KeyBasedAssetTransferConfirm = () => {
       value: formatTokenAmount(amount ?? 0, assetData.token),
       token: assetData.token,
     });
-    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
+    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, ethereumRates, assetData.token);
 
     return (
       <Table.RowContainer key={assetData.token} separator={index !== 0}>
@@ -113,9 +120,9 @@ const KeyBasedAssetTransferConfirm = () => {
     );
   };
 
-  const sortedAssetTransfers = sortAssetTransfers(assetTransfers, rates, fiatCurrency);
+  const sortedAssetTransfers = sortAssetTransfers(assetTransfers, ethereumRates, fiatCurrency);
 
-  const totalValue = getTotalValue(assetTransfers, rates, fiatCurrency);
+  const totalValue = getTotalValue(assetTransfers, ethereumRates, fiatCurrency);
   const totalFee = getTotalFee(assetTransfers);
 
   const remainingEthBalance = getRemainingBalance(keyWalletBalances, assetTransfers, ETH);
@@ -158,7 +165,7 @@ const KeyBasedAssetTransferConfirm = () => {
         <Table.Header>{t('assets.header')}</Table.Header>
         {sortedAssetTransfers.map(renderItem)}
 
-        <FeeTable fee={totalFee} symbol={ETH} />
+        <FeeTable fee={totalFee} symbol={ETH} chain={CHAIN.ETHEREUM} />
       </Content>
     </ContainerWithHeader>
   );
@@ -177,7 +184,7 @@ const getRemainingBalance = (
   return transfer ? balance.minus(transfer.amount ?? 0) : balance;
 };
 
-const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: Rates, fiatCurrency: string) => {
+const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: RatesBySymbol, fiatCurrency: string) => {
   let result = 0;
 
   assetTransfers.forEach(({ assetData, amount }) => {
@@ -200,7 +207,7 @@ const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
 
 const sortAssetTransfers = (
   assetTransfers: KeyBasedAssetTransfer[],
-  rates: Rates,
+  rates: RatesBySymbol,
   fiatCurrency: string,
 ): KeyBasedAssetTransfer[] => {
   return orderBy(

@@ -18,8 +18,6 @@
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
-  "ticket": "ticket",
-  "ticket_plural": "tickets",
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
@@ -113,7 +111,6 @@
     "pending": "Pending",
     "collectibleSent": "Collectible sent",
     "collectibleReceive": "Collectible received",
-    "badgeReceived": "Badge received",
     "connectionRequested": "Requested",
     "assets": "Assets",
     "backupPhrase": "Backup phrase",
@@ -137,7 +134,6 @@
     "adding": "Adding",
     "all": "All",
     "backedUp": "Backup secured",
-    "badge": "Badge",
     "canceled": "Canceled",
     "collectibleFromUser": "Collectible from {{username}}",
     "collectibleToUser": "Collectible to {{username}}",
@@ -321,12 +317,9 @@
     "tryAgain": "Try again",
     "viewAllItemsAmount": "View all {{amount}}",
     "viewAll": "View all",
-    "viewBadge": "View badge",
     "viewBalance": "View balance",
     "viewDeposit": "View deposit",
     "viewOnBlockchain": "View on the blockchain",
-    "viewPoolTogetherPool": "View pool",
-    "viewSablierStream": "View stream",
     "verify": "Verify",
     "withdraw": "Withdraw",
     "withdrawMore": "Withdraw more",
@@ -388,14 +381,6 @@
   },
 
   "insight": {
-    "keyWalletIntro": {
-      "title": "Never lose your funds",
-      "description": {
-        "backupWallet": "Backup wallet",
-        "setPinCode": "Set PIN code",
-        "enableBiometrics": "Enable biometric login (optional)"
-      }
-    },
     "pillarNetworkActivate": {
       "hasNoPPNBalance": {
         "title": "Activate Pillar Network",
@@ -419,18 +404,6 @@
         }
       }
     },
-    "smartWalletIntro": {
-      "title": "Welcome to the Pillar Smart Wallet!",
-      "description": {
-        "intro": "The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and features the following benefits:",
-        "recovery": "It can be recovered from any web-connected device following proper set up.",
-        "accessToPPN": "It provides access to the Pillar Payment Network including instant and gas-free transactions.",
-        "multipleKeys": "It can control multiple keys providing for dapp-specific usage and spending limits."
-      },
-      "button": {
-        "ok": "Wow, that's cool"
-      }
-    },
     "smartWalletActivate": {
       "default": {
         "title": "To send assets, activate Smart Wallet first",
@@ -448,27 +421,6 @@
           "needToSetupSmartAccount": "You need to top up your Smart Account first.",
           "default": "There was an error on our server. Please try to re-activate the account by clicking the button bellow."
         }
-      }
-    },
-    "dataPrivacy": {
-      "title": "All your data is private",
-      "description": "We care for our users' privacy. We don't support scammers. We need to make sure you're a genuine user in order to get rewarded with PLR tokens for inviting friends.",
-      "button": {
-        "ok": "I understand"
-      }
-    },
-    "walletConnectAppsListExplain": {
-      "title": "What is it?",
-      "description": "A curated collection of web3 apps available to use with Pillar. Sign in without creating an account. Just scan QR and go.",
-      "button": {
-        "ok": "Cool, thanks"
-      }
-    },
-    "moneyStream": {
-      "title": "Stream your money or receive streams with Sablier",
-      "description": {
-        "forWorkers": "As a worker, you see your earnings increasing in real-time in the Sablier wallet.",
-        "forOrganizations": "As an organisation, our technology helps you get rid of the hassle of payroll admin."
       }
     }
   },
@@ -577,11 +529,6 @@
     },
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
-      "poolTogetherStats": "Can't connect to Pool Together",
-      "sablierStreams": "Can't connect to Sablier",
-      "isTokenSupportedByUniswap": "Can't connect to exchange service",
-      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
-      "rari": "Can't connect to Rari service.",
       "liquidityPools": "Can't connect to Liquidity Pools service"
     },
     "unableToSendTransaction": "Unable to send transaction. Please try again.",
@@ -665,10 +612,6 @@
       "bodyBottomFormat2": "Do not send {{symbol}} to this smart wallet if you do not wish to activate it.",
       "depositFormat": "Deposit {{symbol}} on {{chain}}"
     }
-  },
-
-  "badgeText": {
-    "new": "NEW"
   },
 
   "ppnContent": {
@@ -883,50 +826,6 @@
     }
   },
 
-  "aaveContent": {
-    "depositedAssetsList": {
-      "title": "Aave Deposits"
-    },
-    "title": {
-      "assetsToDepositScreen": "Choose asset to deposit",
-      "noAssetsToDeposit": "No assets to deposit",
-      "noDepositedAssets": "No deposited assets",
-      "depositedAssetsScreen": "Your deposits",
-      "depositConfirmationScreen": "Review",
-      "depositAmountScreen": "Add deposit",
-      "withdrawAmountScreen": "Withdraw",
-      "depositedAssetScreen": "Your deposit",
-      "activityFeed": "History",
-      "withdrawConfirmationScreen": "Review"
-    },
-    "label": {
-      "currentAPY": "Current APY",
-      "currentAPYPercentage": "Current APY {{rate}} %",
-      "earned": "Earned",
-      "youAreAdding": "You are adding",
-      "youAreWithdrawing": "You are withdrawing"
-    },
-    "button": {
-      "confirmDeposit": "Deposit",
-      "confirmWithdrawal": "Withdraw"
-    }
-  },
-
-  "badgesContent": {
-    "badgesList": {
-      "title": "Game of badges",
-      "emptyState": {
-        "noBadges": {
-          "title": "No badges",
-          "paragraph": "You do not have badges yet"
-        }
-      }
-    },
-    "title": {
-      "unknownBadge": "Unknown badge"
-    }
-  },
-
   "settingsContent": {
     "settingsItem": {
       "analytics": {
@@ -1089,41 +988,6 @@
     }
   },
 
-  "wbtcCafe": {
-    "rate": "Exchange rate",
-    "renFee": "RenVM fee",
-    "btcFee": "Bitcoin fee",
-    "slippage": "Max. price slippage",
-    "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
-    "copy": "Copy address",
-    "useOnce": "Address will be valid for the next 15 minutes and can be used only once.",
-    "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
-    "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
-    "custom": "Custom",
-    "enterCustom": "Enter custom percent",
-    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC.",
-    "intro": "WBTC.Cafe provides one of the easiest ways for users to acquire Wrapped Bitcoin (WBTC) with real Bitcoin (BTC). The Cafe facilitates a native Bitcoin user experience, allowing users to put their BTC to use in the Ethereum DeFi ecosystem.",
-    "how": "How it works",
-    "info": "The Cafe is a shining example of DeFi composability and RenVM’s ability to bolster greater utility for all of DeFi. It is a collaborative effort of three DeFi Projects; RenVM, Curve Finance, and WBTC - all offered in an intuitive mobile experience with Pillar Wallet.",
-    "ren": "RenVM",
-    "renInfo": "A user sends BTC and RenVM converts the BTC to renBTC.",
-    "curve": "Curve Liquidity Pool",
-    "curveInfo": "The platform receives renBTC and automatically swaps it for WBTC within a low-slippage liquidity pool.",
-    "wbtc": "WBTC",
-    "wbtcInfo": "The user receives WBTC and is now able to use it on any supported DeFi platform or protocol.",
-    "put": "Put your Bitcoin to work!",
-    "get": "Get WBTC",
-    "cafe": "WBTC.Cafe",
-    "trade": "Trade Bitcoin for WBTC",
-    "sent": "I've sent BTC",
-    "buyMore": "Buy more WBTC",
-    "error": "Something went wrong. Please choose a different value or try again.",
-    "higherAmount": "Please choose a higher amount",
-    "time": "Transaction time",
-    "timeHrs": "1 - 3 hrs",
-    "confirmBTC": "Please confirm that you have sent bitcoins by clicking on this button."
-  },
-
   "relayerMigrationContent": {
     "modal": {
       "switch": {
@@ -1157,184 +1021,21 @@
     }
   },
 
-  "poolTogetherContent": {
-    "label": {
-      "prizeInDollars": "Prize ${{prize}}",
-      "ownedTickets": "{{count}} ticket",
-      "ownedTickets_plural": "{{count}} tickets",
-      "winChance": "{{chancePercent}} chance",
-      "prizeEstimate": "Prize est.",
-      "currentPrize": "Current prize",
-      "winningChance": "<0>{{primaryText}}</0> chance of win",
-      "purchaseTickets": "Purchase tickets for pool",
-      "daiPool": "DAI Pool",
-      "usdcPool": "USDC Pool",
-      "youArePurchasing": "You are purchasing",
-      "ticketsReview": "{{count}} <0>ticket</0>",
-      "ticketsReview_plural": "{{count}} <0>tickets</0>",
-      "chanceOfWin": "Chance of win",
-      "youAreWithdrawing": "You are withdrawing"
-    },
-    "ticketsList": {
-      "title": "PoolTogether savings game"
-    },
-    "title": {
-      "mainScreen": "Pool Together",
-      "activityFeed": "History",
-      "ticketPurchaseScreen": "Purchase Tickets",
-      "withdrawScreen": "Withdraw",
-      "withdrawConfirmScreen": "Review",
-      "purchaseConfirmScreen": "Review"
-    },
-    "button": {
-      "joinPool": "Join Pool",
-      "purchaseTickets": "Purchase",
-      "confirmWithdraw": "Withdraw"
-    },
-    "paragraph": {
-      "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",
-      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes."
-    }
-  },
-
-  "sablierContent": {
-    "status": {
-      "canceled": "Canceled",
-      "ended": "Ended",
-      "remaining": "Remaining"
-    },
-    "moneyStreamingList": {
-      "title": "Sablier money streaming"
-    },
-    "title": {
-      "incomingStream": "Incoming stream",
-      "newStreamScreen": "New stream",
-      "newStreamReviewScreen": "Review",
-      "outgoingStreamScreen": "Outgoing stream",
-      "streamingActivityFeed": "History",
-      "allowanceModal": "Allow Sablier",
-      "cancelStreamScreen": "Cancel stream",
-      "userStreamsScreen": "Your streams",
-      "withdrawScreen": "Withdraw",
-      "withdrawReviewScreen": "Review",
-      "startFirstStream": "Start your first stream"
-    },
-    "label": {
-      "streamed": "Streamed",
-      "withdrawn": "withdrawn",
-      "start": "Start",
-      "end": "End",
-      "ofTokenValueStream": "of {{value}} {{token}} stream",
-      "startTime": "Start time",
-      "endTime": "End time",
-      "estStreamTime": "Est. stream time",
-      "youAreStreaming": "You are streaming",
-      "streamDetails": "Stream details",
-      "youAreWithdrawing": "You are withdrawing"
-    },
-    "button": {
-      "startImmediately": "Start immediately",
-      "plusHour": "+1 hour",
-      "plusDay": "+1 day",
-      "plus30Days": "+30 days",
-      "startStream": "Start stream",
-      "cancelStream": "Cancel stream",
-      "confirmStreamCancellation": "Confirm cancellation",
-      "cancelStreamCancellation": "Do not cancel",
-      "newStream": "New stream",
-      "confirmWithdraw": "Withdraw"
-    },
-    "paragraph": {
-      "allowanceMissing": "In order to create a stream you will need to allow Sablier to send {{asset}} transactions on your behalf",
-      "allowancePending": "Please wait for Sablier allowance transaction",
-      "newStreamInformation": "You will stream a total of {{value}} {{asset}} for {{duration}} at a rate of {{streamingRate}} per minute",
-      "allowSablierWithToken": "Allow Sablier to send {{token}} transactions on your behalf",
-      "cancelStreamWarning": "If you cancel the stream, the money sent to the recipient will remain with them, and the rest will be returned to you."
-    },
-    "tabs": {
-      "outgoingStreams": "Outgoing",
-      "incomingStreams": "Incoming"
-    }
-  },
-
   "walletConnectContent": {
     "title": {
-      "appsList": "Explore apps",
-      "requestsList": "Requests",
-      "activeConnections": "Active сonnections",
-      "connect": "Connect",
       "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "WalletConnect",
-      "requestType": {
-        "call": "Call Request",
-        "transaction": "Transaction Request",
-        "message": "Message Request",
-        "unsupported": "Unsupported Request",
-        "default": "Request"
-      },
-      "manageSessionsScreen": "Manage Sessions"
+      "walletConnect": "WalletConnect"
     },
     "label": {
-      "requestFrom": "Request from {{name}}",
       "unknownRequestName": "Unknown",
       "requestDescription": "Description",
       "requestLink": "Url",
-      "upcomingApp": "Coming soon",
       "name": "Name",
       "chain": "Chain"
     },
-    "banner": {
-      "promo": {
-        "paragraph": "A collection of dapps to use with Pillar"
-      },
-      "promoExtended": {
-        "paragraph": "Swap tokens on decentralized exchanges, lend & borrow crypto, play games and more"
-      }
-    },
-    "button": {
-      "approveType": {
-        "call": "Approve Call",
-        "transaction": "Approve Transaction",
-        "message": "Approve Message",
-        "unsupported": "Approve Unsupported",
-        "default": "Approve"
-      },
-      "checkApp": "View"
-    },
-    "appDescription": {
-      "zerion": "A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.",
-      "poolTogether": "No-loss, audited savings game. Deposit Dai into the pool to get tickets. Each ticket is a chance to win weekly prizes!",
-      "mooni": "A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.",
-      "oasis": "Trade, borrow, and save using Dai.",
-      "sablier": "\"Stream\" money in real-time.",
-      "binanceDex": "Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.",
-      "localCryptos": "The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with each other. Buy and sell crypto on your own terms, using any payment method.",
-      "asyncArt": "Collect and experience programmable rare art.",
-      "knownOrigin": "Discover and collect rare digital artwork.",
-      "clovers": "Discover, collect & trade cryptographic icons.",
-      "default": "N/A"
-    },
-    "tabs": {
-      "active": {
-        "title": "Active",
-        "emptyState": {
-          "title": "No Active Sessions"
-        }
-      },
-      "requests": {
-        "title": "Requests",
-        "emptyState": {
-          "title": "No Pending Requests"
-        }
-      }
-    },
-    "paragraph": {
-      "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
-    },
     "error": {
       "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
-      "unsupportedRequestCallRequestType": "Unsupported Call Request type.",
-      "unableToShowTransaction": "Unable to show transaction. Contact support."
+      "unsupportedRequestCallRequestType": "Unsupported Call Request type."
     }
   },
 
@@ -1342,43 +1043,11 @@
     "title": {
       "servicesScreen": "Services"
     },
-    "exchange": {
-      "title": "Offers engine",
-      "description": "Aggregated offers from many decentralized exchanges and token swap services",
-      "label": {
-        "exchangeCount": "{{count}} exchange",
-        "exchangeCount_plural": "{{count}} exchanges"
-      }
-    },
-    "aaveDeposit": {
-      "title": "AAVE Deposit",
-      "description": "Deposit crypto and earn interest in real-time"
-    },
-    "poolTogether": {
-      "title": "Pool Together savings game",
-      "description": "Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!"
-    },
-    "sablier": {
-      "title": "Sablier money streaming",
-      "description": "Stream money to people and organizations in real-time with just one deposit"
-    },
     "ramp": {
-      "assetDecisionAlert": {
-        "title": "Please choose...",
-        "description": "Would you like to buy PLR tokens, or other tokens?",
-        "actionNonPlr": "Other tokens",
-        "actionPlr": "PLR tokens"
-      },
       "addCash": {
         "title": "Buy Crypto",
         "subTitle": "You pay with card"
-      },
-      "title": "Buy with Ramp.Network",
-      "description": "Buy Now"
-    },
-    "rari": {
-      "title": "Rari Capital",
-      "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
+      }
     },
     "liquidityPools": {
       "title": "Liquidity Pools",
@@ -1386,8 +1055,7 @@
     },
     "label": {
       "requiresActivation": "Requires activation",
-      "forSmartWallet": "For Smart Wallet",
-      "soon": "soon"
+      "forSmartWallet": "For Smart Wallet"
     }
   },
 
@@ -1401,8 +1069,6 @@
       "exchangeTransactionSuccess": "Swapping tokens...",
       "transactionSuccess": "Tokens are on their way",
       "collectibleTransactionSuccess": "Collectible is on its way",
-      "poolTogetherTransactionSuccess": "You're in the pool!",
-      "sablierTransactionSuccess": "Your stream has begun",
       "transferAssetsToSmartWalletScreen": "Migration to Smart Wallet",
       "amountEditScreen": "Set amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
@@ -1446,8 +1112,6 @@
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
-      "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
-      "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
       "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
       "typedDataMessage": "Typed Data message"
     },
@@ -1475,7 +1139,6 @@
     "biometricLoginEnabled": "Biometric login enabled.",
     "biometricLoginDisabled": "Biometric login disabled.",
     "assetAdded": "{{assetName}} ({{assetSymbol}}) added.",
-    "badgeReceived": "{{badgeName}} received.",
     "unableToAddDevice": "Couldn't add device, please try again.",
     "linkedDeviceRemoved": "Linked device removed.",
     "linkedDeviceNotFound": " Linked device not found.",
@@ -1487,8 +1150,6 @@
     "PPNTopUpSuccess": "{{paymentInfo}} added to Pillar Tank.",
     "PPNWithdrawSuccess": "{{paymentInfo}} withdrawn from Pillar Tank.",
     "PPNSettleSuccess": "Assets settled to your wallet.",
-    "lendingDepositSuccess": "{{paymentInfo}} deposited.",
-    "lendingWithdrawSuccess": " {{paymentInfo}} withdrawn.",
     "transactionSent": "{{paymentInfo}} sent.",
     "transactionReceived": "{{paymentInfo}} received.",
     "backendProblem": "There was a problem on our server. Don't worry, your funds are safe. Please try again or contact support.",
@@ -1519,15 +1180,11 @@
     "invalidPhoneNumber": "Phone number should have country code.",
     "dailyInvitationsLimitReached": "You have {{remainingDailyInvitations}} remaining invitations today. Max {{allowedDailyUpdates}} per day",
     "ensNameNotFound": "ENS name not found. Try different name.",
-    "purchasedPoolTogetherTickets": "{{count}} ticket purchased. Good luck!",
-    "purchasedPoolTogetherTickets_plural": "{{count}} tickets purchased. Good luck!",
     "transactionStarted": "{{paymentInfo}} sent.",
     "tooManyTransactionsToSettle": "You can settle only {{maxTxToSettle}} transactions at once. You can settle more in another batch.",
     "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
     "languageChanged": "Language changed.",
     "languageChangeFailed": "Can't change language. Please try again.",
-    "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
-    "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
     "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
     "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
@@ -1557,15 +1214,6 @@
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
     "walletBackedUp": "Your wallet is backed up now.",
-    "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
-    "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
-    "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
-    "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
-    "rariWithdraw": "{{amount}} {{token}} withdrawn from Rari Capital.",
-    "rariTransfer": "{{amount}} {{token}} transfered to {{recipient}}.",
-    "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
-    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
-    "rariNotEnoughLiquidity": "Not enough liquidity to exchange this token. Please select another token.",
     "poolDataFetchFailed": "Can't fetch liquidity pools data. Please try again or contact support.",
     "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
     "cannotStakeTokens": "Cannot stake tokens. Please try again.",
@@ -1622,112 +1270,6 @@
         "title": "No live offers",
         "paragraph": "Currently no matching offers from exchange services are provided."
       }
-    }
-  },
-
-  "rariContent": {
-    "title": {
-      "depositScreen": "Your deposit",
-      "infoScreen": "Rari Capital",
-      "addDepositScreen": "Add deposit",
-      "addDepositReviewScreen": "Review",
-      "withdrawScreen": "Withdraw",
-      "withdrawReviewScreen": "Review",
-      "transferScreen": "Transfer",
-      "transferReviewScreen": "Review",
-      "claimRgtScreen": "Claim rewards",
-      "claimRgtReviewScreen": "Review"
-    },
-    "label": {
-      "currentAPY": "Current APY",
-      "earned": "Earned",
-      "totalSupply": "Total supply",
-      "rariExchangeFee": "Rari fee",
-      "depositDetails": "Deposit details",
-      "maxSlippage": "Max. slippage",
-      "poolBalance": "Pool Balance",
-      "youAreDepositingToStablePool": "You are depositing to Stable pool",
-      "youAreDepositingToYieldPool": "You are depositing to Yield pool",
-      "youAreDepositingToEthPool": "You are depositing to ETH pool",
-      "youAreWithdrawingFromStablePool": "You are withdrawing from Stable pool",
-      "youAreWithdrawingFromYieldPool": "You are withdrawing from Yield pool",
-      "youAreWithdrawingFromEthPool": "You are withdrawing from ETH pool",
-      "withdrawDetails": "Withdraw details",
-      "rariWithdrawalFee": "Rari withdrawal fee",
-      "youAreTransferring": "You are transferring",
-      "transferDetails": "Transfer details",
-      "claimedSoFar": "{{amount}} RGT claimed so far",
-      "youAreClaiming": "You are claiming rewards",
-      "rgtPrice": "RGT price",
-      "rgtSupply": "RGT supply",
-      "currentAPYWithValue": "Current APY: {{value}}",
-      "claimingDetails": "Claiming details",
-      "burnTakeback": "Burn/Takeback"
-    },
-    "button": {
-      "withdraw": "Withdraw",
-      "deposit": "Deposit",
-      "transfer": "Transfer",
-      "claimRewards": "Claim rewards"
-    },
-    "tooltip": {
-      "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first",
-      "rariWithdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools.",
-      "burnTakeback": "Claiming your RGT before December 19th, 2020 will result in fraction of it being burned and sent back to the protocol. 70% of the amount taken will be burned and 30% taken back into the protocol. This amount decreases from 33% linearly until the 19th when it will reach 0%."
-    },
-    "infoContent": {
-      "subtitle": {
-        "whatIsRari": "What is Rari?",
-        "howDoesRariEarn": "How does Rari Earn Yield?",
-        "rariPools": "Rari Pools",
-        "deposits": "Deposits",
-        "withdrawals": "Withdrawals",
-        "RGT": "$RGT (Rari Governance Token)",
-        "performanceFee": "Performance Fee",
-        "withdrawalFee": "Withdrawal fee",
-        "RGTFee": "RGT Claim Fee",
-        "rariFee": "Rari fee"
-      },
-      "paragraph": {
-        "whatIsRari": "Rari Capital is an easy interface to earn yield within DeFi.\n\nRari Capital began by delivering on this mission in a safe way that enables individuals to autonomously and easily earn yield on their stable assets in a lossless manner. From there, it transformed into a solution that leveraged yield farming strategies to increase the returns offered to users.",
-        "howDoesRariEarn": "Currently, the product optimizes for yield across a series of stable-assets (swapping via 0x) in the stable and yield pools and Ethereum in the ETH pool. It earns yield by lending and farming across various DeFi protocols like Compound, dYdX, KeeperDAO, mStable, yEarn, and Aave. We are actively expanding our strategy set to focus on more sustainable yields off of the chain. We expect lending to compose the minority of the pool's allocation once mass protocol expansion has begun.",
-        "rariPools": "The first pool is the stable pool ($RSPT) which interacts safely with exclusively audited contracts. The next pool is the yield pool ($RYPT) that will maximize for yield at all costs, whether it is leverage or unaudited contracts--the yield pool will always have the highest returns. Lastly, the ETH ($REPT) fund will work to deliver safe and stable returns with ETH as the base asset. ",
-        "deposits": "Only certain stablecoins are accepted for direct deposits (direct meaning without exchange to an accepted currency). To deposit another currency, you must exchange your funds before depositing. Fortunately, Rari can exchange and deposit your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to deposit via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
-        "withdrawals": "Only the stablecoins currently held by the Rari Stable Pool are available for direct withdrawals. To withdraw another currency, you must exchange your funds after withdrawing. Fortunately, Rari can withdraw and exchange your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to withdraw via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
-        "RGT": "The $RGT is the Rari Governance Token. It can be used to propose and vote proposals made by the Rari Team or fellow token-holding community members. Users can also delegate their voting power to another address to pool voting power.\n\n$RGT enables transaction discounts for users, a unique feature of $RGT and the Rari Protocol. By staking held $RGT tokens in Rari, users can gain discounts on Rari Protocol fees. Rari normally charges a 9.5% fee on all gains, however, staking $RGT can reduce these fees over certain intervals. Fees accumulate through time and discounts are determined by the ratio between deposited funds to staked $RGT. ",
-        "performanceFee": "There is a 9.5% fee on all profits accrued through the Rari Protocol. ",
-        "withdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools. This 0.5% figure is inspired by yEarn, as they have the same standard for their yVaults.",
-        "RGTFee": "The RGT Claim Fee is a slight fee that takes place when a user attempts to claim their token within the first sixty days of the mining of it.\n\nAttempting to claim the token right after earning it will result in a 33% fee. From there, it decreases linearly across the subsequent sixty days. This is highlighted in the chart below. If you wait sixty days, you will not have any claim fee. You can view day-by-day data here. ",
-        "rariFee": "When you are depositing tokens, which is not supported by the Rari Stable Pool,  your funds must be exchanged first."
-      },
-      "tableOfContents": {
-        "whatIsRari": "What is Rari?",
-        "howDoesRariEarn": "How does Rari Earn Yield?",
-        "rariPools": "Rari Pools",
-        "howToDeposit": "How to Deposit and Withdraw",
-        "RGT": "$RGT",
-        "fees": "Fees"
-      },
-      "maximizeYieldInsight": {
-        "title": "Maximize yield in DeFi",
-        "button": "Deposit now"
-      },
-      "poolsInsight": {
-        "stablePool": "The Rari Stable Pool allows users to deposit ETH or any ERC20 token to mint the native token, $RSPT.",
-        "yieldPool": "The Rari Yield Pool provides users with the opportunity to earn a high yield by depositing ETH or any ERC20 token to mint the native token, $RYPT.",
-        "ethPool": "The Rari ETH Pool allows Rari users to deposit ETH or any ERC20 tokens to immediately start earning interest through the $REPT."
-      }
-    },
-    "tabs": {
-      "stablePool": "Stable Pool",
-      "yieldPool": "Yield Pool",
-      "ethPool": "ETH Pool"
-    },
-    "depositsList": {
-      "title": "Rari Capital",
-      "stablePool": "Stable pool",
-      "yieldPool": "Yield pool",
-      "ethPool": "ETH pool"
     }
   },
 

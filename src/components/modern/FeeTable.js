@@ -27,7 +27,7 @@ import * as Table from 'components/modern/Table';
 import Tooltip from 'components/Tooltip';
 
 // Selectors
-import { useRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
@@ -36,23 +36,25 @@ import { formatTokenAmount, hitSlop20 } from 'utils/common';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   fee: Value,
   symbol: string,
+  chain: Chain,
   style?: ViewStyleProp,
 |};
 
-function FeeTable({ fee, symbol, style }: Props) {
+function FeeTable({ fee, symbol, style, chain }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('transactions.label');
 
   return (
     <View style={style}>
       <Table.Header>{t('fees')}</Table.Header>
 
-      <FeeRow title={t('ethFee')} symbol={symbol} fee={fee} separator={false} />
+      <FeeRow title={t('ethFee')} symbol={symbol} fee={fee} separator={false} chain={chain} />
       <Table.Row title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
-      <FeeRow title={t('totalFee')} symbol={symbol} fee={fee} separator={false} />
+      <FeeRow title={t('totalFee')} symbol={symbol} fee={fee} separator={false} chain={chain} />
     </View>
   );
 }
@@ -63,6 +65,7 @@ type FeeItemProps = {|
   title: string,
   symbol: string,
   fee: Value,
+  chain: Chain,
   separator?: boolean,
 |};
 
@@ -71,16 +74,17 @@ export function FeeRow({
   symbol,
   fee,
   separator,
+  chain,
 }: FeeItemProps) {
   const { t } = useTranslation();
 
   const [showTooltip, setShowTooltip] = React.useState(false);
 
-  const rates = useRates();
+  const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
 
   const formattedFee = t('tokenValue', { value: formatTokenAmount(fee, symbol), token: symbol });
-  const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, rates, symbol);
+  const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, symbol);
 
   return (
     <Table.RowContainer separator={separator}>

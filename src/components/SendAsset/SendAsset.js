@@ -282,9 +282,14 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon:
-          !!selectedContact &&
-          renderFeeToggle(feeInfo, showFee, chain, errorMessage, isEstimating, enoughBalanceForTransaction),
+        footerTopAddon: !!selectedContact && renderFeeToggle(
+          feeInfo,
+          showFee,
+          chain,
+          errorMessage,
+          isEstimating,
+          enoughBalanceForTransaction,
+        ),
         isLoading: isEstimating,
       }}
     />

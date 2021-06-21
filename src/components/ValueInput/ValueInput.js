@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-// Components
+// components
 import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
@@ -38,6 +38,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
+// utils
 import {
   formatAmount,
   isValidNumber,
@@ -50,20 +51,26 @@ import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getRate, getBalanceInFiat } from 'utils/assets';
 
+// constants
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
+// selectors
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
+import { useChainRates } from 'selectors';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Rates, AssetOption } from 'models/Asset';
+import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
+import type { RatesBySymbol } from 'models/Rates';
 
+// local
 import ValueInputHeader from './ValueInputHeader';
 
 export type ExternalProps = {|
@@ -86,14 +93,13 @@ export type ExternalProps = {|
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
-  customRates?: Rates,
+  customRates?: RatesBySymbol,
 |};
 
 type InnerProps = {|
   assets: AssetOption[],
   accountAssetsBalances: CategoryBalancesPerChain,
   baseFiatCurrency: ?string,
-  rates: Rates,
   collectibles: Collectible[],
   theme: Theme,
 |};
@@ -109,7 +115,7 @@ const SelectorChevron = styled(Icon)`
   color: ${({ theme }) => theme.colors.basic030};
 `;
 
-export const getErrorMessage = (
+const getErrorMessage = (
   amount: string,
   assetBalance: string,
   assetSymbol: string,
@@ -127,14 +133,13 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInputComponent = ({
+const ValueInputComponent = ({
   disabled,
   assets,
   customAssets,
   accountAssetsBalances,
   customBalances,
   baseFiatCurrency,
-  rates,
   selectorOptionsTitle = t('transactions.title.valueSelectorModal'),
   assetData,
   onAssetDataChange,
@@ -157,13 +162,14 @@ export const ValueInputComponent = ({
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
   const [calculateBalanceSendPercent, setCalculateBalanceSendPercent] = useState<?number>(null);
 
-  const ratesWithCustomRates = { ...rates, ...customRates };
-
   const assetSymbol = assetData.symbol || '';
   const chain = assetData?.chain || CHAIN.ETHEREUM;
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const assetBalance = (customBalances || walletBalances)[assetSymbol]?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
+
+  const chainRates = useChainRates(chain);
+  const ratesWithCustomRates = { ...chainRates, ...(customRates ?? {}) };
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -375,10 +381,8 @@ export const ValueInputComponent = ({
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
-  rates,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -397,7 +401,7 @@ export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
 const getAssetBalanceFromFiat = (
   baseFiatCurrency: ?string,
   fiatBalance: ?string | ?number,
-  rates: Rates,
+  rates: RatesBySymbol,
   symbol: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

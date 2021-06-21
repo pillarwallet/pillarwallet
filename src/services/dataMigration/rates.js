@@ -18,9 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useSelector } from 'react-redux';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { RariReducerState } from 'reducers/rariReducer';
+export default function (storageData: Object) {
+  const rates = storageData?.rates?.rates || {};
 
-export const useRariSelector = <T>(selector: (state: RariReducerState) => T): T =>
-  useSelector((root: RootReducerState) => selector(root.rari));
+  // per migration moment current rates were Ethereum only
+  if (Array.isArray(rates)) {
+    return { ethereum: rates };
+  }
+
+  return rates;
+}

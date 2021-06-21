@@ -30,7 +30,10 @@ import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { parseNumber } from 'utils/common';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  archanovaAccountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -40,12 +43,10 @@ export const fetchAvailableSyntheticAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_SYNTHETIC_ASSETS_FETCHING, payload: true });
 
-    const {
-      paymentNetwork: { availableStake },
-      assets: { supportedAssets },
-    } = getState();
+    const { paymentNetwork: { availableStake } } = getState();
 
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
     const assetsData = getAssetsAsList(accountAssets);
 
     const stakedPLR = parseNumber(availableStake);

@@ -47,6 +47,9 @@ import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsA
 import { findSupportedAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
+// selectors
+import { useChainSupportedAssets } from 'selectors';
+
 // types
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -58,7 +61,6 @@ import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  supportedAssets: Asset[],
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -88,7 +90,6 @@ const FooterInner = styled.View`
 
 const StakeTokensScreen = ({
   navigation,
-  supportedAssets,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -96,6 +97,8 @@ const StakeTokensScreen = ({
   calculateStakeTransactionEstimate,
   liquidityPoolsReducer,
 }: Props) => {
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+
   useEffect(() => {
     resetEstimateTransaction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,7 +113,7 @@ const StakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
+  const assetData = findSupportedAsset(ethereumSupportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
@@ -197,11 +200,9 @@ const StakeTokensScreen = ({
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
   liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,

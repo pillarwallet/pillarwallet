@@ -26,11 +26,11 @@ import TabView from 'components/modern/TabView';
 // Selectors
 import {
   activeAccountAddressSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   useRootSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // Constants
@@ -88,8 +88,10 @@ function ChainHistoryView({ chain }: { chain: Chain }) {
 function useHistoryEvents(chain: Chain): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
-  const accountAssets = getAssetsAsList(useRootSelector(accountAssetsSelector));
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
+  const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
+  const chainSupportedAssets = supportedAssets[chain] ?? [];
   const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
 
   const transactionsHistory = accountHistory[chain] ?? [];
@@ -133,8 +135,8 @@ function useHistoryEvents(chain: Chain): Event[] {
     transactionsHistory,
     chain,
     activeAccountAddress,
-    accountAssets,
-    supportedAssets,
+    chainAccountAssets,
+    chainSupportedAssets,
   );
 
   return [

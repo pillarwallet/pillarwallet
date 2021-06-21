@@ -44,9 +44,7 @@ import { fontStyles, spacing } from 'utils/variables';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { USER_EVENT } from 'constants/userEventsConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
-import { SABLIER_EVENT } from 'constants/sablierConstants';
 
 
 const ActivityFeedList = styled.FlatList`
@@ -216,9 +214,7 @@ class ActivityFeed extends React.Component<Props> {
   };
 
   shouldRenderActivityItem = (item: Object) => {
-    const typesThatRender = [
-      USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION, BADGE_REWARD_EVENT, SABLIER_EVENT,
-    ];
+    const typesThatRender = [USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION];
     return typesThatRender.includes(item.type);
   };
 

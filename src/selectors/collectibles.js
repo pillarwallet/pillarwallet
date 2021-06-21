@@ -42,7 +42,7 @@ export const accountCollectiblesHistorySelector = createSelector(
   activeAccountIdSelector,
   (history, activeAccountId): ChainRecord<CollectibleTransaction[]> => {
     if (!activeAccountId) return { ethereum: [] };
-    return history[activeAccountId];
+    return history[activeAccountId] ?? { ethereum: [] };
   },
 );
 

@@ -44,7 +44,7 @@ import { spacing } from 'utils/variables';
 import { getCrossChainAccountHistory } from 'utils/history';
 
 // types
-import type { Assets } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
@@ -54,7 +54,7 @@ type DispatchProps = {|
 |};
 
 type OwnProps = {|
-  accountAssets: Assets,
+  accountAssets: AssetsBySymbol,
   accountHistory: ChainRecord<Transaction[]>,
   onMigrated?: () => void,
 |};

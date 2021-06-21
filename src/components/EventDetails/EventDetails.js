@@ -46,7 +46,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { getRate, getAssetDataByAddress } from 'utils/assets';
+import { getRate } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -67,7 +67,6 @@ import {
   findCollectibleTransactionAcrossAccounts,
   findTransactionAcrossAccounts,
 } from 'utils/history';
-import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 import {
@@ -83,7 +82,7 @@ import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // constants
-import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -98,7 +97,6 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
@@ -106,26 +104,15 @@ import {
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/archanovaConstants';
 import {
-  BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  LENDING_ENTER_WITHDRAW_AMOUNT,
-  LENDING_ENTER_DEPOSIT_AMOUNT,
-  LENDING_VIEW_DEPOSITED_ASSET,
-  POOLTOGETHER_DASHBOARD,
-  POOLTOGETHER_PURCHASE,
-  POOLTOGETHER_WITHDRAW,
-  SABLIER_INCOMING_STREAM,
-  SABLIER_OUTGOING_STREAM,
-  RARI_DEPOSIT,
-  RARI_CLAIM_RGT,
   LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
-import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 import {
   SABLIER_CREATE_STREAM,
@@ -161,7 +148,11 @@ import {
   activeBlockchainSelector,
   collectiblesHistorySelector,
 } from 'selectors';
-import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
+import {
+  assetDecimalsSelector,
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // actions
@@ -171,7 +162,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
@@ -180,26 +171,20 @@ import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Co
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
-import type { Stream } from 'models/Sablier';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
-import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { TransactionsStore } from 'models/History';
+import type { RatesPerChain } from 'models/Rates';
 
 
 type StateProps = {|
-  rates: Rates,
+  ratesPerChain: RatesPerChain,
   baseFiatCurrency: ?string,
   user: Object,
   accounts: Account[],
   ensRegistry: EnsRegistry,
-  supportedAssets: Asset[],
   updatingTransaction: ?string,
   updatingCollectibleTransaction: ?string,
-  depositedAssets: DepositedAsset[],
-  poolStats: PoolPrizeInfo,
-  incomingStreams: Stream[],
-  outgoingStreams: Stream[],
   history: TransactionsStore,
 |};
 
@@ -209,10 +194,11 @@ type SelectorProps = {|
   isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
-  accountAssets: Assets,
+  accountAssets: AssetsBySymbol,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectiblesHistoryStore,
+  supportedAssets: Asset[],
 |};
 
 type DispatchProps = {|
@@ -274,7 +260,6 @@ export const shouldShowEventDetails = (event: Object): boolean => {
     case TRANSACTION_PENDING_EVENT:
       return event.tag !== SABLIER_CANCEL_STREAM;
     case COLLECTIBLE_TRANSACTION:
-    case BADGE_REWARD_EVENT:
       return true;
     default:
       return false;
@@ -447,9 +432,10 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getFormattedGasFee = (formattedFee: number, token: string) => {
-    const { baseFiatCurrency, rates } = this.props;
+    const { baseFiatCurrency, ratesPerChain } = this.props;
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const rate = getRate(rates, token, fiatCurrency);
+    const rate = getRate(ethereumRates, token, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
       tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
@@ -525,12 +511,6 @@ export class EventDetail extends React.Component<Props> {
     Linking.openURL(explorerLink);
   };
 
-  viewBadge = () => {
-    const { navigation, event } = this.props;
-    const { badgeId } = event;
-    navigation.navigate(BADGE, { badgeId });
-  };
-
   openReceiveModal = (receiveWalletAddress: string) =>
     Modal.open(() => <ReceiveModal address={receiveWalletAddress} />);
 
@@ -548,21 +528,6 @@ export class EventDetail extends React.Component<Props> {
   topUpPillarNetwork = () => {
     const { navigation } = this.props;
     navigation.navigate(TANK_FUND_FLOW);
-  };
-
-  onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
-    const { navigation } = this.props;
-    navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
-  };
-
-  onAaveDepositMore = () => {
-    const { navigation, event } = this.props;
-    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
-  };
-
-  onAaveWithdrawMore = () => {
-    const { navigation, event } = this.props;
-    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
   PPNWithdraw = () => {
@@ -587,66 +552,6 @@ export class EventDetail extends React.Component<Props> {
     const { navigation } = this.props;
     navigation.navigate(SETTLE_BALANCE);
   };
-
-  goToPoolTogetherPurcharse = (symbol: string) => {
-    const { navigation, poolStats = {} } = this.props;
-    const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
-
-    let userTickets = 0;
-    if (userInfo) {
-      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
-    }
-
-    navigation.navigate(POOLTOGETHER_PURCHASE, {
-      poolToken: symbol,
-      poolTicketsCount: 0,
-      totalPoolTicketsCount,
-      userTickets,
-    });
-  };
-
-  goToPoolTogetherWithdraw = (symbol: string) => {
-    const { navigation, poolStats = {} } = this.props;
-    const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
-
-    let userTickets = 0;
-    if (userInfo) {
-      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
-    }
-
-    navigation.navigate(POOLTOGETHER_WITHDRAW, {
-      poolToken: symbol,
-      poolTicketsCount: 0,
-      totalPoolTicketsCount,
-      userTickets,
-    });
-  };
-
-  goToPoolTogetherPool = (symbol: string) => {
-    const { navigation } = this.props;
-    navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
-  };
-
-  goToIncomingStream = (streamId: string) => {
-    const { navigation, incomingStreams } = this.props;
-    const stream = incomingStreams.find(({ id }) => id === streamId);
-    navigation.navigate(SABLIER_INCOMING_STREAM, { stream });
-  }
-
-  goToOutgoingStream = (streamId: string) => {
-    const { navigation, outgoingStreams } = this.props;
-    const stream = outgoingStreams.find(({ id }) => id === streamId);
-    navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
-  }
-
-  goToStreamWithdraw = (streamId: string) => {
-    const { navigation, incomingStreams } = this.props;
-    const stream = incomingStreams.find(({ id }) => id === streamId);
-    navigation.navigate(SABLIER_WITHDRAW, { stream });
-  }
-
-  goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
-  goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
 
   goToLiquidityPool = (pool: LiquidityPool) => {
     this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
@@ -794,7 +699,6 @@ export class EventDetail extends React.Component<Props> {
       accounts,
       isPPNActivated,
       itemData,
-      depositedAssets,
       ensRegistry,
       supportedAssets,
     } = this.props;
@@ -809,13 +713,6 @@ export class EventDetail extends React.Component<Props> {
     const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
-
-    let aaveDepositedAsset;
-    if (isAaveTransactionTag(event?.tag)) {
-      aaveDepositedAsset = depositedAssets.find(({
-        symbol: depositedAssetSymbol,
-      }) => depositedAssetSymbol === event?.extra?.symbol);
-    }
 
     // services are left for archanova only and will be decomissioned later
     const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
@@ -910,126 +807,41 @@ export class EventDetail extends React.Component<Props> {
           name: t('aaveDeposit'),
           actionTitle: fullItemValue,
         };
-        const aaveDepositButtons = [];
-        if (event?.asset && isArchanovaAccountActive) {
-          aaveDepositButtons.push({
-            title: t('button.depositMore'),
-            onPress: this.onAaveDepositMore,
-            secondary: true,
-          });
-          if (aaveDepositedAsset) {
-            aaveDepositButtons.push({
-              title: t('button.viewDeposit'),
-              onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-              secondary: true,
-            });
-          }
-        }
-        eventData.buttons = aaveDepositButtons;
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
         eventData = {
           name: t('aaveDeposit'),
           actionTitle: fullItemValue,
         };
-        const aaveWithdrawButtons = [];
-        if (event?.asset && aaveDepositedAsset && isArchanovaAccountActive) {
-          if (aaveDepositedAsset?.currentBalance > 0) {
-            aaveWithdrawButtons.push({
-              title: t('button.withdrawMore'),
-              onPress: this.onAaveWithdrawMore,
-              secondary: true,
-            });
-          }
-          aaveWithdrawButtons.push({
-            title: t('button.viewDeposit'),
-            onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-            secondary: true,
-          });
-        }
-        eventData.buttons = aaveWithdrawButtons;
         break;
       case POOLTOGETHER_DEPOSIT_TRANSACTION:
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
-        const { extra: { symbol } } = event;
-        const buttons = [];
-
-        if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-          buttons.push({
-            title: t('button.purchaseMore'),
-            onPress: () => this.goToPoolTogetherPurcharse(symbol),
-            secondary: true,
-          });
-        } else {
-          buttons.push({
-            title: t('button.withdrawMore'),
-            onPress: () => this.goToPoolTogetherWithdraw(symbol),
-            secondary: true,
-          });
-        }
-
-        buttons.push(
-          {
-            title: t('button.viewPoolTogetherPool'),
-            onPress: () => this.goToPoolTogetherPool(symbol),
-            secondary: true,
-          },
-        );
-
         eventData = {
           name: t('poolTogether'),
           customActionTitle: this.renderPoolTogetherTickets(event),
-          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
       case SABLIER_CREATE_STREAM: {
-        const { contactAddress, streamId } = event.extra;
+        const { contactAddress } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
-        const buttons = [{
-          title: t('button.viewSablierStream'),
-          secondary: true,
-          onPress: () => this.goToOutgoingStream(streamId),
-        }];
 
         eventData = {
           name: usernameOrAddress,
           sublabel: t('label.outgoingSablierStream'),
           actionSubtitle: t('label.started'),
           fee: this.getFeeLabel(event),
-          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
       case SABLIER_WITHDRAW: {
-        const { incomingStreams } = this.props;
-        const { contactAddress, assetAddress, streamId } = event.extra;
+        const { contactAddress } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
-        const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
-        const { symbol, decimals } = assetData;
-
-        const stream = incomingStreams.find(({ id }) => id === streamId);
-        const formattedStreamAmount = formatAmount(formatUnits(stream?.deposit, decimals), getDecimalPlaces(symbol));
-
-        const buttons = [
-          {
-            title: t('button.withdrawMore'),
-            secondary: true,
-            onPress: () => this.goToStreamWithdraw(streamId),
-          },
-          {
-            title: t('button.viewSablierStream'),
-            secondary: true,
-            onPress: () => this.goToIncomingStream(streamId),
-          },
-        ];
 
         eventData = {
           name: usernameOrAddress,
           sublabel: t('label.withdraw'),
           fee: this.getFeeLabel(event),
-          actionSubtitle: t('sablierContent.label.ofTokenValueStream', { value: formattedStreamAmount, token: symbol }),
-          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
@@ -1061,11 +873,6 @@ export class EventDetail extends React.Component<Props> {
           negativeValueToken = symbol;
           positiveValueAmount = formatAmount(formatUnits(rftMinted, 18));
           positiveValueToken = rariToken;
-          buttons.push({
-            secondary: true,
-            title: t('button.depositMore'),
-            onPress: () => this.goToRariDeposit(),
-          });
         } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
           label = t('label.withdrawal');
           subtext = t('label.fromRariToWallet');
@@ -1073,11 +880,6 @@ export class EventDetail extends React.Component<Props> {
           negativeValueToken = rariToken;
           positiveValueAmount = formattedAmount;
           positiveValueToken = symbol;
-          buttons.push({
-            secondary: true,
-            title: t('button.withdrawMore'),
-            onPress: () => this.goToRariDeposit(),
-          });
         } else {
           label = t('label.rewardsClaimed');
           subtext = t('label.fromRariToWallet');
@@ -1085,11 +887,6 @@ export class EventDetail extends React.Component<Props> {
           positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
           negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
           positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
-          buttons.push({
-            secondary: true,
-            title: t('button.claimMore'),
-            onPress: () => this.goToRariClaim(),
-          });
         }
 
         eventData = {
@@ -1111,14 +908,8 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case RARI_TRANSFER_TRANSACTION: {
-        const buttons = [{
-          secondary: true,
-          title: t('button.transferMore'),
-          onPress: () => this.goToRariDeposit(),
-        }];
         eventData = {
           fee: this.getFeeLabel(event),
-          buttons: isArchanovaAccountActive ? buttons : [],
         };
         break;
       }
@@ -1230,14 +1021,8 @@ export class EventDetail extends React.Component<Props> {
             ];
           }
         } else if (isPoolTogetherAddress(event.to)) {
-          const buttons = [{
-            title: t('button.viewPoolTogetherPool'),
-            onPress: () => this.goToPoolTogetherPool(DAI),
-            secondary: true,
-          }];
           eventData = {
             name: t('poolTogether'),
-            buttons: isArchanovaAccountActive ? buttons : [],
           };
         } else {
           eventData = {
@@ -1322,24 +1107,6 @@ export class EventDetail extends React.Component<Props> {
     return eventData;
   };
 
-  getBadgeRewardEventData = (event: Object): EventData => {
-    const { name, imageUrl } = event;
-    const isPending = isPendingTransaction(event);
-
-    return {
-      name,
-      imageUrl,
-      actionTitle: isPending ? t('label.receiving') : t('label.received'),
-      actionSubtitle: t('label.badge'),
-      actionIcon: isPending ? 'pending' : null, // eslint-disable-line i18next/no-literal-string
-      buttons: [{
-        title: t('button.viewBadge'),
-        onPress: this.viewBadge,
-        secondary: true,
-      }],
-    };
-  };
-
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
     switch (event.type) {
@@ -1352,9 +1119,6 @@ export class EventDetail extends React.Component<Props> {
         break;
       case COLLECTIBLE_TRANSACTION:
         eventData = this.getCollectibleTransactionEventData(event);
-        break;
-      case BADGE_REWARD_EVENT:
-        eventData = this.getBadgeRewardEventData(event);
         break;
       default:
         eventData = null;
@@ -1645,31 +1409,22 @@ export class EventDetail extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
   history: { data: history, updatingTransaction },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
-  lending: { depositedAssets },
-  poolTogether: { poolStats },
-  sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): StateProps => ({
-  rates,
+  ratesPerChain,
   baseFiatCurrency,
   user,
   accounts,
   ensRegistry,
-  supportedAssets,
   history,
   updatingTransaction,
   updatingCollectibleTransaction,
-  depositedAssets,
-  poolStats,
-  incomingStreams,
-  outgoingStreams,
 });
 
 const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSelector({
@@ -1678,10 +1433,11 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
-  accountAssets: accountAssetsSelector,
+  accountAssets: accountEthereumAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: collectiblesHistorySelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({

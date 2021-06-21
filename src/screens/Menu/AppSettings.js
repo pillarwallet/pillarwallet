@@ -49,7 +49,7 @@ import { isArchanovaAccount } from 'utils/accounts';
 
 // selectors
 import { isGasTokenSupportedSelector, preferredGasTokenSelector } from 'selectors/archanova';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountSelector } from 'selectors';
 
@@ -59,7 +59,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Account } from 'models/Account';
@@ -77,7 +77,7 @@ type Props = {
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
-  accountAssets: Assets,
+  accountAssets: AssetsBySymbol,
   accountHistory: ChainRecord<Transaction[]>,
   setPreferredGasToken: (token: string) => void,
   localisation: ?LocalisationOptions,
@@ -234,7 +234,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
-  accountAssets: accountAssetsSelector,
+  accountAssets: accountEthereumAssetsSelector,
   accountHistory: accountHistorySelector,
   preferredGasToken: preferredGasTokenSelector,
   activeAccount: activeAccountSelector,
