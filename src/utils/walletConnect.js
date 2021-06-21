@@ -35,7 +35,6 @@ import {
 // utils
 import {
   addressesEqual,
-  getAssetData,
   getAssetDataByAddress,
   getAssetsAsList,
 } from 'utils/assets';
@@ -152,15 +151,12 @@ export const mapCallRequestToTransactionPayload = (
     to = methodToAddress;
   }
 
-  // TODO: review after implementing supported assets per chain
-  const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
-  const chainNativeDecimals = nativeAssetPerChain[chain].decimals;
-  const nativeAssetData = getAssetData(chainAccountAssets, chainSupportedAssets, chainNativeSymbol);
+  const nativeAssetData = nativeAssetPerChain[chain];
 
   const {
-    symbol = chainNativeSymbol,
+    symbol = nativeAssetData.symbol,
     address: contractAddress = nativeAssetData.address,
-    decimals = chainNativeDecimals,
+    decimals = nativeAssetData.decimals,
   } = assetData;
 
   return {

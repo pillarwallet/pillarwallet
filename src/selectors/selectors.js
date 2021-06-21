@@ -42,8 +42,8 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRates = () => useRootSelector(ratesSelector);
-export const useSupportedAssets = () => useRootSelector(supportedAssetsPerChainSelector);
-export const useChainSupportedAssets = (chain: Chain) => useSupportedAssets()[chain] ?? [];
+export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
+export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? [];
 
 //
 // Global selectors here

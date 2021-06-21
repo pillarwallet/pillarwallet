@@ -37,7 +37,7 @@ import Modal from 'components/Modal';
 import AddFundsModal from 'components/AddFundsModal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
-// Contants
+// Constants
 import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
@@ -48,12 +48,11 @@ import {
   activeAccountAddressSelector,
   supportedAssetsPerChainSelector,
 } from 'selectors';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { findSupportedAssetBySymbol } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -78,7 +77,6 @@ function WalletTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
   const accountAddress = useRootSelector(activeAccountAddressSelector);
@@ -97,10 +95,9 @@ function WalletTab() {
   const navigateToAssetDetails = (item: WalletItem) => {
     const { chain, symbol } = item;
 
-    const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
     const chainSupportedAssets = supportedAssets[chain] ?? [];
 
-    const asset = getAssetData(chainAccountAssetsList, chainSupportedAssets, symbol);
+    const asset = findSupportedAssetBySymbol(chainSupportedAssets, symbol);
     if (isEmpty(asset)) return;
 
     const assetData = buildAssetDataNavigationParam(asset, chain);

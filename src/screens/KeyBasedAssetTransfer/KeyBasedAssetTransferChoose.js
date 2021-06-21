@@ -49,12 +49,12 @@ import TextWithCopy from 'components/TextWithCopy';
 import { compactFalsy } from 'utils/array';
 import {
   addressesEqual,
-  getAssetData,
   getBalance,
   getBalanceBN,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
+  findSupportedAssetBySymbol,
 } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -62,14 +62,16 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 // Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// Selectors
+import { useChainSupportedAssets } from 'selectors';
 
 // Types
 import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import { useChainSupportedAssets } from 'selectors';
-import { CHAIN } from 'constants/chainConstants';
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
@@ -135,8 +137,8 @@ const KeyBasedAssetTransferChoose = ({
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => getAssetData(ethereumSupportedAssets, [], symbol))
-      .filter((assetData) => !isEmpty(assetData))
+      .map((symbol) => findSupportedAssetBySymbol(ethereumSupportedAssets, symbol))
+      .filter(Boolean)
       .map(mapAssetToAssetData);
 
     const collectibles = availableCollectibles.map(mapCollectibleToAssetData);
