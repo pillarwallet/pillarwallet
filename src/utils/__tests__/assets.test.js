@@ -29,7 +29,6 @@ import {
 
 // types
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesBySymbol } from 'models/Rates';
 
 
 describe('Assets utils', () => {
