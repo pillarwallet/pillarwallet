@@ -52,17 +52,17 @@ import { accountEthereumAssetsSelector } from 'selectors/assets';
 import type { AssetsBySymbol } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 
 type Props = {
-  baseFiatCurrency: string,
+  baseFiatCurrency: Currency,
   assets: AssetsBySymbol,
   ratesPerChain: RatesPerChain,
   paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object,
-}
+};
 
 const FloatingButtonView = styled.View`
   position: absolute;

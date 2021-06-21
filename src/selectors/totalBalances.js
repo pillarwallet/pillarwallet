@@ -141,7 +141,7 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
 const calculateWalletAssetsFiatValue = (
   assetBalances: WalletAssetsBalances,
   rates: RatesBySymbol,
-  currency: string,
+  currency: Currency,
 ): BigNumber => {
   const assetBalancesInFiat = map(assetBalances, (asset) => {
     if (!asset?.balance) return BigNumber(0);

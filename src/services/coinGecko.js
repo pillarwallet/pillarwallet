@@ -29,19 +29,22 @@ import { CHAIN } from 'constants/chainConstants';
 import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
-import { type Record, mapRecordKeys } from 'utils/object';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { Asset, AssetsBySymbol } from 'models/Asset';
-import type { Rates, RateKey, RatesBySymbol } from 'models/Rates';
+import type { Rates, RatesBySymbol } from 'models/Rates';
 import type { Chain } from 'models/Chain';
-
-// { "usd": 382.72, "eur": 314.22, "gbp": 270.63, "eth": 0.14214279 }
-type CoinGeckoPriceEntry = Record<number>;
 
 type CoinGeckoAssetsPrices = {
   [coinGeckoAssetId: string]: CoinGeckoPriceEntry,
+};
+
+type CoinGeckoPriceEntry = {
+  usd: number,
+  eur: number,
+  gbp: number,
+  eth: number,
 };
 
 // does not change between envs
@@ -153,9 +156,10 @@ export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?Rates
 
 const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?Rates => {
   if (isEmpty(prices)) return null;
-  return mapRecordKeys(prices, findRateKeyFromCoinGeckoCurrency);
-};
-
-const findRateKeyFromCoinGeckoCurrency = (coinGeckoCurrency: string): ?RateKey => {
-  return rateKeys.find((key) => isCaseInsensitiveMatch(coinGeckoCurrency, key));
+  return {
+    USD: prices.usd,
+    EUR: prices.eur,
+    GBP: prices.gbp,
+    ETH: prices.eth,
+  };
 };

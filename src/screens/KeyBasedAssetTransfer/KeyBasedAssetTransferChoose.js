@@ -72,6 +72,7 @@ import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Currency } from 'models/Rates';
 
 
 type Props = {
@@ -86,7 +87,7 @@ type Props = {
   walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
 };
 
 const KeyBasedAssetTransferChoose = ({

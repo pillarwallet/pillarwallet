@@ -85,13 +85,14 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { CategoryBalancesPerChain } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
+import type { Currency } from 'models/Rates';
 
 
 type Props = {
   fetchAssetsBalances: () => void,
   accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
   accountAssetsBalances: CategoryBalancesPerChain,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,

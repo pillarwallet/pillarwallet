@@ -174,12 +174,12 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { TransactionsStore } from 'models/History';
-import type { RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 
 type StateProps = {|
   ratesPerChain: RatesPerChain,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   user: Object,
   accounts: Account[],
   ensRegistry: EnsRegistry,

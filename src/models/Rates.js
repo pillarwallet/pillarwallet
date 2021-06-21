@@ -35,7 +35,7 @@ export type Currency = typeof USD | typeof EUR | typeof GBP;
 // TODO: migrate to strongly typed keys: USD, EUR, GBP, ETH.
 export type RateKey = Currency | typeof ETH;
 
-export type Rates = { [symbol: string]: number };
+export type Rates = { [key: RateKey]: number };
 
 export type RatesBySymbol = { [symbol: string]: Rates };
 

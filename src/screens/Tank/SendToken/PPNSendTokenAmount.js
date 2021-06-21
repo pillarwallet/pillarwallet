@@ -41,7 +41,7 @@ import { themedColors } from 'utils/themes';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
-import type { RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -93,7 +93,7 @@ const FormWrapper = styled.View`
 
 
 type Props = {
-  token: string;
+  token: string,
   address: string,
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
@@ -101,7 +101,7 @@ type Props = {
   availableStake: number,
   session: Object,
   ratesPerChain: RatesPerChain,
-  baseFiatCurrency: string,
+  baseFiatCurrency: Currency,
 };
 
 type State = {
