@@ -233,6 +233,7 @@ describe('Onboarding actions', () => {
       assetsBalances: { data: {} },
       rates: { data: {} },
       badges: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
@@ -254,7 +255,14 @@ describe('Onboarding actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-
+      {
+        payload: true,
+        type: 'SET_FETCHING_TOTAL_BALANCES',
+      },
+      {
+        payload: false,
+        type: 'SET_FETCHING_TOTAL_BALANCES',
+      },
       {
         type: SET_FETCHING_HISTORY,
         payload: true,
@@ -295,6 +303,7 @@ describe('Onboarding actions', () => {
       rates: { data: {} },
       badges: { data: [] },
       userEvents: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
@@ -327,7 +336,14 @@ describe('Onboarding actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-
+      {
+        payload: true,
+        type: 'SET_FETCHING_TOTAL_BALANCES',
+      },
+      {
+        payload: false,
+        type: 'SET_FETCHING_TOTAL_BALANCES',
+      },
       {
         type: SET_FETCHING_HISTORY,
         payload: true,
@@ -337,7 +353,6 @@ describe('Onboarding actions', () => {
         type: SET_FETCHING_HISTORY,
         payload: false,
       },
-
 
       // TODO: etherspot history update tba with separate PR
     ];

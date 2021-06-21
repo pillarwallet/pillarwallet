@@ -47,7 +47,7 @@ import { ADD_COLLECTIBLE_HISTORY_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'co
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import {
-  SET_ACCOUNT_TOTAL_BALANCE,
+  SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
   SET_FETCHING_TOTAL_BALANCES,
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
@@ -519,11 +519,11 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             }, []);
 
             dispatch({
-              type: SET_ACCOUNT_TOTAL_BALANCE,
+              type: SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
               payload: {
                 accountId: getAccountId(account),
-                chain,
                 category: balanceCategory,
+                chain,
                 balance: categoryTotalBalance,
               },
             });
