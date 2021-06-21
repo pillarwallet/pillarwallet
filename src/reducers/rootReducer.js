@@ -40,7 +40,6 @@ import notificationsReducer from './notificationsReducer';
 import sessionReducer from './sessionReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
-import badgesReducer from './badgesReducer';
 import accountsReducer from './accountsReducer';
 import assetsBalancesReducer from './assetsBalancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
@@ -51,15 +50,11 @@ import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
-import lendingReducer from './lendingReducer';
-import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 import contactsReducer from './contactsReducer';
-import sablierReducer from './sablierReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
-import rariReducer from './rariReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
 
@@ -74,14 +69,13 @@ import type {
 } from './walletConnectSessionsReducer';
 import type { AssetsReducerState } from './assetsReducer';
 import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
-import type { RatesReducerState } from './ratesReducer';
+import type { RatesReducerState, RatesReducerAction } from './ratesReducer';
 import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
 import type { SessionReducerState } from './sessionReducer';
 import type { TxCountReducerState } from './txCountReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
-import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
 import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './assetsBalancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
@@ -92,18 +86,14 @@ import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walk
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
-import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
-import type { PoolTogetherReducerState } from './poolTogetherReducer';
 import type {
   KeyBasedAssetTransferReducerAction,
   KeyBasedAssetTransferReducerState,
 } from './keyBasedAssetTransferReducer';
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
-import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
-import type { RariReducerAction, RariReducerState } from './rariReducer';
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
 
@@ -122,7 +112,6 @@ export type RootReducerState = {|
   session: SessionReducerState,
   txCount: TxCountReducerState,
   collectibles: CollectiblesReducerState,
-  badges: BadgesReducerState,
   accounts: AccountsReducerState,
   assetsBalances: AssetsBalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
@@ -133,15 +122,11 @@ export type RootReducerState = {|
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
   insights: InsightsReducerState,
-  lending: LendingReducerState,
-  poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
   contacts: ContactsReducerState,
-  sablier: SablierReducerState,
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
   transactionEstimate: TransactionEstimateReducerState,
-  rari: RariReducerState,
   liquidityPools: LiquidityPoolsReducerState,
   totalBalances: TotalBalancesReducerState,
 |};
@@ -149,7 +134,6 @@ export type RootReducerState = {|
 type RootReducerAction =
   | AccountsAction
   | AppSettingsReducerAction
-  | BadgesReducerAction
   | AssetsBalancesReducerAction
   | BlockchainNetworkAction
   | CollectiblesAction
@@ -165,16 +149,14 @@ type RootReducerAction =
   | SyntheticsReducerAction
   | EnsRegistryReducerAction
   | InsightsReducerAction
-  | LendingReducerAction
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
-  | SablierReducerAction
   | OnboardingReducerAction
   | CacheAction
   | TransactionEstimateReducerAction
-  | RariReducerAction
   | LiquidityPoolsReducerAction
-  | TotalBalancesReducerAction;
+  | TotalBalancesReducerAction
+  | RatesReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -204,7 +186,6 @@ const appReducer = combineReducers({
   session: sessionReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
-  badges: badgesReducer,
   accounts: accountsReducer,
   assetsBalances: assetsBalancesReducer,
   paymentNetwork: paymentNetworkReducer,
@@ -215,15 +196,11 @@ const appReducer = combineReducers({
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
-  lending: lendingReducer,
-  poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
   contacts: contactsReducer,
-  sablier: sablierReducer,
   onboarding: onboardingReducer,
   cache: cacheReducer,
   transactionEstimate: transactionEstimateReducer,
-  rari: rariReducer,
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
 });

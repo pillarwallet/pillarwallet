@@ -31,7 +31,6 @@ import {
   uniqBy,
   formatUnits,
   formatFiat,
-  extractJwtPayload,
   parseTokenAmount,
   getFormattedTransactionFeeValue,
   formatBigAmount,
@@ -96,20 +95,6 @@ describe('Common utils', () => {
       const expectedOutput = 'pillar';
       const func = pipe(emptyJoin, toLower);
       expect(func(['PILLAR'])).toBe(expectedOutput);
-    });
-  });
-
-  describe('extractJwtPayload', () => {
-    it('returns {} for invalid tokens', () => {
-      const token = '-not-valid-';
-      const expectedValue = {};
-      expect(extractJwtPayload(token)).toEqual(expectedValue);
-    });
-
-    it('decodes jwt token', () => {
-      const token = `ignored.${Buffer.from(JSON.stringify({ id: 4 })).toString('base64')}`;
-      const expectedValue = { id: 4 };
-      expect(extractJwtPayload(token)).toEqual(expectedValue);
     });
   });
 

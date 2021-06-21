@@ -19,11 +19,18 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+
+// components
 import { BaseText } from 'components/Typography';
 
+// constants
+import { CHAIN } from 'constants/chainConstants';
+
+// local
 import Table, { TableRow, TableLabel, TableAmount, TableTotal } from './Table';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+
 
 storiesOf('Table', module)
   .addDecorator(CenterViewDecorator)
@@ -32,7 +39,7 @@ storiesOf('Table', module)
     <Table title="Table">
       <TableRow>
         <TableLabel>One</TableLabel>
-        <TableAmount amount={12320.56} token="PLR" />
+        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} />
       </TableRow>
       <TableRow>
         <TableLabel>Two</TableLabel>
@@ -41,15 +48,15 @@ storiesOf('Table', module)
       <BaseText large negative>Even weirder component</BaseText>
       <TableRow>
         <TableLabel>Free</TableLabel>
-        <TableAmount amount={0} token="ETH" />
+        <TableAmount amount={0} token="ETH" chain={CHAIN.ETHEREUM} />
       </TableRow>
       <TableRow>
         <TableLabel>High fees</TableLabel>
-        <TableAmount amount={12320.56} token="PLR" highFees />
+        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} highFees />
       </TableRow>
       <TableRow>
         <TableTotal>Total</TableTotal>
-        <TableAmount amount={12320.56} token="PLR" />
+        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} />
       </TableRow>
     </Table>
   ));

@@ -20,8 +20,3 @@
 import { RARI_POOLS } from 'constants/rariConstants';
 
 export type RariPool = $Values<typeof RARI_POOLS>;
-
-export type Interests = {
-  interests: number,
-  interestsPercentage: number,
-};

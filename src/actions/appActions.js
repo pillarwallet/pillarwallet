@@ -33,13 +33,12 @@ import { migrate } from 'services/dataMigration';
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
-import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
+import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -58,12 +57,9 @@ import {
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
-import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
-import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
-import { SET_RARI_USER_DATA } from 'constants/rariConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
@@ -91,25 +87,23 @@ export const initAppAndRedirectAction = () => {
 
     if (walletTimestamp) {
       // migrations
-      storageData = await migrate('assets', storageData, dispatch, getState);
       storageData = await migrate('collectibles', storageData, dispatch, getState);
       storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
       storageData = await migrate('history', storageData, dispatch, getState);
+      storageData = await migrate('supportedAssets', storageData, dispatch, getState);
+      storageData = await migrate('rates', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const { assets = {} } = get(storageData, 'assets', {});
-      dispatch({ type: UPDATE_ASSETS, payload: assets });
-
-      const { supportedAssets = [] } = get(storageData, 'supportedAssets', {});
-      dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
+      const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
+      dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
 
-      const { rates = {} } = get(storageData, 'rates', {});
-      dispatch({ type: UPDATE_RATES, payload: rates });
+      const rates = storageData?.rates?.rates ?? {};
+      dispatch({ type: SET_RATES, payload: rates });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
@@ -119,15 +113,6 @@ export const initAppAndRedirectAction = () => {
 
       const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
-
-      const { badges = [] } = get(storageData, 'badges', {});
-      dispatch({ type: UPDATE_BADGES, payload: badges });
-
-      const { contactsBadges = {} } = get(storageData, 'contactsBadges', {});
-      dispatch({ type: SET_CONTACTS_BADGES, payload: contactsBadges });
-
-      const { badgeAwardEvents = [] } = get(storageData, 'badgeAwardEvents', {});
-      dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: badgeAwardEvents });
 
       const { paymentNetworkBalances = {} } = get(storageData, 'paymentNetworkBalances', {});
       dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
@@ -151,15 +136,8 @@ export const initAppAndRedirectAction = () => {
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
-      const { depositedAssets = [] } = get(storageData, 'lending', []);
-      dispatch({ type: SET_LENDING_DEPOSITED_ASSETS, payload: depositedAssets });
-
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
-
-      // "|| {}" is fix for users when we released a version where Sablier streams were incoming as nulls
-      const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {}) || {};
-      dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
 
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
@@ -194,9 +172,6 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
-
-      const rariData = get(storageData, 'rari');
-      if (rariData) dispatch({ type: SET_RARI_USER_DATA, payload: rariData });
 
       const historyLastSyncIds = get(storageData, 'historyLastSyncIds');
       if (historyLastSyncIds) dispatch({ type: SET_HISTORY_LAST_SYNC_IDS, payload: historyLastSyncIds });

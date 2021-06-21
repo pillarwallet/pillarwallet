@@ -29,7 +29,6 @@ import {
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -37,9 +36,6 @@ import { loginAction } from 'actions/authActions';
 // services
 import Storage from 'services/storage';
 import etherspotService from 'services/etherspot';
-
-// utils
-import { transformAssetsToObject } from 'utils/assets';
 
 // test utils
 import {
@@ -49,7 +45,6 @@ import {
   mockArchanovaConnectedAccount,
   mockEtherspotAccountExtra,
 } from 'testUtils/jestSetup';
-import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
@@ -111,13 +106,6 @@ describe('Auth actions', () => {
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockEtherspotAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
 
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },

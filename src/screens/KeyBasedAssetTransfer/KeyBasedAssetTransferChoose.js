@@ -49,12 +49,12 @@ import TextWithCopy from 'components/TextWithCopy';
 import { compactFalsy } from 'utils/array';
 import {
   addressesEqual,
-  getAssetData,
   getBalance,
   getBalanceBN,
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
+  findSupportedAssetBySymbol,
 } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -62,12 +62,17 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 // Constants
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// Selectors
+import { useChainRates, useChainSupportedAssets } from 'selectors';
 
 // Types
-import type { Asset, AssetData, KeyBasedAssetTransfer, Rates } from 'models/Asset';
+import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
@@ -78,18 +83,14 @@ type Props = {
   availableCollectibles: Collectibles,
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
-  supportedAssets: Asset[],
   walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
-  rates: ?Rates,
   baseFiatCurrency: ?string,
 };
 
 const KeyBasedAssetTransferChoose = ({
   walletAddress,
-  supportedAssets,
-  rates,
   baseFiatCurrency,
   isFetchingAvailableBalances,
   isFetchingAvailableCollectibles,
@@ -102,6 +103,8 @@ const KeyBasedAssetTransferChoose = ({
   keyBasedAssetsToTransfer,
   calculateTransactionsGas,
 }: Props) => {
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const navigation = useNavigation();
 
   const onAvailableBalancesRefresh = () => {
@@ -133,8 +136,8 @@ const KeyBasedAssetTransferChoose = ({
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => getAssetData(supportedAssets, [], symbol))
-      .filter((assetData) => !isEmpty(assetData))
+      .map((symbol) => findSupportedAssetBySymbol(ethereumSupportedAssets, symbol))
+      .filter(Boolean)
       .map(mapAssetToAssetData);
 
     const collectibles = availableCollectibles.map(mapCollectibleToAssetData);
@@ -164,6 +167,7 @@ const KeyBasedAssetTransferChoose = ({
           iconUrl={item.icon}
           onPress={onCheck}
           leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}
+          chain={CHAIN.ETHEREUM}
         />
       );
     }
@@ -189,13 +193,19 @@ const KeyBasedAssetTransferChoose = ({
           })
         }
         leftAddOn={<CheckBox value={!!checkedAsset} onValueChange={onCheck} />}
+        chain={CHAIN.ETHEREUM}
       />
     );
   };
 
   let totalValue = 0;
   keyBasedAssetsToTransfer.forEach((asset) => {
-    totalValue += getBalanceInFiat(baseFiatCurrency, asset.draftAmount, rates || {}, asset.assetData.token);
+    totalValue += getBalanceInFiat(
+      baseFiatCurrency,
+      asset.draftAmount,
+      ethereumRates,
+      asset.assetData.token,
+    );
   });
 
   return (
@@ -241,8 +251,6 @@ const mapStateToProps = ({
   appSettings: {
     data: { baseFiatCurrency },
   },
-  assets: { supportedAssets },
-  rates: { data: rates },
   keyBasedAssetTransfer: {
     data: keyBasedAssetsToTransfer,
     availableBalances,
@@ -253,8 +261,6 @@ const mapStateToProps = ({
   wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
   walletAddress: walletData?.address,
-  supportedAssets,
-  rates,
   baseFiatCurrency,
   keyBasedAssetsToTransfer,
   isFetchingAvailableBalances,

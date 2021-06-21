@@ -19,27 +19,40 @@
 */
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
+
+// utils
 import { getFormattedRate } from 'utils/assets';
-import { formatAmount, hitSlop10 } from 'utils/common';
+import {
+  formatAmount,
+  hitSlop10,
+  wrapBigNumber,
+} from 'utils/common';
 import { images } from 'utils/images';
+import { useTheme } from 'utils/themes';
+
+// components
 import Image from 'components/Image';
 import { BaseText } from 'components/Typography';
 import Tooltip from 'components/Tooltip';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import type { Rates } from 'models/Asset';
-import type { Theme } from 'models/Theme';
-import type { RootReducerState } from 'reducers/rootReducer';
+
+// selectors
+import {
+  useChainRates,
+  useFiatCurrency,
+} from 'selectors';
+
+// types
+import type { Chain } from 'models/Chain';
+import type { Value } from 'utils/common';
+
 
 type Props = {
-  amount: number,
-  token: string,
+  amount: Value,
+  chain: Chain,
+  token?: string,
   highFees?: boolean,
-  rates: Rates,
-  baseFiatCurrency: ?string,
-  theme: Theme,
 };
 
 const HighFeesIcon = styled(Image)`
@@ -54,15 +67,25 @@ const Row = styled.View`
 `;
 
 const TableAmount = ({
-  amount, token, highFees, rates, baseFiatCurrency, theme,
+  amount,
+  token,
+  chain,
+  highFees,
 }: Props) => {
+  const theme = useTheme();
+  const chainRates = useChainRates(chain);
+  const fiatCurrency = useFiatCurrency();
+
+  const amountBN = wrapBigNumber(amount);
+
   const [showTokenAmount, setShowTokenAmount] = useState<boolean>(false);
-  if (amount === 0) {
+  if (amountBN.isZero()) {
     return (
       <BaseText regular positive>{t('label.free')}</BaseText>
     );
   }
-  const fiatAmount = getFormattedRate(rates, amount, token, baseFiatCurrency || defaultFiatCurrency);
+
+  const fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), token ?? '', fiatCurrency);
   const formattedAmount = formatAmount(amount);
   const tooltipText = t('tokenValue', { value: formattedAmount, token });
 
@@ -80,12 +103,4 @@ const TableAmount = ({
   );
 };
 
-const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
-}: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
-});
-
-export default withTheme(connect(mapStateToProps)(TableAmount));
+export default TableAmount;

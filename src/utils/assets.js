@@ -20,15 +20,13 @@
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
-import get from 'lodash.get';
-import { keyBy, orderBy } from 'lodash';
+import { orderBy, get, mapValues } from 'lodash';
 
 // constants
 import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { mapNotNil } from 'utils/array';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 
@@ -36,17 +34,17 @@ import { nativeAssetPerChain } from 'utils/chains';
 import type {
   Asset,
   AssetData,
-  Assets,
+  AssetsBySymbol,
   AssetOption,
   AssetOptionBalance,
-  AssetsByAccount,
-  Rates,
+  AssetsPerChain,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -57,7 +55,7 @@ export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
 };
 
-export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
+export const transformAssetsToObject = (assetsArray: Asset[] = []): AssetsBySymbol => {
   return assetsArray.reduce((memo, asset) => {
     memo[asset.symbol] = asset;
     return memo;
@@ -71,11 +69,11 @@ export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = 
   }, {});
 };
 
-export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
+export const getAssetsAsList = (assetsObject: AssetsBySymbol): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
 };
 
-export const sortAssets = (assets: Assets): Asset[] => {
+export const sortAssets = (assets: AssetsBySymbol): Asset[] => {
   const assetsList = getAssetsAsList(assets);
 
   return sortAssetsArray(assetsList);
@@ -102,7 +100,7 @@ export const getBalance = (balances: ?WalletAssetsBalances, asset: string): numb
   return +formatAmount(number.toString());
 };
 
-const baseRate = (rates: Rates, asset: string, fiatCurrency: string): number => {
+const baseRate = (rates: RatesBySymbol, asset: string, fiatCurrency: string): number => {
   const rate = rates[asset];
   if (!rate) {
     return 0;
@@ -111,7 +109,7 @@ const baseRate = (rates: Rates, asset: string, fiatCurrency: string): number => 
   return rate[fiatCurrency];
 };
 
-const tokenRate = (rates: Rates, token: string, fiatCurrency: string): number => {
+const tokenRate = (rates: RatesBySymbol, token: string, fiatCurrency: string): number => {
   const tokenRates = rates[token];
 
   if (!tokenRates) {
@@ -131,7 +129,7 @@ const tokenRate = (rates: Rates, token: string, fiatCurrency: string): number =>
   return ethToFiat * tokenToETH;
 };
 
-export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string): number => {
+export const getRate = (rates: RatesBySymbol = {}, token: string, fiatCurrency: string): number => {
   if (token === ETH) {
     return baseRate(rates, token, fiatCurrency);
   }
@@ -140,7 +138,7 @@ export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string):
 };
 
 export const getFormattedRate = (
-  rates: Rates,
+  rates: RatesBySymbol,
   amount: number,
   token: string,
   fiatCurrency: string,
@@ -221,7 +219,7 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: WalletAssetsBalances, rates: Rates): number => {
+export const balanceInEth = (balances: WalletAssetsBalances, rates: RatesBySymbol): number => {
   const balanceValues: WalletAssetBalance[] = (Object.values(balances): any);
 
   return balanceValues.reduce((total, item) => {
@@ -238,7 +236,11 @@ export const balanceInEth = (balances: WalletAssetsBalances, rates: Rates): numb
   }, 0);
 };
 
-export const getTotalBalanceInFiat = (balances: WalletAssetsBalances, rates: Rates, currency: string): number => {
+export const getTotalBalanceInFiat = (
+  balances: WalletAssetsBalances,
+  rates: RatesBySymbol,
+  currency: string,
+): number => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
@@ -247,7 +249,7 @@ export const getTotalBalanceInFiat = (balances: WalletAssetsBalances, rates: Rat
   return get(ethRates, currency, 0) * balanceInEth(balances, rates);
 };
 
-export const getPPNTokenAddress = (token: string, assets: Assets): ?string => {
+export const getPPNTokenAddress = (token: string, assets: AssetsBySymbol): ?string => {
   if (token === ETH) return null;
 
   return get(assets[token], 'address', '');
@@ -271,11 +273,6 @@ export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?str
 
 export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
   return supportedAssets.find((asset) => asset.symbol === symbol);
-};
-
-export const pickSupportedAssetsWithSymbols = (supportedAssets: Asset[], symbols: string[]): Assets => {
-  const assets = mapNotNil(symbols, symbol => findSupportedAssetBySymbol(supportedAssets, symbol));
-  return keyBy(assets, (asset) => asset.symbol);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -304,10 +301,6 @@ export const getAssetDataByAddress = (
   return userAssets.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || supportedAssetsData.find(({ address }: Asset) => addressesEqual(address, assetAddress))
   || {};
-};
-
-export const getAssetFromRegistry = (assetRegistry: Asset[], symbol: string): ?Asset => {
-  return assetRegistry.find((asset) => asset.symbol === symbol);
 };
 
 export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[], address: ?string): ?string => {
@@ -356,7 +349,7 @@ export const mapCollectibleToAssetData = ({
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,
   assetBalance: ?Value,
-  rates: Rates,
+  rates: RatesBySymbol,
   symbol: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -368,7 +361,7 @@ export const getBalanceInFiat = (
 export const getFormattedBalanceInFiat = (
   baseFiatCurrency: ?string,
   assetBalance: ?Value,
-  rates: Rates,
+  rates: RatesBySymbol,
   symbol: string,
 ): string => {
   const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
@@ -380,7 +373,7 @@ export const getFormattedBalanceInFiat = (
 const getAssetOptionBalance = (
   symbol: string,
   balances: ?WalletAssetsBalances,
-  rates: ?Rates,
+  rates: ?RatesBySymbol,
   fiatCurrency: ?string,
 ): ?AssetOptionBalance => {
   if (!balances) return null;
@@ -400,7 +393,7 @@ const getAssetOptionBalance = (
 export const getAssetOption = (
   asset: Asset,
   balances: ?WalletAssetsBalances,
-  rates: ?Rates,
+  rates: ?RatesBySymbol,
   baseFiatCurrency: ?string,
 ): AssetOption => {
   const { symbol, iconUrl } = asset;
@@ -423,7 +416,7 @@ export const getAssetOption = (
 export const mapAssetDataToAssetOption = (
   assetData: AssetData,
   balances?: ?WalletAssetsBalances,
-  rates?: ?Rates,
+  rates?: ?RatesBySymbol,
   fiatCurrency?: ?string,
 ): AssetOption => {
   return {
@@ -438,7 +431,7 @@ export const mapAssetDataToAssetOption = (
   };
 };
 
-export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {
+export const convertUSDToFiat = (value: number, rates: RatesBySymbol = {}, fiatCurrency: string) => {
   const ethRates = rates[ETH];
   if (!ethRates) {
     return 0;
@@ -469,11 +462,6 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
   return 0;
 };
 
-export const mergeAccountAssets = (assetsByAccount: AssetsByAccount): Assets => {
-  const assetsArray = Object.keys(assetsByAccount).map(accountId => assetsByAccount[accountId]);
-  return Object.assign({}, ...assetsArray);
-};
-
 type CollectibleMatch = { contractAddress: string, id: string };
 
 export const isMatchingCollectible = (
@@ -483,3 +471,15 @@ export const isMatchingCollectible = (
   && addressesEqual(a.contractAddress, b.contractAddress)
   && a.id
   && a.id === b.id;
+
+export const mapWalletAssetsBalancesIntoAssetsBySymbol = (
+  walletAssetsBalances: WalletAssetsBalances,
+  chainSupportedAssets: Asset[],
+): AssetsBySymbol => mapValues(
+  walletAssetsBalances,
+  ({ symbol }: WalletAssetBalance) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
+);
+
+export const sortSupportedAssets = (
+  supportedChainAssets: AssetsPerChain,
+) => mapValues(supportedChainAssets, sortAssetsArray);

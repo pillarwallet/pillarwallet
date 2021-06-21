@@ -230,7 +230,7 @@ const SendCollectibleConfirm = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={chain} />
           </TableRow>
           {isKovanNetwork && (
             <TableRow>
@@ -238,7 +238,7 @@ const SendCollectibleConfirm = ({
                 {/* eslint-disable i18next/no-literal-string */}
                 Balance in Rinkeby ETH (visible in dev and staging while on Kovan)
               </TableLabel>
-              <TableAmount amount={rinkebyEth} token={ETH} />
+              <TableAmount amount={rinkebyEth} token={ETH} chain={chain} />
             </TableRow>
           )}
           <TableRow>

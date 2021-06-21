@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { BigNumber as EthersBigNumber } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -33,76 +32,11 @@ import { fetchUserStreams } from 'services/sablier';
 
 // utils
 import { addressesEqual } from 'utils/assets';
-import { countDownDHMS, isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 // types
 import type { Stream } from 'models/Sablier';
 import type { TxSablierExtra, Transaction } from 'models/Transaction';
-
-
-export const getTimestamp = (date?: ?Date) => {
-  if (!date) {
-    date = new Date();
-  }
-  return Math.round(date.getTime() / 1000);
-};
-
-export const getTotalWithdrawn = (stream: Stream): EthersBigNumber => {
-  const { withdrawals, cancellation } = stream;
-  if (cancellation) {
-    return EthersBigNumber.from(cancellation.recipientBalance);
-  }
-  const reducer = (withdrawn, withdrawal) => EthersBigNumber.from(withdrawal.amount).add(withdrawn);
-  return withdrawals.reduce(reducer, EthersBigNumber.from(0));
-};
-
-export const getTotalStreamed = (stream: Stream): EthersBigNumber => {
-  const {
-    cancellation, startTime, stopTime, deposit, ratePerSecond,
-  } = stream;
-
-  if (cancellation) {
-    return EthersBigNumber.from(cancellation.recipientBalance);
-  }
-
-  const now = getTimestamp();
-
-  if (+startTime > now) {
-    return EthersBigNumber.from(0);
-  }
-  if (+stopTime < now) {
-    return EthersBigNumber.from(deposit);
-  }
-  return EthersBigNumber.from(ratePerSecond).mul(now - (+startTime));
-};
-
-export const getStreamBalance = (stream: Stream): EthersBigNumber => {
-  const totalWithdrawn = getTotalWithdrawn(stream);
-  const totalStreamed = getTotalStreamed(stream);
-
-  return totalStreamed.sub(totalWithdrawn);
-};
-
-export const getStreamProgress = (stream: Stream): number => {
-  const { deposit } = stream;
-  return getTotalStreamed(stream) / EthersBigNumber.from(deposit);
-};
-
-export const getWithdrawnProgress = (stream: Stream): number => {
-  const { deposit } = stream;
-  return getTotalWithdrawn(stream) / EthersBigNumber.from(deposit);
-};
-
-export const hasStreamEnded = (stream: Stream) => {
-  return stream.cancellation || (+stream.stopTime < getTimestamp());
-};
-
-export const streamCountDownDHMS = (stream: Stream) => {
-  if (hasStreamEnded(stream)) {
-    return countDownDHMS(0);
-  }
-  return countDownDHMS((+stream.stopTime - getTimestamp()) * 1000);
-};
 
 export const isSablierTransactionTag = (tag?: string): boolean => !!tag && [
   SABLIER_CREATE_STREAM,

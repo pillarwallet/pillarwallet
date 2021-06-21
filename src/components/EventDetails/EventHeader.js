@@ -30,7 +30,6 @@ import Image from 'components/Image';
 
 import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 import { fontTrackings, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -81,12 +80,6 @@ const getEventInfo = (eventType, eventStatus, colors) => {
   if (eventType === COLLECTIBLE_TRANSACTION) {
     return {
       title: eventStatus === COLLECTIBLE_SENT ? t('title.collectibleSent') : t('title.collectibleReceive'),
-      iconName: null,
-    };
-  }
-  if (eventType === BADGE_REWARD_EVENT) {
-    return {
-      title: t('title.badgeReceived'),
       iconName: null,
     };
   }
@@ -174,7 +167,7 @@ const EventHeader = (props: Props) => {
   const colors = getThemeColors(theme);
   const thisEvent = getEventInfo(eventType, eventStatus, colors);
   // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
-  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
+  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION;
   const { genericToken } = images(theme);
 
   return (

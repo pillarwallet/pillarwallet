@@ -24,6 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel } from 'components/Table';
 import Image from 'components/Image';
@@ -33,30 +34,35 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
+// utils
 import { formatFiat, formatBigFiatAmount, formatBigAmount, formatTokenAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { LIQUIDITY_POOL_DASHBOARD, LIQUIDITY_POOLS_INFO } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
+// actions
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
-import type { Rates, Asset } from 'models/Asset';
+// selectors
+import { useChainRates, useChainSupportedAssets } from 'selectors';
+
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Theme } from 'models/Theme';
 
+
 type Props = {
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
   baseFiatCurrency: ?string,
-  supportedAssets: Asset[],
   isFetchingLiquidityPoolsData: boolean,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   navigation: NavigationScreenProp<*>,
-  rates: Rates,
   poolDataGraphQueryFailed: boolean,
   theme: Theme,
 };
@@ -120,17 +126,18 @@ const Reward = styled.View`
 const LiquidityPoolsScreen = ({
   fetchLiquidityPoolsData,
   baseFiatCurrency,
-  supportedAssets,
   isFetchingLiquidityPoolsData,
   liquidityPoolsReducer,
   navigation,
-  rates,
   poolDataGraphQueryFailed,
   theme,
 }) => {
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
-  const supportedPools = useMemo(() => supportedLiquidityPools(supportedAssets), [supportedAssets]);
+  const supportedPools = useMemo(() => supportedLiquidityPools(ethereumSupportedAssets), [ethereumSupportedAssets]);
   const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
 
   useEffect(() => {
@@ -211,7 +218,7 @@ const LiquidityPoolsScreen = ({
             <CardColumn>
               <BaseText big>
                 {formatBigFiatAmount(
-                  convertUSDToFiat(poolStats.currentPrice, rates, fiatCurrency),
+                  convertUSDToFiat(poolStats.currentPrice, ethereumRates, fiatCurrency),
                   fiatCurrency,
                 )}
               </BaseText>
@@ -223,7 +230,7 @@ const LiquidityPoolsScreen = ({
             <CardColumn>
               <BaseText big>
                 {formatBigFiatAmount(
-                  convertUSDToFiat(poolStats.volume, rates, fiatCurrency),
+                  convertUSDToFiat(poolStats.volume, ethereumRates, fiatCurrency),
                   fiatCurrency,
                 )}
               </BaseText>
@@ -242,13 +249,17 @@ const LiquidityPoolsScreen = ({
                 <Spacing w={16} />
                 <Rewards>
                   {pool.rewards?.map((reward) => {
-                    const asset = supportedAssets.find(
+                    const asset = ethereumSupportedAssets.find(
                       ({ symbol }) => symbol === reward.symbol,
                     );
                     return (
                       <Reward key={reward.symbol}>
-                        <RewardIcon source={{ uri: asset.iconUri }} />
-                        <Spacing w={6} />
+                        {asset && (
+                          <>
+                            <RewardIcon source={{ uri: asset.iconUrl }} />
+                            <Spacing w={6} />
+                          </>
+                        )}
                         <BaseText regular>
                           {t('tokenValue', {
                             value: formatBigAmount(reward.amount),
@@ -294,7 +305,10 @@ const LiquidityPoolsScreen = ({
     const balance = poolStats.userLiquidityTokenBalance.toNumber();
 
     const { currentPrice } = poolStats;
-    const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
+    const balanceInFiat = formatFiat(
+      convertUSDToFiat(currentPrice * balance, ethereumRates, fiatCurrency),
+      fiatCurrency,
+    );
 
     return renderPoolListItem(pool, balance, balanceInFiat);
   };
@@ -304,7 +318,11 @@ const LiquidityPoolsScreen = ({
     if (!poolStats) return null;
 
     const { currentPrice } = poolStats;
-    const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount.toNumber(), rates, fiatCurrency);
+    const stakedAmountInFiat = convertUSDToFiat(
+      currentPrice * poolStats.stakedAmount.toNumber(),
+      ethereumRates,
+      fiatCurrency,
+    );
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
     const tokenSymbol = pool.rewards?.[0].symbol;
 
@@ -415,15 +433,11 @@ const mapStateToProps = ({
   },
   liquidityPools: liquidityPoolsReducer,
   appSettings: { data: { baseFiatCurrency } },
-  assets: { supportedAssets },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
   baseFiatCurrency,
-  supportedAssets,
   liquidityPoolsReducer,
-  rates,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

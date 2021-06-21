@@ -18,15 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
 import { createSelector } from 'reselect';
+import { mapValues } from 'lodash';
 
 // utils
 import {
   findFirstArchanovaAccount,
   findFirstEtherspotAccount,
   getAccountId,
-  getEnabledAssets,
 } from 'utils/accounts';
 import {
   getAssetData,
@@ -34,136 +33,153 @@ import {
   getBalanceBN,
   getBalanceInFiat,
   getFormattedBalanceInFiat,
+  mapWalletAssetsBalancesIntoAssetsBySymbol,
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 
-// constants
-import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
-
 // types
-import type { Asset, Assets, Rates } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { CategoryBalancesPerChain } from 'models/Balances';
+import type {
+  AssetsPerChain,
+  AssetsBySymbol,
+  Asset,
+} from 'models/Asset';
+import type {
+  AssetBalancesPerAccount,
+  CategoryBalancesPerChain,
+  WalletAssetsBalances,
+} from 'models/Balances';
+import type { ChainRecord } from 'models/Chain';
+import type { Account } from 'models/Account';
+import type { RatesPerChain } from 'models/Rates';
 
-import { accountAssetsBalancesSelector } from 'selectors/balances';
+// selectors
 import {
-  assetsSelector,
+  accountAssetsBalancesSelector,
+  accountEthereumWalletAssetsBalancesSelector,
+} from 'selectors/balances';
+import {
   activeAccountIdSelector,
-  hiddenAssetsSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   accountsSelector,
-  ratesSelector,
+  ratesPerChainSelector,
   baseFiatCurrencySelector,
+  assetsBalancesSelector,
+  type Selector,
 } from './selectors';
 
 
-export const accountAssetsSelector = createSelector(
-  assetsSelector,
-  activeAccountIdSelector,
-  hiddenAssetsSelector,
-  (assets, activeAccountId, hiddenAssets) => {
-    if (!activeAccountId) {
-      // return default in case account was created offline
-      return get(assets, DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, {});
-    }
-    const activeAccountAssets = get(assets, activeAccountId, {});
-    const activeAccountHiddenAssets = get(hiddenAssets, activeAccountId, []);
-
-    return getEnabledAssets(activeAccountAssets, activeAccountHiddenAssets);
-  },
+export const ethereumSupportedAssetsSelector: Selector<Asset[]> = createSelector(
+  supportedAssetsPerChainSelector,
+  (supportedAssets: AssetsPerChain): Asset[] => supportedAssets?.ethereum ?? [],
 );
 
-export const archanovaAccountAssetsSelector = createSelector(
-  assetsSelector,
+
+export const accountAssetsPerChainSelector: Selector<ChainRecord<AssetsBySymbol>> = createSelector(
+  accountAssetsBalancesSelector,
+  supportedAssetsPerChainSelector,
+  (
+    accountAssetsBalances: CategoryBalancesPerChain,
+    supportedAssets: AssetsPerChain,
+  ): ChainRecord<AssetsBySymbol> => mapValues(
+    accountAssetsBalances,
+    ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssetsBySymbol(
+      accountWalletBalances,
+      supportedAssets?.[chain] ?? [],
+    ),
+  ),
+);
+
+export const accountEthereumAssetsSelector: Selector<AssetsBySymbol> = createSelector(
+  accountEthereumWalletAssetsBalancesSelector,
+  ethereumSupportedAssetsSelector,
+  (
+    accountEthereumWalletBalances: WalletAssetsBalances,
+    ethereumSupportedAssets: Asset[],
+  ): AssetsBySymbol => mapWalletAssetsBalancesIntoAssetsBySymbol(
+    accountEthereumWalletBalances,
+    ethereumSupportedAssets,
+  ),
+);
+
+export const archanovaAccountEthereumAssetsSelector: Selector<AssetsBySymbol> = createSelector(
+  assetsBalancesSelector,
+  ethereumSupportedAssetsSelector,
   accountsSelector,
-  hiddenAssetsSelector,
-  (assets, accounts, hiddenAssets) => {
+  (
+    assetsBalances: AssetBalancesPerAccount,
+    ethereumSupportedAssets: Asset[],
+    accounts: Account[],
+  ): AssetsBySymbol => {
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return {};
 
     const accountId = getAccountId(archanovaAccount);
+    const accountEthereumAssets = assetsBalances?.[accountId]?.ethereum ?? {};
+    const accountEthereumWalletBalances = accountEthereumAssets?.wallet ?? {};
 
-    const accountAssets = get(assets, accountId, {});
-    const accountHiddenAssets = get(hiddenAssets, accountId, []);
-
-    return getEnabledAssets(accountAssets, accountHiddenAssets);
+    return mapWalletAssetsBalancesIntoAssetsBySymbol(
+      accountEthereumWalletBalances,
+      ethereumSupportedAssets,
+    );
   },
 );
 
-export const etherspotAccountAssetsSelector = createSelector(
-  assetsSelector,
+export const etherspotAccountAssetsSelector: Selector<ChainRecord<AssetsBySymbol>> = createSelector(
+  assetsBalancesSelector,
+  supportedAssetsPerChainSelector,
   accountsSelector,
-  hiddenAssetsSelector,
-  (assets, accounts, hiddenAssets) => {
+  (
+    assetsBalances: AssetBalancesPerAccount,
+    supportedAssets: AssetsPerChain,
+    accounts: Account[],
+  ): ChainRecord<AssetsBySymbol> => {
     const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (!etherspotAccount) return {};
+    if (!etherspotAccount) return { ethereum: {} };
 
     const accountId = getAccountId(etherspotAccount);
+    const accountAssetsBalances = assetsBalances?.[accountId] ?? {};
 
-    const accountAssets = get(assets, accountId, {});
-    const accountHiddenAssets = get(hiddenAssets, accountId, []);
-
-    return getEnabledAssets(accountAssets, accountHiddenAssets);
-  },
-);
-
-export const makeAccountEnabledAssetsSelector = (accountId: string) => createSelector(
-  assetsSelector,
-  hiddenAssetsSelector,
-  (assets, hiddenAssets) => {
-    const accountAssets = get(assets, accountId, {});
-    const accountHiddenAssets = get(hiddenAssets, accountId, []);
-    return getEnabledAssets(accountAssets, accountHiddenAssets);
-  },
-);
-
-export const allAccountsAssetsSelector = createSelector(
-  assetsSelector,
-  hiddenAssetsSelector,
-  (assets, hiddenAssets) => {
-    return Object.keys(assets).reduce((memo, accountId) => {
-      const accountAssets = get(assets, accountId, {});
-      const accountHiddenAssets = get(hiddenAssets, accountId, []);
-      const enabledAssets = getEnabledAssets(accountAssets, accountHiddenAssets);
-      const newAssets = Object.keys(enabledAssets).filter((asset) => !memo.includes(asset));
-      return [...memo, ...newAssets];
-    }, []);
+    return mapValues(
+      accountAssetsBalances,
+      ({ wallet: accountWalletBalances }, chain) => mapWalletAssetsBalancesIntoAssetsBySymbol(
+        accountWalletBalances,
+        supportedAssets?.[chain] ?? [],
+      ),
+    );
   },
 );
 
 /**
- * Returns array of assets to be used for asset data lookup.
+ * @deprecated: used only on Archanova legacy screens
  */
-export const assetRegistrySelector: (RootReducerState) => Asset[] = createSelector(
-  allAccountsAssetsSelector,
-  supportedAssetsSelector,
-  (assets, supportedAssets) => [...getAssetsAsList(assets), ...supportedAssets],
-);
-
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
-  allAccountsAssetsSelector,
-  supportedAssetsSelector,
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
   assetSelector,
-  (assets, supportedAssets, asset) => {
-    const { decimals = 18 } = getAssetData(getAssetsAsList(assets), supportedAssets, asset);
+  (
+    assets: AssetsBySymbol,
+    ethereumSupportedAssets: Asset[],
+    asset: string,
+  ) => {
+    const { decimals = 18 } = getAssetData(getAssetsAsList(assets), ethereumSupportedAssets, asset);
     return decimals;
   },
 );
 
 export const accountAssetsWithBalanceSelector = createSelector(
   activeAccountIdSelector,
-  ratesSelector,
+  ratesPerChainSelector,
   baseFiatCurrencySelector,
   accountAssetsBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   (
     activeAccountId: string,
-    rates: Rates,
+    ratesPerChain: RatesPerChain,
     baseFiatCurrency: ?string,
     accountAssetsBalances: CategoryBalancesPerChain,
-    supportedAssets: Assets[],
+    supportedAssetsPerChain: AssetsPerChain,
   ) => {
-    if (!activeAccountId || !supportedAssets?.length) return {};
+    if (!activeAccountId) return {};
 
     return Object.keys(accountAssetsBalances).reduce((assetsWithBalance, chain) => {
       const balances = accountAssetsBalances[chain]?.wallet ?? {};
@@ -172,7 +188,10 @@ export const accountAssetsWithBalanceSelector = createSelector(
         const assetBalanceBN = getBalanceBN(balances, symbol);
         if (assetBalanceBN.isZero()) return;
 
-        const relatedAsset = supportedAssets.find(({ symbol: supportedSymbol }) => supportedSymbol === symbol);
+        const chainSupportedAssets = supportedAssetsPerChain[chain];
+        if (!chainSupportedAssets?.length) return;
+
+        const relatedAsset = chainSupportedAssets.find(({ symbol: supportedSymbol }) => supportedSymbol === symbol);
         if (!relatedAsset) {
           reportErrorLog(
             'accountAssetsWithBalanceSelector failed: no supported asset found for existing balance',
@@ -181,9 +200,11 @@ export const accountAssetsWithBalanceSelector = createSelector(
           return;
         }
 
+        const chainRates = ratesPerChain[chain] ?? {};
+
         const { iconUrl: imageUrl, address } = relatedAsset;
-        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
-        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, rates, symbol);
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
 
         assetsWithBalance.push({
           ...relatedAsset,

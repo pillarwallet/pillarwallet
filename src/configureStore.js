@@ -55,7 +55,7 @@ const persistConfig = {
   storage: AsyncStorage,
   version: 1, // bump up the version when new changes are made with migrations
   stateReconciler: autoMergeLevel2,
-  whitelist: ['history', 'walletConnectSessions', 'poolTogether', 'liquidityPools'],
+  whitelist: ['history', 'walletConnectSessions', 'liquidityPools'],
   migrate: createMigrate(migrations, { debug: false }),
   timeout: 0, // HACK: wait until the storage responds
 };

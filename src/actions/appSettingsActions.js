@@ -176,30 +176,6 @@ export const toggleBalanceAction = () => {
   };
 };
 
-export const toggleBadgesAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { hideBadges } },
-    } = getState();
-    const newBadgesState = !hideBadges;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { hideBadges: newBadgesState } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBadges: newBadgesState } });
-  };
-};
-
-export const togglePoolTogetherAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { hidePoolTogether } },
-    } = getState();
-    const newPoolTogetherState = !hidePoolTogether;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { hidePoolTogether: newPoolTogetherState } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hidePoolTogether: newPoolTogetherState } });
-  };
-};
-
 export const dismissConnectAppsIntroAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
@@ -226,42 +202,11 @@ export const initialDeeplinkExecutedAction = () => {
   };
 };
 
-export const toggleLendingDepositsAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { hideLendingDeposits } } } = getState();
-    dispatch(updateAppSettingsAction('hideLendingDeposits', !hideLendingDeposits));
-  };
-};
-
 export const toggleOmitPinOnLoginAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { omitPinOnLogin } } } = getState();
     dispatch(saveDbAction('app_settings', { appSettings: { omitPinOnLogin: !omitPinOnLogin } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
-  };
-};
-
-export const toggleSablierAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { hideSablier } },
-    } = getState();
-    const newSablierState = !hideSablier;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { hideSablier: newSablierState } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideSablier: newSablierState } });
-  };
-};
-
-export const toggleRariAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { hideRari } },
-    } = getState();
-    const newRariState = !hideRari;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { hideRari: newRariState } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideRari: newRariState } });
   };
 };
 

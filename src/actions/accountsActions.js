@@ -27,7 +27,7 @@ import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
 // actions
-import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -198,7 +198,6 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
-    dispatch(checkForMissedAssetsAction());
     dispatch(updateWalletConnectSessionsByActiveAccount());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };

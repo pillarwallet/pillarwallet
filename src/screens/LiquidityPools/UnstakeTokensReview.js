@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
@@ -31,13 +32,17 @@ import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 
+// utils
 import { getUnstakeTransaction } from 'utils/liquidityPools';
 
+// constants
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// selectors
 import { activeAccountAddressSelector } from 'selectors';
 
+// types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -99,6 +104,7 @@ const StakeTokensReviewScreen = ({
           assetSymbol={poolToken.symbol}
           text={t('liquidityPoolsContent.label.youAreUnstaking')}
           amount={amount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={26} />
         <Table>
@@ -108,7 +114,7 @@ const StakeTokensReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>

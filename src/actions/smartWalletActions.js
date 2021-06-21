@@ -53,7 +53,7 @@ import {
   START_ARCHANOVA_WALLET_DEPLOYMENT,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import {
   ADD_HISTORY_TRANSACTION,
   SET_HISTORY,
@@ -78,8 +78,6 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
-import { SABLIER_CANCEL_STREAM, SABLIER_WITHDRAW } from 'constants/sablierConstants';
-import { initialAssets } from 'fixtures/assets';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -88,16 +86,18 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 // services
 import archanovaService, { formatEstimated, parseEstimatePayload } from 'services/archanova';
 import { navigate } from 'services/navigation';
-import aaveService from 'services/aave';
 import etherspotService from 'services/etherspot';
 
 // selectors
-import { accountAssetsSelector, archanovaAccountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  archanovaAccountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import {
   accountsSelector,
   activeAccountAddressSelector,
   activeAccountIdSelector,
-  supportedAssetsSelector,
 } from 'selectors';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -143,7 +143,6 @@ import {
   getAssetsAsList,
   getBalance,
   getPPNTokenAddress,
-  transformAssetsToObject,
 } from 'utils/assets';
 import {
   formatMoney,
@@ -172,9 +171,7 @@ import { fetchAssetsBalancesAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchTransactionsHistoryAction, insertTransactionAction } from './historyActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
-import { fetchUserStreamsAction } from './sablierActions';
 import { lockScreenAction } from './authActions';
 import {
   setEstimatingTransactionAction,
@@ -379,7 +376,7 @@ export const fetchVirtualAccountBalanceAction = () => {
     if (!isConnectedToArchanovaSmartAccount(connectedAccount) || !isOnline) return;
 
     const accountId = getActiveAccountId(accounts);
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
     const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
 
@@ -449,14 +446,14 @@ export const syncVirtualAccountTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedPaymentId },
-      assets: { supportedAssets },
     } = getState();
 
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const payments = await archanovaService.getAccountPayments(lastSyncedPaymentId);
-    const accountAssets = archanovaAccountAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
 
     // filter out already stored payments
@@ -654,11 +651,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
         wallet: { data: walletData },
-        assets: { supportedAssets },
       } = getState();
       let { history: { data: currentHistory } } = getState();
       const archanovaAccount = findFirstArchanovaAccount(accounts);
       if (!archanovaAccount) return;
+
+      const supportedAssets = ethereumSupportedAssetsSelector(getState());
 
       const archanovaAccountAddress = getAccountAddress(archanovaAccount);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
@@ -688,11 +686,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         }
 
         if (!skipNotifications.includes(txType)) {
-          const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
-          const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
-
           let notificationMessage;
-          let toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
+          const toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
 
           if ([transactionTypes.TopUp, transactionTypes.Withdrawal].includes(txType)) {
             const tokenValue = get(event, 'payload.tokenValue');
@@ -720,23 +715,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             } else {
               notificationMessage = t('toast.transactionSent', { paymentInfo });
             }
-          } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
-            notificationMessage = t('toast.lendingDepositSuccess', { paymentInfo: getPaymentFromHistory() });
-            dispatch(fetchDepositedAssetsAction());
-          } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
-            notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
-            dispatch(fetchDepositedAssetsAction());
-          } else if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
-            if (txFromHistory?.tag === SABLIER_WITHDRAW) {
-              const symbol = get(txFromHistory, 'extra.symbol', '');
-              const currentAccountAssets = accountAssetsSelector(getState());
-              const assetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
-              notificationMessage = t('toast.sablierWithdraw', { assetName: assetData.name, assetSymbol: symbol });
-            } else if (txFromHistory?.tag === SABLIER_CANCEL_STREAM) {
-              notificationMessage = t('toast.sablierCancelStream');
-              toastEmoji = 'x'; // eslint-disable-line i18next/no-literal-string
-            }
-            dispatch(fetchUserStreamsAction());
           } else if (addressesEqual(archanovaAccountAddress, txSenderAddress)) {
             notificationMessage = t('toast.transactionSent', { paymentInfo: getPaymentFromHistory() });
           }
@@ -800,7 +778,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
       const tokenTransferred = get(event, 'payload.token.address', null);
-      const accountAssets = accountAssetsSelector(getState());
+      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
       const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
 
@@ -831,7 +809,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txReceiverAddress = get(event, 'payload.recipient.account.address', '');
       const txSenderAddress = get(event, 'payload.sender.account.address', '');
 
-      const accountAssets = accountAssetsSelector(getState());
+      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
       const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
@@ -906,7 +884,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
 
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountEthereumAssetsSelector(getState());
     const balances = accountEthereumWalletAssetsBalancesSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
@@ -950,7 +928,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
 
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountEthereumAssetsSelector(getState());
 
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount.toString(), decimals);
@@ -1024,7 +1002,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
 
     dispatch({ type: RESET_ESTIMATED_WITHDRAWAL_FEE });
 
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountEthereumAssetsSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
@@ -1063,7 +1041,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
 
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = accountEthereumAssetsSelector(getState());
 
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount.toString(), decimals);
@@ -1155,7 +1133,7 @@ export const fetchAvailableTxToSettleAction = () => {
 
     const activeAccountAddress = activeAccountAddressSelector(getState());
     const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await archanovaService.getAccountPaymentsToSettle(activeAccountAddress);
@@ -1258,14 +1236,12 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       });
 
     if (txHash) {
-      const {
-        accounts: { data: accounts },
-        assets: { supportedAssets },
-      } = getState();
+      const accounts = accountsSelector(getState());
       const archanovaAccount = findFirstArchanovaAccount(accounts);
       if (!archanovaAccount) return;
 
-      const accountAssets = accountAssetsSelector(getState());
+      const supportedAssets = ethereumSupportedAssetsSelector(getState());
+      const accountAssets = accountEthereumAssetsSelector(getState());
       const accountAssetsData = getAssetsAsList(accountAssets);
       const accountId = getAccountId(archanovaAccount);
       const accountAddress = getAccountAddress(archanovaAccount);
@@ -1327,11 +1303,12 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     const archanovaAccounts = await archanovaService.getAccounts();
     if (isEmpty(archanovaAccounts)) return;
 
-    // check balances of existing archanova accounts
-    const supportedAssets = supportedAssetsSelector(getState());
+    // Archanova supports Ethereum only
+    const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
+
     const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(({
       address,
-    }) => etherspotService.getBalances(CHAIN.ETHEREUM, address, supportedAssets)));
+    }) => etherspotService.getBalances(CHAIN.ETHEREUM, address, ethereumSupportedAssets)));
 
     // no need to import empty balance accounts
     const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
@@ -1348,18 +1325,6 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
 
     const accountId = normalizeWalletAddress(archanovaAccounts[0].address);
     await dispatch(connectArchanovaAccountAction(accountId));
-
-    // set default assets for smart wallet
-    const defaultInitialAssets = transformAssetsToObject(initialAssets);
-    await dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: {
-        accountId,
-        assets: defaultInitialAssets,
-      },
-    });
-    const assets = { [accountId]: defaultInitialAssets };
-    dispatch(saveDbAction('assets', { assets }, true));
 
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());

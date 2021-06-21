@@ -37,10 +37,10 @@ import { CHAIN } from 'constants/chainConstants';
 // Selectors
 import {
   useRootSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
   useActiveAccount,
 } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
@@ -48,7 +48,7 @@ import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
-import { getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { chainFromChainId } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
@@ -104,6 +104,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
           isLoading={isEstimating}
           isNotEnough={hasNotEnoughGas}
           style={styles.fee}
+          chain={chain}
         />
       )}
 
@@ -120,11 +121,11 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 export default TransactionRequestContent;
 
 const useTransactionPayload = (request: WalletConnectCallRequest) => {
-  const supportedAssets = useRootSelector(supportedAssetsSelector);
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
 
   const transactionPayload = React.useMemo(
-    () => mapCallRequestToTransactionPayload(request, getAssetsAsList(accountAssets), supportedAssets),
+    () => mapCallRequestToTransactionPayload(request, accountAssets, supportedAssets),
     [request, accountAssets, supportedAssets],
   );
 
