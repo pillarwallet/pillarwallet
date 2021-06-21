@@ -68,7 +68,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type { RatesBySymbol } from 'models/Rates';
 
 // local
 import ValueInputHeader from './ValueInputHeader';
@@ -93,7 +93,7 @@ export type ExternalProps = {|
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
-  customRates?: RatesByAssetSymbol,
+  customRates?: RatesBySymbol,
 |};
 
 type InnerProps = {|
@@ -401,7 +401,7 @@ export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
 const getAssetBalanceFromFiat = (
   baseFiatCurrency: ?string,
   fiatBalance: ?string | ?number,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
   symbol: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

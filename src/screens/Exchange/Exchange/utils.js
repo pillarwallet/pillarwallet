@@ -27,16 +27,19 @@ import { ETH } from 'constants/assetsConstants';
 import { getBalance, sortAssets, getAssetOption } from 'utils/assets';
 
 // Types
-import type { Asset, AssetsBySymbol, AssetOption, Currency } from 'models/Asset';
+import type { Asset, AssetsBySymbol, AssetOption} from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type {
+  Currency,
+  RatesBySymbol,
+} from 'models/Rates';
 
 export const getExchangeFromAssetOptions = (
   assets: AssetsBySymbol,
   supportedAssets: Asset[],
   balances: WalletAssetsBalances,
   currency: Currency,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
 ): AssetOption[] => {
   const isMatching = (asset: Asset) => asset.symbol === ETH || getBalance(balances, asset.symbol) !== 0;
   const isSupported = (asset: Asset) =>
@@ -51,7 +54,7 @@ export const getExchangeToAssetOptions = (
   supportedAssets: Asset[],
   balances: WalletAssetsBalances,
   currency: Currency,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
 ): AssetOption[] => {
   if (!Array.isArray(supportedAssets)) return [];
 

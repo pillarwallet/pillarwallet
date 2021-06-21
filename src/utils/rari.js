@@ -49,7 +49,7 @@ import RARI_FUND_MANAGER_CONTRACT_ABI_ETH from 'abi/rariFundManagerEth.json';
 import type { Asset } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 const MSTABLE_TOKENS = [USDC, USDT, TUSD];
@@ -118,7 +118,7 @@ const getMStableRedeemValidity = (inputAmountBN: EthersBigNumber, outputTokenAdd
 };
 
 const getRariDepositTransactionData = async (
-  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: RatesByAssetSymbol,
+  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: RatesBySymbol,
 ) => {
   const acceptedCurrencies = await getRariAcceptedCurrencies(rariPool);
   if (!acceptedCurrencies) return null;
@@ -254,7 +254,7 @@ export const getRariDepositTransactionsAndExchangeFee = async (
   amount: string,
   token: Asset,
   supportedAssets: Asset[],
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   let data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);

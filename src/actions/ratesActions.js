@@ -47,7 +47,7 @@ import {
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type { RatesBySymbol } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -60,7 +60,7 @@ export const setIsFetchingRatesAction = (isFetching: boolean) => ({
 
 export const setRatesAction = (
   chain: Chain,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
@@ -88,15 +88,18 @@ export const fetchAssetsRatesAction = () => {
 
     await Promise.all(Object.keys(assetsBalances).map(async (accountId) => {
       const accountAssetsBalances = assetsBalances[accountId] ?? {};
-
       await Promise.all(Object.keys(accountAssetsBalances).map(async (chain) => {
-        const chainSupportedAssets = supportedAssets[chain] ?? [];
-        const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
+        try {
+          const chainSupportedAssets = supportedAssets[chain] ?? [];
+          const walletAssets = accountAssetsBalances[chain]?.wallet ?? {};
 
-        const accountAssets = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
-        const rates = await getExchangeRates(chain, accountAssets);
+          const accountAssets = mapWalletAssetsBalancesIntoAssetsBySymbol(walletAssets, chainSupportedAssets);
+          const rates = await getExchangeRates(chain, accountAssets);
 
-        await dispatch(setRatesAction(chain, rates));
+          await dispatch(setRatesAction(chain, rates));
+        } catch (error) {
+          reportErrorLog('fetchAssetsRatesAction failed', { error, chain, accountId, accountAssetsBalances });
+        }
       }));
     }));
 
@@ -126,13 +129,17 @@ export const fetchSingleChainAssetRatesAction = (
 
     const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
     if (!asset) {
+      dispatch(setIsFetchingRatesAction(false));
       reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });
       return;
     }
 
     const rates = await getExchangeRates(chain, { [asset.symbol]: asset });
 
-    if (isEmpty(rates)) return;
+    if (isEmpty(rates)) {
+      dispatch(setIsFetchingRatesAction(false));
+      return;
+    }
 
     await dispatch(setRatesAction(chain, rates));
 

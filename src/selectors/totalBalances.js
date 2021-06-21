@@ -55,7 +55,7 @@ import type {
   WalletTotalBalances,
 } from 'models/TotalBalances';
 import type {
-  RatesByAssetSymbol,
+  RatesBySymbol,
   RatesPerChain,
 } from 'models/Rates';
 
@@ -127,7 +127,7 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
 
 const calculateWalletAssetsFiatValue = (
   assetBalances: WalletAssetsBalances,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
   currency: string,
 ): BigNumber => {
   const assetBalancesInFiat = map(assetBalances, (asset) => {

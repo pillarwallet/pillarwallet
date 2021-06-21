@@ -41,9 +41,9 @@ import { nativeAssetPerChain } from 'utils/chains';
 // Types
 import type { Asset, AssetsBySymbol } from 'models/Asset';
 import type {
-  RateByCurrencySymbol,
+  RateBySymbol,
   RateKey,
-  RatesByAssetSymbol,
+  RatesBySymbol,
 } from 'models/Rates';
 import type { Chain } from 'models/Chain';
 
@@ -86,7 +86,7 @@ const chainToCoinGeckoNetwork = {
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
   assetsList: Asset[],
-): RatesByAssetSymbol => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
+): RatesBySymbol => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
   const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
   if (walletAsset) {
     const { symbol } = walletAsset;
@@ -98,7 +98,7 @@ const mapWalletAndCoinGeckoAssetsPrices = (
 export const getCoinGeckoTokenPrices = async (
   chain: Chain,
   assets: AssetsBySymbol,
-): Promise<?RatesByAssetSymbol> => {
+): Promise<?RatesBySymbol> => {
   const assetsList = getAssetsAsList(assets);
   const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
 
@@ -138,7 +138,7 @@ export const getCoinGeckoTokenPrices = async (
     });
 };
 
-export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?RateByCurrencySymbol> => {
+export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?RateBySymbol> => {
   const params = {
     ids: coinId,
     vs_currencies: currenciesParam,
@@ -161,7 +161,7 @@ export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?RateB
   }
 };
 
-const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateByCurrencySymbol => {
+const mapPricesToRates = (prices: ?CoinGeckoPriceEntry): ?RateBySymbol => {
   if (isEmpty(prices)) return null;
   return mapRecordKeys(prices, findRateKeyFromCoinGeckoCurrency);
 };

@@ -29,7 +29,7 @@ import {
 
 // types
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type { RatesBySymbol } from 'models/Rates';
 
 
 describe('Assets utils', () => {
@@ -37,7 +37,7 @@ describe('Assets utils', () => {
   const ETH_USD = 5;
   const PLR_ETH = 1.2;
 
-  const rates: RatesByAssetSymbol = {
+  const rates: RatesBySymbol = {
     ETH: { GBP: ETH_GBP, ETH: 1, USD: ETH_USD },
     PLR: { GBP: (PLR_ETH * ETH_GBP), ETH: PLR_ETH },
     AAA: { GBP: 3 },

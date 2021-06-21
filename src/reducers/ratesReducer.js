@@ -26,7 +26,7 @@ import {
 } from 'constants/ratesConstants';
 
 // types
-import type { RatesPerChain } from 'models/Rates';
+import type { RatesPerChain, RatesBySymbol } from 'models/Rates';
 
 
 export type RatesReducerState = {
@@ -34,10 +34,27 @@ export type RatesReducerState = {
   isFetching: boolean,
 };
 
-export type RatesReducerAction = {
-  type: string,
-  payload: any
-};
+export type SetFetchingRatesAction = {|
+  type: typeof SET_FETCHING_RATES,
+  payload: boolean,
+|};
+
+export type SetRatesAction = {|
+  type: typeof SET_RATES,
+  payload: RatesPerChain,
+|};
+
+export type SetChainRatesAction = {|
+  type: typeof SET_CHAIN_RATES,
+  payload: {
+    chain: string,
+    rates: RatesBySymbol,
+  },
+|};
+
+export type RatesReducerAction = SetFetchingRatesAction
+  | SetRatesAction
+  | SetChainRatesAction;
 
 export const initialState = {
   data: { ethereum: {} },

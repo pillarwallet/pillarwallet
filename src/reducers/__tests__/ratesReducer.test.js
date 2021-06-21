@@ -25,7 +25,7 @@ import { CHAIN } from 'constants/chainConstants';
 // reducer
 import ratesReducer from 'reducers/ratesReducer';
 
-describe('RatesByAssetSymbol ratesReducer', () => {
+describe('RatesBySymbol ratesReducer', () => {
   it('should handle SET_RATES', () => {
     const updateAction = {
       type: SET_RATES,

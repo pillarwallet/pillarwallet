@@ -44,10 +44,10 @@ import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributo
 
 // types
 import type { RariPool } from 'models/RariPool';
-import type { RatesByAssetSymbol } from 'models/Rates';
+import type { RatesBySymbol } from 'models/Rates';
 
 
-const hasEthUsdPrice = (rates: RatesByAssetSymbol) => !!rates?.[ETH]?.USD;
+const hasEthUsdPrice = (rates: RatesBySymbol) => !!rates?.[ETH]?.USD;
 
 const mapPools = (resultsArray: Object[]) => {
   return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
@@ -56,7 +56,7 @@ const mapPools = (resultsArray: Object[]) => {
   }, {});
 };
 
-export const getRariFundBalanceInUSD = async (rates: RatesByAssetSymbol) => {
+export const getRariFundBalanceInUSD = async (rates: RatesBySymbol) => {
   const balancePerPool = await Promise.all(RARI_POOLS_ARRAY.map(async rariPool => {
     const rariContract = getContract(
       getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
@@ -121,7 +121,7 @@ export const getAccountDeposit = async (accountAddress: string) => {
 export const getAccountDepositInUSDBN = async (
   rariPool: RariPool,
   accountAddress: string,
-  rates: RatesByAssetSymbol,
+  rates: RatesBySymbol,
 ) => {
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
@@ -142,7 +142,7 @@ export const getAccountDepositInUSDBN = async (
   return balanceBN;
 };
 
-export const getAccountDepositInUSD = async (accountAddress: string, rates: RatesByAssetSymbol) => {
+export const getAccountDepositInUSD = async (accountAddress: string, rates: RatesBySymbol) => {
   const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
     const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress, rates);
     return parseFloat(utils.formatUnits(balanceBN, 18));
@@ -167,7 +167,7 @@ export const getAccountDepositInPoolToken = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getUserInterests = async (accountAddress: string, rates: RatesByAssetSymbol) => {
+export const getUserInterests = async (accountAddress: string, rates: RatesBySymbol) => {
   const userBalanceUSD = await getAccountDeposit(accountAddress);
   const userBalanceInPoolToken = await getAccountDepositInPoolToken(accountAddress);
 
