@@ -67,7 +67,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { Currency } from 'models/rates';
+import type { Currency } from 'models/Rates';
 
 // local
 import StakingEnabledModal from './StakingEnabledModal';
