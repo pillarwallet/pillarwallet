@@ -21,8 +21,8 @@ import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
-import type { Currency } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
+import type { Currency } from 'models/Rates';
 
 export type AppSettingsReducerState = {
   data: {

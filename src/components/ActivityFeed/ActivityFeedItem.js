@@ -109,7 +109,10 @@ import {
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { assetDecimalsSelector } from 'selectors/assets';
+import {
+  assetDecimalsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // types
@@ -998,12 +1001,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  assets: { supportedAssets },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
-  supportedAssets,
   sessionLanguageCode,
 });
 
@@ -1011,6 +1012,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props) => ({

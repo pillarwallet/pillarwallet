@@ -22,25 +22,31 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee, TableUser } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
+// utils
 import { formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
+// selectors
+import { useChainRates } from 'selectors';
+
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 
@@ -50,7 +56,6 @@ type Props = {
   ensRegistry: EnsRegistry,
   rariFundBalance: {[RariPool]: number},
   rariTotalSupply: {[RariPool]: number},
-  rates: Rates,
   baseFiatCurrency: ?string,
 };
 
@@ -66,18 +71,19 @@ const RariTransferReviewScreen = ({
   ensRegistry,
   rariFundBalance,
   rariTotalSupply,
-  rates,
   baseFiatCurrency,
 }: Props) => {
   const {
     transactionPayload, amount, rariPool, receiverAddress,
   } = navigation.state.params;
 
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   const onNextButtonPress = () => navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
   const amountInUSD = (rariFundBalance[rariPool] / rariTotalSupply[rariPool]) * amount;
-  const fiatAmount = convertUSDToFiat(amountInUSD, rates, fiatCurrency);
+  const fiatAmount = convertUSDToFiat(amountInUSD, ethereumRates, fiatCurrency);
   const formattedFiatAmount = formatFiat(fiatAmount, fiatCurrency);
 
   return (
@@ -94,6 +100,7 @@ const RariTransferReviewScreen = ({
           text={t('rariContent.label.youAreTransferring')}
           assetIcon={rariLogo}
           fiatAmount={formattedFiatAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         <Table title={t('rariContent.label.transferDetails')}>
@@ -111,7 +118,7 @@ const RariTransferReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -132,14 +139,12 @@ const mapStateToProps = ({
     rariFundBalance,
     rariTotalSupply,
   },
-  rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   ensRegistry,
   rariFundBalance,
   rariTotalSupply,
-  rates,
   baseFiatCurrency,
 });
 

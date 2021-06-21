@@ -161,7 +161,11 @@ import {
   activeBlockchainSelector,
   collectiblesHistorySelector,
 } from 'selectors';
-import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
+import {
+  assetDecimalsSelector,
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // actions
@@ -171,7 +175,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
+import type { AssetsBySymbol, Asset, DepositedAsset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
@@ -185,15 +189,15 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { TransactionsStore } from 'models/History';
+import type { RatesPerChain } from 'models/Rates';
 
 
 type StateProps = {|
-  rates: Rates,
+  ratesPerChain: RatesPerChain,
   baseFiatCurrency: ?string,
   user: Object,
   accounts: Account[],
   ensRegistry: EnsRegistry,
-  supportedAssets: Asset[],
   updatingTransaction: ?string,
   updatingCollectibleTransaction: ?string,
   depositedAssets: DepositedAsset[],
@@ -209,10 +213,11 @@ type SelectorProps = {|
   isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
-  accountAssets: Assets,
+  accountAssets: AssetsBySymbol,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectiblesHistoryStore,
+  supportedAssets: Asset[],
 |};
 
 type DispatchProps = {|
@@ -447,9 +452,10 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getFormattedGasFee = (formattedFee: number, token: string) => {
-    const { baseFiatCurrency, rates } = this.props;
+    const { baseFiatCurrency, ratesPerChain } = this.props;
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const rate = getRate(rates, token, fiatCurrency);
+    const rate = getRate(ethereumRates, token, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
       tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
@@ -1645,24 +1651,22 @@ export class EventDetail extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
   history: { data: history, updatingTransaction },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
   sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): StateProps => ({
-  rates,
+  ratesPerChain,
   baseFiatCurrency,
   user,
   accounts,
   ensRegistry,
-  supportedAssets,
   history,
   updatingTransaction,
   updatingCollectibleTransaction,
@@ -1678,10 +1682,11 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
-  accountAssets: accountAssetsSelector,
+  accountAssets: accountEthereumAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: collectiblesHistorySelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({

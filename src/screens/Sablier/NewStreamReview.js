@@ -58,11 +58,14 @@ import { themedColors } from 'utils/themes';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -73,7 +76,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 type Props = {
   navigation: NavigationScreenProp<*>,
   activeAccountAddress: string,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
   balances: WalletAssetsBalances,
@@ -217,6 +220,7 @@ class NewStreamReview extends React.Component<Props> {
             assetSymbol={assetSymbol}
             text={t('sablierContent.label.youAreStreaming')}
             amount={formatUnits(assetValue, asset.decimals)}
+            chain={CHAIN.ETHEREUM}
           />
           <Spacing h={36} />
           <Table title={t('sablierContent.label.streamDetails')}>
@@ -245,7 +249,7 @@ class NewStreamReview extends React.Component<Props> {
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-              <TableAmount amount={0} />
+              <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
             </TableRow>
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -265,11 +269,9 @@ class NewStreamReview extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   ensRegistry,
   isEstimating,
   feeInfo,
@@ -278,8 +280,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

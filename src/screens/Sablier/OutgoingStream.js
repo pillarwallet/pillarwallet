@@ -49,6 +49,7 @@ import { getSablierCancellationTransaction } from 'services/sablier';
 // selectors
 import { sablierEventsSelector } from 'selectors/sablier';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 // utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
@@ -184,10 +185,7 @@ class OutgoingStream extends React.Component<Props> {
         headerProps={{ centerItems: [{ title: t('sablierContent.title.outgoingStreamScreen') }] }}
         putContentInScrollView
       >
-
-        <SablierStreamCircles
-          stream={stream}
-        />
+        <SablierStreamCircles stream={stream} />
         <SelectorWrapper>
           <ArrowIcon />
           <Spacing h={20} />
@@ -213,12 +211,10 @@ class OutgoingStream extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
   transactionEstimate: { feeInfo, isEstimating },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   ensRegistry,
   accounts,
   feeInfo,
@@ -228,6 +224,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: archanovaAccountEthereumHistorySelector,
   sablierEvents: sablierEventsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

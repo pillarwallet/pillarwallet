@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
@@ -32,16 +33,20 @@ import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
 
+// constants
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
+// utils
 import { getRariClaimRgtTransaction, getClaimRtgFee } from 'utils/rari';
 import { formatFiat, reportErrorLog } from 'utils/common';
 
+// selectors
 import { activeAccountAddressSelector } from 'selectors';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -153,6 +158,7 @@ const RariClaimRgtReview = ({
           text={t('rariContent.label.youAreClaiming')}
           assetIcon={rariLogo}
           fiatAmount={formattedFiatAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {!!claimFee && (
@@ -175,7 +181,7 @@ const RariClaimRgtReview = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>

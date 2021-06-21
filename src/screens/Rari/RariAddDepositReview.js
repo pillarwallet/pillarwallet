@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
@@ -31,12 +32,15 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from '
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// utils
 import { formatUnits } from 'utils/common';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -82,6 +86,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
           assetSymbol={assetSymbol}
           amount={amount}
           text={summaryTitles[rariPool]}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {(slippage || exchangeFeeBN.gt(0)) && (
@@ -98,7 +103,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
                   <TableLabel tooltip={t('rariContent.tooltip.rariExchangeFee')}>
                     {t('rariContent.label.rariExchangeFee')}
                   </TableLabel>
-                  <TableAmount amount={formattedExchangeFee} token={ETH} />
+                  <TableAmount amount={formattedExchangeFee} token={ETH} chain={CHAIN.ETHEREUM} />
                 </TableRow>
               )}
             </Table>
@@ -113,11 +118,11 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} />
+            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />

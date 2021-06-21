@@ -45,7 +45,10 @@ import { formatUnits } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // actions
@@ -57,7 +60,7 @@ import { fetchStreamBalance } from 'services/sablier';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -65,7 +68,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 
 type Props = {
   calculateSablierWithdrawTransactionEstimate: (stream: Stream, amount: EthersBigNumber, asset: Asset) => void,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
@@ -220,18 +223,17 @@ const Withdraw = (props: Props) => {
 };
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

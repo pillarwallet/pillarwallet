@@ -18,7 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const COIN_ID = {
-  ETH: 'ethereum',
-  BNB: 'binancecoin',
-};
+export default function (storageData: Object) {
+  const supportedAssets = storageData?.supportedAssets?.supportedAssets || {};
+
+  // per migration moment current supported assets were Ethereum only
+  if (Array.isArray(supportedAssets)) {
+    return { ethereum: supportedAssets };
+  }
+
+  return supportedAssets;
+}

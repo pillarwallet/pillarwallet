@@ -57,6 +57,7 @@ import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 const ContentWrapper = styled.View`
@@ -204,7 +205,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-                <TableAmount amount={0} />
+                <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
               </TableRow>
               <TableRow>
                 <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -226,16 +227,15 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
   session,
-  supportedAssets,
   feeInfo,
 });
 
 const structuredSelector = createStructuredSelector({
   accountAddress: activeAccountAddressSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

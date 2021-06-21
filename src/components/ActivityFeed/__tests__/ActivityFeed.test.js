@@ -35,6 +35,8 @@ import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as sessionState } from 'reducers/sessionReducer';
+import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
+import { initialState as assetsBalancesState } from 'reducers/assetsBalancesReducer';
 
 
 const mockStore = configureMockStore([thunk]);
@@ -46,6 +48,8 @@ const initialStore = mockStore({
   ensRegistry: ensRegistryState,
   smartWallet: smartWalletState,
   session: sessionState,
+  appSettings: appSettingsState,
+  assetsBalances: assetsBalancesState,
 });
 
 const Component = (store, children) => (

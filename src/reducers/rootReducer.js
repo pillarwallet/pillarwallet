@@ -74,7 +74,7 @@ import type {
 } from './walletConnectSessionsReducer';
 import type { AssetsReducerState } from './assetsReducer';
 import type { AppSettingsReducerAction, AppSettingsReducerState } from './appSettingsReducer';
-import type { RatesReducerState } from './ratesReducer';
+import type { RatesReducerState, RatesReducerAction } from './ratesReducer';
 import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
@@ -174,7 +174,8 @@ type RootReducerAction =
   | TransactionEstimateReducerAction
   | RariReducerAction
   | LiquidityPoolsReducerAction
-  | TotalBalancesReducerAction;
+  | TotalBalancesReducerAction
+  | RatesReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (

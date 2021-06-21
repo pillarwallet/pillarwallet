@@ -42,7 +42,10 @@ import { getThemeColors } from 'utils/themes';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { hasStreamEnded, getStreamProgress, streamCountDownDHMS } from 'utils/sablier';
 import { activeAccountAddressSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { SABLIER_INCOMING_STREAM, SABLIER_OUTGOING_STREAM } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -50,7 +53,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Stream } from 'models/Sablier';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 
 
@@ -60,7 +63,7 @@ type Props = {
   activeAccountAddress: string,
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
-  assets: Assets,
+  assets: AssetsBySymbol,
   theme: Theme,
 };
 
@@ -194,16 +197,15 @@ class SablierStream extends React.Component<Props> {
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
-  supportedAssets,
 });
 
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props) => ({

@@ -76,7 +76,7 @@ import type {
   ExchangeOffer as EtherspotExchangeOffer,
   GatewayEstimatedBatch,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset, Assets } from 'models/Asset';
+import type { AssetCore, Asset } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -287,22 +287,6 @@ export class EtherspotService {
         { symbol, balance: positiveBalance },
       ];
     }, []);
-  }
-
-  async getOwnedAssets(
-    chain: Chain,
-    accountAddress: string,
-    supportedAssets: Asset[],
-  ): Promise<Assets> {
-    const balances = await this.getBalances(chain, accountAddress, supportedAssets);
-
-    return balances.reduce((ownedAssets, { symbol }) => {
-      const supportedAsset = supportedAssets.find((asset) => asset.symbol === symbol);
-
-      if (supportedAsset) return { ...ownedAssets, [symbol]: supportedAsset };
-
-      return ownedAssets;
-    }, {});
   }
 
   reserveEnsName(username: string): Promise<?ENSNode> {
@@ -583,20 +567,31 @@ export class EtherspotService {
       });
   }
 
-  async getSupportedAssets(): Promise<?(Asset[])> {
+  async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
+      return null;
+    }
+
     try {
-      const tokenListEthereum = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
-      const tokens: TokenListToken[] = await this.sdk.getTokenListTokens({ name: tokenListEthereum });
+      const tokenListName = chain === CHAIN.ETHEREUM
+        ? firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM)
+        : null;
+
+      const tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
+
       if (!tokens) {
-        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListEthereum });
+        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListName });
         return null;
       }
 
       let supportedAssets = tokens.map(parseTokenListToken);
 
-      // TODO: replace by single invocation per chain:
-      supportedAssets = appendNativeAssetIfNeeded(CHAIN.ETHEREUM, supportedAssets);
-      supportedAssets = appendNativeAssetIfNeeded(CHAIN.BINANCE, supportedAssets);
+      supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
+
+      // rest of checks are Ethereum only
+      if (chain !== CHAIN.ETHEREUM) return supportedAssets;
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({

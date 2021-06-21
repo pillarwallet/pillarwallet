@@ -106,6 +106,7 @@ const WithdrawTransactionConfirm = ({
           assetSymbol={depositedAssetSymbol}
           text={t('aaveContent.label.youAreWithdrawing')}
           amount={withdrawAmount}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={42} />
         <Table>
@@ -115,7 +116,7 @@ const WithdrawTransactionConfirm = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>

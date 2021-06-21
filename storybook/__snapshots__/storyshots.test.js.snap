@@ -50965,23 +50965,11 @@ exports[`Storyshots Value Input default 1`] = `
                       <ValueInputHeader
                         asset={
                           Object {
-                            "address": "0x0000000000000000000000000000000000000000",
+                            "address": "0x",
                             "decimals": 18,
-                            "email": "",
-                            "iconUrl": "https://api-core.pillarproject.io/asset/images/tokens/icons/ethColor.png",
-                            "icos": Array [],
-                            "id": "5c65a07d000204d2f9481c1c",
-                            "isDefault": true,
-                            "isPreferred": false,
+                            "iconUrl": "",
                             "name": "Ethereum",
-                            "socialMedia": Array [],
                             "symbol": "ETH",
-                            "telegram": "",
-                            "twitter": "https://twitter.com/ethereum",
-                            "updatedAt": "2019-08-30T10:20:13.866Z",
-                            "value": "ETH",
-                            "website": "https://ethereum.org/",
-                            "whitepaper": "",
                           }
                         }
                         disableAssetSelection={false}

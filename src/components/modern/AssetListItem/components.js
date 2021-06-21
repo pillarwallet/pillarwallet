@@ -27,7 +27,7 @@ import Text from 'components/modern/Text';
 import TokenIcon from 'components/modern/TokenIcon';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useChainRates, useRootSelector } from 'selectors';
 
 // Utils
 import { formatTokenAmount } from 'utils/common';
@@ -37,6 +37,7 @@ import { fontStyles, spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
+import type { Chain } from 'models/Chain';
 
 /**
  * This file contains low-level building blocks for constructing custom Asset List Item.
@@ -70,6 +71,7 @@ export const Name = styled(Text)`
 type BalanceProps = {|
   symbol: string,
   balance: Value,
+  chain: Chain,
   onPress: ?(() => mixed),
   style?: ViewStyleProp,
 |};
@@ -77,14 +79,15 @@ type BalanceProps = {|
 export function Balance({
   symbol,
   balance,
+  chain,
   onPress,
   style,
 }: BalanceProps) {
   const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
-  const rates = useRootSelector((root) => root.rates.data);
+  const chainRates = useChainRates(chain);
 
   const formattedBalance = formatTokenAmount(balance, symbol);
-  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol);
+  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, chainRates, symbol);
 
   return (
     <BalanceWrapper onPress={onPress} disabled={!onPress} style={style}>

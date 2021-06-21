@@ -30,8 +30,9 @@ import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Asset, AssetsByAccount } from 'models/Asset';
+import type { AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
+import type { Chain } from 'models/Chain';
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -40,8 +41,10 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
-export const useRates = () => useRootSelector(ratesSelector);
-export const useSupportedAssets = () => useRootSelector(supportedAssetsSelector);
+export const useRatesPerChain = () => useRootSelector(ratesPerChainSelector);
+export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? {};
+export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
+export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? [];
 
 //
 // Global selectors here
@@ -74,14 +77,11 @@ export const activeAccountAddressSelector = createSelector(
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const assetsSelector = ({ assets }: RootReducerState): AssetsByAccount => assets.data;
-
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
-export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
-  get(userSettings, 'data.hiddenAssets', {});
-
-export const supportedAssetsSelector = (root: RootReducerState): Asset[] => root.assets.supportedAssets ?? [];
+export const supportedAssetsPerChainSelector = (
+  root: RootReducerState,
+): AssetsPerChain => root.assets.supportedAssets ?? {};
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
@@ -89,7 +89,7 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 
-export const ratesSelector = ({ rates }: RootReducerState) => rates.data;
+export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 
 export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
   get(poolTogether, 'poolStats', {});

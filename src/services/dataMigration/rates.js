@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_RATES = 'SET_RATES';
-export const UPDATE_CHAIN_RATES = 'UPDATE_CHAIN_RATES';
-export const SET_FETCHING_RATES = 'SET_FETCHING_RATES';
+
+export default function (storageData: Object) {
+  const rates = storageData?.rates?.rates || {};
+
+  // per migration moment current rates were Ethereum only
+  if (Array.isArray(rates)) {
+    return { ethereum: rates };
+  }
+
+  return rates;
+}

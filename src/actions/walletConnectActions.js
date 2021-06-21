@@ -50,8 +50,8 @@ import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // selectors
-import { activeAccountSelector, supportedAssetsSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
@@ -59,7 +59,6 @@ import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList } from 'utils/assets';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
@@ -341,10 +340,14 @@ export const estimateWalletConnectCallRequestTransactionAction = (callRequest: W
   return (dispatch: Dispatch, getState: GetState) => {
     dispatch(resetEstimateTransactionAction());
 
-    const accountAssets = getAssetsAsList(accountAssetsSelector(getState()));
-    const supportedAssets = supportedAssetsSelector(getState());
+    const accountAssets = accountAssetsPerChainSelector(getState());
+    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
-    const { amount: value, to, data } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssets);
+    const {
+      amount: value,
+      to,
+      data,
+    } = mapCallRequestToTransactionPayload(callRequest, accountAssets, supportedAssetsPerChain);
 
     const { chainId } = callRequest;
     const chain = chainFromChainId[chainId];

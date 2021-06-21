@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
@@ -32,17 +33,22 @@ import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
+// constants
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
+// utils
 import { formatUnits, formatFiat } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { getWithdrawalFeeRate } from 'utils/rari';
 
+// selectors
+import { useChainRates } from 'selectors';
+
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
@@ -50,7 +56,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
   baseFiatCurrency: ?string,
-  rates: Rates,
 };
 
 const MainContainer = styled.View`
@@ -58,11 +63,13 @@ const MainContainer = styled.View`
 `;
 
 const RariWithdrawReviewScreen = ({
-  navigation, feeInfo, baseFiatCurrency, rates,
+  navigation, feeInfo, baseFiatCurrency,
 }: Props) => {
   const {
     transactionPayload, assetSymbol, amount, exchangeFeeBN, slippage, rariPool,
   } = navigation.state.params;
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const [withdrawalFeeRate, setWithdrawalFeeRate] = useState(null);
   useEffect(() => {
@@ -97,7 +104,11 @@ const RariWithdrawReviewScreen = ({
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
   const withdrawalFee = assetSymbol && getFormattedRate(
-    rates, amount * parseFloat(formatUnits(withdrawalFeeRate || '0', 18)), assetSymbol, fiatCurrency);
+    ethereumRates,
+    amount * parseFloat(formatUnits(withdrawalFeeRate || '0', 18)),
+    assetSymbol,
+    fiatCurrency,
+  );
 
   return (
     <ContainerWithHeader
@@ -111,6 +122,7 @@ const RariWithdrawReviewScreen = ({
           assetSymbol={assetSymbol}
           amount={amount}
           text={summaryTitles[rariPool]}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={34} />
         {(slippage || exchangeFeeBN.gt(0) || withdrawalFeeRate) && (
@@ -127,7 +139,7 @@ const RariWithdrawReviewScreen = ({
                   <TableLabel tooltip={t('rariContent.tooltip.rariExchangeFee')}>
                     {t('rariContent.label.rariExchangeFee')}
                   </TableLabel>
-                  <TableAmount amount={formattedExchangeFee} token={ETH} />
+                  <TableAmount amount={formattedExchangeFee} token={ETH} chain={CHAIN.ETHEREUM} />
                 </TableRow>
               )}
               {withdrawalFeeRate && (
@@ -150,11 +162,11 @@ const RariWithdrawReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} />
+            <TableAmount amount={(+formattedExchangeFee) + (+formattedFee)} token={ETH} chain={CHAIN.ETHEREUM} />
           </TableRow>
         </Table>
         <Spacing h={48} />
@@ -167,11 +179,9 @@ const RariWithdrawReviewScreen = ({
 const mapStateToProps = ({
   transactionEstimate: { feeInfo },
   appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   baseFiatCurrency,
-  rates,
 });
 
 export default connect(mapStateToProps)(RariWithdrawReviewScreen);

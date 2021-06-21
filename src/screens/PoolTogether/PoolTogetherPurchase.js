@@ -49,13 +49,16 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // models
 import type { Account } from 'models/Account';
-import type { Assets, Asset } from 'models/Asset';
+import type { AssetsBySymbol, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
@@ -101,7 +104,7 @@ type Props = {
   balances: WalletAssetsBalances,
   poolPrizeInfo: PoolPrizeInfo,
   fetchPoolStats: (symbol: string) => void,
-  assets: Assets,
+  assets: AssetsBySymbol,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
@@ -308,13 +311,11 @@ const mapStateToProps = ({
   poolTogether: {
     poolStats: poolPrizeInfo,
   },
-  assets: { supportedAssets },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
-  supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
@@ -322,8 +323,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   accountAddress: activeAccountAddressSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

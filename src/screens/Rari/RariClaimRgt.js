@@ -25,25 +25,31 @@ import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
+// utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { noop } from 'utils/common';
 
+// actions
 import { calculateRariClaimTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { RARI_CLAIM_RGT_REVIEW } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { CHAIN } from 'constants/chainConstants';
 
+// selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';

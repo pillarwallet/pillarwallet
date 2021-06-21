@@ -26,9 +26,7 @@ import Toast from 'components/Toast';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import { initialAssets } from 'fixtures/assets';
 
 // actions
 import {
@@ -48,10 +46,10 @@ import etherspotService from 'services/etherspot';
 import {
   accountsSelector,
   historySelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -69,7 +67,6 @@ import {
 import {
   getAssetData,
   getAssetsAsList,
-  transformAssetsToObject,
 } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
 
@@ -165,17 +162,6 @@ export const importEtherspotAccountsAction = () => {
 
     // set ENS if needed
     dispatch(setEnsNameIfNeededAction());
-
-    // set default assets for active Etherspot wallet
-    const defaultInitialAssets = transformAssetsToObject(initialAssets);
-    await dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: { accountId, assets: defaultInitialAssets },
-    });
-
-    const assets = { [accountId]: defaultInitialAssets };
-
-    dispatch(saveDbAction('assets', { assets }, true));
   };
 };
 
@@ -336,9 +322,17 @@ const handleGatewayBatchUpdatedNotification = async (
     dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
   }
 
-  const accountAssets = accountAssetsSelector(getState());
-  const supportedAssets = supportedAssetsSelector(getState());
-  const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, existingTransaction.asset);
+  const accountAssets = accountAssetsPerChainSelector(getState());
+  const chainAccountAssets = accountAssets[chain] ?? {};
+
+  const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+  const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+
+  const assetData = getAssetData(
+    getAssetsAsList(chainAccountAssets),
+    chainSupportedAssets,
+    existingTransaction.asset,
+  );
 
   const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
 

@@ -26,6 +26,7 @@ import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
+// configs
 import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -36,36 +37,44 @@ import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 
+// utils
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
 import { reportErrorLog, formatUnits, formatApy } from 'utils/common';
 
+// actions
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
+// selectors
 import {
-  accountAssetsSelector,
+  accountEthereumAssetsSelector,
   accountAssetsWithBalanceSelector,
+  ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
-import { activeAccountAddressSelector } from 'selectors/selectors';
+import { activeAccountAddressSelector, useChainRates } from 'selectors/selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
+// services
 import { NotEnoughLiquidityError } from 'services/0x';
 import { usePoolCurrentApy } from 'services/rariSdk';
 
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Rates, Asset, Assets, AssetOption } from 'models/Asset';
+import type { Asset, AssetsBySymbol, AssetOption } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { WalletAssetsBalances } from 'models/Balances';
 
+
 type Props = {
-  assets: Assets,
+  assets: AssetsBySymbol,
   visibleAssets: AssetOption[],
   navigation: NavigationScreenProp<*>,
   calculateRariDepositTransactionEstimate: (Object[]) => void,
@@ -75,7 +84,6 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   activeAccountAddress: string,
-  rates: Rates,
   setEstimatingTransaction: (boolean) => void,
   balances: WalletAssetsBalances,
 };
@@ -102,7 +110,6 @@ const RariAddDepositScreen = ({
   estimateErrorMessage,
   resetEstimateTransaction,
   activeAccountAddress,
-  rates,
   setEstimatingTransaction,
   balances,
 }: Props) => {
@@ -117,6 +124,8 @@ const RariAddDepositScreen = ({
   const [exchangeFeeBN, setExchangeFee] = useState(null);
   const [slippage, setSlippage] = useState(null);
   const [inputValid, setInputValid] = useState(false);
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
@@ -151,7 +160,7 @@ const RariAddDepositScreen = ({
       assetValue,
       selectedAsset,
       supportedAssets,
-      rates,
+      ethereumRates,
     ).then((txsAndExchangeFee) => {
       if (!txsAndExchangeFee) {
         Toast.show({
@@ -268,22 +277,19 @@ const RariAddDepositScreen = ({
 };
 
 const mapStateToProps = ({
-  rates: { data: rates },
-  assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  supportedAssets,
   feeInfo,
   estimateErrorMessage,
   isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   visibleAssets: accountAssetsWithBalanceSelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountEthereumWalletAssetsBalancesSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

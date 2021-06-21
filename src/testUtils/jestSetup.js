@@ -39,6 +39,7 @@ import {
   TEST_TRANSLATIONS_BASE_URL,
   TEST_TRANSLATIONS_TIME_STAMP,
 } from 'constants/localesConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
@@ -249,10 +250,6 @@ export const mockExchangeRates = {
   ETH: mockEtherExchangeRates,
 };
 
-jest.setMock('cryptocompare', {
-  priceMulti: () => Promise.resolve(mockExchangeRates),
-});
-
 jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);
@@ -369,15 +366,15 @@ jest.setMock('configs/envConfig', envConfigMock);
 export const mockSupportedAssets = [
   {
     symbol: ETH,
-    name: 'ethereum',
-    address: '',
+    name: 'Ethereum',
+    address: '0x',
     iconUrl: '',
     decimals: 18,
   },
   {
     symbol: PLR,
-    name: 'ethereum',
-    address: '',
+    name: 'Pillar',
+    address: '0x',
     iconUrl: '',
     decimals: 18,
   },
@@ -387,7 +384,8 @@ jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
-  getCoinGeckoPricesByCoinIds: () => Promise.resolve([mockEtherExchangeRates, null]),
+  getCoinGeckoPricesByCoinId: () => Promise.resolve(mockEtherExchangeRates),
+  chainToCoinGeckoCoinId: {},
 });
 
 const getMockedTranslations = (url) => {
@@ -437,10 +435,8 @@ export const mockEtherspotAccountExtra: Etherspot.Account = {
 jest.setMock('instabug-reactnative', {});
 
 const mockEtherspotGetBalances = (chain, address, assets) => {
-  // mock positive balances for mocked archanova account
-  const balances = address === mockArchanovaAccount.extra.address
-    ? assets.map(({ symbol }) => ({ symbol, balance: 1 }))
-    : [];
+  // mock positive balances
+  const balances = assets.map(({ symbol }) => ({ symbol, balance: 1 }));
 
   return Promise.resolve(balances);
 };
@@ -450,6 +446,6 @@ jest.setMock('services/etherspot', {
   init: jest.fn(),
   getAccounts: jest.fn(),
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
-  getSupportedAssets: () => Promise.resolve(mockSupportedAssets),
+  getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
   getBalances: mockEtherspotGetBalances,
 });

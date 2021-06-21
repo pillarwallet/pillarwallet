@@ -19,35 +19,34 @@
 */
 import * as React from 'react';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
+
+// components
 import { MediumText } from 'components/Typography';
 import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
+
+// utils
 import { getDeviceWidth, formatAmount, formatUnits, getDecimalPlaces, isCaseInsensitiveMatch } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { themedColors, getThemeColors, useTheme } from 'utils/themes';
 import { getWithdrawnProgress, getStreamProgress, getTotalStreamed, streamCountDownDHMS } from 'utils/sablier';
-import { accountAssetsSelector } from 'selectors/assets';
-import { activeAccountAddressSelector } from 'selectors';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
+import { activeAccountAddressSelector, useChainSupportedAssets, useRootSelector } from 'selectors';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+// constants
+import { CHAIN } from 'constants/chainConstants';
+
+// types
 import type { Stream } from 'models/Sablier';
-import type { Assets, Asset } from 'models/Asset';
-import type { Theme } from 'models/Theme';
 
 
 type Props = {
   stream: Stream,
-  supportedAssets: Asset[],
-  assets: Assets,
-  activeAccountAddress: string,
-  theme: Theme,
 };
 
 const screenWidth = getDeviceWidth();
@@ -80,12 +79,14 @@ const ClockIcon = styled(Icon)`
   font-size: 20px;
 `;
 
-const SablierStreamCircles = ({
-  stream, assets, supportedAssets, activeAccountAddress, theme,
-}: Props) => {
+const SablierStreamCircles = ({ stream }: Props) => {
+  const theme = useTheme();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+  const assets = useRootSelector(accountEthereumAssetsSelector);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const colors = getThemeColors(theme);
 
-  const assetData = getAssetDataByAddress(getAssetsAsList(assets), supportedAssets, stream.token.id);
+  const assetData = getAssetDataByAddress(getAssetsAsList(assets), ethereumSupportedAssets, stream.token.id);
   const decimalPlaces = getDecimalPlaces(assetData.symbol);
 
   const streamProgress = getStreamProgress(stream);
@@ -157,20 +158,5 @@ const SablierStreamCircles = ({
   );
 };
 
-const mapStateToProps = ({
-  assets: { supportedAssets },
-}: RootReducerState): $Shape<Props> => ({
-  supportedAssets,
-});
 
-const structuredSelector = createStructuredSelector({
-  assets: accountAssetsSelector,
-  activeAccountAddress: activeAccountAddressSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default withTheme(connect(combinedMapStateToProps)(SablierStreamCircles));
+export default SablierStreamCircles;

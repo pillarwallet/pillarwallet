@@ -40,8 +40,12 @@ import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbo
 import { getGasSymbol } from 'utils/transactions';
 
 // selectors
-import { useRootSelector, useRates, useFiatCurrency } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useChainRates,
+} from 'selectors';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { isGasTokenSupportedSelector } from 'selectors/archanova';
 
@@ -72,9 +76,9 @@ const FeeLabelToggle = ({
   showRelayerMigration = true,
   hasError,
 }: Props) => {
-  const rates = useRates();
+  const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
-  const accountAssets = useRootSelector(accountAssetsSelector);
+  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
   const isGasTokenSupported = useRootSelector(isGasTokenSupportedSelector);
 
@@ -84,12 +88,14 @@ const FeeLabelToggle = ({
     return <Spinner size={20} trackWidth={2} />;
   }
 
+  const chainAccountAssets = accountAssets[chain] ?? {};
+
   const feeDisplayValue = formatTransactionFee(chain, txFeeInWei, gasToken);
   const feeValue = getFormattedTransactionFeeValue(chain, txFeeInWei, gasToken);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
   const gasSymbol = getGasSymbol(chain, gasToken);
-  const feeInFiat = parseFloat(feeValue) * getRate(rates, gasSymbol, fiatCurrency);
+  const feeInFiat = parseFloat(feeValue) * getRate(chainRates, gasSymbol, fiatCurrency);
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
@@ -101,7 +107,7 @@ const FeeLabelToggle = ({
     if (!showRelayerMigration) return;
     Modal.open(() => (
       <RelayerMigrationModal
-        accountAssets={accountAssets}
+        accountAssets={chainAccountAssets}
         accountHistory={accountHistory}
       />
     ));

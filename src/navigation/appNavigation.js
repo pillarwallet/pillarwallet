@@ -30,7 +30,6 @@ import { withTranslation } from 'react-i18next';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import AssetSearchScreen from 'screens/AssetSearch/AssetSearch';
 import ExchangeScreen from 'screens/Exchange/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
@@ -137,7 +136,7 @@ import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
 } from 'actions/notificationsActions';
-import { checkForMissedAssetsAction, fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
@@ -151,7 +150,6 @@ import {
   MAIN_FLOW,
   ASSETS,
   ASSET,
-  ASSET_SEARCH,
   SERVICES_FLOW,
   EXCHANGE,
   EXCHANGE_CONFIRM,
@@ -324,7 +322,6 @@ const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
-    [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
   },
@@ -665,7 +662,6 @@ type Props = {
   stopListeningNotifications: Function,
   initWalletConnect: Function,
   fetchAllAccountsAssetsBalances: () => Function,
-  checkForMissedAssets: Function,
   notifications: Notification[],
   showHomeUpdateIndicator: boolean,
   navigation: NavigationScreenProp<*>,
@@ -700,7 +696,6 @@ class AppFlow extends React.Component<Props, State> {
   componentDidMount() {
     const {
       startListeningNotifications,
-      checkForMissedAssets,
       fetchAllAccountsAssetsBalances,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -717,7 +712,6 @@ class AppFlow extends React.Component<Props, State> {
 
     // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsAssetsBalances();
-    checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
   }
@@ -855,7 +849,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
   fetchAllAccountsAssetsBalances: () => dispatch(fetchAllAccountsAssetsBalancesAction()),
-  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),

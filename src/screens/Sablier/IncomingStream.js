@@ -47,13 +47,16 @@ import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 // selectors
 import { sablierEventsSelector } from 'selectors/sablier';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountEthereumAssetsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, AssetsBySymbol } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 
@@ -62,7 +65,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
-  assets: Assets,
+  assets: AssetsBySymbol,
   history: Transaction[],
   sablierEvents: Object[],
   accounts: Account[],
@@ -145,9 +148,7 @@ class IncomingStream extends React.Component<Props> {
           <Spacing h={20} />
           <ArrowIcon />
         </SelectorWrapper>
-        <SablierStreamCircles
-          stream={stream}
-        />
+        <SablierStreamCircles stream={stream} />
         <Spacing h={27} />
         <WithdrawCardWrapper>
           <MediumText big>{t('sablierContent.label.streamed')}</MediumText>
@@ -192,17 +193,16 @@ class IncomingStream extends React.Component<Props> {
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
-  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   history: archanovaAccountEthereumHistorySelector,
   sablierEvents: sablierEventsSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
