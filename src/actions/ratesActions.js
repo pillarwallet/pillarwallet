@@ -117,7 +117,6 @@ export const fetchAssetsRatesAction = () => {
 
       try {
         const rates = await getExchangeRates(chain, chainAssetsBySymbol);
-
         await dispatch(updateRatesAction(chain, rates));
       } catch (error) {
         reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsBySymbol });
