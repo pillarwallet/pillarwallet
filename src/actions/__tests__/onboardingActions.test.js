@@ -33,6 +33,7 @@ import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants'
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_CHAIN_RATES, SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // actions
 import {
@@ -234,6 +235,7 @@ describe('Onboarding actions', () => {
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
       badges: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
@@ -243,6 +245,9 @@ describe('Onboarding actions', () => {
 
       // etherspot
       { type: UPDATE_ACCOUNTS, payload: [mockNewEtherspotAccount] },
+
+      { payload: true, type: SET_FETCHING_TOTAL_BALANCES },
+      { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_HISTORY, payload: false },
@@ -279,6 +284,7 @@ describe('Onboarding actions', () => {
       rates: { data: {} },
       badges: { data: [] },
       userEvents: { data: [] },
+      totalBalances: {},
     });
 
     const expectedActions = [
@@ -292,6 +298,9 @@ describe('Onboarding actions', () => {
 
       // etherspot
       { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount, mockNewEtherspotAccount] },
+
+      { payload: true, type: SET_FETCHING_TOTAL_BALANCES },
+      { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
