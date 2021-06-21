@@ -272,7 +272,7 @@ export function formatExchangeRateWithoutSymbol(rate: ?BigNumber | number) {
 export function formatLiquidityPoolShare(value: ?BigNumber) {
   if (!value) return null;
 
-  if (value.lte(0.000001)) return '<0.0001%';
+  if (value.lte(0.000001)) return '<0.0001%'; // note: 0.000001 * 100 = 0.0001%
 
   return formatPercentValue(value, { decimalPlaces: 4, stripTrailingZeros: true });
 }
