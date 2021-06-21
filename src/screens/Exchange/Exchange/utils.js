@@ -29,10 +29,7 @@ import { getBalance, sortAssets, getAssetOption } from 'utils/assets';
 // Types
 import type { Asset, AssetsBySymbol, AssetOption} from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type {
-  Currency,
-  RatesBySymbol,
-} from 'models/Rates';
+import type { Currency, RatesBySymbol } from 'models/Rates';
 
 export const getExchangeFromAssetOptions = (
   assets: AssetsBySymbol,
