@@ -33,10 +33,10 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { sumRecord } from 'utils/bigNumber';
 
 // Types
-import type { CategoryRecord } from 'models/TotalBalances';
+import type { AssetCategoryRecord } from 'models/AssetCategory';
 
 type Props = {|
-  balancePerCategory: CategoryRecord<BigNumber>,
+  balancePerCategory: AssetCategoryRecord<BigNumber>,
 |};
 
 function AssetPieChart({ balancePerCategory }: Props) {
@@ -91,7 +91,7 @@ type ChartDatum = {|
   value: number,
 |};
 
-const useChartProps = (balances: CategoryRecord<BigNumber>) => {
+const useChartProps = (balances: AssetCategoryRecord<BigNumber>) => {
   const config = useAssetCategoriesConfig();
   const colors = useThemeColors();
 

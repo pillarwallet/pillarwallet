@@ -50,6 +50,7 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
@@ -58,12 +59,15 @@ import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
+// selectors
+import { useChainRates, useChainSupportedAssets } from 'selectors';
+
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Rates, Asset } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Currency } from 'models/Rates';
 
 // local
 import StakingEnabledModal from './StakingEnabledModal';
@@ -72,15 +76,13 @@ import StakingEnabledModal from './StakingEnabledModal';
 type Props = {
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
-  baseFiatCurrency: ?string,
-  rates: Rates,
+  baseFiatCurrency: ?Currency,
   poolDataGraphQueryFailed: boolean,
   isFetchingLiquidityPoolsData: boolean,
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
-  supportedAssets: Asset[],
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-  shownStakingEnabledModal: {[string]: boolean},
-  setShownStakingEnabledModal: string => void,
+  shownStakingEnabledModal: { [string]: boolean },
+  setShownStakingEnabledModal: (string) => void,
 };
 
 const MainContainter = styled.View`
@@ -155,12 +157,13 @@ const LiquidityPoolDashboard = ({
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
   fetchLiquidityPoolsData,
-  supportedAssets,
   liquidityPoolsReducer,
-  rates,
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
@@ -168,7 +171,7 @@ const LiquidityPoolDashboard = ({
 
   useEffect(() => {
     if (!poolStats) {
-      fetchLiquidityPoolsData(supportedLiquidityPools(supportedAssets));
+      fetchLiquidityPoolsData(supportedLiquidityPools(ethereumSupportedAssets));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -197,7 +200,7 @@ const LiquidityPoolDashboard = ({
   if (!poolStats) return <Loader />;
 
   const rewardAssetData = pool.rewards?.[0]
-    ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
+    ? ethereumSupportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
     : undefined;
 
   const balance = poolStats.userLiquidityTokenBalance.toNumber();
@@ -205,10 +208,13 @@ const LiquidityPoolDashboard = ({
   const hasBalance = balance > 0;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
+  const fiatBalance = formatFiat(
+    convertUSDToFiat(balance * poolStats.currentPrice, ethereumRates, fiatCurrency),
+    fiatCurrency,
+  );
   const stakedAmountInFiat = convertUSDToFiat(
     poolStats.stakedAmount.toNumber() * poolStats.currentPrice,
-    rates,
+    ethereumRates,
     fiatCurrency,
   );
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
@@ -231,20 +237,29 @@ const LiquidityPoolDashboard = ({
   const stats = [
     {
       title: t('liquidityPoolsContent.label.24hFees'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyFees, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.dailyFees, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.totalLiquidity, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
-      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyVolume, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(
+        convertUSDToFiat(poolStats.dailyVolume, ethereumRates, fiatCurrency),
+        fiatCurrency,
+      ),
     },
   ];
 
   pool.tokensProportions.forEach(({ symbol: tokenSymbol }) => {
-    const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+    const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
     if (!tokenData) return;
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
@@ -416,9 +431,13 @@ const LiquidityPoolDashboard = ({
             </MediumText>
             <Spacing h={22} />
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
-              const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+              const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
-              const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
+              const tokenPriceInFiat = convertUSDToFiat(
+                poolStats.tokensPricesUSD[tokenSymbol],
+                ethereumRates,
+                fiatCurrency,
+              );
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
@@ -490,16 +509,12 @@ const mapStateToProps = ({
     poolDataGraphQueryFailed,
     shownStakingEnabledModal,
   },
-  assets: { supportedAssets },
   liquidityPools: liquidityPoolsReducer,
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
-  supportedAssets,
   liquidityPoolsReducer,
-  rates,
   shownStakingEnabledModal,
 });
 

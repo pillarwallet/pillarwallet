@@ -46,9 +46,9 @@ import { spacing } from 'utils/variables';
 import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
-import type { AssetCategory } from 'models/AssetCategory';
+import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { Chain, ChainRecord } from 'models/Chain';
-import type { AccountTotalBalances, CategoryRecord } from 'models/TotalBalances';
+import type { TotalBalances } from 'models/TotalBalances';
 
 
 // Local
@@ -57,7 +57,7 @@ import ChainListItem from './components/ChainListItem';
 import { calculateTotalCollectibleCount } from './utils';
 
 type Props = {|
-  accountTotalBalances: AccountTotalBalances,
+  accountTotalBalances: TotalBalances,
   accountCollectibleCounts: ChainRecord<number>,
 |};
 
@@ -101,7 +101,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
     navigateToAssetDetails(category, CHAIN.ETHEREUM);
   };
 
-  const renderCategoryWithBalance = (category: $Keys<CategoryRecord<BigNumber>>) => {
+  const renderCategoryWithBalance = (category: AssetCategoryRecordKeys) => {
     const balance = balancePerCategory[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
@@ -122,7 +122,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
     );
   };
 
-  const renderChainWithBalance = (category: $Keys<CategoryRecord<BigNumber>>, chain: Chain) => {
+  const renderChainWithBalance = (category: AssetCategoryRecordKeys, chain: Chain) => {
     const balance = accountTotalBalances?.[category]?.[chain] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
@@ -170,9 +170,12 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
     );
   };
 
+  // Temporarily hide rewards tab until rewards fetching is implemented
+  const categoriesToRender = Object.keys(balancePerCategory).filter(category => category !== ASSET_CATEGORY.REWARDS);
+
   return (
     <Container>
-      {Object.keys(balancePerCategory).map((category) => renderCategoryWithBalance(category))}
+      {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
       {renderCollectiblesCategory()}
 

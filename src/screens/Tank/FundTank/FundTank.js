@@ -48,9 +48,10 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
-import type { Assets, Rates } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
@@ -62,7 +63,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
 
 
@@ -101,14 +102,14 @@ const FormWrapper = styled.View`
 `;
 
 type Props = {
-  assets: Assets,
+  assets: AssetsBySymbol,
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
   session: Object,
   estimateTopUpVirtualAccount: () => void,
   topUpFee: TopUpFee,
-  rates: Rates,
-  baseFiatCurrency: ?string,
+  ratesPerChain: RatesPerChain,
+  baseFiatCurrency: ?Currency,
   useGasToken: boolean,
 };
 
@@ -186,7 +187,7 @@ class FundTank extends React.Component<Props, State> {
       session,
       balances,
       topUpFee,
-      rates,
+      ratesPerChain,
       baseFiatCurrency,
       useGasToken,
       topUpFee: { feeInfo },
@@ -195,12 +196,14 @@ class FundTank extends React.Component<Props, State> {
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
+
     // balance
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
@@ -223,7 +226,7 @@ class FundTank extends React.Component<Props, State> {
     const maxAmount = parseFloat(calculateMaxAmount(token, balance, txFeeInWei, gasToken));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
@@ -301,11 +304,11 @@ class FundTank extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
+  ratesPerChain,
   session,
   topUpFee,
   baseFiatCurrency,
@@ -313,7 +316,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
   useGasToken: useGasTokenSelector,
 });
 

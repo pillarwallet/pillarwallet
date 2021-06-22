@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
@@ -32,26 +33,29 @@ import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
+// utils
 import { formatAmount, formatTokenAmount, formatFiat } from 'utils/common';
 import { getFormattedRate, getRate } from 'utils/assets';
 import { getAddLiquidityTransactions } from 'utils/liquidityPools';
 
+// constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
-import { activeAccountAddressSelector } from 'selectors';
+// selectors
+import { activeAccountAddressSelector, useChainRates } from 'selectors';
 
-import type { Rates } from 'models/Asset';
+// types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Currency } from 'models/Rates';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
-  baseFiatCurrency: ?string,
-  rates: Rates,
+  baseFiatCurrency: ?Currency,
   accountAddress: string,
 };
 
@@ -63,10 +67,11 @@ const AddLiquidityReviewScreen = ({
   navigation,
   feeInfo,
   baseFiatCurrency,
-  rates,
   accountAddress,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   const {
     tokensData, poolToken, tokensValues, poolTokenValue, shareOfPool, pool,
@@ -74,12 +79,12 @@ const AddLiquidityReviewScreen = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalValue = tokensData.reduce((sum, token, i) => {
-    sum += tokensValues[i] * getRate(rates, token.symbol, fiatCurrency);
+    sum += tokensValues[i] * getRate(ethereumRates, token.symbol, fiatCurrency);
     return sum;
   }, 0);
 
   const tokensValuesInFiat = tokensData.map((token, i) => {
-    return getFormattedRate(rates, tokensValues[i], token.symbol, fiatCurrency);
+    return getFormattedRate(ethereumRates, tokensValues[i], token.symbol, fiatCurrency);
   });
 
   const onNextButtonPress = async () => {
@@ -131,6 +136,7 @@ const AddLiquidityReviewScreen = ({
           text={t('liquidityPoolsContent.label.youAreAddingLiquidity')}
           amount={poolTokenValue}
           fiatAmount={formatFiat(totalValue)}
+          chain={CHAIN.ETHEREUM}
         />
         <Spacing h={8} />
         <BaseText regular secondary center>
@@ -157,7 +163,7 @@ const AddLiquidityReviewScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
+            <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
@@ -177,11 +183,9 @@ const AddLiquidityReviewScreen = ({
 const mapStateToProps = ({
   transactionEstimate: { feeInfo },
   appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   baseFiatCurrency,
-  rates,
 });
 
 const structuredSelector = createStructuredSelector({

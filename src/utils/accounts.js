@@ -18,8 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
-import omit from 'lodash.omit';
 import t from 'translations/translate';
 
 // constants
@@ -28,7 +26,6 @@ import { CHAIN } from 'constants/chainConstants';
 
 // types
 import type { Account, AccountTypes } from 'models/Account';
-import type { Assets } from 'models/Asset';
 import type { TranslatedString } from 'models/Translations';
 
 // local
@@ -142,13 +139,6 @@ export const normalizeForEns = (value: string): string => {
   return value
     .toLowerCase()
     .replace(/ /g, '-');
-};
-
-export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[]): Assets => {
-  if (!isEmpty(allAccountAssets)) {
-    return omit(allAccountAssets, hiddenAssets);
-  }
-  return {};
 };
 
 export const getAccountEnsName = (account: ?Account): ?string => {

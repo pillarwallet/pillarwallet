@@ -70,34 +70,35 @@ import assetsConfig from 'configs/assetsConfig';
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
+  useChainRates,
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // models, types
-import type { Assets, Asset, Rates, AssetDataNavigationParam } from 'models/Asset';
+import type { AssetsBySymbol, AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { CategoryBalancesPerChain } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
+import type { Currency } from 'models/Rates';
 
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssets: Assets,
+  accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
   accountAssetsBalances: CategoryBalancesPerChain,
-  rates: Rates,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   smartWalletState: Object,
   accounts: Account[],
   activeAccount: ?Account,
   accountHistory: ChainRecord<Transaction[]>,
   activeAccountAddress: string,
-  supportedAssets: Asset[],
+  supportedAssetsPerChain: AssetsPerChain,
 };
 
 const AssetCardWrapper = styled.View`
@@ -148,7 +149,6 @@ const ValuesWrapper = styled.View`
 
 const AssetScreen = ({
   activeAccountAddress,
-  rates,
   fetchAssetsBalances,
   baseFiatCurrency,
   smartWalletState,
@@ -156,13 +156,15 @@ const AssetScreen = ({
   accountHistory,
   accountAssetsBalances,
   activeAccount,
-  accountAssets,
-  supportedAssets,
+  accountAssetsPerChain,
+  supportedAssetsPerChain,
 }: Props) => {
   const navigation = useNavigation();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const { token, chain } = assetData;
+
+  const chainRates = useChainRates(chain);
 
   const tokenTransactions = useMemo(
     () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
@@ -171,6 +173,9 @@ const AssetScreen = ({
 
   const transactions = useMemo(
     () => {
+      const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+      const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
+
       if (isArchanovaAccount(activeAccount)) {
         return tokenTransactions.filter(({
           isPPNTransaction = false,
@@ -192,8 +197,8 @@ const AssetScreen = ({
           tokenTransactions,
           chain,
           activeAccountAddress,
-          getAssetsAsList(accountAssets),
-          supportedAssets,
+          getAssetsAsList(chainAccountAssets),
+          chainSupportedAssets,
         );
       }
 
@@ -204,9 +209,9 @@ const AssetScreen = ({
       chain,
       accounts,
       activeAccount,
-      accountAssets,
+      accountAssetsPerChain,
       activeAccountAddress,
-      supportedAssets,
+      supportedAssetsPerChain,
     ],
   );
 
@@ -224,7 +229,7 @@ const AssetScreen = ({
   ));
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const tokenRate = getRate(rates, token, fiatCurrency);
+  const tokenRate = getRate(chainRates, token, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, token);
   const isWalletEmpty = balance <= 0;
@@ -311,12 +316,10 @@ const AssetScreen = ({
 };
 
 const mapStateToProps = ({
-  rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
@@ -325,10 +328,10 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
   accountHistory: accountHistorySelector,
-  accountAssets: accountAssetsSelector,
+  accountAssetsPerChain: accountAssetsPerChainSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  supportedAssets: supportedAssetsSelector,
+  supportedAssetsPerChain: supportedAssetsPerChainSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

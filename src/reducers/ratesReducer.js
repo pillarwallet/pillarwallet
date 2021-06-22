@@ -17,27 +17,48 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_RATES } from 'constants/ratesConstants';
 
-type Rates = {
-  [key: string]: {
-    [key: string]: number,
-  },
-};
+// constants
+import {
+  UPDATE_CHAIN_RATES,
+  SET_FETCHING_RATES,
+  SET_RATES,
+} from 'constants/ratesConstants';
+
+// types
+import type { RatesPerChain, RatesBySymbol } from 'models/Rates';
+
 
 export type RatesReducerState = {
-  data: Rates,
-  isFetched: boolean,
+  data: RatesPerChain,
+  isFetching: boolean,
 };
 
-export type RatesReducerAction = {
-  type: string,
-  payload: any
-};
+export type SetFetchingRatesAction = {|
+  type: typeof SET_FETCHING_RATES,
+  payload: boolean,
+|};
+
+export type SetRatesAction = {|
+  type: typeof SET_RATES,
+  payload: RatesPerChain,
+|};
+
+export type UpdateChainRatesAction = {|
+  type: typeof UPDATE_CHAIN_RATES,
+  payload: {
+    chain: string,
+    rates: RatesBySymbol,
+  },
+|};
+
+export type RatesReducerAction = SetFetchingRatesAction
+  | SetRatesAction
+  | UpdateChainRatesAction;
 
 export const initialState = {
-  data: {},
-  isFetched: false,
+  data: { ethereum: {} },
+  isFetching: false,
 };
 
 const ratesReducer = (
@@ -45,8 +66,31 @@ const ratesReducer = (
   action: RatesReducerAction,
 ): RatesReducerState => {
   switch (action.type) {
-    case UPDATE_RATES:
-      return { ...state, data: action.payload, isFetched: true };
+    case SET_RATES:
+      return {
+        ...state,
+        data: action.payload,
+      };
+
+    case UPDATE_CHAIN_RATES:
+      const { chain, rates } = action.payload;
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [chain]: {
+            ...(state.data[chain] ?? {}),
+            ...rates,
+          },
+        },
+      };
+
+    case SET_FETCHING_RATES:
+      return {
+        ...state,
+        isFetching: action.payload,
+      };
+
     default:
       return state;
   }

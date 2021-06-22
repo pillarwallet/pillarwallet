@@ -128,7 +128,7 @@ function TokenTransactionEventDetails({ event, chain }: Props) {
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
         <Spacing h={spacing.extraLarge} />
 
-        {!!event?.fee && <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" />}
+        {!!event?.fee && <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" chain={chain} />}
         <Spacing h={spacing.mediumLarge} />
 
         <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />

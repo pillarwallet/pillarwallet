@@ -22,18 +22,20 @@ import { BigNumber } from 'bignumber.js';
 
 // Utils
 import { sumBy, sumRecord } from 'utils/bigNumber';
-import { recordValues } from 'utils/object';
+import { mapChainRecordValues } from 'utils/chains';
+import { recordValues, mapRecordValues } from 'utils/object';
 
 // Types
+import type { AssetCategoryRecord } from 'models/AssetCategory';
 import type { ChainRecord } from 'models/Chain';
-import type { AccountTotalBalances, CategoryRecord } from 'models/TotalBalances';
+import type { TotalBalances, AccountCategoryChainRecord, CategoryChainRecord } from 'models/TotalBalances';
 
-export function calculateTotalBalance(accountBalances: AccountTotalBalances): BigNumber {
+export function calculateTotalBalance(accountBalances: TotalBalances): BigNumber {
   const totalBalancePerCategory = calculateTotalBalancePerCategory(accountBalances);
   return sumRecord(totalBalancePerCategory);
 }
 
-export function calculateTotalBalancePerCategory(accountBalances: AccountTotalBalances): CategoryRecord<BigNumber> {
+export function calculateTotalBalancePerCategory(accountBalances: TotalBalances): AssetCategoryRecord<BigNumber> {
   return {
     wallet: sumRecord(accountBalances.wallet),
     deposits: sumRecord(accountBalances.deposits),
@@ -43,7 +45,7 @@ export function calculateTotalBalancePerCategory(accountBalances: AccountTotalBa
   };
 }
 
-export function calculateTotalBalancePerChain(accountBalances: AccountTotalBalances): ChainRecord<BigNumber> {
+export function calculateTotalBalancePerChain(accountBalances: TotalBalances): ChainRecord<BigNumber> {
   const balancesPerChain = recordValues(accountBalances);
   return {
     ethereum: sumBy(balancesPerChain, (balance) => balance?.ethereum),
@@ -53,3 +55,22 @@ export function calculateTotalBalancePerChain(accountBalances: AccountTotalBalan
   };
 }
 
+/** Helper function for dealing with Account -> Category - Chain nesting  */
+export function mapAccountCategoryChainRecordValues<Value, Target>(
+  accountCategoryChainRecord: AccountCategoryChainRecord<Value>,
+  valueSelector: (value: Value) => Target,
+): AccountCategoryChainRecord<Target> {
+  return mapRecordValues(accountCategoryChainRecord, (categoryChainRecord: CategoryChainRecord<Value>) =>
+    mapCategoryChainRecordValues(categoryChainRecord, valueSelector),
+  );
+}
+
+/** Helper function for dealing with Category - Chain nesting  */
+export function mapCategoryChainRecordValues<Value, Target>(
+  categoryChainRecord: CategoryChainRecord<Value>,
+  valueSelector: (value: Value) => Target,
+): AssetCategoryRecord<ChainRecord<Target>> {
+  return mapRecordValues(categoryChainRecord, (chainRecord: ChainRecord<Value>) =>
+    mapChainRecordValues(chainRecord, valueSelector),
+  );
+}

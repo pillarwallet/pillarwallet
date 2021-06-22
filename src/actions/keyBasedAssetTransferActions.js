@@ -63,6 +63,7 @@ import { fetchCollectibles } from 'services/opensea';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Account } from 'models/Account';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: Object) => {
@@ -167,10 +168,7 @@ export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: 
 
 export const fetchAvailableBalancesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      wallet: { data: walletData },
-      assets: { supportedAssets },
-    } = getState();
+    const { wallet: { data: walletData } } = getState();
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
@@ -179,6 +177,8 @@ export const fetchAvailableBalancesToTransferAction = () => {
     }
 
     dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
+
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const availableBalances = await etherspotService.getBalances(
       CHAIN.ETHEREUM,

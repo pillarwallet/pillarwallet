@@ -39,28 +39,30 @@ import { spacing } from 'utils/variables';
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SETTLE_BALANCE } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // selectors
 import {
   paymentNetworkAccountBalancesSelector,
   paymentNetworkNonZeroBalancesSelector,
 } from 'selectors/paymentNetwork';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
-import type { Assets } from 'models/Asset';
+import type { AssetsBySymbol } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 
 type Props = {
-  baseFiatCurrency: string,
-  assets: Assets,
-  rates: Object,
+  baseFiatCurrency: Currency,
+  assets: AssetsBySymbol,
+  ratesPerChain: RatesPerChain,
   paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object,
-}
+};
 
 const FloatingButtonView = styled.View`
   position: absolute;
@@ -75,14 +77,15 @@ class UnsettledAssets extends React.Component<Props> {
     const {
       baseFiatCurrency,
       assets,
-      rates,
+      ratesPerChain,
     } = this.props;
 
     const tokenSymbol = get(item, 'symbol', '');
     const tokenBalance = get(item, 'balance', '0');
     const paymentNetworkBalanceFormatted = formatTokenAmount(tokenBalance, tokenSymbol);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = tokenBalance * getRate(rates, tokenSymbol, fiatCurrency);
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
+    const totalInFiat = tokenBalance * getRate(ethereumRates, tokenSymbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
     const { symbol, name } = thisAsset;
@@ -132,17 +135,17 @@ class UnsettledAssets extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  rates,
+  ratesPerChain,
   baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: accountEthereumAssetsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

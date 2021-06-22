@@ -24,21 +24,13 @@ import { getEnv } from 'configs/envConfig';
 
 import { DAI, USDC } from 'constants/assetsConstants';
 
-import {
-  POOLTOGETHER_WITHDRAW_TRANSACTION,
-  POOLTOGETHER_DEPOSIT_TRANSACTION,
-} from 'constants/poolTogetherConstants';
+import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
 import type { Transaction, TxPoolTogetherExtra } from 'models/Transaction';
 
 import { getPoolTogetherTransactions } from 'services/poolTogether';
 
 import { addressesEqual } from './assets';
-
-
-export const getWinChance = (currentCount: number = 0, totalPoolTicketsCount: number = 0): number => {
-  return (currentCount * 100) / (totalPoolTicketsCount > 0 ? totalPoolTicketsCount : 1); // win chance in %
-};
 
 export const isPoolTogetherTag = (tag: ?string) => {
   return tag && (tag === POOLTOGETHER_WITHDRAW_TRANSACTION || tag === POOLTOGETHER_DEPOSIT_TRANSACTION);

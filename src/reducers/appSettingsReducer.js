@@ -21,8 +21,8 @@ import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
-import type { Currency } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
+import type { Currency } from 'models/Rates';
 
 export type AppSettingsReducerState = {
   data: {
@@ -40,13 +40,8 @@ export type AppSettingsReducerState = {
     hasSeenTutorial?: boolean,
     hideBalance?: boolean,
     hasDismissedConnectAppsIntro?: boolean,
-    hideBadges?: boolean,
-    hidePoolTogether?: boolean,
-    hideSablier?: boolean,
-    hideRari?: boolean,
     preferredGasToken: ?string,
     initialDeeplinkExecuted: boolean,
-    hideLendingDeposits?: boolean,
     omitPinOnLogin: boolean,
     localisation: ?LocalisationOptions,
     hideLiquidityPools?: boolean,
@@ -77,13 +72,8 @@ export const initialState: AppSettingsReducerState = {
     hasSeenTutorial: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
-    hideBadges: false,
-    hidePoolTogether: false,
-    hideSablier: false,
-    hideRari: false,
     preferredGasToken: null,
     initialDeeplinkExecuted: false,
-    hideLendingDeposits: false,
     omitPinOnLogin: false,
     localisation: null,
     hideLiquidityPools: false,

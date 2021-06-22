@@ -18,19 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const FETCHED = 'FETCHED';
-export const FETCHING = 'FETCHING';
-export const FETCHING_INITIAL = 'FETCHING_INITIAL';
-export const FETCH_INITIAL_FAILED = 'FETCH_INITIAL_FAILED';
-export const FETCHED_INITIAL = 'FETCHED_INITIAL';
-export const UPDATE_ASSET = 'UPDATE_ASSET';
-export const UPDATE_ASSETS = 'UPDATE_ASSETS';
-export const UPDATE_ASSETS_STATE = 'UPDATE_ASSETS_STATE';
-export const START_ASSETS_SEARCH = 'START_ASSETS_SEARCH';
-export const UPDATE_ASSETS_SEARCH_RESULT = 'UPDATE_ASSETS_SEARCH_RESULT';
-export const RESET_ASSETS_SEARCH_RESULT = 'RESET_ASSETS_SEARCH_RESULT';
-export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
-export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
+// reducer
+export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
+export const SET_CHAIN_SUPPORTED_ASSETS = 'SET_CHAIN_SUPPORTED_ASSETS';
 
 // fiat
 export const USD = ('USD': 'USD');
@@ -45,8 +35,6 @@ export const MATIC = 'MATIC';
 export const BNB = 'BNB';
 export const XDAI = 'xDAI';
 
-export const HOT = 'HOT';
-export const HOLO = 'HOLO';
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';
@@ -83,7 +71,6 @@ const testBTC = 'testBTC'; // testnet
 export const TOKENS = ('TOKENS': 'TOKENS');
 export const COLLECTIBLES = ('COLLECTIBLES': 'COLLECTIBLES');
 
-export const BADGES = 'BADGES';
 export const SYNTHETIC = 'SYNTHETIC';
 export const NONSYNTHETIC = 'NONSYNTHETIC';
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';

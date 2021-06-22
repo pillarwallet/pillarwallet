@@ -17,40 +17,31 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
 
-import * as React from 'react';
-import { useTranslation } from 'translations/translate';
-
-// Components
-import Text from 'components/modern/Text';
+// Constants
+import { ETH, USD } from 'constants/assetsConstants';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
+import { wrapBigNumber } from 'utils/bigNumber';
 
 // Types
-import { type BadgeReceivedEvent } from 'models/History';
+import type { RatesBySymbol, Currency } from 'models/Rates';
 
-// Local
-import HistoryListItem from './HistoryListItem';
+export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?number {
+  // No need to calculate rate for USD/USD.
+  if (currency === USD) return 1;
 
-type Props = {|
-  event: BadgeReceivedEvent,
-  onPress?: () => mixed,
-|};
+  const ethRates = rates[ETH];
+  if (!ethRates || !ethRates[currency] || !ethRates[USD]) {
+    return null;
+  }
 
-function BadgeReceivedItem({ event, onPress }: Props) {
-  const { t } = useTranslation();
-  const colors = useThemeColors();
-
-  return (
-    <HistoryListItem
-      iconUrl={event.iconUrl}
-      title={event.title}
-      subtitle={t('label.badge')}
-      valueComponent={<Text color={colors.basic030}>{t('label.received')}</Text>}
-      onPress={onPress}
-    />
-  );
+  return ethRates[currency] / ethRates[USD];
 }
 
-export default BadgeReceivedItem;
+export function getFiatValueFromUsd(valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber {
+  if (!valueInUsd || usdToFiatRate == null) return null;
+
+  return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
+}

@@ -29,7 +29,7 @@ import Spinner from 'components/Spinner';
 import { Spacing } from 'components/Layout';
 
 // Selectors
-import { useRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { getBalanceInFiat } from 'utils/assets';
@@ -39,24 +39,34 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { Chain } from 'models/Chain';
 
 type Mode = 'actual' | 'estimate';
 
 type Props = {
   value: ?BigNumber,
   symbol: string,
+  chain: Chain,
   mode?: Mode,
   isLoading?: boolean,
   isNotEnough?: boolean,
   style?: ViewStyleProp,
 };
 
-function FeeLabel({ value, symbol, mode, isLoading, isNotEnough, style }: Props) {
+function FeeLabel({
+  value,
+  symbol,
+  mode,
+  isLoading,
+  isNotEnough,
+  style,
+  chain,
+}: Props) {
   const { t } = useTranslation();
 
   const [showFiatValue, setShowFiatValue] = React.useState(true);
 
-  const rates = useRates();
+  const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
   const colors = useThemeColors();
@@ -65,7 +75,7 @@ function FeeLabel({ value, symbol, mode, isLoading, isNotEnough, style }: Props)
     return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
-  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, rates, symbol));
+  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, symbol));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, symbol);
 
   return (

@@ -24,7 +24,12 @@ import { constants as EthersConstants } from 'ethers';
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import { ETH, MATIC, BNB, DAI } from 'constants/assetsConstants';
+import {
+  ETH,
+  MATIC,
+  BNB,
+  XDAI,
+} from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
@@ -89,8 +94,8 @@ export const nativeAssetPerChain = {
   },
   xdai: {
     address: EthersConstants.AddressZero,
-    name: 'Dai',
-    symbol: DAI,
+    name: 'xDAI',
+    symbol: XDAI,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
   },

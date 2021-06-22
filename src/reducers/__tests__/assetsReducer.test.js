@@ -17,36 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  UPDATE_ASSET,
-  UPDATE_ASSETS_STATE,
-  UPDATE_SUPPORTED_ASSETS,
-  FETCHING,
-  ETH,
-} from 'constants/assetsConstants';
+
+// constants
+import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+
+// reducers
 import reducer from 'reducers/assetsReducer';
 
+// types
 import type { Asset } from 'models/Asset';
 
+
 describe('Assets reducer', () => {
-  it('handles UPDATE_ASSET', () => {
-    const updateAction = { type: UPDATE_ASSET, payload: { symbol: ETH, balance: 5 } };
-    const expectedAssets = {
-      data: {
-        [ETH]: {
-          symbol: ETH,
-          balance: 5,
-        },
-      },
-    };
-    expect(reducer(undefined, updateAction)).toMatchObject(expectedAssets);
-  });
-
-  it('handles UPDATE_ASSET_STATE', () => {
-    const updateAction = { type: UPDATE_ASSETS_STATE, payload: FETCHING };
-    expect(reducer(undefined, updateAction)).toMatchObject({ assetsState: FETCHING });
-  });
-
   it('sorts supported assets', () => {
     const newAsset = (symbol: string): Asset => ({
       symbol,
@@ -57,18 +39,22 @@ describe('Assets reducer', () => {
     });
 
     const updateAction = {
-      type: UPDATE_SUPPORTED_ASSETS,
-      payload: [
-        newAsset('BCA'),
-        newAsset('CDA'),
-        newAsset('BBA'),
-        newAsset('ABC'),
-      ],
+      type: SET_SUPPORTED_ASSETS,
+      payload: {
+        ethereum: [
+          newAsset('BCA'),
+          newAsset('CDA'),
+          newAsset('BBA'),
+          newAsset('ABC'),
+        ],
+      },
     };
 
     const state = reducer(undefined, updateAction);
 
-    expect(state.supportedAssets.map(({ symbol }) => symbol)).toEqual([
+    const ethereumSupportedAssetsInState = state.supportedAssets?.ethereum ?? [];
+
+    expect(ethereumSupportedAssetsInState.map(({ symbol }) => symbol)).toEqual([
       'ABC',
       'BBA',
       'BCA',

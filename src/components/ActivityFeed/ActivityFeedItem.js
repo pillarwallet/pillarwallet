@@ -70,14 +70,13 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
-import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/archanovaConstants';
-import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
@@ -86,8 +85,6 @@ import {
   SABLIER_CREATE_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
-  SABLIER_STREAM_ENDED,
-  SABLIER_EVENT,
 } from 'constants/sablierConstants';
 import { DAI } from 'constants/assetsConstants';
 import { WBTC_SETTLED_TRANSACTION, WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
@@ -109,7 +106,10 @@ import {
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { assetDecimalsSelector } from 'selectors/assets';
+import {
+  assetDecimalsSelector,
+  ethereumSupportedAssetsSelector,
+} from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // types
@@ -289,46 +289,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
     return iconUrl ? { uri: iconUrl } : null;
   };
-
-  getSablierEventData = (event: Object) => {
-    const { ensRegistry } = this.props;
-    const { contactAddress } = event;
-    const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
-
-    let data = {
-      label: usernameOrAddress,
-      cornerIcon: sablierLogo,
-      profileImage: true,
-    };
-
-    switch (event.tag) {
-      case SABLIER_CREATE_STREAM:
-        data = {
-          ...data,
-          subtext: t('label.incomingSablierStream'),
-          actionLabel: t('label.started'),
-        };
-        break;
-      case SABLIER_CANCEL_STREAM:
-        data = {
-          ...data,
-          subtext: t('label.incomingSablierStream'),
-          actionLabel: t('label.canceled'),
-        };
-        break;
-      case SABLIER_STREAM_ENDED: {
-        data = {
-          ...data,
-          subtext: event.incoming ? t('label.incomingSablierStream') : t('label.outgoingSablierStream'),
-          actionLabel: t('label.ended'),
-        };
-        break;
-      }
-      default:
-        data = null;
-    }
-    return data;
-  }
 
   getWalletCreatedEventData = (event: Object) => {
     const { isArchanovaWalletActivated, theme } = this.props;
@@ -929,16 +889,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     };
   };
 
-  getBadgeRewardEventData = (event: Object): EventData => {
-    const { name, imageUrl } = event;
-    return {
-      label: name,
-      itemImageUrl: imageUrl,
-      subtext: t('label.badge'),
-      actionLabel: this.STATUSES().RECEIVED,
-    };
-  };
-
   getEventData = (event: Object): ?EventData => {
     switch (event.type) {
       case USER_EVENT:
@@ -947,10 +897,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         return this.getTransactionEventData(event);
       case COLLECTIBLE_TRANSACTION:
         return this.getCollectibleTransactionEventData(event);
-      case BADGE_REWARD_EVENT:
-        return this.getBadgeRewardEventData(event);
-      case SABLIER_EVENT:
-        return this.getSablierEventData(event);
       default:
         return null;
     }
@@ -998,12 +944,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  assets: { supportedAssets },
   session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
-  supportedAssets,
   sessionLanguageCode,
 });
 
@@ -1011,6 +955,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
+  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props) => ({

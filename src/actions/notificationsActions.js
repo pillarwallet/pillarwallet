@@ -26,7 +26,7 @@ import messaging from '@react-native-firebase/messaging';
 
 // actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import {
   subscribeToEtherspotNotificationsAction,
@@ -81,7 +81,6 @@ export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_IND
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(checkForMissedAssetsAction());
     dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAssetsBalancesAction());
@@ -199,7 +198,6 @@ export const startListeningOnOpenNotificationAction = () => {
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
-          dispatch(checkForMissedAssetsAction());
           dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchAssetsBalancesAction());
         }

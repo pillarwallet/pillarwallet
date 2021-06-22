@@ -34,20 +34,21 @@ import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 
 // Constants
-import { SERVICES_FLOW } from 'constants/navigationConstants';
+import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useUsdToFiatRate } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { spacing } from 'utils/variables';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { getFiatValueFromUsd } from 'utils/rates';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
-import type { InvestmentAssetBalance } from 'models/Balances';
+import type { ServiceAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -70,13 +71,11 @@ function InvestmentsTab() {
   const totalBalance = useInvestmentsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
+  const usdToFiatRate = useUsdToFiatRate();
 
-  const navigateToServices = () => {
-    // TODO: navigate to new WalletConnect screen when available
-    navigation.navigate(SERVICES_FLOW);
-  };
+  const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
-  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
@@ -92,12 +91,14 @@ function InvestmentsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<InvestmentAssetBalance>) => {
+  const renderItem = (headerListItem: HeaderListItem<ServiceAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change } = headerListItem.item;
+    const { title, iconUrl, valueInUsd, changeInUsd } = headerListItem.item;
+    const value = getFiatValueFromUsd(valueInUsd, usdToFiatRate);
+    const change = getFiatValueFromUsd(changeInUsd, usdToFiatRate);
     return <InvestmentListItem title={title} iconUrl={iconUrl} value={value} change={change} />;
   };
 
@@ -120,7 +121,7 @@ function InvestmentsTab() {
 export default InvestmentsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<InvestmentAssetBalance>>,
+  ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

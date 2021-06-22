@@ -20,106 +20,89 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { withTheme } from 'styled-components/native';
+import { Provider } from 'react-redux';
 
 // constants
-import { GBP } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
+import { ETH, GBP, PLR } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
-import { ValueInputComponent } from 'components/ValueInput';
+import ValueInputComponent from 'components/ValueInput';
 
+// test utils
+import { createTestStore, initialTestState } from 'testUtils/store';
 
+// local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 
-const reduxMock = {
-  assets: [
-    {
-      isPreferred: false,
-      address: '0x0000000000000000000000000000000000000000',
-      decimals: 18,
-      name: 'Ethereum',
-      symbol: 'ETH',
-      value: 'ETH',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/ethColor.png',
-      email: '',
-      telegram: '',
-      twitter: 'https://twitter.com/ethereum',
-      website: 'https://ethereum.org/',
-      whitepaper: '',
-      isDefault: true,
-      updatedAt: '2019-08-30T10:20:13.866Z',
-      socialMedia: [],
-      icos: [],
-      id: '5c65a07d000204d2f9481c1c',
-    },
-    {
-      isPreferred: false,
-      address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
-      decimals: 18,
-      name: 'Pillar',
-      symbol: 'PLR',
-      value: 'PLR',
-      iconUrl: 'https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png',
-      email: 'info@pillarproject.io',
-      telegram: 'https://t.me/pillarofficial',
-      twitter: 'https://twitter.com/PillarWallet',
-      website: 'https://pillarproject.io/',
-      whitepaper: 'https://pillarproject.io/documents/Pillar-Gray-Paper.pdf',
-      isDefault: true,
-      updatedAt: '2019-07-19T12:43:23.540Z',
-      id: '5c65a07d000204d2f9481c1d',
-      totalSupply: '',
-      socialMedia: [],
-      icos: [],
-    },
-  ],
-  accountAssetsBalances: {
-    [CHAIN.ETHEREUM]: {
-      wallet: {
-        ETH: {
-          balance: '0.512345',
-          symbol: 'ETH',
-        },
-        PLR: {
-          balance: '54321',
-          symbol: 'ETH',
+const activeAccount = {
+  id: '0x',
+  isActive: true,
+  type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+};
+
+const ethAsset = {
+  symbol: ETH,
+  name: 'Ethereum',
+  address: '0x',
+  iconUrl: '',
+  decimals: 18,
+};
+
+const plrAsset = {
+  symbol: PLR,
+  name: 'Pillar',
+  address: '0x',
+  iconUrl: '',
+  decimals: 18,
+};
+
+const store = createTestStore({
+  ...initialTestState,
+  accounts: { data: [activeAccount] },
+  assetsBalances: {
+    data: {
+      [activeAccount.id]: {
+        ethereum: {
+          wallet: {
+            [ETH]: {
+              balance: '0.512345',
+              symbol: ETH,
+            },
+            [PLR]: {
+              balance: '54321',
+              symbol: PLR,
+            },
+          },
         },
       },
     },
   },
   rates: {
-    ETH: {
-      ETH: 1,
-      EUR: 206,
-      GBP: 185,
-      UDS: 230,
-    },
-    PLR: {
-      ETH: 0.008,
-      EUR: 0.25,
-      GBP: 0.1,
-      UDS: 0.3,
+    data: {
+      ethereum: {
+        [ETH]: { [GBP]: 185 },
+        [PLR]: { [GBP]: 0.1 },
+      },
     },
   },
-  baseFiatCurrency: GBP,
-  collectibles: [],
-};
-
-const ValueInputWithTheme = withTheme(ValueInputComponent);
+  appSettings: { data: { baseFiatCurrency: GBP } },
+  collectibles: { data: [] },
+  assets: { supportedAssets: { ethereum: [ethAsset, plrAsset] } },
+});
 
 storiesOf('Value Input', module)
   .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ValueInputWithTheme
-      {...reduxMock}
-      value=""
-      onValueChange={() => {}}
-      assetData={reduxMock.assets[0]}
-      onAssetPress={() => {}}
-      onAssetDataChange={() => {}}
-    />
+    <Provider store={store}>
+      <ValueInputComponent
+        value=""
+        onValueChange={() => {}}
+        onAssetDataChange={() => {}}
+        assetData={ethAsset}
+      />
+    </Provider>
   ));

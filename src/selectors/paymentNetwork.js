@@ -36,7 +36,7 @@ import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
-import type { Asset, Assets } from 'models/Asset';
+import type { Asset, AssetsBySymbol } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
@@ -47,10 +47,10 @@ import {
   activeAccountAddressSelector,
   activeAccountIdSelector,
   paymentNetworkBalancesSelector,
-  supportedAssetsSelector,
+  supportedAssetsPerChainSelector,
 } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
-import { accountAssetsSelector } from './assets';
+import { accountEthereumAssetsSelector } from './assets';
 
 const ppnTrxTags = [
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -99,9 +99,9 @@ export const paymentNetworkNonZeroBalancesSelector: ((
 ) => WalletAssetsBalances) = createSelector(
   PPNIncomingTransactionsSelector,
   archanovaAccountEthereumHistorySelector,
-  supportedAssetsSelector,
-  accountAssetsSelector,
-  (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: Assets) => {
+  supportedAssetsPerChainSelector,
+  accountEthereumAssetsSelector,
+  (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: AssetsBySymbol) => {
     return PPNTransactions
       .filter(({
         hash,

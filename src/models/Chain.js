@@ -23,10 +23,10 @@ import { CHAIN } from 'constants/chainConstants';
 
 export type Chain = $Values<typeof CHAIN>;
 
-export type ChainRecord<T> = {|
+export type ChainRecord<T> = {
   polygon?: T,
   binance?: T,
   xdai?: T,
   ethereum?: T,
-|};
+};
 

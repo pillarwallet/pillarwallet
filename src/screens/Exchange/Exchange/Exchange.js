@@ -45,8 +45,13 @@ import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useSupportedAssets, useRates } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  useRootSelector,
+  useFiatCurrency,
+  useChainSupportedAssets,
+  useChainRates,
+} from 'selectors';
+import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
@@ -68,10 +73,9 @@ function Exchange() {
   const fromInputRef = React.useRef();
 
   const fiatCurrency = useFiatCurrency();
-  const supportedAssets = useSupportedAssets();
-  const rates = useRates();
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
-  const assets = useRootSelector(accountAssetsSelector);
+  const assets = useRootSelector(accountEthereumAssetsSelector);
 
   const initialFromSymbol: string = navigation.getParam('fromAssetCode') || ETH;
   const initialToSymbol: string = navigation.getParam('toAssetCode') || PLR;
@@ -83,17 +87,23 @@ function Exchange() {
   const [fromAmount]: [string] = useDebounce(rawFromAmount, 500);
 
   const chainConfig = useChainConfig(CHAIN.ETHEREUM);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
   const fromOptions = React.useMemo(
-    () => getExchangeFromAssetOptions(assets, supportedAssets, balances, fiatCurrency, rates),
-    [assets, supportedAssets, balances, fiatCurrency, rates],
+    () => getExchangeFromAssetOptions(assets, ethereumSupportedAssets, balances, fiatCurrency, ethereumRates),
+    [assets, ethereumSupportedAssets, balances, fiatCurrency, ethereumRates],
   );
 
-  const toOptions = React.useMemo(() => getExchangeToAssetOptions(supportedAssets, balances, fiatCurrency, rates), [
-    supportedAssets,
+  const toOptions = React.useMemo(() => getExchangeToAssetOptions(
+    ethereumSupportedAssets,
     balances,
     fiatCurrency,
-    rates,
+    ethereumRates,
+  ), [
+    ethereumSupportedAssets,
+    balances,
+    fiatCurrency,
+    ethereumRates,
   ]);
 
   const fromAsset = React.useMemo(() => fromOptions.find((a) => a.symbol === fromSymbol), [fromOptions, fromSymbol]);

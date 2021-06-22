@@ -21,35 +21,34 @@
 import { createSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 
-// constants
+// Constants
 import { PLR } from 'constants/assetsConstants';
 
-// utils
+// Utils
 import { isEtherspotAccount } from 'utils/accounts';
-import { pickSupportedAssetsWithSymbols, getTotalBalanceInFiat } from 'utils/assets';
-import { getWalletAssetsSymbols } from 'utils/balances';
-import { mapRecordValues } from 'utils/object';
+import { getTotalBalanceInFiat } from 'utils/assets';
 
-// types
-import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Rates, Asset, Assets, AssetsByAccount } from 'models/Asset';
-import type { Account } from 'models/Account';
-import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
-
-// selectors
+// Selectors
 import {
-  assetsBalancesSelector,
-  supportedAssetsSelector,
   fiatCurrencySelector,
-  ratesSelector,
+  ratesPerChainSelector,
   activeAccountIdSelector,
   activeAccountSelector,
-} from './selectors';
+} from 'selectors';
 
-export const accountAssetsBalancesSelector = createSelector(
-  assetsBalancesSelector,
+// Types
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
+import type { RatesPerChain } from 'models/Rates';
+
+
+export const assetsBalancesPerAccountSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
+
+export const accountAssetsBalancesSelector: Selector<CategoryBalancesPerChain> = createSelector(
+  assetsBalancesPerAccountSelector,
   activeAccountIdSelector,
-  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain | {} => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },
@@ -68,42 +67,13 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
 export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
   activeAccountSelector,
   ({ paymentNetwork }) => paymentNetwork.availableStake,
-  ratesSelector,
+  ratesPerChainSelector,
   fiatCurrencySelector,
-  (activeAccount: Account, ppnBalance: number, rates: Rates, currency: string) => {
+  (activeAccount: Account, ppnBalance: number, ratesPerChain: RatesPerChain, currency: string) => {
     // currently not supported by Etherspot
     if (isEtherspotAccount(activeAccount)) return BigNumber(0);
 
     const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
-    return BigNumber(getTotalBalanceInFiat(balances, rates, currency));
-  },
-);
-
-/**
- * Compat function for providing array of assets represening all accounts assets across all chains.
- * Intended to be used in place of `assetsSelector` from 'selectors`.
- */
-export const assetsCompatSelector: Selector<AssetsByAccount> = createSelector(
-  assetsBalancesSelector,
-  supportedAssetsSelector,
-  (assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    return mapRecordValues(assetsBalances, (accountAssetsBalances: CategoryBalancesPerChain) => {
-      const symbols = getWalletAssetsSymbols(accountAssetsBalances);
-      return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
-    });
-  },
-);
-
-/**
- * Compat function for providing array of assets represening active account assets across all chains.
- * Intended to be used in place of `accountAssetsSelector` from 'selectors`.
- */
-export const accountAssetsCompatSelector: Selector<Assets> = createSelector(
-  activeAccountIdSelector,
-  assetsBalancesSelector,
-  supportedAssetsSelector,
-  (accountId: string, assetsBalances: AssetBalancesPerAccount, supportedAssets: Asset[]) => {
-    const symbols = getWalletAssetsSymbols(assetsBalances[accountId]);
-    return pickSupportedAssetsWithSymbols(supportedAssets, symbols);
+    return BigNumber(getTotalBalanceInFiat(balances, ratesPerChain.ethereum ?? {}, currency));
   },
 );

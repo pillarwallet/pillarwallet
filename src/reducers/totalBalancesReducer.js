@@ -18,25 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// constants
+import { BigNumber } from 'bignumber.js';
+
+// Constants
 import {
   SET_FETCHING_TOTAL_BALANCES,
   SET_TOTAL_BALANCES,
-  SET_ACCOUNT_TOTAL_BALANCE,
+  SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 
-// utils
-import { BigNumber } from 'utils/common';
+// Types
+import type { TotalBalancesPerAccount } from 'models/TotalBalances';
 
-// types
-import type { StoreTotalBalances } from 'models/TotalBalances';
-
+// State
 export type TotalBalancesReducerState = {
-  data: StoreTotalBalances,
+  data: TotalBalancesPerAccount,
   isFetching: boolean,
 };
 
+
+// Actions
 export type SetFetchingTotalBalancesAction = {|
   type: typeof SET_FETCHING_TOTAL_BALANCES,
   payload: boolean,
@@ -44,11 +46,11 @@ export type SetFetchingTotalBalancesAction = {|
 
 export type SetTotalBalancesAction = {|
   type: typeof SET_TOTAL_BALANCES,
-  payload: StoreTotalBalances,
+  payload: TotalBalancesPerAccount,
 |};
 
-export type SetAccountTotalChainCategoryBalanceAction = {|
-  type: typeof SET_ACCOUNT_TOTAL_BALANCE,
+export type SetAccountCategoryChainTotalBalanceAction = {|
+  type: typeof SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
   payload: {
     accountId: string,
     chain: string,
@@ -62,9 +64,10 @@ export type ResetAccountTotalBalancesAction = {|
   payload: string,
 |};
 
-export type TotalBalancesReducerAction = SetFetchingTotalBalancesAction
+export type TotalBalancesReducerAction =
+  | SetFetchingTotalBalancesAction
   | SetTotalBalancesAction
-  | SetAccountTotalChainCategoryBalanceAction
+  | SetAccountCategoryChainTotalBalanceAction
   | ResetAccountTotalBalancesAction;
 
 export const initialState = {
@@ -72,21 +75,18 @@ export const initialState = {
   isFetching: false,
 };
 
-const setNewBalance = (balancesState, accountId, chain, category, newBalance) => {
-  const accountState = balancesState[accountId] ?? {};
-  const categoryState = accountState[category] ?? {};
+const setNewBalance = (balancesState, accountId, category, chain, balance) => {
   return {
     ...balancesState,
     [accountId]: {
-      ...accountState,
+      ...balancesState?.[accountId],
       [category]: {
-        ...categoryState,
-        [chain]: newBalance,
+        ...balancesState?.[accountId]?.[category],
+        [chain]: balance,
       },
     },
   };
 };
-
 
 export default function totalBalancesReducer(
   state: TotalBalancesReducerState = initialState,
@@ -102,16 +102,11 @@ export default function totalBalancesReducer(
     case RESET_ACCOUNT_TOTAL_BALANCES:
       return { ...state, data: { ...state.data, [action.payload]: {} } };
 
-    case SET_ACCOUNT_TOTAL_BALANCE:
-      const {
-        accountId,
-        chain,
-        category,
-        balance,
-      } = action.payload;
+    case SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE:
+      const { accountId, chain, category, balance } = action.payload;
       return {
         ...state,
-        data: setNewBalance(state.data, accountId, chain, category, balance),
+        data: setNewBalance(state.data, accountId, category, chain, balance),
       };
 
     default:

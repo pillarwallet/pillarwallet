@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,22 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type PoolUserInfo = {
-  openBalance?: string,
-  totalBalance?: string,
-  userCurrentPoolBalance?: string,
-  ticketBalance: string,
+// constants
+import { USD, EUR, GBP } from 'constants/assetsConstants';
+
+// types
+import type { ChainRecord } from 'models/Chain';
+
+
+export type Currency = typeof USD | typeof EUR | typeof GBP;
+
+export type Rates = {
+  USD?: number,
+  EUR?: number,
+  GBP?: number,
+  ETH?: number,
 }
 
-export type PoolInfo = {
-  currentPrize: string,
-  prizeEstimate: string,
-  drawDate: number,
-  remainingTimeMs: number,
-  totalPoolTicketsCount: number,
-  userInfo: ?PoolUserInfo,
-};
+export type RatesBySymbol = { [symbol: string]: Rates };
 
-export type PoolPrizeInfo = {
-  [symbol: string]: PoolInfo,
-}
+export type RatesPerChain = ChainRecord<RatesBySymbol>;

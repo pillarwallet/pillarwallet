@@ -18,29 +18,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Image from 'components/Image';
-import { formatTokenAmount } from 'utils/common';
+
+// utils
+import { formatTokenAmount, wrapBigNumber } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import type { Rates, Asset } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
+import { useTheme } from 'utils/themes';
+
+// selectors
+import {
+  useChainRates,
+  useChainSupportedAssets,
+  useFiatCurrency,
+} from 'selectors';
+
+// types
+import type { Chain } from 'models/Chain';
+import type { Value } from 'utils/common';
+
 
 type Props = {
-  amount: number,
+  amount: Value,
   assetSymbol: string,
   text: string,
-  rates: Rates,
-  baseFiatCurrency: ?string,
-  supportedAssets: Asset[],
-  theme: Theme,
   assetIcon?: {uri: string} | number,
   fiatAmount?: string,
+  chain: Chain,
 };
 
 const Container = styled.View`
@@ -53,15 +62,26 @@ const TokenImage = styled(Image)`
 `;
 
 export const TokenReviewSummaryComponent = ({
-  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme, assetIcon, fiatAmount,
+  assetSymbol,
+  amount,
+  text,
+  assetIcon,
+  fiatAmount,
+  chain,
 }: Props) => {
-  const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
+  const theme = useTheme();
+  const fiatCurrency = useFiatCurrency();
+  const chainSupportedAssets = useChainSupportedAssets(chain);
+  const chainRates = useChainRates(chain);
+
+  const asset = chainSupportedAssets.find(({ symbol }) => assetSymbol === symbol);
   const formattedAmount = formatTokenAmount(amount, assetSymbol);
 
   if (asset) {
     assetIcon = { uri: asset.iconUrl };
+    const amountBN = wrapBigNumber(amount);
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
+      fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), asset.symbol, fiatCurrency);
     }
   }
 
@@ -79,14 +99,4 @@ export const TokenReviewSummaryComponent = ({
   );
 };
 
-const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
-  assets: { supportedAssets },
-}: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
-  supportedAssets,
-});
-
-export default withTheme(connect(mapStateToProps)(TokenReviewSummaryComponent));
+export default TokenReviewSummaryComponent;

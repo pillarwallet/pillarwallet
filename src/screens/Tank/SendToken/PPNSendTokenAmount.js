@@ -41,7 +41,7 @@ import { themedColors } from 'utils/themes';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Rates } from 'models/Asset';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -93,15 +93,15 @@ const FormWrapper = styled.View`
 
 
 type Props = {
-  token: string;
+  token: string,
   address: string,
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
   formValues?: Object,
   availableStake: number,
   session: Object,
-  rates: Rates,
-  baseFiatCurrency: string,
+  ratesPerChain: RatesPerChain,
+  baseFiatCurrency: Currency,
 };
 
 type State = {
@@ -175,19 +175,21 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const {
       session,
       availableStake,
-      rates,
+      ratesPerChain,
       baseFiatCurrency,
     } = this.props;
 
     const { symbol, iconUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
+    const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
+
     // balance
     const balance = availableStake;
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // max amount
@@ -197,7 +199,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
@@ -264,10 +266,10 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  rates: { data: rates },
+  rates: { data: ratesPerChain },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
-  rates,
+  ratesPerChain,
   session,
   baseFiatCurrency,
 });
