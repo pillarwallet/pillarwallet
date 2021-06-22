@@ -67,7 +67,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { sumBy } from 'utils/bigNumber';
+import { wrapBigNumberOrNil, sumBy } from 'utils/bigNumber';
 
 // selectors
 import { accountsSelector, supportedAssetsPerChainSelector } from 'selectors';
@@ -443,15 +443,10 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                   label,
                   balanceUSD,
                   img,
-                  share: tokensShare,
-                  supply: tokensSupply,
+                  share,
                 } = asset;
 
                 const valueInUsd = BigNumber(balanceUSD);
-
-                const share = tokensShare && tokensSupply
-                  ? BigNumber(tokensShare).dividedBy(tokensSupply)
-                  : null;
 
                 return {
                   key: `${protocol}-${symbol}`,
@@ -459,7 +454,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                   service: balances.label,
                   title: label,
                   iconUrl: img ? `https://zapper.fi/images/${img}` : null,
-                  share,
+                  share: wrapBigNumberOrNil(share),
                   valueInUsd,
                 };
               });
