@@ -87,7 +87,6 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
-export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 
 export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 
