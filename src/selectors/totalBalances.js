@@ -149,22 +149,19 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
 };
 
 /**
- * This will return zero for service assets.
+ * Note: this will return zero for service assets to prevent double counting them.
  */
 const calculateWalletAssetsFiatValue = (
-  assetBalances: CategoryAssetsBalances,
+  categoryAssetBalances: CategoryAssetsBalances,
   supportedAssets: Asset[],
   rates: RatesBySymbol,
   currency: Currency,
 ): BigNumber => {
-  const assetBalancesInFiat = map(assetBalances.wallet ?? {}, ({ symbol, balance }: WalletAssetBalance) => {
+  const assetBalancesInFiat = map(categoryAssetBalances.wallet ?? {}, ({ symbol, balance }: WalletAssetBalance) => {
     if (!balance) return BigNumber(0);
 
-    const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(assetBalances, supportedAssets, symbol);
-    if (hasMatchingServiceAsset) {
-      console.log('FILTER OUT', symbol, balance);
-      return BigNumber(0);
-    }
+    const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
+    if (hasMatchingServiceAsset) return BigNumber(0);
 
     const rate = getRate(rates, symbol, currency);
     return BigNumber(balance).times(rate);
