@@ -22,6 +22,9 @@ import { BigNumber } from 'bignumber.js';
 // Constants
 import { ETH, USD } from 'constants/assetsConstants';
 
+// Utils
+import { wrapBigNumber } from 'utils/bigNumber';
+
 // Types
 import type { RatesBySymbol, Currency } from 'models/Rates';
 
@@ -38,5 +41,7 @@ export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?num
 }
 
 export function getFiatValueFromUsd(valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber {
-  return valueInUsd && usdToFiatRate != null ? BigNumber(valueInUsd).times(usdToFiatRate) : null;
+  if (!valueInUsd || usdToFiatRate == null) return null;
+
+  return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
 }
