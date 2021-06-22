@@ -275,12 +275,8 @@ export const findAllAssetsBySymbol = (assets: Asset[], symbolToFind: ?string): A
   return assets.filter((asset) => asset.symbol === symbolToFind) ?? [];
 };
 
-export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
-  return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
-};
-
-export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
-  return supportedAssets.find((asset) => asset.symbol === symbol);
+export const findFirstAssetBySymbol = (assets: Asset[], symbolToFind: ?string): ?Asset => {
+  return assets.find((asset) => asset.symbol === symbolToFind);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -485,7 +481,7 @@ export const mapWalletAssetsBalancesIntoAssetsBySymbol = (
   chainSupportedAssets: Asset[],
 ): AssetsBySymbol => mapValues(
   walletAssetsBalances,
-  ({ symbol }: WalletAssetBalance) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
+  ({ symbol }: WalletAssetBalance) => findFirstAssetBySymbol(chainSupportedAssets, symbol),
 );
 
 export const sortSupportedAssets = (

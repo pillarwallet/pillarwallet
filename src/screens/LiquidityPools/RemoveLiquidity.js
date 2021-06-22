@@ -41,7 +41,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
-import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { findAssetByAddress, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
@@ -128,7 +128,7 @@ const RemoveLiquidityScreen = ({
   const tokensData = pool.tokensProportions
     .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
 
-  const poolTokenData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
+  const poolTokenData = findAssetByAddress(supportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (

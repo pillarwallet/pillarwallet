@@ -44,7 +44,7 @@ import { resetEstimateTransactionAction } from 'actions/transactionEstimateActio
 import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 // utils
-import { findSupportedAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // selectors
@@ -113,7 +113,7 @@ const StakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = findSupportedAsset(ethereumSupportedAssets, pool.uniswapPairAddress);
+  const assetData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
