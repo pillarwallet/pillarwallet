@@ -41,8 +41,9 @@ import { useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { spacing } from 'utils/variables';
+import { formatLiquidityPoolShare } from 'utils/format';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -98,10 +99,12 @@ function LiquidityPoolsTab() {
     }
 
     const { title, iconUrl, value, change, share } = headerListItem.item;
+    const formattedShare = formatLiquidityPoolShare(share);
+
     return (
       <LiquidityPoolListItem
         title={title}
-        subtitle={share ? t('poolShare', { share }) : null}
+        subtitle={share ? t('poolShare', { share: formattedShare }) : null}
         iconUrl={iconUrl}
         value={value}
         change={change}

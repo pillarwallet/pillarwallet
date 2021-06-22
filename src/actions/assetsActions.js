@@ -483,9 +483,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                   ? balanceUsdBN
                   : balanceUsdBN.times(usdRate ?? 0);
 
-                // TODO: do we need to fix exponential for very small values or hide small share at all?
                 const share = tokensShare && tokensSupply
-                  ? BigNumber(tokensShare).dividedBy(tokensSupply).times(100)
+                  ? BigNumber(tokensShare).dividedBy(tokensSupply)
                   : null;
 
                 return {
