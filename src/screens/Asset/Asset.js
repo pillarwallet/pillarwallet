@@ -82,7 +82,7 @@ import type { AssetsBySymbol, AssetsPerChain, AssetDataNavigationParam } from 'm
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { CategoryBalancesPerChain } from 'models/Balances';
+import type { AssetBalances } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
 import type { Currency } from 'models/Rates';
@@ -91,7 +91,7 @@ import type { Currency } from 'models/Rates';
 type Props = {
   fetchAssetsBalances: () => void,
   accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
-  accountAssetsBalances: CategoryBalancesPerChain,
+  accountAssetsBalances: AssetBalances,
   baseFiatCurrency: ?Currency,
   smartWalletState: Object,
   accounts: Account[],

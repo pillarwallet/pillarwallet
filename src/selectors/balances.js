@@ -39,16 +39,16 @@ import {
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
+import type { WalletAssetsBalances, AssetBalances, AssetBalancesPerAccount } from 'models/Balances';
 import type { RatesPerChain } from 'models/Rates';
 
 
 export const assetsBalancesPerAccountSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 
-export const accountAssetsBalancesSelector: Selector<CategoryBalancesPerChain> = createSelector(
+export const accountAssetsBalancesSelector: Selector<AssetBalances> = createSelector(
   assetsBalancesPerAccountSelector,
   activeAccountIdSelector,
-  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): AssetBalances => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },

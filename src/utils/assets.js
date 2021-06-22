@@ -42,7 +42,7 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
-import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
+import type { CategoryAssetsBalances, WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesBySymbol } from 'models/Rates';
 
@@ -265,6 +265,14 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 /** Checks if address list contains given address. Similar to `Array.includes`.  */
 export const addressesInclude = (addresses: string[], addressToFind: ?string): boolean => {
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
+};
+
+export const findAssetByAddress = (assets: Asset[], addressToFind: ?string): Asset | void => {
+  return assets?.find((asset) => addressesEqual(asset.address, addressToFind));
+};
+
+export const findAllAssetsBySymbol = (assets: Asset[], symbolToFind: ?string): Asset[] => {
+  return assets.filter((asset) => asset.symbol === symbolToFind) ?? [];
 };
 
 export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
