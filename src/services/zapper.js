@@ -169,6 +169,7 @@ const depositProtocols = [
   PROTOCOLS.VESPER,
 ];
 
+// TODO: when adding protocols please unhide Home rewards list item & Assets rewards tab.
 const rewardProtocols = [];
 
 const supportedProtocols = [
