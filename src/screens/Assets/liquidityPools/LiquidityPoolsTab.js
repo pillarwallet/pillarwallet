@@ -34,7 +34,7 @@ import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 
 // Constants
-import { SERVICES_FLOW } from 'constants/navigationConstants';
+import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -71,12 +71,11 @@ function LiquidityPoolsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const navigateToServices = () => {
-    // TODO: navigate to new WalletConnect screen when available
-    navigation.navigate(SERVICES_FLOW);
+  const navigateToWalletConnect = () => {
+    navigation.navigate(WALLETCONNECT);
   };
 
-  const buttons = [{ title: t('addLiquidity'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('addLiquidity'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;
