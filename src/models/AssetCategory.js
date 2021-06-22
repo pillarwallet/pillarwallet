@@ -22,3 +22,18 @@
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 export type AssetCategory = $Values<typeof ASSET_CATEGORY>;
+
+/**
+ * Generic record of data per asset category.
+ *
+ * Note: it does not contain collectibles, as they are usually treated separately.
+ */
+export type AssetCategoryRecord<T> = {
+  wallet?: T,
+  deposits?: T,
+  investments?: T,
+  liquidityPools?: T,
+  rewards?: T,
+};
+
+export type AssetCategoryRecordKeys = $Keys<AssetCategoryRecord<mixed>>;

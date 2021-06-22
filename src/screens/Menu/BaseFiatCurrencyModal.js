@@ -19,27 +19,33 @@
 */
 
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import t from 'translations/translate';
 
+// Components
 import OptionListModal from 'components/OptionListModal';
 
-import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { baseFiatCurrencySelector } from 'selectors/selectors';
+// Constants
+import { supportedFiatCurrencies } from 'constants/assetsConstants';
+
+// Selectors
+import { useFiatCurrency } from 'selectors';
+
+// Actions
 import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
 
 const BaseFiatCurrencyModal = () => {
+  const fiatCurrency = useFiatCurrency();
   const dispatch = useDispatch();
-  const baseFiatCurrency = useSelector(baseFiatCurrencySelector);
 
   return (
     <OptionListModal
       title={t('settingsContent.settingsItem.fiatCurrency.screenTitle')}
       options={currencies}
-      initial={baseFiatCurrency || defaultFiatCurrency}
-      onSelect={value => dispatch(saveBaseFiatCurrencyAction(value))}
+      initial={fiatCurrency}
+      onSelect={(value) => dispatch(saveBaseFiatCurrencyAction(value))}
     />
   );
 };

@@ -27,6 +27,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
+import { getUsdToFiatRate } from 'utils/rates';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -53,7 +54,6 @@ export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerCh
 export const fiatCurrencySelector = (root: RootReducerState) =>
   root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
 
-export const assetsBalancesSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 export const collectiblesSelector = ({ collectibles }: RootReducerState) => collectibles.data;
 export const collectiblesHistorySelector =
   ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
@@ -87,7 +87,6 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
-export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 
 export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 
@@ -105,3 +104,14 @@ export const useIsExchangeAvailable = (): boolean => {
   const account = useActiveAccount();
   return isEtherspotAccount(account);
 };
+
+/**
+ * Returns exchange rate from USD to user's fiat currency.
+ */
+export const usdToFiatRateSelector = (root: RootReducerState) => {
+  const rates = ratesPerChainSelector(root).ethereum;
+  const currency = fiatCurrencySelector(root);
+  return getUsdToFiatRate(rates ?? {}, currency);
+};
+
+export const useUsdToFiatRate = () => useRootSelector(usdToFiatRateSelector);

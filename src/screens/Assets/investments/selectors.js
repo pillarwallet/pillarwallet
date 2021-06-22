@@ -32,7 +32,7 @@ import { sumRecord } from 'utils/bigNumber';
 // Types
 import type { ChainRecord } from 'models/Chain';
 import type { FiatBalance } from 'models/Value';
-import type { InvestmentAssetBalance } from 'models/Balances';
+import type { ServiceAssetBalance } from 'models/Balances';
 
 export function useInvestmentsTotalBalance(): FiatBalance {
   const value = sumRecord(useInvestmentsBalancePerChain());
@@ -43,6 +43,6 @@ export function useInvestmentsBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountInvestmentsBalancePerChainSelector);
 }
 
-export function useInvestmentAssets(): ChainRecord<InvestmentAssetBalance[]> {
+export function useInvestmentAssets(): ChainRecord<ServiceAssetBalance[]> {
   return getChainInvestmentAssetsBalances(useRootSelector(accountAssetsBalancesSelector));
 }

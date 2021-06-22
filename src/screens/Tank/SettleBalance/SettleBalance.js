@@ -51,7 +51,7 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 // utils
 import {
@@ -71,7 +71,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
   paymentNetworkBalances: WalletAssetsBalances,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   ratesPerChain: RatesPerChain,
   assets: AssetsBySymbol,
   session: Object,

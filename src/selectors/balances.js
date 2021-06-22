@@ -21,32 +21,34 @@
 import { createSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 
-// constants
+// Constants
 import { PLR } from 'constants/assetsConstants';
 
-// utils
+// Utils
 import { isEtherspotAccount } from 'utils/accounts';
 import { getTotalBalanceInFiat } from 'utils/assets';
 
-// types
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { Account } from 'models/Account';
-import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
-import type { RatesPerChain } from 'models/Rates';
-
-// selectors
+// Selectors
 import {
-  assetsBalancesSelector,
   fiatCurrencySelector,
   ratesPerChainSelector,
   activeAccountIdSelector,
   activeAccountSelector,
-} from './selectors';
+} from 'selectors';
 
-export const accountAssetsBalancesSelector = createSelector(
-  assetsBalancesSelector,
+// Types
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+import type { WalletAssetsBalances, CategoryBalancesPerChain, AssetBalancesPerAccount } from 'models/Balances';
+import type { RatesPerChain } from 'models/Rates';
+
+
+export const assetsBalancesPerAccountSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
+
+export const accountAssetsBalancesSelector: Selector<CategoryBalancesPerChain> = createSelector(
+  assetsBalancesPerAccountSelector,
   activeAccountIdSelector,
-  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain | {} => {
+  (balances: AssetBalancesPerAccount, activeAccountId: ?string): CategoryBalancesPerChain => {
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },

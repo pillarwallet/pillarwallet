@@ -19,12 +19,7 @@
 */
 
 // constants
-import {
-  ETH,
-  EUR,
-  GBP,
-  USD,
-} from 'constants/assetsConstants';
+import { USD, EUR, GBP } from 'constants/assetsConstants';
 
 // types
 import type { ChainRecord } from 'models/Chain';
@@ -32,10 +27,12 @@ import type { ChainRecord } from 'models/Chain';
 
 export type Currency = typeof USD | typeof EUR | typeof GBP;
 
-// TODO: migrate to strongly typed keys: USD, EUR, GBP, ETH.
-export type RateKey = Currency | typeof ETH;
-
-export type Rates = { [symbol: string]: number };
+export type Rates = {
+  USD?: number,
+  EUR?: number,
+  GBP?: number,
+  ETH?: number,
+}
 
 export type RatesBySymbol = { [symbol: string]: Rates };
 

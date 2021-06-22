@@ -68,7 +68,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
-import type { RatesBySymbol } from 'models/Rates';
+import type { Currency, RatesBySymbol } from 'models/Rates';
 
 // local
 import ValueInputHeader from './ValueInputHeader';
@@ -99,7 +99,7 @@ export type ExternalProps = {|
 type InnerProps = {|
   assets: AssetOption[],
   accountAssetsBalances: CategoryBalancesPerChain,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   collectibles: Collectible[],
   theme: Theme,
 |};
@@ -399,7 +399,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
 
 const getAssetBalanceFromFiat = (
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   fiatBalance: ?string | ?number,
   rates: RatesBySymbol,
   symbol: string,

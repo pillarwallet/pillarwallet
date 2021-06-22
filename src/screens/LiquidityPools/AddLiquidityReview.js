@@ -49,12 +49,13 @@ import { activeAccountAddressSelector, useChainRates } from 'selectors';
 // types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Currency } from 'models/Rates';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   feeInfo: ?TransactionFeeInfo,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   accountAddress: string,
 };
 

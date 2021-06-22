@@ -29,15 +29,15 @@ import { clamp } from 'lodash';
 import PagerControl from 'components/modern/PagerControl';
 
 // Types
+import type { AssetCategoryRecord } from 'models/AssetCategory';
 import type { ChainRecord } from 'models/Chain';
-import type { CategoryRecord } from 'models/TotalBalances';
 
 // Local
 import AssetPieChart from './components/AssetPieChart';
 import ChainPieChart from './components/ChainPieChart';
 
 type Props = {|
-  balancePerCategory: CategoryRecord<BigNumber>,
+  balancePerCategory: AssetCategoryRecord<BigNumber>,
   balancePerChain: ChainRecord<BigNumber>,
 |};
 

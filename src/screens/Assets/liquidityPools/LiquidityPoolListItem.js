@@ -40,8 +40,8 @@ type Props = {|
   title: ?string,
   subtitle: ?string,
   iconUrl: ?string,
-  value: BigNumber,
-  change?: BigNumber,
+  value: ?BigNumber,
+  change?: ?BigNumber,
   share?: BigNumber,
   onPress?: () => mixed,
 |};

@@ -29,9 +29,7 @@ import type {
   CategoryBalancesPerChain,
   WalletAssetBalance,
   WalletAssetsBalances,
-  DepositAssetBalance,
-  InvestmentAssetBalance,
-  LiquidityPoolAssetBalance,
+  ServiceAssetBalance,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
@@ -44,17 +42,17 @@ export const getChainWalletAssetsBalances = (
 
 export const getChainDepositAssetsBalances = (
   assetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<DepositAssetBalance[]> =>
+): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
 
 export const getChainLiquidityPoolAssetsBalances = (
   assetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<LiquidityPoolAssetBalance[]> =>
+): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
 
 export const getChainInvestmentAssetsBalances = (
   assetsBalances: ?CategoryBalancesPerChain,
-): ChainRecord<InvestmentAssetBalance[]> =>
+): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
 export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {

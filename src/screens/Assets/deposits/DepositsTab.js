@@ -37,18 +37,19 @@ import FloatingButtons from 'components/FloatingButtons';
 import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useUsdToFiatRate } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { spacing } from 'utils/variables';
-import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { formatPercentValue } from 'utils/format';
+import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { getFiatValueFromUsd } from 'utils/rates';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
-import type { DepositAssetBalance } from 'models/Balances';
+import type { ServiceAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -67,6 +68,7 @@ function DepositsTab() {
   const totalBalance = useDepositsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
+  const usdToFiatRate = useUsdToFiatRate();
 
   const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
@@ -86,12 +88,14 @@ function DepositsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<DepositAssetBalance>) => {
+  const renderItem = (headerListItem: HeaderListItem<ServiceAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change, currentApy } = headerListItem.item;
+    const { title, iconUrl, valueInUsd, changeInUsd, currentApy } = headerListItem.item;
+    const value = getFiatValueFromUsd(valueInUsd, usdToFiatRate);
+    const change = getFiatValueFromUsd(changeInUsd, usdToFiatRate);
     const formattedCurrentApy = formatPercentValue(currentApy);
     const subtitle = formattedCurrentApy ? tRoot('label.currentApyFormat', { value: formattedCurrentApy }) : undefined;
 
@@ -117,7 +121,7 @@ function DepositsTab() {
 export default DepositsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<DepositAssetBalance>>,
+  ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

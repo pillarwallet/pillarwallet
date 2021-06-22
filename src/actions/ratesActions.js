@@ -38,8 +38,9 @@ import {
 import { reportErrorLog } from 'utils/common';
 
 // selectors
+import { supportedAssetsPerChainSelector } from 'selectors';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
-import { assetsBalancesSelector, supportedAssetsPerChainSelector } from 'selectors';
+import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -80,7 +81,7 @@ export const fetchAssetsRatesAction = () => {
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const assetsBalancesPerAccount = assetsBalancesSelector(getState());
+    const assetsBalancesPerAccount = assetsBalancesPerAccountSelector(getState());
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts

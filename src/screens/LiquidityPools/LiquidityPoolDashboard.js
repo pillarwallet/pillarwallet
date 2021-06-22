@@ -67,6 +67,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
+import type { Currency } from 'models/Rates';
 
 // local
 import StakingEnabledModal from './StakingEnabledModal';
@@ -75,13 +76,13 @@ import StakingEnabledModal from './StakingEnabledModal';
 type Props = {
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   poolDataGraphQueryFailed: boolean,
   isFetchingLiquidityPoolsData: boolean,
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-  shownStakingEnabledModal: {[string]: boolean},
-  setShownStakingEnabledModal: string => void,
+  shownStakingEnabledModal: { [string]: boolean },
+  setShownStakingEnabledModal: (string) => void,
 };
 
 const MainContainter = styled.View`

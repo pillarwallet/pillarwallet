@@ -57,7 +57,7 @@ import { spacing } from 'utils/variables';
 // Types
 import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesBySymbol } from 'models/Rates';
+import type { Currency, RatesBySymbol } from 'models/Rates';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
@@ -184,7 +184,7 @@ const getRemainingBalance = (
   return transfer ? balance.minus(transfer.amount ?? 0) : balance;
 };
 
-const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: RatesBySymbol, fiatCurrency: string) => {
+const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: RatesBySymbol, fiatCurrency: Currency) => {
   let result = 0;
 
   assetTransfers.forEach(({ assetData, amount }) => {
@@ -208,7 +208,7 @@ const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
 const sortAssetTransfers = (
   assetTransfers: KeyBasedAssetTransfer[],
   rates: RatesBySymbol,
-  fiatCurrency: string,
+  fiatCurrency: Currency,
 ): KeyBasedAssetTransfer[] => {
   return orderBy(
     assetTransfers,
