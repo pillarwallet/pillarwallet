@@ -170,9 +170,12 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
     );
   };
 
+  // Temporarily hide rewards tab until rewards fetching is implemented
+  const categoriesToRender = Object.keys(balancePerCategory).filter(category => category !== ASSET_CATEGORY.REWARDS);
+
   return (
     <Container>
-      {Object.keys(balancePerCategory).map((category) => renderCategoryWithBalance(category))}
+      {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
       {renderCollectiblesCategory()}
 

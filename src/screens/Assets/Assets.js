@@ -41,7 +41,6 @@ import WalletTab from './wallet/WalletTab';
 import DepositsTab from './deposits/DepositsTab';
 import InvestmentsTab from './investments/InvestmentsTab';
 import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
-import RewardsTab from './rewards/RewardsTab';
 import CollectiblesTab from './collectibles/CollectiblesTab';
 
 
@@ -55,7 +54,8 @@ function Assets() {
     { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
     { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
     { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
-    { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
+    // Temporarily hide rewards tab until rewards fetching is implemented
+    // { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
   ];
 
