@@ -72,9 +72,7 @@ function LiquidityPoolsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const navigateToWalletConnect = () => {
-    navigation.navigate(WALLETCONNECT);
-  };
+  const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
   const buttons = [{ title: t('addLiquidity'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
