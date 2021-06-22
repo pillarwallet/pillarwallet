@@ -34,7 +34,7 @@ import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 
 // Constants
-import { SERVICES_FLOW } from 'constants/navigationConstants';
+import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Selectors
 import { useFiatCurrency, useUsdToFiatRate } from 'selectors';
@@ -73,12 +73,9 @@ function InvestmentsTab() {
   const currency = useFiatCurrency();
   const usdToFiatRate = useUsdToFiatRate();
 
-  const navigateToServices = () => {
-    // TODO: navigate to new WalletConnect screen when available
-    navigation.navigate(SERVICES_FLOW);
-  };
+  const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
-  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToServices }];
+  const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
   const renderListHeader = () => {
     const { value, change } = totalBalance;

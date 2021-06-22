@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { SectionList, Linking, useWindowDimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
+import { useInteractionManager } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
@@ -65,6 +66,7 @@ function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
+  const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
 
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
@@ -73,7 +75,6 @@ function WalletConnectHome() {
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
-
 
   const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
 
@@ -111,7 +112,7 @@ function WalletConnectHome() {
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
-      {!isFetching ? (
+      {isReady && !isFetching && (
         <SectionList
           sections={sections ?? []}
           renderSectionHeader={({ section }) => <SectionHeader>{section.title}</SectionHeader>}
@@ -121,7 +122,8 @@ function WalletConnectHome() {
           ListHeaderComponent={renderListHeader()}
           contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
-      ) : (
+      )}
+      {isReady && isFetching && (
         <>
           {renderListHeader()}
           <Center flex={1}>
@@ -171,9 +173,9 @@ type SectionData = {|
 |};
 
 const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => {
+  const supportedChains = useSupportedChains();
   const categoriesQuery = useFetchWalletConnectCategoriesQuery();
   const appsQuery = useFetchWalletConnectAppsQuery();
-  const supportedChains = useSupportedChains();
 
   if (!categoriesQuery.data || !appsQuery.data) return { isFetching: true };
 
