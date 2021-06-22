@@ -71,9 +71,7 @@ function InvestmentsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const navigateToWalletConnect = () => {
-    navigation.navigate(WALLETCONNECT);
-  };
+  const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
   const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
