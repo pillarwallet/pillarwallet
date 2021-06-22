@@ -68,9 +68,7 @@ function DepositsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
 
-  const navigateToWalletConnect = () => {
-    navigation.navigate(WALLETCONNECT);
-  };
+  const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
   const buttons = [{ title: t('deposit'), iconName: 'plus', onPress: navigateToWalletConnect }];
 
