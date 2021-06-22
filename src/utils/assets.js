@@ -42,7 +42,7 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Value } from 'utils/common';
-import type { CategoryAssetsBalances, WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
+import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesBySymbol } from 'models/Rates';
 
