@@ -58,7 +58,7 @@ import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
-import type { AssetBalances } from 'models/Balances';
+import type { AccountAssetBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
 
@@ -66,7 +66,7 @@ type Props = {
   defaultContact: ?Contact,
   source: string,
   navigation: NavigationScreenProp<*>,
-  accountAssetsBalances: AssetBalances,
+  accountAssetsBalances: AccountAssetBalances,
   session: SessionData,
   useGasToken: boolean,
   assetsWithBalance: AssetOption[],

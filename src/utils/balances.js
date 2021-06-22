@@ -28,7 +28,7 @@ import { mapChainRecordValues } from 'utils/chains';
 // Types
 import type { Asset } from 'models/Asset';
 import type {
-  AssetBalances,
+  AccountAssetBalances,
   WalletAssetBalance,
   WalletAssetsBalances,
   ServiceAssetBalance,
@@ -37,28 +37,28 @@ import type {
 import type { ChainRecord } from 'models/Chain';
 
 export const getChainWalletAssetsBalances = (
-  assetsBalances: ?AssetBalances,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<WalletAssetsBalances> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) =>
     filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
   );
 
 export const getChainDepositAssetsBalances = (
-  assetsBalances: ?AssetBalances,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
 
 export const getChainLiquidityPoolAssetsBalances = (
-  assetsBalances: ?AssetBalances,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
 
 export const getChainInvestmentAssetsBalances = (
-  assetsBalances: ?AssetBalances,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
-export const getWalletAssetsSymbols = (accountAssetsBalances: ?AssetBalances): string[] => {
+export const getWalletAssetsSymbols = (accountAssetsBalances: ?AccountAssetBalances): string[] => {
   const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
 
   return Object.keys(walletAssetsBalancesPerChain).flatMap((chain) => {

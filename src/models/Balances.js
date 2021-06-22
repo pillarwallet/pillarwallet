@@ -24,10 +24,10 @@ import { BigNumber } from 'bignumber.js';
 import type { ChainRecord } from 'models/Chain';
 
 export type AssetBalancesPerAccount = {
-  [accountId: string]: AssetBalances,
+  [accountId: string]: AccountAssetBalances,
 };
 
-export type AssetBalances = ChainRecord<CategoryAssetsBalances>;
+export type AccountAssetBalances = ChainRecord<CategoryAssetsBalances>;
 
 export type CategoryAssetsBalances = {|
   wallet?: WalletAssetsBalances,
@@ -37,14 +37,14 @@ export type CategoryAssetsBalances = {|
   rewards?: ServiceAssetBalance[],
 |};
 
+export type WalletAssetsBalances = {
+  [symbol: string]: WalletAssetBalance,
+};
+
 export type WalletAssetBalance = {|
   symbol: string,
   balance: string,
 |};
-
-export type WalletAssetsBalances = {
-  [symbol: string]: WalletAssetBalance,
-};
 
 export type ServiceAssetBalance = {|
   key: string,

@@ -67,7 +67,7 @@ import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AssetBalances, WalletAssetsBalances } from 'models/Balances';
+import type { AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesBySymbol } from 'models/Rates';
 
 // local
@@ -98,7 +98,7 @@ export type ExternalProps = {|
 
 type InnerProps = {|
   assets: AssetOption[],
-  accountAssetsBalances: AssetBalances,
+  accountAssetsBalances: AccountAssetBalances,
   baseFiatCurrency: ?Currency,
   collectibles: Collectible[],
   theme: Theme,

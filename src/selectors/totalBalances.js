@@ -46,7 +46,7 @@ import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { Asset, AssetsPerChain } from 'models/Asset';
 import type {
   AssetBalancesPerAccount,
-  AssetBalances,
+  AccountAssetBalances,
   CategoryAssetsBalances,
   WalletAssetBalance,
 } from 'models/Balances';
@@ -76,7 +76,7 @@ export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalances
     ratesPerChain: RatesPerChain,
     currency: Currency,
   ): WalletTotalBalancesPerAccount =>
-    mapRecordValues(assetsBalancesPerAccount, (assetsBalancesPerChain: AssetBalances) =>
+    mapRecordValues(assetsBalancesPerAccount, (assetsBalancesPerChain: AccountAssetBalances) =>
       mapChainRecordValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances, chain: Chain) =>
         calculateWalletAssetsFiatValue(
           assetBalances ?? {},
