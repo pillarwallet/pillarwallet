@@ -20,41 +20,46 @@
 
 import { BigNumber } from 'bignumber.js';
 
-// types
+// Types
 import type { AccountRecord } from 'models/Account';
+import type { AssetCategoryRecord } from 'models/AssetCategory';
 import type { ChainRecord } from 'models/Chain';
 
 /**
  * Total balances are represented in top-down nesting:
  *  - level 1. Account
- *  - level 2. Category
+ *  - level 2. Asset Category
  *  - level 3. Chain
  *
  * This hierarchy represents the order in which they are most frequently used.
  */
 
-// Category balances are calculated using selectors in redux
-export type CategoryRecord<T> = {
-  wallet?: T,
-  deposits?: T,
-  investments?: T,
-  liquidityPools?: T,
-  rewards?: T,
-};
+/** Generic helper type for Account -> Category -> Chain nesting. */
+export type AccountCategoryChainRecord<T> = AccountRecord<AssetCategoryRecord<ChainRecord<T>>>;
 
-export type TotalBalances = AccountRecord<?AccountTotalBalances>;
-export type AccountTotalBalances = CategoryRecord<ChainRecord<BigNumber>>;
+/** Generic helper type for Category -> Chain nesting. */
+export type CategoryChainRecord<T> = AssetCategoryRecord<ChainRecord<T>>;
 
-// Stored balances are stored directly in redux
-export type StoreCategoryRecord<T> = {
-  deposits?: T,
-  investments?: T,
-  liquidityPools?: T,
-  rewards?: T,
-};
+/**
+ * Total balances for all accounts, as returned from selectors &  used by app components.
+ *
+ * Nesting: Account -> Category -> Chain
+ * Values expressed in user's fiat currency.
+ */
+export type TotalBalancesPerAccount = AccountCategoryChainRecord<BigNumber>;
 
-export type StoreTotalBalances = AccountRecord<?StoreAccountTotalBalances>;
-export type StoreAccountTotalBalances = StoreCategoryRecord<ChainRecord<BigNumber>>;
+/**
+ * Total balances for given account, as returned from selectors & used by app components.
+ *
+ * Nesting: Category -> Chain
+ * Values expressed in user's fiat currency.
+ */
+export type TotalBalances = CategoryChainRecord<BigNumber>;
 
-// Wallet balances are calculated using selectors in redux
-export type WalletTotalBalances = AccountRecord<ChainRecord<BigNumber>>;
+/**
+ * Wallet total for all accounts, as returned by selectors.
+ *
+ * Nesting: Account -> Chain
+ * Values expressed in user's fiat currency.
+ */
+export type WalletTotalBalancesPerAccount = AccountRecord<ChainRecord<BigNumber>>;

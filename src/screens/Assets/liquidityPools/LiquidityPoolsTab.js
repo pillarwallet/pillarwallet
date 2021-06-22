@@ -37,18 +37,19 @@ import FloatingButtons from 'components/FloatingButtons';
 import { SERVICES_FLOW } from 'constants/navigationConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useUsdToFiatRate } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { formatLiquidityPoolShare } from 'utils/format';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
+import { getFiatValueFromUsd } from 'utils/rates';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
-import type { LiquidityPoolAssetBalance } from 'models/Balances';
+import type { ServiceAssetBalance } from 'models/Balances';
 
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
@@ -71,6 +72,7 @@ function LiquidityPoolsTab() {
   const totalBalance = useLiquidityPoolsTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
+  const usdToFiatRate = useUsdToFiatRate();
 
   const navigateToServices = () => {
     // TODO: navigate to new WalletConnect screen when available
@@ -93,12 +95,14 @@ function LiquidityPoolsTab() {
     return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
   };
 
-  const renderItem = (headerListItem: HeaderListItem<LiquidityPoolAssetBalance>) => {
+  const renderItem = (headerListItem: HeaderListItem<ServiceAssetBalance>) => {
     if (headerListItem.type === 'header') {
       return <ServiceListHeader title={headerListItem.key} />;
     }
 
-    const { title, iconUrl, value, change, share } = headerListItem.item;
+    const { title, iconUrl, valueInUsd, changeInUsd, share } = headerListItem.item;
+    const value = getFiatValueFromUsd(valueInUsd, usdToFiatRate);
+    const change = getFiatValueFromUsd(changeInUsd, usdToFiatRate);
     const formattedShare = formatLiquidityPoolShare(share);
 
     return (
@@ -131,7 +135,7 @@ function LiquidityPoolsTab() {
 export default LiquidityPoolsTab;
 
 type Section = {
-  ...SectionBase<HeaderListItem<LiquidityPoolAssetBalance>>,
+  ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
   balance: BigNumber,
 };

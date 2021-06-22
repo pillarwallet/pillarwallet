@@ -18,7 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// constants
+import { BigNumber } from 'bignumber.js';
+
+// Constants
 import {
   SET_FETCHING_TOTAL_BALANCES,
   SET_TOTAL_BALANCES,
@@ -26,17 +28,17 @@ import {
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 
-// utils
-import { BigNumber } from 'utils/common';
+// Types
+import type { TotalBalancesPerAccount } from 'models/TotalBalances';
 
-// types
-import type { StoreTotalBalances } from 'models/TotalBalances';
-
+// State
 export type TotalBalancesReducerState = {
-  data: StoreTotalBalances,
+  data: TotalBalancesPerAccount,
   isFetching: boolean,
 };
 
+
+// Actions
 export type SetFetchingTotalBalancesAction = {|
   type: typeof SET_FETCHING_TOTAL_BALANCES,
   payload: boolean,
@@ -44,7 +46,7 @@ export type SetFetchingTotalBalancesAction = {|
 
 export type SetTotalBalancesAction = {|
   type: typeof SET_TOTAL_BALANCES,
-  payload: StoreTotalBalances,
+  payload: TotalBalancesPerAccount,
 |};
 
 export type SetAccountCategoryChainTotalBalanceAction = {|

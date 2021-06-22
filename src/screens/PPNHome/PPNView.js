@@ -72,7 +72,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
@@ -95,7 +95,7 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 
 
 type Props = {
-  baseFiatCurrency: ?string,
+  baseFiatCurrency: ?Currency,
   ratesPerChain: RatesPerChain,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
