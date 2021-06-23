@@ -47,7 +47,7 @@ import archanovaService from 'services/archanova';
 // utils
 import { transformBalancesToObject } from 'utils/assets';
 import { chainFromChainId, getSupportedChains } from 'utils/chains';
-import { parseTokenAmount, reportErrorLog } from 'utils/common';
+import { BigNumber, parseTokenAmount, reportErrorLog } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
@@ -408,7 +408,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
           title,
           iconUrl,
           share: wrapBigNumberOrNil(share),
-          valueInUsd: wrapBigNumberOrNil(valueInUsd),
+          valueInUsd: BigNumber(valueInUsd),
         }));
 
         dispatch({
@@ -417,7 +417,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             accountId,
             chain,
             category: assetsCategory,
-            balances: mappedBalances,
+            balances: BigNumber(mappedBalances),
           },
         });
 
