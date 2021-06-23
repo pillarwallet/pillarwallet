@@ -19,7 +19,7 @@
 */
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { View, RefreshControl } from 'react-native';
+import { View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -39,6 +39,7 @@ import Stats from 'components/Stats';
 import Progress from 'components/Progress';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
+import RefreshControl from 'components/RefreshControl';
 import ValueOverTimeGraph from 'components/Graph/ValueOverTimeGraph';
 
 // constants

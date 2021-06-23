@@ -19,7 +19,6 @@
 */
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -33,6 +32,7 @@ import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, MediumText } from 'components/Typography';
+import RefreshControl from 'components/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
@@ -82,7 +82,7 @@ import type { AssetsBySymbol, AssetsPerChain, AssetDataNavigationParam } from 'm
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { CategoryBalancesPerChain } from 'models/Balances';
+import type { AccountAssetBalances } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
 import type { Currency } from 'models/Rates';
@@ -91,7 +91,7 @@ import type { Currency } from 'models/Rates';
 type Props = {
   fetchAssetsBalances: () => void,
   accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
-  accountAssetsBalances: CategoryBalancesPerChain,
+  accountAssetsBalances: AccountAssetBalances,
   baseFiatCurrency: ?Currency,
   smartWalletState: Object,
   accounts: Account[],

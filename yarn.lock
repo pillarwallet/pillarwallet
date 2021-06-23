@@ -2252,6 +2252,19 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
+"@nerdwallet/apollo-cache-policies@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@nerdwallet/apollo-cache-policies/-/apollo-cache-policies-1.2.1.tgz#d20195be418d4cc81a0f70a98f8021bdcb3d5cd3"
+  integrity sha512-B9ffnsNadLJ4Ge6l92lwVDLgzSmen8MqZhZenK4ocQQ7x1vctOdVSffXtmJUCYb98/KYHNQRskj0xgnS1+dlmw==
+  dependencies:
+    "@types/graphql" "^14.5.0"
+    "@types/lodash" "^4.14.168"
+    "@types/uuid" "^7.0.4"
+    graphql "^15.5.0"
+    lodash "^4.17.20"
+    typescript "^4.3.2"
+    uuid "^7.0.3"
+
 "@netgum/types@^0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@netgum/types/-/types-0.1.8.tgz#d18eb6ac55f53235110a385ed73684574597a6ee"
@@ -3247,6 +3260,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/graphql@^14.5.0":
+  version "14.5.0"
+  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.5.0.tgz#a545fb3bc8013a3547cf2f07f5e13a33642b75d6"
+  integrity sha512-MOkzsEp1Jk5bXuAsHsUi6BVv0zCO+7/2PTiZMXWDSsMXvNU6w/PLMQT2vHn8hy2i0JqojPz1Sz6rsFjHtsU0lA==
+  dependencies:
+    graphql "*"
+
 "@types/hammerjs@^2.0.36":
   version "2.0.36"
   resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.36.tgz#17ce0a235e9ffbcdcdf5095646b374c2bf615a4c"
@@ -3314,6 +3334,11 @@
   version "4.14.168"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
+
+"@types/lodash@^4.14.168":
+  version "4.14.170"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
+  integrity sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==
 
 "@types/minimatch@*":
   version "3.0.3"
@@ -3422,6 +3447,11 @@
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@types/ungap__global-this/-/ungap__global-this-0.3.1.tgz#18ce9f657da556037a29d50604335614ce703f4c"
   integrity sha512-+/DsiV4CxXl6ZWefwHZDXSe1Slitz21tom38qPCaG0DYCS1NnDPIQDTKcmQ/tvK/edJUKkmuIDBJbmKDiB0r/g==
+
+"@types/uuid@^7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-7.0.4.tgz#00a5749810b4ad80bff73a61f9cc9d0d521feb3c"
+  integrity sha512-WGZCqBZZ0mXN2RxvLHL6/7RCu+OWs28jgQMP04LWfpyJlQUMTR6YU9CNJAKDgbw+EV/u687INXuLUc7FuML/4g==
 
 "@types/validator@^13.1.3":
   version "13.1.3"
@@ -7823,13 +7853,14 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.6.1.tgz#e526a8a816dbc0bfbcad684c744c26faa366439c"
-  integrity sha512-MEVuM0WbW0bY5S0R8QUWGuYtc2efwins5bYEKf2CWJBrBZC661H2kjjzI+3HR9LmMkv11DI5Ml6uYrxym4BVaA==
+etherspot@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.11.0.tgz#c6540edb3edfd13724f450800beebabc472e768d"
+  integrity sha512-rH9NtGamcpNJ8rd+Vpe6R5btzDYDeEhvvM/CW4SAN6xg4Y4VtiD0WTL8nLx8qJzrtGz4HcEO+gK7m0Q3W3AVBQ==
   dependencies:
     "@apollo/client" "3.3.11"
     "@etherspot/contracts" "1.2.3"
+    "@nerdwallet/apollo-cache-policies" "1.2.1"
     class-transformer "0.4.0"
     class-validator "0.13.1"
     cross-fetch "3.0.6"
@@ -8952,6 +8983,11 @@ graphql-tag@^2.12.0:
   integrity sha512-VV1U4O+9x99EkNpNmCUV5RZwq6MnK4+pGbRYWG+lA/m3uo7TSqJF81OkcOP148gFP6fzdl7JWYBrwWVTS9jXww==
   dependencies:
     tslib "^2.1.0"
+
+graphql@*, graphql@^15.5.0:
+  version "15.5.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.5.1.tgz#f2f84415d8985e7b84731e7f3536f8bb9d383aad"
+  integrity sha512-FeTRX67T3LoE3LWAxxOlW2K3Bz+rMYAC18rRguK4wgXaTZMiJwSUwDmPFo3UadAKbzirKIg5Qy+sNJXbpPRnQw==
 
 graphql@15.5.0:
   version "15.5.0"
@@ -17490,6 +17526,11 @@ typedarray@^0.0.6:
 typeforce@^1.11.5:
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/typeforce/-/typeforce-1.18.0.tgz#d7416a2c5845e085034d70fcc5b6cc4a90edbfdc"
+
+typescript@^4.3.2:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.4.tgz#3f85b986945bcf31071decdd96cf8bfa65f9dcbc"
+  integrity sha512-uauPG7XZn9F/mo+7MrsRjyvbxFpzemRjKEZXS4AK83oP2KKOJPvb+9cO/gmnv8arWZvhnjVOXz7B49m1l0e9Ew==
 
 ua-parser-js@^0.7.18:
   version "0.7.21"

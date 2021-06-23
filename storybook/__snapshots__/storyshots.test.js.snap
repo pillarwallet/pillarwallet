@@ -39917,7 +39917,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
       onScrollBeginDrag={[Function]}
       onScrollEndDrag={[Function]}
       refreshControl={
-        <RefreshControlMock
+        <RefreshControl
           onRefresh={[Function]}
           refreshing={false}
         />

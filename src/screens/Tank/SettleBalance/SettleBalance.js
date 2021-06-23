@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import { RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
@@ -37,6 +36,7 @@ import Button from 'components/Button';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
+import RefreshControl from 'components/RefreshControl';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
 

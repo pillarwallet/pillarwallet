@@ -92,6 +92,7 @@ export const semanticLightThemeColors = {
   pagerInactive: '#d4d9db',
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
+  refreshControl: '#0000004C',
 };
 
 export const semanticDarkThemeColors = {
@@ -144,6 +145,7 @@ export const semanticDarkThemeColors = {
   pagerInactive: '#4D4D4D',
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
+  refreshControl: '#FFFFFF4C',
 };
 
 export const themedColors = {
