@@ -567,7 +567,11 @@ export class EtherspotService {
 
       return totalBalances;
     } catch (error) {
-      reportErrorLog('EtherspotService getDashboardData failed', { error });
+      reportErrorLog('EtherspotService getAccountTotalBalances failed', {
+        error,
+        accountAddress,
+        currencySymbol,
+      });
       return null;
     }
   }
