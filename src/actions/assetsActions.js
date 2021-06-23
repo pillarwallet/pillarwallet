@@ -20,11 +20,10 @@
 import { isEmpty } from 'lodash';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
-import { BigNumber } from 'bignumber.js';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, COLLECTIBLES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ETH, COLLECTIBLES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, USD } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
   SET_ACCOUNT_ASSETS_BALANCES,
@@ -44,15 +43,10 @@ import { CHAIN } from 'constants/chainConstants';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
-import {
-  getZapperAvailableChainProtocols,
-  getZapperProtocolBalanceOnNetwork,
-  mapZapperProtocolIdToBalanceCategory,
-} from 'services/zapper';
 
 // utils
 import { transformBalancesToObject } from 'utils/assets';
-import { getSupportedChains } from 'utils/chains';
+import { chainFromChainId, getSupportedChains } from 'utils/chains';
 import { parseTokenAmount, reportErrorLog } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
@@ -63,11 +57,10 @@ import {
   isArchanovaAccount,
   isEtherspotAccount,
   getAccountType,
-  findAccountByAddress,
-  isArchanovaAccountAddress,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { wrapBigNumberOrNil, sumBy } from 'utils/bigNumber';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { assetsCategoryFromTotalBalancesCategory } from 'utils/etherspot';
 
 // selectors
 import { accountsSelector, supportedAssetsPerChainSelector } from 'selectors';
@@ -383,112 +376,62 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     const accounts = accountsSelector(getState());
     const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
 
-    smartWalletAccounts.forEach((account) => dispatch(fetchCollectiblesAction(account)));
+    await Promise.all(smartWalletAccounts.map(async (account) => {
+      dispatch(fetchCollectiblesAction(account));
 
-    const accountsAddresses = smartWalletAccounts.map((account) => getAccountAddress(account));
-    const availableChainProtocols = await getZapperAvailableChainProtocols(accountsAddresses);
-    if (!availableChainProtocols) {
-      dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
-      reportErrorLog('fetchAllAccountsTotalBalancesAction failed: no availableChainProtocols', { accountsAddresses });
-      return;
-    }
+      const accountId = getAccountId(account);
+      const accountAddress = getAccountAddress(account);
 
-    try {
-      await Promise.all(availableChainProtocols.map(async ({ chain, zapperProtocolIds, zapperNetworkId }) => {
-        // we don't need to pull multi chain balances for Archanova account, only Ethereum
-        const requestForAddresses = chain !== CHAIN.ETHEREUM
-          ? accountsAddresses.filter((address) => !isArchanovaAccountAddress(address, accounts))
-          : accountsAddresses;
+      // we're fetching and storing values in USD and converting rates by app selected currency later
+      const accountTotalBalances = await etherspotService.getAccountTotalBalances(accountAddress, USD);
+      if (!accountTotalBalances) return;
 
-        const chainProtocolsBalances = await Promise.all(zapperProtocolIds.map(async (zapperProtocolId) => {
-          const protocolBalancesByAccounts = await getZapperProtocolBalanceOnNetwork(
-            requestForAddresses,
-            zapperProtocolId,
-            zapperNetworkId,
-          );
+      accountTotalBalances.forEach(({
+        balances: protocolBalances,
+        category: totalBalancesCategory,
+        chainId,
+        totalBalance,
+      }) => {
+        const chain = chainFromChainId[chainId];
+        const assetsCategory = assetsCategoryFromTotalBalancesCategory[totalBalancesCategory];
 
-          const balanceCategory = mapZapperProtocolIdToBalanceCategory(zapperProtocolId);
-          if (!protocolBalancesByAccounts || !balanceCategory) return null;
-
-          return { category: balanceCategory, balances: protocolBalancesByAccounts };
+        const mappedBalances = protocolBalances.map(({
+          key,
+          title,
+          serviceTitle,
+          iconUrl,
+          share,
+          value: valueInUsd,
+        }) => ({
+          key,
+          service: serviceTitle,
+          title,
+          iconUrl,
+          share: wrapBigNumberOrNil(share),
+          valueInUsd: wrapBigNumberOrNil(valueInUsd),
         }));
 
-        // filter ones that are null (no protocol>category map found or no balances)
-        const availableChainProtocolsBalances = chainProtocolsBalances.filter(Boolean);
-
-        availableChainProtocolsBalances.forEach(({
-          balances: protocolBalancesByAccounts,
-          category: balanceCategory,
-        }) => {
-          Object.keys(protocolBalancesByAccounts).forEach((accountAddress) => {
-            const account = findAccountByAddress(accountAddress, accounts);
-            const accountProtocolBalances = protocolBalancesByAccounts[accountAddress]?.products;
-
-            // no need to add anything no matching account found or empty balances
-            if (!account || isEmpty(accountProtocolBalances)) return;
-
-            let categoryTotalBalance = BigNumber(0);
-
-            const categoryAssetsBalances = accountProtocolBalances.reduce((combinedBalances, balances) => {
-              const protocolAssetsBalances = balances?.assets;
-
-              // useless to proceed if no assets for provided protocol
-              if (isEmpty(protocolAssetsBalances)) return combinedBalances;
-
-              const assetsBalances = protocolAssetsBalances.map((asset) => {
-                const {
-                  protocol,
-                  symbol,
-                  label,
-                  balanceUSD,
-                  img,
-                  share,
-                } = asset;
-
-                const valueInUsd = BigNumber(balanceUSD);
-
-                return {
-                  key: `${protocol}-${symbol}`,
-                  service: balances.label,
-                  title: label,
-                  iconUrl: img ? `https://zapper.fi/images/${img}` : null,
-                  share: wrapBigNumberOrNil(share),
-                  valueInUsd,
-                };
-              });
-
-              // add to total balance
-              const totalValue = sumBy(assetsBalances, (balance) => balance.valueInUsd);
-              categoryTotalBalance = categoryTotalBalance.plus(totalValue);
-
-              return [...combinedBalances, ...assetsBalances];
-            }, []);
-
-            dispatch({
-              type: SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
-              payload: {
-                accountId: getAccountId(account),
-                category: balanceCategory,
-                chain,
-                balance: categoryTotalBalance,
-              },
-            });
-
-            dispatch({
-              type: SET_ACCOUNT_ASSETS_BALANCES,
-              payload: {
-                accountId: getAccountId(account),
-                chain,
-                category: balanceCategory,
-                balances: categoryAssetsBalances,
-              },
-            });
-          });
+        dispatch({
+          type: SET_ACCOUNT_ASSETS_BALANCES,
+          payload: {
+            accountId,
+            chain,
+            category: assetsCategory,
+            balances: mappedBalances,
+          },
         });
-      }));
-    } catch (error) {
-      reportErrorLog('fetchAllAccountsTotalBalancesAction failed', { error });
-    }
+
+        dispatch({
+          type: SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
+          payload: {
+            accountId,
+            category: assetsCategory,
+            chain,
+            balance: totalBalance,
+          },
+        });
+      });
+    }));
 
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 

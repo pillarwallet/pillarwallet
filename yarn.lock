@@ -7823,10 +7823,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.6.1.tgz#e526a8a816dbc0bfbcad684c744c26faa366439c"
-  integrity sha512-MEVuM0WbW0bY5S0R8QUWGuYtc2efwins5bYEKf2CWJBrBZC661H2kjjzI+3HR9LmMkv11DI5Ml6uYrxym4BVaA==
+etherspot@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.9.0.tgz#33338b6f633bde038bcd10851816285896100f6e"
+  integrity sha512-yMr/N9EzUZYv9CvApFwKrfjk87HPlLSKYx+yA+R/zn5TZI+q5c94VWm2UgxJW0K5nzx53yxhxmWUdzmnVAqWQA==
   dependencies:
     "@apollo/client" "3.3.11"
     "@etherspot/contracts" "1.2.3"

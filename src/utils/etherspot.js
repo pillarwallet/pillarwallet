@@ -27,6 +27,7 @@ import {
   ExchangeProviders as EtherspotExchangeProviders,
   AccountStates,
   GatewayBatchStates,
+  AccountDashboardProtocols as EtherspotAccountDashboardProtocols,
 } from 'etherspot';
 
 // constants
@@ -35,7 +36,7 @@ import {
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import { ETH } from 'constants/assetsConstants';
+import { ASSET_CATEGORY, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
 
@@ -229,4 +230,12 @@ const exchangeProviderFromEtherspot = {
 
 export const parseExchangeProvider = (provider: string): ?ExchangeProvider => {
   return exchangeProviderFromEtherspot[provider];
+};
+
+export const assetsCategoryFromTotalBalancesCategory = {
+  [EtherspotAccountDashboardProtocols.Deposits]: ASSET_CATEGORY.DEPOSITS,
+  [EtherspotAccountDashboardProtocols.LiquidityPools]: ASSET_CATEGORY.LIQUIDITY_POOLS,
+  [EtherspotAccountDashboardProtocols.Investments]: ASSET_CATEGORY.INVESTMENTS,
+  // TODO: enable once rewards available
+  // [AccountDashboardProtocols.Rewards]: ASSET_CATEGORY.REWARDS
 };

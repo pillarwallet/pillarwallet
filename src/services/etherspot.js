@@ -36,7 +36,8 @@ import {
   NotificationTypes,
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
-  type AccountDashboard,
+  Currencies as EtherspotCurrencies,
+  AccountTotalBalancesItem as EtherspotAccountTotalBalancesItem,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -554,17 +555,21 @@ export class EtherspotService {
       });
   }
 
-  getDashboardData(accountAddress: string, currencySymbol: string, periodInDays: number): Promise<AccountDashboard> {
-    return this.sdk
-      .getAccountDashboard({
+  async getAccountTotalBalances(
+    accountAddress: string,
+    currencySymbol: EtherspotCurrencies,
+  ): Promise<?(EtherspotAccountTotalBalancesItem[])> {
+    try {
+      const { totalBalances } = await this.sdk.getAccountTotalBalances({
         account: accountAddress,
-        currency: currencySymbol.toLowerCase(),
-        days: periodInDays,
-      })
-      .catch((error) => {
-        reportErrorLog('EtherspotService getDashboardData failed', { error });
-        return null;
+        currency: currencySymbol,
       });
+
+      return totalBalances;
+    } catch (error) {
+      reportErrorLog('EtherspotService getDashboardData failed', { error });
+      return null;
+    }
   }
 
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
