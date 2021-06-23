@@ -37,7 +37,6 @@ import {
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
-  AccountTotalBalancesItem as EtherspotAccountTotalBalancesItem,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -76,6 +75,7 @@ import type {
   TokenListToken,
   ExchangeOffer as EtherspotExchangeOffer,
   GatewayEstimatedBatch,
+  EtherspotAccountTotalBalancesItem,
 } from 'utils/types/etherspot';
 import type { AssetCore, Asset } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';

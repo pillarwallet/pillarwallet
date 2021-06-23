@@ -403,6 +403,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
           key,
           title,
           serviceTitle,
+          address,
           iconUrl,
           share,
           value: valueInUsd,
@@ -410,6 +411,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
           key,
           service: serviceTitle,
           title,
+          address,
           iconUrl,
           share: wrapBigNumberOrNil(share),
           valueInUsd: BigNumber(valueInUsd),
@@ -421,7 +423,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
             accountId,
             chain,
             category: assetsCategory,
-            balances: BigNumber(mappedBalances),
+            balances: mappedBalances,
           },
         });
 
