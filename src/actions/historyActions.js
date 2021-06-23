@@ -139,7 +139,6 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const accounts = accountsSelector(getState());
     const { isOnline } = getState().session.data;
     const etherspotAccount = findFirstEtherspotAccount(accounts);
-
     if (!etherspotAccount || !isOnline) return;
 
     dispatch(setFetchingHistoryAction(true));
