@@ -232,7 +232,7 @@ export const parseExchangeProvider = (provider: string): ?ExchangeProvider => {
   return exchangeProviderFromEtherspot[provider];
 };
 
-export const assetsCategoryFromTotalBalancesCategory = {
+export const assetsCategoryFromEtherspotBalancesCategory = {
   [EtherspotAccountDashboardProtocols.Deposits]: ASSET_CATEGORY.DEPOSITS,
   [EtherspotAccountDashboardProtocols.LiquidityPools]: ASSET_CATEGORY.LIQUIDITY_POOLS,
   [EtherspotAccountDashboardProtocols.Investments]: ASSET_CATEGORY.INVESTMENTS,

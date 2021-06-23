@@ -60,7 +60,7 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { assetsCategoryFromTotalBalancesCategory } from 'utils/etherspot';
+import { assetsCategoryFromEtherspotBalancesCategory } from 'utils/etherspot';
 
 // selectors
 import { accountsSelector, supportedAssetsPerChainSelector } from 'selectors';
@@ -387,15 +387,15 @@ export const fetchAllAccountsTotalBalancesAction = () => {
       if (!accountTotalBalances) return;
 
       accountTotalBalances.forEach(({
-        balances: protocolBalances,
-        category: totalBalancesCategory,
+        balances,
+        category: balancesCategory,
         chainId,
         totalBalance,
       }) => {
         const chain = chainFromChainId[chainId];
-        const assetsCategory = assetsCategoryFromTotalBalancesCategory[totalBalancesCategory];
+        const assetsCategory = assetsCategoryFromEtherspotBalancesCategory[balancesCategory];
 
-        const mappedBalances = protocolBalances.map(({
+        const mappedBalances = balances.map(({
           key,
           title,
           serviceTitle,
