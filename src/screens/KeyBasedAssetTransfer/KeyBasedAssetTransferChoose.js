@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { SectionList, RefreshControl } from 'react-native';
+import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -42,6 +42,7 @@ import BalanceView from 'components/BalanceView';
 import Button from 'components/Button';
 import CheckBox from 'components/modern/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import RefreshControl from 'components/RefreshControl';
 import Text from 'components/modern/Text';
 import TextWithCopy from 'components/TextWithCopy';
 

@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
@@ -40,6 +40,7 @@ import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
+import RefreshControl from 'components/RefreshControl';
 import SWActivationModal from 'components/SWActivationModal';
 import Modal from 'components/Modal';
 

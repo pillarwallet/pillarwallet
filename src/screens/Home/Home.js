@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
-import { RefreshControl } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 // Actions
@@ -31,6 +30,7 @@ import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
 import { Container, Content } from 'components/modern/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
+import RefreshControl from 'components/RefreshControl';
 import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';

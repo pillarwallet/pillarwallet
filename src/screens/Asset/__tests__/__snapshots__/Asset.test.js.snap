@@ -160,7 +160,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     keyboardSpace={0}
     onScroll={[Function]}
     refreshControl={
-      <RefreshControlMock
+      <RefreshControl
         onRefresh={[Function]}
         refreshing={false}
       />
