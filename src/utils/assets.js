@@ -267,12 +267,16 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
 };
 
-export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
-  return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+export const findAssetByAddress = (assets: Asset[], addressToFind: ?string): Asset | void => {
+  return assets?.find((asset) => addressesEqual(asset.address, addressToFind));
 };
 
-export const findSupportedAssetBySymbol = (supportedAssets: Asset[], symbol: ?string): ?Asset => {
-  return supportedAssets.find((asset) => asset.symbol === symbol);
+export const findAllAssetsBySymbol = (assets: Asset[], symbolToFind: ?string): Asset[] => {
+  return assets.filter((asset) => asset.symbol === symbolToFind) ?? [];
+};
+
+export const findFirstAssetBySymbol = (assets: Asset[], symbolToFind: ?string): ?Asset => {
+  return assets.find((asset) => asset.symbol === symbolToFind);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -477,7 +481,7 @@ export const mapWalletAssetsBalancesIntoAssetsBySymbol = (
   chainSupportedAssets: Asset[],
 ): AssetsBySymbol => mapValues(
   walletAssetsBalances,
-  ({ symbol }: WalletAssetBalance) => findSupportedAssetBySymbol(chainSupportedAssets, symbol),
+  ({ symbol }: WalletAssetBalance) => findFirstAssetBySymbol(chainSupportedAssets, symbol),
 );
 
 export const sortSupportedAssets = (

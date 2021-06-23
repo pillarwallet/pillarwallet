@@ -51,7 +51,7 @@ import {
 // Types
 import type { Account } from 'models/Account';
 import type { AssetsPerChain, AssetsBySymbol, Asset } from 'models/Asset';
-import type { AssetBalancesPerAccount, CategoryBalancesPerChain, WalletAssetsBalances } from 'models/Balances';
+import type { AssetBalancesPerAccount, AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { RatesPerChain, Currency } from 'models/Rates';
 
@@ -66,7 +66,7 @@ export const accountAssetsPerChainSelector: Selector<ChainRecord<AssetsBySymbol>
   accountAssetsBalancesSelector,
   supportedAssetsPerChainSelector,
   (
-    accountAssetsBalances: CategoryBalancesPerChain,
+    accountAssetsBalances: AccountAssetBalances,
     supportedAssets: AssetsPerChain,
   ): ChainRecord<AssetsBySymbol> => mapValues(
     accountAssetsBalances,
@@ -164,7 +164,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
     activeAccountId: string,
     ratesPerChain: RatesPerChain,
     baseFiatCurrency: Currency,
-    accountAssetsBalances: CategoryBalancesPerChain,
+    accountAssetsBalances: AccountAssetBalances,
     supportedAssetsPerChain: AssetsPerChain,
   ) => {
     if (!activeAccountId) return {};

@@ -28,7 +28,7 @@ import SendAsset from 'components/SendAsset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { CategoryBalancesPerChain } from 'models/Balances';
+import type { AccountAssetBalances } from 'models/Balances';
 
 // selectors
 import { accountAssetsBalancesSelector } from 'selectors/balances';
@@ -36,7 +36,7 @@ import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  accountAssetsBalances: CategoryBalancesPerChain,
+  accountAssetsBalances: AccountAssetBalances,
   session: SessionData,
 };
 

@@ -22,40 +22,43 @@ import { BigNumber } from 'bignumber.js';
 import { pickBy } from 'lodash';
 
 // Utils
+import { findAllAssetsBySymbol, addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
 
 // Types
+import type { Asset } from 'models/Asset';
 import type {
-  CategoryBalancesPerChain,
+  AccountAssetBalances,
   WalletAssetBalance,
   WalletAssetsBalances,
   ServiceAssetBalance,
+  CategoryAssetsBalances,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
 export const getChainWalletAssetsBalances = (
-  assetsBalances: ?CategoryBalancesPerChain,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<WalletAssetsBalances> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) =>
     filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
   );
 
 export const getChainDepositAssetsBalances = (
-  assetsBalances: ?CategoryBalancesPerChain,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
 
 export const getChainLiquidityPoolAssetsBalances = (
-  assetsBalances: ?CategoryBalancesPerChain,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
 
 export const getChainInvestmentAssetsBalances = (
-  assetsBalances: ?CategoryBalancesPerChain,
+  assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
-export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesPerChain): string[] => {
+export const getWalletAssetsSymbols = (accountAssetsBalances: ?AccountAssetBalances): string[] => {
   const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
 
   return Object.keys(walletAssetsBalancesPerChain).flatMap((chain) => {
@@ -66,4 +69,31 @@ export const getWalletAssetsSymbols = (accountAssetsBalances: ?CategoryBalancesP
 
 export const filterNonZeroAssetBalances = (balances: WalletAssetsBalances): WalletAssetsBalances => {
   return pickBy(balances, ({ balance }: WalletAssetBalance) => !!balance && !BigNumber(balance).isZero());
+};
+
+export const findServiceAssetBalance = (
+  balances: ?(ServiceAssetBalance[]),
+  addressToFind: string,
+): ServiceAssetBalance | void => {
+  return balances?.find((asset) => addressesEqual(asset.address, addressToFind));
+};
+
+/**
+ * Check if user has service asset balances for given asset symbol.
+ *
+ * Note: given symbol may correspond to 1+ supported asset, so we need to pick them from supported assets.
+ */
+export const hasServiceAssetBalanceForSymbol = (
+  assetBalances: CategoryAssetsBalances,
+  supportedAssets: Asset[],
+  symbol: string,
+): boolean => {
+  const matchingSupportedAssets = findAllAssetsBySymbol(supportedAssets, symbol);
+
+  return matchingSupportedAssets.some(
+    (asset) =>
+      findServiceAssetBalance(assetBalances.deposits, asset.address) ??
+      findServiceAssetBalance(assetBalances.investments, asset.address) ??
+      findServiceAssetBalance(assetBalances.liquidityPools, asset.address),
+  );
 };
