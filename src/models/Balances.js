@@ -23,12 +23,27 @@ import { BigNumber } from 'bignumber.js';
 // types
 import type { ChainRecord } from 'models/Chain';
 
+export type AssetBalancesPerAccount = {
+  [accountId: string]: AccountAssetBalances,
+};
+
+export type AccountAssetBalances = ChainRecord<CategoryAssetsBalances>;
+
 export type CategoryAssetsBalances = {|
   wallet?: WalletAssetsBalances,
   deposits?: ServiceAssetBalance[],
   investments?: ServiceAssetBalance[],
   liquidityPools?: ServiceAssetBalance[],
   rewards?: ServiceAssetBalance[],
+|};
+
+export type WalletAssetsBalances = {
+  [symbol: string]: WalletAssetBalance,
+};
+
+export type WalletAssetBalance = {|
+  symbol: string,
+  balance: string,
 |};
 
 export type ServiceAssetBalance = {|
@@ -40,19 +55,5 @@ export type ServiceAssetBalance = {|
   iconUrl: ?string,
   share?: ?BigNumber,
   currentApy?: ?BigNumber,
+  address: string,
 |};
-
-export type WalletAssetBalance = {|
-  symbol: string,
-  balance: string,
-|};
-
-export type WalletAssetsBalances = {
-  [symbol: string]: WalletAssetBalance,
-};
-
-export type AssetBalancesPerAccount = {
-  [accountId: string]: CategoryBalancesPerChain,
-};
-
-export type CategoryBalancesPerChain = ChainRecord<CategoryAssetsBalances>;

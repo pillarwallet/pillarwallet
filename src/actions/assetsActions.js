@@ -439,6 +439,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
                 const {
                   protocol,
                   symbol,
+                  address,
                   label,
                   balanceUSD,
                   img,
@@ -449,6 +450,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
                 return {
                   key: `${protocol}-${symbol}`,
+                  address,
                   service: balances.label,
                   title: label,
                   iconUrl: img ? `https://zapper.fi/images/${img}` : null,

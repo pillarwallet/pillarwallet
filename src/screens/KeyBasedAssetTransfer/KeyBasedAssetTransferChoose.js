@@ -54,7 +54,7 @@ import {
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
-  findSupportedAssetBySymbol,
+  findFirstAssetBySymbol,
 } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -137,7 +137,7 @@ const KeyBasedAssetTransferChoose = ({
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
       .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => findSupportedAssetBySymbol(ethereumSupportedAssets, symbol))
+      .map((symbol) => findFirstAssetBySymbol(ethereumSupportedAssets, symbol))
       .filter(Boolean)
       .map(mapAssetToAssetData);
 
