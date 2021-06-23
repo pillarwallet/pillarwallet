@@ -19,7 +19,6 @@
 */
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -33,6 +32,7 @@ import HistoryList from 'components/HistoryList';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, MediumText } from 'components/Typography';
+import RefreshControl from 'components/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
