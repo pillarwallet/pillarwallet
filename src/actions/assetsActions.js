@@ -361,12 +361,6 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
   };
 };
 
-/**
- * Note: Per current moment of implementation it's not needed to
- * separate this per single account action because we would even
- * need to double the requests from Zapper as they allow to query
- * for multiple addresses and response time does not increase significantly.
- */
 export const fetchAllAccountsTotalBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (getState().totalBalances.isFetching) return;
