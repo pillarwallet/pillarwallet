@@ -225,9 +225,11 @@ export const fetchTransactionsHistoryAction = () => {
 
       const archanovaTransactionsHistory = parseArchanovaTransactions(
         archanovaTransactions,
+        ethereumSupportedAssets,
         assetsList,
         relayerExtensionDevice?.address,
       );
+
       const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, archanovaTransactionsHistory);
       const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
       const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
