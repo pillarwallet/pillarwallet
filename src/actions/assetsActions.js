@@ -394,6 +394,10 @@ export const fetchAllAccountsTotalBalancesAction = () => {
       }) => {
         const chain = chainFromChainId[chainId];
         const assetsCategory = assetsCategoryFromEtherspotBalancesCategory[balancesCategory];
+        if (!assetsCategory) {
+          reportErrorLog('Cannot map Etherspot balances category into assets category', { balancesCategory });
+          return;
+        }
 
         const mappedBalances = balances.map(({
           key,
