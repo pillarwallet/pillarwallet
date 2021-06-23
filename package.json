@@ -65,7 +65,7 @@
     "eth-sig-util": "^3.0.0",
     "ethereumjs-util": "^7.0.8",
     "ethers": "5.0.19",
-    "etherspot": "^1.10.0",
+    "etherspot": "^1.11.0",
     "events": "^1.0.0",
     "gas-price-oracle": "^0.1.4",
     "https-browserify": "~0.0.0",
