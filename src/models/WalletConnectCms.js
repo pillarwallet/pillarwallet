@@ -23,6 +23,7 @@ import type { Chain } from 'models/Chain';
 export type WalletConnectCmsCategory = {|
   id: string,
   title: string,
+  order: number,
 |};
 
 export type WalletConnectCmsApp = {|
