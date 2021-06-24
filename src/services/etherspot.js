@@ -305,7 +305,7 @@ export class EtherspotService {
     });
   }
 
-  isValidEnsName(name: string): Promise<boolean> {
+  isValidEnsName(name: string): Promise<boolean> | boolean {
     try {
       return this.sdk.validateENSName({ name });
     } catch (error) {
