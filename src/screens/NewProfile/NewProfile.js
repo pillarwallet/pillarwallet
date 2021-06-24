@@ -29,8 +29,9 @@ import t from 'translations/translate';
 import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
 
 // components
+import { Container, Content } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
 import { Wrapper, Spacing } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
@@ -53,43 +54,6 @@ import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnboardingUser } from 'models/User';
 
-
-const UsernameWrapper = styled(Wrapper)`
-  margin: 36px 0 20px;
-  align-self: center;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  top: 2px;
-`;
-
-const Text = styled(MediumText)`
-  ${fontStyles.big};
-  width: 100%;
-  text-align: center;
-  max-width: 230px;
-`;
-
-const ContentWrapper = styled.View`
-  flex: 1;
-`;
-
-const StyledWrapper = styled.View`
-  flex-grow: 1;
-  padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
-  min-height: 180px; ${''/* to add screen estate for error toast */}
-`;
-
-const CheckboxText = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
-`;
-
-const FooterWrapper = styled.View`
-  padding: 0 ${spacing.layoutSides}px 20px;
-  width: 100%;
-`;
-
 const PROFILE_IMAGE_WIDTH = 144;
 
 type Props = {
@@ -99,30 +63,6 @@ type Props = {
   user: ?OnboardingUser,
   theme: Theme,
   errorMessage: ?string,
-};
-
-export const getUsernameInputIcon = (
-  colors: Object,
-  isUsernameInputDirty: boolean,
-  isCheckingUsername: boolean,
-  user: ?OnboardingUser,
-  usernameValidationErrorMessage: ?string,
-  errorMessage: ?string,
-) => {
-  let statusIcon = null;
-  let iconColor = null;
-
-  if (isUsernameInputDirty && !isCheckingUsername) {
-    if (usernameValidationErrorMessage || errorMessage) {
-      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
-      iconColor = colors.negative;
-    } else if (user?.username) {
-      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
-      iconColor = colors.positive;
-    }
-  }
-
-  return { statusIcon, iconColor };
 };
 
 const NewProfile = ({
@@ -255,59 +195,56 @@ const NewProfile = ({
     && (existingUser || hasAgreedToAllTerms);
 
   const headerProps = existingUser
-    ? { default: true, floating: true, transparent: true }
+    ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
   const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
 
   return (
-    <ContainerWithHeader
-      headerProps={headerProps}
-      putContentInScrollView={!existingUser}
-      keyboardShouldPersistTaps="always"
-      footer={!existingUser && (
-        <FooterWrapper>
-          <Checkbox
-            onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
-            small
-            lightText
-            wrapperStyle={{ marginBottom: 16 }}
-            checked={hasAgreedToTerms}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:termsOfUse'),
-                onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Checkbox
-            onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
-            small
-            lightText
-            checked={hasAgreedToPolicy}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:privacyPolicy'),
-                onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Spacing h={22} />
-          <Button
-            title={t('auth:button.next')}
-            onPress={proceedToNextScreen}
-            disabled={!allowNext}
-          />
-        </FooterWrapper>
-      )}
-    >
-      <ContentWrapper>
-        {!existingUser && renderChooseUsername()}
-        {existingUser && renderWelcomeBack()}
-      </ContentWrapper>
-    </ContainerWithHeader>
+    <Container>
+      <HeaderBlock {...headerProps} />
+
+      <Content paddingHorizontal={0} paddingVertical={0}>
+        <ContentWrapper>
+          {!existingUser && renderChooseUsername()}
+          {existingUser && renderWelcomeBack()}
+        </ContentWrapper>
+
+        {!existingUser && (
+          <FooterWrapper>
+            <Checkbox
+              onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
+              small
+              lightText
+              wrapperStyle={{ marginBottom: 16 }}
+              checked={hasAgreedToTerms}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:termsOfUse'),
+                  onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Checkbox
+              onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
+              small
+              lightText
+              checked={hasAgreedToPolicy}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:privacyPolicy'),
+                  onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Spacing h={22} />
+            <Button title={t('auth:button.next')} onPress={proceedToNextScreen} disabled={!allowNext} />
+          </FooterWrapper>
+        )}
+      </Content>
+    </Container>
   );
 };
 
@@ -327,3 +264,65 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));
+
+export const getUsernameInputIcon = (
+  colors: Object,
+  isUsernameInputDirty: boolean,
+  isCheckingUsername: boolean,
+  user: ?OnboardingUser,
+  usernameValidationErrorMessage: ?string,
+  errorMessage: ?string,
+) => {
+  let statusIcon = null;
+  let iconColor = null;
+
+  if (isUsernameInputDirty && !isCheckingUsername) {
+    if (usernameValidationErrorMessage || errorMessage) {
+      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.negative;
+    } else if (user?.username) {
+      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.positive;
+    }
+  }
+
+  return { statusIcon, iconColor };
+};
+
+const UsernameWrapper = styled(Wrapper)`
+  margin: 36px 0 20px;
+  align-self: center;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  top: 2px;
+`;
+
+const Text = styled(MediumText)`
+  ${fontStyles.big};
+  width: 100%;
+  text-align: center;
+  max-width: 230px;
+`;
+
+const ContentWrapper = styled.View`
+  flex: 1;
+  background-color: yellow;
+`;
+
+const StyledWrapper = styled.View`
+  flex-grow: 1;
+  padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
+  min-height: 180px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.accent};
+`;
+
+const FooterWrapper = styled.View`
+  background-color: red;
+  padding: 0 ${spacing.layoutSides}px 20px;
+  width: 100%;
+`;

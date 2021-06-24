@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
+import { Platform, ScrollView, KeyboardAvoidingView } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
@@ -66,24 +66,36 @@ export function Content({
   const styles = [contentStyles.safeArea, { paddingHorizontal, paddingVertical }];
 
   return (
-    <ScrollView
-      refreshControl={refreshControl}
-      contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
-      onScroll={onScroll}
-      scrollEventThrottle={scrollEventThrottle}
-      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={contentStyles.keyboardAvoidingView}
     >
-      <SafeAreaView style={styles}>{children}</SafeAreaView>
-    </ScrollView>
+      <SafeAreaView style={styles}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
+          refreshControl={refreshControl}
+          onScroll={onScroll}
+          scrollEventThrottle={scrollEventThrottle}
+          showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        >
+          {children}
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const contentStyles = {
-  scrollViewContent: {
-    flexGrow: 1,
-  },
   safeArea: {
     flex: 1,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
   },
 };
 
