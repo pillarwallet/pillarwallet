@@ -193,9 +193,9 @@ const NewProfile = () => {
 
   return (
     <Container>
-      <HeaderBlock {...headerProps} />
+      <HeaderBlock {...headerProps} navigation={navigation} />
 
-      <Content paddingHorizontal={0} paddingVertical={0}>
+      <Content paddingHorizontal={0} paddingVertical={0} scrollEnabled={!existingUser}>
         <ContentWrapper>
           {!existingUser && renderChooseUsername()}
           {existingUser && renderWelcomeBack()}
@@ -283,13 +283,11 @@ const Text = styled(MediumText)`
 
 const ContentWrapper = styled.View`
   flex: 1;
-  background-color: yellow;
 `;
 
 const StyledWrapper = styled.View`
   flex-grow: 1;
   padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
-  min-height: 180px;
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -298,7 +296,5 @@ const CheckboxText = styled(BaseText)`
 `;
 
 const FooterWrapper = styled.View`
-  background-color: red;
   padding: 0 ${spacing.layoutSides}px 20px;
-  width: 100%;
 `;

@@ -42,6 +42,7 @@ type ContentProps = {|
   paddingHorizontal?: number,
   paddingVertical?: number,
   contentContainerStyle?: ViewStyleProp,
+  scrollEnabled?: boolean,
   refreshControl?: React.Element<any>,
   onScroll?: ?(event: ScrollEvent) => void,
   scrollEventThrottle?: number,
@@ -58,6 +59,7 @@ export function Content({
   paddingHorizontal = spacing.layoutSides,
   paddingVertical = spacing.layoutSides,
   contentContainerStyle,
+  scrollEnabled,
   refreshControl,
   onScroll,
   scrollEventThrottle = 0,
@@ -79,6 +81,7 @@ export function Content({
           onScroll={onScroll}
           scrollEventThrottle={scrollEventThrottle}
           showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+          scrollEnabled={scrollEnabled}
         >
           {children}
         </ScrollView>
