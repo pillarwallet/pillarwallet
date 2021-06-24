@@ -18,17 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Platform } from 'react-native';
-import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
-import debounce from 'lodash.debounce';
+import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
+import { debounce } from 'lodash';
 import t from 'translations/translate';
 
-// actions
-import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
-
-// components
+// Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import { Wrapper, Spacing } from 'components/Layout';
@@ -40,44 +37,34 @@ import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal'
 import TextInput from 'components/TextInput';
 import Modal from 'components/Modal';
 
-// constants
+// Constants
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
-// utils
+// Selectors
+import { useRootSelector } from 'selectors';
+
+// Actions
+import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
+
+// Utils
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { useThemeColors, themedColors } from 'utils/themes';
 import { validateUsername } from 'utils/validators';
 import { getEnsPrefix } from 'utils/common';
 
-// types
-import type { Theme } from 'models/Theme';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// Types
 import type { OnboardingUser } from 'models/User';
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  checkUsernameAvailability: (username: string) => void,
-  resetUsernameCheck: () => void,
-  user: ?OnboardingUser,
-  theme: Theme,
-  errorMessage: ?string,
-};
+const NewProfile = () => {
+  const navigation = useNavigation();
+  const colors = useThemeColors();
 
-const NewProfile = ({
-  user,
-  checkUsernameAvailability,
-  navigation,
-  theme,
-  errorMessage,
-  resetUsernameCheck,
-}: Props) => {
-  useEffect(() => {
-    // prepare for username check if no user set
-    if (!user) resetUsernameCheck();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const dispatch = useDispatch();
+
+  const user = useRootSelector(root => root.onboarding.user);
+  const errorMessage = useRootSelector(root => root.onboarding.errorMessage);
 
   const [usernameValue, setUsernameValue] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
@@ -90,9 +77,15 @@ const NewProfile = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(
-    debounce(() => { if (usernameValue) checkUsernameAvailability(usernameValue); }, 200),
+    debounce(() => { if (usernameValue) dispatch(checkUsernameAvailabilityAction(usernameValue)); }, 200),
     [usernameValue],
   );
+
+  useEffect(() => {
+    // prepare for username check if no user set
+    if (!user) dispatch(resetUsernameCheckAction(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!isCheckingUsername
@@ -118,8 +111,6 @@ const NewProfile = ({
     return onValidUsername.cancel;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onValidUsername, usernameValue]);
-
-  const colors = getThemeColors(theme);
 
   const existingUser = !!user?.isExisting;
 
@@ -248,22 +239,7 @@ const NewProfile = ({
   );
 };
 
-const mapStateToProps = ({
-  onboarding: {
-    user,
-    errorMessage,
-  },
-}: RootReducerState): $Shape<Props> => ({
-  user,
-  errorMessage,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkUsernameAvailability: (username: string) => dispatch(checkUsernameAvailabilityAction(username)),
-  resetUsernameCheck: () => dispatch(resetUsernameCheckAction(true)),
-});
-
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));
+export default NewProfile;
 
 export const getUsernameInputIcon = (
   colors: Object,
