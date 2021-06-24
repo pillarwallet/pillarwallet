@@ -45,7 +45,20 @@ export const getExistingServicesAccounts = async (privateKey: string): Promise<A
   if (etherspotAccounts) {
     etherspotMappedAccounts = await Promise.all(etherspotAccounts.map(async ({ address }) => {
       // $FlowFixMe: Account extras
-      const extra = await etherspotService.getAccountPerChains(address);
+      let extra = await etherspotService.getAccountPerChains(address);
+
+      // if no actual ENS name set for Etherspot account let's try fetch reserved one
+      if (!extra.ethereum?.ensNode) {
+        const ensNode = await etherspotService.getEnsNode(address);
+        extra = {
+          ...extra,
+          ethereum: {
+            ...extra.ethereum,
+            ensNode,
+          },
+        };
+      }
+
       return {
         id: address,
         type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
@@ -68,7 +81,12 @@ export const getExistingServicesAccounts = async (privateKey: string): Promise<A
     }));
   }
 
-  return [...etherspotMappedAccounts, ...archanovaMappedAccounts];
+  /**
+   * keep Archanova accounts first as this is used for ENS name checks
+   * and Etherspot may contain reserved names while Archanova can contain
+   * ENS names of legacy users that are already set
+   */
+  return [...archanovaMappedAccounts, ...etherspotMappedAccounts];
 };
 
 // this should remain isolated from general Archanova/Etherspot service wrappers
@@ -79,12 +97,11 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
     return false;
   }
 
-  try {
-    const ensName = getEnsName(username);
-    const result = await etherspotService.getEnsNode(ensName);
-    return isCaseInsensitiveMatch(result?.name, ensName);
-  } catch (error) {
-    reportErrorLog('isUsernameTaken failed', { username, error });
-    return false;
-  }
+  const ensName = getEnsName(username);
+
+  const isValid = await etherspotService.isValidEnsName(ensName);
+  if (!isValid) return true; // invalid/blacklisted/taken/error
+
+  const result = await etherspotService.getEnsNode(ensName);
+  return isCaseInsensitiveMatch(result?.name, ensName);
 };
