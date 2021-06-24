@@ -306,10 +306,11 @@ export class EtherspotService {
   }
 
   isValidEnsName(name: string): Promise<boolean> {
-    return this.sdk.validateENSName({ name }).catch((error) => {
-      reportErrorLog('EtherspotService isValidEnsName failed', { name, error });
-      return false;
-    });
+    try {
+      return this.sdk.validateENSName({ name });
+    } catch (error) {
+      return false; // no need to report
+    }
   }
 
   clearTransactionsBatch(chain: Chain): void {
