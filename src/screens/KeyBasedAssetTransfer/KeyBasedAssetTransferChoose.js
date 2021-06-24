@@ -70,7 +70,7 @@ import { useChainRates, useChainSupportedAssets } from 'selectors';
 
 // Types
 import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
-import type { Collectibles } from 'models/Collectible';
+import type { Collectible } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency } from 'models/Rates';
@@ -82,7 +82,7 @@ type Props = {
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
   availableBalances: WalletAssetsBalances,
-  availableCollectibles: Collectibles,
+  availableCollectibles: Collectible[],
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   walletAddress: ?string,
