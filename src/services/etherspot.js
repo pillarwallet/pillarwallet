@@ -292,7 +292,7 @@ export class EtherspotService {
 
   reserveEnsName(username: string): Promise<?ENSNode> {
     const fullEnsName = getEnsName(username);
-    return this.sdk.getAccountTokenListTokens({ name: fullEnsName }).catch((error) => {
+    return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;
     });
@@ -302,6 +302,13 @@ export class EtherspotService {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
       return null;
+    });
+  }
+
+  isValidEnsName(name: string): Promise<boolean> {
+    return this.sdk.validateENSName({ name }).catch((error) => {
+      reportErrorLog('EtherspotService isValidEnsName failed', { name, error });
+      return false;
     });
   }
 
