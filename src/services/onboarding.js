@@ -101,7 +101,7 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
     const ensName = getEnsName(username);
 
     const isValid = await etherspotService.isValidEnsName(ensName);
-    if (!isValid) return true; // invalid/blacklisted/taken
+    if (!isValid) return true; // invalid/blacklisted/taken/error
 
     const result = await etherspotService.getEnsNode(ensName);
     return isCaseInsensitiveMatch(result?.name, ensName);
