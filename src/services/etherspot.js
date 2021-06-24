@@ -292,7 +292,7 @@ export class EtherspotService {
 
   reserveEnsName(username: string): Promise<?ENSNode> {
     const fullEnsName = getEnsName(username);
-    return this.sdk.getAccountTokenListTokens({ name: fullEnsName }).catch((error) => {
+    return this.sdk.reserveENSName({ name: fullEnsName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullEnsName });
       return null;
     });
@@ -302,6 +302,30 @@ export class EtherspotService {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
       return null;
+    });
+  }
+
+  isValidEnsName(name: string): Promise<boolean> {
+    return this.sdk.validateENSName({ name }).catch((error) => {
+      try {
+        // ref https://github.com/etherspot/etherspot-backend-monorepo/blob/f879c0817aa18faa4f75c148131ecb9278184a2c/apps/ms-ens/src/ens.service.spec.ts#L163
+        // eslint-disable-next-line i18next/no-literal-string
+        const invalidUsernameErrorProperties = ['name', 'address', 'rootNode'];
+
+        const errorMessageJson = JSON.parse(error.message);
+        const { property } = errorMessageJson[0];
+
+        if (!invalidUsernameErrorProperties.includes(property)) {
+          reportErrorLog('EtherspotService isValidEnsName failed with unknown property', { property, error });
+        }
+      } catch (messageParseError) {
+        reportErrorLog('EtherspotService isValidEnsName failed and error message parse failed', {
+          error,
+          messageParseError,
+        });
+      }
+
+      return false;
     });
   }
 
