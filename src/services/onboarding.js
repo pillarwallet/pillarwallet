@@ -97,16 +97,11 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
     return false;
   }
 
-  try {
-    const ensName = getEnsName(username);
+  const ensName = getEnsName(username);
 
-    const isValid = await etherspotService.isValidEnsName(ensName);
-    if (!isValid) return true; // invalid/blacklisted/taken
+  const isValid = await etherspotService.isValidEnsName(ensName);
+  if (!isValid) return true; // invalid/blacklisted/taken
 
-    const result = await etherspotService.getEnsNode(ensName);
-    return isCaseInsensitiveMatch(result?.name, ensName);
-  } catch (error) {
-    reportErrorLog('isUsernameTaken failed', { username, error });
-    return false;
-  }
+  const result = await etherspotService.getEnsNode(ensName);
+  return isCaseInsensitiveMatch(result?.name, ensName);
 };
