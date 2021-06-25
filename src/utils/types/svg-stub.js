@@ -18,4 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-declare export default any;
+import * as React from 'react';
+
+// Types
+import type { ViewStyleProp } from 'utils/types/react-native';
+
+// Note: add more props from real Svg component if needed.
+export type SvgProps = {|
+  width?: number,
+  height?: number,
+  fill?: string,
+  style?: ViewStyleProp,
+|};
+
+export type SvgImage = React.AbstractComponent<SvgProps>;
+
+declare export default SvgImage;

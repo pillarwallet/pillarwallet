@@ -27,6 +27,8 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { SvgImage } from 'utils/types/svg-stub';
+import type { Record } from 'utils/object';
 
 // Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
@@ -101,7 +103,7 @@ import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 
-const components = {
+const components: Record<SvgImage> = {
   // Generic icons
   'add-cash': IconAddCash,
   'add-contact': IconAddContact,
