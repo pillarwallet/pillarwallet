@@ -27,7 +27,6 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Image from 'components/Image';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 
 // Constants
@@ -44,16 +43,19 @@ import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
 
 // Utils
+import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { useThemedImages } from 'utils/images';
+
+// Assets
+import PillarLogo from 'assets/images/svg/pillar-logo-small.svg';
 
 // Local
 import MenuItem from './MenuItem';
 
 const Menu = () => {
-  const navigation = useNavigation();
   const { t } = useTranslationWithPrefix('menu');
-  const { pillarLogoSmall: logo } = useThemedImages();
+  const colors = useThemeColors();
+  const navigation = useNavigation();
 
   const hasPositiveBalance = useRootSelector(keyBasedWalletHasPositiveBalanceSelector);
   const hasTransferInProgress = useRootSelector(hasKeyBasedAssetsTransferInProgressSelector);
@@ -68,7 +70,7 @@ const Menu = () => {
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ custom: <HeaderLogo source={logo} /> }]}
+        centerItems={[{ custom: <PillarLogo fill={colors.pillarText} /> }]}
         navigation={navigation}
       />
 
@@ -95,8 +97,3 @@ const styles = {
 };
 
 const MenuItemsContainer = styled.View``;
-
-const HeaderLogo = styled(Image)`
-  width: 68px;
-  height: 20px;
-`;

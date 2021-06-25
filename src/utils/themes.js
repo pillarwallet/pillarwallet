@@ -93,6 +93,7 @@ export const semanticLightThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#0000004C',
+  pillarText: '#000000',
   exchangeScheme: lightThemeColors.basic080,
 };
 
@@ -147,6 +148,7 @@ export const semanticDarkThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#FFFFFF4C',
+  pillarText: '#e7e7e7',
   exchangeScheme: darkThemeColors.basic040,
 };
 
