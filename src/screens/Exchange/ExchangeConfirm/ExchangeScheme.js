@@ -72,7 +72,7 @@ function ExchangeScheme({ fromValue, fromSymbol, toValue, toSymbol, imageSource,
         {!!valueToWidth && (
           <ArrowHolder isLeft>
             <AnimatedSVGPath
-              strokeColor={colors.separator}
+              strokeColor={colors.exchangeScheme}
               duration={500}
               strokeWidth={2}
               height={112}
@@ -87,7 +87,7 @@ function ExchangeScheme({ fromValue, fromSymbol, toValue, toSymbol, imageSource,
         {!!valueFromWidth && (
           <ArrowHolder>
             <AnimatedSVGPath
-              strokeColor={colors.separator}
+              strokeColor={colors.exchangeScheme}
               duration={500}
               strokeWidth={2}
               height={112}

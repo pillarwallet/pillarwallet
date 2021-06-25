@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,19 +21,32 @@
 import React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import Instabug from 'instabug-reactnative';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+
+// Constants
+import { APP_SETTINGS, CONTACTS_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { useThemedImages } from 'utils/images';
 
+// Local
+import MenuItem from './MenuItem';
+
 const Menu = () => {
   const navigation = useNavigation();
+  const { t } = useTranslationWithPrefix('menu');
   const { pillarLogoSmall: logo } = useThemedImages();
+
+  const goToSettings = () => navigation.navigate(APP_SETTINGS);
+  const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
+  const goToSupportChat = () => Instabug.show();
+
 
   return (
     <Container>
@@ -42,8 +55,11 @@ const Menu = () => {
         centerItems={[{ custom: <HeaderLogo source={logo} /> }]}
         navigation={navigation}
       />
-      <Content>
-        <Text>Menu</Text>
+
+      <Content paddingHorizontal={0}>
+        <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
+        <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
+        <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
       </Content>
     </Container>
   );

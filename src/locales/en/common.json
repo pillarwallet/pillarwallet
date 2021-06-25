@@ -552,6 +552,14 @@
     }
   },
 
+  "menu": {
+    "item": {
+      "settings": "Settings",
+      "addressBook": "Address book",
+      "supportChat": "Support chat"
+    }
+  },
+
   "history": {
     "title": "Transactions history"
   },

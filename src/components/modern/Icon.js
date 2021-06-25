@@ -65,6 +65,7 @@ import IconLiquidityPool from 'assets/icons/svg/icon-24-liquidity-pool.svg';
 import IconLogout from 'assets/icons/svg/icon-24-logout.svg';
 import IconMail from 'assets/icons/svg/icon-24-mail.svg';
 import IconMenu from 'assets/icons/svg/icon-24-menu.svg';
+import IconMessage from 'assets/icons/svg/icon-16-message.svg';
 import IconMinus from 'assets/icons/svg/icon-24-minus.svg';
 import IconMute from 'assets/icons/svg/icon-24-mute.svg';
 import IconNote from 'assets/icons/svg/icon-24-note.svg';
@@ -138,6 +139,7 @@ const components = {
   logout: IconLogout,
   mail: IconMail,
   menu: IconMenu,
+  message: IconMessage,
   minus: IconMinus,
   mute: IconMute,
   note: IconNote,
