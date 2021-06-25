@@ -93,7 +93,7 @@ const Menu = ({
 }: Props) => {
   const navigation = useNavigation();
 
-  const { pillarLogoSmall: logo } = useThemedImages();
+  const { pillarLogo: logo } = useThemedImages();
   const colors = useThemeColors();
 
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
