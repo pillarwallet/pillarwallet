@@ -28,11 +28,23 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Image from 'components/Image';
+import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 
 // Constants
-import { APP_SETTINGS, CONTACTS_FLOW } from 'constants/navigationConstants';
+import {
+  APP_SETTINGS,
+  CONTACTS_FLOW,
+  KEY_BASED_ASSET_TRANSFER_INTRO,
+  KEY_BASED_ASSET_TRANSFER_STATUS,
+} from 'constants/navigationConstants';
+
+// Selector
+import { useRootSelector } from 'selectors';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
 
 // Utils
+import { spacing } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 
 // Local
@@ -43,10 +55,14 @@ const Menu = () => {
   const { t } = useTranslationWithPrefix('menu');
   const { pillarLogoSmall: logo } = useThemedImages();
 
+  const hasPositiveBalance = useRootSelector(keyBasedWalletHasPositiveBalanceSelector);
+  const hasTransferInProgress = useRootSelector(hasKeyBasedAssetsTransferInProgressSelector);
+
   const goToSettings = () => navigation.navigate(APP_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToSupportChat = () => Instabug.show();
-
+  const goToMigrateWallet = () =>
+    navigation.navigate(hasTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_INTRO);
 
   return (
     <Container>
@@ -57,15 +73,28 @@ const Menu = () => {
       />
 
       <Content paddingHorizontal={0}>
-        <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
-        <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-        <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
+        {hasPositiveBalance && <MigrateWalletBanner onPress={goToMigrateWallet} style={styles.migrateWalletBanner} />}
+
+        <MenuItemsContainer>
+          <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
+          <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
+          <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
+        </MenuItemsContainer>
       </Content>
     </Container>
   );
 };
 
 export default Menu;
+
+const styles = {
+  migrateWalletBanner: {
+    marginHorizontal: spacing.large,
+    marginBottom: spacing.largePlus,
+  },
+};
+
+const MenuItemsContainer = styled.View``;
 
 const HeaderLogo = styled(Image)`
   width: 68px;
