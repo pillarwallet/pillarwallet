@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="37px" viewBox="0 0 48 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>48/flag/bosanski</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="48" height="37" rx="4.36363636"></rect>
+    </defs>
+    <g id="48/flag/bosanski" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Mask" fill="#FF0000" xlink:href="#path-1"></use>
+        <g id="Flag_of_Bosnia_and_Herzegovina" mask="url(#mask-2)">
+            <g transform="translate(-21.000000, -5.000000)">
+                <rect id="Rectangle" fill="#002395" fill-rule="nonzero" x="0" y="4.3" width="80" height="40"></rect>
+                <polygon id="Path" fill="#FECB00" fill-rule="nonzero" points="21.2 4.3 61.2 4.3 61.2 44.3"></polygon>
+                <g id="g" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(10.300000, 0.000000)">
+                    <g id="s-link" transform="translate(5.000000, 5.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                        <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                    </g>
+                    <g id="s-link" transform="translate(10.000000, 10.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                        <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                    </g>
+                </g>
+                <g id="g-link" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(25.300000, 15.000000)">
+                    <g id="g" fill="#FFFFFF" fill-rule="nonzero">
+                        <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        <g id="s-link" transform="translate(5.000000, 5.000000)">
+                            <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        </g>
+                        <g id="s-link" transform="translate(10.000000, 10.000000)">
+                            <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        </g>
+                    </g>
+                </g>
+                <g id="g-link" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(40.300000, 30.000000)">
+                    <g id="g" fill="#FFFFFF" fill-rule="nonzero">
+                        <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        <g id="s-link" transform="translate(5.000000, 5.000000)">
+                            <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        </g>
+                        <g id="s-link" transform="translate(10.000000, 10.000000)">
+                            <polygon id="s" points="1.466415 6.9242645 3.7 0.05 5.933585 6.924265 0.085985 2.675735 7.314015 2.675735"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

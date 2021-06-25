@@ -561,6 +561,44 @@
     }
   },
 
+  "menu": {
+    "item": {
+      "settings": "Settings",
+      "addressBook": "Address book",
+      "supportChat": "Support chat"
+    },
+    "footer": {
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of service",
+      "systemInformation": "System information",
+      "signOut": "Sign out"
+    },
+    "settings": {
+      "title": "Settings",
+      "appSettings": "App settings",
+      "darkMode": "Dark mode",
+      "language": "Language",
+      "fiatCurrency": "Local fiat currency",
+      "biometricLogin": "Biometric login",
+      "changePin": "Change PIN",
+      "walletBackup": "Wallet backup",
+      "viewBackupPhrase": "View 12 words",
+      "backupNotFinished": "Backup not finished",
+      "backupNotFinishedWarning": "Warning"
+    },
+    "selectLanguage": {
+      "title": "Language"
+    },
+    "selectCurrency": {
+      "title": "Currency"
+    },
+    "systemInformation": {
+      "title": "System Information",
+      "environment": "Environment",
+      "buildNumber": "Build number"
+    }
+  },
+
   "history": {
     "title": "Transactions history"
   },

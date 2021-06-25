@@ -67,11 +67,12 @@ import LogoutPendingScreen from 'screens/LogoutPending';
 import PPNHomeScreen from 'screens/PPNHome/PPNHome';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
-import MenuScreen from 'screens/Menu';
-import AppSettingsScreen from 'screens/Menu/AppSettings';
-import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
+import MenuScreen from 'screens/Menu/Menu';
+import MenuSettingsScreen from 'screens/Menu/Settings';
+import MenuSelectLanguageScreen from 'screens/Menu/SelectLanguage';
+import MenuSelectCurrencyScreen from 'screens/Menu/SelectCurrency';
+import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
-import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import WalletMigrationArchanovaIntroScreen from 'screens/WalletMigrationArchanova/Intro';
@@ -108,10 +109,7 @@ import Toast from 'components/Toast';
 import UsernameFailed from 'components/UsernameFailed';
 
 // actions
-import {
-  stopListeningNotificationsAction,
-  startListeningNotificationsAction,
-} from 'actions/notificationsActions';
+import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
@@ -165,7 +163,12 @@ import {
   MANAGE_WALLETS_FLOW,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
+  MENU_FLOW,
   MENU,
+  MENU_SETTINGS,
+  MENU_SELECT_LANGUAGE,
+  MENU_SELECT_CURRENCY,
+  MENU_SYSTEM_INFORMATION,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
@@ -179,10 +182,6 @@ import {
   SERVICES,
   PPN_HOME,
   STORYBOOK,
-  WALLET_SETTINGS,
-  COMMUNITY_SETTINGS,
-  APP_SETTINGS,
-  MENU_FLOW,
   CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
@@ -271,7 +270,6 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [WALLET_SETTINGS]: WalletSettingsScreen,
   },
   StackNavigatorConfig,
 );
@@ -327,7 +325,6 @@ const homeFlow = createStackNavigator(
     [HOME_HISTORY]: HistoryScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [STORYBOOK]: StorybookScreen,
-    [WALLET_SETTINGS]: WalletSettingsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -444,57 +441,72 @@ const tankWithdrawalFlow = createStackNavigator(
 const menuFlow = createStackNavigator(
   {
     [MENU]: MenuScreen,
-    [WALLET_SETTINGS]: WalletSettingsScreen,
-    [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
-    [APP_SETTINGS]: AppSettingsScreen,
-    [WEB_VIEW]: WebViewScreen,
+    [MENU_SETTINGS]: MenuSettingsScreen,
+    [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
+    [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
+    [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
   },
   StackNavigatorConfig,
 );
 
-const keyBasedAssetTransferFlow = createStackNavigator({
-  [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
-  [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
-  [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
-  [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
-  [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
+const keyBasedAssetTransferFlow = createStackNavigator(
+  {
+    [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
+    [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
+    [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
+    [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
+    [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const walletMigrationFlow = createStackNavigator({
-  [WALLET_MIGRATION_ARCHANOVA_INTRO]: WalletMigrationArchanovaIntroScreen,
-  [WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS]: WalletMigrationArchanovaSelectAssetsScreen,
-  [WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT]: WalletMigrationArchanovaSetAmountScreen,
-  [WALLET_MIGRATION_ARCHANOVA_REVIEW]: WalletMigrationArchanovaReviewScreen,
-  [WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM]: WalletMigrationArchanovaPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
+const walletMigrationFlow = createStackNavigator(
+  {
+    [WALLET_MIGRATION_ARCHANOVA_INTRO]: WalletMigrationArchanovaIntroScreen,
+    [WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS]: WalletMigrationArchanovaSelectAssetsScreen,
+    [WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT]: WalletMigrationArchanovaSetAmountScreen,
+    [WALLET_MIGRATION_ARCHANOVA_REVIEW]: WalletMigrationArchanovaReviewScreen,
+    [WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM]: WalletMigrationArchanovaPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const contactsFlow = createStackNavigator({
-  [CONTACTS_LIST]: ContactsListScreen,
-}, StackNavigatorConfig);
+const contactsFlow = createStackNavigator(
+  {
+    [CONTACTS_LIST]: ContactsListScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const ensMigrationFlow = createStackNavigator({
-  [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
+const ensMigrationFlow = createStackNavigator(
+  {
+    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
 
-const liquidityPoolsFlow = createStackNavigator({
-  [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
-  [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
-  [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
-  [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
-  [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
-  [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
-  [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
-  [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
-  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
-  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
-  [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
-  [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorConfig);
+const liquidityPoolsFlow = createStackNavigator(
+  {
+    [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
+    [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+    [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
+    [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
+    [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
+    [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
+    [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
+    [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
+    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
+    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
+    [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
+    [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
 
 const MainStack = createStackNavigator(
   {
@@ -545,6 +557,7 @@ const AppFlowNavigation = createStackNavigator(
     [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
     [ADD_CASH]: addCashFlow,
+    [WEB_VIEW]: WebViewScreen,
   },
   modalTransition,
 );
@@ -610,11 +623,7 @@ class AppFlow extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      notifications,
-      wallet,
-      removePrivateKeyFromMemory,
-    } = this.props;
+    const { notifications, wallet, removePrivateKeyFromMemory } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (wallet?.privateKey) {
@@ -694,13 +703,7 @@ class AppFlow extends React.Component<Props, State> {
 
 // Workaround for React Navigation 4 obscure crash occuring if `screenProps` object is re-created on each render.
 // Functional component created just to use useMemo hook, can be inlined when AppFlow is migrated to FC.
-const MemoizedAppFlowNavigation = ({
-  showHomeUpdateIndicator,
-  isWalletBackedUp,
-  theme,
-  language,
-  navigation,
-}) => {
+const MemoizedAppFlowNavigation = ({ showHomeUpdateIndicator, isWalletBackedUp, theme, language, navigation }) => {
   const screenProps = React.useMemo(
     () => ({
       showHomeUpdateIndicator,
@@ -708,25 +711,21 @@ const MemoizedAppFlowNavigation = ({
       theme,
       language,
     }),
-    [
-      showHomeUpdateIndicator,
-      isWalletBackedUp,
-      theme,
-      language,
-    ],
+    [showHomeUpdateIndicator, isWalletBackedUp, theme, language],
   );
 
   return <AppFlowNavigation screenProps={screenProps} navigation={navigation} />;
 };
 
 const mapStateToProps = ({
-  notifications: {
-    data: notifications,
-    showHomeUpdateIndicator,
-  },
+  notifications: { data: notifications, showHomeUpdateIndicator },
   wallet: { data: wallet, backupStatus },
-  appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  session: { data: { isOnline } },
+  appSettings: {
+    data: { isPickingImage, isBrowsingWebView },
+  },
+  session: {
+    data: { isOnline },
+  },
   onboarding: { usernameRegistrationFailed: onboardingUsernameRegistrationFailed },
 }: RootReducerState): $Shape<Props> => ({
   notifications,

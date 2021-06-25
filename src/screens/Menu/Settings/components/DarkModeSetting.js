@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,36 +18,33 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import t from 'translations/translate';
-
-// Components
-import OptionListModal from 'components/OptionListModal';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { supportedFiatCurrencies } from 'constants/assetsConstants';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useRootSelector } from 'selectors';
 
 // Actions
-import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
 
-const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
+// Local
+import SettingsToggle from './SettingsToggle';
 
-const BaseFiatCurrencyModal = () => {
-  const fiatCurrency = useFiatCurrency();
+function DarkModeSetting() {
+  const { t } = useTranslationWithPrefix('menu.settings');
   const dispatch = useDispatch();
 
-  return (
-    <OptionListModal
-      title={t('settingsContent.settingsItem.fiatCurrency.screenTitle')}
-      options={currencies}
-      initial={fiatCurrency}
-      onSelect={(value) => dispatch(saveBaseFiatCurrencyAction(value))}
-    />
-  );
-};
+  const isDarkMode = useRootSelector((root) => root.appSettings.data.themeType) === DARK_THEME;
 
-export default BaseFiatCurrencyModal;
+  const handleChangeValue = (value: boolean) => dispatch(setAppThemeAction(value ? DARK_THEME : LIGHT_THEME, true));
+
+  return (
+    <SettingsToggle icon="darkMode16" title={t('darkMode')} value={isDarkMode} onChangeValue={handleChangeValue} />
+  );
+}
+
+export default DarkModeSetting;

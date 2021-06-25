@@ -18,13 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useSelector } from 'react-redux';
-import type { RootReducerState } from 'reducers/rootReducer';
-import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
+// Config
+import localeConfig from 'configs/localeConfig';
 
-export const useAppSettingsSelector = <T>(selector: (state: AppSettingsReducerState) => T): T =>
-  useSelector((root: RootReducerState) => selector(root.appSettings));
+// Selector
+import { useRootSelector } from 'selectors';
 
-export const useBaseFiatCurrency = () => useAppSettingsSelector(state => state.data.baseFiatCurrency);
+export function useThemeType() {
+  return useRootSelector((root) => root.appSettings.data.themeType);
+}
 
-export const useBiometricsSelector = () => useAppSettingsSelector(state => state.data.useBiometrics);
+export function useLanguageCode() {
+  const localisation = useRootSelector((root) => root.appSettings.data.localisation);
+  const sessionLanguageCode = useRootSelector((root) => root.session.data.sessionLanguageCode);
+
+  return localisation?.activeLngCode || sessionLanguageCode || localeConfig.defaultLanguage;
+}
+
+export function useBiometricsSelector() {
+  return useRootSelector((root) => root.appSettings.data.useBiometrics);
+}

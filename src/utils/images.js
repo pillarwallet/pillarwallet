@@ -30,8 +30,6 @@ const genericTokenLight = require('assets/images/tokens/genericTokenLight.png');
 const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
 const pillarLogoLight = require('assets/images/pillar-logo-pixel-dark.png');
 const pillarLogoDark = require('assets/images/pillar-logo-pixel-dark.png');
-const pillarLogoSmallLight = require('assets/images/pillar-logo-small-on-light.png');
-const pillarLogoSmallDark = require('assets/images/pillar-logo-small-on-dark.png');
 const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
 const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
@@ -77,10 +75,6 @@ export const images = (theme: Theme) => {
     pillarLogo: getImageByTheme(currentTheme, {
       lightTheme: pillarLogoLight,
       darkTheme: pillarLogoDark,
-    }),
-    pillarLogoSmall: getImageByTheme(currentTheme, {
-      lightTheme: pillarLogoSmallLight,
-      darkTheme: pillarLogoSmallDark,
     }),
     keyWalletIcon: getImageByTheme(currentTheme, {
       lightTheme: keyWalletIcon,

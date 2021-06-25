@@ -23,6 +23,9 @@ import { createSelector } from 'reselect';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// selectors
+import { useRootSelector } from 'selectors';
+
 // utils
 import { isSmartWalletAccount } from 'utils/accounts';
 
@@ -32,41 +35,38 @@ import type { RootReducerState } from 'reducers/rootReducer';
 // local
 import { accountsSelector, activeAccountSelector, activeBlockchainSelector } from './selectors';
 
-
 export const activeWalletSelector = createSelector(
   activeAccountSelector,
   activeBlockchainSelector,
   (activeAccount) => activeAccount,
 );
 
-export const availableWalletsSelector = createSelector(
-  accountsSelector,
-  activeBlockchainSelector,
-  (accounts) => {
-    const availableWallets = [];
+export const availableWalletsSelector = createSelector(accountsSelector, activeBlockchainSelector, (accounts) => {
+  const availableWallets = [];
 
-    const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyWallet) availableWallets.push(keyWallet);
+  const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+  if (keyWallet) availableWallets.push(keyWallet);
 
-    accounts.filter(isSmartWalletAccount).forEach((smartWallet) => {
-      availableWallets.push({
-        ...smartWallet,
-        isActive: smartWallet.isActive,
-      });
+  accounts.filter(isSmartWalletAccount).forEach((smartWallet) => {
+    availableWallets.push({
+      ...smartWallet,
+      isActive: smartWallet.isActive,
     });
+  });
 
-    // etherspot account first
-    return sortBy(
-      availableWallets,
-      ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
-    );
-  },
-);
+  // etherspot account first
+  return sortBy(availableWallets, ({ type }) => (type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1));
+});
 
 export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.data,
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.creatingTransactions,
-  (keyBasedAssetsTransfer, creatingTransactions) => creatingTransactions || keyBasedAssetsTransfer.some(
-    (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
-  ),
+  (keyBasedAssetsTransfer, creatingTransactions) =>
+    creatingTransactions ||
+    keyBasedAssetsTransfer.some((keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction)),
 );
+
+export function useIsWalletBackedUp() {
+  const backupStatus = useRootSelector((root) => root.wallet.backupStatus);
+  return backupStatus.isImported || backupStatus.isBackedUp;
+}

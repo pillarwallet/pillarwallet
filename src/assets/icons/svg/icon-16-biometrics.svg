@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke="#000">
+        <path stroke-width="1.5" d="M10.6 3.667c.603 1 .86 2.172.733 3.333v.667c0 .702.183 1.391.534 2" transform="translate(-20.000000, -448.000000) translate(0.000000, 196.000000) translate(0.000000, 228.000000) translate(20.000000, 19.000000) translate(0.000000, 5.000000) translate(2.000000, 1.500000)"/>
+        <path d="M3.333 6.333c0-1.472 1.194-2.666 2.667-2.666 1.473 0 2.667 1.194 2.667 2.666V7c0 1.442.468 2.846 1.333 4" transform="translate(-20.000000, -448.000000) translate(0.000000, 196.000000) translate(0.000000, 228.000000) translate(20.000000, 19.000000) translate(0.000000, 5.000000) translate(2.000000, 1.500000)"/>
+        <path stroke-width="1.5" d="M6 6.333v1.334c-.002 1.906.58 3.767 1.667 5.333" transform="translate(-20.000000, -448.000000) translate(0.000000, 196.000000) translate(0.000000, 228.000000) translate(20.000000, 19.000000) translate(0.000000, 5.000000) translate(2.000000, 1.500000)"/>
+        <path d="M3.333 9c.163 1.393.57 2.747 1.2 4" transform="translate(-20.000000, -448.000000) translate(0.000000, 196.000000) translate(0.000000, 228.000000) translate(20.000000, 19.000000) translate(0.000000, 5.000000) translate(2.000000, 1.500000)"/>
+        <path stroke-width="1.5" d="M1.267 11.667C.817 10.154.614 8.577.667 7v-.667C.66 4.425 1.676 2.66 3.327 1.703 4.978.748 7.014.747 8.667 1.7" transform="translate(-20.000000, -448.000000) translate(0.000000, 196.000000) translate(0.000000, 228.000000) translate(20.000000, 19.000000) translate(0.000000, 5.000000) translate(2.000000, 1.500000)"/>
+    </g>
+</svg>

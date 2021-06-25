@@ -23,3 +23,8 @@ export type EthereumWallet = {
   address: string,
   privateKey: ?string,
 };
+
+export type WalletObject = {
+  mnemonic: ?string,
+  privateKey: ?string,
+};
