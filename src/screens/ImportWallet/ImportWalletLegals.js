@@ -112,8 +112,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  openLegalModal = (primisicDocumentId: string) => Modal.open(() => (
-    <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />
+  openLegalModal = (prismicDocumentId: string) => Modal.open(() => (
+    <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />
   ));
 
   render() {

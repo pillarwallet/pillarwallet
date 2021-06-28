@@ -171,8 +171,8 @@ const Menu = ({
     },
   ];
 
-  const openLegalModal = (primisicDocumentId: string) =>
-    Modal.open(() => <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />);
+  const openLegalModal = (prismicDocumentId: string) =>
+    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(

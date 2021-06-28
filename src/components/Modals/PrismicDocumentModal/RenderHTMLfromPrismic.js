@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const renderHTMLfromPrimisic = (type: string, text: string) => {
+export const renderHTMLfromPrismic = (type: string, text: string) => {
   /* eslint-disable i18next/no-literal-string */
   switch (type) {
     case 'heading1':

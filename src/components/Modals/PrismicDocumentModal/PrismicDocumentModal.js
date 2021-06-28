@@ -36,50 +36,31 @@ import type { ScrollToProps } from 'components/Modals/SlideModal';
 import { spacing } from 'utils/variables';
 
 // Services
-import { fetchPrivacyDocument } from 'services/cms/FetchPrivacyTermsDocument';
-
-import {
-  renderHTMLfromPrimisic,
-} from './RenderHTMLfromPrimisic';
+import * as Prismic from 'services/prismic';
 
 
 type Props = {|
-  primisicDocumentId: string,
+  prismicDocumentId: string,
 |};
 
 
-const PrismicDocumentModal = ({ primisicDocumentId }: Props) => {
+const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
   const scrollViewRef = React.useRef(null);
   const modalRef = React.useRef();
-  const [isPrimisicDocumentFetched, setIsPrimisicDocumentFetched] = React.useState(false);
+  const [isPrismicHTMLFetched, setIsPrismicHTMLFetched] = React.useState(false);
   const [documentHTMLData, setDocumentHTMLData] = React.useState('');
   const [scrollOffset, setScrollOffset] = React.useState(0);
   const [containerHeight, setContainerHeight] = React.useState(0);
   const [contentContainerHeight, setContentContainerHeight] = React.useState(0);
 
   React.useEffect(() => {
-    async function fetchPrimisicData() {
-      const fetchPrimisicDocumentResponse = await fetchPrivacyDocument(primisicDocumentId);
-      const document = fetchPrimisicDocumentResponse.data;
-      const prismicHTMLContent = [];
-      document?.title?.map((documentData) => {
-        if (!documentData.text) return null;
-        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
-      });
-      document?.subtitle?.map((documentData) => {
-        if (!documentData.text) return null;
-        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
-      });
-      document?.content?.map((documentData) => {
-        if (!documentData.text) return null;
-        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
-      });
-      const prismicConvertedHTMLData = prismicHTMLContent.join('');
-      setDocumentHTMLData(prismicConvertedHTMLData);
-      setIsPrimisicDocumentFetched(true);
+    async function fetchPrismicData() {
+      const fetchPrismicHTMLResponse = await Prismic.queryDocumentsByID(prismicDocumentId);
+      setDocumentHTMLData(fetchPrismicHTMLResponse);
+      setIsPrismicHTMLFetched(true);
     }
-    fetchPrimisicData();
-  }, [primisicDocumentId]);
+    fetchPrismicData();
+  }, [prismicDocumentId]);
 
   const handleModalClose = () => {
     if (modalRef.current) modalRef.current.close();
@@ -121,12 +102,12 @@ const PrismicDocumentModal = ({ primisicDocumentId }: Props) => {
     >
       <Container>
         <HeaderBlock noBack rightItems={[{ close: true }]} onClose={handleModalClose} noPaddingTop />
-        {!isPrimisicDocumentFetched && (
+        {!isPrismicHTMLFetched && (
           <ActivityIndicatorWrapper>
             <Spinner />
           </ActivityIndicatorWrapper>
         )}
-        {!!isPrimisicDocumentFetched && (
+        {!!isPrismicHTMLFetched && (
           // $FlowFixMe: react-native types
           <ScrollView
             paddingHorizontal={spacing.rhythm}

@@ -262,8 +262,8 @@ const NewProfile = ({
     ? { default: true, floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (primisicDocumentId: string) =>
-    Modal.open(() => <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />);
+  const openLegalModal = (prismicDocumentId: string) =>
+    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
 
   return (
     <ContainerWithHeader

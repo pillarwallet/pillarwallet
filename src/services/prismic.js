@@ -21,6 +21,11 @@
 import * as Prismic from '@prismicio/client';
 import { getEnv } from 'configs/envConfig';
 
+// Components
+import {
+  renderHTMLfromPrismic,
+} from 'components/Modals/PrismicDocumentModal/RenderHTMLfromPrismic';
+
 export const DOCUMENT_TYPE = 'document.type';
 
 const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
@@ -46,6 +51,22 @@ export function queryDocumentsByType<T>(type: string, options?: QueryOptions): R
   return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
 }
 
-export function queryDocumentsByID(id: string): Response<String> {
-  return prismicClient.getByID(id);
+export async function queryDocumentsByID(id: string): Promise<Object> {
+  const fetchPrismicDocumentResponse = await prismicClient.getByID(id);
+  const document = fetchPrismicDocumentResponse.data;
+  const prismicHTMLContent = [];
+  document?.title?.map((documentData) => {
+    if (!documentData.text) return null;
+    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+  });
+  document?.subtitle?.map((documentData) => {
+    if (!documentData.text) return null;
+    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+  });
+  document?.content?.map((documentData) => {
+    if (!documentData.text) return null;
+    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+  });
+  const prismicConvertedHTMLData = prismicHTMLContent.join('');
+  return prismicConvertedHTMLData;
 }
