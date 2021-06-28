@@ -41,7 +41,7 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
-import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
@@ -171,7 +171,8 @@ const Menu = ({
     },
   ];
 
-  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+  const openLegalModal = (primisicDocumentId: string) =>
+    Modal.open(() => <HTMLContentModal primisicDocumentId={primisicDocumentId} />);
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(
@@ -252,11 +253,19 @@ const Menu = ({
               </FooterBanner>
             )}
             <LinksSection>
-              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
+              <LegalTextLink
+                onPress={() =>
+                  openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID))
+                }
+              >
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
               <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
-              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.PRIVACY_POLICY)}>
+              <LegalTextLink
+                onPress={() =>
+                  openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID))
+                }
+              >
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>

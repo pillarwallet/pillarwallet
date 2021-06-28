@@ -18,228 +18,132 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-import { StyleSheet, ScrollView } from 'react-native';
-import HTMLView from 'react-native-htmlview';
+import styled from 'styled-components/native';
+import { ScrollView } from 'react-native';
+import HTML from 'react-native-render-html';
 import get from 'lodash.get';
 
 // components
 import Spinner from 'components/Spinner';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Modal from 'components/Modal';
+import HeaderBlock from 'components/HeaderBlock';
+import { Container } from 'components/modern/Layout';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
 
 // utils
-import { fontSizes, lineHeights, appFont, spacing } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
-import { reportErrorLog } from 'utils/common';
-
-// constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { spacing } from 'utils/variables';
 
 // services
-import { firebaseRemoteConfig } from 'services/firebase';
+import { fetchPrivacyDocument } from 'services/cms/FetchPrivacyTermsDocument';
 
-// types
-import type { ScrollToProps } from 'components/Modals/SlideModal';
-import type { Theme } from 'models/Theme';
+import {
+  renderHTMLfromPrimisic,
+} from './RenderHTMLfromPrimisic';
 
-export const ENDPOINTS = {
-  TERMS_OF_SERVICE: 'terms_of_service',
-  PRIVACY_POLICY: 'privacy_policy',
-};
-
-type OwnProps = {|
-  htmlEndpoint: string,
-|};
 
 type Props = {|
-  ...OwnProps,
-  theme: Theme,
+  primisicDocumentId: string,
 |};
 
-type State = {|
-  isHtmlFetched: boolean,
-  htmlData: string,
-  scrollOffset: number,
-  contentContainerHeight: number,
-  containerHeight: number,
-|};
 
-type CustomNode = {
-  name: string,
-}
+const HTMLContentModal = ({ primisicDocumentId }: Props) => {
+  const scrollViewRef = React.useRef(null);
+  const modalRef = React.useRef();
+  const [isPrimisicDocumentFetched, setIsPrimisicDocumentFetched] = React.useState(false);
+  const [documentHTMLData, setDocumentHTMLData] = React.useState('');
+  const [scrollOffset, setScrollOffset] = React.useState(0);
+  const [containerHeight, setContainerHeight] = React.useState(0);
+  const [contentContainerHeight, setContentContainerHeight] = React.useState(0);
+
+  React.useEffect(() => {
+    async function fetchPrimisicData() {
+      const fetchPrimisicDocumentResponse = await fetchPrivacyDocument(primisicDocumentId);
+      const document = fetchPrimisicDocumentResponse.data;
+      const titleHtmlData = document?.title?.map((documentData) => {
+        if (!documentData.text) return null;
+        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+      });
+      const subtitleHtmlData = document?.subtitle?.map((documentData) => {
+        if (!documentData.text) return null;
+        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+      });
+      const contentHtmlData = document?.content?.map((documentData) => {
+        if (!documentData.text) return null;
+        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+      });
+      const documentconvertedHTMLData = `${titleHtmlData}${subtitleHtmlData}${contentHtmlData}`;
+      setDocumentHTMLData(documentconvertedHTMLData);
+      setIsPrimisicDocumentFetched(true);
+    }
+    fetchPrimisicData();
+  }, [primisicDocumentId]);
+
+  const handleModalClose = () => {
+    if (modalRef.current) modalRef.current.close();
+  };
+
+  const handleModalScrollTo = (p: ScrollToProps) => scrollViewRef?.current?.scrollTo(p);
+
+  const handleContentOnScroll = (event: Object) => {
+    const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
+    setScrollOffset(contentOffsetY);
+  };
+
+  const handleContentOnLayout = (event: Object) => {
+    const { height } = event.nativeEvent.layout;
+    if (!containerHeight || containerHeight !== height) {
+      setContainerHeight(height);
+    }
+  };
+
+  const handleOnContentSizeChange = (width: number, height: number) => {
+    setContentContainerHeight(height);
+  };
+  const animationInTiming = 400;
+  const animationOutTiming = 400;
+
+  const scrollOffsetMax =
+    contentContainerHeight > 0 && containerHeight ? contentContainerHeight - containerHeight : undefined;
+
+  return (
+    <Modal
+      ref={modalRef}
+      animationInTiming={animationInTiming}
+      animationOutTiming={animationOutTiming}
+      scrollOffset={scrollOffset}
+      scrollOffsetMax={scrollOffsetMax}
+      scrollTo={handleModalScrollTo}
+      style={{ margin: 0, justifyContent: 'flex-start' }}
+    >
+      <Container>
+        <HeaderBlock noBack rightItems={[{ close: true }]} onClose={handleModalClose} noPaddingTop />
+        {!isPrimisicDocumentFetched && (
+          <ActivityIndicatorWrapper>
+            <Spinner />
+          </ActivityIndicatorWrapper>
+        )}
+        {!!isPrimisicDocumentFetched && (
+          // $FlowFixMe: react-native types
+          <ScrollView
+            paddingHorizontal={spacing.rhythm}
+            ref={scrollViewRef}
+            onScroll={handleContentOnScroll}
+            scrollEventThrottle={16} // inherited from ScrollWrapper component
+            onLayout={handleContentOnLayout}
+            onContentSizeChange={handleOnContentSizeChange}
+          >
+            <HTML source={{ html: documentHTMLData }} />
+          </ScrollView>
+        )}
+      </Container>
+    </Modal>
+  );
+};
+
+export default HTMLContentModal;
 
 const ActivityIndicatorWrapper = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
 `;
-
-const boldStyle = { fontFamily: appFont.medium };
-
-const baseStyles = (colors) => {
-  return (
-    StyleSheet.create({
-      b: boldStyle,
-      strong: boldStyle,
-      a: {
-        ...boldStyle,
-        color: colors.basic000,
-        fontSize: fontSizes.regular,
-        lineHeight: lineHeights.regular,
-      },
-      li: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-      p: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-      h1: { ...boldStyle, fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
-      h2: { ...boldStyle, fontSize: fontSizes.large, lineHeight: lineHeights.large },
-      h3: { ...boldStyle, fontSize: fontSizes.big, lineHeight: lineHeights.big },
-      h4: { ...boldStyle, fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
-      h5: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-      h6: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-    })
-  );
-};
-
-class HTMLContentModal extends React.Component<Props, State> {
-  scrollViewRef = React.createRef<React.ElementRef<typeof ScrollView>>();
-  modalRef = React.createRef();
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isHtmlFetched: false,
-      htmlData: '',
-      scrollOffset: 0,
-      containerHeight: 0,
-      contentContainerHeight: 0,
-    };
-  }
-
-  componentDidMount() {
-    const endpointPrefix = firebaseRemoteConfig.getString(REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX);
-    const { htmlEndpoint } = this.props;
-    // eslint-disable-next-line i18next/no-literal-string
-    const htmlEndpointFull = `${endpointPrefix}${htmlEndpoint}.html`;
-
-    fetch(htmlEndpointFull)
-      .then((resp) => resp.text())
-      .then((text) => {
-        this.setState({
-          isHtmlFetched: true,
-          htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
-        });
-      })
-      .catch((error => {
-        reportErrorLog(`HTMLContentModal: Failed to fetch ${htmlEndpointFull}`, { error });
-      }));
-  }
-
-  handleModalClose = () => {
-    if (this.modalRef.current) this.modalRef.current.close();
-  };
-
-  renderNode = (node: CustomNode) => {
-    if (node.name === 'iframe' || node.name === 'script') {
-      return null;
-    }
-    // If the function returns undefined (not null), the default renderer will be used for that node.
-    return undefined;
-  };
-
-  handleModalScrollTo = (p: ScrollToProps) => {
-    if (!p || !this.scrollViewRef.current) return;
-    this.scrollViewRef.current.scrollTo(p);
-  };
-
-  handleContentOnScroll = (event: Object) => {
-    const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
-    this.setState({ scrollOffset: contentOffsetY });
-  };
-
-  handleContentOnLayout = (event: Object) => {
-    const { containerHeight } = this.state;
-    const { height } = event.nativeEvent.layout;
-    if (!containerHeight || containerHeight !== height) {
-      this.setState({ containerHeight: height });
-    }
-  };
-
-  handleOnContentSizeChange = (width: number, height: number) => {
-    this.setState({ contentContainerHeight: height });
-  };
-
-  render() {
-    const { theme } = this.props;
-    const {
-      htmlData,
-      isHtmlFetched,
-      scrollOffset,
-      contentContainerHeight,
-      containerHeight,
-    } = this.state;
-
-    const animationInTiming = 400;
-    const animationOutTiming = 400;
-
-    const colors = getThemeColors(theme);
-
-    const commonTextStyle = {
-      color: colors.basic010,
-      fontFamily: appFont.regular,
-    };
-
-    const scrollOffsetMax = contentContainerHeight > 0 &&
-      containerHeight ? contentContainerHeight - containerHeight : undefined;
-
-    return (
-      <Modal
-        ref={this.modalRef}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
-        scrollOffset={scrollOffset}
-        scrollOffsetMax={scrollOffsetMax}
-        scrollTo={this.handleModalScrollTo}
-        style={{ margin: 0, justifyContent: 'flex-start' }}
-      >
-        <ContainerWithHeader
-          headerProps={{
-            rightItems: [{ close: true }],
-            noBack: true,
-            noPaddingTop: true,
-            floating: true,
-            onClose: this.handleModalClose,
-          }}
-        >
-          {!isHtmlFetched &&
-            <ActivityIndicatorWrapper>
-              <Spinner />
-            </ActivityIndicatorWrapper>
-          }
-          {!!isHtmlFetched &&
-            // do not put ScrollView as styled component or ref.scrollTo will fail
-            // $FlowFixMe: react-native types
-            <ScrollView
-              paddingHorizontal={spacing.rhythm}
-              ref={this.scrollViewRef}
-              onScroll={this.handleContentOnScroll}
-              scrollEventThrottle={16} // inherited from ScrollWrapper component
-              onLayout={this.handleContentOnLayout}
-              onContentSizeChange={this.handleOnContentSizeChange}
-            >
-              <HTMLView
-                value={htmlData}
-                textComponentProps={{ style: commonTextStyle }}
-                stylesheet={baseStyles(colors)}
-                renderNode={this.renderNode}
-                style={{ marginBottom: 10 }}
-                paragraphBreak={null}
-              />
-            </ScrollView>
-          }
-        </ContainerWithHeader>
-      </Modal>
-    );
-  }
-}
-
-export default (withTheme(HTMLContentModal): React.AbstractComponent<OwnProps>);

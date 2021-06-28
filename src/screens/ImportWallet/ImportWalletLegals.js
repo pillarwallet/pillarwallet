@@ -23,17 +23,24 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { IMPORT_WALLET } from 'constants/navigationConstants';
-
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
-import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 import Modal from 'components/Modal';
 
+// utils
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// Constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -105,8 +112,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  openLegalModal = (endpoint: string) => Modal.open(() => (
-    <HTMLContentModal htmlEndpoint={endpoint} />
+  openLegalModal = (primisicDocumentId: string) => Modal.open(() => (
+    <HTMLContentModal primisicDocumentId={primisicDocumentId} />
   ));
 
   render() {
@@ -120,15 +127,17 @@ class ImportWalletLegals extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={({
+        headerProps={{
           centerItems: [{ title: t('auth:title.recoverWallet') }],
           customOnBack: this.handleBackAction,
-        })}
+        }}
       >
         <Wrapper>
           <ContentWrapper>
             <Checkbox
-              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
+              onPress={() => {
+                this.setState({ hasAgreedToTerms: !hasAgreedToTerms });
+              }}
               small
               lightText
               wrapperStyle={{ marginBottom: 16 }}
@@ -137,12 +146,17 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => this.openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
+                  onPress: () =>
+                    this.openLegalModal(
+                      firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID),
+                    ),
                 })}
               </CheckboxText>
             </Checkbox>
             <Checkbox
-              onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
+              onPress={() => {
+                this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy });
+              }}
               small
               lightText
               checked={hasAgreedToPolicy}
@@ -150,7 +164,10 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => this.openLegalModal(ENDPOINTS.PRIVACY_POLICY),
+                  onPress: () =>
+                    this.openLegalModal(
+                      firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID),
+                    ),
                 })}
               </CheckboxText>
             </Checkbox>

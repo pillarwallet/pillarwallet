@@ -35,12 +35,13 @@ import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/Checkbox';
-import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import TextInput from 'components/TextInput';
 import Modal from 'components/Modal';
 
 // constants
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -52,6 +53,9 @@ import { getEnsPrefix } from 'utils/common';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnboardingUser } from 'models/User';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 
 const UsernameWrapper = styled(Wrapper)`
@@ -258,50 +262,51 @@ const NewProfile = ({
     ? { default: true, floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+  const openLegalModal = (primisicDocumentId: string) =>
+    Modal.open(() => <HTMLContentModal primisicDocumentId={primisicDocumentId} />);
 
   return (
     <ContainerWithHeader
       headerProps={headerProps}
       putContentInScrollView={!existingUser}
       keyboardShouldPersistTaps="always"
-      footer={!existingUser && (
-        <FooterWrapper>
-          <Checkbox
-            onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
-            small
-            lightText
-            wrapperStyle={{ marginBottom: 16 }}
-            checked={hasAgreedToTerms}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:termsOfUse'),
-                onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Checkbox
-            onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
-            small
-            lightText
-            checked={hasAgreedToPolicy}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:privacyPolicy'),
-                onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Spacing h={22} />
-          <Button
-            title={t('auth:button.next')}
-            onPress={proceedToNextScreen}
-            disabled={!allowNext}
-          />
-        </FooterWrapper>
-      )}
+      footer={
+        !existingUser && (
+          <FooterWrapper>
+            <Checkbox
+              onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
+              small
+              lightText
+              wrapperStyle={{ marginBottom: 16 }}
+              checked={hasAgreedToTerms}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:termsOfUse'),
+                  onPress: () =>
+                    openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID)),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Checkbox
+              onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
+              small
+              lightText
+              checked={hasAgreedToPolicy}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:privacyPolicy'),
+                  onPress: () =>
+                    openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID)),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Spacing h={22} />
+            <Button title={t('auth:button.next')} onPress={proceedToNextScreen} disabled={!allowNext} />
+          </FooterWrapper>
+        )
+      }
     >
       <ContentWrapper>
         {!existingUser && renderChooseUsername()}
