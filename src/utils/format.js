@@ -21,13 +21,8 @@
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { getCurrencySymbol, getDecimalPlaces } from 'utils/common';
-
-function wrapBigNumber(value: ?BigNumber | number): ?BigNumber {
-  if (value == null) return null;
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
-}
 
 /**
  * Modern formatting functions.
@@ -49,7 +44,7 @@ type FormatValueOptions = {|
  * Does not make assumption about formatted output.
  */
 export function formatValue(value: ?BigNumber | number, options?: FormatValueOptions) {
-  value = wrapBigNumber(value);
+  value = wrapBigNumberOrNil(value);
   if (!value || !value.isFinite()) return null;
 
   const stripTrailingZeros = options?.stripTrailingZeros ?? false;
@@ -103,7 +98,7 @@ export function formatPercentChange(value: ?BigNumber, options?: FormatValueOpti
  *
  */
 export function formatValueWithUnit(value: ?BigNumber | number, options?: FormatValueOptions) {
-  value = wrapBigNumber(value);
+  value = wrapBigNumberOrNil(value);
 
   if (!value || !value.isFinite()) return null;
 
@@ -233,7 +228,7 @@ export function formatExchangeRate(
   toSymbol: string,
   reverse: boolean = false,
 ) {
-  rate = wrapBigNumber(rate);
+  rate = wrapBigNumberOrNil(rate);
   if (!rate || !rate.isFinite()) return null;
 
   if (reverse) {
@@ -246,7 +241,7 @@ export function formatExchangeRate(
 }
 
 export function formatExchangeRateWithoutSymbol(rate: ?BigNumber | number) {
-  rate = wrapBigNumber(rate);
+  rate = wrapBigNumberOrNil(rate);
   if (!rate || !rate.isFinite()) return null;
 
   if (rate.gt(1000)) {
@@ -269,7 +264,8 @@ export function formatExchangeRateWithoutSymbol(rate: ?BigNumber | number) {
  *
  * Input number is expressed as a fraction, i.e. 0.5 == 50%
  */
-export function formatLiquidityPoolShare(value: ?BigNumber) {
+export function formatLiquidityPoolShare(value: ?BigNumber | string) {
+  value = wrapBigNumberOrNil(value);
   if (!value) return null;
 
   if (value.lte(0.000001)) return '<0.0001%'; // note: 0.000001 * 100 = 0.0001%

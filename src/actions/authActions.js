@@ -69,6 +69,7 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
+import archanovaService from 'services/archanova';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -424,6 +425,7 @@ export const resetAppServicesAction = () => {
     if (env) await storage.save('environment', env, true);
 
     await etherspotService.logout();
+    await archanovaService.reset();
 
     // reset data stored in keychain
     await resetKeychainDataObject();

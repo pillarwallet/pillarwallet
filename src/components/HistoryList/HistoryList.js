@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, SectionList } from 'react-native';
+import { SectionList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useDispatch } from 'react-redux';
@@ -30,6 +30,7 @@ import { fetchEtherspotTransactionsHistoryAction } from 'actions/historyActions'
 // Components
 import HistoryEventDetails from 'components/HistoryEventDetails';
 import Modal from 'components/Modal';
+import RefreshControl from 'components/RefreshControl';
 import Text from 'components/modern/Text';
 
 // Utils

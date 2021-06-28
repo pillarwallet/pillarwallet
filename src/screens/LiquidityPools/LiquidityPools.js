@@ -19,7 +19,7 @@
 */
 import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
+import { FlatList, View, TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -32,6 +32,7 @@ import { Spacing, ScrollWrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import RefreshControl from 'components/RefreshControl';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // utils

@@ -255,7 +255,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       'onboarding',
       'setupAppServicesAction: dispatching fetchTransactionsHistoryAction',
     );
-    await dispatch(fetchTransactionsHistoryAction());
+    dispatch(fetchTransactionsHistoryAction());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
     await dispatch(fetchAssetsRatesAction());

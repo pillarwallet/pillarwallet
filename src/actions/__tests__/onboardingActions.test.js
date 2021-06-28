@@ -250,8 +250,8 @@ describe('Onboarding actions', () => {
       { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
 
       { type: SET_FETCHING_HISTORY, payload: true },
-      { type: SET_FETCHING_HISTORY, payload: false },
       { type: SET_FETCHING_RATES, payload: true },
+      { type: SET_FETCHING_HISTORY, payload: false },
 
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
@@ -303,9 +303,8 @@ describe('Onboarding actions', () => {
       { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
 
       { type: SET_FETCHING_HISTORY, payload: true },
-      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
-      { type: SET_FETCHING_HISTORY, payload: false },
       { type: SET_FETCHING_RATES, payload: true },
+      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
 
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },

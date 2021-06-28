@@ -42,7 +42,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
-import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { findAssetByAddress, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetValues, getShareOfPool } from 'utils/liquidityPools';
 
 // selectors
@@ -135,7 +135,7 @@ const AddLiquidityScreen = ({
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const tokensData = pool.tokensProportions.map(({ symbol }) => supportedAssets.find(asset => asset.symbol === symbol));
-  const poolTokenData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
+  const poolTokenData = findAssetByAddress(supportedAssets, pool.uniswapPairAddress);
 
   const [debouncedAssetsValues] = useDebounce(assetsValues, 500);
   useEffect(() => {

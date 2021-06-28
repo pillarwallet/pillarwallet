@@ -19,6 +19,7 @@
 */
 
 import { BigNumber as EthersBigNumber } from 'ethers';
+import type { AccountDashboardProtocols as EtherspotAccountDashboardProtocols } from 'etherspot';
 
 export type PaginationResult<T = any> = {
   items?: T[];
@@ -60,4 +61,21 @@ export type GatewayEstimatedBatch = {
   refundAmount: EthersBigNumber,
   refundTokenPayee: string,
   signature: string,
+};
+
+type EtherspotAccountTotalBalancesMetadata = {
+  key: string,
+  serviceTitle: string,
+  title: string,
+  iconUrl: string,
+  address: string,
+  share: number,
+  value: number,
+};
+
+export type EtherspotAccountTotalBalancesItem = {
+  chainId: number,
+  category: EtherspotAccountDashboardProtocols,
+  totalBalance: number,
+  balances: EtherspotAccountTotalBalancesMetadata[],
 };
