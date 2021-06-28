@@ -35,7 +35,7 @@ import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/Checkbox';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import TextInput from 'components/TextInput';
 import Modal from 'components/Modal';
 
@@ -263,7 +263,7 @@ const NewProfile = ({
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
   const openLegalModal = (primisicDocumentId: string) =>
-    Modal.open(() => <HTMLContentModal primisicDocumentId={primisicDocumentId} />);
+    Modal.open(() => <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />);
 
   return (
     <ContainerWithHeader

@@ -26,7 +26,7 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 import Modal from 'components/Modal';
@@ -113,7 +113,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
   };
 
   openLegalModal = (primisicDocumentId: string) => Modal.open(() => (
-    <HTMLContentModal primisicDocumentId={primisicDocumentId} />
+    <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />
   ));
 
   render() {

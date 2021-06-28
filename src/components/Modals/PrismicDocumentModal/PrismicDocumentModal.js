@@ -23,17 +23,19 @@ import { ScrollView } from 'react-native';
 import HTML from 'react-native-render-html';
 import get from 'lodash.get';
 
-// components
+// Components
 import Spinner from 'components/Spinner';
 import Modal from 'components/Modal';
 import HeaderBlock from 'components/HeaderBlock';
 import { Container } from 'components/modern/Layout';
+
+// Types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 
-// utils
+// Utils
 import { spacing } from 'utils/variables';
 
-// services
+// Services
 import { fetchPrivacyDocument } from 'services/cms/FetchPrivacyTermsDocument';
 
 import {
@@ -46,7 +48,7 @@ type Props = {|
 |};
 
 
-const HTMLContentModal = ({ primisicDocumentId }: Props) => {
+const PrismicDocumentModal = ({ primisicDocumentId }: Props) => {
   const scrollViewRef = React.useRef(null);
   const modalRef = React.useRef();
   const [isPrimisicDocumentFetched, setIsPrimisicDocumentFetched] = React.useState(false);
@@ -59,20 +61,21 @@ const HTMLContentModal = ({ primisicDocumentId }: Props) => {
     async function fetchPrimisicData() {
       const fetchPrimisicDocumentResponse = await fetchPrivacyDocument(primisicDocumentId);
       const document = fetchPrimisicDocumentResponse.data;
-      const titleHtmlData = document?.title?.map((documentData) => {
+      const prismicHTMLContent = [];
+      document?.title?.map((documentData) => {
         if (!documentData.text) return null;
-        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
       });
-      const subtitleHtmlData = document?.subtitle?.map((documentData) => {
+      document?.subtitle?.map((documentData) => {
         if (!documentData.text) return null;
-        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
       });
-      const contentHtmlData = document?.content?.map((documentData) => {
+      document?.content?.map((documentData) => {
         if (!documentData.text) return null;
-        return renderHTMLfromPrimisic(documentData.type, documentData.text);
+        return prismicHTMLContent.push(renderHTMLfromPrimisic(documentData.type, documentData.text));
       });
-      const documentconvertedHTMLData = `${titleHtmlData}${subtitleHtmlData}${contentHtmlData}`;
-      setDocumentHTMLData(documentconvertedHTMLData);
+      const prismicConvertedHTMLData = prismicHTMLContent.join('');
+      setDocumentHTMLData(prismicConvertedHTMLData);
       setIsPrimisicDocumentFetched(true);
     }
     fetchPrimisicData();
@@ -102,8 +105,9 @@ const HTMLContentModal = ({ primisicDocumentId }: Props) => {
   const animationInTiming = 400;
   const animationOutTiming = 400;
 
-  const scrollOffsetMax =
-    contentContainerHeight > 0 && containerHeight ? contentContainerHeight - containerHeight : undefined;
+  const scrollOffsetMax = contentContainerHeight > 0 && containerHeight
+    ? contentContainerHeight - containerHeight
+    : undefined;
 
   return (
     <Modal
@@ -140,7 +144,7 @@ const HTMLContentModal = ({ primisicDocumentId }: Props) => {
   );
 };
 
-export default HTMLContentModal;
+export default PrismicDocumentModal;
 
 const ActivityIndicatorWrapper = styled.View`
   flex: 1;

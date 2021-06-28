@@ -41,7 +41,7 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
@@ -172,7 +172,7 @@ const Menu = ({
   ];
 
   const openLegalModal = (primisicDocumentId: string) =>
-    Modal.open(() => <HTMLContentModal primisicDocumentId={primisicDocumentId} />);
+    Modal.open(() => <PrismicDocumentModal primisicDocumentId={primisicDocumentId} />);
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(

@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -20,6 +19,7 @@
 */
 
 export const renderHTMLfromPrimisic = (type: string, text: string) => {
+  /* eslint-disable i18next/no-literal-string */
   switch (type) {
     case 'heading1':
       return `<h1>${text}</h1>`;
