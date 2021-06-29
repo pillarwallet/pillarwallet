@@ -21,6 +21,9 @@
 import * as Prismic from '@prismicio/client';
 import { getEnv } from 'configs/envConfig';
 
+// Utils
+import { mapFromDocumentDataToString } from 'utils/prismic';
+
 export const DOCUMENT_TYPE = 'document.type';
 
 const prismicClient = Prismic.client(getEnv().PRISMIC_ENDPOINT_URL, { accessToken: getEnv().PRISMIC_TOKEN });
@@ -42,6 +45,22 @@ export type Document<T> = {
   data: T,
 }
 
+export type DocumentData = {
+  type: string,
+  text: string,
+}
+
 export function queryDocumentsByType<T>(type: string, options?: QueryOptions): Response<T> {
   return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
+}
+
+export async function queryDocumentsByID(id: string): Promise<string> {
+  const fetchPrismicDocumentResponse = await prismicClient.getByID(id);
+  const document = fetchPrismicDocumentResponse.data;
+  const prismicContent = [];
+  mapFromDocumentDataToString(document?.title, prismicContent);
+  mapFromDocumentDataToString(document?.subtitle, prismicContent);
+  mapFromDocumentDataToString(document?.content, prismicContent);
+  const prismicConvertedHTMLData = prismicContent.join('');
+  return prismicConvertedHTMLData;
 }

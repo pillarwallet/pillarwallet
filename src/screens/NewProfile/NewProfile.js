@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -33,12 +30,13 @@ import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/Checkbox';
-import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import TextInput from 'components/TextInput';
 import Modal from 'components/Modal';
 
 // Constants
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -55,6 +53,9 @@ import { getEnsPrefix } from 'utils/common';
 // Types
 import type { OnboardingUser } from 'models/User';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 const PROFILE_IMAGE_WIDTH = 144;
 
 const NewProfile = () => {
@@ -70,6 +71,13 @@ const NewProfile = () => {
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
   const [hasAgreedToPolicy, setHasAgreedToPolicy] = useState(false);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+
+  const prismicTermsOfPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID,
+  );
+  const prismicPrivacyPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
+  );
 
   const isUsernameInputDirty = usernameValue !== null;
 
@@ -189,7 +197,8 @@ const NewProfile = () => {
     ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+  const openLegalModal = (prismicDocumentId: string) =>
+    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
 
   return (
     <Container>
@@ -213,7 +222,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
+                  onPress: () => openLegalModal(prismicTermsOfPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -226,7 +235,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
+                  onPress: () => openLegalModal(prismicPrivacyPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>

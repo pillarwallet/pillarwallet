@@ -41,7 +41,7 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
-import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
@@ -99,6 +99,12 @@ const Menu = ({
 
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
 
+  const prismicTermsOfPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID,
+  );
+  const prismicPrivacyPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
+  );
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   const showMigrateWallet =
     (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
@@ -171,7 +177,8 @@ const Menu = ({
     },
   ];
 
-  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
+  const openLegalModal = (prismicDocumentId: string) =>
+    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(
@@ -252,11 +259,19 @@ const Menu = ({
               </FooterBanner>
             )}
             <LinksSection>
-              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
+              <LegalTextLink
+                onPress={() =>
+                  openLegalModal(prismicTermsOfPolicyDocumentId)
+                }
+              >
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
               <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
-              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.PRIVACY_POLICY)}>
+              <LegalTextLink
+                onPress={() =>
+                  openLegalModal(prismicPrivacyPolicyDocumentId)
+                }
+              >
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>
