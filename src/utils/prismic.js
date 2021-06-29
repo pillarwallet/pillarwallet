@@ -21,7 +21,13 @@
 // Components
 import { renderHTMLfromPrismic } from 'components/Modals/PrismicDocumentModal/RenderHTMLfromPrismic';
 
-export const mapFromDocumentDataToString = (document: Array<Object>, prismicContent: Array<Object>) => {
+// Services
+import * as Prismic from 'services/prismic';
+
+export const mapFromDocumentDataToString = (
+  document: Array<Prismic.DocumentData>,
+  prismicContent: Array<string>,
+): void => {
   document.map((documentData) => {
     if (!documentData.text) return null;
     return prismicContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
