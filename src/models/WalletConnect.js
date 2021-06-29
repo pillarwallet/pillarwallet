@@ -37,6 +37,7 @@ export type WalletConnectConnector = {|
   connected: boolean,
   pending: boolean,
   session: WalletConnectSession,
+  _transport: { close: () => void },
   on(event: string, callback: (error: Error | null, payload: ?any) => void): void,
   connect(options?: WalletConnectCreateSessionOptions): Promise<WalletConnectSessionStatus>,
   createSession(options?: WalletConnectCreateSessionOptions): Promise<void>,

@@ -35,6 +35,7 @@ export const WALLETCONNECT_EVENT = {
   CALL_REQUEST: 'call_request',
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
+  TRANSPORT_ERROR: 'transport_error', // websocket connection lost
 };
 
 export const PERSONAL_SIGN = 'personal_sign';
