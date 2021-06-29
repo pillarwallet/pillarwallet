@@ -51,6 +51,7 @@ import {
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
+import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -124,6 +125,7 @@ type Props = {
   initialDeeplinkExecuted: boolean,
   sessionLanguageVersion: ?string,
   logScreenView: (screenName: string) => void,
+  initWalletConnectSessionsWithoutReset: () => void,
 }
 
 
@@ -260,7 +262,7 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
-    const { updateTranslationResourceOnContextChange } = this.props;
+    const { updateTranslationResourceOnContextChange, initWalletConnectSessionsWithoutReset } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
 
@@ -276,6 +278,7 @@ class App extends React.Component<Props, *> {
     } else {
       if (this.offlineToastId !== null) Toast.close(this.offlineToastId);
       updateTranslationResourceOnContextChange();
+      initWalletConnectSessionsWithoutReset();
     }
   };
 
@@ -391,6 +394,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   changeLanguage: (language) => dispatch(changeLanguageAction(language)),
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
+  initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
 });
 
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));

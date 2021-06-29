@@ -529,7 +529,7 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
-  initWalletConnect: Function,
+  initWalletConnectSessions: (resetExisting: boolean) => void,
   fetchAllAccountsAssetsBalances: () => Function,
   notifications: Notification[],
   showHomeUpdateIndicator: boolean,
@@ -567,7 +567,7 @@ class AppFlow extends React.Component<Props, State> {
       startListeningNotifications,
       fetchAllAccountsAssetsBalances,
       fetchAllCollectiblesData,
-      initWalletConnect,
+      initWalletConnectSessions,
       checkArchanovaSession,
     } = this.props;
 
@@ -582,7 +582,7 @@ class AppFlow extends React.Component<Props, State> {
     // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsAssetsBalances();
     fetchAllCollectiblesData();
-    initWalletConnect();
+    initWalletConnectSessions(true);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -620,6 +620,7 @@ class AppFlow extends React.Component<Props, State> {
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
       checkArchanovaSession,
+      initWalletConnectSessions,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -635,6 +636,7 @@ class AppFlow extends React.Component<Props, State> {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
       checkArchanovaSession();
+      initWalletConnectSessions(false);
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -716,7 +718,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
-  initWalletConnect: () => dispatch(initWalletConnectSessionsAction()),
+  initWalletConnectSessions: (resetExisting: boolean) => dispatch(initWalletConnectSessionsAction(resetExisting)),
   fetchAllAccountsAssetsBalances: () => dispatch(fetchAllAccountsAssetsBalancesAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
