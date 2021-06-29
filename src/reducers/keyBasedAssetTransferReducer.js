@@ -28,14 +28,14 @@ import {
   SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE,
 } from 'constants/keyBasedAssetTransferConstants';
 import type { KeyBasedAssetTransfer } from 'models/Asset';
-import type { Collectibles } from 'models/Collectible';
+import type { Collectible } from 'models/Collectible';
 import type { WalletAssetsBalances } from 'models/Balances';
 
 
 export type KeyBasedAssetTransferReducerState = {|
   data: KeyBasedAssetTransfer[],
   availableBalances: WalletAssetsBalances,
-  availableCollectibles: Collectibles,
+  availableCollectibles: Collectible[],
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
   isCalculatingGas: boolean,
