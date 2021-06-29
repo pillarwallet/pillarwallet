@@ -82,7 +82,7 @@
     "liquidityPools": "Liquidity pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
-    "collectibles": "Collectibles"
+    "collectibles": "NFTs"
   },
 
   "assetCategoriesShort": {
@@ -92,7 +92,7 @@
     "liquidityPools": "Pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
-    "collectibles": "Collectibles"
+    "collectibles": "NFTs"
   },
 
   "title": {
@@ -109,8 +109,8 @@
     "select": "Select",
     "failed": "Failed",
     "pending": "Pending",
-    "collectibleSent": "Collectible sent",
-    "collectibleReceive": "Collectible received",
+    "collectibleSent": "NFT sent",
+    "collectibleReceive": "NFT received",
     "connectionRequested": "Requested",
     "assets": "Assets",
     "backupPhrase": "Backup phrase",
@@ -135,8 +135,8 @@
     "all": "All",
     "backedUp": "Backup secured",
     "canceled": "Canceled",
-    "collectibleFromUser": "Collectible from {{username}}",
-    "collectibleToUser": "Collectible to {{username}}",
+    "collectibleFromUser": "NFT from {{username}}",
+    "collectibleToUser": "NFT to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
     "currentApyFormat": "Current APY: {{value}}",
@@ -172,7 +172,7 @@
     "requested": "Requested",
     "search": "Search",
     "searchAsset": "Search asset",
-    "searchCollectible": "Search collectible",
+    "searchCollectible": "Search NFT",
     "sending": "Sending",
     "sent": "Sent",
     "settle": "Settle",
@@ -210,8 +210,8 @@
     "walletAddressEnsUser": "Wallet address, ENS, user",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
-    "collectibles": "Collectibles",
-    "collectible": "Collectible",
+    "collectibles": "NFTs",
+    "collectible": "NFT",
     "processing": "Processing...",
     "mainAccount": "Main Account",
     "free": "Free",
@@ -464,8 +464,8 @@
       "default": "Transaction failed",
       "offline": "You can't send transaction while offline",
       "notEnoughGas": "Not enough gas to cover the transaction fee. Top up your ETH balance",
-      "notOwnedCollectible": "You no longer own this collectible",
-      "collectibleCantBeTransferred": "This collectible can't be transferred",
+      "notOwnedCollectible": "You no longer own this NFT",
+      "collectibleCantBeTransferred": "This NFT can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
       "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}",
       "cantCalculateFee": "Unable to calculate transaction fee"
@@ -719,7 +719,7 @@
         "title": "Tokens"
       },
       "collectibles": {
-        "title": "Collectibles"
+        "title": "NFTs"
       }
     },
     "paragraph": {
@@ -795,11 +795,11 @@
   "collectiblesList": {
     "emptyState": {
       "noCollectibles": {
-        "title": "No collectibles",
-        "paragraph": "There are no collectibles in this wallet"
+        "title": "No NFTs",
+        "paragraph": "There are no NFTs in this wallet"
       },
       "noneFound": {
-        "title": "Collectible not found",
+        "title": "NFT not found",
         "paragraph": "Check if the name was entered correctly"
       }
     }
@@ -1068,7 +1068,7 @@
       "allowanceTransactionSuccess": "Transaction is on its way",
       "exchangeTransactionSuccess": "Swapping tokens...",
       "transactionSuccess": "Tokens are on their way",
-      "collectibleTransactionSuccess": "Collectible is on its way",
+      "collectibleTransactionSuccess": "NFT is on its way",
       "transferAssetsToSmartWalletScreen": "Migration to Smart Wallet",
       "amountEditScreen": "Set amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
@@ -1093,11 +1093,11 @@
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",
       "noAssetsFound": "No assets found",
-      "noCollectiblesFound": "No collectibles found",
+      "noCollectiblesFound": "No NFTs found",
       "fromKeyWallet": "From Key based wallet",
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
-      "collectiblesToTransfer": "Collectibles to transfer",
+      "collectiblesToTransfer": "NFTs to transfer",
       "data": "Data",
       "message": "Message",
       "address": "Address",
@@ -1203,7 +1203,7 @@
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
     "cannotGetWalletAddress": "Cannot get wallet address.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
-    "cannotSendCollectible": "Cannot send collectible. Please try again.",
+    "cannotSendCollectible": "Cannot send NFT. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
@@ -1344,8 +1344,8 @@
     "transactionReceivedConfirmed": "{{tokenValue}} received.",
     "transactionSentPending": "{{tokenValue}} is being sent.",
     "transactionSentConfirmed": "{{tokenValue}} sent.",
-    "receivedCollectible": "You received a collectible.",
-    "collectibleSentAndReceived": "Your collectible has been received."
+    "receivedCollectible": "You received an NFT.",
+    "collectibleSentAndReceived": "Your NFT has been received."
   },
 
   "graph": {

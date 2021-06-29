@@ -57,9 +57,6 @@ export type CollectibleTransaction = {
   _id: string,
 };
 
-
-export type Collectibles = Collectible[];
-
 export type CollectiblesStore = {
   [accountId: string]: Collectible[],
 };
