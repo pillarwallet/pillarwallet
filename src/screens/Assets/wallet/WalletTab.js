@@ -34,11 +34,10 @@ import ChainListFooter from 'components/modern/ChainListFooter';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import AddFundsModal from 'components/AddFundsModal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
 
 // Selectors
 import {
@@ -86,10 +85,6 @@ function WalletTab() {
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
-  };
-
-  const showAddFundsModal = () => {
-    Modal.open(() => <AddFundsModal receiveAddress={accountAddress} />);
   };
 
   const navigateToAssetDetails = (item: WalletItem) => {
@@ -157,7 +152,7 @@ function WalletTab() {
     !hasPositiveBalance && {
       title: tRoot('button.addCash'),
       iconName: 'plus',
-      onPress: showAddFundsModal,
+      onPress: () => navigation.navigate(ADD_CASH),
     },
   ];
 
