@@ -44,14 +44,15 @@ export function useFetchWalletConnectCategoriesQuery(): QueryResult<WalletConnec
 async function fetchWalletConnectCategoriesApiCall(): Promise<WalletConnectCmsCategory[]> {
   const data = await Prismic.queryDocumentsByType<CategoryDto>(TYPE_CATEGORIES, { pageSize: 100 });
   const parseData = parse.mapArrayOrEmpty(data.results, parseCategory);
-  return orderBy(parseData, 'title');
+  return orderBy(parseData, ['order']);
 }
 
 /**
  * Type representing Prismic data for category. Contains only fields that are actually used.
  */
 type CategoryDto = {
-  name?: [?{ text?: string }]
+  name?: [?{ text?: string }],
+  order?: number,
 };
 
 function parseCategory(item: ?Prismic.Document<CategoryDto>): ?WalletConnectCmsCategory {
@@ -59,7 +60,8 @@ function parseCategory(item: ?Prismic.Document<CategoryDto>): ?WalletConnectCmsC
 
   const id = parse.stringOrNull(item.id);
   const title = parse.stringOrNull(item.data?.name?.[0]?.text);
+  const order = parse.numberOrNull(item.data?.order) ?? Infinity;
   if (!id || !title) return null;
 
-  return { id, title };
+  return { id, title, order };
 }
