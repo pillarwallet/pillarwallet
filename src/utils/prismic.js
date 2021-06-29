@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,21 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const renderHTMLfromPrismic = (type: string, text: string): string => {
-  /* eslint-disable i18next/no-literal-string */
-  switch (type) {
-    case 'heading1':
-      return `<h1>${text}</h1>`;
-    case 'heading4':
-      return `<h4>${text}</h4>`;
-    case 'heading6':
-      return `<h6>${text}</h6>`;
-    case 'paragraph':
-      return `<p>${text}</p>`;
-    case 'list-item':
-      return `<li>${text}</li>`;
-    default:
-      return '';
-  }
-  /* eslint-enable i18next/no-literal-string */
+// Components
+import { renderHTMLfromPrismic } from 'components/Modals/PrismicDocumentModal/RenderHTMLfromPrismic';
+
+export const mapFromDocumentDataToString = (document: Array<Object>, prismicContent: Array<Object>) => {
+  document.map((documentData) => {
+    if (!documentData.text) return null;
+    return prismicContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+  });
 };

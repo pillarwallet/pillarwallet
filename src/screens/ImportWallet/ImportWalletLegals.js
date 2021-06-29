@@ -112,9 +112,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  openLegalModal = (prismicDocumentId: string) => Modal.open(() => (
-    <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />
-  ));
+  openLegalModal = (prismicDocumentId: string) =>
+    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
 
   render() {
     const { navigation } = this.props;
@@ -124,6 +123,12 @@ class ImportWalletLegals extends React.Component<Props, State> {
     } = this.state;
 
     const canGoNext = hasAgreedToTerms && hasAgreedToPolicy;
+    const prismicTermsOfPolicyDocumentId = firebaseRemoteConfig.getString(
+      REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID,
+    );
+    const prismicPrivacyPolicyDocumentId = firebaseRemoteConfig.getString(
+      REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
+    );
 
     return (
       <ContainerWithHeader
@@ -146,10 +151,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () =>
-                    this.openLegalModal(
-                      firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID),
-                    ),
+                  onPress: () => this.openLegalModal(prismicTermsOfPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -164,10 +166,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () =>
-                    this.openLegalModal(
-                      firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID),
-                    ),
+                  onPress: () => this.openLegalModal(prismicPrivacyPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>

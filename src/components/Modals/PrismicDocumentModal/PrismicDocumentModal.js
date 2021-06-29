@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { ScrollView } from 'react-native';
 import HTML from 'react-native-render-html';
-import get from 'lodash.get';
 
 // Components
 import Spinner from 'components/Spinner';
@@ -31,6 +30,7 @@ import { Container } from 'components/modern/Layout';
 
 // Types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
+import type { ScrollEvent, LayoutEvent } from 'utils/types/react-native';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -68,12 +68,12 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
 
   const handleModalScrollTo = (p: ScrollToProps) => scrollViewRef?.current?.scrollTo(p);
 
-  const handleContentOnScroll = (event: Object) => {
-    const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
+  const handleContentOnScroll = (event: ScrollEvent) => {
+    const contentOffsetY = event.nativeEvent?.contentOffset?.y;
     setScrollOffset(contentOffsetY);
   };
 
-  const handleContentOnLayout = (event: Object) => {
+  const handleContentOnLayout = (event: LayoutEvent) => {
     const { height } = event.nativeEvent.layout;
     if (!containerHeight || containerHeight !== height) {
       setContainerHeight(height);
@@ -108,9 +108,8 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
           </ActivityIndicatorWrapper>
         )}
         {!!isPrismicHTMLFetched && (
-          // $FlowFixMe: react-native types
           <ScrollView
-            paddingHorizontal={spacing.rhythm}
+            style={styles.scrollView}
             ref={scrollViewRef}
             onScroll={handleContentOnScroll}
             scrollEventThrottle={16} // inherited from ScrollWrapper component
@@ -126,6 +125,12 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
 };
 
 export default PrismicDocumentModal;
+
+const styles = {
+  scrollView: {
+    paddingHorizontal: spacing.rhythm,
+  },
+};
 
 const ActivityIndicatorWrapper = styled.View`
   flex: 1;

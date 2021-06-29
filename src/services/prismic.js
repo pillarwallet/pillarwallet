@@ -21,10 +21,8 @@
 import * as Prismic from '@prismicio/client';
 import { getEnv } from 'configs/envConfig';
 
-// Components
-import {
-  renderHTMLfromPrismic,
-} from 'components/Modals/PrismicDocumentModal/RenderHTMLfromPrismic';
+// Utils
+import { mapFromDocumentDataToString } from 'utils/prismic';
 
 export const DOCUMENT_TYPE = 'document.type';
 
@@ -51,22 +49,13 @@ export function queryDocumentsByType<T>(type: string, options?: QueryOptions): R
   return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
 }
 
-export async function queryDocumentsByID(id: string): Promise<Object> {
+export async function queryDocumentsByID(id: string): Promise<string> {
   const fetchPrismicDocumentResponse = await prismicClient.getByID(id);
   const document = fetchPrismicDocumentResponse.data;
-  const prismicHTMLContent = [];
-  document?.title?.map((documentData) => {
-    if (!documentData.text) return null;
-    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
-  });
-  document?.subtitle?.map((documentData) => {
-    if (!documentData.text) return null;
-    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
-  });
-  document?.content?.map((documentData) => {
-    if (!documentData.text) return null;
-    return prismicHTMLContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
-  });
-  const prismicConvertedHTMLData = prismicHTMLContent.join('');
+  const prismicContent = [];
+  mapFromDocumentDataToString(document?.title, prismicContent);
+  mapFromDocumentDataToString(document?.subtitle, prismicContent);
+  mapFromDocumentDataToString(document?.content, prismicContent);
+  const prismicConvertedHTMLData = prismicContent.join('');
   return prismicConvertedHTMLData;
 }

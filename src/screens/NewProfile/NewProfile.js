@@ -148,6 +148,13 @@ const NewProfile = ({
   const [hasAgreedToPolicy, setHasAgreedToPolicy] = useState(false);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
+  const prismicTermsOfPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID,
+  );
+  const prismicPrivacyPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
+  );
+
   const isUsernameInputDirty = usernameValue !== null;
 
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
@@ -283,8 +290,7 @@ const NewProfile = ({
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () =>
-                    openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID)),
+                  onPress: () => openLegalModal(prismicTermsOfPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -297,8 +303,7 @@ const NewProfile = ({
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () =>
-                    openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID)),
+                  onPress: () => openLegalModal(prismicPrivacyPolicyDocumentId),
                 })}
               </CheckboxText>
             </Checkbox>

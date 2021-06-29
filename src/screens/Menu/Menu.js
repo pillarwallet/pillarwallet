@@ -99,6 +99,12 @@ const Menu = ({
 
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
 
+  const prismicTermsOfPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID,
+  );
+  const prismicPrivacyPolicyDocumentId = firebaseRemoteConfig.getString(
+    REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
+  );
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   const showMigrateWallet =
     (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
@@ -255,7 +261,7 @@ const Menu = ({
             <LinksSection>
               <LegalTextLink
                 onPress={() =>
-                  openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID))
+                  openLegalModal(prismicTermsOfPolicyDocumentId)
                 }
               >
                 {t('settingsContent.button.termOfUse')}
@@ -263,7 +269,7 @@ const Menu = ({
               <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
               <LegalTextLink
                 onPress={() =>
-                  openLegalModal(firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID))
+                  openLegalModal(prismicPrivacyPolicyDocumentId)
                 }
               >
                 {t('settingsContent.button.privacyPolicy')}
