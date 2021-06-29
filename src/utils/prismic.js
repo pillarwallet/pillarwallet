@@ -17,7 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_WALLETCONNECT_SESSIONS_IMPORTED = 'SET_WALLETCONNECT_SESSIONS_IMPORTED';
-export const ADD_WALLETCONNECT_SESSION = 'ADD_WALLETCONNECT_SESSION';
-export const REMOVE_WALLETCONNECT_SESSION = 'REMOVE_WALLETCONNECT_SESSION';
-export const SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS = 'SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS';
+
+// Components
+import { renderHTMLfromPrismic } from 'components/Modals/PrismicDocumentModal/RenderHTMLfromPrismic';
+
+// Services
+import * as Prismic from 'services/prismic';
+
+export const mapFromDocumentDataToString = (
+  document: Array<Prismic.DocumentData>,
+  prismicContent: Array<string>,
+): void => {
+  document.map((documentData) => {
+    if (!documentData.text) return null;
+    return prismicContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+  });
+};

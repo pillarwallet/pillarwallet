@@ -29,6 +29,7 @@ import {
   WALLETCONNECT_EVENT,
   SET_WALLETCONNECT_CONNECTOR_REQUEST,
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
+  REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
 } from 'constants/walletConnectConstants';
 import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
@@ -317,6 +318,17 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       });
 
       navigate(navigateToAppAction);
+    });
+
+    connector.on(WALLETCONNECT_EVENT.TRANSPORT_ERROR, (error: Error | null) => {
+      // remove from active connectors, active connector will be restored when available
+      dispatch({ type: REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { peerId: connector.peerId } });
+
+      connector?._transport?.close?.(); // closes failed websocket connection, but not killing session
+
+      if (!error) return;
+
+      dispatch(setWalletConnectErrorAction(error?.message));
     });
 
     connector.on(WALLETCONNECT_EVENT.DISCONNECT, (error: Error | null) => {
