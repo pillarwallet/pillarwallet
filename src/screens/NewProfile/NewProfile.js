@@ -18,19 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Platform } from 'react-native';
-import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
-import debounce from 'lodash.debounce';
+import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
+import { debounce } from 'lodash';
 import t from 'translations/translate';
 
-// actions
-import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
-
-// components
+// Components
+import { Container, Content } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
 import { Wrapper, Spacing } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
@@ -39,105 +37,34 @@ import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal'
 import TextInput from 'components/TextInput';
 import Modal from 'components/Modal';
 
-// constants
+// Constants
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
-// utils
+// Selectors
+import { useRootSelector } from 'selectors';
+
+// Actions
+import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
+
+// Utils
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { useThemeColors, themedColors } from 'utils/themes';
 import { validateUsername } from 'utils/validators';
 import { getEnsPrefix } from 'utils/common';
 
-// types
-import type { Theme } from 'models/Theme';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// Types
 import type { OnboardingUser } from 'models/User';
-
-
-const UsernameWrapper = styled(Wrapper)`
-  margin: 36px 0 20px;
-  align-self: center;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  top: 2px;
-`;
-
-const Text = styled(MediumText)`
-  ${fontStyles.big};
-  width: 100%;
-  text-align: center;
-  max-width: 230px;
-`;
-
-const ContentWrapper = styled.View`
-  flex: 1;
-`;
-
-const StyledWrapper = styled.View`
-  flex-grow: 1;
-  padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
-  min-height: 180px; ${''/* to add screen estate for error toast */}
-`;
-
-const CheckboxText = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
-`;
-
-const FooterWrapper = styled.View`
-  padding: 0 ${spacing.layoutSides}px 20px;
-  width: 100%;
-`;
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  checkUsernameAvailability: (username: string) => void,
-  resetUsernameCheck: () => void,
-  user: ?OnboardingUser,
-  theme: Theme,
-  errorMessage: ?string,
-};
+const NewProfile = () => {
+  const navigation = useNavigation();
+  const colors = useThemeColors();
 
-export const getUsernameInputIcon = (
-  colors: Object,
-  isUsernameInputDirty: boolean,
-  isCheckingUsername: boolean,
-  user: ?OnboardingUser,
-  usernameValidationErrorMessage: ?string,
-  errorMessage: ?string,
-) => {
-  let statusIcon = null;
-  let iconColor = null;
+  const dispatch = useDispatch();
 
-  if (isUsernameInputDirty && !isCheckingUsername) {
-    if (usernameValidationErrorMessage || errorMessage) {
-      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
-      iconColor = colors.negative;
-    } else if (user?.username) {
-      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
-      iconColor = colors.positive;
-    }
-  }
-
-  return { statusIcon, iconColor };
-};
-
-const NewProfile = ({
-  user,
-  checkUsernameAvailability,
-  navigation,
-  theme,
-  errorMessage,
-  resetUsernameCheck,
-}: Props) => {
-  useEffect(() => {
-    // prepare for username check if no user set
-    if (!user) resetUsernameCheck();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const user = useRootSelector(root => root.onboarding.user);
+  const errorMessage = useRootSelector(root => root.onboarding.errorMessage);
 
   const [usernameValue, setUsernameValue] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
@@ -150,9 +77,15 @@ const NewProfile = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(
-    debounce(() => { if (usernameValue) checkUsernameAvailability(usernameValue); }, 200),
+    debounce(() => { if (usernameValue) dispatch(checkUsernameAvailabilityAction(usernameValue)); }, 200),
     [usernameValue],
   );
+
+  useEffect(() => {
+    // prepare for username check if no user set
+    if (!user) dispatch(resetUsernameCheckAction(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!isCheckingUsername
@@ -178,8 +111,6 @@ const NewProfile = ({
     return onValidUsername.cancel;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onValidUsername, usernameValue]);
-
-  const colors = getThemeColors(theme);
 
   const existingUser = !!user?.isExisting;
 
@@ -255,75 +186,115 @@ const NewProfile = ({
     && (existingUser || hasAgreedToAllTerms);
 
   const headerProps = existingUser
-    ? { default: true, floating: true, transparent: true }
+    ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
   const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
 
   return (
-    <ContainerWithHeader
-      headerProps={headerProps}
-      putContentInScrollView={!existingUser}
-      keyboardShouldPersistTaps="always"
-      footer={!existingUser && (
-        <FooterWrapper>
-          <Checkbox
-            onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
-            small
-            lightText
-            wrapperStyle={{ marginBottom: 16 }}
-            checked={hasAgreedToTerms}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:termsOfUse'),
-                onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Checkbox
-            onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
-            small
-            lightText
-            checked={hasAgreedToPolicy}
-          >
-            <CheckboxText>
-              {t('auth:withLink.readUnderstandAgreeTo', {
-                linkedText: t('auth:privacyPolicy'),
-                onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
-              })}
-            </CheckboxText>
-          </Checkbox>
-          <Spacing h={22} />
-          <Button
-            title={t('auth:button.next')}
-            onPress={proceedToNextScreen}
-            disabled={!allowNext}
-          />
-        </FooterWrapper>
-      )}
-    >
-      <ContentWrapper>
-        {!existingUser && renderChooseUsername()}
-        {existingUser && renderWelcomeBack()}
-      </ContentWrapper>
-    </ContainerWithHeader>
+    <Container>
+      <HeaderBlock {...headerProps} navigation={navigation} />
+
+      <Content paddingHorizontal={0} paddingVertical={0} scrollEnabled={!existingUser}>
+        <ContentWrapper>
+          {!existingUser && renderChooseUsername()}
+          {existingUser && renderWelcomeBack()}
+        </ContentWrapper>
+
+        {!existingUser && (
+          <FooterWrapper>
+            <Checkbox
+              onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
+              small
+              lightText
+              wrapperStyle={{ marginBottom: 16 }}
+              checked={hasAgreedToTerms}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:termsOfUse'),
+                  onPress: () => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Checkbox
+              onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
+              small
+              lightText
+              checked={hasAgreedToPolicy}
+            >
+              <CheckboxText>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:privacyPolicy'),
+                  onPress: () => openLegalModal(ENDPOINTS.PRIVACY_POLICY),
+                })}
+              </CheckboxText>
+            </Checkbox>
+            <Spacing h={22} />
+            <Button title={t('auth:button.next')} onPress={proceedToNextScreen} disabled={!allowNext} />
+          </FooterWrapper>
+        )}
+      </Content>
+    </Container>
   );
 };
 
-const mapStateToProps = ({
-  onboarding: {
-    user,
-    errorMessage,
-  },
-}: RootReducerState): $Shape<Props> => ({
-  user,
-  errorMessage,
-});
+export default NewProfile;
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkUsernameAvailability: (username: string) => dispatch(checkUsernameAvailabilityAction(username)),
-  resetUsernameCheck: () => dispatch(resetUsernameCheckAction(true)),
-});
+export const getUsernameInputIcon = (
+  colors: Object,
+  isUsernameInputDirty: boolean,
+  isCheckingUsername: boolean,
+  user: ?OnboardingUser,
+  usernameValidationErrorMessage: ?string,
+  errorMessage: ?string,
+) => {
+  let statusIcon = null;
+  let iconColor = null;
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));
+  if (isUsernameInputDirty && !isCheckingUsername) {
+    if (usernameValidationErrorMessage || errorMessage) {
+      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.negative;
+    } else if (user?.username) {
+      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.positive;
+    }
+  }
+
+  return { statusIcon, iconColor };
+};
+
+const UsernameWrapper = styled(Wrapper)`
+  margin: 36px 0 20px;
+  align-self: center;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  top: 2px;
+`;
+
+const Text = styled(MediumText)`
+  ${fontStyles.big};
+  width: 100%;
+  text-align: center;
+  max-width: 230px;
+`;
+
+const ContentWrapper = styled.View`
+  flex: 1;
+`;
+
+const StyledWrapper = styled.View`
+  flex-grow: 1;
+  padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.accent};
+`;
+
+const FooterWrapper = styled.View`
+  padding: 0 ${spacing.layoutSides}px 20px;
+`;
