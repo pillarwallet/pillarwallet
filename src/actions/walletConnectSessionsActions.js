@@ -30,6 +30,7 @@ import Toast from 'components/Toast';
 import {
   ADD_WALLETCONNECT_SESSION,
   REMOVE_WALLETCONNECT_SESSION,
+  SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
 } from 'constants/walletConnectSessionsConstants';
 import {
@@ -51,12 +52,24 @@ import { hasKeyBasedWalletConnectSession } from 'utils/walletConnect';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-export const initWalletConnectSessionsAction = () => {
+
+export const setIsCreatingWalletConnectSessionsAction = (isInitializing: boolean) => ({
+  type: SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
+  payload: isInitializing,
+});
+
+export const initWalletConnectSessionsAction = (resetExisting: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      walletConnectSessions: { isImported, sessions },
+      walletConnectSessions: { isImported, sessions, isInitializingSessions },
+      walletConnect: { activeConnectors },
       wallet: { data: walletData },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline || isInitializingSessions) return;
+
+    dispatch(setIsCreatingWalletConnectSessionsAction(true));
 
     // resets sessions for of old key based wallet implementation
     const keyBasedWalletAddress = walletData?.address;
@@ -78,14 +91,29 @@ export const initWalletConnectSessionsAction = () => {
     }
 
     // reset before subscribing
-    dispatch(({ type: RESET_WALLETCONNECT_ACTIVE_CONNECTORS }));
+    if (resetExisting) {
+      // closes failed websocket connection, but not killing session
+      activeConnectors.forEach((connector) => connector?._transport?.close?.());
+      dispatch(({ type: RESET_WALLETCONNECT_ACTIVE_CONNECTORS }));
+    }
+
+    // select connectors after reset
+    const { walletConnect: { activeConnectors: currentActiveConnectors } } = getState();
 
     storedSessions.forEach((session) => {
+      const activeConnectorExists = currentActiveConnectors.some((connector) => connector.peerId === session.peerId);
+      if (activeConnectorExists) return;
+
       const connector = createConnector({ session });
-      if (connector) {
-        dispatch(subscribeToWalletConnectConnectorEventsAction(connector));
+      if (!connector) {
+        reportErrorLog('initWalletConnectSessionsAction createConnector failed: no connector', { session });
+        return;
       }
+
+      dispatch(subscribeToWalletConnectConnectorEventsAction(connector));
     });
+
+    dispatch(setIsCreatingWalletConnectSessionsAction(false));
   };
 };
 

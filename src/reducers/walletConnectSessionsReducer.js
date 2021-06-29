@@ -21,6 +21,7 @@ import {
   ADD_WALLETCONNECT_SESSION,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
   REMOVE_WALLETCONNECT_SESSION,
+  SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
 } from 'constants/walletConnectSessionsConstants';
 
 import type { WalletConnectSession } from 'models/WalletConnect';
@@ -32,26 +33,34 @@ export type SetWalletConnectSessionsImportedAction = {|
 
 export type AddWalletConnectSessionAction = {|
   type: typeof ADD_WALLETCONNECT_SESSION,
-  payload: { session: WalletConnectSession }
+  payload: { session: WalletConnectSession },
 |};
 
 export type RemoveWalletConnectSessionAction = {|
   type: typeof REMOVE_WALLETCONNECT_SESSION,
-  payload: { peerId: string }
+  payload: { peerId: string },
+|};
+
+export type SetIsInitializingWalletConnectSessions = {|
+  type: typeof SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
+  payload: boolean,
 |};
 
 export type WalletConnectSessionsReducerAction = SetWalletConnectSessionsImportedAction
   | AddWalletConnectSessionAction
-  | RemoveWalletConnectSessionAction;
+  | RemoveWalletConnectSessionAction
+  | SetIsInitializingWalletConnectSessions;
 
 export type WalletConnectSessionsReducerState = {|
   sessions: WalletConnectSession[],
   isImported: boolean,
+  isInitializingSessions: boolean,
 |};
 
 const initialState: WalletConnectSessionsReducerState = {
   sessions: [],
   isImported: false,
+  isInitializingSessions: false,
 };
 
 const walletConnectSessionsReducer = (
@@ -73,6 +82,12 @@ const walletConnectSessionsReducer = (
       return {
         ...state,
         sessions: sessions.filter(({ peerId: existingPeerId }) => existingPeerId !== peerId),
+      };
+
+    case SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS:
+      return {
+        ...state,
+        isInitializingSessions: action.payload,
       };
 
     default:
