@@ -24,6 +24,7 @@ import type { ChainRecord } from 'models/Chain';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { mapRecordValues } from 'utils/object';
 
 export type CollectibleItem = {|
   key: string,
@@ -37,25 +38,26 @@ export type CollectibleItem = {|
 |};
 
 export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
-  const collectibles = useRootSelector(accountCollectiblesSelector);
+  const collectiblesPerChain = useRootSelector(accountCollectiblesSelector);
 
-  const collectiblesMapped = collectibles.map(({
-    id,
-    contractAddress,
-    description,
-    icon: iconUrl,
-    image: imageUrl,
-    name: title,
-  }) => ({
-    key: `${contractAddress}-${id}`,
-    id,
-    title,
-    description,
-    iconUrl,
-    imageUrl,
-    contractAddress,
-    tokenId: id,
-  }));
-
-  return { ethereum: collectiblesMapped };
+  return mapRecordValues(
+    collectiblesPerChain,
+    (collectibles) => (collectibles ?? []).map(({
+      id,
+      contractAddress,
+      description,
+      icon: iconUrl,
+      image: imageUrl,
+      name: title,
+    }) => ({
+      key: `${contractAddress}-${id}`,
+      id,
+      title,
+      description,
+      iconUrl,
+      imageUrl,
+      contractAddress,
+      tokenId: id,
+    })),
+  );
 }

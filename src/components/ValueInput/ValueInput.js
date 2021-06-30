@@ -69,6 +69,7 @@ import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesBySymbol } from 'models/Rates';
+import type { ChainRecord } from 'models/Chain';
 
 // local
 import ValueInputHeader from './ValueInputHeader';
@@ -100,7 +101,7 @@ type InnerProps = {|
   assets: AssetOption[],
   accountAssetsBalances: AccountAssetBalances,
   baseFiatCurrency: ?Currency,
-  collectibles: Collectible[],
+  collectiblesPerChain: ChainRecord<Collectible[]>,
   theme: Theme,
 |};
 
@@ -150,7 +151,7 @@ const ValueInputComponent = ({
   txFeeInfo,
   hideMaxSend,
   updateTxFee,
-  collectibles,
+  collectiblesPerChain,
   theme,
   leftSideSymbol,
   getInputRef,
@@ -167,6 +168,8 @@ const ValueInputComponent = ({
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const assetBalance = (customBalances || walletBalances)[assetSymbol]?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
+
+  const collectibles = collectiblesPerChain[chain] ?? [];
 
   const chainRates = useChainRates(chain);
   const ratesWithCustomRates = { ...chainRates, ...(customRates ?? {}) };
@@ -388,7 +391,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
   assets: accountAssetsWithBalanceSelector,
-  collectibles: activeAccountMappedCollectiblesSelector,
+  collectiblesPerChain: activeAccountMappedCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

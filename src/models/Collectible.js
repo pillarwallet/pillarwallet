@@ -58,7 +58,7 @@ export type CollectibleTransaction = {
 };
 
 export type CollectiblesStore = {
-  [accountId: string]: Collectible[],
+  [accountId: string]: ChainRecord<Collectible[]>,
 };
 
 export type CollectiblesHistoryStore = {

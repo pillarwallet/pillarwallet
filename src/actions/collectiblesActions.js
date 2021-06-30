@@ -25,10 +25,10 @@ import { mapValues } from 'lodash';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import {
-  UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
   SET_UPDATING_COLLECTIBLE_TRANSACTION,
+  SET_ACCOUNT_COLLECTIBLES,
 } from 'constants/collectiblesConstants';
 
 // Services
@@ -44,7 +44,10 @@ import {
 import { getTrxInfo } from 'utils/history';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
-// types
+// Selectors
+import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
+
+// Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
@@ -100,21 +103,15 @@ const collectibleTransactionUpdate = (hash: string) => {
   };
 };
 
-
 export const fetchCollectiblesAction = (account?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      collectibles: { data: collectibles },
-    } = getState();
-
     const walletAddress = account
       ? getAccountAddress(account)
-      : getActiveAccountAddress(accounts);
+      : activeAccountAddressSelector(getState());
 
     const accountId = account
       ? getAccountId(account)
-      : getActiveAccountId(accounts);
+      : activeAccountIdSelector(getState());
 
     if (!walletAddress || !accountId) {
       reportErrorLog('fetchCollectiblesAction failed: no walletAddress or accountId', {
@@ -136,13 +133,14 @@ export const fetchCollectiblesAction = (account?: Account) => {
       return;
     }
 
-    const updatedCollectibles = {
-      ...collectibles,
-      [accountId]: openSeaCollectibles.map(collectibleFromResponse),
+    const updatedAccountCollectibles = {
+      ethereum: openSeaCollectibles.map(collectibleFromResponse),
     };
 
+    dispatch({ type: SET_ACCOUNT_COLLECTIBLES, payload: { accountId, collectibles: updatedAccountCollectibles } });
+
+    const updatedCollectibles = getState().collectibles.data;
     dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
-    dispatch({ type: UPDATE_COLLECTIBLES, payload: updatedCollectibles });
   };
 };
 
