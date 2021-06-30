@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { SvgCssUri } from 'react-native-svg';
 
 // Components
 import Icon, { type IconName } from 'components/modern/Icon';
@@ -30,6 +31,7 @@ import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { isSvgImage } from 'utils/images';
 
 // Types
 import type { TransactionStatus } from 'models/History';
@@ -60,13 +62,15 @@ function HistoryListItem({
   onPress,
 }: Props) {
   const colors = useThemeColors();
+  const isSvg = isSvgImage(iconUrl);
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
       <LeftColumn>
         {!!iconUrl && (
           <IconImageWrapper>
-            <IconImage source={{ uri: iconUrl }} />
+            {isSvg && <SvgCssUri uri={iconUrl} width="100%" height="100%" />}
+            {!isSvg && <IconImage source={{ uri: iconUrl }} />}
           </IconImageWrapper>
         )}
         {!!iconName && (

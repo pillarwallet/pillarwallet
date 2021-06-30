@@ -44312,6 +44312,16 @@ exports[`Storyshots ReviewSummary collectible 1`] = `
         }
       >
         <View
+          style={
+            Array [
+              Object {
+                "height": 192,
+                "width": 192,
+              },
+            ]
+          }
+        />
+        <View
           h={16}
           style={
             Array [
