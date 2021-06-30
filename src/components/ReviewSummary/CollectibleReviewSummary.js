@@ -43,7 +43,7 @@ const CollectibleReviewSummary = ({ collectible, text }: Props) => {
   return (
     <Container>
       <CollectibleImageWrapper>
-        <CollectibleImage source={{ uri: collectible.imageUrl }} width={192} heigh={192} />
+        <CollectibleImage source={{ uri: collectible.imageUrl }} width={192} height={192} />
       </CollectibleImageWrapper>
       <Spacing h={16} />
       <BaseText regular>{text}</BaseText>
