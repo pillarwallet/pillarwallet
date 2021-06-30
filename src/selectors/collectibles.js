@@ -19,10 +19,16 @@
 */
 
 import { createSelector } from 'reselect';
+import { mapValues } from 'lodash';
 
 // types
 import type { ChainRecord } from 'models/Chain';
-import type { CollectibleTransaction } from 'models/Collectible';
+import type {
+  Collectible,
+  CollectiblesHistoryStore,
+  CollectiblesStore,
+  CollectibleTransaction,
+} from 'models/Collectible';
 
 // selectors
 import { collectiblesSelector, collectiblesHistorySelector, activeAccountIdSelector } from './selectors';
@@ -31,29 +37,33 @@ import { collectiblesSelector, collectiblesHistorySelector, activeAccountIdSelec
 export const accountCollectiblesSelector = createSelector(
   collectiblesSelector,
   activeAccountIdSelector,
-  (collectibles, activeAccountId) => {
-    if (!activeAccountId) return [];
-    return collectibles[activeAccountId] || [];
+  (collectibles: CollectiblesStore, activeAccountId: ?string): ChainRecord<Collectible[]> => {
+    if (!activeAccountId) return { ethereum: [] };
+    return collectibles[activeAccountId] || { ethereum: [] };
   },
 );
 
 export const accountCollectiblesHistorySelector = createSelector(
   collectiblesHistorySelector,
   activeAccountIdSelector,
-  (history, activeAccountId): ChainRecord<CollectibleTransaction[]> => {
+  (history: CollectiblesHistoryStore, activeAccountId: ?string): ChainRecord<CollectibleTransaction[]> => {
     if (!activeAccountId) return { ethereum: [] };
     return history[activeAccountId] ?? { ethereum: [] };
   },
 );
 
-export const activeAccountMappedCollectiblesSelector = createSelector(accountCollectiblesSelector, (collectibles) => {
-  return collectibles.map((collectible) => {
-    const { icon, id } = collectible;
-    return {
-      imageUrl: icon,
-      value: id,
-      tokenId: id,
-      ...collectible,
-    };
-  });
-});
+export const activeAccountMappedCollectiblesSelector = createSelector(
+  accountCollectiblesSelector,
+  (collectiblesPerChain: ChainRecord<Collectible[]>) => mapValues(
+    collectiblesPerChain,
+    (collectibles) => (collectibles ?? []).map((collectible) => {
+      const { icon, id } = collectible;
+      return {
+        imageUrl: icon,
+        value: id,
+        tokenId: id,
+        ...collectible,
+      };
+    }),
+  ),
+);

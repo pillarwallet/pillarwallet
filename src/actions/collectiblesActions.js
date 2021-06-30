@@ -25,14 +25,15 @@ import { mapValues } from 'lodash';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import {
-  UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
   SET_UPDATING_COLLECTIBLE_TRANSACTION,
+  SET_ACCOUNT_COLLECTIBLES,
 } from 'constants/collectiblesConstants';
 
 // Services
 import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
+import { getPoapCollectiblesOnXDai } from 'services/poap';
 
 // Utils
 import {
@@ -40,11 +41,15 @@ import {
   getAccountId,
   getActiveAccountAddress,
   getActiveAccountId,
+  isEtherspotAccount,
 } from 'utils/accounts';
 import { getTrxInfo } from 'utils/history';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
-// types
+// Selectors
+import { activeAccountSelector } from 'selectors';
+
+// Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
@@ -100,30 +105,16 @@ const collectibleTransactionUpdate = (hash: string) => {
   };
 };
 
-
-export const fetchCollectiblesAction = (account?: Account) => {
+export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      collectibles: { data: collectibles },
-    } = getState();
-
-    const walletAddress = account
-      ? getAccountAddress(account)
-      : getActiveAccountAddress(accounts);
-
-    const accountId = account
-      ? getAccountId(account)
-      : getActiveAccountId(accounts);
-
-    if (!walletAddress || !accountId) {
-      reportErrorLog('fetchCollectiblesAction failed: no walletAddress or accountId', {
-        accountId,
-        walletAddress,
-        defaultAccount: account,
-      });
+    const account = defaultAccount ?? activeAccountSelector(getState());
+    if (!account) {
+      reportErrorLog('fetchCollectiblesAction failed: no account', { defaultAccount });
       return;
     }
+
+    const walletAddress = getAccountAddress(account);
+    const accountId = getAccountId(account);
 
     const openSeaCollectibles = await fetchCollectibles(walletAddress);
     if (!openSeaCollectibles) {
@@ -131,18 +122,24 @@ export const fetchCollectiblesAction = (account?: Account) => {
         openSeaCollectibles,
         accountId,
         walletAddress,
-        defaultAccount: account,
+        account,
       });
       return;
     }
 
-    const updatedCollectibles = {
-      ...collectibles,
-      [accountId]: openSeaCollectibles.map(collectibleFromResponse),
+    let updatedAccountCollectibles = {
+      [CHAIN.ETHEREUM]: openSeaCollectibles.map(collectibleFromResponse),
     };
 
+    if (isEtherspotAccount(account)) {
+      const poapCollectiblesOnXDai = await getPoapCollectiblesOnXDai(walletAddress);
+      updatedAccountCollectibles = { ...updatedAccountCollectibles, [CHAIN.XDAI]: poapCollectiblesOnXDai };
+    }
+
+    dispatch({ type: SET_ACCOUNT_COLLECTIBLES, payload: { accountId, collectibles: updatedAccountCollectibles } });
+
+    const updatedCollectibles = getState().collectibles.data;
     dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
-    dispatch({ type: UPDATE_COLLECTIBLES, payload: updatedCollectibles });
   };
 };
 

@@ -45,7 +45,7 @@ export async function migrate(
       return storageData;
 
     case 'collectibles':
-      data = loadAndMigrateCollectibles(storageData);
+      data = loadAndMigrateCollectibles(storageData, dispatch);
       break;
 
     case 'collectiblesHistory':

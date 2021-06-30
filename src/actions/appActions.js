@@ -37,7 +37,7 @@ import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
+import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -109,7 +109,7 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
 
       const { collectibles = {} } = get(storageData, 'collectibles', {});
-      dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+      dispatch({ type: SET_COLLECTIBLES, payload: collectibles });
 
       const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });

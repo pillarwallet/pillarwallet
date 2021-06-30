@@ -23,14 +23,14 @@ import { useRootSelector } from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // Utils
-import { recordValues } from 'utils/object';
+import { mapRecordValues, recordValues } from 'utils/object';
 
 // Types
 import type { ChainRecord } from 'models/Chain';
 
 export function useAccountCollectibleCounts(): ChainRecord<number> {
-  const ethereum = useRootSelector(accountCollectiblesSelector).length;
-  return { ethereum };
+  const collectiblesPerChain = useRootSelector(accountCollectiblesSelector);
+  return mapRecordValues(collectiblesPerChain, (collectibles) => collectibles?.length ?? 0);
 }
 
 export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<number>): number {
