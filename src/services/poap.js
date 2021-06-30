@@ -25,6 +25,7 @@ import { callSubgraph } from 'services/theGraph';
 
 // utils
 import httpRequest from 'utils/httpRequest';
+import { reportErrorLog } from 'utils/common';
 
 // abis
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
@@ -76,7 +77,12 @@ export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<
       const { data } = await httpRequest.get(tokenMetadataUri);
       return { ...data, tokenId };
     } catch (error) {
-      //
+      reportErrorLog('getPoapCollectiblesOnXDai token URI fetch failed', {
+        error,
+        tokenId,
+        tokenMetadataUri,
+        walletAddress,
+      });
     }
 
     return null;
