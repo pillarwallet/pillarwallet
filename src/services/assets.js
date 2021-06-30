@@ -37,7 +37,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-import ERC721_CONTRACT_ABI from 'abi/erc721.json';
+import ERC721_CONTRACT_ABI_TRANSFER from 'abi/erc721_transfer.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
@@ -209,7 +209,7 @@ export const buildERC721TransactionData = async (transaction: Object, customProv
         params = [from, to, tokenId];
         break;
       case 'transfer':
-        contractAbi = ERC721_CONTRACT_ABI;
+        contractAbi = ERC721_CONTRACT_ABI_TRANSFER;
         params = [to, tokenId];
         break;
       case 'transferFrom':

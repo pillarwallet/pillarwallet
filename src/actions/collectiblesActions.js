@@ -33,6 +33,7 @@ import {
 
 // Services
 import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
+import { getPoapCollectiblesOnXDai } from 'services/poap';
 
 // Utils
 import {
@@ -40,12 +41,13 @@ import {
   getAccountId,
   getActiveAccountAddress,
   getActiveAccountId,
+  isEtherspotAccount,
 } from 'utils/accounts';
 import { getTrxInfo } from 'utils/history';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // Selectors
-import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
+import { activeAccountSelector } from 'selectors';
 
 // Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
@@ -103,24 +105,16 @@ const collectibleTransactionUpdate = (hash: string) => {
   };
 };
 
-export const fetchCollectiblesAction = (account?: Account) => {
+export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const walletAddress = account
-      ? getAccountAddress(account)
-      : activeAccountAddressSelector(getState());
-
-    const accountId = account
-      ? getAccountId(account)
-      : activeAccountIdSelector(getState());
-
-    if (!walletAddress || !accountId) {
-      reportErrorLog('fetchCollectiblesAction failed: no walletAddress or accountId', {
-        accountId,
-        walletAddress,
-        defaultAccount: account,
-      });
+    const account = defaultAccount ?? activeAccountSelector(getState());
+    if (!account) {
+      reportErrorLog('fetchCollectiblesAction failed: no account', { defaultAccount });
       return;
     }
+
+    const walletAddress = getAccountAddress(account);
+    const accountId = getAccountId(account);
 
     const openSeaCollectibles = await fetchCollectibles(walletAddress);
     if (!openSeaCollectibles) {
@@ -128,14 +122,19 @@ export const fetchCollectiblesAction = (account?: Account) => {
         openSeaCollectibles,
         accountId,
         walletAddress,
-        defaultAccount: account,
+        account,
       });
       return;
     }
 
-    const updatedAccountCollectibles = {
-      ethereum: openSeaCollectibles.map(collectibleFromResponse),
+    let updatedAccountCollectibles = {
+      [CHAIN.ETHEREUM]: openSeaCollectibles.map(collectibleFromResponse),
     };
+
+    if (isEtherspotAccount(account)) {
+      const poapCollectiblesOnXDai = await getPoapCollectiblesOnXDai(walletAddress);
+      updatedAccountCollectibles = { ...updatedAccountCollectibles, [CHAIN.XDAI]: poapCollectiblesOnXDai };
+    }
 
     dispatch({ type: SET_ACCOUNT_COLLECTIBLES, payload: { accountId, collectibles: updatedAccountCollectibles } });
 
