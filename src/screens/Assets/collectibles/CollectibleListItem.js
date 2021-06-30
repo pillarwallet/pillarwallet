@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { SvgCssUri } from 'react-native-svg';
 
 // Components
 import Image from 'components/Image';
@@ -27,6 +28,7 @@ import Text from 'components/modern/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { isSvgImage } from 'utils/images';
 
 type Props = {|
   title: ?string,
@@ -36,10 +38,17 @@ type Props = {|
 |};
 
 function CollectibleListItem({ title, iconUrl, onPress, width }: Props) {
+  const isSvg = isSvgImage(iconUrl);
+
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress} style={{ width }}>
       <IconContainer width={width}>
-        {!!iconUrl && <Icon source={{ uri: iconUrl }} resizeMode={Image.resizeMode.contain} />}
+        {!!iconUrl && (
+          <>
+            {isSvg && <SvgCssUri uri={iconUrl} width="100%" height="100%" />}
+            {!isSvg && <Icon source={{ uri: iconUrl }} resizeMode={Image.resizeMode.contain} />}
+          </>
+        )}
       </IconContainer>
 
       <TitleContainer>
