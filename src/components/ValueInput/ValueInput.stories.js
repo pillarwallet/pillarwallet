@@ -89,7 +89,7 @@ const store = createTestStore({
     },
   },
   appSettings: { data: { baseFiatCurrency: GBP } },
-  collectibles: { data: [] },
+  collectibles: { data: { ethereum: [] } },
   assets: { supportedAssets: { ethereum: [ethAsset, plrAsset] } },
 });
 

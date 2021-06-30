@@ -20,10 +20,11 @@
 
 // constants
 import {
-  UPDATE_COLLECTIBLES,
+  SET_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_HISTORY_TRANSACTION,
   SET_UPDATING_COLLECTIBLE_TRANSACTION,
+  SET_ACCOUNT_COLLECTIBLES,
 } from 'constants/collectiblesConstants';
 
 // utils
@@ -57,13 +58,16 @@ const initialState = {
 };
 
 const removeFromCollectibles = (
-  collectibles: Collectible[],
-  collectibleToRemove: { tokenId: string, contractAddress: string },
+  collectibles: ChainRecord<Collectible[]>,
+  collectibleToRemove: { tokenId: string, contractAddress: string, chain: string },
 ) => {
-  const { tokenId: id, contractAddress } = collectibleToRemove;
-  return collectibles.filter((
-    existing,
-  ) => !isMatchingCollectible(existing, { id, contractAddress }));
+  const { tokenId: id, contractAddress, chain } = collectibleToRemove;
+  const chainCollectibles = collectibles[chain] ?? [];
+
+  return {
+    ...collectibles,
+    [chain]: chainCollectibles.filter((existing) => !isMatchingCollectible(existing, { id, contractAddress })),
+  };
 };
 
 const addAccountCollectibleTransaction = (
@@ -82,11 +86,23 @@ const collectiblesReducer = (
   state: CollectiblesReducerState = initialState,
   action: CollectiblesAction,
 ): CollectiblesReducerState => {
+  let accountId;
+
   switch (action.type) {
-    case UPDATE_COLLECTIBLES:
+    case SET_COLLECTIBLES:
       return {
         ...state,
         data: action.payload || {},
+      };
+    case SET_ACCOUNT_COLLECTIBLES:
+      ({ accountId } = action.payload);
+      const { collectibles } = action.payload;
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [accountId]: collectibles || {},
+        },
       };
     case SET_COLLECTIBLES_TRANSACTION_HISTORY:
       return {
@@ -100,8 +116,8 @@ const collectiblesReducer = (
         updatingTransaction: action.payload,
       };
     case ADD_COLLECTIBLE_HISTORY_TRANSACTION:
-      const { accountId } = action.payload;
-      const accountCollectibles = state.data[accountId] ?? [];
+      ({ accountId } = action.payload);
+      const accountCollectibles = state.data[accountId] ?? {};
       const accountHistory = state.transactionHistory[accountId] ?? {};
       return {
         ...state,
