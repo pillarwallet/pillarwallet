@@ -34,7 +34,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const StyledCollectibleImage = styled(CollectibleImage)`
+const CollectibleImageWrapper = styled.View`
   width: 192px;
   height: 192px;
 `;
@@ -42,7 +42,9 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const CollectibleReviewSummary = ({ collectible, text }: Props) => {
   return (
     <Container>
-      <StyledCollectibleImage source={{ uri: collectible.imageUrl }} />
+      <CollectibleImageWrapper>
+        <CollectibleImage source={{ uri: collectible.imageUrl }} width={192} height={192} />
+      </CollectibleImageWrapper>
       <Spacing h={16} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={16} />

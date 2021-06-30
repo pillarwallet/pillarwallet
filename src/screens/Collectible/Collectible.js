@@ -69,7 +69,7 @@ import type { ChainRecord } from 'models/Chain';
 
 
 type Props = {
-  collectibles: Collectible[],
+  collectibles: ChainRecord<Collectible[]>,
   accountCollectibleHistory: ChainRecord<CollectibleTransaction[]>,
   accounts: Account[],
   theme: Theme,
@@ -166,8 +166,8 @@ const CollectibleScreen = ({
   };
 
   const isOwned = useMemo(
-    () => collectibles.some((ownedCollectible) => ownedCollectible.id === id),
-    [collectibles, id],
+    () => (collectibles[chain] ?? []).some((ownedCollectible) => ownedCollectible.id === id),
+    [collectibles, id, chain],
   );
 
   const mappedCollectiblesTransactions = useMemo(

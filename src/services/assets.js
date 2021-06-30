@@ -37,7 +37,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-import ERC721_CONTRACT_ABI from 'abi/erc721.json';
+import ERC721_CONTRACT_ABI_TRANSFER from 'abi/erc721_transfer.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
@@ -160,10 +160,12 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
   const transferHash = 'a9059cbb'; // transfer(address,uint256)
   const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
-
+  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
 
   if (!isReceiverContractAddress && contractHasMethod(code, safeTransferFromHash)) {
     return 'safeTransferFrom';
+  } else if (contractHasMethod(code, transferFromHash)) {
+    return 'transferFrom';
   } else if (contractHasMethod(code, transferHash)) {
     return 'transfer';
   }
@@ -172,7 +174,6 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
    * sometimes code contains proxy contract code on which one of the methods can be found,
    * let's fallback to transferFrom which belongs to EIP 721/1155 standard
    */
-  // const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
 
   return 'transferFrom';
 }
@@ -197,7 +198,7 @@ export const buildERC721TransactionData = async (transaction: Object, customProv
   const provider = customProvider || getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
   const code = await provider.getCode(contractAddress);
-  const receiverCode = await provider.getCode(contractAddress);
+  const receiverCode = await provider.getCode(to);
   // regular address will return exactly 0x while contract address will return 0x...0
   const isReceiverContractAddress = receiverCode && receiverCode.length > 2;
   const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress);
@@ -209,7 +210,7 @@ export const buildERC721TransactionData = async (transaction: Object, customProv
         params = [from, to, tokenId];
         break;
       case 'transfer':
-        contractAbi = ERC721_CONTRACT_ABI;
+        contractAbi = ERC721_CONTRACT_ABI_TRANSFER;
         params = [to, tokenId];
         break;
       case 'transferFrom':

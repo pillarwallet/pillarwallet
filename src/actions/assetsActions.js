@@ -63,7 +63,12 @@ import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { assetsCategoryFromEtherspotBalancesCategory } from 'utils/etherspot';
 
 // selectors
-import { accountsSelector, supportedAssetsPerChainSelector } from 'selectors';
+import {
+  accountsSelector,
+  activeAccountSelector,
+  supportedAssetsPerChainSelector,
+} from 'selectors';
+import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { Account } from 'models/Account';
@@ -110,13 +115,7 @@ export const sendAssetAction = (
       logTransactionType = symbol === ETH ? 'ETH' : 'ERC20'; // eslint-disable-line i18next/no-literal-string
     }
 
-    const {
-      accounts: { data: accounts },
-      collectibles: { data: collectibles },
-    } = getState();
-
-    const activeAccount = getActiveAccount(accounts);
-
+    const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
       reportErrorLog('sendAssetAction failed: no active account');
       return;
@@ -125,11 +124,11 @@ export const sendAssetAction = (
     const accountId = getAccountId(activeAccount);
     const accountAddress = getAccountAddress(activeAccount);
 
-    const accountCollectibles = collectibles[accountId] || [];
+    const accountCollectiblesOnChain = accountCollectiblesSelector(getState())?.[chain] ?? [];
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
-      collectibleInfo = accountCollectibles.find(item => item.id === transaction.tokenId);
+      collectibleInfo = accountCollectiblesOnChain.find(item => item.id === transaction.tokenId);
       if (!collectibleInfo) {
         callback({
           isSuccess: false,
