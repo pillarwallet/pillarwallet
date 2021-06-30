@@ -607,10 +607,8 @@
   "etherspot": {
     "deploymentInterjection": {
       "title": "Smart Wallet deployment",
-      "bodyTopFormat": "Your Smart Wallet needs to be deployed first in order to be able to send any outgoing transactions on {{chain}}. Non-deployed wallets only receive funds.",
-      "bodyBottomFormat1": "Your Smart Wallet is deployed automatically when you make your first transaction on {{chain}}. The deployment fee for this is automatically added to the transaction fee.",
-      "bodyBottomFormat2": "Do not send {{symbol}} to this smart wallet if you do not wish to activate it.",
-      "depositFormat": "Deposit {{symbol}} on {{chain}}"
+      "depositFormat": "Deposit {{symbol}} on {{chain}}",
+      "bottomText": "Do not send ETH to this wallet if you don’t wish to activate it"
     }
   },
 

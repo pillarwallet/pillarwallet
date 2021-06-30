@@ -232,6 +232,7 @@ export const spacing = {
   largePlus: 24,
   extraLarge: 32,
   layoutSides: 16,
+  extraPlusLarge: 56,
 };
 
 export const itemSizes = {

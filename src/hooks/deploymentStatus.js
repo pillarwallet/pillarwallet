@@ -27,6 +27,7 @@ import SWActivationModal from 'components/SWActivationModal';
 
 // Constants
 import { ETHERSPOT_DEPLOYMENT_INTERJECTION } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useRootSelector, useActiveAccount } from 'selectors';
@@ -38,21 +39,25 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 // Types
 import { type Chain } from 'models/Chain';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 export function useDeploymentStatus() {
   const navigation = useNavigation();
   const activeAccount = useActiveAccount();
 
   const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
+  const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
 
   const showDeploymentInterjection = React.useCallback(
     (chain: Chain) => {
       if (isEtherspotAccount(activeAccount)) {
-        navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
+        navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain, prismicInterjectionDocumentId });
       } else if (isArchanovaAccount(activeAccount)) {
         Modal.open(() => <SWActivationModal navigation={navigation} />);
       }
     },
-    [navigation, activeAccount],
+    [navigation, activeAccount, prismicInterjectionDocumentId],
   );
 
   return {

@@ -24,12 +24,13 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container, Content } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/modern/Text';
+import Spinner from 'components/Spinner';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -39,10 +40,14 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
-import { spacing } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
+import { mapFromDocumentDataToString } from 'utils/prismic';
 
 // Types
 import type { Chain } from 'models/Chain';
+
+// Services
+import * as Prismic from 'services/prismic';
 
 /**
  * Interjection screen used when Etherspot smart wallet is not yet deployed on given chain.
@@ -50,11 +55,35 @@ import type { Chain } from 'models/Chain';
 function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const navigation = useNavigation();
+  const [interjectionPrismicContent, setinterjectionPrismicContent] = React.useState({});
+  const [introductionText, setIntroductionText] = React.useState('');
+  const [isPrismicContentFetched, setIsPrismicContentFetched] = React.useState(false);
 
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
+  const prismicInterjectionDocumentId = navigation.getParam('prismicInterjectionDocumentId');
 
   const address = useRootSelector(activeAccountAddressSelector);
   const chainConfig = useChainConfig(chain);
+
+  React.useEffect(() => {
+    async function fetchPrismicData() {
+      const interjectionDocument = await Prismic.queryDocumentsByID(prismicInterjectionDocumentId);
+      const introductionContent = interjectionDocument?.introduction?.map((introduction) => {
+        return introduction.text.replace('{{network}}', chainConfig.title);
+      });
+      setIntroductionText(introductionContent);
+      const prismicContent = [];
+      /* eslint-disable camelcase */
+      mapFromDocumentDataToString(interjectionDocument?.point_1, prismicContent);
+      mapFromDocumentDataToString(interjectionDocument?.point_2, prismicContent);
+      mapFromDocumentDataToString(interjectionDocument?.point_3, prismicContent);
+      const prismicConvertedDocumentData = prismicContent;
+      setinterjectionPrismicContent(prismicConvertedDocumentData);
+      setIsPrismicContentFetched(true);
+    }
+    fetchPrismicData();
+  }, [prismicInterjectionDocumentId, chainConfig.title]);
+
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={address} />);
@@ -63,35 +92,108 @@ function EtherspotDeploymentInterjection() {
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
-
-      <BodyTop variant="big">{t('bodyTopFormat', { chain: chainConfig.title })}</BodyTop>
-
-      <BodyBottom variant="medium">{t('bodyBottomFormat1', { chain: chainConfig.titleShort })}</BodyBottom>
-      <BodyBottom variant="medium">{t('bodyBottomFormat2', { symbol: chainConfig.gasSymbol })}</BodyBottom>
-
-      <ButtonContainer>
-        <Button
-          title={t('depositFormat', { chain: chainConfig.titleShort, symbol: chainConfig.gasSymbol })}
-          onPress={showReceiveModal}
-        />
-      </ButtonContainer>
+      {!isPrismicContentFetched && (
+        <ActivityIndicatorWrapper>
+          <Spinner />
+        </ActivityIndicatorWrapper>
+      )}
+      {!!isPrismicContentFetched && (
+        <Content showsVerticalScrollIndicator={false}>
+          <TopContainer>
+            <IntroductionText variant="big">{introductionText}</IntroductionText>
+          </TopContainer>
+          {interjectionPrismicContent.map((points, index) => (
+            <MiddleContainer key={index}>
+              <PointView>
+                <PointNumber>{index + 1}</PointNumber>
+              </PointView>
+              <TextView>
+                <PointText>
+                  {points.replace('{{network}}', chainConfig.title).replace('{{gasToken}}', chainConfig.gasSymbol)}
+                </PointText>
+              </TextView>
+            </MiddleContainer>
+          ))}
+          <ButtonContainer>
+            <Button
+              title={t('depositFormat', { chain: chainConfig.title, symbol: chainConfig.gasSymbol })}
+              onPress={showReceiveModal}
+            />
+          </ButtonContainer>
+          <BottomText>{t('bottomText')}</BottomText>
+        </Content>
+      )}
     </Container>
   );
 }
 
 export default EtherspotDeploymentInterjection;
 
-const BodyTop = styled(Text)`
-  margin: ${spacing.large}px 30px;
-  text-align: center;
+
+const TopContainer = styled.View`
+  margin: ${spacing.large}px ${spacing.large}px;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: 20px;
+  shadow-opacity: 0.05;
+  shadow-color: #000;
+  shadow-offset: 0 8px;
+  shadow-radius: 16px;
+  elevation: 6;
 `;
 
-const BodyBottom = styled(Text)`
-  margin: ${spacing.medium}px ${spacing.large}px;
+const IntroductionText = styled(Text)`
+  margin: ${spacing.mediumLarge}px ${spacing.largePlus}px;
+  color: ${({ theme }) => theme.colors.hazardIconColor};
   text-align: center;
-  color: ${({ theme }) => theme.colors.secondaryText};
+  font-size: ${fontSizes.medium}px;
+`;
+
+const MiddleContainer = styled.View`
+  flex-direction: row;
+  margin: ${spacing.large}px ${spacing.large}px;
+`;
+
+const PointView = styled.View`
+  width: 48px;
+  height: 48px;
+  background-color: ${({ theme }) => theme.colors.recieveModalWarningText};
+  border-radius: 48px;
+  justify-content: center;
+`;
+
+const PointNumber = styled(Text)`
+  text-align: center;
+  margin-horizontal: ${spacing.large}px;
+  color: ${({ theme }) => theme.colors.basic050};
+  font-size: ${fontSizes.medium}px;
+`;
+
+const TextView = styled.View`
+  justify-content: center;
+  margin-horizontal: ${spacing.large}px;
+`;
+
+const PointText = styled(Text)`
+  text-align: center;
+  padding-right: ${spacing.large}px;
+  font-size: ${fontSizes.medium}px;
 `;
 
 const ButtonContainer = styled.View`
-  margin: ${spacing.large}px ${spacing.large}px;
+  margin-top: ${spacing.extraPlusLarge}px;
+  margin-horizontal: ${spacing.large}px;
+`;
+
+const BottomText = styled(Text)`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.hazardIconColor};
+  margin: ${spacing.large}px;
+  font-size: ${fontSizes.medium}px;
+`;
+
+const ActivityIndicatorWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 `;
