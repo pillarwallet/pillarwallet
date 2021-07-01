@@ -66,7 +66,7 @@ function EtherspotDeploymentInterjection() {
   const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
 
   const address = useRootSelector(activeAccountAddressSelector);
-  const chainConfig = useChainConfig(chain);
+  const { title: chainTitle, color: chainColor, gasSymbol: chainGasSymbol } = useChainConfig(chain);
 
   React.useEffect(() => {
     async function fetchPrismicData() {
@@ -75,7 +75,7 @@ function EtherspotDeploymentInterjection() {
         const introductionContent = interjectionDocument?.introduction?.map(
           (introduction: Prismic.DocumentData) => {
             if (!introduction) return null;
-            return introduction.text.replace('{{network}}', chainConfig.title);
+            return introduction.text.replace('{{network}}', chainTitle);
           },
         );
         setIntroductionText(introductionContent);
@@ -91,7 +91,7 @@ function EtherspotDeploymentInterjection() {
       }
     }
     fetchPrismicData();
-  }, [prismicInterjectionDocumentId, chainConfig.title]);
+  }, [prismicInterjectionDocumentId, chainTitle]);
 
 
   const showReceiveModal = () => {
@@ -113,19 +113,19 @@ function EtherspotDeploymentInterjection() {
           </TopContainer>
           {interjectionPrismicContent.map((points, index) => (
             <MiddleContainer key={index}>
-              <PointView>
+              <PointView style={{ backgroundColor: chainColor }}>
                 <PointNumber>{index + 1}</PointNumber>
-              </PointView>
+              </PointView >
               <TextView>
                 <PointText>
-                  {points.replace('{{network}}', chainConfig.title).replace('{{gasToken}}', chainConfig.gasSymbol)}
+                  {points.replace('{{network}}', chainTitle).replace('{{gasToken}}', chainGasSymbol)}
                 </PointText>
               </TextView>
             </MiddleContainer>
           ))}
           <ButtonContainer>
             <Button
-              title={t('depositFormat', { chain: chainConfig.title, symbol: chainConfig.gasSymbol })}
+              title={t('depositFormat', { chain: chainTitle, symbol: chainGasSymbol })}
               onPress={showReceiveModal}
             />
           </ButtonContainer>
@@ -166,7 +166,6 @@ const MiddleContainer = styled.View`
 const PointView = styled.View`
   width: 48px;
   height: 48px;
-  background-color: ${({ theme }) => theme.colors.recieveModalWarningText};
   border-radius: 48px;
   justify-content: center;
 `;
