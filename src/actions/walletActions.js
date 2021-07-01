@@ -19,8 +19,6 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import isEmpty from 'lodash.isempty';
-import get from 'lodash.get';
 import t from 'translations/translate';
 
 // components
@@ -37,7 +35,6 @@ import { WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getSaltedPin } from 'utils/wallet';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { setKeychainDataObject } from 'utils/keychain';
 
 // services
