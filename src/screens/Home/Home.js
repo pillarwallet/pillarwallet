@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'translations/translate';
 
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
@@ -34,12 +35,13 @@ import RefreshControl from 'components/RefreshControl';
 import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
+import Tooltip from 'components/Tooltip';
 
 // Constants
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, useSmartWalletAccounts } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 
@@ -58,11 +60,15 @@ import { useAccountCollectibleCounts } from './utils';
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
+  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
+
+  const canSwitchAccount = useSmartWalletAccounts().length > 1;
 
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
@@ -74,6 +80,7 @@ function Home() {
     dispatch(fetchAllAccountsTotalBalancesAction());
   };
 
+
   return (
     <Container>
       <HeaderBlock
@@ -83,6 +90,15 @@ function Home() {
         navigation={navigation}
         noPaddingTop
       />
+
+      {/* this should stay first element, avoid putting it inside UserNameAndImage */}
+      {canSwitchAccount && (
+        <Tooltip
+          isVisible={!accountSwitchTooltipDismissed}
+          body={t('tooltip.switchAccountsByTappingHere')}
+          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+        />
+      )}
 
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}

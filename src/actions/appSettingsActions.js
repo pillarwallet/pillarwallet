@@ -237,3 +237,10 @@ export const hideWalletConnectPromoCardAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideWalletConnectPromoCard: true } });
   };
 };
+
+export const dismissAccountSwitchTooltipAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { accountSwitchTooltipDismissed: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { accountSwitchTooltipDismissed: true } });
+  };
+};
