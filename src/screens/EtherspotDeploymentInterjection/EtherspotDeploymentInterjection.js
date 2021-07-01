@@ -183,7 +183,6 @@ const TextView = styled.View`
 `;
 
 const PointText = styled(Text)`
-  text-align: center;
   padding-right: ${spacing.large}px;
   font-size: ${fontSizes.medium}px;
 `;
