@@ -34,6 +34,7 @@ import Spinner from 'components/Spinner';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
@@ -48,6 +49,7 @@ import type { Chain } from 'models/Chain';
 
 // Services
 import * as Prismic from 'services/prismic';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 /**
  * Interjection screen used when Etherspot smart wallet is not yet deployed on given chain.
@@ -60,7 +62,7 @@ function EtherspotDeploymentInterjection() {
   const [isPrismicContentFetched, setIsPrismicContentFetched] = React.useState(false);
 
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
-  const prismicInterjectionDocumentId = navigation.getParam('prismicInterjectionDocumentId');
+  const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
 
   const address = useRootSelector(activeAccountAddressSelector);
   const chainConfig = useChainConfig(chain);
@@ -77,8 +79,7 @@ function EtherspotDeploymentInterjection() {
       mapFromDocumentDataToString(interjectionDocument?.point_1, prismicContent);
       mapFromDocumentDataToString(interjectionDocument?.point_2, prismicContent);
       mapFromDocumentDataToString(interjectionDocument?.point_3, prismicContent);
-      const prismicConvertedDocumentData = prismicContent;
-      setinterjectionPrismicContent(prismicConvertedDocumentData);
+      setinterjectionPrismicContent(prismicContent);
       setIsPrismicContentFetched(true);
     }
     fetchPrismicData();
