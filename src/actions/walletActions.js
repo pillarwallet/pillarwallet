@@ -131,17 +131,9 @@ export const checkForWalletBackupToastAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { backupStatus: { isImported, isBackedUp } },
-      accounts: { data: accounts },
-      assetsBalances: { data: balances },
     } = getState();
 
-    const keyBasedAccount = findKeyBasedAccount(accounts);
-    if (isImported || isBackedUp || !keyBasedAccount) return;
-
-    const keyBasedAccountBalances = balances[getAccountId(keyBasedAccount)];
-    const anyAssetHasPositiveBalance = !isEmpty(keyBasedAccountBalances)
-      && Object.values(keyBasedAccountBalances).some((asset) => !!Number(get(asset, 'balance', 0)));
-    if (!anyAssetHasPositiveBalance) return;
+    if (isImported || isBackedUp) return;
 
     Toast.show({
       message: t('toast.ensureBackup'),
