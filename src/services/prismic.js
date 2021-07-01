@@ -51,8 +51,7 @@ export function queryDocumentsByType<T>(type: string, options?: QueryOptions): R
   return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
 }
 
-export async function queryDocumentsByID(id: string): Promise<Object> {
+export async function queryDocumentsByID<T>(id: string): Promise<T> {
   const document = await prismicClient.getByID(id);
-  const prismicDocument = document.data;
-  return prismicDocument;
+  return document.data;
 }

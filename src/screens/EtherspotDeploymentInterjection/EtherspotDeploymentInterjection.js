@@ -43,6 +43,7 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import { useChainConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { mapFromDocumentDataToString } from 'utils/prismic';
+import { reportErrorLog } from 'utils/common';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -69,18 +70,25 @@ function EtherspotDeploymentInterjection() {
 
   React.useEffect(() => {
     async function fetchPrismicData() {
-      const interjectionDocument = await Prismic.queryDocumentsByID(prismicInterjectionDocumentId);
-      const introductionContent = interjectionDocument?.introduction?.map((introduction) => {
-        return introduction.text.replace('{{network}}', chainConfig.title);
-      });
-      setIntroductionText(introductionContent);
-      const prismicContent = [];
-      /* eslint-disable camelcase */
-      mapFromDocumentDataToString(interjectionDocument?.point_1, prismicContent);
-      mapFromDocumentDataToString(interjectionDocument?.point_2, prismicContent);
-      mapFromDocumentDataToString(interjectionDocument?.point_3, prismicContent);
-      setinterjectionPrismicContent(prismicContent);
-      setIsPrismicContentFetched(true);
+      try {
+        const interjectionDocument = await Prismic.queryDocumentsByID(prismicInterjectionDocumentId);
+        const introductionContent = interjectionDocument?.introduction?.map(
+          (introduction: Prismic.DocumentData) => {
+            if (!introduction) return null;
+            return introduction.text.replace('{{network}}', chainConfig.title);
+          },
+        );
+        setIntroductionText(introductionContent);
+        const prismicContent = [];
+        /* eslint-disable camelcase */
+        mapFromDocumentDataToString(interjectionDocument?.point_1, prismicContent);
+        mapFromDocumentDataToString(interjectionDocument?.point_2, prismicContent);
+        mapFromDocumentDataToString(interjectionDocument?.point_3, prismicContent);
+        setinterjectionPrismicContent(prismicContent);
+        setIsPrismicContentFetched(true);
+      } catch (error) {
+        reportErrorLog('Exception in fetching prismic content failed', { error });
+      }
     }
     fetchPrismicData();
   }, [prismicInterjectionDocumentId, chainConfig.title]);

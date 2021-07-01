@@ -23,13 +23,19 @@ import * as Prismic from 'services/prismic';
 
 // Utils
 import { mapFromDocumentDataToString } from 'utils/prismic';
+import { reportErrorLog } from 'utils/common';
 
-export async function prismicDataToHTML(id: string): Promise<string> {
-  const document = await Prismic.queryDocumentsByID(id);
-  const prismicContent = [];
-  mapFromDocumentDataToString(document?.title, prismicContent, true);
-  mapFromDocumentDataToString(document?.subtitle, prismicContent, true);
-  mapFromDocumentDataToString(document?.content, prismicContent, true);
-  const prismicConvertedHTMLData = prismicContent.join('');
-  return prismicConvertedHTMLData;
+export async function getPrismicDocumentAsHTML(id: string): Promise<string> {
+  try {
+    const document = await Prismic.queryDocumentsByID(id);
+    const prismicContent = [];
+    mapFromDocumentDataToString(document?.title, prismicContent, true);
+    mapFromDocumentDataToString(document?.subtitle, prismicContent, true);
+    mapFromDocumentDataToString(document?.content, prismicContent, true);
+    const prismicConvertedHTMLData = prismicContent.join('');
+    return prismicConvertedHTMLData;
+  } catch (error) {
+    reportErrorLog('Exception in fetching prismic content failed', { error });
+    return '';
+  }
 }

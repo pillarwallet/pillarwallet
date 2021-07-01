@@ -36,8 +36,7 @@ import type { ScrollEvent, LayoutEvent } from 'utils/types/react-native';
 import { spacing } from 'utils/variables';
 
 // Services
-import { prismicDataToHTML } from 'services/cms/PrismicPrivacyTermsContent';
-
+import { getPrismicDocumentAsHTML } from 'services/cms/PrismicPrivacyTermsContent';
 
 type Props = {|
   prismicDocumentId: string,
@@ -55,7 +54,7 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
 
   React.useEffect(() => {
     async function fetchPrismicData() {
-      const fetchPrismicHTMLResponse = await prismicDataToHTML(prismicDocumentId);
+      const fetchPrismicHTMLResponse = await getPrismicDocumentAsHTML(prismicDocumentId);
       setDocumentHTMLData(fetchPrismicHTMLResponse);
       setIsPrismicHTMLFetched(true);
     }
