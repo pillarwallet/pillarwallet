@@ -1449,9 +1449,14 @@
       }
     }
   },
+
   "receiveModal": {
     "etherspotSingleAddressInfo": "All chains use single wallet address.",
     "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
     "withCaution": "with caution."
+  },
+
+  "tooltip": {
+    "switchAccountsByTappingHere": "You can switch accounts by tapping here"
   }
 }
