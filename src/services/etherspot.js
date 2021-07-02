@@ -37,6 +37,7 @@ import {
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
+  ENSNodeStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -340,12 +341,21 @@ export class EtherspotService {
     sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(chain: Chain, transactions: EthereumTransaction[]) {
+  async setTransactionsBatch(chain: Chain, transactions: EthereumTransaction[]) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
       reportErrorLog('setTransactionsBatch failed: no SDK for chain set', { transactions, chain });
       throw new Error(t('error.unableToSetTransaction'));
+    }
+
+    // check if ENS setup transaction needs to be included
+    const { account: etherspotAccount } = sdk.state;
+    if (!etherspotAccount?.ensNode) {
+      const ensNode = await this.getEnsNode(etherspotAccount.address);
+      if (ensNode?.state === ENSNodeStates.Reserved) {
+        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+      }
     }
 
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
