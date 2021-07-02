@@ -54,8 +54,8 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
 
   React.useEffect(() => {
     async function fetchPrismicData() {
-      const fetchPrismicHTMLResponse = await getPrismicDocumentAsHTML(prismicDocumentId);
-      setDocumentHTMLData(fetchPrismicHTMLResponse);
+      const prismicHTMLResponse = await getPrismicDocumentAsHTML(prismicDocumentId);
+      setDocumentHTMLData(prismicHTMLResponse);
       setIsPrismicHTMLFetched(true);
     }
     fetchPrismicData();

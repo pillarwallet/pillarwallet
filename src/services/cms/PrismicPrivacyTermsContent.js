@@ -35,7 +35,7 @@ export async function getPrismicDocumentAsHTML(id: string): Promise<string> {
     const prismicConvertedHTMLData = prismicContent.join('');
     return prismicConvertedHTMLData;
   } catch (error) {
-    reportErrorLog('Exception in fetching prismic content failed', { error });
+    reportErrorLog('getPrismicDocumentAsHTML failed', { error, documentId: id });
     return '';
   }
 }

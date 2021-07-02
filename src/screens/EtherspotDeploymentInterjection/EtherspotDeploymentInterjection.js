@@ -58,7 +58,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const navigation = useNavigation();
-  const [interjectionPrismicContent, setinterjectionPrismicContent] = React.useState({});
+  const [interjectionPrismicContent, setInterjectionPrismicContent] = React.useState({});
   const [introductionText, setIntroductionText] = React.useState('');
   const [isPrismicContentFetched, setIsPrismicContentFetched] = React.useState(false);
 
@@ -84,10 +84,10 @@ function EtherspotDeploymentInterjection() {
         mapFromDocumentDataToString(interjectionDocument?.point_1, prismicContent);
         mapFromDocumentDataToString(interjectionDocument?.point_2, prismicContent);
         mapFromDocumentDataToString(interjectionDocument?.point_3, prismicContent);
-        setinterjectionPrismicContent(prismicContent);
+        setInterjectionPrismicContent(prismicContent);
         setIsPrismicContentFetched(true);
       } catch (error) {
-        reportErrorLog('Exception in fetching prismic content failed', { error });
+        reportErrorLog('Prismic content fetch failed', { error, prismicInterjectionDocumentId });
       }
     }
     fetchPrismicData();
