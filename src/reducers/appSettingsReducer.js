@@ -48,6 +48,7 @@ export type AppSettingsReducerState = {
     hideWalletConnectPromoCard?: boolean,
     isPickingImage?: boolean,
     isBrowsingWebView?: boolean,
+    accountSwitchTooltipDismissed?: boolean,
   },
   isFetched: boolean,
 };
@@ -77,6 +78,7 @@ export const initialState: AppSettingsReducerState = {
     omitPinOnLogin: false,
     localisation: null,
     hideLiquidityPools: false,
+    accountSwitchTooltipDismissed: false,
   },
   isFetched: false,
 };
