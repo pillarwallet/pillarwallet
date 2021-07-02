@@ -353,7 +353,7 @@ export class EtherspotService {
     const { account: etherspotAccount } = sdk.state;
     if (!etherspotAccount?.ensNode) {
       const ensNode = await this.getEnsNode(etherspotAccount.address);
-      if (ensNode?.state === ENSNodeStates.Reserved) {
+      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
         await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
       }
     }
