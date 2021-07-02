@@ -21,13 +21,17 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
+
+// Actions
+import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
-// Contants
+// Constants
 import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Selectors
@@ -41,6 +45,7 @@ import { useThemeColors } from 'utils/themes';
 // Types
 import type { User } from 'models/User';
 
+
 type Props = {
   user: User,
 };
@@ -48,17 +53,23 @@ type Props = {
 const UserNameAndImage = ({ user }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
+  const dispatch = useDispatch();
   const { username } = user;
 
-  const accountCount = useSmartWalletAccounts().length;
+  const canSwitchAccount = useSmartWalletAccounts().length > 1;
+
+  const onAccountSwitchPress = () => {
+    dispatch(dismissAccountSwitchTooltipAction());
+    navigation.navigate(ACCOUNTS);
+  };
 
   return (
-    <Wrapper onPress={() => navigation.navigate(ACCOUNTS)} hitSlop={hitSlop20}>
+    <Wrapper onPress={canSwitchAccount ? onAccountSwitchPress : null} hitSlop={hitSlop20}>
       <ProfileImage userName={username} diameter={24} />
 
       {!!username && <UserName>{username}</UserName>}
 
-      {accountCount > 1 && <Icon name="select" color={colors.basic020} />}
+      {canSwitchAccount && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
   );
 };
