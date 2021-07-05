@@ -38890,7 +38890,6 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                   Array [
                     Object {
                       "marginLeft": -12,
-                      "marginRight": -20,
                     },
                     Object {
                       "marginBottom": -20,
@@ -46751,7 +46750,6 @@ exports[`Storyshots SlideModal default 1`] = `
                         Array [
                           Object {
                             "marginLeft": -12,
-                            "marginRight": -20,
                           },
                           Object {
                             "marginBottom": -20,

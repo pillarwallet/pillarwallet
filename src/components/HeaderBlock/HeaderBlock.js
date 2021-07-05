@@ -345,7 +345,9 @@ class HeaderBlock extends React.Component<Props> {
         wrapperStyle.marginRight = -(20 - spacing.small);
       }
       if (type === RIGHT) {
-        wrapperStyle.marginRight = -20;
+        // not sure what's the full scope of this, but below causes close button to be moved too far right when in modal
+        // wrapperStyle.marginRight = -20;
+
         wrapperStyle.marginLeft = -(20 - spacing.small);
       }
 
