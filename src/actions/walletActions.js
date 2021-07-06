@@ -19,8 +19,6 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import isEmpty from 'lodash.isempty';
-import get from 'lodash.get';
 import t from 'translations/translate';
 
 // components
@@ -37,7 +35,6 @@ import { WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getSaltedPin } from 'utils/wallet';
-import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { setKeychainDataObject } from 'utils/keychain';
 
 // services
@@ -131,17 +128,9 @@ export const checkForWalletBackupToastAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { backupStatus: { isImported, isBackedUp } },
-      accounts: { data: accounts },
-      assetsBalances: { data: balances },
     } = getState();
 
-    const keyBasedAccount = findKeyBasedAccount(accounts);
-    if (isImported || isBackedUp || !keyBasedAccount) return;
-
-    const keyBasedAccountBalances = balances[getAccountId(keyBasedAccount)];
-    const anyAssetHasPositiveBalance = !isEmpty(keyBasedAccountBalances)
-      && Object.values(keyBasedAccountBalances).some((asset) => !!Number(get(asset, 'balance', 0)));
-    if (!anyAssetHasPositiveBalance) return;
+    if (isImported || isBackedUp) return;
 
     Toast.show({
       message: t('toast.ensureBackup'),
