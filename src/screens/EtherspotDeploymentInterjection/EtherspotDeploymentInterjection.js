@@ -127,6 +127,7 @@ function EtherspotDeploymentInterjection() {
             <Button
               title={t('depositFormat', { chain: chainTitle, symbol: chainGasSymbol })}
               onPress={showReceiveModal}
+              btnTextStyle={styles.btnTextStyle}
             />
           </ButtonContainer>
           <BottomText>{t('bottomText')}</BottomText>
@@ -138,6 +139,11 @@ function EtherspotDeploymentInterjection() {
 
 export default EtherspotDeploymentInterjection;
 
+const styles = {
+  btnTextStyle: {
+    textAlign: 'center',
+  },
+};
 
 const TopContainer = styled.View`
   margin: ${spacing.large}px ${spacing.large}px;
