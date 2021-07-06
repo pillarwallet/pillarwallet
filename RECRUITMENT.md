@@ -48,7 +48,7 @@ Here's a few references to get you started:
 
 - [ethers.js](https://docs.ethers.io/v5/)
 - [Infura](https://infura.io/)
-- [Create React App](https://reactjs.org/docs/create-a-new-react-app.html)
+- [Create React Native App](https://github.com/expo/create-react-native-app)
 - [Free Ropsten ETH](https://faucet.ropsten.be/)
 
 ### 🏆 Submitting your app
