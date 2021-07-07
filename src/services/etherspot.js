@@ -623,8 +623,8 @@ export class EtherspotService {
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
-      // rest of checks are Ethereum only
-      if (chain !== CHAIN.ETHEREUM) return supportedAssets;
+      // rest of checks are Ethereum mainnet (prod) only
+      if (chain !== CHAIN.ETHEREUM || !isProdEnv()) return supportedAssets;
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({
