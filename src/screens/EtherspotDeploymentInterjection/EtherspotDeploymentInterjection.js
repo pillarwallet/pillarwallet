@@ -30,7 +30,6 @@ import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/modern/Text';
-import Spinner from 'components/Spinner';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -61,6 +60,7 @@ function EtherspotDeploymentInterjection() {
   const [interjectionPrismicContent, setInterjectionPrismicContent] = React.useState({});
   const [introductionText, setIntroductionText] = React.useState('');
   const [isPrismicContentFetched, setIsPrismicContentFetched] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
   const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
@@ -88,10 +88,11 @@ function EtherspotDeploymentInterjection() {
         setIsPrismicContentFetched(true);
       } catch (error) {
         reportErrorLog('Prismic content fetch failed', { error, prismicInterjectionDocumentId });
+        setErrorMessage(t('error'));
       }
     }
     fetchPrismicData();
-  }, [prismicInterjectionDocumentId, chainTitle]);
+  }, [prismicInterjectionDocumentId, chainTitle, t]);
 
 
   const showReceiveModal = () => {
@@ -101,17 +102,13 @@ function EtherspotDeploymentInterjection() {
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
-      {!isPrismicContentFetched && (
-        <ActivityIndicatorWrapper>
-          <Spinner />
-        </ActivityIndicatorWrapper>
-      )}
+      {!isPrismicContentFetched && <ErrorMessage>{errorMessage}</ErrorMessage>}
       {!!isPrismicContentFetched && (
         <Content showsVerticalScrollIndicator={false}>
           <TopContainer>
             <IntroductionText variant="big">{introductionText}</IntroductionText>
           </TopContainer>
-          {interjectionPrismicContent.map((points, index) => (
+          {interjectionPrismicContent?.map((points, index) => (
             <MiddleContainer key={index}>
               <PointView style={{ backgroundColor: chainColor }}>
                 <PointNumber>{index + 1}</PointNumber>
@@ -205,8 +202,8 @@ const BottomText = styled(Text)`
   font-size: ${fontSizes.medium}px;
 `;
 
-const ActivityIndicatorWrapper = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
+const ErrorMessage = styled(Text)`
+  margin: ${spacing.large}px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

@@ -533,7 +533,8 @@
     },
     "unableToSendTransaction": "Unable to send transaction. Please try again.",
     "unableToSetTransaction": "Unable to set transaction. Please try again.",
-    "unableToResetTransactions": "Unable to reset transactions. Please try again."
+    "unableToResetTransactions": "Unable to reset transactions. Please try again.",
+    "prismicDataFetchFailed": "Can't fetch {{prismicDocument}} data. Please try again."
   },
 
   "home": {
@@ -608,7 +609,8 @@
     "deploymentInterjection": {
       "title": "Smart Wallet deployment",
       "depositFormat": "Deposit {{symbol}} on {{chain}}",
-      "bottomText": "Do not send ETH to this wallet if you don’t wish to activate it"
+      "bottomText": "Do not send ETH to this wallet if you don’t wish to activate it",
+      "error": "Can't fetch Smart Wallet Deployment Interjection data. Please try again."
     }
   },
 
