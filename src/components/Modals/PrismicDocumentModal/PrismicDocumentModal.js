@@ -34,9 +34,11 @@ import type { ScrollEvent, LayoutEvent } from 'utils/types/react-native';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { mapFromDocumentDataToString } from 'utils/prismic';
+import { reportErrorLog } from 'utils/common';
 
 // Services
-import { getPrismicDocumentAsHTML } from 'services/cms/PrismicPrivacyTermsContent';
+import * as Prismic from 'services/prismic';
 
 type Props = {|
   prismicDocumentId: string,
@@ -54,9 +56,18 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
 
   React.useEffect(() => {
     async function fetchPrismicData() {
-      const prismicHTMLResponse = await getPrismicDocumentAsHTML(prismicDocumentId);
-      setDocumentHTMLData(prismicHTMLResponse);
-      setIsPrismicHTMLFetched(true);
+      try {
+        const prismicDocument = await Prismic.queryDocumentsByID(prismicDocumentId);
+        const prismicContent = [];
+        mapFromDocumentDataToString(prismicDocument?.title, prismicContent, true);
+        mapFromDocumentDataToString(prismicDocument?.subtitle, prismicContent, true);
+        mapFromDocumentDataToString(prismicDocument?.content, prismicContent, true);
+        const prismicHTMLResponse = prismicContent.join('');
+        setDocumentHTMLData(prismicHTMLResponse);
+        setIsPrismicHTMLFetched(true);
+      } catch (error) {
+        reportErrorLog('getPrismicDocumentAsHTML failed', { error, documentId: prismicDocumentId });
+      }
     }
     fetchPrismicData();
   }, [prismicDocumentId]);
