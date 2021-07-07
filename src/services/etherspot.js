@@ -37,6 +37,7 @@ import {
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
+  ENSNodeStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -340,12 +341,21 @@ export class EtherspotService {
     sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(chain: Chain, transactions: EthereumTransaction[]) {
+  async setTransactionsBatch(chain: Chain, transactions: EthereumTransaction[]) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
       reportErrorLog('setTransactionsBatch failed: no SDK for chain set', { transactions, chain });
       throw new Error(t('error.unableToSetTransaction'));
+    }
+
+    // check if ENS setup transaction needs to be included
+    const { account: etherspotAccount } = sdk.state;
+    if (!etherspotAccount?.ensNode) {
+      const ensNode = await this.getEnsNode(etherspotAccount.address);
+      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
+        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+      }
     }
 
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
@@ -608,23 +618,23 @@ export class EtherspotService {
     }
 
     try {
-      const tokenListName = chain === CHAIN.ETHEREUM
+      const tokenListName = chain === CHAIN.ETHEREUM && isProdEnv()
         ? firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM)
         : null;
 
-      const tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
 
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListName });
-        return null;
+        tokens = []; // let append native assets
       }
 
       let supportedAssets = tokens.map(parseTokenListToken);
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
-      // rest of checks are Ethereum only
-      if (chain !== CHAIN.ETHEREUM) return supportedAssets;
+      // rest of checks are Ethereum mainnet (prod) only
+      if (chain !== CHAIN.ETHEREUM || !isProdEnv()) return supportedAssets;
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({

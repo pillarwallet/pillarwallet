@@ -36,7 +36,7 @@ import {
   reportErrorLog,
   resolveEnsName,
 } from 'utils/common';
-import { findFirstArchanovaAccount } from 'utils/accounts';
+import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
 
 // selectors
 import { accountsSelector } from 'selectors';
@@ -64,8 +64,9 @@ export const setEnsNameIfNeededAction = () => {
     const accounts = accountsSelector(getState());
     const legacySmartWallet = findFirstArchanovaAccount(accounts);
 
-    // perform clean Etherspot ENS reserve only for new accounts that does not have any Archanova account
-    if (legacySmartWallet) return;
+    // reserve Etherspot ENS only for new accounts that does not have ENS on Archanova account
+    const archanovaEnsName = getAccountEnsName(legacySmartWallet);
+    if (archanovaEnsName) return;
 
     dispatch(reserveEtherspotEnsNameAction(username));
   };
