@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
-// components
+// Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import FloatingButtons from 'components/FloatingButtons';
@@ -35,15 +35,15 @@ import { BaseText, MediumText } from 'components/Typography';
 import RefreshControl from 'components/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
 
-// actions
+// Actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
-// constants
+// Constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
-// utils
+// Utils
 import { spacing, fontStyles } from 'utils/variables';
 import { formatFiat } from 'utils/common';
 import {
@@ -60,10 +60,10 @@ import {
 } from 'utils/history';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
-// configs
+// Configs
 import assetsConfig from 'configs/assetsConfig';
 
-// selectors
+// Selectors
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
