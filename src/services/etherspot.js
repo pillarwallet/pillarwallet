@@ -608,23 +608,23 @@ export class EtherspotService {
     }
 
     try {
-      const tokenListName = chain === CHAIN.ETHEREUM
+      const tokenListName = chain === CHAIN.ETHEREUM && isProdEnv()
         ? firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM)
         : null;
 
-      const tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
 
       if (!tokens) {
         reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListName });
-        return null;
+        tokens = []; // let append native assets
       }
 
       let supportedAssets = tokens.map(parseTokenListToken);
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
-      // rest of checks are Ethereum only
-      if (chain !== CHAIN.ETHEREUM) return supportedAssets;
+      // rest of checks are Ethereum mainnet (prod) only
+      if (chain !== CHAIN.ETHEREUM || !isProdEnv()) return supportedAssets;
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
       LIQUIDITY_POOLS().forEach(({
