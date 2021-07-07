@@ -66,7 +66,7 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
         setDocumentHTMLData(prismicHTMLResponse);
         setIsPrismicHTMLFetched(true);
       } catch (error) {
-        reportErrorLog('getPrismicDocumentAsHTML failed', { error, documentId: prismicDocumentId });
+        reportErrorLog('Prismic content fetch failed', { error, documentId: prismicDocumentId });
       }
     }
     fetchPrismicData();
