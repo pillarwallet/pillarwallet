@@ -239,8 +239,6 @@ export const loginAction = (
         dispatch(fetchAllAccountsTotalBalancesAction());
       }
 
-      dispatch(checkForWalletBackupToastAction());
-
       // user is registered
       if (isOnline) {
         dispatch(fetchTransactionsHistoryAction());
@@ -285,6 +283,8 @@ export const loginAction = (
       }
 
       navigate(navigateToAppAction);
+
+      dispatch(checkForWalletBackupToastAction());
     } catch (e) {
       reportLog(`An error occurred whilst trying to complete auth actions: ${e.errorMessage}`, e);
       dispatch(updatePinAttemptsAction(true));
