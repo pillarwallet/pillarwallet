@@ -43,6 +43,7 @@ export const REMOTE_CONFIG = {
   FEATURE_TOKEN_LIST_ETHEREUM: 'app_tokenlist_name',
   PRISMIC_PRIVACY_POLICY_DOCUMENT_ID: 'prismic_privacy_policy_document_id',
   PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID: 'prismic_terms_of_policy_document_id',
+  PRISMIC_INTERJECTION_DOCUMENT_ID: 'prismic_interjection_document_id',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -68,5 +69,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM]: 'PillarTokens',
   [REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID]: 'YNGoWxIAACMAsjF2',
   [REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID]: 'YNGo8hIAACMAsjRR',
-
+  [REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID]: 'YNsHjxIAACIAw0ca',
 };

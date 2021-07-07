@@ -27,9 +27,12 @@ import * as Prismic from 'services/prismic';
 export const mapFromDocumentDataToString = (
   document: Array<Prismic.DocumentData>,
   prismicContent: Array<string>,
+  isHtmlContent?: boolean,
 ): void => {
   document.map((documentData) => {
     if (!documentData.text) return null;
-    return prismicContent.push(renderHTMLfromPrismic(documentData.type, documentData.text));
+    return isHtmlContent
+      ? prismicContent.push(renderHTMLfromPrismic(documentData.type, documentData.text))
+      : prismicContent.push(documentData.text);
   });
 };
