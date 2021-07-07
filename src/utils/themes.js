@@ -93,6 +93,7 @@ export const semanticLightThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#0000004C',
+  interjectionPointText: '#0a1427',
 };
 
 export const semanticDarkThemeColors = {
@@ -146,6 +147,7 @@ export const semanticDarkThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#FFFFFF4C',
+  interjectionPointText: '#0a1427',
 };
 
 export const themedColors = {
@@ -256,6 +258,10 @@ export const themedColors = {
   hazardIconColor: theme('current', {
     lightTheme: semanticLightThemeColors.hazardIconColor,
     darkTheme: semanticDarkThemeColors.hazardIconColor,
+  }),
+  interjectionPointText: theme('current', {
+    lightTheme: semanticLightThemeColors.interjectionPointText,
+    darkTheme: semanticDarkThemeColors.interjectionPointText,
   }),
 };
 

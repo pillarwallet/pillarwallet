@@ -177,8 +177,10 @@ const Menu = ({
     },
   ];
 
-  const openLegalModal = (prismicDocumentId: string) =>
-    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
+  const openLegalModal = (prismicDocumentId: string, prismicDocumentName: string) =>
+    Modal.open(() => (
+      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
+    ));
 
   const navigateToKeyBasedAssetMigration = () => {
     navigation.navigate(
@@ -261,7 +263,7 @@ const Menu = ({
             <LinksSection>
               <LegalTextLink
                 onPress={() =>
-                  openLegalModal(prismicTermsOfPolicyDocumentId)
+                  openLegalModal(prismicTermsOfPolicyDocumentId, t('settingsContent.button.termOfUse'))
                 }
               >
                 {t('settingsContent.button.termOfUse')}
@@ -269,7 +271,7 @@ const Menu = ({
               <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
               <LegalTextLink
                 onPress={() =>
-                  openLegalModal(prismicPrivacyPolicyDocumentId)
+                  openLegalModal(prismicPrivacyPolicyDocumentId, t('settingsContent.button.privacyPolicy'))
                 }
               >
                 {t('settingsContent.button.privacyPolicy')}

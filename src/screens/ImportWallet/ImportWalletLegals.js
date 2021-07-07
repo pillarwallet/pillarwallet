@@ -112,8 +112,10 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  openLegalModal = (prismicDocumentId: string) =>
-    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
+  openLegalModal = (prismicDocumentId: string, prismicDocumentName: string) =>
+    Modal.open(() => (
+      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
+    ));
 
   render() {
     const { navigation } = this.props;
@@ -151,7 +153,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => this.openLegalModal(prismicTermsOfPolicyDocumentId),
+                  onPress: () => this.openLegalModal(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -166,7 +168,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => this.openLegalModal(prismicPrivacyPolicyDocumentId),
+                  onPress: () => this.openLegalModal(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
                 })}
               </CheckboxText>
             </Checkbox>

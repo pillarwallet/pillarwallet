@@ -197,8 +197,10 @@ const NewProfile = () => {
     ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (prismicDocumentId: string) =>
-    Modal.open(() => <PrismicDocumentModal prismicDocumentId={prismicDocumentId} />);
+  const openLegalModal = (prismicDocumentId: string, prismicDocumentName: string) =>
+    Modal.open(() => (
+      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
+    ));
 
   return (
     <Container>
@@ -222,7 +224,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => openLegalModal(prismicTermsOfPolicyDocumentId),
+                  onPress: () => openLegalModal(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -235,7 +237,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => openLegalModal(prismicPrivacyPolicyDocumentId),
+                  onPress: () => openLegalModal(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
                 })}
               </CheckboxText>
             </Checkbox>
