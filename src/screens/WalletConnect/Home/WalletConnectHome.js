@@ -93,20 +93,15 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
-  const renderItem = (item: WalletConnectCmsApp) => {
-    const disabled = activeChain != null && !isDeployedOnChain[activeChain];
-
-    return (
-      <WalletConnectListItem
-        key={item.id}
-        title={item.title}
-        iconUrl={item.iconUrl}
-        width={columnWidth}
-        onPress={() => Linking.openURL(item.url)}
-        disabled={disabled}
-      />
-    );
-  };
+  const renderItem = (item: WalletConnectCmsApp) => (
+    <WalletConnectListItem
+      key={item.id}
+      title={item.title}
+      iconUrl={item.iconUrl}
+      width={columnWidth}
+      onPress={() => Linking.openURL(item.url)}
+    />
+  );
 
   return (
     <Container>

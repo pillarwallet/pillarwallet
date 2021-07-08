@@ -21,12 +21,13 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { ScrollView } from 'react-native';
 import HTML from 'react-native-render-html';
+import t from 'translations/translate';
 
 // Components
-import Spinner from 'components/Spinner';
 import Modal from 'components/Modal';
 import HeaderBlock from 'components/HeaderBlock';
 import { Container } from 'components/modern/Layout';
+import Text from 'components/modern/Text';
 
 // Types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
@@ -34,33 +35,46 @@ import type { ScrollEvent, LayoutEvent } from 'utils/types/react-native';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { mapFromDocumentDataToString } from 'utils/prismic';
+import { reportErrorLog } from 'utils/common';
 
 // Services
 import * as Prismic from 'services/prismic';
 
-
 type Props = {|
   prismicDocumentId: string,
+  prismicDocumentName: string
 |};
 
 
-const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
+const PrismicDocumentModal = ({ prismicDocumentId, prismicDocumentName }: Props) => {
   const scrollViewRef = React.useRef(null);
   const modalRef = React.useRef();
   const [isPrismicHTMLFetched, setIsPrismicHTMLFetched] = React.useState(false);
   const [documentHTMLData, setDocumentHTMLData] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState('');
   const [scrollOffset, setScrollOffset] = React.useState(0);
   const [containerHeight, setContainerHeight] = React.useState(0);
   const [contentContainerHeight, setContentContainerHeight] = React.useState(0);
 
   React.useEffect(() => {
     async function fetchPrismicData() {
-      const fetchPrismicHTMLResponse = await Prismic.queryDocumentsByID(prismicDocumentId);
-      setDocumentHTMLData(fetchPrismicHTMLResponse);
-      setIsPrismicHTMLFetched(true);
+      try {
+        const prismicDocument = await Prismic.queryDocumentsByID(prismicDocumentId);
+        const prismicContent = [];
+        mapFromDocumentDataToString(prismicDocument?.title, prismicContent, true);
+        mapFromDocumentDataToString(prismicDocument?.subtitle, prismicContent, true);
+        mapFromDocumentDataToString(prismicDocument?.content, prismicContent, true);
+        const prismicHTMLResponse = prismicContent.join('');
+        setDocumentHTMLData(prismicHTMLResponse);
+        setIsPrismicHTMLFetched(true);
+      } catch (error) {
+        reportErrorLog('Prismic content fetch failed', { error, documentId: prismicDocumentId });
+        setErrorMessage(t('error.prismicDataFetchFailed', { prismicDocument: prismicDocumentName }));
+      }
     }
     fetchPrismicData();
-  }, [prismicDocumentId]);
+  }, [prismicDocumentId, prismicDocumentName]);
 
   const handleModalClose = () => {
     if (modalRef.current) modalRef.current.close();
@@ -102,11 +116,7 @@ const PrismicDocumentModal = ({ prismicDocumentId }: Props) => {
     >
       <Container>
         <HeaderBlock noBack rightItems={[{ close: true }]} onClose={handleModalClose} noPaddingTop />
-        {!isPrismicHTMLFetched && (
-          <ActivityIndicatorWrapper>
-            <Spinner />
-          </ActivityIndicatorWrapper>
-        )}
+        {!isPrismicHTMLFetched && <ErrorMessage>{errorMessage}</ErrorMessage>}
         {!!isPrismicHTMLFetched && (
           <ScrollView
             style={styles.scrollView}
@@ -132,8 +142,8 @@ const styles = {
   },
 };
 
-const ActivityIndicatorWrapper = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
+const ErrorMessage = styled(Text)`
+  margin: ${spacing.large}px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

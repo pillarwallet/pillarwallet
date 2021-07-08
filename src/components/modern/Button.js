@@ -29,7 +29,7 @@ import Text from 'components/modern/Text';
 import { fontSizes, spacing } from 'utils/variables';
 
 // Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 type Variant = 'primary' | 'secondary' | 'text' | 'primary-destructive' | 'text-destructive';
 
@@ -40,12 +40,13 @@ type Props = {|
   compact?: boolean,
   disabled?: boolean,
   style?: ViewStyleProp,
+  btnTextStyle?: TextStyleProp,
 |};
 
-function Button({ title, onPress, variant = 'primary', compact, disabled, style }: Props) {
+function Button({ title, onPress, variant = 'primary', compact, disabled, style, btnTextStyle }: Props) {
   return (
     <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $compact={compact}>
-      <Title $variant={variant}>{title}</Title>
+      <Title $variant={variant} style={btnTextStyle}>{title}</Title>
     </TouchableContainer>
   );
 }

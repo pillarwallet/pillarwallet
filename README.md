@@ -1,5 +1,9 @@
 # Pillar Wallet
 
+## 💰 Looking for a job?
+We're always on the lookout for talented and passionate developers. Check out our 
+[RECRUITMENT.md](RECRUITMENT.md) file to see how you can join us!
+
 ## Pull Request Review
 The following set of criteria and guideline has been set for code reviews
 [Pillar Pull Request and Code Review Guidelines](CONTRIBUTING.md)
