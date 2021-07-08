@@ -111,10 +111,9 @@ function SendTokenTransaction(props: Props) {
     accounts,
   } = navigation.state.params;
 
-  const fromAddress = getActiveAccountAddress(accounts);
+  const fromAddress = accounts ? getActiveAccountAddress(accounts) : '';
 
-  const viewOnBlockchain = () => {};
-  dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
+  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
 
   const handleDismissal = () => {
     const { transactionPayload } = navigation.state.params;
