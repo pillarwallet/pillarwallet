@@ -1112,7 +1112,7 @@
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
+      "transactionSuccess": "It will be settled in a few moments, depending on {{network}} load",
       "typedDataMessage": "Typed Data message"
     },
     "emptyState": {
