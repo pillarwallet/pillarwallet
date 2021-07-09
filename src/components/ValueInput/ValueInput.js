@@ -163,10 +163,11 @@ const ValueInputComponent = ({
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
   const [calculateBalanceSendPercent, setCalculateBalanceSendPercent] = useState<?number>(null);
 
-  const assetSymbol = assetData.symbol || '';
+  const assetAddress = assetData?.contractAddress || '';
+  const assetSymbol = assetData?.symbol || '';
   const chain = assetData?.chain || CHAIN.ETHEREUM;
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
-  const assetBalance = (customBalances || walletBalances)[assetSymbol]?.balance || '0';
+  const assetBalance = (customBalances || walletBalances)?.[assetAddress]?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const collectibles = collectiblesPerChain[chain] ?? [];

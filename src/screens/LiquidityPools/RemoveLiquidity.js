@@ -41,11 +41,12 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
-import { findAssetByAddress, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { findAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { useChainSupportedAssets } from 'selectors';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -58,12 +59,10 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  supportedAssets: Asset[],
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -103,7 +102,6 @@ const FooterInner = styled.View`
 
 const RemoveLiquidityScreen = ({
   navigation,
-  supportedAssets,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -120,15 +118,15 @@ const RemoveLiquidityScreen = ({
   const [poolTokenAmount, setPoolTokenAmount] = useState('');
   const [obtainedTokenFieldsValid, setObtainedTokenFieldsValid] = useState([true, true]);
   const [poolTokenFieldValid, setPoolTokenFieldValid] = useState(true);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsState);
 
-
   const tokensData = pool.tokensProportions
-    .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
+    .map(({ address: assetAddress }) => findAsset([], ethereumSupportedAssets, assetAddress));
 
-  const poolTokenData = findAssetByAddress(supportedAssets, pool.uniswapPairAddress);
+  const poolTokenData = findAsset([], ethereumSupportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (
@@ -181,15 +179,14 @@ const RemoveLiquidityScreen = ({
 
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
-    const tokenSymbol = tokensData[tokenIndex]?.symbol;
-    const customBalances: WalletAssetsBalances = tokenSymbol
-      ? {
-        [tokenSymbol]: {
-          balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
-          symbol: tokenSymbol,
-        },
-      }
-      : {};
+    const { symbol: assetSymbol, address: assetAddress } = tokensData[tokenIndex];
+    const customBalances: WalletAssetsBalances = {
+      [assetAddress]: {
+        balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
+        symbol: assetSymbol,
+        address: assetAddress,
+      },
+    };
 
     return (
       <ValueInput
@@ -312,7 +309,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

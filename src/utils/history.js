@@ -50,12 +50,11 @@ import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Co
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
-import { addressesEqual, getAssetData } from 'utils/assets';
+import { addressesEqual, findAsset } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // services
 import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
-
 
 export const buildHistoryTransaction = ({
   from,
@@ -65,7 +64,8 @@ export const buildHistoryTransaction = ({
   value,
   gasPrice,
   gasLimit,
-  asset,
+  assetSymbol,
+  assetAddress,
   note,
   status,
   createdAt,
@@ -86,7 +86,8 @@ export const buildHistoryTransaction = ({
   to,
   // $FlowFixMe: either will be present for _id
   _id: hash || batchHash,
-  asset,
+  assetSymbol,
+  assetAddress,
   createdAt: createdAt || Math.round(+new Date() / 1000), // seconds
   nbConfirmations: 0,
   note,
@@ -210,13 +211,13 @@ export const getTrxInfo = async (hash: string, network?: string) => {
 export const getTokenTransactionsFromHistory = (
   history: Transaction[],
   accounts: Account[],
-  token: string,
+  tokenAddress: string,
 ): Transaction[] => {
   const mappedTransactions = mapTransactionsHistory(history, accounts, TRANSACTION_EVENT);
   return mappedTransactions.filter(
-    ({ asset, tag = '', extra = [] }) =>
-      (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) ||
-      (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)),
+    ({ assetAddress, tag = '', extra = [] }) =>
+      (addressesEqual(assetAddress, tokenAddress) && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) ||
+      (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ address }) => addressesEqual(address, tokenAddress))),
   );
 };
 
@@ -259,7 +260,7 @@ export const getHistoryEventsFromTransactions = (
   hash,
   batchHash,
   value: rawValue,
-  asset: symbol,
+  assetAddress,
   createdAt,
   from: fromAddress,
   to: toAddress,
@@ -270,7 +271,11 @@ export const getHistoryEventsFromTransactions = (
   status,
 }) => {
   const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
-  const { decimals } = getAssetData(accountAssets, supportedAssets, symbol);
+  const asset = findAsset(accountAssets, supportedAssets, assetAddress);
+
+  const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
+  const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};
+
   const value = {
     value: wrapBigNumber(formatUnits(rawValue, decimals)),
     symbol,

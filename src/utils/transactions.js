@@ -60,7 +60,7 @@ export const calculateETHTransactionAmountAfterFee = (
   balances: WalletAssetsBalances,
   totalFeeInEth: BigNumber,
 ): BigNumber => {
-  const ethBalance = new BigNumber(getBalance(balances, ETH));
+  const ethBalance = new BigNumber(getBalance(balances, nativeAssetPerChain.ethereum.address));
   const ethBalanceLeftAfterTransaction = ethBalance
     .minus(totalFeeInEth)
     .minus(ethAmount);

@@ -21,6 +21,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { WebSocket } from 'mock-socket';
+import { ethers } from 'ethers';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
@@ -108,8 +109,8 @@ const mockAssetsBalancesStore = {
     [mockEtherspotAccount.id]: {
       ethereum: {
         wallet: {
-          [ETH]: { balance: '1', symbol: ETH },
-          [PLR]: { balance: '1', symbol: PLR },
+          [ethers.constants.AddressZero]: { balance: '1', symbol: ETH, address: ethers.constants.AddressZero },
+          '0x': { balance: '1', symbol: PLR, address: '0x' },
         },
       },
     },

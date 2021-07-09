@@ -20,9 +20,11 @@
 
 import { createSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Constants
 import { PLR } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -73,7 +75,14 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
     // currently not supported by Etherspot
     if (isEtherspotAccount(activeAccount)) return BigNumber(0);
 
-    const balances: WalletAssetsBalances = { [PLR]: { balance: ppnBalance.toString(), symbol: PLR } };
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+    const balances: WalletAssetsBalances = {
+      [plrAddress]: {
+        balance: ppnBalance.toString(),
+        symbol: PLR,
+        address: plrAddress,
+      },
+    };
     return BigNumber(getTotalBalanceInFiat(balances, ratesPerChain.ethereum ?? {}, currency));
   },
 );

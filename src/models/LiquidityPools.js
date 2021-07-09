@@ -32,6 +32,7 @@ export type LiquidityPoolBase = {
   symbol: string,
   tokensProportions: {
     symbol: string,
+    address: string,
     proportion: number,
     progressBarColor?: string,
   }[],

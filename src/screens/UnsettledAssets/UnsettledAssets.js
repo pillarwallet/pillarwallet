@@ -23,7 +23,6 @@ import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import get from 'lodash.get';
 import t from 'translations/translate';
 
 // components
@@ -32,7 +31,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Button from 'components/Button';
 
 // utils
-import { getRate } from 'utils/assets';
+import { findAsset, getAssetsAsList, getRate } from 'utils/assets';
 import { formatTokenAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 
@@ -49,7 +48,7 @@ import {
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
@@ -57,7 +56,7 @@ import type { Currency, RatesPerChain } from 'models/Rates';
 
 type Props = {
   baseFiatCurrency: Currency,
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
   ratesPerChain: RatesPerChain,
   paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
@@ -80,15 +79,14 @@ class UnsettledAssets extends React.Component<Props> {
       ratesPerChain,
     } = this.props;
 
-    const tokenSymbol = get(item, 'symbol', '');
-    const tokenBalance = get(item, 'balance', '0');
-    const paymentNetworkBalanceFormatted = formatTokenAmount(tokenBalance, tokenSymbol);
+    const { address, balance = '0' } = item;
+    const { name, symbol } = findAsset(getAssetsAsList(assets), [], address) ?? {};
+
+    const paymentNetworkBalanceFormatted = formatTokenAmount(balance, symbol);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
-    const totalInFiat = tokenBalance * getRate(ethereumRates, tokenSymbol, fiatCurrency);
+    const totalInFiat = balance * getRate(ethereumRates, symbol, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
-    const thisAsset = assets[tokenSymbol] || {};
-    const { symbol, name } = thisAsset;
 
     return (
       <ListItemWithImage

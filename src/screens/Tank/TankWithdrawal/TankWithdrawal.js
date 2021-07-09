@@ -48,7 +48,7 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { WithdrawalFee } from 'models/PaymentNetwork';
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
 
@@ -102,7 +102,7 @@ const FormWrapper = styled.View`
 `;
 
 type Props = {
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
   availableStake: number,

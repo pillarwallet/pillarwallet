@@ -24,23 +24,29 @@ import { BigNumber } from 'bignumber.js';
 import { ETH } from 'constants/assetsConstants';
 
 // Utils
-import { getBalance, sortAssets, getAssetOption } from 'utils/assets';
+import {
+  getBalance,
+  sortAssets,
+  getAssetOption,
+  addressesEqual,
+} from 'utils/assets';
 
 // Types
-import type { Asset, AssetsBySymbol, AssetOption } from 'models/Asset';
+import type { Asset, AssetByAddress, AssetOption } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesBySymbol } from 'models/Rates';
 
 export const getExchangeFromAssetOptions = (
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
   supportedAssets: Asset[],
   balances: WalletAssetsBalances,
   currency: Currency,
   rates: RatesBySymbol,
 ): AssetOption[] => {
-  const isMatching = (asset: Asset) => asset.symbol === ETH || getBalance(balances, asset.symbol) !== 0;
-  const isSupported = (asset: Asset) =>
-    supportedAssets.some((supportedAsset) => asset.symbol === supportedAsset.symbol);
+  const isMatching = (asset: Asset) => asset.symbol === ETH || getBalance(balances, asset.address) !== 0;
+  const isSupported = (
+    asset: Asset,
+  ) => supportedAssets.some((supportedAsset) => addressesEqual(asset.address, supportedAsset.address));
 
   return sortAssets(assets)
     .filter((asset) => isMatching(asset) && isSupported(asset))

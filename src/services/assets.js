@@ -49,7 +49,7 @@ import {
 } from 'services/coinGecko';
 
 // types
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { RatesBySymbol } from 'models/Rates';
 
 
@@ -303,7 +303,7 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
 
 export async function getExchangeRates(
   chain: string,
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
 ): Promise<?RatesBySymbol> {
   const assetSymbols = Object.keys(assets);
 

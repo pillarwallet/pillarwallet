@@ -37,7 +37,8 @@ export type Collectible = {
 };
 
 export type CollectibleTransaction = {
-  asset: string,
+  assetSymbol: string,
+  assetAddress: string,
   assetData: Collectible,
   blockNumber: string,
   contractAddress: string,

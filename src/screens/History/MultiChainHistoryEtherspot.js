@@ -106,7 +106,7 @@ function useHistoryEvents(chain: Chain): Event[] {
     to: toAddress,
     icon: imageUrl,
     status,
-    asset: title,
+    assetSymbol: title,
     feeWithGasToken,
     gasUsed,
     gasPrice,

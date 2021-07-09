@@ -23,6 +23,7 @@ import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // actions
 import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
@@ -35,16 +36,17 @@ import Button from 'components/Button';
 import Image from 'components/Image';
 
 // constants
-import { PLR } from 'constants/assetsConstants';
 import { ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/archanovaConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { spacing } from 'utils/variables';
 import { getCrossChainAccountHistory } from 'utils/history';
+import { findAsset, getAssetsAsList } from 'utils/assets';
 
 // types
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
@@ -54,7 +56,7 @@ type DispatchProps = {|
 |};
 
 type OwnProps = {|
-  accountAssets: AssetsBySymbol,
+  accountAssets: AssetByAddress,
   accountHistory: ChainRecord<Transaction[]>,
   onMigrated?: () => void,
 |};
@@ -94,7 +96,8 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
       accountHistory,
     } = this.props;
     const { switchPressed } = this.state;
-    const { iconUrl } = accountAssets[PLR] || {};
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+    const { iconUrl } = findAsset(getAssetsAsList(accountAssets), [], plrAddress) ?? {};
     const isSwitchPending = getCrossChainAccountHistory(accountHistory).some(({ tag, status }) => {
       return tag === ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });

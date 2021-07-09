@@ -32,7 +32,7 @@ import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
-import type { Asset, AssetsBySymbol } from 'models/Asset';
+import type { Asset, AssetByAddress } from 'models/Asset';
 import type { Rates, RatesBySymbol } from 'models/Rates';
 import type { Chain } from 'models/Chain';
 
@@ -90,7 +90,7 @@ const mapWalletAndCoinGeckoAssetsPrices = (
 
 export const getCoinGeckoTokenPrices = async (
   chain: Chain,
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
 ): Promise<?RatesBySymbol> => {
   const assetsList = getAssetsAsList(assets);
   const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;

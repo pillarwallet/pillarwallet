@@ -32,7 +32,6 @@ import Toast from 'components/Toast';
 
 // constants
 import {
-  ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE,
   ARCHANOVA_PPN_PAYMENT_COMPLETED,
   ARCHANOVA_PPN_PAYMENT_PROCESSED,
   RESET_ARCHANOVA_WALLET_DEPLOYMENT,
@@ -45,15 +44,13 @@ import {
   SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
   SET_ARCHANOVA_SDK_INIT,
   SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
-  ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
-  ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
   START_ARCHANOVA_WALLET_DEPLOYMENT,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 import {
   ADD_HISTORY_TRANSACTION,
   SET_HISTORY,
@@ -81,7 +78,7 @@ import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
-import { PPN_TOKEN } from 'configs/assetsConfig';
+import { getPlrAddressForChain, PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
 import archanovaService, { formatEstimated, parseEstimatePayload } from 'services/archanova';
@@ -106,7 +103,6 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 import type {
   InitArchanovaProps,
   ArchanovaWalletAccount,
-  ArchanovaWalletAccountDevice,
   ArchanovaWalletDeploymentError,
 } from 'models/ArchanovaWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
@@ -133,16 +129,13 @@ import {
   buildArchanovaTransactionEstimate,
   isConnectedToArchanovaSmartAccount,
   isHiddenUnsettledTransaction,
-  isArchanovaDeviceDeployed,
   buildArchanovaTxFeeInfo,
 } from 'utils/archanova';
 import {
   addressesEqual,
-  getAssetData,
-  getAssetDataByAddress,
+  findAsset,
   getAssetsAsList,
   getBalance,
-  getPPNTokenAddress,
 } from 'utils/assets';
 import {
   formatMoney,
@@ -157,6 +150,7 @@ import {
   getPrivateKeyFromPin,
   normalizeWalletAddress,
 } from 'utils/wallet';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // actions
 import {
@@ -375,13 +369,26 @@ export const fetchVirtualAccountBalanceAction = () => {
 
     if (!isConnectedToArchanovaSmartAccount(connectedAccount) || !isOnline) return;
 
-    const accountId = getActiveAccountId(accounts);
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
     const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
-    const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
-    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+    const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+    if (!ppnAsset) {
+      reportErrorLog('fetchVirtualAccountBalanceAction failed: no PPN asset found', {
+        PPN_TOKEN,
+        plrAddress,
+      });
+      return;
+    }
+
+    const accountId = getActiveAccountId(accounts);
+
+    const { decimals, address } = ppnAsset;
 
     const [staked, pendingBalances] = await Promise.all([
-      archanovaService.getAccountStakedAmount(ppnTokenAddress),
+      archanovaService.getAccountStakedAmount(address),
       archanovaService.getAccountPendingBalances(),
     ]);
 
@@ -470,7 +477,11 @@ export const syncVirtualAccountTransactionsAction = () => {
     );
 
     const transformedNewPayments = newOrUpdatedPayments.map(payment => {
-      const tokenSymbol = get(payment, 'token.symbol', ETH);
+      const {
+        symbol: assetSymbol = nativeAssetPerChain.ethereum.symbol,
+        address: assetAddress = nativeAssetPerChain.ethereum.address,
+      } = payment?.token ?? {};
+
       const value = get(payment, 'value', new BigNumber(0));
       let senderAddress = get(payment, 'sender.account.address');
       let recipientAddress = get(payment, 'recipient.account.address');
@@ -490,12 +501,12 @@ export const syncVirtualAccountTransactionsAction = () => {
 
         // check if recipient address is present in extra, else this is incoming payment
         if (!isEmpty(syntheticRecipient)) {
-          const syntheticAsset = syntheticAssetAddress !== null
-            ? getAssetDataByAddress(assetsList, supportedAssets, syntheticAssetAddress)
-            : getAssetData(assetsList, supportedAssets, ETH); // if null then it's ETH
+          // if syntheticAssetAddress is null then it's ETH
+          const finalSyntheticAssetAddress = syntheticAssetAddress || nativeAssetPerChain.ethereum.address;
+          const syntheticAsset = findAsset(assetsList, supportedAssets, finalSyntheticAssetAddress);
 
           // don't format synthetic value if asset not found at all because synthetic value will end up as 0
-          if (!isEmpty(syntheticAsset)) {
+          if (syntheticAsset) {
             const { decimals, symbol: syntheticSymbol } = syntheticAsset;
             const syntheticToAmount = formatUnits(syntheticValue, decimals);
             transactionExtra = {
@@ -527,7 +538,8 @@ export const syncVirtualAccountTransactionsAction = () => {
         hash: payment.hash,
         to: recipientAddress,
         value: value.toString(),
-        asset: tokenSymbol,
+        assetSymbol,
+        assetAddress,
         isPPNTransaction: true,
         createdAt: +new Date(payment.updatedAt) / 1000,
         ...existingTransaction,
@@ -685,14 +697,14 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           dispatch(checkKeyBasedAssetTransferTransactionsAction());
         }
 
-        if (!skipNotifications.includes(txType)) {
+        const { tokenValue, tokenAddress } = event?.payload ?? {};
+        const assetData = findAsset([], supportedAssets, tokenAddress);
+
+        if (assetData && !skipNotifications.includes(txType)) {
           let notificationMessage;
           const toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
 
           if ([transactionTypes.TopUp, transactionTypes.Withdrawal].includes(txType)) {
-            const tokenValue = get(event, 'payload.tokenValue');
-            const tokenAddress = get(event, 'payload.tokenAddress');
-            const assetData = getAssetDataByAddress([], supportedAssets, tokenAddress);
             const amount = formatUnits(tokenValue, assetData.decimals);
             const paymentInfo = `${amount} ${assetData.symbol}`;
             if (txType === transactionTypes.TopUp) {
@@ -704,9 +716,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             notificationMessage = t('toast.PPNSettleSuccess');
           } else if (txType === transactionTypes.Erc20Transfer) {
             const isReceived = addressesEqual(txReceiverAddress, archanovaAccountAddress);
-            const tokenValue = get(event, 'payload.tokenValue');
-            const tokenAddress = get(event, 'payload.tokenAddress');
-            const assetData = getAssetDataByAddress([], supportedAssets, tokenAddress);
             const amount = formatUnits(tokenValue, assetData.decimals);
             const paymentInfo = `${amount} ${assetData.symbol}`;
 
@@ -778,14 +787,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
     if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
       const tokenTransferred = get(event, 'payload.token.address', null);
-      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
-      const ppnTokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
-      const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
 
-      if (addressesEqual(tokenTransferred, ppnTokenAddress)) {
+      const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
+      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+      const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+      const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+      if (ppnAsset && addressesEqual(tokenTransferred, ppnAsset.address)) {
         // update the balance
         const value = get(event, 'payload.value', '');
-        const formattedValue = formatUnits(value, decimals);
+        const formattedValue = formatUnits(value, ppnAsset.decimals);
         dispatch({
           type: UPDATE_PAYMENT_NETWORK_STAKED,
           payload: formattedValue,
@@ -884,18 +896,31 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
 
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
-    const accountAssets = accountEthereumAssetsSelector(getState());
-    const balances = accountEthereumWalletAssetsBalancesSelector(getState());
-    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
-    const value = utils.parseUnits(amount, decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
-    if (!tokenAddress) return;
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
 
-    const balance = getBalance(balances, PPN_TOKEN);
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+    const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+    if (!ppnAsset) {
+      reportErrorLog('estimateTopUpVirtualAccountAction failed: no PPN asset found', {
+        PPN_TOKEN,
+        plrAddress,
+      });
+      return;
+    }
+
+    const { decimals, address } = ppnAsset;
+
+    const balances = accountEthereumWalletAssetsBalancesSelector(getState());
+
+    const balance = getBalance(balances, address);
     if (balance < +amount) return;
 
+    const value = utils.parseUnits(amount, decimals);
+
     const response = await archanovaService
-      .estimateTopUpAccountVirtualBalance(value, tokenAddress)
+      .estimateTopUpAccountVirtualBalance(value, address)
       .catch((e) => {
         Toast.show({
           message: t('toast.backendProblem'),
@@ -926,16 +951,33 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return;
 
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+    const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+    if (!ppnAsset) {
+      reportErrorLog('topUpVirtualAccountAction failed: no PPN asset found', {
+        PPN_TOKEN,
+        plrAddress,
+      });
+      return;
+    }
+
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
-    const accountAssets = accountEthereumAssetsSelector(getState());
 
-    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
+    const {
+      decimals,
+      symbol: assetSymbol,
+      address: assetAddress,
+    } = ppnAsset;
+
     const value = utils.parseUnits(amount.toString(), decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const estimated = await archanovaService
-      .estimateTopUpAccountVirtualBalance(value, tokenAddress)
+      .estimateTopUpAccountVirtualBalance(value, assetAddress)
       .catch((e) => {
         Toast.show({
           message: t('toast.backendProblem'),
@@ -965,7 +1007,8 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
         hash: txHash,
         to: accountAddress,
         value: value.toString(),
-        asset: PPN_TOKEN,
+        assetSymbol,
+        assetAddress,
         tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
       });
 
@@ -1002,13 +1045,26 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
 
     dispatch({ type: RESET_ESTIMATED_WITHDRAWAL_FEE });
 
-    const accountAssets = accountEthereumAssetsSelector(getState());
-    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+    const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+    if (!ppnAsset) {
+      reportErrorLog('estimateWithdrawFromVirtualAccountAction failed: no PPN asset found', {
+        PPN_TOKEN,
+        plrAddress,
+      });
+      return;
+    }
+
+    const { decimals, address } = ppnAsset;
+
     const value = utils.parseUnits(amount, decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const response = await archanovaService
-      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .estimateWithdrawFromVirtualAccount(value, address)
       .catch((e) => {
         Toast.show({
           message: t('toast.backendProblem'),
@@ -1039,16 +1095,33 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return;
 
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
+    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const supportedAssets = ethereumSupportedAssetsSelector(getState());
+
+    const ppnAsset = findAsset(getAssetsAsList(accountAssets), supportedAssets, plrAddress);
+    if (!ppnAsset) {
+      reportErrorLog('withdrawFromVirtualAccountAction failed: no PPN asset found', {
+        PPN_TOKEN,
+        plrAddress,
+      });
+      return;
+    }
+
+    const {
+      decimals,
+      address: assetAddress,
+      symbol: assetSymbol,
+    } = ppnAsset;
+
+    const value = utils.parseUnits(amount.toString(), decimals);
+
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
-    const accountAssets = accountEthereumAssetsSelector(getState());
-
-    const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
-    const value = utils.parseUnits(amount.toString(), decimals);
-    const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
 
     const estimated = await archanovaService
-      .estimateWithdrawFromVirtualAccount(value, tokenAddress)
+      .estimateWithdrawFromVirtualAccount(value, assetAddress)
       .catch((e) => {
         Toast.show({
           message: t('toast.backendProblem'),
@@ -1078,7 +1151,8 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
         hash: txHash,
         to: accountAddress,
         value: value.toString(),
-        asset: PPN_TOKEN,
+        assetSymbol,
+        assetAddress,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
       });
 
@@ -1246,18 +1320,23 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       const accountId = getAccountId(archanovaAccount);
       const accountAddress = getAccountAddress(archanovaAccount);
 
-      const settlementData = txToSettle.map(({ symbol, value, hash }) => {
-        const { decimals = 18 } = getAssetData(accountAssetsData, supportedAssets, symbol);
+      const settlementData = txToSettle.map(({ symbol, value, hash, address }) => {
+        const asset = findAsset(accountAssetsData, supportedAssets, address);
+        const { decimals = 18 } = asset ?? {};
         const parsedValue = parseTokenAmount(value, decimals);
         return { symbol, value: parsedValue, hash };
       });
+
+      // Archanova is Ethereum only
+      const { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain.ethereum;
 
       const transaction = buildHistoryTransaction({
         from: accountAddress,
         hash: txHash,
         to: accountAddress,
         value: '0',
-        asset: PAYMENT_NETWORK_TX_SETTLEMENT,
+        assetSymbol,
+        assetAddress,
         tag: PAYMENT_NETWORK_TX_SETTLEMENT,
         extra: settlementData,
       });
@@ -1331,102 +1410,6 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
   };
 };
 
-export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(fetchConnectedArchanovaAccountAction());
-
-    // checking new device
-    const accountDevices = get(getState(), 'smartWallet.connectedAccount.devices');
-    const existingDevice = accountDevices.find(({ device }) => addressesEqual(device.address, deviceAddress));
-    let accountDevice: ArchanovaWalletAccountDevice;
-
-    if (existingDevice) {
-      // check if device is already deployed or being deployed
-      if (isArchanovaDeviceDeployed(existingDevice)) return;
-      accountDevice = existingDevice;
-    }
-
-    if (!accountDevice) {
-      accountDevice = await archanovaService.addAccountDevice(deviceAddress);
-      if (!accountDevice) {
-        Toast.show({
-          message: t('toast.failedToAddDevice'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
-        return;
-      }
-      dispatch({ type: ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
-    }
-
-    const accountDeviceDeploymentHash = await archanovaService.deployAccountDevice(deviceAddress, payWithGasToken);
-    if (!accountDeviceDeploymentHash) {
-      // no transaction hash, unknown error occurred
-      Toast.show({
-        message: t('toast.failedToAddDevice'),
-        emoji: 'hushed',
-        supportLink: true,
-        autoClose: false,
-      });
-      return;
-    }
-
-    const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount) return;
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-    const historyTx = buildHistoryTransaction({
-      from: accountAddress,
-      hash: accountDeviceDeploymentHash,
-      to: accountAddress,
-      value: '0',
-      asset: ETH,
-      tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
-    });
-    dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
-
-    dispatch(fetchConnectedArchanovaAccountAction());
-  };
-};
-
-export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const accountDeviceUnDeploymentHash = await archanovaService.unDeployAccountDevice(
-      deviceAddress,
-      payWithGasToken,
-    );
-    if (!accountDeviceUnDeploymentHash) {
-      // no transaction hash, unknown error occurred
-      Toast.show({
-        message: t('toast.failedToRemoveDevice'),
-        emoji: 'hushed',
-        supportLink: true,
-        autoClose: false,
-      });
-      return;
-    }
-
-    const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount) return;
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-    const historyTx = buildHistoryTransaction({
-      from: accountAddress,
-      hash: accountDeviceUnDeploymentHash,
-      to: accountAddress,
-      value: '0',
-      asset: ETH,
-      tag: ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
-    });
-    dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
-
-    await dispatch(fetchConnectedArchanovaAccountAction());
-  };
-};
-
 export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitArchanovaProps) => {
   return async (dispatch: Dispatch) => {
     let privateKey = _privateKey;
@@ -1459,12 +1442,16 @@ export const switchToGasTokenRelayerAction = () => {
       return;
     }
 
+    // Archanova is Ethereum only
+    const { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain.ethereum;
+
     const historyTx = buildHistoryTransaction({
       from: accountAddress,
       hash,
       to: accountAddress,
       value: '0',
-      asset: ETH,
+      assetSymbol,
+      assetAddress,
       tag: ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
     });
     dispatch(insertTransactionAction(historyTx, accountId, CHAIN.ETHEREUM));
@@ -1653,11 +1640,15 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
       etherspotAccount: etherspotAccountAddress,
     });
 
+    // Archanova is Ethereum only
+    const { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain.ethereum;
+
     const transaction = buildHistoryTransaction({
       from: archanovaAccountAddress,
       to: migratorAddress,
       hash,
-      asset: ETH,
+      assetSymbol,
+      assetAddress,
       value: 0,
       extra: { isEnsMigrationToEtherspot: true },
     });

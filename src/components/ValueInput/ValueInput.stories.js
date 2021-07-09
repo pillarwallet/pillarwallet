@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { Provider } from 'react-redux';
+import { ethers } from 'ethers';
 
 // constants
 import { ETH, GBP, PLR } from 'constants/assetsConstants';
@@ -67,11 +68,13 @@ const store = createTestStore({
       [activeAccount.id]: {
         ethereum: {
           wallet: {
-            [ETH]: {
+            [ethers.constants.AddressZero]: {
+              address: ethers.constants.AddressZero,
               balance: '0.512345',
               symbol: ETH,
             },
-            [PLR]: {
+            '0x': {
+              address: '0x',
               balance: '54321',
               symbol: PLR,
             },

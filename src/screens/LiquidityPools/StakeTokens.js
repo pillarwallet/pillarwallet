@@ -44,7 +44,7 @@ import { resetEstimateTransactionAction } from 'actions/transactionEstimateActio
 import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 // utils
-import { findAssetByAddress } from 'utils/assets';
+import { findAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // selectors
@@ -113,7 +113,7 @@ const StakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
+  const assetData = findAsset([], ethereumSupportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
@@ -146,9 +146,10 @@ const StakeTokensScreen = ({
   const poolTokenCustomBalances: WalletAssetsBalances =
     assetData != null
       ? {
-        [assetData.symbol]: {
+        [assetData.address]: {
           balance: poolStats?.userLiquidityTokenBalance.toFixed() ?? '0',
           symbol: assetData?.symbol,
+          address: assetData.address,
         },
       }
       : {};

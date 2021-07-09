@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import t from 'translations/translate';
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // components
 import Toast from 'components/Toast';
@@ -32,7 +33,8 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { findAsset, getAssetsAsList } from 'utils/assets';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
 import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
@@ -46,6 +48,7 @@ import {
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { PLR } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -146,8 +149,12 @@ export const estimateTransactionsAction = (
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
+    const gasTokenAddress = preferredGasTokenSelector(getState()) === PLR
+      ? getPlrAddressForChain(chain)
+      : nativeAssetPerChain[chain].address;
+
     const gasToken = useGasToken
-      ? getAssetData(chainAccountAssetsList, chainSupportedAssets, preferredGasTokenSelector(getState()))
+      ? findAsset(chainAccountAssetsList, chainSupportedAssets, gasTokenAddress)
       : null;
 
     let errorMessage;

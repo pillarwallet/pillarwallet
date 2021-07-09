@@ -254,9 +254,9 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
 
     const customBalances = syntheticAssets
-      .map(asset => ({ symbol: asset.symbol || '', balance: asset.balance?.syntheticBalance || '0' }))
+      .map(asset => ({ address: asset.address, balance: asset.balance?.syntheticBalance || '0' }))
       .reduce((balances, assetBalance) => {
-        balances[assetBalance.symbol] = assetBalance;
+        balances[assetBalance.address] = assetBalance;
         return balances;
       }, {});
 

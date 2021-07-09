@@ -127,8 +127,8 @@ export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGro
   if (!ppnTransactions.length) return [];
 
   ppnTransactions.forEach((trx) => {
-    const { symbol: _symbol, asset, value: rawValue } = trx;
-    const symbol = _symbol || asset;
+    const { symbol: _symbol, assetSymbol, value: rawValue } = trx;
+    const symbol = _symbol || assetSymbol;
 
 
     const value = new BigNumber(rawValue);

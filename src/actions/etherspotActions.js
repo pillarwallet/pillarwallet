@@ -65,7 +65,7 @@ import {
   getAccountId,
 } from 'utils/accounts';
 import {
-  getAssetData,
+  findAsset,
   getAssetsAsList,
 } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
@@ -328,10 +328,10 @@ const handleGatewayBatchUpdatedNotification = async (
   const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
   const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-  const assetData = getAssetData(
+  const assetData = findAsset(
     getAssetsAsList(chainAccountAssets),
     chainSupportedAssets,
-    existingTransaction.asset,
+    existingTransaction.assetAddress,
   );
 
   const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);

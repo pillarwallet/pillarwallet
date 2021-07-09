@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber as EthersBigNumber, Interface, utils } from 'ethers';
-import { orderBy, isEmpty } from 'lodash';
+import { orderBy } from 'lodash';
 import t from 'translations/translate';
 
 // Constants
@@ -35,7 +35,7 @@ import {
 // utils
 import {
   addressesEqual,
-  getAssetDataByAddress,
+  findAsset,
   getAssetsAsList,
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
@@ -52,7 +52,7 @@ import type {
   WalletConnectSession,
 } from 'models/WalletConnect';
 import type { TransactionPayload } from 'models/Transaction';
-import type { AssetsBySymbol, AssetsPerChain } from 'models/Asset';
+import type { AssetByAddress, AssetsPerChain } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
 
 
@@ -116,7 +116,7 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
 
 export const mapCallRequestToTransactionPayload = (
   callRequest: WalletConnectCallRequest,
-  accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
+  accountAssetsPerChain: ChainRecord<AssetByAddress>,
   supportedAssetsPerChain: AssetsPerChain,
 ): $Shape<TransactionPayload> => {
   const [{ value = 0, data }] = callRequest.params;
@@ -130,11 +130,11 @@ export const mapCallRequestToTransactionPayload = (
 
   // to address can be either token contract (transfer data) or other kind of contract
   const assetData = isTokenTransfer(data) && to
-    ? getAssetDataByAddress(chainAccountAssets, chainSupportedAssets, to)
-    : {};
+    ? findAsset(chainAccountAssets, chainSupportedAssets, to)
+    : null;
 
   let amount;
-  if (isEmpty(assetData)) {
+  if (!assetData) {
     amount = utils.formatEther(EthersBigNumber.from(value).toString());
   } else {
     const erc20Interface = new Interface(ERC20_CONTRACT_ABI);
@@ -157,7 +157,7 @@ export const mapCallRequestToTransactionPayload = (
     symbol = nativeAssetData.symbol,
     address: contractAddress = nativeAssetData.address,
     decimals = nativeAssetData.decimals,
-  } = assetData;
+  } = assetData ?? {};
 
   return {
     to,

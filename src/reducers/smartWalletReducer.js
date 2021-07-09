@@ -28,7 +28,6 @@ import {
   SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID,
   START_ARCHANOVA_WALLET_DEPLOYMENT,
   RESET_ARCHANOVA_WALLET_DEPLOYMENT,
-  ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE,
   SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
   SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE,
   SET_CHECKING_ARCHANOVA_SESSION,
@@ -157,17 +156,6 @@ export default function smartWalletReducer(
         upgrade: {
           ...state.upgrade,
           deploymentStarted: false,
-        },
-      };
-    case ADD_ARCHANOVA_WALLET_CONNECTED_ACCOUNT_DEVICE:
-      return {
-        ...state,
-        connectedAccount: {
-          ...state.connectedAccount,
-          devices: [
-            ...state.connectedAccount.devices,
-            action.payload,
-          ],
         },
       };
     case SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE:

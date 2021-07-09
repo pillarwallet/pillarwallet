@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers } from 'ethers';
 
 // utils
 import {
@@ -79,8 +80,8 @@ describe('Assets utils', () => {
   describe('balanceInEth', () => {
     it('returns the total in ETH', () => {
       const balances: WalletAssetsBalances = {
-        ETH: { symbol: 'ETH', balance: '2.321000' },
-        PLR: { symbol: 'PLR', balance: '1200' },
+        ETH: { symbol: 'ETH', balance: '2.321000', address: ethers.constants.AddressZero },
+        PLR: { symbol: 'PLR', balance: '1200', address: '0x' },
       };
 
       const balance = balanceInEth(balances, rates);
@@ -90,7 +91,7 @@ describe('Assets utils', () => {
 
     it('returns 0 when there are no rates for ETH', () => {
       const balances: WalletAssetsBalances = {
-        PLR: { symbol: 'PLR', balance: '1200' },
+        PLR: { symbol: 'PLR', balance: '1200', address: '0x' },
       };
 
       const balance = balanceInEth(balances, { PLR: { GBP: 12 } });
@@ -101,17 +102,17 @@ describe('Assets utils', () => {
 
   describe('getBalance', () => {
     it('returns 0 for empty balance', () => {
-      const balance = getBalance({}, 'ETH');
+      const balance = getBalance({}, ethers.constants.AddressZero);
 
       expect(balance).toEqual(0);
     });
 
     it('returns the balance', () => {
       const balances: WalletAssetsBalances = {
-        ETH: { symbol: 'ETH', balance: '2.321000' },
+        ETH: { symbol: 'ETH', balance: '2.321000', address: ethers.constants.AddressZero },
       };
 
-      const balance = getBalance(balances, 'ETH');
+      const balance = getBalance(balances, ethers.constants.AddressZero);
       expect(balance).toEqual(2.321);
     });
   });
@@ -131,7 +132,7 @@ describe('Assets utils', () => {
       describe('when assets have no rate', () => {
         it('returns 0 balance', () => {
           const balances: WalletAssetsBalances = {
-            MANA: { symbol: 'MANA', balance: '1200.0' },
+            MANA: { symbol: 'MANA', balance: '1200.0', address: '0x1' },
           };
 
           const balance = getTotalBalanceInFiat(balances, {}, 'GBP');
@@ -145,7 +146,7 @@ describe('Assets utils', () => {
 
         it('returns the ETH balance', () => {
           const balances: WalletAssetsBalances = {
-            ETH: { symbol: 'ETH', balance: `${ethBalance}` },
+            ETH: { symbol: 'ETH', balance: `${ethBalance}`, address: ethers.constants.AddressZero },
           };
 
           const balance = getTotalBalanceInFiat(balances, rates, 'GBP');
@@ -158,8 +159,8 @@ describe('Assets utils', () => {
 
           it('returns the totals balance', () => {
             const balances: WalletAssetsBalances = {
-              ETH: { symbol: 'ETH', balance: `${ethBalance}` },
-              PLR: { symbol: 'PLR', balance: `${plrBalance}` },
+              ETH: { symbol: 'ETH', balance: `${ethBalance}`, address: ethers.constants.AddressZero },
+              PLR: { symbol: 'PLR', balance: `${plrBalance}`, address: '0x' },
             };
 
             const balance = getTotalBalanceInFiat(balances, rates, 'GBP');

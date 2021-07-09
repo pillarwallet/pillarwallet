@@ -46,7 +46,7 @@ import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // types
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -73,7 +73,7 @@ type Props = {
   paymentNetworkBalances: WalletAssetsBalances,
   baseFiatCurrency: ?Currency,
   ratesPerChain: RatesPerChain,
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
   session: Object,
   estimateSettleBalance: Function,
   availableToSettleTx: Object[],

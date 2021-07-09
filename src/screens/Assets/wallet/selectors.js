@@ -27,7 +27,7 @@ import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { findFirstAssetBySymbol } from 'utils/assets';
+import { findAsset } from 'utils/assets';
 import { getChainWalletAssetsBalances } from 'utils/balances';
 import { mapChainRecordValues } from 'utils/chains';
 import { sumRecord } from 'utils/bigNumber';
@@ -54,6 +54,7 @@ export type WalletItem = {|
   iconUrl: ?string,
   value: BigNumber,
   symbol: string,
+  assetAddress: string,
   change?: BigNumber,
   chain: Chain,
 |};
@@ -69,15 +70,22 @@ export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
   });
 };
 
-const buildWalletItem = ({ symbol, balance }: WalletAssetBalance, chain: Chain, supportedAssets: Asset[]) => {
-  const asset = findFirstAssetBySymbol(supportedAssets, symbol);
+const buildWalletItem = (
+  { address: assetAddress, symbol, balance }: WalletAssetBalance,
+  chain: Chain,
+  supportedAssets: Asset[],
+) => {
+  const asset = findAsset([], supportedAssets, assetAddress);
   if (!asset) return null;
+
+  const { name: title, iconUrl } = asset;
 
   return {
     key: `${chain}-${symbol}`,
-    title: asset.name,
-    iconUrl: asset.iconUrl,
-    symbol: asset.symbol,
+    title,
+    iconUrl,
+    symbol,
+    assetAddress,
     value: BigNumber(balance || 0),
     chain,
   };

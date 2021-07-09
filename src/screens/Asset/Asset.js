@@ -78,7 +78,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // models, types
-import type { AssetsBySymbol, AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
+import type { AssetByAddress, AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -90,7 +90,7 @@ import type { Currency } from 'models/Rates';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssetsPerChain: ChainRecord<AssetsBySymbol>,
+  accountAssetsPerChain: ChainRecord<AssetByAddress>,
   accountAssetsBalances: AccountAssetBalances,
   baseFiatCurrency: ?Currency,
   smartWalletState: Object,
@@ -162,13 +162,13 @@ const AssetScreen = ({
   const navigation = useNavigation();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
-  const { token, chain } = assetData;
+  const { token, contractAddress, chain } = assetData;
 
   const chainRates = useChainRates(chain);
 
   const tokenTransactions = useMemo(
-    () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, token),
-    [accountHistory, accounts, token, chain],
+    () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, contractAddress),
+    [accountHistory, accounts, contractAddress, chain],
   );
 
   const transactions = useMemo(
@@ -231,7 +231,7 @@ const AssetScreen = ({
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const tokenRate = getRate(chainRates, token, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
-  const balance = getBalance(walletBalances, token);
+  const balance = getBalance(walletBalances, contractAddress);
   const isWalletEmpty = balance <= 0;
   const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
   const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);

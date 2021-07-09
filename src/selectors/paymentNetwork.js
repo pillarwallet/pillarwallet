@@ -19,7 +19,6 @@
 */
 
 import { createSelector } from 'reselect';
-import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 
 // constants
@@ -31,12 +30,12 @@ import {
 } from 'constants/paymentNetworkConstants';
 
 // utils
-import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
+import { addressesEqual, findAsset, getAssetsAsList } from 'utils/assets';
 import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits } from 'utils/common';
 
 // models, types
-import type { Asset, AssetsBySymbol } from 'models/Asset';
+import type { Asset, AssetByAddress } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
@@ -101,29 +100,38 @@ export const paymentNetworkNonZeroBalancesSelector: ((
   archanovaAccountEthereumHistorySelector,
   supportedAssetsPerChainSelector,
   accountEthereumAssetsSelector,
-  (PPNTransactions: Transaction[], history: Transaction[], supportedAssets: Asset[], accountAssets: AssetsBySymbol) => {
+  (
+    PPNTransactions: Transaction[],
+    history: Transaction[],
+    supportedAssets: Asset[],
+    accountAssets: AssetByAddress,
+  ) => {
     return PPNTransactions
       .filter(({
         hash,
         stateInPPN,
       }) => stateInPPN === ARCHANOVA_PPN_PAYMENT_COMPLETED && hash && !isHiddenUnsettledTransaction(hash, history))
       .reduce((nonZeroBalances, transaction) => {
-        const { value: rawValue, asset: symbol } = transaction;
+        const { value: rawValue, assetSymbol, assetAddress } = transaction;
 
         const value = new BigNumber(rawValue);
-        const assetBalance = nonZeroBalances[symbol] || { symbol, rawBalance: new BigNumber(0) };
+        const assetBalance = nonZeroBalances[assetAddress] || {
+          symbol: assetSymbol,
+          address: assetAddress,
+          rawBalance: new BigNumber(0),
+        };
         const rawBalance = assetBalance.rawBalance.plus(value);
 
         if (rawBalance.lte(0)) return nonZeroBalances;
 
-        const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, symbol);
-        if (isEmpty(assetData)) return nonZeroBalances;
+        const assetData = findAsset(getAssetsAsList(accountAssets), supportedAssets, assetAddress);
+        if (!assetData) return nonZeroBalances;
 
         const balance = formatUnits(rawBalance.toString(), assetData.decimals);
 
         return {
           ...nonZeroBalances,
-          [symbol]: { ...assetBalance, balance, rawBalance },
+          [assetAddress]: { ...assetBalance, balance, rawBalance },
         };
       }, {});
   },

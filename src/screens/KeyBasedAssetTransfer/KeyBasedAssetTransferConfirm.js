@@ -53,6 +53,7 @@ import { getBalanceBN, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils
 import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { KeyBasedAssetTransfer } from 'models/Asset';
@@ -125,7 +126,11 @@ const KeyBasedAssetTransferConfirm = () => {
   const totalValue = getTotalValue(assetTransfers, ethereumRates, fiatCurrency);
   const totalFee = getTotalFee(assetTransfers);
 
-  const remainingEthBalance = getRemainingBalance(keyWalletBalances, assetTransfers, ETH);
+  const remainingEthBalance = getRemainingBalance(
+    keyWalletBalances,
+    assetTransfers,
+    nativeAssetPerChain.ethereum.address,
+  );
   const hasEnoughGas = remainingEthBalance.gte(totalFee);
 
   return (
@@ -176,9 +181,9 @@ export default KeyBasedAssetTransferConfirm;
 const getRemainingBalance = (
   balances: WalletAssetsBalances,
   assetTransfers: KeyBasedAssetTransfer[],
-  token: string,
+  tokenAddress: string,
 ) => {
-  const balance = getBalanceBN(balances, token);
+  const balance = getBalanceBN(balances, tokenAddress);
   const transfer = assetTransfers.find(({ assetData }) => assetData?.token === ETH);
 
   return transfer ? balance.minus(transfer.amount ?? 0) : balance;
