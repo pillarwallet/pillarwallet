@@ -50,7 +50,7 @@ import {
   START_ARCHANOVA_WALLET_DEPLOYMENT,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, PLR } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import {
   ADD_HISTORY_TRANSACTION,
   SET_HISTORY,

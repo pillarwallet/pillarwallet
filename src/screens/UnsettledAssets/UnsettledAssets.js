@@ -79,7 +79,7 @@ class UnsettledAssets extends React.Component<Props> {
       ratesPerChain,
     } = this.props;
 
-    const { address, balance = '0' } = item;
+    const { address, balance = 0 } = item;
     const { name, symbol } = findAsset(getAssetsAsList(assets), [], address) ?? {};
 
     const paymentNetworkBalanceFormatted = formatTokenAmount(balance, symbol);
