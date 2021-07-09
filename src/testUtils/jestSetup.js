@@ -164,6 +164,7 @@ jest.setMock('ethers', {
       fromMnemonic: () => mockWallet,
       fromEncryptedJson: () => mockWallet,
     },
+    constants: ethersConstants,
   },
   Wallet: EthersWallet,
   Contract: mocktract,
