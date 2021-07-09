@@ -35,7 +35,6 @@ import {
 
 // constants
 import {
-  ADD_NOTIFICATION,
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
   BCX,
@@ -52,11 +51,10 @@ import { firebaseMessaging } from 'services/firebase';
 import {
   processNotification,
   resetAppNotificationsBadgeNumber,
-  getToastNotification,
 } from 'utils/notifications';
 
 // types
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 import type { FirebaseMessage } from 'models/Notification';
 
 let notificationsListener = null;
@@ -88,7 +86,7 @@ export const fetchAllNotificationsAction = () => {
 };
 
 const onFirebaseMessageAction = (message: FirebaseMessage) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
     if (checkForSupportAlert(message.data)) return;
     const type = message?.data?.type;
 
@@ -102,14 +100,6 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 
     if (type === FCM_DATA_TYPE.COLLECTIBLE) {
       dispatch(fetchAllCollectiblesDataAction());
-    }
-
-    if (message.notification) {
-      const { wallet: { data: wallet } } = getState();
-      const notification = message.data && getToastNotification(message.data, wallet?.address);
-      if (!notification) return;
-      dispatch({ type: ADD_NOTIFICATION, payload: notification });
-      dispatch(showHomeUpdateIndicatorAction());
     }
   };
 };

@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Platform } from 'react-native';
-import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { Notifications } from 'react-native-notifications';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -94,47 +93,6 @@ export const getToastNotification = (data: mixed, myEthAddress: ?string): null |
   const { type, msg } = data ?? {};
   const notification = typeof msg === 'string' && parseNotification(msg);
   if (!notification) return null;
-
-  if (type === FCM_DATA_TYPE.BCX) {
-    if (!validBcxTransaction(notification)) return null;
-
-    const {
-      asset,
-      status,
-      value,
-      decimals,
-      fromAddress: sender,
-      toAddress: receiver,
-    } = notification;
-
-    const tokenValue = t('tokenValue', {
-      value: utils.formatUnits(EthersBigNumber.from(value.toString()), decimals),
-      token: asset,
-    });
-
-    // TODO: do we still need to process key based wallet notifications?
-    if (addressesEqual(receiver, myEthAddress) && status === 'pending') {
-      return {
-        message: t('notification.transactionReceivedPending', { tokenValue }),
-        emoji: 'ok_hand',
-      };
-    } else if (addressesEqual(receiver, myEthAddress) && status === 'confirmed') {
-      return {
-        message: t('notification.transactionReceivedConfirmed', { tokenValue }),
-        emoji: 'ok_hand',
-      };
-    } else if (addressesEqual(sender, myEthAddress) && status === 'pending') {
-      return {
-        message: t('notification.transactionSentPending', { tokenValue }),
-        emoji: 'ok_hand',
-      };
-    } else if (addressesEqual(sender, myEthAddress) && status === 'confirmed') {
-      return {
-        message: t('notification.transactionSentConfirmed', { tokenValue }),
-        emoji: 'ok_hand',
-      };
-    }
-  }
 
   if (type === FCM_DATA_TYPE.COLLECTIBLE) {
     if (!validCollectibleTransaction(notification)) return null;
