@@ -74,6 +74,9 @@ import WebViewScreen from 'screens/WebView/WebViewScreen';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
+import WalletMigrationIntroScreen from 'screens/WalletMigration/Intro';
+import WalletMigrationSelectAssetsScreen from 'screens/WalletMigration/SelectAssets';
+import WalletMigrationConfirmScreen from 'screens/WalletMigration/Confirm';
 import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
@@ -188,6 +191,10 @@ import {
   KEY_BASED_ASSET_TRANSFER_UNLOCK,
   KEY_BASED_ASSET_TRANSFER_FLOW,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  WALLET_MIGRATION_FLOW,
+  WALLET_MIGRATION_INTRO,
+  WALLET_MIGRATION_SELECT_ASSETS,
+  WALLET_MIGRATION_CONFIRM,
   CONTACTS_LIST,
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
@@ -448,6 +455,12 @@ const keyBasedAssetTransferFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
+const walletMigrationFlow = createStackNavigator({
+  [WALLET_MIGRATION_INTRO]: WalletMigrationIntroScreen,
+  [WALLET_MIGRATION_SELECT_ASSETS]: WalletMigrationSelectAssetsScreen,
+  [WALLET_MIGRATION_CONFIRM]: WalletMigrationConfirmScreen,
+}, StackNavigatorConfig);
+
 const contactsFlow = createStackNavigator({
   [CONTACTS_LIST]: ContactsListScreen,
 }, StackNavigatorConfig);
@@ -511,6 +524,7 @@ const AppFlowNavigation = createStackNavigator(
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
+    [WALLET_MIGRATION_FLOW]: walletMigrationFlow,
     [CONTACTS_FLOW]: contactsFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,

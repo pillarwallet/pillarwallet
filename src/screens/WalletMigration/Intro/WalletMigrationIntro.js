@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
 
 import * as React from 'react';
 import { Image } from 'react-native';
@@ -44,11 +43,11 @@ import { getThemeByType } from 'utils/themes';
 
 const smartWalletImage = require('assets/images/smart-wallet-migration.png');
 
-function KeyBasedAssetTransferIntro() {
+function WalletMigrationIntro() {
   const navigation = useNavigation();
   const darkTheme = getThemeByType(DARK_THEME);
 
-  const { t } = useTranslationWithPrefix('smartWalletContent.intro');
+  const { t } = useTranslationWithPrefix('walletMigration.etherspot.intro');
 
   const navigateToMigration = () => {
     navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE);
@@ -62,7 +61,8 @@ function KeyBasedAssetTransferIntro() {
           navigation={navigation}
           noPaddingTop
         />
-        <Content>
+
+        <Content showsVerticalScrollIndicator={false}>
           <Title>{t('title')}</Title>
           <Spacing h={spacing.largePlus} />
           <Body>{t('header')}</Body>
@@ -93,11 +93,10 @@ function KeyBasedAssetTransferIntro() {
   );
 }
 
-export default KeyBasedAssetTransferIntro;
-
+export default WalletMigrationIntro;
 
 const Title = styled(Text)`
-  font-family: "${appFont.medium}";
+  font-family: '${appFont.medium}';
   ${fontStyles.large};
   margin: 0px 50px;
   text-align: center;

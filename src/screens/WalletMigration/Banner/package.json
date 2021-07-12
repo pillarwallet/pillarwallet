@@ -1,0 +1,6 @@
+{
+  "name": "WalletMigrationBanner",
+  "version": "0.0.0",
+  "private": true,
+  "main": "WalletMigrationBanner.js"
+}
