@@ -424,13 +424,13 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
   };
 };
 
-export type EventType = {
+export type TransactionToView = {
   hash?: string,
   batchHash?: string,
   fromAddress?: any,
 }
 
-export const viewTransactionOnBlockchainAction = (chain: Chain, event: Event | EventType) => {
+export const viewTransactionOnBlockchainAction = (chain: Chain, event: Event | TransactionToView) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { hash = null, batchHash = null, fromAddress = null } = event;
 

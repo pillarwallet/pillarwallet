@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
@@ -54,10 +54,10 @@ import { CHAIN } from 'constants/chainConstants';
 // Actions
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
+// Types
+import type { TransactionPayload } from 'models/Transaction';
+import type { Account } from 'models/Account';
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-};
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
@@ -74,13 +74,11 @@ const getTransactionErrorMessage = (error: string): string => {
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
-const getTransactionSuccessMessage = (transactionType: ?string, chain: ?string) => {
+const getTransactionSuccessMessage = (transactionType: ?string, chainType: ?string) => {
   if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     return t('transactions.paragraph.exchangeTransactionSuccess');
   }
-  return chain
-    ? t('transactions.paragraph.transactionSuccess', { network: chain })
-    : t('transactions.paragraph.transactionSuccess', { network: CHAIN.ETHEREUM });
+  return t('transactions.paragraph.transactionSuccess', { network: chainType });
 };
 
 const getTransactionSuccessTitle = (props) => {
@@ -96,28 +94,32 @@ const getTransactionSuccessTitle = (props) => {
   return t('transactions.title.transactionSuccess');
 };
 
-function SendTokenTransaction(props: Props) {
+function SendTokenTransaction() {
   const dispatch = useDispatch();
-  const { navigation } = props;
+  const navigation = useNavigation();
+
+  const isSuccess: boolean = useNavigationParam('isSuccess');
+  const error: string = useNavigationParam('error', '');
+  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
+  const transactionType: ?string = useNavigationParam('transactionType');
+  const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
+  const noRetry: string = useNavigationParam('noRetry');
+  const batchHash: string = useNavigationParam('batchHash', '');
+  const hash: string = useNavigationParam('hash', '');
+  const accounts: Account[] = useNavigationParam('accounts');
+
   const {
-    isSuccess,
-    error,
-    transactionPayload: { tokenType: transactionTokenType, extra: { allowance = {} } = {}, chain },
-    transactionType,
-    goBackDismiss,
-    noRetry,
-    batchHash = '',
-    hash = '',
-    accounts,
-  } = navigation.state.params;
+    tokenType: transactionTokenType,
+    extra: { allowance = {} } = {},
+    chain: chainType = CHAIN.ETHEREUM,
+  } = transactionPayload;
 
   const fromAddress = accounts ? getActiveAccountAddress(accounts) : '';
 
-  const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
+  const viewOnBlockchain = () =>
+    dispatch(viewTransactionOnBlockchainAction(chainType, { hash, batchHash, fromAddress }));
 
   const handleDismissal = () => {
-    const { transactionPayload } = navigation.state.params;
-
     const txTag = transactionPayload?.tag || '';
 
     if (isLiquidityPoolsTransactionTag(txTag)) {
@@ -170,8 +172,6 @@ function SendTokenTransaction(props: Props) {
   };
 
   const handleNavigationBack = () => {
-    const { transactionPayload } = navigation.state.params;
-
     if (transactionPayload.tokenType === COLLECTIBLES) {
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
       return;
@@ -179,7 +179,7 @@ function SendTokenTransaction(props: Props) {
     navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
-  const renderSuccessButton = () => {
+  const renderSuccess = () => {
     const successButtonText = transactionType === TRANSACTION_TYPE.EXCHANGE
       ? t('button.finish')
       : t('button.magic', { exclamation: true });
@@ -195,7 +195,7 @@ function SendTokenTransaction(props: Props) {
     );
   };
 
-  const renderFailureButtons = () => {
+  const renderFailure = () => {
     return (
       <ButtonContainer>
         {!noRetry && (
@@ -212,7 +212,7 @@ function SendTokenTransaction(props: Props) {
 
   const animationSource = isSuccess ? animationSuccess : animationFailure;
   const transactionStatusText = isSuccess
-    ? getTransactionSuccessMessage(transactionType, chain)
+    ? getTransactionSuccessMessage(transactionType, chainType)
     : getTransactionErrorMessage(error);
   const isAllowanceTransaction = Object.keys(allowance).length;
   const transactionStatusTitle = isSuccess
@@ -228,7 +228,7 @@ function SendTokenTransaction(props: Props) {
         <Paragraph light center style={textStyle}>
           {transactionStatusText}
         </Paragraph>
-        {isSuccess ? renderSuccessButton() : renderFailureButtons()}
+        {isSuccess ? renderSuccess() : renderFailure()}
       </Wrapper>
       {/*
         {isSuccess &&

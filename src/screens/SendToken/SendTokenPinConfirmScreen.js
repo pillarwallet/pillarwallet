@@ -98,11 +98,11 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   };
 
   navigateToTransactionState = (params: ?Object) => {
-    const { navigation } = this.props;
+    const { navigation, accounts } = this.props;
     const { transactionPayload } = this.state;
     const transactionType = navigation.getParam('transactionType', '');
 
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload, transactionType });
+    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload, transactionType, accounts });
   };
 
   handleBack = () => {
