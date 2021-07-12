@@ -24,7 +24,7 @@ import { Alert } from 'react-native';
 import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
 
-// actions
+// Actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -33,8 +33,9 @@ import {
   unsubscribeToEtherspotNotificationsAction,
 } from 'actions/etherspotActions';
 
-// constants
+// Constants
 import {
+  ADD_NOTIFICATION,
   SHOW_HOME_UPDATE_INDICATOR,
   HIDE_HOME_UPDATE_INDICATOR,
   BCX,
@@ -43,18 +44,20 @@ import {
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 
-// services
+// Services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import { firebaseMessaging } from 'services/firebase';
 
-// utils
+// Utils
 import {
   processNotification,
   resetAppNotificationsBadgeNumber,
+  getToastNotification,
 } from 'utils/notifications';
+import { getActiveAccountAddress } from 'utils/accounts';
 
-// types
-import type { Dispatch } from 'reducers/rootReducer';
+// Types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { FirebaseMessage } from 'models/Notification';
 
 let notificationsListener = null;
@@ -86,7 +89,7 @@ export const fetchAllNotificationsAction = () => {
 };
 
 const onFirebaseMessageAction = (message: FirebaseMessage) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (checkForSupportAlert(message.data)) return;
     const type = message?.data?.type;
 
@@ -100,6 +103,17 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 
     if (type === FCM_DATA_TYPE.COLLECTIBLE) {
       dispatch(fetchAllCollectiblesDataAction());
+    }
+
+    if (message.notification) {
+      const {
+        accounts: { data: accounts },
+      } = getState();
+      const walletAddress = getActiveAccountAddress(accounts);
+      const notification = message.data && getToastNotification(message.data, walletAddress);
+      if (!notification) return;
+      dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      dispatch(showHomeUpdateIndicatorAction());
     }
   };
 };
