@@ -36,7 +36,6 @@ import Toast from 'components/Toast';
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
-import { getActiveAccountAddress } from 'utils/accounts';
 
 // Constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, LIQUIDITY_POOL_DASHBOARD } from 'constants/navigationConstants';
@@ -56,7 +55,9 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Types
 import type { TransactionPayload } from 'models/Transaction';
-import type { Account } from 'models/Account';
+
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -97,6 +98,7 @@ const getTransactionSuccessTitle = (props) => {
 function SendTokenTransaction() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const fromAddress = useRootSelector(activeAccountAddressSelector);
 
   const isSuccess: boolean = useNavigationParam('isSuccess');
   const error: string = useNavigationParam('error', '');
@@ -106,15 +108,12 @@ function SendTokenTransaction() {
   const noRetry: string = useNavigationParam('noRetry');
   const batchHash: string = useNavigationParam('batchHash', '');
   const hash: string = useNavigationParam('hash', '');
-  const accounts: Account[] = useNavigationParam('accounts');
 
   const {
     tokenType: transactionTokenType,
     extra: { allowance = {} } = {},
     chain: chainType = CHAIN.ETHEREUM,
   } = transactionPayload;
-
-  const fromAddress = accounts ? getActiveAccountAddress(accounts) : '';
 
   const viewOnBlockchain = () =>
     dispatch(viewTransactionOnBlockchainAction(chainType, { hash, batchHash, fromAddress }));
