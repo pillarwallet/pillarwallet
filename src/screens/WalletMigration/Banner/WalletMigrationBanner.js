@@ -31,6 +31,10 @@ import Text from 'components/modern/Text';
 // Constants
 import { WALLET_MIGRATION_INTRO } from 'constants/navigationConstants';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+import { showWalletMigrationSelector } from 'selectors/walletMigration';
+
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -47,8 +51,7 @@ function WalletMigrationBanner({ style }: Props) {
   const { t } = useTranslationWithPrefix('walletMigration.etherspot.banner');
   const navigation = useNavigation();
 
-  // TODO: implement logic
-  const showMigrationBanner = true;
+  const showMigrationBanner = useRootSelector(showWalletMigrationSelector);
 
   if (!showMigrationBanner) return null;
 

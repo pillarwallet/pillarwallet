@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Contants
 import { DARK_THEME } from 'constants/appSettingsConstants';
-import { KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
+import { WALLET_MIGRATION_SELECT_ASSETS } from 'constants/navigationConstants';
 
 // Components
 import { Spacing } from 'components/Layout';
@@ -50,7 +50,7 @@ function WalletMigrationIntro() {
   const { t } = useTranslationWithPrefix('walletMigration.etherspot.intro');
 
   const navigateToMigration = () => {
-    navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE);
+    navigation.navigate(WALLET_MIGRATION_SELECT_ASSETS);
   };
 
   return (
