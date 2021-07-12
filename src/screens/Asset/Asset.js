@@ -240,7 +240,7 @@ const AssetScreen = ({
         )}
       </Content>
       <FloatingButtons items={buttons} />
-      {!isSendActive && <SWActivationCard />}
+      {!isSendActive && isArchanovaAccount(activeAccount) && <SWActivationCard />}
     </Container>
   );
 };
