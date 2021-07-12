@@ -157,6 +157,7 @@
         "contentAlign",
         "contentInsetAdjustmentBehavior",
         "ellipsizeMode",
+        "emoji",
         "fill",
         "fill-rule",
         "font",

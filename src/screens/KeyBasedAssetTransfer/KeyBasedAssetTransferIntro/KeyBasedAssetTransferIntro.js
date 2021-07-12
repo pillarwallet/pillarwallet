@@ -35,12 +35,12 @@ import Button from 'components/Button';
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
+import EmojiCard from 'components/modern/EmojiCard';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { getThemeByType } from 'utils/themes';
 
-import Card from './Card';
 
 const smartWalletImage = require('assets/images/smart-wallet-migration.png');
 
@@ -74,9 +74,9 @@ function KeyBasedAssetTransferIntro() {
 
           <Spacing h={spacing.medium} />
 
-          <Card title={t('benefits.secure')} emoji="🔐" />
-          <Card title={t('benefits.ensName')} emoji="⚛️" />
-          <Card title={t('benefits.betterApp')} emoji="⚡" />
+          <EmojiCard title={t('benefits.secure')} emoji="🔐" />
+          <EmojiCard title={t('benefits.ensName')} emoji="⚛️" />
+          <EmojiCard title={t('benefits.betterApp')} emoji="⚡" />
 
           <Spacing h={spacing.extraLarge} />
 
