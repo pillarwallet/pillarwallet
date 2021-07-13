@@ -21,7 +21,6 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { WebSocket } from 'mock-socket';
-import { ethers } from 'ethers';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';

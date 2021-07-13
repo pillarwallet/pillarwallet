@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { ETH } from 'constants/assetsConstants';
 
 // utils
-import { calculateETHTransactionAmountAfterFee } from '../transactions';
+import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 import { mockEthAddress } from 'testUtils/jestSetup';
 
 

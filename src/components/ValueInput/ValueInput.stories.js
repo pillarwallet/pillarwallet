@@ -32,7 +32,6 @@ import ValueInputComponent from 'components/ValueInput';
 
 // test utils
 import { createTestStore, initialTestState } from 'testUtils/store';
-import { mapAssetToAssetData } from 'utils/assets';
 
 // local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -110,7 +109,7 @@ storiesOf('Value Input', module)
         value=""
         onValueChange={() => {}}
         onAssetDataChange={() => {}}
-        assetData={ethAsset}
+        assetData={{ ...ethAsset, contractAddress: ethAsset.address }}
       />
     </Provider>
   ));

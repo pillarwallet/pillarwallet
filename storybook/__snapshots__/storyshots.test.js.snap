@@ -50506,6 +50506,7 @@ exports[`Storyshots Value Input default 1`] = `
                         asset={
                           Object {
                             "address": "0x0000000000000000000000000000000000000000",
+                            "contractAddress": "0x0000000000000000000000000000000000000000",
                             "decimals": 18,
                             "iconUrl": "",
                             "name": "Ethereum",
