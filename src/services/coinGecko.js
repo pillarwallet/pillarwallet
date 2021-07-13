@@ -26,14 +26,13 @@ import { rateKeys } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
-import type { Asset, AssetByAddress } from 'models/Asset';
-import type { Rates, RatesBySymbol } from 'models/Rates';
+import type { Asset } from 'models/Asset';
+import type { Rates, RatesByAssetAddress } from 'models/Rates';
 import type { Chain } from 'models/Chain';
 
 type CoinGeckoAssetsPrices = {
@@ -79,26 +78,23 @@ const chainToCoinGeckoNetwork = {
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
   assetsList: Asset[],
-): RatesBySymbol => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
+): RatesByAssetAddress => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
   const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
   if (walletAsset) {
-    const { symbol } = walletAsset;
-    mappedResponseData[symbol] = mapPricesToRates(responseData[contractAddress]);
+    const { address } = walletAsset;
+    mappedResponseData[address] = mapPricesToRates(responseData[contractAddress]);
   }
   return mappedResponseData;
 }, {});
 
 export const getCoinGeckoTokenPrices = async (
   chain: Chain,
-  assets: AssetByAddress,
-): Promise<?RatesBySymbol> => {
-  const assetsList = getAssetsAsList(assets);
-  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
-
+  assets: Asset[],
+): Promise<?RatesByAssetAddress> => {
   // native asset not always fit into token price endpoint, it is fetched with other API call
-  const assetsListWithoutNativeAsset = assetsList.filter(({ symbol }) => symbol !== nativeAssetSymbol);
+  const assetsWithoutNativeAsset = assets.filter(({ address }) => address !== nativeAssetPerChain[chain].address);
 
-  const assetsContractAddresses = assetsListWithoutNativeAsset.map(({ address }) => address);
+  const assetsContractAddresses = assetsWithoutNativeAsset.map(({ address }) => address);
 
   const contractAddressesQuery = assetsContractAddresses.join(',');
 
@@ -120,7 +116,7 @@ export const getCoinGeckoTokenPrices = async (
         return null;
       }
 
-      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsListWithoutNativeAsset);
+      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsWithoutNativeAsset);
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoTokenPrices failed: API request error', {

@@ -50,7 +50,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { chainFromChainId } from 'utils/chains';
+import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
@@ -73,7 +73,14 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfigs = useChainsConfig();
 
   const { title, iconUrl, chain, errorMessage } = useViewData(request);
-  const { fee, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage } = useTransactionFee(request);
+  const {
+    fee,
+    gasSymbol,
+    gasAddress,
+    hasNotEnoughGas,
+    isEstimating,
+    estimationErrorMessage,
+  } = useTransactionFee(request);
   const transactionPayload = useTransactionPayload(request);
 
   const handleConfirm = () => {
@@ -100,7 +107,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       {!estimationErrorMessage && (
         <FeeLabel
           value={fee}
-          symbol={gasSymbol}
+          assetSymbol={gasSymbol}
+          assetAddress={gasAddress}
           isLoading={isEstimating}
           isNotEnough={hasNotEnoughGas}
           style={styles.fee}
@@ -146,6 +154,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const txFeeInWei = feeInfo?.fee;
   const fee = BigNumber(getFormattedTransactionFeeValue(chain, txFeeInWei, feeInfo?.gasToken)) || null;
   const gasSymbol = getGasSymbol(chain, feeInfo?.gasToken);
+  const gasAddress = feeInfo?.gasToken?.address || nativeAssetPerChain[chain].address;
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
@@ -165,7 +174,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
 
-  return { fee, gasSymbol, hasNotEnoughGas, isEstimating, estimationErrorMessage };
+  return { fee, gasSymbol, gasAddress, hasNotEnoughGas, isEstimating, estimationErrorMessage };
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {

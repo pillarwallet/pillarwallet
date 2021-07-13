@@ -192,8 +192,8 @@ export const accountAssetsWithBalanceSelector = createSelector(
 
         const { iconUrl: imageUrl, address, symbol } = relatedAsset;
 
-        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
-        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, symbol);
+        const balanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, address);
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalanceBN, chainRates, address);
 
         assetsWithBalance.push({
           ...relatedAsset,

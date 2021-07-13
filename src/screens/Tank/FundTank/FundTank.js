@@ -42,7 +42,6 @@ import { formatAmount, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import {
   getBalance,
-  getRate,
   calculateMaxAmount,
   isEnoughBalanceForTransactionFee,
   findAsset,
@@ -51,6 +50,7 @@ import {
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
+import { getRate } from 'utils/rates';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -215,7 +215,7 @@ class FundTank extends React.Component<Props, State> {
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getRate(ethereumRates, plrAddress, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
@@ -238,7 +238,7 @@ class FundTank extends React.Component<Props, State> {
     const maxAmount = parseFloat(calculateMaxAmount(token, balance, txFeeInWei, gasToken));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getRate(ethereumRates, plrAddress, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form

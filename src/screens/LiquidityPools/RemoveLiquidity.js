@@ -41,12 +41,17 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
-import { findAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import {
+  findAsset,
+  getAssetOption,
+  isEnoughBalanceForTransactionFee,
+  mapAssetToAssetData,
+} from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { useChainSupportedAssets } from 'selectors';
+import { useChainRates, useChainSupportedAssets, useFiatCurrency } from 'selectors';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -120,6 +125,9 @@ const RemoveLiquidityScreen = ({
   const [poolTokenFieldValid, setPoolTokenFieldValid] = useState(true);
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
 
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const fiatCurrency = useFiatCurrency();
+
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsState);
 
@@ -190,8 +198,8 @@ const RemoveLiquidityScreen = ({
 
     return (
       <ValueInput
-        assetData={tokensData[tokenIndex]}
-        customAssets={[tokensData[tokenIndex]]}
+        assetData={mapAssetToAssetData(tokensData[tokenIndex])}
+        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency)]}
         value={obtainedAssetsValues[tokenIndex]}
         onValueChange={(newValue: string, newPercent: number | void) =>
           onObtainedAssetValueChange(tokenIndex, newValue, newPercent)

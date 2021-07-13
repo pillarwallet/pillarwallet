@@ -45,7 +45,7 @@ import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
-import type { RatesBySymbol } from 'models/Rates';
+import type { RatesByAssetAddress } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -58,7 +58,7 @@ export const setIsFetchingRatesAction = (isFetching: boolean) => ({
 
 export const updateRatesAction = (
   chain: string,
-  rates: RatesBySymbol,
+  rates: RatesByAssetAddress,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
@@ -85,7 +85,7 @@ export const fetchAssetsRatesAction = () => {
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
-    const assetsBySymbolPerChain = Object.keys(CHAIN).reduce((
+    const assetsAddressPerChain = Object.keys(CHAIN).reduce((
       combinedAssetsBySymbolPerChain,
       chainKey,
     ) => {
@@ -93,34 +93,34 @@ export const fetchAssetsRatesAction = () => {
 
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-      const chainAccountsAssetsBySymbol = Object.keys(assetsBalancesPerAccount).reduce((
+      const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce((
         combinedAssetsBySymbol,
         accountId,
       ) => {
         const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
         const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
 
-        const assetsBySymbol = mapWalletAssetsBalancesIntoAssetsByAddress(
+        const assetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
           accountWalletAssetsBalances,
           chainSupportedAssets,
         );
 
         // $FlowFixMe
-        return { ...combinedAssetsBySymbol, ...assetsBySymbol };
+        return { ...combinedAssetsBySymbol, ...assetsByAddress };
       }, {});
 
       // $FlowFixMe
-      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsBySymbol };
+      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsByAddress };
     }, {});
 
-    await Promise.all(Object.keys(assetsBySymbolPerChain).map(async (chain) => {
-      const chainAssetsBySymbol = assetsBySymbolPerChain[chain] ?? {};
+    await Promise.all(Object.keys(assetsAddressPerChain).map(async (chain) => {
+      const chainAssetsByAddress = assetsAddressPerChain[chain] ?? {};
 
       try {
-        const rates = await getExchangeRates(chain, chainAssetsBySymbol);
+        const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));
         await dispatch(updateRatesAction(chain, rates));
       } catch (error) {
-        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsBySymbol });
+        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
       }
     }));
 
@@ -155,7 +155,7 @@ export const fetchSingleChainAssetRatesAction = (
       return;
     }
 
-    const rates = await getExchangeRates(chain, { [asset.symbol]: asset });
+    const rates = await getExchangeRates(chain, [asset]);
 
     if (isEmpty(rates)) {
       dispatch(setIsFetchingRatesAction(false));

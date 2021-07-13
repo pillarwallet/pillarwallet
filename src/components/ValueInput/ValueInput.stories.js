@@ -86,8 +86,8 @@ const store = createTestStore({
   rates: {
     data: {
       ethereum: {
-        [ETH]: { [GBP]: 185 },
-        [PLR]: { [GBP]: 0.1 },
+        [ethers.constants.AddressZero]: { [GBP]: 185 },
+        '0x': { [GBP]: 0.1 },
       },
     },
   },

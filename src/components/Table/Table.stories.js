@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+import { ethers } from 'ethers';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -39,7 +40,7 @@ storiesOf('Table', module)
     <Table title="Table">
       <TableRow>
         <TableLabel>One</TableLabel>
-        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} />
+        <TableAmount amount={12320.56} assetSymbol="PLR" assetAddress="0x" chain={CHAIN.ETHEREUM} />
       </TableRow>
       <TableRow>
         <TableLabel>Two</TableLabel>
@@ -48,15 +49,15 @@ storiesOf('Table', module)
       <BaseText large negative>Even weirder component</BaseText>
       <TableRow>
         <TableLabel>Free</TableLabel>
-        <TableAmount amount={0} token="ETH" chain={CHAIN.ETHEREUM} />
+        <TableAmount amount={0} assetSymbol="ETH" assetAddress={ethers.constants.AddressZero} chain={CHAIN.ETHEREUM} />
       </TableRow>
       <TableRow>
         <TableLabel>High fees</TableLabel>
-        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} highFees />
+        <TableAmount amount={12320.56} assetSymbol="PLR" assetAddress="0x" chain={CHAIN.ETHEREUM} highFees />
       </TableRow>
       <TableRow>
         <TableTotal>Total</TableTotal>
-        <TableAmount amount={12320.56} token="PLR" chain={CHAIN.ETHEREUM} />
+        <TableAmount amount={12320.56} assetSymbol="PLR" assetAddress="0x" chain={CHAIN.ETHEREUM} />
       </TableRow>
     </Table>
   ));

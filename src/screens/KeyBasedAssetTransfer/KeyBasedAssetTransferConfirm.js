@@ -58,7 +58,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 // Types
 import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { Currency, RatesBySymbol } from 'models/Rates';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
 const KeyBasedAssetTransferConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('smartWalletContent.confirm');
@@ -104,7 +104,7 @@ const KeyBasedAssetTransferConfirm = () => {
       value: formatTokenAmount(amount ?? 0, assetData.token),
       token: assetData.token,
     });
-    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, ethereumRates, assetData.token);
+    const valueInFiat = getFormattedBalanceInFiat(fiatCurrency, amount ?? 0, ethereumRates, assetData.contractAddress);
 
     return (
       <Table.RowContainer key={assetData.token} separator={index !== 0}>
@@ -170,7 +170,12 @@ const KeyBasedAssetTransferConfirm = () => {
         <Table.Header>{t('assets.header')}</Table.Header>
         {sortedAssetTransfers.map(renderItem)}
 
-        <FeeTable fee={totalFee} symbol={ETH} chain={CHAIN.ETHEREUM} />
+        <FeeTable
+          fee={totalFee}
+          assetSymbol={ETH}
+          assetAddress={nativeAssetPerChain.ethereum.address}
+          chain={CHAIN.ETHEREUM}
+        />
       </Content>
     </ContainerWithHeader>
   );
@@ -189,11 +194,11 @@ const getRemainingBalance = (
   return transfer ? balance.minus(transfer.amount ?? 0) : balance;
 };
 
-const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: RatesBySymbol, fiatCurrency: Currency) => {
+const getTotalValue = (assetTransfers: KeyBasedAssetTransfer[], rates: RatesByAssetAddress, fiatCurrency: Currency) => {
   let result = 0;
 
   assetTransfers.forEach(({ assetData, amount }) => {
-    result += getBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.token);
+    result += getBalanceInFiat(fiatCurrency, amount ?? 0, rates, assetData.contractAddress);
   });
 
   return result;
@@ -212,7 +217,7 @@ const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
 
 const sortAssetTransfers = (
   assetTransfers: KeyBasedAssetTransfer[],
-  rates: RatesBySymbol,
+  rates: RatesByAssetAddress,
   fiatCurrency: Currency,
 ): KeyBasedAssetTransfer[] => {
   return orderBy(
@@ -220,7 +225,7 @@ const sortAssetTransfers = (
     [
       (transfer: KeyBasedAssetTransfer) => (transfer.assetData.tokenType !== COLLECTIBLES ? 1 : 0),
       (transfer: KeyBasedAssetTransfer) =>
-        getBalanceInFiat(fiatCurrency, transfer.amount ?? 0, rates, transfer.assetData.token) ?? 0,
+        getBalanceInFiat(fiatCurrency, transfer.amount ?? 0, rates, transfer.assetData.contractAddress) ?? 0,
       (transfer: KeyBasedAssetTransfer) => transfer.assetData.name?.trim().toLowerCase(),
     ],
     ['desc', 'desc', 'asc'],

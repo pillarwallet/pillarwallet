@@ -17,33 +17,45 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { utils, BigNumber as EthersBigNumber } from 'ethers';
+import { BigNumber as EthersBigNumber, utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { orderBy, get, mapValues } from 'lodash';
+import { get, mapValues, orderBy } from 'lodash';
 
 // constants
-import { COLLECTIBLES, ETH, PLR, TOKENS, USD, defaultFiatCurrency } from 'constants/assetsConstants';
+import {
+  COLLECTIBLES,
+  defaultFiatCurrency,
+  ETH,
+  PLR,
+  TOKENS,
+} from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
+import {
+  formatAmount,
+  formatFiat,
+  isCaseInsensitiveMatch,
+  reportOrWarn,
+} from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { getRate } from 'utils/rates';
 
 // types
 import type {
   Asset,
-  AssetData,
   AssetByAddress,
+  AssetData,
   AssetOption,
   AssetOptionBalance,
   AssetsPerChain,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
-import type { Value } from 'utils/common';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-import type { Currency, RatesBySymbol } from 'models/Rates';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
+import type { Value } from 'utils/common';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -52,13 +64,6 @@ const sortAssetsFn = (a: Asset, b: Asset): number => {
 
 export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
-};
-
-export const transformAssetsToObject = (assetsArray: Asset[] = []): AssetByAddress => {
-  return assetsArray.reduce((memo, asset) => {
-    memo[asset.symbol] = asset;
-    return memo;
-  }, {});
 };
 
 export const transformBalancesToObject = (
@@ -97,54 +102,6 @@ export const getBalance = (balances: ?WalletAssetsBalances, assetAddress: string
   const number = new BigNumber(assetBalance.balance);
 
   return +formatAmount(number.toString());
-};
-
-const baseRate = (rates: RatesBySymbol, asset: string, fiatCurrency: Currency): number => {
-  const rate = rates[asset];
-  if (!rate || !rate[fiatCurrency]) {
-    return 0;
-  }
-
-  return rate[fiatCurrency];
-};
-
-const tokenRate = (rates: RatesBySymbol, token: string, fiatCurrency: Currency): number => {
-  const tokenRates = rates[token];
-
-  if (!tokenRates) {
-    return 0;
-  }
-
-  const ethToFiat = baseRate(rates, ETH, fiatCurrency);
-  if (!ethToFiat) {
-    return tokenRates[fiatCurrency] || 0;
-  }
-
-  const tokenToETH = tokenRates[ETH];
-  if (!tokenToETH) {
-    return tokenRates[fiatCurrency] || 0;
-  }
-
-  return ethToFiat * tokenToETH;
-};
-
-export const getRate = (rates: RatesBySymbol = {}, token: string, fiatCurrency: Currency): number => {
-  if (token === ETH) {
-    return baseRate(rates, token, fiatCurrency);
-  }
-
-  return tokenRate(rates, token, fiatCurrency);
-};
-
-export const getFormattedRate = (
-  rates: RatesBySymbol,
-  amount: number,
-  token: string,
-  fiatCurrency: Currency,
-): string => {
-  const amountInFiat = amount * getRate(rates, token, fiatCurrency);
-
-  return formatFiat(amountInFiat, fiatCurrency);
 };
 
 export const calculateMaxAmount = (
@@ -219,36 +176,6 @@ export const isEnoughBalanceForTransactionFee = (
   return balanceInWei.gte(txFeeInWeiBN);
 };
 
-export const balanceInEth = (balances: WalletAssetsBalances, rates: RatesBySymbol): number => {
-  const balanceValues: WalletAssetBalance[] = (Object.values(balances): any);
-
-  return balanceValues.reduce((total, item) => {
-    const balance = +item.balance;
-    const assetRates = rates[item.symbol];
-
-    if (!assetRates || balance === 0) {
-      return total;
-    }
-
-    const ethRate = assetRates[ETH] || 0;
-
-    return total + (ethRate * balance);
-  }, 0);
-};
-
-export const getTotalBalanceInFiat = (
-  balances: WalletAssetsBalances,
-  rates: RatesBySymbol,
-  currency: string,
-): number => {
-  const ethRates = rates[ETH];
-  if (!ethRates) {
-    return 0;
-  }
-
-  return get(ethRates, currency, 0) * balanceInEth(balances, rates);
-};
-
 export const addressesEqual = (address1: ?string, address2: ?string): boolean => {
   if (address1 === address2) return true;
   if (!address1 || !address2) return false;
@@ -263,10 +190,6 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
 
 export const findAllAssetsBySymbol = (assets: Asset[], symbolToFind: ?string): Asset[] => {
   return assets.filter((asset) => asset.symbol === symbolToFind) ?? [];
-};
-
-export const findFirstAssetBySymbol = (assets: Asset[], symbolToFind: ?string): ?Asset => {
-  return assets.find((asset) => asset.symbol === symbolToFind);
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -315,22 +238,22 @@ export const mapCollectibleToAssetData = ({
 export const getBalanceInFiat = (
   baseFiatCurrency: ?Currency,
   assetBalance: ?Value,
-  rates: RatesBySymbol,
-  symbol: string,
+  rates: RatesByAssetAddress,
+  assetAddress: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance.toString()) * getRate(rates, symbol, fiatCurrency) : 0;
+    parseFloat(assetBalance.toString()) * getRate(rates, assetAddress, fiatCurrency) : 0;
   return assetBalanceInFiat;
 };
 
 export const getFormattedBalanceInFiat = (
   baseFiatCurrency: ?Currency,
   assetBalance: ?Value,
-  rates: RatesBySymbol,
-  symbol: string,
+  rates: RatesByAssetAddress,
+  assetAddress: string,
 ): string => {
-  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, assetAddress);
   if (!assetBalanceInFiat) return '';
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
@@ -340,14 +263,14 @@ const getAssetOptionBalance = (
   symbol: string,
   address: string,
   balances: ?WalletAssetsBalances,
-  rates: ?RatesBySymbol,
+  rates: ?RatesByAssetAddress,
   fiatCurrency: ?Currency,
 ): ?AssetOptionBalance => {
   if (!balances) return null;
 
   const balance = getBalance(balances, address);
-  const balanceInFiat = rates ? getBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
-  const value = rates ? getFormattedBalanceInFiat(fiatCurrency, balance, rates, symbol) : undefined;
+  const balanceInFiat = rates ? getBalanceInFiat(fiatCurrency, balance, rates, address) : undefined;
+  const value = rates ? getFormattedBalanceInFiat(fiatCurrency, balance, rates, address) : undefined;
 
   return {
     token: symbol,
@@ -360,14 +283,14 @@ const getAssetOptionBalance = (
 export const getAssetOption = (
   asset: Asset,
   balances: ?WalletAssetsBalances,
-  rates: ?RatesBySymbol,
+  rates: ?RatesByAssetAddress,
   baseFiatCurrency: ?Currency,
 ): AssetOption => {
   const { symbol, iconUrl, address } = asset;
 
   const assetBalance = getBalance(balances, address);
   const formattedAssetBalance = assetBalance ? formatAmount(assetBalance) : '';
-  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
+  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, address) : '';
 
   return {
     ...asset,
@@ -383,7 +306,7 @@ export const getAssetOption = (
 export const mapAssetDataToAssetOption = (
   assetData: AssetData,
   balances?: ?WalletAssetsBalances,
-  rates?: ?RatesBySymbol,
+  rates?: ?RatesByAssetAddress,
   fiatCurrency?: ?Currency,
 ): AssetOption => {
   return {
@@ -396,14 +319,6 @@ export const mapAssetDataToAssetOption = (
     balance: getAssetOptionBalance(assetData.token, assetData.contractAddress, balances, rates, fiatCurrency),
     chain: CHAIN.ETHEREUM,
   };
-};
-
-export const convertUSDToFiat = (value: number, rates: RatesBySymbol = {}, fiatCurrency: Currency) => {
-  const ethRates = rates[ETH];
-  if (!ethRates || !ethRates[fiatCurrency] || !ethRates[USD]) {
-    return 0;
-  }
-  return value * (ethRates[fiatCurrency] / ethRates[USD]);
 };
 
 /**

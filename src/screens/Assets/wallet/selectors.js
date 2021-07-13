@@ -53,7 +53,7 @@ export type WalletItem = {|
   title: string,
   iconUrl: ?string,
   value: BigNumber,
-  symbol: string,
+  assetSymbol: string,
   assetAddress: string,
   change?: BigNumber,
   chain: Chain,
@@ -71,7 +71,7 @@ export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
 };
 
 const buildWalletItem = (
-  { address: assetAddress, symbol, balance }: WalletAssetBalance,
+  { address: assetAddress, symbol: assetSymbol, balance }: WalletAssetBalance,
   chain: Chain,
   supportedAssets: Asset[],
 ) => {
@@ -81,10 +81,10 @@ const buildWalletItem = (
   const { name: title, iconUrl } = asset;
 
   return {
-    key: `${chain}-${symbol}`,
+    key: `${chain}-${assetSymbol}`,
     title,
     iconUrl,
-    symbol,
+    assetSymbol,
     assetAddress,
     value: BigNumber(balance || 0),
     chain,

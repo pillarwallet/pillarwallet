@@ -24,7 +24,6 @@ import { ScrollView, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -45,7 +44,7 @@ import SWActivationModal from 'components/SWActivationModal';
 import Modal from 'components/Modal';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
@@ -76,13 +75,15 @@ import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
 
 // utils
-import { getRate, addressesEqual } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getArchanovaWalletStatus, isDeployingArchanovaWallet, isHiddenUnsettledTransaction } from 'utils/archanova';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstArchanovaAccount } from 'utils/accounts';
+import { nativeAssetPerChain } from 'utils/chains';
+import { getRate } from 'utils/rates';
 
 // selectors
 import {
@@ -276,11 +277,13 @@ class PPNView extends React.Component<Props, State> {
     const assetsOnNetworkArray = Object.values(assetsOnNetwork);
     if (assetsOnNetworkArray.length) {
       incomingBalanceInFiat = assetsOnNetworkArray.reduce((totalInFiat, incomingAsset) => {
-        const tokenSymbol = get(incomingAsset, 'symbol', ETH);
-        const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
+        // $FlowFixMe: legacy screen
+        const assetAddress = incomingAsset?.address || nativeAssetPerChain.ethereum.address;
+        // $FlowFixMe: legacy screen
+        const assetBalance = incomingAsset?.balance ?? 0;
         const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const tokenRate = getRate(ethereumRates, tokenSymbol, fiatCurrency);
-        return totalInFiat + (tokenBalance * tokenRate);
+        const tokenRate = getRate(ethereumRates, assetAddress, fiatCurrency);
+        return totalInFiat + (+assetBalance * tokenRate);
       }, 0);
     }
 

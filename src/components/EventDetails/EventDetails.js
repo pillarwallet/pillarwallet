@@ -46,7 +46,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { findAsset, getRate } from 'utils/assets';
+import { findAsset } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -76,13 +76,15 @@ import {
   isArchanovaAccount,
   isEtherspotAccount,
 } from 'utils/accounts';
+import { nativeAssetPerChain } from 'utils/chains';
+import { getRate } from 'utils/rates';
 
 // services
 import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -429,14 +431,15 @@ export class EventDetail extends React.Component<Props> {
     return isReceived ? event.from : event.to;
   };
 
-  getFormattedGasFee = (formattedFee: number, token: string) => {
+  getFormattedGasFee = (formattedFee: number) => {
     const { baseFiatCurrency, ratesPerChain } = this.props;
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const rate = getRate(ethereumRates, token, fiatCurrency);
+    const { symbol, address } = nativeAssetPerChain.ethereum;
+    const rate = getRate(ethereumRates, address, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
-      tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
+      tokenValue: t('tokenValue', { value: formattedFee, token: symbol }), fiatValue: formattedFiatValue,
     });
   };
 
@@ -452,7 +455,7 @@ export class EventDetail extends React.Component<Props> {
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
-      return this.getFormattedGasFee(formattedFee, ETH);
+      return this.getFormattedGasFee(formattedFee);
     }
     return null;
   };

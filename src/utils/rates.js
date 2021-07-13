@@ -18,30 +18,63 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import { ethers } from 'ethers';
 
 // Constants
-import { ETH, USD } from 'constants/assetsConstants';
+import { USD } from 'constants/assetsConstants';
 
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
+import { formatFiat } from 'utils/common';
 
 // Types
-import type { RatesBySymbol, Currency } from 'models/Rates';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
-export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?number {
+
+export const getUsdToFiatRate = (rates: RatesByAssetAddress, currency: Currency): ?number => {
   // No need to calculate rate for USD/USD.
   if (currency === USD) return 1;
 
-  const ethRates = rates[ETH];
-  if (!ethRates || !ethRates[currency] || !ethRates[USD]) {
+  // will select native asset rates to calculate between
+  const nativeAssetRates = rates[ethers.constants.AddressZero];
+  if (!nativeAssetRates || !nativeAssetRates[currency] || !nativeAssetRates[USD]) {
     return null;
   }
 
-  return ethRates[currency] / ethRates[USD];
-}
+  return nativeAssetRates[currency] / nativeAssetRates[USD];
+};
 
-export function getFiatValueFromUsd(valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber {
+export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
 
   return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
-}
+};
+
+export const convertValueInUsdToFiat = (
+  value: number,
+  rates: RatesByAssetAddress = {},
+  fiatCurrency: Currency,
+): number => {
+  const usdToFiatRate = getUsdToFiatRate(rates, fiatCurrency);
+
+  if (!usdToFiatRate) return 0;
+
+  return value * usdToFiatRate;
+};
+
+export const getRate = (
+  rates: RatesByAssetAddress,
+  assetAddress: string,
+  fiatCurrency: Currency,
+): number => rates?.[assetAddress]?.[fiatCurrency] ?? 0;
+
+export const getFormattedRate = (
+  rates: RatesByAssetAddress,
+  amount: number,
+  assetAddress: string,
+  fiatCurrency: Currency,
+): string => {
+  const amountInFiat = amount * getRate(rates, assetAddress, fiatCurrency);
+
+  return formatFiat(amountInFiat, fiatCurrency);
+};

@@ -49,11 +49,7 @@ import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkCons
 import { spacing, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
-import {
-  getAssetsAsList,
-  getBalance,
-  getRate,
-} from 'utils/assets';
+import { getAssetsAsList, getBalance } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -62,6 +58,7 @@ import {
   getTokenTransactionsFromHistory,
 } from 'utils/history';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { getRate } from 'utils/rates';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -229,7 +226,7 @@ const AssetScreen = ({
   ));
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const tokenRate = getRate(chainRates, token, fiatCurrency);
+  const tokenRate = getRate(chainRates, contractAddress, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, contractAddress);
   const isWalletEmpty = balance <= 0;

@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react-native';
+import { ethers } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -37,7 +38,7 @@ const store = createTestStore({
   rates: {
     data: {
       ethereum: {
-        ETH: {
+        [ethers.constants.AddressZero]: {
           ETH: 1,
           EUR: 2017.2,
           GBP: 1756.24,

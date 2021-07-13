@@ -43,7 +43,8 @@ export type RewardItem = {|
   title: string,
   iconUrl?: string,
   value: BigNumber,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   chain: Chain,
 |};
 

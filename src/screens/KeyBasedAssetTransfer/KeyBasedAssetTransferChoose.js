@@ -185,6 +185,7 @@ const KeyBasedAssetTransferChoose = ({
       <AssetListItem
         name={item.name}
         symbol={item.token}
+        address={item.contractAddress}
         iconUrl={item.icon}
         balance={assetAmountBN}
         onPress={onCheck}
@@ -206,7 +207,7 @@ const KeyBasedAssetTransferChoose = ({
       baseFiatCurrency,
       asset.draftAmount,
       ethereumRates,
-      asset.assetData.token,
+      asset.assetData.contractAddress,
     );
   });
 

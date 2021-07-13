@@ -58,15 +58,6 @@ export const getChainInvestmentAssetsBalances = (
 ): ChainRecord<ServiceAssetBalance[]> =>
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
-export const getWalletAssetsSymbols = (accountAssetsBalances: ?AccountAssetBalances): string[] => {
-  const walletAssetsBalancesPerChain = getChainWalletAssetsBalances(accountAssetsBalances);
-
-  return Object.keys(walletAssetsBalancesPerChain).flatMap((chain) => {
-    const walletAssetsBalances = walletAssetsBalancesPerChain[chain];
-    return Object.keys(walletAssetsBalances ?? {});
-  });
-};
-
 export const filterNonZeroAssetBalances = (balances: WalletAssetsBalances): WalletAssetsBalances => {
   return pickBy(balances, ({ balance }: WalletAssetBalance) => !!balance && !BigNumber(balance).isZero());
 };

@@ -23,6 +23,7 @@ import { BigNumber } from 'bignumber.js';
 export type TokenValue = {|
   value: BigNumber,
   symbol: string,
+  address: string,
 |};
 
 export type FiatValue = {|

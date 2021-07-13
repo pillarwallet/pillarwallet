@@ -1208,14 +1208,17 @@ export const fetchAvailableTxToSettleAction = () => {
     const activeAccountAddress = activeAccountAddressSelector(getState());
     const accountEthereumHistory = archanovaAccountEthereumHistorySelector(getState());
     const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
+    const accountAssetsList = getAssetsAsList(accountAssets);
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await archanovaService.getAccountPaymentsToSettle(activeAccountAddress);
+    console.log('fetchAvailableTxToSettleAction payments: ', payments); // TODO: check item.token if symbol or address
 
     const txToSettle = payments
       .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountEthereumHistory))
       .map((item) => {
-        const { decimals = 18 } = accountAssets[item.token] || {};
+        const asset = accountAssetsList.find(({ address }) => addressesEqual(item?.token?.address, address));
+
         let senderAddress = get(item, 'sender.account.address', '');
 
         const paymentExtra = get(item, 'extra');
@@ -1229,7 +1232,7 @@ export const fetchAvailableTxToSettleAction = () => {
         return {
           token: item.token,
           hash: item.hash,
-          value: new BigNumber(formatUnits(item.value, decimals)),
+          value: new BigNumber(formatUnits(item.value, asset?.decimals ?? 18)),
           createdAt: item.updatedAt,
           senderAddress,
         };

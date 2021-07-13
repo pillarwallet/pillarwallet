@@ -27,9 +27,9 @@ import Image from 'components/Image';
 
 // utils
 import { formatTokenAmount, wrapBigNumber } from 'utils/common';
-import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
+import { getFormattedRate } from 'utils/rates';
 
 // selectors
 import {
@@ -81,7 +81,7 @@ export const TokenReviewSummaryComponent = ({
     assetIcon = { uri: asset.iconUrl };
     const amountBN = wrapBigNumber(amount);
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), asset.symbol, fiatCurrency);
+      fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), asset.address, fiatCurrency);
     }
   }
 

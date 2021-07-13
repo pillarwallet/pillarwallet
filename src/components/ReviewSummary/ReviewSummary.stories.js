@@ -73,7 +73,7 @@ const collectible = {
 const store = createTestStore({
   ...initialTestState,
   assets: { supportedAssets: { ethereum: [plrAsset] } },
-  rates: { data: { ethereum: { [PLR]: { [EUR]: 0.25 } } } },
+  rates: { data: { ethereum: { '0x1': { [EUR]: 0.25 } } } },
   appSettings: { data: { baseFiatCurrency: EUR } },
 });
 

@@ -33,12 +33,11 @@ import {
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
-import { getRate } from 'utils/assets';
 import { hasServiceAssetBalanceForSymbol } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { mapRecordValues } from 'utils/object';
-import { getFiatValueFromUsd } from 'utils/rates';
+import { getFiatValueFromUsd, getRate } from 'utils/rates';
 import { mapAccountCategoryChainRecordValues } from 'utils/totalBalances';
 
 // Types
@@ -60,7 +59,7 @@ import type {
   WalletTotalBalancesPerAccount,
 } from 'models/TotalBalances';
 import type {
-  RatesBySymbol,
+  RatesByAssetAddress,
   RatesPerChain,
   Currency,
 } from 'models/Rates';
@@ -154,18 +153,21 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
 const calculateWalletAssetsFiatValue = (
   categoryAssetBalances: CategoryAssetsBalances,
   supportedAssets: Asset[],
-  rates: RatesBySymbol,
+  rates: RatesByAssetAddress,
   currency: Currency,
 ): BigNumber => {
-  const assetBalancesInFiat = map(categoryAssetBalances.wallet ?? {}, ({ symbol, balance }: WalletAssetBalance) => {
-    if (!balance) return BigNumber(0);
+  const assetBalancesInFiat = map(
+    categoryAssetBalances.wallet ?? {},
+    ({ symbol, address, balance }: WalletAssetBalance) => {
+      if (!balance) return BigNumber(0);
 
-    const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
-    if (hasMatchingServiceAsset) return BigNumber(0);
+      const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
+      if (hasMatchingServiceAsset) return BigNumber(0);
 
-    const rate = getRate(rates, symbol, currency);
-    return BigNumber(balance).times(rate);
-  });
+      const rate = getRate(rates, address, currency);
+      return BigNumber(balance).times(rate);
+    },
+  );
 
   return sum(assetBalancesInFiat);
 };

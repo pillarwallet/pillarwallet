@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // utils
-import { getFormattedRate } from 'utils/assets';
 import {
   formatAmount,
   hitSlop10,
@@ -31,6 +30,7 @@ import {
 } from 'utils/common';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
+import { getFormattedRate } from 'utils/rates';
 
 // components
 import Image from 'components/Image';
@@ -51,7 +51,8 @@ import type { Value } from 'utils/common';
 type Props = {
   amount: Value,
   chain: Chain,
-  token?: string,
+  assetSymbol?: string,
+  assetAddress?: string,
   highFees?: boolean,
 };
 
@@ -68,7 +69,8 @@ const Row = styled.View`
 
 const TableAmount = ({
   amount,
-  token,
+  assetSymbol,
+  assetAddress,
   chain,
   highFees,
 }: Props) => {
@@ -85,9 +87,9 @@ const TableAmount = ({
     );
   }
 
-  const fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), token ?? '', fiatCurrency);
+  const fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), assetAddress ?? '', fiatCurrency);
   const formattedAmount = formatAmount(amount);
-  const tooltipText = t('tokenValue', { value: formattedAmount, token });
+  const tooltipText = t('tokenValue', { value: formattedAmount, token: assetSymbol });
 
   const { highFeesIcon } = images(theme);
 
