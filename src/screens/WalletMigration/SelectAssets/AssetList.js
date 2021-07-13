@@ -37,14 +37,18 @@ import { fontStyles, appFont, spacing } from 'utils/variables';
 import type { SectionBase } from 'utils/types/react-native';
 import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
+import type { AssetBalanceRecord } from 'models/WalletMigrationArchanova';
+
 
 type Props = {
   assets: WalletAssetBalanceInfo[],
   collectibles: Collectible[],
+  selectedAssets: AssetBalanceRecord,
+  onSelectedAssetsChange: (assets: AssetBalanceRecord) => mixed,
   ListHeaderComponent: React.Element<any>,
 };
 
-const AssetList = ({ assets, collectibles, ListHeaderComponent }: Props) => {
+const AssetList = ({ assets, collectibles, selectedAssets, onSelectedAssetsChange, ListHeaderComponent }: Props) => {
   const sections = useSectionsData(assets, collectibles);
 
   const renderSectionHeader = (section: Section) => <SectionHeader>{section.title}</SectionHeader>;
@@ -52,8 +56,17 @@ const AssetList = ({ assets, collectibles, ListHeaderComponent }: Props) => {
   const renderItem = (item: Item) => (item.collectible ? renderCollectible(item.collectible) : renderToken(item.asset));
 
   const renderToken = ({ asset, balance }: WalletAssetBalanceInfo) => {
-    const isChecked = false;
-    const onCheck = () => {};
+    const isChecked = !!selectedAssets[asset.address];
+    const onCheck = () => {
+      if (isChecked) {
+        const newValue = { ...selectedAssets };
+        delete newValue[asset.address];
+        onSelectedAssetsChange(newValue);
+      } else {
+        const newValue = { ...selectedAssets, [asset.address]: { address: asset.address, balance } };
+        onSelectedAssetsChange(newValue);
+      }
+    };
 
     return (
       <AssetListItem
@@ -74,14 +87,23 @@ const AssetList = ({ assets, collectibles, ListHeaderComponent }: Props) => {
     );
   };
 
-  const renderCollectible = (item: Collectible) => {
-    const isChecked = false;
-    const onCheck = () => {};
+  const renderCollectible = (collectible: Collectible) => {
+    const isChecked = !!selectedAssets[collectible.contractAddress];
+    const onCheck = () => {
+      if (isChecked) {
+        const newValue = { ...selectedAssets };
+        delete newValue[collectible.contractAddress];
+        onSelectedAssetsChange(newValue);
+      } else {
+        const newValue = { ...selectedAssets, [collectible.contractAddress]: { address: collectible.contractAddress } };
+        onSelectedAssetsChange(newValue);
+      }
+    };
 
     return (
       <AssetListItem
-        name={item.name}
-        iconUrl={item.icon}
+        name={collectible.name}
+        iconUrl={collectible.icon}
         chain={CHAIN.ETHEREUM}
         onPress={onCheck}
         leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}

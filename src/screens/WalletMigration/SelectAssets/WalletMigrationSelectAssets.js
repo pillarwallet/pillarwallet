@@ -37,6 +37,9 @@ import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 // Utils
 import { buildWalletAssetBalanceInfoList } from 'utils/balances';
 
+// Types
+import type { AssetBalanceRecord } from 'models/WalletMigrationArchanova';
+
 // Local
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
@@ -52,6 +55,8 @@ const WalletMigrationSelectAssets = () => {
   const rates = useChainRates(CHAIN.ETHEREUM);
   const currency = useFiatCurrency();
 
+  const [selectedAssets, setSelectedAssets] = React.useState<AssetBalanceRecord>({});
+
   const archanovaAccountId = archanovaAccount?.id ?? '';
   const assets = buildWalletAssetBalanceInfoList(
     balancesPerAccount[archanovaAccountId]?.ethereum?.wallet,
@@ -64,6 +69,11 @@ const WalletMigrationSelectAssets = () => {
   const walletAddress = archanovaAccount?.id ?? '';
   const totalValue = 0;
 
+  const handleSelectedAssetsChange = (value: AssetBalanceRecord) => {
+    console.log("AAA", value);
+    setSelectedAssets(value);
+  };
+
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
@@ -72,6 +82,8 @@ const WalletMigrationSelectAssets = () => {
         ListHeaderComponent={<WalletSummary address={walletAddress} totalValueInFiat={totalValue} />}
         assets={assets}
         collectibles={collectibles}
+        selectedAssets={selectedAssets}
+        onSelectedAssetsChange={handleSelectedAssetsChange}
       />
     </Container>
   );
