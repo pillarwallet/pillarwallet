@@ -39,7 +39,7 @@ type Props = {|
   textToCopy?: string,
   style?: ViewStyleProp,
   iconColor?: string,
-  toastText: string,
+  toastText?: string,
   textStyle?: TextStyleProp,
   adjustsFontSizeToFit?: boolean,
   numberOfLines?: number,
@@ -59,7 +59,10 @@ const TextWithCopy = ({
     if (!textToCopy) return;
 
     Clipboard.setString(textToCopy);
-    Toast.show({ message: toastText, emoji: 'ok_hand' });
+
+    if (toastText) {
+      Toast.show({ message: toastText, emoji: 'ok_hand' });
+    }
   };
 
   return (

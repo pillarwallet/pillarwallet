@@ -712,6 +712,11 @@
         "button": {
           "upgrade": "Upgrade"
         }
+      },
+      "selectAssets": {
+        "title": "Migration to Smart Wallet",
+        "migratingFrom": "migrating from",
+      
       }
     }
   },

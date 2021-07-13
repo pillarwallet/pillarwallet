@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -25,21 +24,32 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
 
-function WalletMigrationSelectAssets() {
-  const navigation = useNavigation();
+// Selectors
+import { useRootSelector } from 'selectors';
+import { achanovaAccountSelector } from 'selectors/archanova';
+
+// Local
+import WalletSummary from './WalletSummary';
+
+const WalletMigrationSelectAssets = () => {
   const { t } = useTranslationWithPrefix('walletMigration.etherspot.selectAssets');
+  const navigation = useNavigation();
+
+  const archanovaAccount = useRootSelector(achanovaAccountSelector);
+
+  const walletAddress = archanovaAccount?.id ?? '';
+  const totalValue = 0;
 
   return (
     <Container>
-      <HeaderBlock navigation={navigation} noPaddingTop />
+      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <Content>
-        <Text>{t('title')}</Text>
+        <WalletSummary address={walletAddress} totalValueInFiat={totalValue} />
       </Content>
     </Container>
   );
-}
+};
 
 export default WalletMigrationSelectAssets;
