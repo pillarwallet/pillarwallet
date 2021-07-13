@@ -22,21 +22,44 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, useChainSupportedAssets, useChainRates, useFiatCurrency } from 'selectors';
 import { achanovaAccountSelector } from 'selectors/archanova';
+import { assetsBalancesPerAccountSelector } from 'selectors/balances';
+import { collectiblesPerAccountSelector } from 'selectors/collectibles';
+
+// Utils
+import { buildWalletAssetBalanceInfoList } from 'utils/balances';
 
 // Local
 import WalletSummary from './WalletSummary';
+import AssetList from './AssetList';
 
 const WalletMigrationSelectAssets = () => {
   const { t } = useTranslationWithPrefix('walletMigration.etherspot.selectAssets');
   const navigation = useNavigation();
 
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
+  const balancesPerAccount = useRootSelector(assetsBalancesPerAccountSelector);
+  const collectiblesPerAccount = useRootSelector(collectiblesPerAccountSelector);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const currency = useFiatCurrency();
+
+  const archanovaAccountId = archanovaAccount?.id ?? '';
+  const assets = buildWalletAssetBalanceInfoList(
+    balancesPerAccount[archanovaAccountId]?.ethereum?.wallet,
+    ethereumSupportedAssets,
+    rates,
+    currency,
+  );
+  const collectibles = collectiblesPerAccount[archanovaAccountId]?.ethereum ?? [];
 
   const walletAddress = archanovaAccount?.id ?? '';
   const totalValue = 0;
@@ -45,9 +68,11 @@ const WalletMigrationSelectAssets = () => {
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
-      <Content>
-        <WalletSummary address={walletAddress} totalValueInFiat={totalValue} />
-      </Content>
+      <AssetList
+        ListHeaderComponent={<WalletSummary address={walletAddress} totalValueInFiat={totalValue} />}
+        assets={assets}
+        collectibles={collectibles}
+      />
     </Container>
   );
 };

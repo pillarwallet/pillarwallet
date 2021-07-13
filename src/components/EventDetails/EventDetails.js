@@ -145,16 +145,13 @@ import {
   isPPNActivatedSelector,
   combinedPPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
-import {
-  activeAccountAddressSelector,
-  activeBlockchainSelector,
-  collectiblesHistorySelector,
-} from 'selectors';
+import { activeAccountAddressSelector, activeBlockchainSelector } from 'selectors';
+import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 import {
   assetDecimalsSelector,
   ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
-import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
+import { collectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { lookupAddressAction } from 'actions/ensRegistryActions';

@@ -21,6 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 
 // types
+import type { Asset } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
 
 export type AssetBalancesPerAccount = {
@@ -57,3 +58,10 @@ export type ServiceAssetBalance = {|
   currentApy?: ?BigNumber,
   address: string,
 |};
+
+/** Convenience type grouping asset definition with balance both in token and user's fiat currency. */
+export type WalletAssetBalanceInfo = {|
+  asset: Asset,
+  balance: BigNumber,
+  balanceInFiat: ?BigNumber,
+|}

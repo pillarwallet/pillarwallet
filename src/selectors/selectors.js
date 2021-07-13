@@ -54,9 +54,6 @@ export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerCh
 export const fiatCurrencySelector = (root: RootReducerState) =>
   root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
 
-export const collectiblesSelector = ({ collectibles }: RootReducerState) => collectibles.data;
-export const collectiblesHistorySelector =
-  ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
 export const paymentNetworkBalancesSelector =

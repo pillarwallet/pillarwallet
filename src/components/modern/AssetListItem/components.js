@@ -32,7 +32,7 @@ import { useChainRates, useRootSelector } from 'selectors';
 // Utils
 import { formatTokenAmount } from 'utils/common';
 import { getFormattedBalanceInFiat } from 'utils/assets';
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles, appFont, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -66,6 +66,7 @@ export const Icon = styled(TokenIcon)`
 export const Name = styled(Text)`
   flex: 1;
   ${fontStyles.medium};
+  font-family: ${appFont.medium};
 `;
 
 /**

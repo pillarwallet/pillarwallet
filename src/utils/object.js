@@ -42,7 +42,8 @@ export function buildRecord<Element, Value>(
 /**
  * Properly typed version of `Object.values`.
  */
-export function recordValues<Value>(record: Record<Value>): Value[] {
+export function recordValues<Value>(record: ?Record<Value>): Value[] {
+  if (!record) return [];
   return Object.keys(record).map((key) => record[key]);
 }
 
