@@ -25,7 +25,7 @@ import { USD } from 'constants/assetsConstants';
 
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
-import { formatFiat } from 'utils/common';
+import { formatFiat, valueAsKey } from 'utils/common';
 
 // Types
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
@@ -36,7 +36,7 @@ export const getUsdToFiatRate = (rates: RatesByAssetAddress, currency: Currency)
   if (currency === USD) return 1;
 
   // will select native asset rates to calculate between
-  const nativeAssetRates = rates[ethers.constants.AddressZero];
+  const nativeAssetRates = rates[valueAsKey(ethers.constants.AddressZero)];
   if (!nativeAssetRates || !nativeAssetRates[currency] || !nativeAssetRates[USD]) {
     return null;
   }
@@ -66,7 +66,7 @@ export const getRate = (
   rates: RatesByAssetAddress,
   assetAddress: string,
   fiatCurrency: Currency,
-): number => rates?.[assetAddress]?.[fiatCurrency] ?? 0;
+): number => rates?.[valueAsKey(assetAddress)]?.[fiatCurrency] ?? 0;
 
 export const getFormattedRate = (
   rates: RatesByAssetAddress,

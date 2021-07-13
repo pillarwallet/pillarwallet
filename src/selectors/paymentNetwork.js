@@ -32,7 +32,7 @@ import {
 // utils
 import { addressesEqual, findAsset, getAssetsAsList } from 'utils/assets';
 import { isHiddenUnsettledTransaction } from 'utils/archanova';
-import { formatUnits } from 'utils/common';
+import { formatUnits, valueAsKey } from 'utils/common';
 
 // models, types
 import type { Asset, AssetByAddress } from 'models/Asset';
@@ -115,7 +115,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
         const { value: rawValue, assetSymbol, assetAddress } = transaction;
 
         const value = new BigNumber(rawValue);
-        const assetBalance = nonZeroBalances[assetAddress] || {
+        const assetBalance = nonZeroBalances[valueAsKey(assetAddress)] || {
           symbol: assetSymbol,
           address: assetAddress,
           rawBalance: new BigNumber(0),
@@ -131,7 +131,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
 
         return {
           ...nonZeroBalances,
-          [assetAddress]: { ...assetBalance, balance, rawBalance },
+          [valueAsKey(assetAddress)]: { ...assetBalance, balance, rawBalance },
         };
       }, {});
   },

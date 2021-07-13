@@ -36,6 +36,7 @@ import {
   formatBigAmount,
   formatBigFiatAmount,
   formatTokenAmount,
+  valueAsKey,
 } from 'utils/common';
 
 import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
@@ -341,6 +342,21 @@ describe('Common utils', () => {
       expect(formatTokenAmount('123.456789', USDC)).toEqual('123.45');
       expect(formatTokenAmount('123.4000000', USDC)).toEqual('123.4');
       expect(formatTokenAmount('123.456789')).toEqual('123.45');
+    });
+  });
+
+  describe('valueAsKey', () => {
+    it('returns lower case string key on value being string', () => {
+      expect(valueAsKey('AAA')).toEqual('aaa');
+    });
+    it('returns numeric string key on value being number', () => {
+      expect(valueAsKey(123)).toEqual('123');
+    });
+    it('fails safe on no value', () => {
+      // $FlowFixMe: value passed only to validate test
+      expect(valueAsKey(undefined)).toEqual('');
+      // $FlowFixMe: value passed only to validate test
+      expect(valueAsKey(null)).toEqual('');
     });
   });
 });

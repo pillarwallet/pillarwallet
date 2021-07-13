@@ -46,6 +46,7 @@ import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsA
 // utils
 import { findAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
+import { valueAsKey } from 'utils/common';
 
 // selectors
 import { useChainSupportedAssets } from 'selectors';
@@ -146,7 +147,7 @@ const StakeTokensScreen = ({
   const poolTokenCustomBalances: WalletAssetsBalances =
     assetData != null
       ? {
-        [assetData.address]: {
+        [valueAsKey(assetData.address)]: {
           balance: poolStats?.userLiquidityTokenBalance.toFixed() ?? '0',
           symbol: assetData?.symbol,
           address: assetData.address,

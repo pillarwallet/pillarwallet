@@ -37,6 +37,7 @@ import {
   formatFiat,
   isCaseInsensitiveMatch,
   reportOrWarn,
+  valueAsKey,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getRate } from 'utils/rates';
@@ -70,7 +71,7 @@ export const transformBalancesToObject = (
   balancesArray: WalletAssetBalance[] = [],
 ): WalletAssetsBalances => balancesArray.reduce((memo, balance) => ({
   ...memo,
-  [balance.address]: balance,
+  [valueAsKey(balance.address)]: balance,
 }), {});
 
 export const getAssetsAsList = (assetsObject: AssetByAddress): Asset[] => {
@@ -85,7 +86,7 @@ export const sortAssets = (assets: AssetByAddress): Asset[] => {
 
 export const getBalanceBN = (balances: ?WalletAssetsBalances, assetAddress: ?string): BigNumber => {
   if (!balances || !assetAddress) return BigNumber('0');
-  return BigNumber(balances[assetAddress]?.balance ?? '0');
+  return BigNumber(balances[valueAsKey(assetAddress)]?.balance ?? '0');
 };
 
 /**
@@ -94,7 +95,7 @@ export const getBalanceBN = (balances: ?WalletAssetsBalances, assetAddress: ?str
 export const getBalance = (balances: ?WalletAssetsBalances, assetAddress: string): number => {
   if (!balances) return 0;
 
-  const assetBalance = balances?.[assetAddress];
+  const assetBalance = balances?.[valueAsKey(assetAddress)];
   if (!assetBalance) {
     return 0;
   }
@@ -154,7 +155,7 @@ export const isEnoughBalanceForTransactionFee = (
   const feeSymbol = gasToken?.symbol || nativeAssetPerChain[chain].symbol;
   const feeDecimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
 
-  if (!balances[gasTokenAddress]) return false;
+  if (!balances[valueAsKey(gasTokenAddress)]) return false;
 
   const balance = getBalance(balances, gasTokenAddress);
 

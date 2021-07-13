@@ -31,6 +31,7 @@ import {
   parseTokenBigNumberAmount,
   reportErrorLog,
   reportLog,
+  valueAsKey,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
@@ -314,7 +315,7 @@ export async function getExchangeRates(
     const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe
-      rates = { ...rates, [nativeAssetAddress]: nativeAssetPrice };
+      rates = { ...rates, [valueAsKey(nativeAssetAddress)]: nativeAssetPrice };
     }
   }
 
@@ -323,19 +324,10 @@ export async function getExchangeRates(
     return null;
   }
 
-  /**
-   * address may have different letter case and mismatch
-   * between our back-end and rates service returned result
-   */
-  return Object.keys(rates).reduce((mappedData: RatesByAssetAddress, returnedAssetAddress: string) => {
-    const supportedAsset = assets.find(({ address }) => addressesEqual(address, returnedAssetAddress));
-    if (!supportedAsset) return mappedData;
-
-    return {
-      ...mappedData,
-      [supportedAsset.address]: rates[returnedAssetAddress],
-    };
-  }, {});
+  return Object.keys(rates).reduce((mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
+    ...mappedData,
+    [valueAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+  }), {});
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status

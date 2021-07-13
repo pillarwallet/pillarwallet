@@ -26,7 +26,7 @@ import { rateKeys } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { reportErrorLog, valueAsKey } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
 
@@ -77,15 +77,10 @@ const chainToCoinGeckoNetwork = {
 
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
-  assetsList: Asset[],
-): RatesByAssetAddress => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
-  const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
-  if (walletAsset) {
-    const { address } = walletAsset;
-    mappedResponseData[address] = mapPricesToRates(responseData[contractAddress]);
-  }
-  return mappedResponseData;
-}, {});
+): RatesByAssetAddress => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => ({
+  ...mappedResponseData,
+  [valueAsKey(contractAddress)]: mapPricesToRates(responseData[contractAddress]),
+}), {});
 
 export const getCoinGeckoTokenPrices = async (
   chain: Chain,
@@ -116,7 +111,7 @@ export const getCoinGeckoTokenPrices = async (
         return null;
       }
 
-      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsWithoutNativeAsset);
+      return mapWalletAndCoinGeckoAssetsPrices(responseData);
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoTokenPrices failed: API request error', {

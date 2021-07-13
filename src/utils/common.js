@@ -595,3 +595,8 @@ export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
+
+export const valueAsKey = (value: string | number): string => {
+  if (!value) return '';
+  return value.toString().toLowerCase();
+};

@@ -42,6 +42,7 @@ import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 // utils
 import { findAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
+import { valueAsKey } from 'utils/common';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -138,7 +139,7 @@ const UnstakeTokensScreen = ({
   );
 
   const customBalances = assetData != null ? {
-    [assetData.address]: {
+    [valueAsKey(assetData.address)]: {
       balance: poolStats?.stakedAmount.toFixed(),
       symbol: assetData.symbol,
       address: assetData.address,
