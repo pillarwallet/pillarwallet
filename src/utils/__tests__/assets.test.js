@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { ethers } from 'ethers';
 
 // utils
 import { getBalance } from 'utils/assets';
 import { convertValueInUsdToFiat, getRate } from 'utils/rates';
+import { mockEthAddress, mockPlrAddress } from 'testUtils/jestSetup';
 
 // types
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -30,25 +30,22 @@ import type { RatesByAssetAddress } from 'models/Rates';
 describe('Assets utils', () => {
   const ETH_GBP = 10;
   const ETH_USD = 5;
-  const TKN_USD = 1.5;
-  const TKN_GBP = 3;
+  const PLR_USD = 1.5;
+  const PLR_GBP = 3;
 
-  const mockEthAddress = ethers.constants.AddressZero;
-  const mockTknAddress = '0x';
-  const mockNoEthRateTknAddress = '0x1';
-  const mockInvalidTknAddress = '0x2';
+  const mockInvalidTknAddress = '0x1';
 
   const rates: RatesByAssetAddress = {
     [mockEthAddress]: { GBP: ETH_GBP, USD: ETH_USD },
-    [mockTknAddress]: { GBP: TKN_GBP, USD: TKN_USD },
+    [mockPlrAddress]: { GBP: PLR_GBP, USD: PLR_USD },
   };
 
   describe('getRate', () => {
     describe('for ethereum tokens', () => {
       it('returns the rate', () => {
-        const rate = getRate(rates, mockTknAddress, 'GBP');
+        const rate = getRate(rates, mockPlrAddress, 'GBP');
 
-        expect(rate).toEqual(TKN_GBP);
+        expect(rate).toEqual(PLR_GBP);
       });
 
       describe('for invalid token', () => {
@@ -56,14 +53,6 @@ describe('Assets utils', () => {
           const rate = getRate(rates, mockInvalidTknAddress, 'GBP');
 
           expect(rate).toEqual(0);
-        });
-      });
-
-      describe('for token that has no ETH rate', () => {
-        it('returns fiat rate', () => {
-          const rate = getRate(rates, mockNoEthRateTknAddress, 'GBP');
-
-          expect(rate).toEqual(TKN_GBP);
         });
       });
     });

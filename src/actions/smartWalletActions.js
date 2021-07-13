@@ -1212,7 +1212,6 @@ export const fetchAvailableTxToSettleAction = () => {
 
     dispatch({ type: START_FETCHING_AVAILABLE_TO_SETTLE_TX });
     const payments = await archanovaService.getAccountPaymentsToSettle(activeAccountAddress);
-    console.log('fetchAvailableTxToSettleAction payments: ', payments); // TODO: check item.token if symbol or address
 
     const txToSettle = payments
       .filter(({ hash }) => !isHiddenUnsettledTransaction(hash, accountEthereumHistory))

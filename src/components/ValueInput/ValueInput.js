@@ -164,7 +164,7 @@ const ValueInputComponent = ({
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
   const [calculateBalanceSendPercent, setCalculateBalanceSendPercent] = useState<?number>(null);
 
-  const assetAddress = assetData?.contractAddress || '';
+  const assetAddress = assetData?.contractAddress || assetData?.address || '';
   const assetSymbol = assetData?.symbol || '';
   const chain = assetData?.chain || CHAIN.ETHEREUM;
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};

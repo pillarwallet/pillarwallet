@@ -18,20 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { ethers } from 'ethers';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { calculateETHTransactionAmountAfterFee } from '../transactions';
+import { mockEthAddress } from 'testUtils/jestSetup';
 
 
 const mockEthBalance = (balance) => ({
-  [ethers.constants.AddressZero]: {
+  [mockEthAddress]: {
     balance,
     symbol: ETH,
-    address: ethers.constants.AddressZero,
+    address: mockEthAddress,
   },
 });
 

@@ -232,8 +232,11 @@ jest.setMock('react-native-vector-icons', {
   createIconSet: () => mockView,
 });
 
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ethersConstants.AddressZero;
+
 const mockTokensExchangeRates = {
-  PLR: {
+  [mockPlrAddress]: {
     EUR: 1.21,
     GBP: 1.10,
     USD: 1.42,
@@ -248,7 +251,7 @@ const mockEtherExchangeRates = {
 
 export const mockExchangeRates = {
   ...mockTokensExchangeRates,
-  ETH: mockEtherExchangeRates,
+  [mockEthAddress]: mockEtherExchangeRates,
 };
 
 jest.setMock('react-native-share', {});
@@ -368,14 +371,14 @@ export const mockSupportedAssets = [
   {
     symbol: ETH,
     name: 'Ethereum',
-    address: '0x',
+    address: mockEthAddress,
     iconUrl: '',
     decimals: 18,
   },
   {
     symbol: PLR,
     name: 'Pillar',
-    address: '0x',
+    address: mockPlrAddress,
     iconUrl: '',
     decimals: 18,
   },
@@ -437,7 +440,11 @@ jest.setMock('instabug-reactnative', {});
 
 const mockEtherspotGetBalances = (chain, address, assets) => {
   // mock positive balances
-  const balances = assets.map(({ symbol }) => ({ symbol, balance: 1 }));
+  const balances = assets.map(({ symbol, address: assetAddress }) => ({
+    symbol,
+    address: assetAddress,
+    balance: 1,
+  }));
 
   return Promise.resolve(balances);
 };

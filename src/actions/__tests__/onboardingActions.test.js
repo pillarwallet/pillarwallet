@@ -57,6 +57,8 @@ import {
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
   mockEtherspotAccountExtra,
+  mockEthAddress,
+  mockPlrAddress,
 } from 'testUtils/jestSetup';
 
 // types
@@ -109,8 +111,8 @@ const mockAssetsBalancesStore = {
     [mockEtherspotAccount.id]: {
       ethereum: {
         wallet: {
-          [ethers.constants.AddressZero]: { balance: '1', symbol: ETH, address: ethers.constants.AddressZero },
-          '0x': { balance: '1', symbol: PLR, address: '0x' },
+          [mockEthAddress]: { balance: '1', symbol: ETH, address: mockEthAddress },
+          [mockPlrAddress]: { balance: '1', symbol: PLR, address: mockPlrAddress },
         },
       },
     },

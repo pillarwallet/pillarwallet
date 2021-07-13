@@ -39455,11 +39455,13 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
                 "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
                 "fromValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.218001",
                 },
@@ -39468,6 +39470,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "confirmed",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "2500",
                 },
@@ -39476,11 +39479,13 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
                 "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
                 "fromValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.218001",
                 },
@@ -39489,6 +39494,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "pending",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "2500",
                 },
@@ -39497,11 +39503,13 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
                 "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
                 "fromValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.218001",
                 },
@@ -39510,6 +39518,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "failed",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "2500",
                 },
@@ -39518,11 +39527,13 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
                 "fromAddress": "0x02C191aE18171C41D6138CBa0a10dAA25C653FB8",
                 "fromValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.218001",
                 },
@@ -39531,6 +39542,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "timedout",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "2500",
                 },
@@ -39539,6 +39551,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39552,6 +39565,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "confirmed",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.65",
                 },
@@ -39560,6 +39574,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39573,6 +39588,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "pending",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.65",
                 },
@@ -39581,6 +39597,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39594,6 +39611,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "failed",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.65",
                 },
@@ -39602,6 +39620,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-19T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39615,6 +39634,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "status": "timedout",
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "toValue": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.65",
                 },
@@ -39635,6 +39655,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "type": "tokenReceived",
                 "value": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "4.2",
                 },
@@ -39648,6 +39669,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "type": "tokenReceived",
                 "value": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "4.2",
                 },
@@ -39661,6 +39683,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "type": "tokenReceived",
                 "value": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "4.2",
                 },
@@ -39674,6 +39697,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0x26697240DcB649A62B10764A5F41Ba13CB38b5F0",
                 "type": "tokenReceived",
                 "value": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "4.2",
                 },
@@ -39687,6 +39711,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-13T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39697,6 +39722,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
                 "type": "tokenSent",
                 "value": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "100",
                 },
@@ -39704,6 +39730,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-13T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39714,6 +39741,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
                 "type": "tokenSent",
                 "value": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "100",
                 },
@@ -39721,6 +39749,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-13T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39731,6 +39760,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
                 "type": "tokenSent",
                 "value": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "100",
                 },
@@ -39738,6 +39768,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-13T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39748,6 +39779,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "toAddress": "0xa3E22d8760f95E3566AbDE76EBBD8Ab660E88149",
                 "type": "tokenSent",
                 "value": Object {
+                  "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
                   "symbol": "PLR",
                   "value": "100",
                 },
@@ -39805,6 +39837,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-12T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39820,6 +39853,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-12T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39835,6 +39869,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-12T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39850,6 +39885,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-12T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.012345678",
                 },
@@ -39872,6 +39908,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
                 "date": 2021-04-10T00:00:00.000Z,
                 "ensName": "maciej.pillar.eth",
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.0022311",
                 },
@@ -39882,6 +39919,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               Object {
                 "date": 2021-04-10T00:00:00.000Z,
                 "fee": Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "symbol": "ETH",
                   "value": "0.0222311",
                 },
@@ -50467,7 +50505,7 @@ exports[`Storyshots Value Input default 1`] = `
                       <ValueInputHeader
                         asset={
                           Object {
-                            "address": "0x",
+                            "address": "0x0000000000000000000000000000000000000000",
                             "decimals": 18,
                             "iconUrl": "",
                             "name": "Ethereum",
