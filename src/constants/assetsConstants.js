@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers } from 'ethers';
 
 // reducer
 export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
@@ -130,3 +131,5 @@ export const ASSET_CATEGORY = {
   COLLECTIBLES: ('collectibles': 'collectibles'),
   REWARDS: ('rewards': 'rewards'),
 };
+
+export const ADDRESS_ZERO = ethers.constants.AddressZero;

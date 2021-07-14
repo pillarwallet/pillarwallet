@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react-native';
-import { ethers } from 'ethers';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -36,7 +36,7 @@ import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 // cannot import from test utils, bundler fails
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethers.constants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const store = createTestStore({
   ...initialTestState,

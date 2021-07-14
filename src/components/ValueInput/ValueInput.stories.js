@@ -21,10 +21,9 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { Provider } from 'react-redux';
-import { ethers } from 'ethers';
 
 // constants
-import { ETH, GBP, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ETH, GBP, PLR } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
@@ -40,7 +39,7 @@ import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDeco
 
 // cannot import from test utils, bundler fails
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethers.constants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const activeAccount = {
   id: '0x',

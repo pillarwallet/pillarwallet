@@ -40,7 +40,7 @@ import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationCon
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { formatAmount, valueAsKey } from 'utils/common';
+import { formatAmount, addressAsKey } from 'utils/common';
 import {
   findAsset,
   getAssetOption,
@@ -189,7 +189,7 @@ const RemoveLiquidityScreen = ({
 
     const { symbol: assetSymbol, address: assetAddress } = tokensData[tokenIndex];
     const customBalances: WalletAssetsBalances = {
-      [valueAsKey(assetAddress)]: {
+      [addressAsKey(assetAddress)]: {
         balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
         symbol: assetSymbol,
         address: assetAddress,
@@ -248,7 +248,7 @@ const RemoveLiquidityScreen = ({
   );
 
   const poolTokenCustomBalances = poolTokenData && {
-    [valueAsKey(poolTokenData.address)]: {
+    [addressAsKey(poolTokenData.address)]: {
       balance: poolStats?.userLiquidityTokenBalance.toFixed(),
       symbol: poolTokenData.symbol,
       address: poolTokenData.address,

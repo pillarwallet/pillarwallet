@@ -21,11 +21,10 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { Provider } from 'react-redux';
-import { ethers } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { EUR, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, EUR, PLR } from 'constants/assetsConstants';
 
 // Utils
 import { createTestStore, initialTestState } from 'testUtils/store';
@@ -39,7 +38,7 @@ import CollectibleReviewSummary from './CollectibleReviewSummary';
 
 // cannot import from test utils, bundler fails
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethers.constants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const plrAsset = {
   isPreferred: false,

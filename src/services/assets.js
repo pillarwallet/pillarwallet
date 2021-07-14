@@ -31,7 +31,7 @@ import {
   parseTokenBigNumberAmount,
   reportErrorLog,
   reportLog,
-  valueAsKey,
+  addressAsKey,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
@@ -315,7 +315,7 @@ export async function getExchangeRates(
     const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe
-      rates = { ...rates, [valueAsKey(nativeAssetAddress)]: nativeAssetPrice };
+      rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
     }
   }
 
@@ -326,7 +326,7 @@ export async function getExchangeRates(
 
   return Object.keys(rates).reduce((mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
     ...mappedData,
-    [valueAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+    [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
   }), {});
 }
 

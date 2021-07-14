@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { ethers } from 'ethers';
 
 // Constants
-import { USD } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, USD } from 'constants/assetsConstants';
 
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
-import { formatFiat, valueAsKey } from 'utils/common';
+import { formatFiat, valueForAddress } from 'utils/common';
 
 // Types
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
@@ -36,7 +35,7 @@ export const getUsdToFiatRate = (rates: RatesByAssetAddress, currency: Currency)
   if (currency === USD) return 1;
 
   // will select native asset rates to calculate between
-  const nativeAssetRates = rates[valueAsKey(ethers.constants.AddressZero)];
+  const nativeAssetRates = valueForAddress(rates, ADDRESS_ZERO);
   if (!nativeAssetRates || !nativeAssetRates[currency] || !nativeAssetRates[USD]) {
     return null;
   }
@@ -66,7 +65,7 @@ export const getRate = (
   rates: RatesByAssetAddress,
   assetAddress: string,
   fiatCurrency: Currency,
-): number => rates?.[valueAsKey(assetAddress)]?.[fiatCurrency] ?? 0;
+): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
 
 export const getFormattedRate = (
   rates: RatesByAssetAddress,

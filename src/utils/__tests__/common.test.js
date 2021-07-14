@@ -36,7 +36,8 @@ import {
   formatBigAmount,
   formatBigFiatAmount,
   formatTokenAmount,
-  valueAsKey,
+  addressAsKey,
+  valueForAddress,
 } from 'utils/common';
 
 import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
@@ -345,18 +346,34 @@ describe('Common utils', () => {
     });
   });
 
-  describe('valueAsKey', () => {
+  describe('addressAsKey', () => {
     it('returns lower case string key on value being string', () => {
-      expect(valueAsKey('AAA')).toEqual('aaa');
+      expect(addressAsKey('AAA')).toEqual('aaa');
     });
-    it('returns numeric string key on value being number', () => {
-      expect(valueAsKey(123)).toEqual('123');
+    it('fails safe on no address', () => {
+      // $FlowFixMe: address value passed only to validate test
+      expect(addressAsKey(undefined)).toEqual('');
+      // $FlowFixMe: address value passed only to validate test
+      expect(addressAsKey(null)).toEqual('');
     });
-    it('fails safe on no value', () => {
-      // $FlowFixMe: value passed only to validate test
-      expect(valueAsKey(undefined)).toEqual('');
-      // $FlowFixMe: value passed only to validate test
-      expect(valueAsKey(null)).toEqual('');
+  });
+
+  describe('valueForAddress', () => {
+    const address = '0x';
+    const value = 'ok';
+    const record = { [address]: value };
+
+    it('returns correct value for address', () => {
+      expect(valueForAddress(record, address)).toEqual(value);
+    });
+    it('returns undefined for non existing address', () => {
+      expect(valueForAddress(record, 'invalid')).toEqual(undefined);
+    });
+    it('returns undefined for undefined address', () => {
+      // $FlowFixMe: address value passed only to validate test
+      expect(valueForAddress(record, undefined)).toEqual(undefined);
+      // $FlowFixMe: address value passed only to validate test
+      expect(valueForAddress(record, null)).toEqual(undefined);
     });
   });
 });

@@ -26,7 +26,7 @@ import { rateKeys } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { reportErrorLog, valueAsKey } from 'utils/common';
+import { reportErrorLog, addressAsKey } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
 
@@ -79,7 +79,7 @@ const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
 ): RatesByAssetAddress => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => ({
   ...mappedResponseData,
-  [valueAsKey(contractAddress)]: mapPricesToRates(responseData[contractAddress]),
+  [addressAsKey(contractAddress)]: mapPricesToRates(responseData[contractAddress]),
 }), {});
 
 export const getCoinGeckoTokenPrices = async (

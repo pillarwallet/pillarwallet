@@ -27,7 +27,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
-import { valueAsKey } from 'utils/common';
+import { valueForAddress } from 'utils/common';
 
 // Selectors
 import {
@@ -76,7 +76,7 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
 
-    const plrToFiatRate = ratesPerChain.ethereum?.[valueAsKey(plrAddress)]?.[currency] ?? 0;
+    const plrToFiatRate = valueForAddress(ratesPerChain.ethereum ?? {}, plrAddress)?.[currency] ?? 0;
 
     return BigNumber(plrToFiatRate * ppnBalance);
   },
