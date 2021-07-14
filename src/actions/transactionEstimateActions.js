@@ -170,7 +170,7 @@ export const estimateTransactionsAction = (
         });
 
         estimated = await etherspotService.estimateTransactionsBatch(chain, gasToken?.address).catch((error) => {
-          errorMessage = error?.message;
+          if (!errorMessage) errorMessage = error?.message;
           return null;
         });
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
