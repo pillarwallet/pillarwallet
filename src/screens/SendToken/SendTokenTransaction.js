@@ -36,6 +36,7 @@ import Toast from 'components/Toast';
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, LIQUIDITY_POOL_DASHBOARD } from 'constants/navigationConstants';
@@ -64,22 +65,25 @@ const animationSuccess = require('assets/animations/transactionSentConfirmationA
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
 
-const getTransactionErrorMessage = (error: string): string => {
-  const TRANSACTION_ERRORS = {
-    [ERROR_TYPE.TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
-    [ERROR_TYPE.REPLACEMENT_TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
-    [ERROR_TYPE.NOT_OWNED]: t('error.transactionFailed.notOwnedCollectible'),
-    [ERROR_TYPE.CANT_BE_TRANSFERRED]: t('error.transactionFailed.collectibleCantBeTransferred'),
-  };
+const getTransactionErrorMessage = (error: ?string): string => {
+  if (error) {
+    const TRANSACTION_ERRORS = {
+      [ERROR_TYPE.TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+      [ERROR_TYPE.REPLACEMENT_TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+      [ERROR_TYPE.NOT_OWNED]: t('error.transactionFailed.notOwnedCollectible'),
+      [ERROR_TYPE.CANT_BE_TRANSFERRED]: t('error.transactionFailed.collectibleCantBeTransferred'),
+    };
+    return TRANSACTION_ERRORS[error];
+  }
   const transactionFailureText = t('error.transactionFailed.default');
-  return TRANSACTION_ERRORS[error] || transactionFailureText;
+  return transactionFailureText;
 };
 
-const getTransactionSuccessMessage = (transactionType: ?string, chainType: ?string) => {
+const getTransactionSuccessMessage = (transactionType: ?string, chain: string) => {
   if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     return t('transactions.paragraph.exchangeTransactionSuccess');
   }
-  return t('transactions.paragraph.transactionSuccess', { network: chainType });
+  return t('transactions.paragraph.transactionSuccess', { network: chain });
 };
 
 const getTransactionSuccessTitle = (props) => {
@@ -101,22 +105,24 @@ function SendTokenTransaction() {
   const fromAddress = useRootSelector(activeAccountAddressSelector);
 
   const isSuccess: boolean = useNavigationParam('isSuccess');
-  const error: string = useNavigationParam('error', '');
+  const error: ?string = useNavigationParam('error');
   const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
   const transactionType: ?string = useNavigationParam('transactionType');
   const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
   const noRetry: string = useNavigationParam('noRetry');
-  const batchHash: string = useNavigationParam('batchHash', '');
-  const hash: string = useNavigationParam('hash', '');
+  const batchHash: ?string = useNavigationParam('batchHash');
+  const hash: ?string = useNavigationParam('hash');
 
   const {
     tokenType: transactionTokenType,
     extra: { allowance = {} } = {},
-    chain: chainType = CHAIN.ETHEREUM,
+    chain = CHAIN.ETHEREUM,
   } = transactionPayload;
 
+  const chainConfig = useChainConfig(chain);
+
   const viewOnBlockchain = () =>
-    dispatch(viewTransactionOnBlockchainAction(chainType, { hash, batchHash, fromAddress }));
+    dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
 
   const handleDismissal = () => {
     const txTag = transactionPayload?.tag || '';
@@ -211,7 +217,7 @@ function SendTokenTransaction() {
 
   const animationSource = isSuccess ? animationSuccess : animationFailure;
   const transactionStatusText = isSuccess
-    ? getTransactionSuccessMessage(transactionType, chainType)
+    ? getTransactionSuccessMessage(transactionType, chainConfig.titleShort)
     : getTransactionErrorMessage(error);
   const isAllowanceTransaction = Object.keys(allowance).length;
   const transactionStatusTitle = isSuccess

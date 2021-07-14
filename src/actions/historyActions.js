@@ -428,7 +428,7 @@ export type TransactionInfo = {
   hash: ?string,
   batchHash: ?string,
   fromAddress: ?string,
-}
+};
 
 export const viewTransactionOnBlockchainAction = (chain: Chain, event: Event | TransactionInfo) => {
   return (dispatch: Dispatch, getState: GetState) => {
