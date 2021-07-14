@@ -351,7 +351,7 @@ export class EtherspotService {
 
     // check if ENS setup transaction needs to be included
     const { account: etherspotAccount } = sdk.state;
-    if (chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
+    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
       const ensNode = await this.getEnsNode(etherspotAccount.address);
       if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
         await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
