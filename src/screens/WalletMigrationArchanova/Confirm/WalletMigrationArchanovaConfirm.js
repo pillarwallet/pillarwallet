@@ -33,42 +33,88 @@ import HeaderBlock from 'components/HeaderBlock';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
-
 // Constants
-import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
-import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, activeAccountAddressSelector, useChainRates } from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainSupportedAssets, useChainRates } from 'selectors';
+import { etherspotAccountSelector, achanovaAccountSelector } from 'selectors/accounts';
+import { assetsBalancesPerAccountSelector } from 'selectors/balances';
+import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // Utils
-import { BigNumber, formatTokenAmount, humanizeHexString } from 'utils/common';
+import { buildWalletAssetBalanceInfoList } from 'utils/balances';
+import { BigNumber, humanizeHexString } from 'utils/common';
+import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { AssetToMigrate } from 'models/WalletMigrationArchanova';
+import type { WalletAssetBalanceInfo } from 'models/Balances';
+import type { Collectible } from 'models/Collectible';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
+
 
 function WalletMigrationArchanovaConfirm() {
   const navigation = useNavigation();
-  const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.confirm');
+  const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.review');
 
-  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
-  const fiatCurrency = useFiatCurrency();
-  const etherspotAccountAddress = useRootSelector(activeAccountAddressSelector);
-  const archanovaAccountAddress = useRootSelector((root) => root.wallet.data?.address);
+  const etherspotAccount = useRootSelector(etherspotAccountSelector);
+  const archanovaAccount = useRootSelector(achanovaAccountSelector);
+  const balancesPerAccount = useRootSelector(assetsBalancesPerAccountSelector);
+  const collectiblesPerAccount = useRootSelector(collectiblesPerAccountSelector);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const currency = useFiatCurrency();
 
   const images = useThemedImages();
 
-  const assetsToMigrate: AssetToMigrate[] = navigation.getParam('assetsToMigrate') ?? [];
+  const tokensToMigrate: TokensToMigrateByAddress = navigation.getParam('tokens') ?? [];
+  const collectiblesToMigrate: CollectiblesToMigrateByAddress = navigation.getParam('collectibles') ?? [];
+
+  const tokens = buildWalletAssetBalanceInfoList(
+    balancesPerAccount[archanovaAccount?.id ?? '']?.ethereum?.wallet,
+    ethereumSupportedAssets,
+    rates,
+    currency,
+  );
+  const collectibles = collectiblesPerAccount[archanovaAccount?.id ?? '']?.ethereum ?? [];
 
   const hasEnoughGas = true;
   const totalValue = BigNumber(0);
   const totalFee = BigNumber(0);
-  const sortedAssetTransfers = [];
 
-  const renderItem = () => null;
+  const renderTokenItem = ({ asset, balance, balanceInFiat }: WalletAssetBalanceInfo, index: number) => {
+    if (!tokensToMigrate[asset.address]) return null;
+
+    return (
+      <Table.RowContainer key={asset.address} separator={index !== 0}>
+        <Table.RowTitle>{asset.name}</Table.RowTitle>
+        <Table.RowValue fontVariant="tabular-nums">{formatTokenValue(balance, asset.symbol)}</Table.RowValue>
+        {!!balanceInFiat && (
+          <Table.RowValue variant="secondary" fontVariant="tabular-nums">
+            {formatFiatValue(balanceInFiat, currency)}
+          </Table.RowValue>
+        )}
+      </Table.RowContainer>
+    );
+  };
+
+  const renderCollectibleItem = (collectible: Collectible, index: number) => {
+    if (!tokensToMigrate[collectible.contractAddress]) return null;
+
+    return (
+      <Table.Row
+        key={collectible.contractAddress}
+        title={collectible.name}
+        value={tRoot('label.collectible')}
+        separator={index !== 0}
+      />
+    );
+  };
+
+  //  const renderToken = (token: ) => null;
   const handleSubmit = () => {};
 
   return (
@@ -79,24 +125,25 @@ function WalletMigrationArchanovaConfirm() {
         <Header>
           <SmartWalletLogo source={images.smartWalletIcon} />
           <BalanceLabel>{t('header')}</BalanceLabel>
-          <BalanceView fiatCurrency={fiatCurrency} balance={totalValue} />
+          <BalanceView fiatCurrency={currency} balance={totalValue} />
         </Header>
 
         <Table.Header>{t('details.header')}</Table.Header>
         <Table.Row
           title={t('details.fromKeyWallet')}
-          value={humanizeHexString(archanovaAccountAddress)}
+          value={humanizeHexString(archanovaAccount?.id)}
           fontVariant="tabular-nums"
           separator={false}
         />
         <Table.Row
           title={t('details.toSmartWallet')}
-          value={humanizeHexString(etherspotAccountAddress)}
+          value={humanizeHexString(etherspotAccount?.id)}
           fontVariant="tabular-nums"
         />
 
         <Table.Header>{t('assets.header')}</Table.Header>
-        {sortedAssetTransfers.map(renderItem)}
+        {tokens.map(renderTokenItem)}
+        {collectibles.map(renderCollectibleItem)}
 
         <FeeTable fee={totalFee} symbol={ETH} chain={CHAIN.ETHEREUM} />
 

@@ -21,24 +21,21 @@
 import { createSelector } from 'reselect';
 
 // Selectors
-import { archanovaAccountIdSelector } from 'selectors/accounts';
-import { assetsBalancesPerAccountSelector } from 'selectors/balances';
+import { accountsSelector } from 'selectors';
 
 // Utils
-import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
+import { findFirstEtherspotAccount, findFirstArchanovaAccount } from 'utils/accounts';
 
 // Types
-import type { Selector } from 'reducers/rootReducer';
-import type { AssetBalancesPerAccount } from 'models/Balances';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
 
-// Checks for non-negligible balances
-export const showWalletMigrationSelector: Selector<boolean> = createSelector(
-  archanovaAccountIdSelector,
-  assetsBalancesPerAccountSelector,
-  (accountId: ?string, balancesPerAccount: AssetBalancesPerAccount): boolean => {
-    if (!accountId) return false;
-
-    const ethereumWalletBalancs = balancesPerAccount[accountId]?.ethereum?.wallet;
-    return hasNonNegligileWalletBalances(ethereumWalletBalancs);
-  },
+export const etherspotAccountSelector: Selector<?Account> = createSelector(accountsSelector, (accounts: Account[]) =>
+  findFirstEtherspotAccount(accounts),
 );
+
+export const achanovaAccountSelector: Selector<?Account> = createSelector(accountsSelector, (accounts: Account[]) =>
+  findFirstArchanovaAccount(accounts),
+);
+
+export const archanovaAccountIdSelector = (root: RootReducerState) => achanovaAccountSelector(root)?.id;

@@ -103,6 +103,13 @@ const contentStyles = {
 };
 
 /**
+ * Floating footer
+ */
+export const Footer: React.ComponentType<ViewProps> = styled(SafeAreaView)`
+  padding: ${spacing.small}px ${spacing.large}px ${spacing.medium}px;
+`;
+
+/**
  * Display items as a row, centered vertically.
  */
 export const Row: React.ComponentType<ViewProps> = styled.View`

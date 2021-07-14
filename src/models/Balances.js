@@ -63,5 +63,5 @@ export type ServiceAssetBalance = {|
 export type WalletAssetBalanceInfo = {|
   asset: Asset,
   balance: BigNumber,
-  balanceInFiat: ?BigNumber,
+  balanceInFiat: number,
 |}

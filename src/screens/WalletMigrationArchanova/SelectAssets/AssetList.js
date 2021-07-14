@@ -51,7 +51,6 @@ type Props = {
   collectibles: Collectible[],
   collectiblesToMigrate: CollectiblesToMigrateByAddress,
   onToggleCollectible: (address: string) => mixed,
-  ListHeaderComponent: React.Element<any>,
 };
 
 const AssetList = ({
@@ -61,7 +60,6 @@ const AssetList = ({
   collectibles,
   collectiblesToMigrate,
   onToggleCollectible,
-  ListHeaderComponent,
 }: Props) => {
   const sections = useSectionsData(tokens, collectibles);
 
@@ -112,7 +110,6 @@ const AssetList = ({
       sections={sections}
       renderSectionHeader={({ section }) => renderSectionHeader(section)}
       renderItem={({ item }) => renderItem(item)}
-      ListHeaderComponent={ListHeaderComponent}
       contentInsetAdjustmentBehavior="scrollableAxes"
     />
   );

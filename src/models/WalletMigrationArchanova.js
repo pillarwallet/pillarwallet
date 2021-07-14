@@ -20,8 +20,8 @@
 
 import { BigNumber } from 'bignumber.js';
 
-export type TokenAssetToMigrate = {| address: string, value: BigNumber |};
-export type CollectibleAssetToMigrate = {| address: string |};
+export type TokenToMigrate = {| address: string, value: BigNumber |};
+export type CollectibleToMigrate = {| address: string |};
 
-export type TokensToMigrateByAddress = { [address: string]: TokenAssetToMigrate };
-export type CollectiblesToMigrateByAddress = { [address: string]: CollectibleAssetToMigrate };
+export type TokensToMigrateByAddress = { [address: string]: TokenToMigrate };
+export type CollectiblesToMigrateByAddress = { [address: string]: CollectibleToMigrate };

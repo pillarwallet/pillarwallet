@@ -38,23 +38,12 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
-import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Account } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 
 // local
 import { accountsSelector } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
-
-export const achanovaAccountSelector: Selector<?Account> = createSelector(
-  accountsSelector,
-  (accounts: Account[]) => findFirstArchanovaAccount(accounts),
-);
-
-export const archanovaAccountIdSelector: Selector<?string> = (root: RootReducerState) => {
-  const archanovaAccount = achanovaAccountSelector(root);
-  return archanovaAccount?.id;
-};
 
 export const isArchanovaAccountDeployedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);

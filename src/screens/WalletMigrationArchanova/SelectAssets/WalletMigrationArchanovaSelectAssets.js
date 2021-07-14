@@ -21,25 +21,29 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container, Footer } from 'components/modern/Layout';
+import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { WALLET_MIGRATION_CONFIRM } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useChainSupportedAssets, useChainRates, useFiatCurrency } from 'selectors';
-import { achanovaAccountSelector } from 'selectors/archanova';
+import { achanovaAccountSelector } from 'selectors/accounts';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // Utils
 import { buildWalletAssetBalanceInfoList } from 'utils/balances';
-import { recordWithRemovedKey } from 'utils/object';
+import { recordValues, recordWithRemovedKey } from 'utils/object';
 
 // Types
+import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type {
   TokensToMigrateByAddress,
   CollectiblesToMigrateByAddress,
@@ -50,7 +54,7 @@ import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
 
 const WalletMigrationArchanovaSelectAssets = () => {
-  const { t } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
+  const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const navigation = useNavigation();
 
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
@@ -72,9 +76,6 @@ const WalletMigrationArchanovaSelectAssets = () => {
   );
   const collectibles = collectiblesPerAccount[archanovaAccountId]?.ethereum ?? [];
 
-  const walletAddress = archanovaAccount?.id ?? '';
-  const totalValue = 0;
-
   const handleToggleToken = (address: string, balance: BigNumber) => {
     if (tokensToMigrate[address]) {
       setTokensToMigrate(recordWithRemovedKey(tokensToMigrate, address));
@@ -91,9 +92,22 @@ const WalletMigrationArchanovaSelectAssets = () => {
     }
   };
 
+  const navigateToReview = () => {
+    navigation.navigate(WALLET_MIGRATION_CONFIRM, {
+      tokens: tokensToMigrate,
+      collectibles: collectiblesToMigrate,
+    });
+  };
+
+  const walletAddress = archanovaAccount?.id ?? '';
+  const totalValueInFiat = getTotaValueInFiat(tokens, tokensToMigrate);
+  const showNextButton = !isEmpty(tokensToMigrate) || !isEmpty(collectiblesToMigrate);
+
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+
+      <WalletSummary totalValueInFiat={totalValueInFiat} address={walletAddress} />
 
       <AssetList
         tokens={tokens}
@@ -102,10 +116,28 @@ const WalletMigrationArchanovaSelectAssets = () => {
         collectibles={collectibles}
         collectiblesToMigrate={collectiblesToMigrate}
         onToggleCollectible={handleToggleCollectible}
-        ListHeaderComponent={<WalletSummary address={walletAddress} totalValueInFiat={totalValue} />}
       />
+
+      {showNextButton && (
+        <Footer>
+          <Button title={tRoot('button.next')} onPress={navigateToReview} />
+        </Footer>
+      )}
     </Container>
   );
 };
 
 export default WalletMigrationArchanovaSelectAssets;
+
+const getTotaValueInFiat = (tokens: WalletAssetBalanceInfo[], tokensToMigrate: TokensToMigrateByAddress) => {
+  let result = 0;
+
+  tokens.forEach((tokenBalance) => {
+    if (tokensToMigrate[tokenBalance.asset.address]) {
+      // TODO handle partial amount
+      result += tokenBalance.balanceInFiat;
+    }
+  });
+
+  return result;
+};

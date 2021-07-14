@@ -714,9 +714,27 @@
     },
     "selectAssets": {
       "title": "Migration to Smart Wallet",
-      "migratingFrom": "migrating from",
-    
-      }
+      "migratingFrom": "migrating from"
+    },
+    "review": {
+      "title": "Review",
+      "header": "You are migrating",
+      "details": {
+        "header": "Migration details",
+        "fromKeyWallet": "From legacy smart wallet",
+        "toSmartWallet": "To smart wallet"
+      },
+      "assets": {
+        "header": "Selected assets"
+      },
+      "fees": {
+        "header": "Fees",
+        "ethereum": "Max. Ethereum fee",
+        "pillar": "Pillar fee",
+        "total": "Total Fee"
+      },
+      "submit": "Submit"
+    }
   },
 
   "smartWalletContent": {

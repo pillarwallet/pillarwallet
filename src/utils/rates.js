@@ -44,9 +44,9 @@ export const getAssetValueInFiat = (
   balance: ?BigNumber | string,
   rates: RatesByAssetAddress,
   currency: Currency,
-): ?BigNumber => {
+): ?number => {
   const rate = getAssetRateInFiat(rates, assetAddress, currency);
   if (!balance || rate == null) return null;
 
-  return wrapBigNumber(balance)?.times(rate);
+  return wrapBigNumber(balance)?.times(rate).toNumber();
 };
