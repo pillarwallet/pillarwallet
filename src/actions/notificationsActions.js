@@ -54,11 +54,13 @@ import {
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
-import { getActiveAccountAddress } from 'utils/accounts';
 
 // Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { FirebaseMessage } from 'models/Notification';
+
+// Selectors
+import { activeAccountAddressSelector } from 'selectors';
 
 let notificationsListener = null;
 let disabledPushNotificationsListener = null;
@@ -106,10 +108,7 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
     }
 
     if (message.notification) {
-      const {
-        accounts: { data: accounts },
-      } = getState();
-      const walletAddress = getActiveAccountAddress(accounts);
+      const walletAddress = activeAccountAddressSelector(getState());
       const notification = message.data && getToastNotification(message.data, walletAddress);
       if (!notification) return;
       dispatch({ type: ADD_NOTIFICATION, payload: notification });
