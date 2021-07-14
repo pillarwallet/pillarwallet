@@ -24,30 +24,27 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
-// components
-import AssetButtons from 'components/AssetButtons';
+// Components
+import { Container, Content } from 'components/modern/Layout';
+import HeaderBlock from 'components/HeaderBlock';
+import FloatingButtons from 'components/FloatingButtons';
 import ActivityFeed from 'components/ActivityFeed';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import HistoryList from 'components/HistoryList';
-import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, MediumText } from 'components/Typography';
 import RefreshControl from 'components/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
-import AddFundsModal from 'components/AddFundsModal';
-import Modal from 'components/Modal';
 
-// actions
+// Actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
-// constants
+// Constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
-// utils
+// Utils
 import { spacing, fontStyles } from 'utils/variables';
-import { getColorByTheme } from 'utils/themes';
 import { formatFiat } from 'utils/common';
 import {
   getAssetsAsList,
@@ -63,10 +60,10 @@ import {
 } from 'utils/history';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 
-// configs
+// Configs
 import assetsConfig from 'configs/assetsConfig';
 
-// selectors
+// Selectors
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
@@ -100,52 +97,6 @@ type Props = {
   activeAccountAddress: string,
   supportedAssetsPerChain: AssetsPerChain,
 };
-
-const AssetCardWrapper = styled.View`
-  flex: 1;
-  justify-content: flex-start;
-  padding-top: 10px;
-  padding-bottom: 30px;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
-  margin-top: 4px;
-`;
-
-const DataWrapper = styled.View`
-  margin: 0 ${spacing.large}px ${spacing.large}px;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 8px;
-`;
-
-const ValueWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const TokenValue = styled(MediumText)`
-  ${fontStyles.giant};
-  text-align: center;
-  color: ${({ theme }) => theme.colors.basic010};
-`;
-
-const ValueInFiat = styled(BaseText)`
-  ${fontStyles.small};
-  text-align: center;
-`;
-
-const Disclaimer = styled(BaseText)`
-  ${fontStyles.regular};
-  text-align: center;
-  color: ${({ theme }) => theme.colors.secondaryAccent240};
-  margin-top: 5px;
-`;
-
-const ValuesWrapper = styled.View`
-  flex-direction: row;
-`;
 
 const AssetScreen = ({
   activeAccountAddress,
@@ -215,18 +166,18 @@ const AssetScreen = ({
     ],
   );
 
-  const goToSendTokenFlow = () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
-
-  const goToExchangeFlow = () => {
-    navigation.navigate(EXCHANGE, { fromAssetCode: token });
-  };
-
-  const openAddFundsModal = () => Modal.open(() => (
-    <AddFundsModal
-      token={token}
-      receiveAddress={activeAccountAddress}
-    />
-  ));
+  const buttons = [
+    {
+      title: t('button.swap'),
+      iconName: 'exchange',
+      onPress: () => navigation.navigate(EXCHANGE, { fromAssetCode: token }),
+    },
+    {
+      title: t('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData }),
+    },
+  ];
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const tokenRate = getRate(chainRates, token, fiatCurrency);
@@ -239,7 +190,6 @@ const AssetScreen = ({
   const {
     listed: isListed = true,
     send: isAssetConfigSendActive = true,
-    receive: isReceiveActive = true,
     disclaimer,
   } = assetsConfig[token] || {};
 
@@ -248,54 +198,32 @@ const AssetScreen = ({
   const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
   return (
-    <ContainerWithHeader
-      navigation={navigation}
-      headerProps={{
-        centerItems: [{ title: assetData.name }],
-      }}
-      inset={{ bottom: 0 }}
-    >
-      <ScrollWrapper
+    <Container>
+      <HeaderBlock centerItems={[{ title: assetData.name }]} navigation={navigation} noPaddingTop />
+      <Content
+        contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+        paddingHorizontal={0}
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => { fetchAssetsBalances(); }}
+            onRefresh={() => {
+              fetchAssetsBalances();
+            }}
           />
         }
       >
-        <AssetPattern
-          token={assetData.token}
-          icon={assetData.patternIcon}
-          isListed={isListed}
-        />
+        <AssetPattern token={assetData.token} icon={assetData.patternIcon} isListed={isListed} />
         <DataWrapper>
           <ValueWrapper>
             <TokenValue>{t('tokenValue', { value: balance, token })}</TokenValue>
           </ValueWrapper>
-          {!!isListed &&
+          {!!isListed && (
             <ValuesWrapper>
-              <ValueInFiat>
-                {fiatAmount}
-              </ValueInFiat>
+              <ValueInFiat>{fiatAmount}</ValueInFiat>
             </ValuesWrapper>
-          }
-          {!isListed &&
-          <Disclaimer>
-            {disclaimer}
-          </Disclaimer>
-          }
+          )}
+          {!isListed && <Disclaimer>{disclaimer}</Disclaimer>}
         </DataWrapper>
-        <AssetCardWrapper>
-          <AssetButtons
-            onPressReceive={openAddFundsModal}
-            onPressSend={goToSendTokenFlow}
-            onPressExchange={goToExchangeFlow}
-            noBalance={isWalletEmpty}
-            isSendDisabled={!isSendActive}
-            isReceiveDisabled={!isReceiveActive}
-          />
-          {!isSendActive && <SWActivationCard />}
-        </AssetCardWrapper>
         {!!transactions.length && (
           <>
             {isArchanovaAccount(activeAccount) && (
@@ -310,8 +238,10 @@ const AssetScreen = ({
             {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
           </>
         )}
-      </ScrollWrapper>
-    </ContainerWithHeader>
+      </Content>
+      <FloatingButtons items={buttons} />
+      {!isSendActive && isArchanovaAccount(activeAccount) && <SWActivationCard />}
+    </Container>
   );
 };
 
@@ -344,3 +274,39 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
+
+
+const DataWrapper = styled.View`
+  margin: 0 ${spacing.large}px ${spacing.large}px;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 8px;
+`;
+
+const ValueWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TokenValue = styled(MediumText)`
+  ${fontStyles.giant};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.basic010};
+`;
+
+const ValueInFiat = styled(BaseText)`
+  ${fontStyles.small};
+  text-align: center;
+`;
+
+const Disclaimer = styled(BaseText)`
+  ${fontStyles.regular};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  margin-top: 5px;
+`;
+
+const ValuesWrapper = styled.View`
+  flex-direction: row;
+`;

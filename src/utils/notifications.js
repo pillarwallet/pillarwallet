@@ -26,7 +26,7 @@ import t from 'translations/translate';
 // $FlowFixMe – throws "react-native-android-badge" not found
 import BadgeAndroid from 'react-native-android-badge';
 
-// constants
+// Constants
 import {
   COLLECTIBLE,
   BCX,
@@ -34,11 +34,11 @@ import {
   FCM_DATA_TYPE,
 } from 'constants/notificationConstants';
 
-// utils
+// Utils
 import { reportLog } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 
-// models
+// Models
 import type { ApiNotification, Notification } from 'models/Notification';
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -112,7 +112,6 @@ export const getToastNotification = (data: mixed, myEthAddress: ?string): null |
       token: asset,
     });
 
-    // TODO: do we still need to process key based wallet notifications?
     if (addressesEqual(receiver, myEthAddress) && status === 'pending') {
       return {
         message: t('notification.transactionReceivedPending', { tokenValue }),
