@@ -24,7 +24,7 @@ import { Alert } from 'react-native';
 import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
 
-// actions
+// Actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -33,7 +33,7 @@ import {
   unsubscribeToEtherspotNotificationsAction,
 } from 'actions/etherspotActions';
 
-// constants
+// Constants
 import {
   ADD_NOTIFICATION,
   SHOW_HOME_UPDATE_INDICATOR,
@@ -44,20 +44,23 @@ import {
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 
-// services
+// Services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import { firebaseMessaging } from 'services/firebase';
 
-// utils
+// Utils
 import {
   processNotification,
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
 
-// types
+// Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { FirebaseMessage } from 'models/Notification';
+
+// Selectors
+import { activeAccountAddressSelector } from 'selectors';
 
 let notificationsListener = null;
 let disabledPushNotificationsListener = null;
@@ -105,8 +108,8 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
     }
 
     if (message.notification) {
-      const { wallet: { data: wallet } } = getState();
-      const notification = message.data && getToastNotification(message.data, wallet?.address);
+      const walletAddress = activeAccountAddressSelector(getState());
+      const notification = message.data && getToastNotification(message.data, walletAddress);
       if (!notification) return;
       dispatch({ type: ADD_NOTIFICATION, payload: notification });
       dispatch(showHomeUpdateIndicatorAction());
