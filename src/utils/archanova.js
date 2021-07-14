@@ -272,7 +272,7 @@ export const parseArchanovaTransactions = (
         const txAsset = findAssetByAddress(supportedAssets, tx.tokenAddress);
         const txValue = tx.tokenValue.toString();
         return {
-          symbol: txAsset ? txAsset.symbol : ETH, // Archanova supports ETH only
+          symbol: txAsset?.symbol ?? ETH, // Archanova supports ETH only
           value: txValue,
           hash: tx.paymentHash,
         };
