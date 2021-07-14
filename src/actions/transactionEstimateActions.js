@@ -34,7 +34,6 @@ import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
 import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
