@@ -34,7 +34,7 @@ import {
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';
-import { addressesEqual, isSupportedAssetAddress, isSupportedAssetSymbol } from 'utils/assets';
+import { addressesEqual, isSupportedAssetAddress } from 'utils/assets';
 import {
   getStakeTransactions as getUnipoolStakeTransactions,
   getUnstakeTransaction as getUnipoolUnstakeTransaction,
@@ -107,7 +107,7 @@ export const fetchPoolData = async (poolAddress: string, userAddress: string): P
 
 export const isSupportedPool = (supportedAssets: Asset[], poolToCheck: LiquidityPool) => {
   return isSupportedAssetAddress(supportedAssets, poolToCheck.uniswapPairAddress)
-    && poolToCheck.tokensProportions.every((token) => isSupportedAssetSymbol(supportedAssets, token.symbol));
+    && poolToCheck.tokensProportions.every((token) => isSupportedAssetAddress(supportedAssets, token.address));
 };
 
 export const supportedLiquidityPools = (supportedAssets: Asset[]): LiquidityPool[] => {

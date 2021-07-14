@@ -101,7 +101,7 @@ const ExchangeConfirmScreen = () => {
     });
   };
 
-  const formattedToValueInFiat = getFormattedBalanceInFiat(fiatCurrency, toAmount, chainRates, toAsset.symbol);
+  const formattedToValueInFiat = getFormattedBalanceInFiat(fiatCurrency, toAmount, chainRates, toAsset.address);
 
   const errorMessage = estimationErrorMessage || notEnoughForFeeErrorMessage;
 

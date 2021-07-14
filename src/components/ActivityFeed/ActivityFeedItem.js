@@ -29,7 +29,7 @@ import { BigNumber as EthersBigNumber } from 'ethers';
 
 // utils
 import { getThemeColors } from 'utils/themes';
-import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import {
   isPendingTransaction,
@@ -50,6 +50,7 @@ import {
   findEnsNameCaseInsensitive,
   formatTokenAmount,
 } from 'utils/common';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -361,7 +362,9 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
     const relevantAddress = this.getRelevantAddress(event);
 
-    const assetSymbol = event ? event.asset : null;
+    // this component is Archanova (Ethereum) only
+    const assetSymbol = event?.assetSymbol ?? nativeAssetPerChain.ethereum.symbol;
+
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
     const formattedFullValue = formatAmount(value);
@@ -381,11 +384,11 @@ export class ActivityFeedItem extends React.Component<Props> {
       roundedPhoneIcon,
     } = images(theme);
 
-    const fullItemValuePPN = getFormattedValue(formattedFullValue, event.asset, {
+    const fullItemValuePPN = getFormattedValue(formattedFullValue, assetSymbol, {
       isPositive: isPositivePPN,
       noSymbol: isZero,
     });
-    const itemValuePPN = getFormattedValue(formattedValue, event.asset, {
+    const itemValuePPN = getFormattedValue(formattedValue, assetSymbol, {
       isPositive: isPositivePPN,
       noSymbol: isZero,
     });
@@ -507,8 +510,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       case WBTC_SETTLED_TRANSACTION:
-        const wbtcValue = `+ ${getFormattedValue(String(event.value / 100000000), event.asset)}`;
-        const wbtcValueFixed = `+ ${getFormattedValue(String((event.value / 100000000).toFixed(5)), event.asset)}`;
+        const wbtcValue = `+ ${getFormattedValue(String(event.value / 100000000), assetSymbol)}`;
+        const wbtcValueFixed = `+ ${getFormattedValue(String((event.value / 100000000).toFixed(5)), assetSymbol)}`;
         data = {
           label: formatHexAddress(relevantAddress),
           fullItemValue: wbtcValue,
@@ -572,7 +575,10 @@ export class ActivityFeedItem extends React.Component<Props> {
       case SABLIER_CANCEL_STREAM: {
         const { amount, contactAddress, assetAddress } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
-        const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
+
+        const assetData = findAssetByAddress(supportedAssets, assetAddress);
+        if (!assetData) break;
+
         const { decimals, symbol } = assetData;
 
         const formattedAmount = formatAmount(formatUnits(amount, decimals), getDecimalPlaces(symbol));
@@ -781,8 +787,8 @@ export class ActivityFeedItem extends React.Component<Props> {
               subtext: isAssetView ? '' : this.FROM().PPN_NETWORK,
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
-              fullItemValue: t('positiveTokenValue', { value: formattedFullValue, token: event.asset }),
-              itemValue: t('positiveTokenValue', { value: formattedValue, token: event.asset }),
+              fullItemValue: t('positiveTokenValue', { value: formattedFullValue, token: assetSymbol }),
+              itemValue: t('positiveTokenValue', { value: formattedValue, token: assetSymbol }),
               valueColor: 'secondaryAccent140',
             };
           } else {
@@ -800,7 +806,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                   />
                   {!isReceived &&
                   <BaseText regular secondary>
-                    {t('tokenValue', { value: formattedValue, token: event.asset })}
+                    {t('tokenValue', { value: formattedValue, token: assetSymbol })}
                   </BaseText>}
                 </ListWrapper>
               );
@@ -808,7 +814,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               data.customAddon = (
                 <ListWrapper>
                   <TankAssetBalance
-                    amount={getFormattedValue(formattedValue, event.asset, {
+                    amount={getFormattedValue(formattedValue, assetSymbol, {
                       isPositive: isReceived,
                       noSymbol: isZero,
                     })}
@@ -838,14 +844,14 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             label: usernameOrAddress,
             fullItemValue: event.tag === WBTC_PENDING_TRANSACTION
-              ? getFormattedValue(String(event.value / 1000000000000000000), event.asset)
+              ? getFormattedValue(String(event.value / 1000000000000000000), assetSymbol)
               : getFormattedValue(formattedFullValue, event.asset, {
                 isPositive: isReceived,
                 noSymbol: !formattedFullValue,
               }),
             itemValue: event.tag === WBTC_PENDING_TRANSACTION
-              ? `+ ${getFormattedValue((event.value / 1000000000000000000).toFixed(5), event.asset)}`
-              : getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
+              ? `+ ${getFormattedValue((event.value / 1000000000000000000).toFixed(5), assetSymbol)}`
+              : getFormattedValue(formattedValue, assetSymbol, { isPositive: isReceived, noSymbol: isZero }),
             valueColor: isReceived && !this.isZeroValue(value) ? 'secondaryAccent140' : 'basic010',
             ...additionalInfo,
             isReceived,
@@ -865,7 +871,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   getCollectibleTransactionEventData = (event: Object) => {
     const isReceived = this.isReceived(event);
     const {
-      asset,
+      assetSymbol,
       assetData: { image },
       icon,
     } = event;
@@ -878,7 +884,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       : t('label.collectibleToUser', { username: usernameOrAddress });
 
     return {
-      label: asset,
+      label: assetSymbol,
       collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
       actionLabel: isReceived ? this.STATUSES().RECEIVED : this.STATUSES().SENT,
@@ -954,7 +960,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
-  assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
+  assetDecimals: assetDecimalsSelector((_, props) => props.event.assetAddress),
   supportedAssets: ethereumSupportedAssetsSelector,
 });
 

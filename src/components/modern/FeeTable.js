@@ -38,32 +38,55 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type Props = {|
   fee: Value,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   chain: Chain,
   style?: ViewStyleProp,
 |};
 
-function FeeTable({ fee, symbol, style, chain }: Props) {
+function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('transactions.label');
 
   return (
     <View style={style}>
       <Table.Header>{t('fees')}</Table.Header>
-
-      <FeeRow title={t('ethFee')} symbol={symbol} fee={fee} separator={false} chain={chain} />
+      <FeeRow
+        title={t('ethFee')}
+        assetSymbol={assetSymbol}
+        assetAddress={assetAddress}
+        fee={fee}
+        separator={false}
+        chain={chain}
+      />
       <Table.Row title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
-      <FeeRow title={t('totalFee')} symbol={symbol} fee={fee} separator={false} chain={chain} />
+      <FeeRow
+        title={t('totalFee')}
+        assetSymbol={assetSymbol}
+        assetAddress={assetAddress}
+        fee={fee}
+        separator={false}
+        chain={chain}
+      />
     </View>
   );
 }
 
 export default FeeTable;
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type FeeItemProps = {|
   title: string,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   fee: Value,
   chain: Chain,
   separator?: boolean,
@@ -71,7 +94,8 @@ type FeeItemProps = {|
 
 export function FeeRow({
   title,
-  symbol,
+  assetSymbol,
+  assetAddress,
   fee,
   separator,
   chain,
@@ -83,8 +107,8 @@ export function FeeRow({
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
 
-  const formattedFee = t('tokenValue', { value: formatTokenAmount(fee, symbol), token: symbol });
-  const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, symbol);
+  const formattedFee = t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol });
+  const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, assetAddress);
 
   return (
     <Table.RowContainer separator={separator}>

@@ -23,13 +23,22 @@ import { BigNumber } from 'bignumber.js';
 import { ETH } from 'constants/assetsConstants';
 
 // utils
-import { calculateETHTransactionAmountAfterFee } from '../transactions';
+import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
+import { mockEthAddress } from 'testUtils/jestSetup';
 
+
+const mockEthBalance = (balance) => ({
+  [mockEthAddress]: {
+    balance,
+    symbol: ETH,
+    address: mockEthAddress,
+  },
+});
 
 describe('transactions utils', () => {
   describe('calculateETHTransactionAmountAfterFee', () => {
     it('should return lower ETH amount when not enough balance left for fees and enough total balance', () => {
-      const balances = { [ETH]: { balance: '1', symbol: ETH } };
+      const balances = mockEthBalance('1');
       const ethTransactionAmount = new BigNumber(1);
       const totalFeeInEth = new BigNumber(0.01);
       const calculatedEthTransactionAmountAfterFees = calculateETHTransactionAmountAfterFee(
@@ -41,7 +50,7 @@ describe('transactions utils', () => {
       expect(calculatedEthTransactionAmountAfterFees.isPositive()).toBeTruthy();
     });
     it('should return zero ETH amount when total balance is equal to fees', () => {
-      const balances = { [ETH]: { balance: '0.01', symbol: ETH } };
+      const balances = mockEthBalance('0.01');
       const ethTransactionAmount = new BigNumber(1);
       const totalFeeInEth = new BigNumber(0.01);
       const calculatedEthTransactionAmountAfterFees = calculateETHTransactionAmountAfterFee(
@@ -54,7 +63,7 @@ describe('transactions utils', () => {
       expect(calculatedEthTransactionAmountAfterFees.isPositive()).toBeTruthy();
     });
     it('should return negative ETH amount when not enough balance left for fees and not enough total balance', () => {
-      const balances = { [ETH]: { balance: '0.01', symbol: ETH } };
+      const balances = mockEthBalance('0.01');
       const ethTransactionAmount = new BigNumber(1);
       const totalFeeInEth = new BigNumber(0.02);
       const calculatedEthTransactionAmountAfterFees = calculateETHTransactionAmountAfterFee(
@@ -66,7 +75,7 @@ describe('transactions utils', () => {
       expect(calculatedEthTransactionAmountAfterFees.isNegative()).toBeTruthy();
     });
     it('should return same ETH amount when enough balance left for fees', () => {
-      const balances = { [ETH]: { balance: '1', symbol: ETH } };
+      const balances = mockEthBalance('1');
       const ethTransactionAmount = new BigNumber(0.97);
       const totalFeeInEth = new BigNumber(0.02);
       const calculatedEthTransactionAmountAfterFees = calculateETHTransactionAmountAfterFee(

@@ -19,8 +19,12 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+import { withTheme } from 'styled-components/native';
+
+// components
 import { ActivityFeedItem as ActivityFeedItemNoTheme } from 'components/ActivityFeed/ActivityFeedItem';
 
+// constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
@@ -51,11 +55,17 @@ import {
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
 } from 'constants/liquidityPoolsConstants';
-import { withTheme } from 'styled-components/native';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
+
+// local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 
 const placeholderImage = 'https://picsum.photos/200';
+
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
 
 const reduxData = {
   assetDecimals: 18,
@@ -128,7 +138,7 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0x123456',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         assetData: { image: placeholderImage },
       }}
     />
@@ -141,7 +151,7 @@ storiesOf('ActivityFeedItem', module)
         from: '0x000000',
         to: '0x123465',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         assetData: { image: placeholderImage },
       }}
     />
@@ -154,7 +164,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x222222',
         to: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -167,7 +178,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x222222',
         to: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
       }}
@@ -181,7 +193,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0x222222',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -194,7 +207,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0x222222',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
       }}
@@ -208,7 +222,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x111111',
         to: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -221,7 +236,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x111111',
         from: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -234,7 +250,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x000000',
         to: '0x222222',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -247,7 +264,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x000000',
         to: '0x222222',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
       }}
@@ -261,7 +279,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0x222222',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -274,7 +293,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0x222222',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
       }}
@@ -288,7 +308,8 @@ storiesOf('ActivityFeedItem', module)
         from: '0x111111',
         to: '0x000000',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -301,7 +322,8 @@ storiesOf('ActivityFeedItem', module)
         to: '0x111111',
         from: '0x000000',
         accountType: ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
       }}
     />
@@ -313,7 +335,8 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x111111',
         from: '0x000000',
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
         isPPNTransaction: true,
       }}
@@ -326,7 +349,8 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x111111',
         from: '0x000000',
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
         isPPNTransaction: true,
         status: TX_FAILED_STATUS,
@@ -340,7 +364,8 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x111111',
         to: '0x000000',
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
         isPPNTransaction: true,
       }}
@@ -370,7 +395,8 @@ storiesOf('ActivityFeedItem', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_ACCOUNT_TOPUP,
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
       }}
     />
@@ -381,7 +407,8 @@ storiesOf('ActivityFeedItem', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
       }}
     />
@@ -401,7 +428,8 @@ storiesOf('ActivityFeedItem', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
-        asset: 'ETH',
+        assetSymbol: 'ETH',
+        assetAddress: mockEthAddress,
         value: '1000000000000000000',
         from: '0x000000',
       }}
@@ -425,7 +453,7 @@ storiesOf('ActivityFeedItem', module)
         from: '0xKeyWallet',
         to: '0xSmartWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         assetData: { image: placeholderImage },
       }}
     />
@@ -440,7 +468,7 @@ storiesOf('ActivityFeedItem', module)
         from: '0xKeyWallet',
         to: '0xSmartWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         isReceived: true,
         assetData: { image: placeholderImage },
       }}
@@ -462,7 +490,7 @@ storiesOf('ActivityFeedItem', module)
         from: '0x000000',
         to: '0xKeyWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         username: 'Key wallet',
         assetData: { image: placeholderImage },
       }}
@@ -484,7 +512,7 @@ storiesOf('ActivityFeedItem', module)
         to: '0x000000',
         from: '0xKeyWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         username: 'Key wallet',
         assetData: { image: placeholderImage },
       }}
@@ -507,7 +535,7 @@ storiesOf('ActivityFeedItem', module)
         to: '0xSmartWallet',
         from: '0xKeyWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         username: 'Smart Wallet',
         assetData: { image: placeholderImage },
       }}
@@ -530,7 +558,7 @@ storiesOf('ActivityFeedItem', module)
         from: '0xSmartWallet',
         to: '0xKeyWallet',
         icon: placeholderImage,
-        asset: 'CryptoKitty',
+        assetSymbol: 'CryptoKitty',
         username: 'Smart Wallet',
         assetData: { image: placeholderImage },
       }}

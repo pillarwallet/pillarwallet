@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import t from 'translations/translate';
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // components
 import Toast from 'components/Toast';
@@ -32,12 +33,11 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 
 // selectors
 import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -46,6 +46,7 @@ import {
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { PLR } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -140,15 +141,11 @@ export const estimateTransactionsAction = (
 
     const useGasToken = useGasTokenSelector(getState());
 
-    const accountAssets = accountAssetsPerChainSelector(getState());
-    const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
-
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-    const gasToken = useGasToken
-      ? getAssetData(chainAccountAssetsList, chainSupportedAssets, preferredGasTokenSelector(getState()))
-      : null;
+    const gasTokenAddress = preferredGasTokenSelector(getState()) === PLR ? getPlrAddressForChain(chain) : null;
+    const gasToken = useGasToken && gasTokenAddress ? findAssetByAddress(chainSupportedAssets, gasTokenAddress) : null;
 
     let errorMessage;
     let estimated;

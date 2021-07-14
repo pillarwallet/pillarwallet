@@ -55,13 +55,13 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { convertUSDToFiat } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // selectors
-import { useChainRates, useChainSupportedAssets } from 'selectors';
+import { useChainSupportedAssets, useUsdToFiatRate } from 'selectors';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -163,7 +163,7 @@ const LiquidityPoolDashboard = ({
   setShownStakingEnabledModal,
 }: Props) => {
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+  const usdToFiatRate = useUsdToFiatRate();
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
@@ -210,14 +210,10 @@ const LiquidityPoolDashboard = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(
-    convertUSDToFiat(balance * poolStats.currentPrice, ethereumRates, fiatCurrency),
+    usdToFiatRate * balance * poolStats.currentPrice,
     fiatCurrency,
   );
-  const stakedAmountInFiat = convertUSDToFiat(
-    poolStats.stakedAmount.toNumber() * poolStats.currentPrice,
-    ethereumRates,
-    fiatCurrency,
-  );
+  const stakedAmountInFiat = usdToFiatRate * poolStats.stakedAmount.toNumber() * poolStats.currentPrice;
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
   const hasStakedTokens = poolStats && poolStats?.stakedAmount.gt(0);
@@ -239,28 +235,28 @@ const LiquidityPoolDashboard = ({
     {
       title: t('liquidityPoolsContent.label.24hFees'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.dailyFees, ethereumRates, fiatCurrency),
+        usdToFiatRate * poolStats.dailyFees,
         fiatCurrency,
       ),
     },
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.totalLiquidity, ethereumRates, fiatCurrency),
+        usdToFiatRate * poolStats.totalLiquidity,
         fiatCurrency,
       ),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.dailyVolume, ethereumRates, fiatCurrency),
+        usdToFiatRate * poolStats.dailyVolume,
         fiatCurrency,
       ),
     },
   ];
 
-  pool.tokensProportions.forEach(({ symbol: tokenSymbol }) => {
-    const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+  pool.tokensProportions.forEach(({ symbol: tokenSymbol, address }) => {
+    const tokenData = findAssetByAddress(ethereumSupportedAssets, address);
     if (!tokenData) return;
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
@@ -434,11 +430,7 @@ const LiquidityPoolDashboard = ({
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
               const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
-              const tokenPriceInFiat = convertUSDToFiat(
-                poolStats.tokensPricesUSD[tokenSymbol],
-                ethereumRates,
-                fiatCurrency,
-              );
+              const tokenPriceInFiat = usdToFiatRate * poolStats.tokensPricesUSD[tokenSymbol];
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance

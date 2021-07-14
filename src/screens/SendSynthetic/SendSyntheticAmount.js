@@ -36,7 +36,7 @@ import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // utils, services
-import { parseNumber } from 'utils/common';
+import { parseNumber, addressAsKey } from 'utils/common';
 import { getReceiverWithEnsName } from 'utils/contacts';
 
 // constants
@@ -254,9 +254,9 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
 
     const customBalances = syntheticAssets
-      .map(asset => ({ symbol: asset.symbol || '', balance: asset.balance?.syntheticBalance || '0' }))
+      .map(asset => ({ address: asset.address, balance: asset.balance?.syntheticBalance || '0' }))
       .reduce((balances, assetBalance) => {
-        balances[assetBalance.symbol] = assetBalance;
+        balances[addressAsKey(assetBalance.address)] = assetBalance;
         return balances;
       }, {});
 

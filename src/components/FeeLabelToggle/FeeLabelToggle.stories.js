@@ -17,10 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react-native';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -28,16 +28,22 @@ import { CHAIN } from 'constants/chainConstants';
 // Test utils
 import { createTestStore, initialTestState } from 'testUtils/store';
 
+// Local
 import FeeLabelToggle from './FeeLabelToggle';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+
+
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
 
 const store = createTestStore({
   ...initialTestState,
   rates: {
     data: {
       ethereum: {
-        ETH: {
+        [mockEthAddress]: {
           ETH: 1,
           EUR: 2017.2,
           GBP: 1756.24,
@@ -56,7 +62,7 @@ storiesOf('FeeLabelToggle', module)
       <FeeLabelToggle
         txFeeInWei="10000000000000000000"
         gasToken={{
-          address: '0x0',
+          address: mockEthAddress,
           decimals: 18,
           symbol: 'ETH',
         }}
@@ -69,7 +75,7 @@ storiesOf('FeeLabelToggle', module)
       <FeeLabelToggle
         txFeeInWei="10000000000000000000"
         gasToken={{
-          address: '0x0',
+          address: mockEthAddress,
           decimals: 18,
           symbol: 'ETH',
         }}

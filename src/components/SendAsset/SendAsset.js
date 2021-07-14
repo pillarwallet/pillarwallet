@@ -104,11 +104,10 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  // $FlowFixMe: Collectible does not contain token, requires more changes to fix, TOOD: fix this later
-  const token = assetData?.token ?? '';
+  const assetAddress = assetData.contractAddress;
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
-  const balance = getBalanceBN(balances, token);
+  const balance = getBalanceBN(balances, assetAddress);
   const currentValue = wrapBigNumber(amount || 0);
 
   const isCollectible = assetData?.tokenType === COLLECTIBLES;
@@ -239,7 +238,8 @@ const SendAsset = ({
       // $FlowFixMe: collectible does not have `decimals`
       decimals: assetData.decimals,
       amount,
-      symbol: token,
+      // $FlowFixMe: collectible does not have `token`
+      symbol: assetData.token,
     };
     enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(
       balances,

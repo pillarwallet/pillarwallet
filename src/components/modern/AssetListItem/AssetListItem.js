@@ -32,6 +32,7 @@ type Props = {|
   chain: Chain,
   name: ?string,
   iconUrl: ?string,
+  address?: string,
   symbol?: string,
   balance?: ?Value,
   onPress?: () => mixed,
@@ -50,6 +51,7 @@ function AssetListItem({
   chain,
   name,
   symbol,
+  address,
   iconUrl,
   balance,
   onPress,
@@ -64,10 +66,11 @@ function AssetListItem({
       <Icon url={iconUrl} />
       <Name>{name}</Name>
 
-      {!!symbol && balance != null && (
+      {!!symbol && !!address && balance != null && (
         <Balance
           chain={chain}
-          symbol={symbol}
+          assetSymbol={symbol}
+          assetAddress={address}
           balance={balance}
           onPress={onPressBalance}
         />

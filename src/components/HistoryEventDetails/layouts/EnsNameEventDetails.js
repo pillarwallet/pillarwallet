@@ -65,7 +65,15 @@ function EnsNameEventDetails({ event, chain }: Props) {
       <Text variant="large">{t('label.registered')}</Text>
       <Spacing h={spacing.extraLarge} />
 
-      {!!event?.fee && <FeeLabel value={event.fee.value} symbol={event.fee.symbol} mode="actual" chain={chain} />}
+      {!!event?.fee && (
+        <FeeLabel
+          value={event.fee.value}
+          assetSymbol={event.fee.symbol}
+          assetAddress={event.fee.address}
+          mode="actual"
+          chain={chain}
+        />
+      )}
       <Spacing h={spacing.mediumLarge} />
 
       <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />

@@ -55,7 +55,7 @@ import {
   mapAssetToAssetData,
   mapCollectibleToAssetData,
   getBalanceInFiat,
-  findFirstAssetBySymbol,
+  findAssetByAddress,
 } from 'utils/assets';
 import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -137,8 +137,8 @@ const KeyBasedAssetTransferChoose = ({
   const prepareSectionsData = () => {
     const assets = Object.keys(availableBalances)
       // filter out extremely low balances that are shown as 0 in app anyway
-      .filter((symbol) => !!getBalance(availableBalances, symbol))
-      .map((symbol) => findFirstAssetBySymbol(ethereumSupportedAssets, symbol))
+      .filter((assetAddress) => !!getBalance(availableBalances, assetAddress))
+      .map((assetAddress) => findAssetByAddress(ethereumSupportedAssets, assetAddress))
       .filter(Boolean)
       .map(mapAssetToAssetData);
 
@@ -178,13 +178,14 @@ const KeyBasedAssetTransferChoose = ({
       isMatchingAssetToTransfer(assetToTransfer, item),
     );
 
-    const assetAmountBN = checkedAsset?.draftAmount || getBalanceBN(availableBalances, item.token);
+    const assetAmountBN = checkedAsset?.draftAmount || getBalanceBN(availableBalances, item.contractAddress);
     const onCheck = () => onAssetSelect(item, assetAmountBN);
 
     return (
       <AssetListItem
         name={item.name}
         symbol={item.token}
+        address={item.contractAddress}
         iconUrl={item.icon}
         balance={assetAmountBN}
         onPress={onCheck}
@@ -206,7 +207,7 @@ const KeyBasedAssetTransferChoose = ({
       baseFiatCurrency,
       asset.draftAmount,
       ethereumRates,
-      asset.assetData.token,
+      asset.assetData.contractAddress,
     );
   });
 

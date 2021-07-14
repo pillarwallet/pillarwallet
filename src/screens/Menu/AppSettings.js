@@ -59,7 +59,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Account } from 'models/Account';
@@ -77,7 +77,7 @@ type Props = {
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
-  accountAssets: AssetsBySymbol,
+  accountAssets: AssetByAddress,
   accountHistory: ChainRecord<Transaction[]>,
   setPreferredGasToken: (token: string) => void,
   localisation: ?LocalisationOptions,

@@ -27,7 +27,7 @@ import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { findFirstAssetBySymbol } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { getChainWalletAssetsBalances } from 'utils/balances';
 import { mapChainRecordValues } from 'utils/chains';
 import { sumRecord } from 'utils/bigNumber';
@@ -48,12 +48,17 @@ export function useWalletBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountWalletBalancePerChainSelector);
 }
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 export type WalletItem = {|
   key: string,
   title: string,
   iconUrl: ?string,
   value: BigNumber,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   change?: BigNumber,
   chain: Chain,
 |};
@@ -69,15 +74,22 @@ export const useWalletAssetsPerChain = (): ChainRecord<WalletItem[]> => {
   });
 };
 
-const buildWalletItem = ({ symbol, balance }: WalletAssetBalance, chain: Chain, supportedAssets: Asset[]) => {
-  const asset = findFirstAssetBySymbol(supportedAssets, symbol);
+const buildWalletItem = (
+  { address: assetAddress, balance }: WalletAssetBalance,
+  chain: Chain,
+  supportedAssets: Asset[],
+) => {
+  const asset = findAssetByAddress(supportedAssets, assetAddress);
   if (!asset) return null;
 
+  const { name: title, iconUrl, symbol: assetSymbol } = asset;
+
   return {
-    key: `${chain}-${symbol}`,
-    title: asset.name,
-    iconUrl: asset.iconUrl,
-    symbol: asset.symbol,
+    key: `${chain}-${assetAddress}`,
+    title,
+    iconUrl,
+    assetSymbol,
+    assetAddress,
     value: BigNumber(balance || 0),
     chain,
   };

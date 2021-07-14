@@ -42,11 +42,18 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
-import { findAssetByAddress, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import {
+  findAssetByAddress,
+  getAssetOption,
+  isEnoughBalanceForTransactionFee,
+  mapAssetToAssetData,
+} from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetValues, getShareOfPool } from 'utils/liquidityPools';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
+import { useChainRates, useFiatCurrency } from 'selectors';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -59,7 +66,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
-import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
@@ -131,10 +137,13 @@ const AddLiquidityScreen = ({
   const [fieldsValid, setFieldsValid] = useState([true, true]);
   const [poolTokenAmount, setPoolTokenAmount] = useState('0');
 
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const fiatCurrency = useFiatCurrency();
+
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const tokensData = pool.tokensProportions.map(({ symbol }) => supportedAssets.find(asset => asset.symbol === symbol));
+  const tokensData = pool.tokensProportions.map(({ address }) => findAssetByAddress(supportedAssets, address));
   const poolTokenData = findAssetByAddress(supportedAssets, pool.uniswapPairAddress);
 
   const [debouncedAssetsValues] = useDebounce(assetsValues, 500);
@@ -159,8 +168,8 @@ const AddLiquidityScreen = ({
   const renderTokenInput = (tokenIndex: number) => {
     return (
       <ValueInput
-        assetData={tokensData[tokenIndex]}
-        customAssets={[tokensData[tokenIndex]]}
+        assetData={mapAssetToAssetData(tokensData[tokenIndex])}
+        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency)]}
         value={assetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {

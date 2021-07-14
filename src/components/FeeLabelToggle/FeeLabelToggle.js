@@ -35,9 +35,9 @@ import Modal from 'components/Modal';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { getRate } from 'utils/assets';
 import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
-import { getGasSymbol } from 'utils/transactions';
+import { getAssetRateInFiat } from 'utils/rates';
+import { getGasAddress } from 'utils/transactions';
 
 // selectors
 import {
@@ -94,8 +94,8 @@ const FeeLabelToggle = ({
   const feeValue = getFormattedTransactionFeeValue(chain, txFeeInWei, gasToken);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
-  const gasSymbol = getGasSymbol(chain, gasToken);
-  const feeInFiat = parseFloat(feeValue) * getRate(chainRates, gasSymbol, fiatCurrency);
+  const gasAddress = getGasAddress(chain, gasToken);
+  const feeInFiat = parseFloat(feeValue) * getAssetRateInFiat(chainRates, gasAddress, fiatCurrency);
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
