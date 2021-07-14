@@ -1,6 +1,6 @@
 {
-  "name": "WalletMigrationBanner",
+  "name": "WalletMigrationArchanovaBanner",
   "version": "0.0.0",
   "private": true,
-  "main": "WalletMigrationBanner.js"
+  "main": "WalletMigrationArchanovaBanner.js"
 }

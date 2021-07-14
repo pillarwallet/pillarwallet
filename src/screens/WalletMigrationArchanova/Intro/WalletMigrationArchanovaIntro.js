@@ -43,7 +43,7 @@ import { getThemeByType } from 'utils/themes';
 
 const smartWalletImage = require('assets/images/smart-wallet-migration.png');
 
-function WalletMigrationIntro() {
+function WalletMigrationArchanovaIntro() {
   const navigation = useNavigation();
   const darkTheme = getThemeByType(DARK_THEME);
 
@@ -93,7 +93,7 @@ function WalletMigrationIntro() {
   );
 }
 
-export default WalletMigrationIntro;
+export default WalletMigrationArchanovaIntro;
 
 const Title = styled(Text)`
   font-family: '${appFont.medium}';

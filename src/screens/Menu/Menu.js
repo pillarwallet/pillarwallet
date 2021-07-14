@@ -45,7 +45,7 @@ import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
-import WalletMigrationBanner from 'screens/WalletMigrationArchanova/Banner';
+import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // constants
 import {
@@ -258,7 +258,7 @@ const Menu = ({
             <BannersWrapper>
               <MigrateEnsBanner style={styles.footerBanner} />
 
-              <WalletMigrationBanner style={styles.footerBanner} />
+              <WalletMigrationArchanovaBanner style={styles.footerBanner} />
 
               {showKeyBasedWalletMigration && (
                 <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} style={styles.footerBanner} />

@@ -47,7 +47,7 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
-function WalletMigrationBanner({ style }: Props) {
+function WalletMigrationArchanovaBanner({ style }: Props) {
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.banner');
   const navigation = useNavigation();
 
@@ -73,7 +73,7 @@ function WalletMigrationBanner({ style }: Props) {
   );
 }
 
-export default WalletMigrationBanner;
+export default WalletMigrationArchanovaBanner;
 
 const GRADIENT_COLORS = ['#008606', '#000100'];
 

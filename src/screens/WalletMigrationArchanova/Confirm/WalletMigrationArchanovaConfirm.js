@@ -27,7 +27,7 @@ import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
-function WalletMigrationConfirm() {
+function WalletMigrationArchanovaConfirm() {
   const navigation = useNavigation();
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.confirm');
 
@@ -42,4 +42,4 @@ function WalletMigrationConfirm() {
   );
 }
 
-export default WalletMigrationConfirm;
+export default WalletMigrationArchanovaConfirm;

@@ -44,7 +44,7 @@ import type { AssetBalanceRecord } from 'models/WalletMigrationArchanova';
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
 
-const WalletMigrationSelectAssets = () => {
+const WalletMigrationArchanovaSelectAssets = () => {
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const navigation = useNavigation();
 
@@ -89,4 +89,4 @@ const WalletMigrationSelectAssets = () => {
   );
 };
 
-export default WalletMigrationSelectAssets;
+export default WalletMigrationArchanovaSelectAssets;
