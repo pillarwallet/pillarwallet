@@ -43,7 +43,7 @@ import { CHAIN } from 'constants/chainConstants';
 // utils
 import { spacing } from 'utils/variables';
 import { getCrossChainAccountHistory } from 'utils/history';
-import { findAsset, getAssetsAsList } from 'utils/assets';
+import { findAssetByAddress, getAssetsAsList } from 'utils/assets';
 
 // types
 import type { AssetByAddress } from 'models/Asset';
@@ -97,7 +97,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     } = this.props;
     const { switchPressed } = this.state;
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-    const { iconUrl } = findAsset(getAssetsAsList(accountAssets), [], plrAddress) ?? {};
+    const { iconUrl } = findAssetByAddress(getAssetsAsList(accountAssets), plrAddress) ?? {};
     const isSwitchPending = getCrossChainAccountHistory(accountHistory).some(({ tag, status }) => {
       return tag === ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });

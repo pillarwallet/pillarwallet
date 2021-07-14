@@ -30,12 +30,12 @@ import {
 } from 'constants/paymentNetworkConstants';
 
 // utils
-import { addressesEqual, findAsset, getAssetsAsList } from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { isHiddenUnsettledTransaction } from 'utils/archanova';
 import { formatUnits, addressAsKey, valueForAddress } from 'utils/common';
 
 // models, types
-import type { Asset, AssetByAddress } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { PaymentNetworkReducerState } from 'reducers/paymentNetworkReducer';
@@ -49,7 +49,6 @@ import {
   supportedAssetsPerChainSelector,
 } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
-import { accountEthereumAssetsSelector } from './assets';
 
 const ppnTrxTags = [
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -99,12 +98,10 @@ export const paymentNetworkNonZeroBalancesSelector: ((
   PPNIncomingTransactionsSelector,
   archanovaAccountEthereumHistorySelector,
   supportedAssetsPerChainSelector,
-  accountEthereumAssetsSelector,
   (
     PPNTransactions: Transaction[],
     history: Transaction[],
     supportedAssets: Asset[],
-    accountAssets: AssetByAddress,
   ) => {
     return PPNTransactions
       .filter(({
@@ -124,7 +121,7 @@ export const paymentNetworkNonZeroBalancesSelector: ((
 
         if (rawBalance.lte(0)) return nonZeroBalances;
 
-        const assetData = findAsset(getAssetsAsList(accountAssets), supportedAssets, assetAddress);
+        const assetData = findAssetByAddress(supportedAssets, assetAddress);
         if (!assetData) return nonZeroBalances;
 
         const balance = formatUnits(rawBalance.toString(), assetData.decimals);

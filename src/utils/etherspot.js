@@ -41,7 +41,7 @@ import { TRANSACTION_STATUS } from 'models/History';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
-import { findAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
@@ -73,7 +73,6 @@ export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
 
 export const parseEtherspotTransactions = (
   etherspotTransactions: EtherspotTransaction[],
-  accountAssets: Asset[],
   supportedAssets: Asset[],
 ): Transaction[] => etherspotTransactions
   .reduce((mappedHistoryTransactions, etherspotTransaction) => {
@@ -102,7 +101,7 @@ export const parseEtherspotTransactions = (
       value = assetValue;
 
       if (assetName !== ETH) {
-        const supportedAsset = findAsset(accountAssets, supportedAssets, contractAddress);
+        const supportedAsset = findAssetByAddress(supportedAssets, contractAddress);
 
         // asset not supported
         if (!supportedAsset) return mappedHistoryTransactions;

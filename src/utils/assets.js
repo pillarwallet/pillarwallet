@@ -194,12 +194,10 @@ export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
 
-export const findAsset = (
-  userAssets: Asset[],
-  supportedAssetsData: Asset[],
+export const findAssetByAddress = (
+  assets: Asset[],
   assetAddress: string,
-): ?Asset => userAssets.find(({ address }) => addressesEqual(address, assetAddress))
-  ?? supportedAssetsData.find(({ address }) => addressesEqual(address, assetAddress));
+): ?Asset => assets.find(({ address }) => addressesEqual(address, assetAddress));
 
 export const mapAssetToAssetData = ({
   symbol: token,
@@ -355,7 +353,7 @@ export const mapWalletAssetsBalancesIntoAssetsByAddress = (
   chainSupportedAssets: Asset[],
 ): AssetByAddress => mapValues(
   walletAssetsBalances,
-  ({ address }: WalletAssetBalance) => findAsset([], chainSupportedAssets, address),
+  ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
 );
 
 export const sortSupportedAssets = (

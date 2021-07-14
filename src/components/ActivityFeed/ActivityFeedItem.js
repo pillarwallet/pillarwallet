@@ -29,7 +29,7 @@ import { BigNumber as EthersBigNumber } from 'ethers';
 
 // utils
 import { getThemeColors } from 'utils/themes';
-import { addressesEqual, findAsset } from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import {
   isPendingTransaction,
@@ -576,7 +576,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         const { amount, contactAddress, assetAddress } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
 
-        const assetData = findAsset([], supportedAssets, assetAddress);
+        const assetData = findAssetByAddress(supportedAssets, assetAddress);
         if (!assetData) break;
 
         const { decimals, symbol } = assetData;

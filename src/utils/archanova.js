@@ -77,7 +77,7 @@ import {
   getActiveAccount,
   isArchanovaAccount,
 } from './accounts';
-import { addressesEqual, findAsset } from './assets';
+import { addressesEqual, findAssetByAddress } from './assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 import { nativeAssetPerChain } from './chains';
@@ -154,8 +154,8 @@ export const accountHasGasTokenSupport = (account: Object): boolean => {
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
-export const getGasTokenDetails = (assets: Asset[], supportedAssets: Asset[], gasTokenAddress: string): ?GasToken => {
-  const assetData = findAsset(assets, supportedAssets, gasTokenAddress);
+export const getGasTokenDetails = (supportedAssets: Asset[], gasTokenAddress: string): ?GasToken => {
+  const assetData = findAssetByAddress(supportedAssets, gasTokenAddress);
   if (!assetData) return null;
 
   const { decimals, symbol, address } = assetData;
@@ -178,7 +178,6 @@ export const parseArchanovaTransactionStatus = (sdkStatus: sdkConstants.AccountT
 export const parseArchanovaTransactions = (
   archanovaTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
-  assets: Asset[],
   relayerExtensionAddress: ?string,
 ): Transaction[] => archanovaTransactions
   .reduce((mapped, smartWalletTransaction) => {
@@ -244,7 +243,7 @@ export const parseArchanovaTransactions = (
     };
 
     if (tokenAddress) {
-      const asset = findAsset(assets, supportedAssets, tokenAddress);
+      const asset = findAssetByAddress(supportedAssets, tokenAddress);
       if (asset) {
         transaction = {
           ...transaction,
@@ -270,7 +269,7 @@ export const parseArchanovaTransactions = (
     if (transactionType === AccountTransactionTypes.Settlement) {
       // get and process all transactions with the same hash
       const extra = sameHashTransactions.map(tx => {
-        const txAsset = findAsset(assets, supportedAssets, tx.tokenAddress);
+        const txAsset = findAssetByAddress(supportedAssets, tx.tokenAddress);
         const txValue = tx.tokenValue.toString();
         return {
           symbol: txAsset ? txAsset.symbol : ETH, // Archanova supports ETH only
@@ -328,7 +327,7 @@ export const parseArchanovaTransactions = (
 
     if (!isEmpty(gasTokenAddress) && transactionFee) {
       // TODO: this should be returned from the backend
-      const gasToken = getGasTokenDetails(assets, supportedAssets, gasTokenAddress);
+      const gasToken = getGasTokenDetails(supportedAssets, gasTokenAddress);
       if (!isEmpty(gasToken)) {
         const feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         transaction = { ...transaction, feeWithGasToken };

@@ -31,7 +31,7 @@ import { getExchangeRates } from 'services/assets';
 
 // utils
 import {
-  findAsset,
+  findAssetByAddress,
   getAssetsAsList,
   mapWalletAssetsBalancesIntoAssetsByAddress,
 } from 'utils/assets';
@@ -39,7 +39,6 @@ import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { supportedAssetsPerChainSelector } from 'selectors';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
@@ -142,13 +141,10 @@ export const fetchSingleChainAssetRatesAction = (
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const accountAssetsPerChain = accountAssetsPerChainSelector(getState());
-    const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
-
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-    const asset = findAsset(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
+    const asset = findAssetByAddress(chainSupportedAssets, assetCode);
     if (!asset) {
       dispatch(setIsFetchingRatesAction(false));
       reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });

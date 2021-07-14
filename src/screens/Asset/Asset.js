@@ -46,7 +46,7 @@ import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkCons
 // Utils
 import { spacing, fontStyles } from 'utils/variables';
 import { formatFiat } from 'utils/common';
-import { getAssetsAsList, getBalance } from 'utils/assets';
+import { getBalance } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -69,10 +69,9 @@ import {
 } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // models, types
-import type { AssetByAddress, AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
+import type { AssetsPerChain, AssetDataNavigationParam } from 'models/Asset';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -84,7 +83,6 @@ import type { Currency } from 'models/Rates';
 
 type Props = {
   fetchAssetsBalances: () => void,
-  accountAssetsPerChain: ChainRecord<AssetByAddress>,
   accountAssetsBalances: AccountAssetBalances,
   baseFiatCurrency: ?Currency,
   smartWalletState: Object,
@@ -104,7 +102,6 @@ const AssetScreen = ({
   accountHistory,
   accountAssetsBalances,
   activeAccount,
-  accountAssetsPerChain,
   supportedAssetsPerChain,
 }: Props) => {
   const navigation = useNavigation();
@@ -122,7 +119,6 @@ const AssetScreen = ({
   const transactions = useMemo(
     () => {
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-      const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
 
       if (isArchanovaAccount(activeAccount)) {
         return tokenTransactions.filter(({
@@ -145,7 +141,6 @@ const AssetScreen = ({
           tokenTransactions,
           chain,
           activeAccountAddress,
-          getAssetsAsList(chainAccountAssets),
           chainSupportedAssets,
         );
       }
@@ -157,7 +152,6 @@ const AssetScreen = ({
       chain,
       accounts,
       activeAccount,
-      accountAssetsPerChain,
       activeAccountAddress,
       supportedAssetsPerChain,
     ],
@@ -255,7 +249,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssetsBalances: accountAssetsBalancesSelector,
   accountHistory: accountHistorySelector,
-  accountAssetsPerChain: accountAssetsPerChainSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
   supportedAssetsPerChain: supportedAssetsPerChainSelector,

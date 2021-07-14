@@ -55,7 +55,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { findAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
@@ -261,7 +261,7 @@ const LiquidityPoolDashboard = ({
   ];
 
   pool.tokensProportions.forEach(({ symbol: tokenSymbol, address }) => {
-    const tokenData = findAsset([], ethereumSupportedAssets, address);
+    const tokenData = findAssetByAddress(ethereumSupportedAssets, address);
     if (!tokenData) return;
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),

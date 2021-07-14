@@ -33,13 +33,12 @@ import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
-import { findAsset, getAssetsAsList } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
 import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/archanova';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -143,9 +142,6 @@ export const estimateTransactionsAction = (
 
     const useGasToken = useGasTokenSelector(getState());
 
-    const accountAssets = accountAssetsPerChainSelector(getState());
-    const chainAccountAssetsList = getAssetsAsList(accountAssets[chain] ?? {});
-
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
@@ -154,7 +150,7 @@ export const estimateTransactionsAction = (
       : nativeAssetPerChain[chain].address;
 
     const gasToken = useGasToken
-      ? findAsset(chainAccountAssetsList, chainSupportedAssets, gasTokenAddress)
+      ? findAssetByAddress(chainSupportedAssets, gasTokenAddress)
       : null;
 
     let errorMessage;

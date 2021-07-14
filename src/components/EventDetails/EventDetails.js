@@ -46,7 +46,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { findAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -919,7 +919,7 @@ export class EventDetail extends React.Component<Props> {
           amount, pool, tokenAmounts,
         } = event.extra;
         const tokensData = pool.tokensProportions.map(
-          ({ address: tokenAddress }) => findAsset([], supportedAssets, tokenAddress),
+          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),
@@ -935,7 +935,7 @@ export class EventDetail extends React.Component<Props> {
       case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
         const { amount, pool, tokenAmounts } = event.extra;
         const tokensData = pool.tokensProportions.map(
-          ({ address: tokenAddress }) => findAsset([], supportedAssets, tokenAddress),
+          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),

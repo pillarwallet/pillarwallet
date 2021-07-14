@@ -31,7 +31,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Button from 'components/Button';
 
 // utils
-import { findAsset, getAssetsAsList } from 'utils/assets';
+import { findAssetByAddress, getAssetsAsList } from 'utils/assets';
 import { formatTokenAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getAssetRateInFiat } from 'utils/rates';
@@ -42,16 +42,12 @@ import { SETTLE_BALANCE } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // selectors
-import {
-  paymentNetworkAccountBalancesSelector,
-  paymentNetworkNonZeroBalancesSelector,
-} from 'selectors/paymentNetwork';
+import { paymentNetworkNonZeroBalancesSelector } from 'selectors/paymentNetwork';
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
 import type { AssetByAddress } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
 
 
@@ -59,7 +55,6 @@ type Props = {
   baseFiatCurrency: Currency,
   assets: AssetByAddress,
   ratesPerChain: RatesPerChain,
-  paymentNetworkBalances: WalletAssetsBalances,
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object,
 };
@@ -81,7 +76,7 @@ class UnsettledAssets extends React.Component<Props> {
     } = this.props;
 
     const { address, balance = 0 } = item;
-    const { name, symbol } = findAsset(getAssetsAsList(assets), [], address) ?? {};
+    const { name, symbol } = findAssetByAddress(getAssetsAsList(assets), address) ?? {};
 
     const paymentNetworkBalanceFormatted = formatTokenAmount(balance, symbol);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -142,7 +137,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   assets: accountEthereumAssetsSelector,
 });

@@ -40,7 +40,7 @@ import { LIQUIDITY_POOLS_UNSTAKE_REVIEW } from 'constants/navigationConstants';
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
 // utils
-import { findAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { addressAsKey } from 'utils/common';
 
@@ -112,7 +112,7 @@ const UnstakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = findAsset([], ethereumSupportedAssets, pool.uniswapPairAddress);
+  const assetData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 

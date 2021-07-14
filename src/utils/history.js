@@ -50,7 +50,7 @@ import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Co
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
-import { addressesEqual, findAsset } from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // services
@@ -256,7 +256,6 @@ export const getHistoryEventsFromTransactions = (
   transactions: Transaction[],
   chain: Chain,
   activeAccountAddress: string,
-  accountAssets: Asset[],
   supportedAssets: Asset[],
 ): Event[] => transactions.map(({
   _id,
@@ -274,7 +273,7 @@ export const getHistoryEventsFromTransactions = (
   status,
 }) => {
   const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
-  const asset = findAsset(accountAssets, supportedAssets, assetAddress);
+  const asset = findAssetByAddress(supportedAssets, assetAddress);
 
   const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
   const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};

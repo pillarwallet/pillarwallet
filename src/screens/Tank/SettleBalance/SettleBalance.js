@@ -49,7 +49,6 @@ import type { AssetByAddress } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
 
 // utils
@@ -67,7 +66,6 @@ import { accountEthereumAssetsSelector } from 'selectors/assets';
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
-  paymentNetworkBalances: WalletAssetsBalances,
   baseFiatCurrency: ?Currency,
   ratesPerChain: RatesPerChain,
   assets: AssetByAddress,

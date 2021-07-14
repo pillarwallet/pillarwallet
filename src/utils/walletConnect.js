@@ -33,11 +33,7 @@ import {
 } from 'constants/walletConnectConstants';
 
 // utils
-import {
-  addressesEqual,
-  findAsset,
-  getAssetsAsList,
-} from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
@@ -126,11 +122,10 @@ export const mapCallRequestToTransactionPayload = (
   const chain = chainFromChainId[chainId];
 
   const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-  const chainAccountAssets = getAssetsAsList(accountAssetsPerChain[chain] ?? {});
 
   // to address can be either token contract (transfer data) or other kind of contract
   const assetData = isTokenTransfer(data) && to
-    ? findAsset(chainAccountAssets, chainSupportedAssets, to)
+    ? findAssetByAddress(chainSupportedAssets, to)
     : null;
 
   let amount;

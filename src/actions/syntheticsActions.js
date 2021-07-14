@@ -27,14 +27,11 @@ import {
 import { CHAIN } from 'constants/chainConstants';
 
 // utils, services
-import { findAsset, getAssetsAsList } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { parseNumber } from 'utils/common';
 
 // selectors
-import {
-  archanovaAccountEthereumAssetsSelector,
-  ethereumSupportedAssetsSelector,
-} from 'selectors/assets';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -44,14 +41,12 @@ export const fetchAvailableSyntheticAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_SYNTHETIC_ASSETS_FETCHING, payload: true });
 
-    const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
     const supportedAssets = ethereumSupportedAssetsSelector(getState());
-    const assetsData = getAssetsAsList(accountAssets);
 
     let defaultAvailableSyntheticAssets = [];
 
     // PLR is default available, synthetic assets are Ethereum mainnet only
-    const plrAsset = findAsset(assetsData, supportedAssets, getPlrAddressForChain(CHAIN.ETHEREUM));
+    const plrAsset = findAssetByAddress(supportedAssets, getPlrAddressForChain(CHAIN.ETHEREUM));
     if (plrAsset) {
       const stakedPLR = parseNumber(getState().paymentNetwork?.availableStake ?? 0);
 

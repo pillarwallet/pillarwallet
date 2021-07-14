@@ -44,7 +44,7 @@ import {
   getBalance,
   calculateMaxAmount,
   isEnoughBalanceForTransactionFee,
-  findAsset,
+  findAssetByAddress,
   getAssetsAsList,
 } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -168,7 +168,7 @@ class FundTank extends React.Component<Props, State> {
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-    const { address } = findAsset(getAssetsAsList(assets), [], plrAddress) ?? {};
+    const { address } = findAssetByAddress(getAssetsAsList(assets), plrAddress) ?? {};
     const token = PPN_TOKEN;
 
     const balance = getBalance(balances, address);
@@ -205,7 +205,7 @@ class FundTank extends React.Component<Props, State> {
     } = this.props;
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-    const { symbol: token, iconUrl, decimals, address } = findAsset(getAssetsAsList(assets), [], plrAddress) ?? {};
+    const { symbol: token, iconUrl, decimals, address } = findAssetByAddress(getAssetsAsList(assets), plrAddress) ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};

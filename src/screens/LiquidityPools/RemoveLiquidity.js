@@ -42,7 +42,7 @@ import { CHAIN } from 'constants/chainConstants';
 // utils
 import { formatAmount, addressAsKey } from 'utils/common';
 import {
-  findAsset,
+  findAssetByAddress,
   getAssetOption,
   isEnoughBalanceForTransactionFee,
   mapAssetToAssetData,
@@ -132,9 +132,9 @@ const RemoveLiquidityScreen = ({
   const poolStats = getPoolStats(pool, liquidityPoolsState);
 
   const tokensData = pool.tokensProportions
-    .map(({ address: assetAddress }) => findAsset([], ethereumSupportedAssets, assetAddress));
+    .map(({ address: assetAddress }) => findAssetByAddress(ethereumSupportedAssets, assetAddress));
 
-  const poolTokenData = findAsset([], ethereumSupportedAssets, pool.uniswapPairAddress);
+  const poolTokenData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (

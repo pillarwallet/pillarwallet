@@ -24,8 +24,7 @@ import { mapValues } from 'lodash';
 // Utils
 import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
 import {
-  findAsset,
-  getAssetsAsList,
+  findAssetByAddress,
   getBalanceBN,
   getBalanceInFiat,
   getFormattedBalanceInFiat,
@@ -141,15 +140,13 @@ export const etherspotAccountAssetsSelector: Selector<ChainRecord<AssetByAddress
  * @deprecated: used only on Archanova legacy screens
  */
 export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
-  accountEthereumAssetsSelector,
   ethereumSupportedAssetsSelector,
   assetSelector,
   (
-    assets: AssetByAddress,
     ethereumSupportedAssets: Asset[],
     assetAddress: string,
   ): number => {
-    const asset = findAsset(getAssetsAsList(assets), ethereumSupportedAssets, assetAddress);
+    const asset = findAssetByAddress(ethereumSupportedAssets, assetAddress);
     return asset?.decimals ?? 18;
   },
 );
@@ -179,7 +176,7 @@ export const accountAssetsWithBalanceSelector = createSelector(
         const chainSupportedAssets = supportedAssetsPerChain[chain];
         if (!chainSupportedAssets?.length) return;
 
-        const relatedAsset = findAsset([], chainSupportedAssets, assetAddress);
+        const relatedAsset = findAssetByAddress(chainSupportedAssets, assetAddress);
         if (!relatedAsset) {
           reportErrorLog(
             'accountAssetsWithBalanceSelector failed: no supported asset found for existing balance',

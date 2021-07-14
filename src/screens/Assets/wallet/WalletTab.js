@@ -50,7 +50,7 @@ import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { findAsset } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -91,7 +91,7 @@ function WalletTab() {
 
     const chainSupportedAssets = supportedAssets[chain] ?? [];
 
-    const asset = findAsset([], chainSupportedAssets, assetAddress);
+    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
     if (!asset) return;
 
     const assetData = buildAssetDataNavigationParam(asset, chain);

@@ -30,7 +30,6 @@ import {
   useRootSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // Constants
@@ -38,7 +37,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
-import { addressesEqual, getAssetsAsList } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
@@ -88,8 +87,6 @@ function ChainHistoryView({ chain }: { chain: Chain }) {
 function useHistoryEvents(chain: Chain): Event[] {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const accountHistory = useRootSelector(accountHistorySelector);
-  const accountAssets = useRootSelector(accountAssetsPerChainSelector);
-  const chainAccountAssets = getAssetsAsList(accountAssets[chain] ?? {});
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
   const chainSupportedAssets = supportedAssets[chain] ?? [];
   const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
@@ -135,7 +132,6 @@ function useHistoryEvents(chain: Chain): Event[] {
     transactionsHistory,
     chain,
     activeAccountAddress,
-    chainAccountAssets,
     chainSupportedAssets,
   );
 

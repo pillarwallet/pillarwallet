@@ -49,7 +49,6 @@ import {
   supportedAssetsPerChainSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -64,10 +63,7 @@ import {
   getAccountAddress,
   getAccountId,
 } from 'utils/accounts';
-import {
-  findAsset,
-  getAssetsAsList,
-} from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // types
@@ -322,17 +318,10 @@ const handleGatewayBatchUpdatedNotification = async (
     dispatch(updateBatchTransactionHashAction(chain, batchHash, transactionHash));
   }
 
-  const accountAssets = accountAssetsPerChainSelector(getState());
-  const chainAccountAssets = accountAssets[chain] ?? {};
-
   const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
   const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-  const assetData = findAsset(
-    getAssetsAsList(chainAccountAssets),
-    chainSupportedAssets,
-    existingTransaction.assetAddress,
-  );
+  const assetData = findAssetByAddress(chainSupportedAssets, existingTransaction.assetAddress);
 
   const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
 
