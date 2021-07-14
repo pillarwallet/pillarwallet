@@ -25,12 +25,13 @@ import t from 'translations/translate';
 // utils
 import {
   formatAmount,
+  formatFiat,
   hitSlop10,
   wrapBigNumber,
 } from 'utils/common';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
-import { getFormattedRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // components
 import Image from 'components/Image';
@@ -87,7 +88,8 @@ const TableAmount = ({
     );
   }
 
-  const fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), assetAddress ?? '', fiatCurrency);
+  const assetRate = getAssetRateInFiat(chainRates, assetAddress ?? '', fiatCurrency);
+  const fiatAmount = formatFiat(amountBN.times(assetRate).toNumber(), fiatCurrency);
   const formattedAmount = formatAmount(amount);
   const tooltipText = t('tokenValue', { value: formattedAmount, token: assetSymbol });
 

@@ -24,7 +24,7 @@ import { ADDRESS_ZERO, USD } from 'constants/assetsConstants';
 
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
-import { formatFiat, valueForAddress } from 'utils/common';
+import { valueForAddress } from 'utils/common';
 
 // Types
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
@@ -66,14 +66,3 @@ export const getAssetRateInFiat = (
   assetAddress: string,
   fiatCurrency: Currency,
 ): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
-
-export const getFormattedRate = (
-  rates: RatesByAssetAddress,
-  amount: number,
-  assetAddress: string,
-  fiatCurrency: Currency,
-): string => {
-  const amountInFiat = amount * getAssetRateInFiat(rates, assetAddress, fiatCurrency);
-
-  return formatFiat(amountInFiat, fiatCurrency);
-};

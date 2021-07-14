@@ -36,7 +36,7 @@ import Toast from 'components/Toast';
 // utils
 import { formatTokenAmount, formatFiat } from 'utils/common';
 import { getRemoveLiquidityTransactions } from 'utils/liquidityPools';
-import { getFormattedRate, getAssetRateInFiat } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -84,7 +84,8 @@ const RemoveLiquidityReviewScreen = ({
   }, 0);
 
   const tokensValuesInFiat = obtainedTokensData.map((token, i) => {
-    return getFormattedRate(ethereumRates, obtainedTokensValues[i], token.address, fiatCurrency);
+    const assetRate = getAssetRateInFiat(ethereumRates, token.address, fiatCurrency);
+    return formatFiat(obtainedTokensValues[i] * assetRate, fiatCurrency);
   });
 
   const onNextButtonPress = async () => {
