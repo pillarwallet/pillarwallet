@@ -28,12 +28,13 @@ import { ERROR_TYPE } from 'constants/transactionsConstants';
 // utils
 import {
   getEthereumProvider,
-  isCaseInsensitiveMatch,
   parseTokenBigNumberAmount,
   reportErrorLog,
   reportLog,
+  addressAsKey,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { addressesEqual } from 'utils/assets';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -49,8 +50,8 @@ import {
 } from 'services/coinGecko';
 
 // types
-import type { AssetByAddress } from 'models/Asset';
-import type { RatesBySymbol } from 'models/Rates';
+import type { Asset } from 'models/Asset';
+import type { RatesByAssetAddress } from 'models/Rates';
 
 
 type Address = string;
@@ -289,13 +290,6 @@ export async function transferETH(options: ETHTransferOptions) {
   return { signedHash, value };
 }
 
-// Fetch methods are temporary until the BCX API provided
-
-export function fetchETHBalance(walletAddress: Address): Promise<string> {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.getBalance(walletAddress).then(utils.formatEther);
-}
-
 export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);
@@ -303,48 +297,37 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
 
 export async function getExchangeRates(
   chain: string,
-  assets: AssetByAddress,
-): Promise<?RatesBySymbol> {
-  const assetSymbols = Object.keys(assets);
-
-  if (isEmpty(assetSymbols)) {
-    reportLog('getExchangeRates received empty assetSymbols array', { assetSymbols });
+  assets: Asset[],
+): Promise<?RatesByAssetAddress> {
+  if (isEmpty(assets)) {
+    reportLog('getExchangeRates received empty assets', { assets });
     return null;
   }
 
   // $FlowFixMe
   let rates = await getCoinGeckoTokenPrices(chain, assets);
 
-  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
+  const nativeAssetAddress = nativeAssetPerChain[chain].address;
+  const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
 
-  if (assetSymbols.includes(nativeAssetSymbol)) {
+  if (listHasNativeAsset) {
     const coinId = chainToCoinGeckoCoinId[chain];
     const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe
-      rates = { ...rates, [nativeAssetSymbol]: nativeAssetPrice };
+      rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
     }
   }
 
   if (!rates) {
-    reportErrorLog('getExchangeRates failed: no rates data', { rates, assetSymbols });
+    reportErrorLog('getExchangeRates failed: no rates data', { rates, assets });
     return null;
   }
 
-  /**
-   * sometimes symbols have different symbol case and mismatch
-   * between our back-end and rates service returned result
-   */
-  return Object.keys(rates).reduce((mappedData, returnedSymbol: string) => {
-    const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
-    if (walletSupportedSymbol && !mappedData[walletSupportedSymbol] && rates) {
-      mappedData = {
-        ...mappedData,
-        [walletSupportedSymbol]: rates[returnedSymbol],
-      };
-    }
-    return mappedData;
-  }, {});
+  return Object.keys(rates).reduce((mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
+    ...mappedData,
+    [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+  }), {});
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status

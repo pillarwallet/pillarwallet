@@ -55,10 +55,11 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { convertUSDToFiat, findAsset } from 'utils/assets';
+import { findAsset } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
+import { convertValueInUsdToFiat } from 'utils/rates';
 
 // selectors
 import { useChainRates, useChainSupportedAssets } from 'selectors';
@@ -210,10 +211,10 @@ const LiquidityPoolDashboard = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(
-    convertUSDToFiat(balance * poolStats.currentPrice, ethereumRates, fiatCurrency),
+    convertValueInUsdToFiat(balance * poolStats.currentPrice, ethereumRates, fiatCurrency),
     fiatCurrency,
   );
-  const stakedAmountInFiat = convertUSDToFiat(
+  const stakedAmountInFiat = convertValueInUsdToFiat(
     poolStats.stakedAmount.toNumber() * poolStats.currentPrice,
     ethereumRates,
     fiatCurrency,
@@ -239,21 +240,21 @@ const LiquidityPoolDashboard = ({
     {
       title: t('liquidityPoolsContent.label.24hFees'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.dailyFees, ethereumRates, fiatCurrency),
+        convertValueInUsdToFiat(poolStats.dailyFees, ethereumRates, fiatCurrency),
         fiatCurrency,
       ),
     },
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.totalLiquidity, ethereumRates, fiatCurrency),
+        convertValueInUsdToFiat(poolStats.totalLiquidity, ethereumRates, fiatCurrency),
         fiatCurrency,
       ),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
       value: formatBigFiatAmount(
-        convertUSDToFiat(poolStats.dailyVolume, ethereumRates, fiatCurrency),
+        convertValueInUsdToFiat(poolStats.dailyVolume, ethereumRates, fiatCurrency),
         fiatCurrency,
       ),
     },
@@ -434,7 +435,7 @@ const LiquidityPoolDashboard = ({
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
               const tokenData = ethereumSupportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
-              const tokenPriceInFiat = convertUSDToFiat(
+              const tokenPriceInFiat = convertValueInUsdToFiat(
                 poolStats.tokensPricesUSD[tokenSymbol],
                 ethereumRates,
                 fiatCurrency,

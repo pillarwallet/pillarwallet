@@ -123,7 +123,8 @@ function WalletTab() {
         iconUrl={item.iconUrl}
         value={item.value}
         change={item.change}
-        symbol={item.symbol}
+        assetSymbol={item.assetSymbol}
+        assetAddress={item.assetAddress}
         onPress={() => navigateToAssetDetails(item)}
         chain={item.chain}
       />

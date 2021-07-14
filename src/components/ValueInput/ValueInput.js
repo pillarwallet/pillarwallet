@@ -46,10 +46,12 @@ import {
   hasTooMuchDecimals,
   noop,
   formatFiat,
+  valueForAddress,
 } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { calculateMaxAmount, getFormattedBalanceInFiat, getRate, getBalanceInFiat } from 'utils/assets';
+import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -68,7 +70,7 @@ import type { Collectible } from 'models/Collectible';
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
-import type { Currency, RatesBySymbol } from 'models/Rates';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
 import type { ChainRecord } from 'models/Chain';
 
 // local
@@ -94,7 +96,7 @@ export type ExternalProps = {|
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
   disableAssetChange?: boolean,
-  customRates?: RatesBySymbol,
+  customRates?: RatesByAssetAddress,
 |};
 
 type InnerProps = {|
@@ -167,7 +169,7 @@ const ValueInputComponent = ({
   const assetSymbol = assetData?.symbol || '';
   const chain = assetData?.chain || CHAIN.ETHEREUM;
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
-  const assetBalance = (customBalances || walletBalances)?.[assetAddress]?.balance || '0';
+  const assetBalance = valueForAddress(customBalances ?? walletBalances, assetAddress)?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const collectibles = collectiblesPerChain[chain] ?? [];
@@ -181,14 +183,14 @@ const ValueInputComponent = ({
     fiatCurrency,
     balanceAvailable,
     ratesWithCustomRates,
-    assetSymbol,
+    assetAddress,
   );
-  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetAddress);
   const leftPositionValue = formattedValueInFiat === '' ? formatFiat('0', fiatCurrency) : formattedValueInFiat;
 
   React.useEffect(() => {
     if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
-      const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+      const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetAddress);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -207,7 +209,7 @@ const ValueInputComponent = ({
     const newValue = formatAmount(maxValueNetFee.multipliedBy(calculateBalanceSendPercent).dividedBy(100));
     onValueChange(newValue);
 
-    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
+    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetAddress);
     setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
 
     setCalculateBalanceSendPercent(null);
@@ -220,7 +222,7 @@ const ValueInputComponent = ({
     if (displayFiatAmount) {
       if (hasTooMuchDecimals(newValue, 2)) return;
 
-      const tokenValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      const tokenValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetAddress);
       const truncatedTokenValue = formatAmount(tokenValue, assetData.decimals);
       onValueChange(truncatedTokenValue);
       setValueInFiat(newValue);
@@ -228,7 +230,7 @@ const ValueInputComponent = ({
       if (hasTooMuchDecimals(newValue, assetData.decimals)) return;
 
       onValueChange(newValue);
-      const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetAddress);
       setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
     }
   };
@@ -252,7 +254,7 @@ const ValueInputComponent = ({
     const newValue = formatAmount(maxValueNetFee.multipliedBy(percent).dividedBy(100), assetData.decimals);
     onValueChange(newValue, percent);
 
-    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetSymbol);
+    const newValueInFiat = getBalanceInFiat(fiatCurrency, newValue.toString(), ratesWithCustomRates, assetAddress);
     setValueInFiat(newValueInFiat ? newValueInFiat.toFixed(2) : '0');
   };
 
@@ -405,10 +407,12 @@ export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
 const getAssetBalanceFromFiat = (
   baseFiatCurrency: ?Currency,
   fiatBalance: ?string | ?number,
-  rates: RatesBySymbol,
-  symbol: string,
+  rates: RatesByAssetAddress,
+  assetAddress: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceFromFiat = fiatBalance ? parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
+  const assetBalanceFromFiat = fiatBalance
+    ? parseFloat(fiatBalance) / getAssetRateInFiat(rates, assetAddress, fiatCurrency)
+    : 0;
   return assetBalanceFromFiat || 0;
 };

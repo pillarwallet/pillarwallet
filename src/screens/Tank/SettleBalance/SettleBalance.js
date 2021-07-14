@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
@@ -41,7 +40,7 @@ import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -54,14 +53,12 @@ import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
 
 // utils
-import {
-  fontStyles,
-  spacing,
-  fontSizes,
-} from 'utils/variables';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { formatFiat, formatAmount, groupSectionsByDate } from 'utils/common';
-import { getRate } from 'utils/assets';
+import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { getThemeColors } from 'utils/themes';
+import { getAssetRateInFiat } from 'utils/rates';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
 import { accountEthereumAssetsSelector } from 'selectors/assets';
@@ -162,16 +159,19 @@ class SettleBalance extends React.Component<Props, State> {
     } = this.props;
     const { txToSettle } = this.state;
     const colors = getThemeColors(theme);
+    const assetsList = getAssetsAsList(assets);
 
-    const tokenSymbol = get(item, 'token.symbol', ETH);
-    const value = get(item, 'value', new BigNumber(0));
-    const senderAddress = get(item, 'senderAddress', '');
+    const assetSymbol = item?.token?.symbol || nativeAssetPerChain.ethereum.symbol;
+    const assetAddress = item?.token?.address || nativeAssetPerChain.ethereum.address;
+    const value = item?.value || new BigNumber(0);
+    const senderAddress = item?.senderAddress ?? '';
 
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
+    const asset = assetsList.find(({ address }) => addressesEqual(address, assetAddress)) ?? {};
 
     const assetInfo = {
-      ...(assets[tokenSymbol] || {}),
-      symbol: tokenSymbol,
+      ...asset,
+      symbol: assetSymbol,
       value,
       hash: item.hash,
       createdAt: item.createdAt,
@@ -183,7 +183,7 @@ class SettleBalance extends React.Component<Props, State> {
     });
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = assetInfo.value.toNumber() * getRate(ethereumRates, assetInfo.symbol, fiatCurrency);
+    const totalInFiat = assetInfo.value.toNumber() * getAssetRateInFiat(ethereumRates, assetAddress, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const isChecked = txToSettle.some(({ hash }) => hash === assetInfo.hash);
     const isDisabled = !isChecked && txToSettle.length === MAX_TX_TO_SETTLE;
@@ -196,7 +196,7 @@ class SettleBalance extends React.Component<Props, State> {
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance amount={formattedAmount} token={tokenSymbol} />
+              <TankAssetBalance amount={formattedAmount} token={assetSymbol} />
               <ValueInFiat>
                 {formattedAmountInFiat}
               </ValueInFiat>

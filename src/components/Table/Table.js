@@ -130,10 +130,11 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
 
 export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
   const decimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
+  const gasTokenAddress = gasToken?.address || nativeAssetPerChain[chain].address;
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
   const gasSymbol = getGasSymbol(chain, gasToken);
 
-  return <TableAmount amount={formattedFee} token={gasSymbol} chain={chain} />;
+  return <TableAmount amount={formattedFee} assetSymbol={gasSymbol} assetAddress={gasTokenAddress} chain={chain} />;
 };
 
 const Divider = styled.View`

@@ -45,7 +45,8 @@ type Mode = 'actual' | 'estimate';
 
 type Props = {
   value: ?BigNumber,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   chain: Chain,
   mode?: Mode,
   isLoading?: boolean,
@@ -55,7 +56,8 @@ type Props = {
 
 function FeeLabel({
   value,
-  symbol,
+  assetSymbol,
+  assetAddress,
   mode,
   isLoading,
   isNotEnough,
@@ -75,8 +77,8 @@ function FeeLabel({
     return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
-  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, symbol));
-  const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, symbol);
+  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
+  const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
 
   return (
     <LabelWrapper style={style}>

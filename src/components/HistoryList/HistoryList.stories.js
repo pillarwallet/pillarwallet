@@ -17,19 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import { storiesOf } from '@storybook/react-native';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Types
 import { EVENT_TYPE, TRANSACTION_STATUS, type Event } from 'models/History';
 
+// Local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import HistoryList from './HistoryList';
+
+
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
 
 const stories = storiesOf('HistoryList', module).addDecorator(WithThemeDecorator);
 
@@ -49,6 +55,7 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(4.2),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
@@ -62,6 +69,7 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(4.2),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.PENDING,
   },
@@ -75,6 +83,7 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(4.2),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.FAILED,
   },
@@ -88,6 +97,7 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(4.2),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
@@ -102,10 +112,12 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(100),
       symbol: 'PLR',
+      address: mockPlrAddress,
     },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
@@ -119,10 +131,12 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(100),
       symbol: 'PLR',
+      address: mockPlrAddress,
     },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.PENDING,
   },
@@ -136,10 +150,12 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(100),
       symbol: 'PLR',
+      address: mockPlrAddress,
     },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.FAILED,
   },
@@ -153,10 +169,12 @@ const basicItems: Event[] = [
     value: {
       value: BigNumber(100),
       symbol: 'PLR',
+      address: mockPlrAddress,
     },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
@@ -223,6 +241,7 @@ const basicItems: Event[] = [
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
@@ -239,6 +258,7 @@ const basicItems: Event[] = [
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.PENDING,
   },
@@ -255,6 +275,7 @@ const basicItems: Event[] = [
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.FAILED,
   },
@@ -271,6 +292,7 @@ const basicItems: Event[] = [
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
@@ -282,11 +304,12 @@ const basicItems: Event[] = [
     date: new Date('2021-04-19'),
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-    fromValue: { symbol: 'ETH', value: BigNumber(0.218001) },
-    toValue: { symbol: 'PLR', value: BigNumber(2500) },
+    fromValue: { symbol: 'ETH', value: BigNumber(0.218001), address: mockEthAddress },
+    toValue: { symbol: 'PLR', value: BigNumber(2500), address: mockPlrAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
@@ -297,11 +320,12 @@ const basicItems: Event[] = [
     date: new Date('2021-04-19'),
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-    fromValue: { symbol: 'ETH', value: BigNumber(0.218001) },
-    toValue: { symbol: 'PLR', value: BigNumber(2500) },
+    fromValue: { symbol: 'ETH', value: BigNumber(0.218001), address: mockEthAddress },
+    toValue: { symbol: 'PLR', value: BigNumber(2500), address: mockPlrAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.PENDING,
   },
@@ -312,11 +336,12 @@ const basicItems: Event[] = [
     date: new Date('2021-04-19'),
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-    fromValue: { symbol: 'ETH', value: BigNumber(0.218001) },
-    toValue: { symbol: 'PLR', value: BigNumber(2500) },
+    fromValue: { symbol: 'ETH', value: BigNumber(0.218001), address: mockEthAddress },
+    toValue: { symbol: 'PLR', value: BigNumber(2500), address: mockPlrAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.FAILED,
   },
@@ -327,11 +352,12 @@ const basicItems: Event[] = [
     date: new Date('2021-04-19'),
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
-    fromValue: { symbol: 'ETH', value: BigNumber(0.218001) },
-    toValue: { symbol: 'PLR', value: BigNumber(2500) },
+    fromValue: { symbol: 'ETH', value: BigNumber(0.218001), address: mockEthAddress },
+    toValue: { symbol: 'PLR', value: BigNumber(2500), address: mockPlrAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
@@ -344,10 +370,11 @@ const basicItems: Event[] = [
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
     fromValue: { currency: 'USD', value: BigNumber(154.5) },
-    toValue: { symbol: 'ETH', value: BigNumber(0.65) },
+    toValue: { symbol: 'ETH', value: BigNumber(0.65), address: mockEthAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
@@ -359,10 +386,11 @@ const basicItems: Event[] = [
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
     fromValue: { currency: 'USD', value: BigNumber(154.5) },
-    toValue: { symbol: 'ETH', value: BigNumber(0.65) },
+    toValue: { symbol: 'ETH', value: BigNumber(0.65), address: mockEthAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.PENDING,
   },
@@ -374,10 +402,11 @@ const basicItems: Event[] = [
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
     fromValue: { currency: 'USD', value: BigNumber(154.5) },
-    toValue: { symbol: 'ETH', value: BigNumber(0.65) },
+    toValue: { symbol: 'ETH', value: BigNumber(0.65), address: mockEthAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.FAILED,
   },
@@ -389,10 +418,11 @@ const basicItems: Event[] = [
     fromAddress: '0x02C191aE18171C41D6138CBa0a10dAA25C653FB8',
     toAddress: '0x26697240DcB649A62B10764A5F41Ba13CB38b5F0',
     fromValue: { currency: 'USD', value: BigNumber(154.5) },
-    toValue: { symbol: 'ETH', value: BigNumber(0.65) },
+    toValue: { symbol: 'ETH', value: BigNumber(0.65), address: mockEthAddress },
     fee: {
       value: BigNumber(0.012345678),
       symbol: 'ETH',
+      address: mockEthAddress,
     },
     status: TRANSACTION_STATUS.TIMEDOUT,
   },
@@ -402,14 +432,22 @@ const basicItems: Event[] = [
     date: new Date('2021-04-10'),
     ensName: 'maciej.pillar.eth',
     hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
-    fee: { value: BigNumber(0.0022311), symbol: 'ETH' },
+    fee: {
+      value: BigNumber(0.0022311),
+      symbol: 'ETH',
+      address: mockEthAddress,
+    },
   },
   {
     type: EVENT_TYPE.WALLET_ACTIVATED,
     id: '5ca21c49754407000644f73b-x',
     date: new Date('2021-04-10'),
     hash: '0xd32eecbf27c962251dc505ae1b23906cb9cad5daf6e9973ec390fc206a6d15f0',
-    fee: { value: BigNumber(0.0222311), symbol: 'ETH' },
+    fee: {
+      value: BigNumber(0.0222311),
+      symbol: 'ETH',
+      address: mockEthAddress,
+    },
     status: TRANSACTION_STATUS.CONFIRMED,
   },
   {

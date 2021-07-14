@@ -20,9 +20,17 @@
 
 import { BigNumber } from 'bignumber.js';
 
+/**
+ * TODO: add chain and remove symbol?
+ * This comes of thinking that neither symbol nor address alone can have a meaning without chain.
+ * Currently TokenValue and similar types share the idea that chain comes from higher level, but MAYBE
+ * we want to change this so TokenValue and other similar types (i.e. Transaction) can contain chain
+ * and could be scaffolded without having chain at higher levels regardless of method, screen or component.
+ */
 export type TokenValue = {|
   value: BigNumber,
   symbol: string,
+  address: string,
 |};
 
 export type FiatValue = {|

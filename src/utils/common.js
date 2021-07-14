@@ -55,6 +55,7 @@ import type { Chain } from 'models/Chain';
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { Record } from 'utils/object';
 
 // local
 import { humanizeDateString, formatDate } from './date';
@@ -595,3 +596,13 @@ export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
+
+export const addressAsKey = (address: string): string => {
+  if (!address) return '';
+  return address.toLowerCase();
+};
+
+export const valueForAddress = <RecordValue>(
+  record: ?Record<RecordValue>,
+  address: string,
+): ?RecordValue => record?.[addressAsKey(address)];

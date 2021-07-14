@@ -21,7 +21,6 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { WebSocket } from 'mock-socket';
-import { ethers } from 'ethers';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
@@ -57,6 +56,8 @@ import {
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
   mockEtherspotAccountExtra,
+  mockEthAddress,
+  mockPlrAddress,
 } from 'testUtils/jestSetup';
 
 // types
@@ -109,8 +110,8 @@ const mockAssetsBalancesStore = {
     [mockEtherspotAccount.id]: {
       ethereum: {
         wallet: {
-          [ethers.constants.AddressZero]: { balance: '1', symbol: ETH, address: ethers.constants.AddressZero },
-          '0x': { balance: '1', symbol: PLR, address: '0x' },
+          [mockEthAddress]: { balance: '1', symbol: ETH, address: mockEthAddress },
+          [mockPlrAddress]: { balance: '1', symbol: PLR, address: mockPlrAddress },
         },
       },
     },

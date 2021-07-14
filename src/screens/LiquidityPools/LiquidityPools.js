@@ -37,9 +37,9 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // utils
 import { formatFiat, formatBigFiatAmount, formatBigAmount, formatTokenAmount } from 'utils/common';
-import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
+import { convertValueInUsdToFiat } from 'utils/rates';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -219,7 +219,7 @@ const LiquidityPoolsScreen = ({
             <CardColumn>
               <BaseText big>
                 {formatBigFiatAmount(
-                  convertUSDToFiat(poolStats.currentPrice, ethereumRates, fiatCurrency),
+                  convertValueInUsdToFiat(poolStats.currentPrice, ethereumRates, fiatCurrency),
                   fiatCurrency,
                 )}
               </BaseText>
@@ -231,7 +231,7 @@ const LiquidityPoolsScreen = ({
             <CardColumn>
               <BaseText big>
                 {formatBigFiatAmount(
-                  convertUSDToFiat(poolStats.volume, ethereumRates, fiatCurrency),
+                  convertValueInUsdToFiat(poolStats.volume, ethereumRates, fiatCurrency),
                   fiatCurrency,
                 )}
               </BaseText>
@@ -307,7 +307,7 @@ const LiquidityPoolsScreen = ({
 
     const { currentPrice } = poolStats;
     const balanceInFiat = formatFiat(
-      convertUSDToFiat(currentPrice * balance, ethereumRates, fiatCurrency),
+      convertValueInUsdToFiat(currentPrice * balance, ethereumRates, fiatCurrency),
       fiatCurrency,
     );
 
@@ -319,7 +319,7 @@ const LiquidityPoolsScreen = ({
     if (!poolStats) return null;
 
     const { currentPrice } = poolStats;
-    const stakedAmountInFiat = convertUSDToFiat(
+    const stakedAmountInFiat = convertValueInUsdToFiat(
       currentPrice * poolStats.stakedAmount.toNumber(),
       ethereumRates,
       fiatCurrency,

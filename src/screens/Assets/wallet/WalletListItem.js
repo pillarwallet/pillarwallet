@@ -32,10 +32,10 @@ import TokenIcon from 'components/modern/TokenIcon';
 import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
-import { getRate } from 'utils/assets';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -45,7 +45,8 @@ type Props = {|
   iconUrl: ?string,
   value: BigNumber,
   change?: BigNumber,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   chain: Chain,
   onPress?: () => mixed,
 |};
@@ -55,7 +56,8 @@ function WalletListItem({
   iconUrl,
   value,
   change,
-  symbol,
+  assetSymbol,
+  assetAddress,
   onPress,
   chain,
 }: Props) {
@@ -64,9 +66,9 @@ function WalletListItem({
   const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const rate = getRate(chainRates, symbol, currency);
+  const rate = getAssetRateInFiat(chainRates, assetAddress, currency);
   const fiatValue = value.times(rate);
-  const tokenValue = formatTokenValue(value, symbol);
+  const tokenValue = formatTokenValue(value, assetSymbol);
   const unitPrice = formatFiatValue(rate, currency);
 
   return (

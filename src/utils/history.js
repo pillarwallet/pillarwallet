@@ -230,19 +230,22 @@ export const parseHistoryEventFee = (
   if (feeWithGasToken?.feeInWei) {
     const {
       feeInWei,
-      gasToken: { decimals, symbol },
+      gasToken: { decimals, symbol, address },
     } = feeWithGasToken;
     return {
       value: wrapBigNumber(formatUnits(feeInWei, decimals)),
+      address,
       symbol,
     };
   }
 
   if (gasUsed && gasPrice) {
     const feeValue = wrapBigNumber(gasPrice).multipliedBy(gasPrice);
+    const { decimals, address, symbol } = nativeAssetPerChain[chain];
     return {
-      value: wrapBigNumber(formatUnits(feeValue, 18)),
-      symbol: nativeAssetPerChain[chain].symbol,
+      value: wrapBigNumber(formatUnits(feeValue, decimals)),
+      address,
+      symbol,
     };
   }
 
@@ -278,6 +281,7 @@ export const getHistoryEventsFromTransactions = (
 
   const value = {
     value: wrapBigNumber(formatUnits(rawValue, decimals)),
+    address: assetAddress,
     symbol,
   };
 

@@ -35,15 +35,21 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // configs
-import { PPN_TOKEN } from 'configs/assetsConfig';
+import { getPlrAddressForChain, PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat, formatTokenAmount } from 'utils/common';
 import { spacing, fontStyles } from 'utils/variables';
-import { getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import {
+  calculateMaxAmount,
+  isEnoughBalanceForTransactionFee,
+  getAssetsAsList,
+  addressesEqual,
+} from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -196,18 +202,25 @@ class TankWithdrawal extends React.Component<Props, State> {
       useGasToken,
       withdrawalFee: { feeInfo },
     } = this.props;
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+    const assetsList = getAssetsAsList(assets);
 
-    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
+    const {
+      symbol,
+      iconUrl,
+      decimals,
+    } = assetsList.find(({ address }) => addressesEqual(address, plrAddress)) ?? {};
+
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
     // balance
     const balance = availableStake;
-    const formattedBalance = formatTokenAmount(balance, token);
+    const formattedBalance = formatTokenAmount(balance, symbol);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
@@ -224,10 +237,10 @@ class TankWithdrawal extends React.Component<Props, State> {
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // max amount
-    const maxAmount = parseFloat(calculateMaxAmount(token, availableStake, txFeeInWei));
+    const maxAmount = parseFloat(calculateMaxAmount(symbol, availableStake, txFeeInWei));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
@@ -241,7 +254,6 @@ class TankWithdrawal extends React.Component<Props, State> {
     );
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: token,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });
@@ -286,7 +298,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               <Label small>{t('ppnContent.label.availableBalance')}</Label>
               <TextRow>
                 <SendTokenDetailsValue>
-                  {t('tokenValue', { value: formattedBalance, token })}
+                  {t('tokenValue', { value: formattedBalance, token: symbol })}
                 </SendTokenDetailsValue>
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>

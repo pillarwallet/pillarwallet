@@ -20,7 +20,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { ethers } from 'ethers';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -36,7 +35,12 @@ import { SET_FETCHING_RATES, UPDATE_CHAIN_RATES } from 'constants/ratesConstants
 import etherspotService from 'services/etherspot';
 
 // test utils
-import { mockExchangeRates, mockSupportedAssets } from 'testUtils/jestSetup';
+import {
+  mockEthAddress,
+  mockExchangeRates,
+  mockPlrAddress,
+  mockSupportedAssets,
+} from 'testUtils/jestSetup';
 
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
@@ -58,16 +62,16 @@ const mockAccounts: Object[] = [{
   isActive: true,
 }];
 
-const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH', address: ethers.constants.AddressZero };
+const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH', address: mockEthAddress };
 
-const mockPlrBalance = { balance: '1', symbol: 'PLR', address: '0x' };
+const mockPlrBalance = { balance: '1', symbol: 'PLR', address: mockPlrAddress };
 
 const mockAccountsBalances = {
   [mockAccounts[0].id]: {
     ethereum: {
       wallet: {
-        [ethers.constants.AddressZero]: mockEthBalance,
-        '0x': mockPlrBalance,
+        [mockEthAddress]: mockEthBalance,
+        [mockPlrAddress]: mockPlrBalance,
       },
     },
   },
@@ -104,7 +108,7 @@ describe('Assets actions', () => {
       accountId: mockAccounts[0].id,
       chain: CHAIN.ETHEREUM,
       category: ASSET_CATEGORY.WALLET,
-      balances: { [ethers.constants.AddressZero]: mockEthBalance },
+      balances: { [mockEthAddress]: mockEthBalance },
     };
 
     const supportedAssetsPayload = {
