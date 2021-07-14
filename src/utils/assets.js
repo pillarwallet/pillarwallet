@@ -41,7 +41,7 @@ import {
   valueForAddress,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // types
 import type {
@@ -245,7 +245,7 @@ export const getBalanceInFiat = (
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance.toString()) * getRate(rates, assetAddress, fiatCurrency) : 0;
+    parseFloat(assetBalance.toString()) * getAssetRateInFiat(rates, assetAddress, fiatCurrency) : 0;
   return assetBalanceInFiat;
 };
 

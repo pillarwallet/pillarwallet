@@ -58,7 +58,7 @@ import {
   getTokenTransactionsFromHistory,
 } from 'utils/history';
 import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -226,7 +226,7 @@ const AssetScreen = ({
   ));
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const tokenRate = getRate(chainRates, contractAddress, fiatCurrency);
+  const tokenRate = getAssetRateInFiat(chainRates, contractAddress, fiatCurrency);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, contractAddress);
   const isWalletEmpty = balance <= 0;

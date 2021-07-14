@@ -61,7 +61,7 @@ export const convertValueInUsdToFiat = (
   return value * usdToFiatRate;
 };
 
-export const getRate = (
+export const getAssetRateInFiat = (
   rates: RatesByAssetAddress,
   assetAddress: string,
   fiatCurrency: Currency,
@@ -73,7 +73,7 @@ export const getFormattedRate = (
   assetAddress: string,
   fiatCurrency: Currency,
 ): string => {
-  const amountInFiat = amount * getRate(rates, assetAddress, fiatCurrency);
+  const amountInFiat = amount * getAssetRateInFiat(rates, assetAddress, fiatCurrency);
 
   return formatFiat(amountInFiat, fiatCurrency);
 };

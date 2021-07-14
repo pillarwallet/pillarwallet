@@ -76,7 +76,7 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
 
-    const plrToFiatRate = valueForAddress(ratesPerChain.ethereum ?? {}, plrAddress)?.[currency] ?? 0;
+    const plrToFiatRate = valueForAddress(ratesPerChain.ethereum, plrAddress)?.[currency] ?? 0;
 
     return BigNumber(plrToFiatRate * ppnBalance);
   },

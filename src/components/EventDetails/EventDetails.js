@@ -77,7 +77,7 @@ import {
   isEtherspotAccount,
 } from 'utils/accounts';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // services
 import archanovaService from 'services/archanova';
@@ -436,7 +436,7 @@ export class EventDetail extends React.Component<Props> {
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const { symbol, address } = nativeAssetPerChain.ethereum;
-    const rate = getRate(ethereumRates, address, fiatCurrency);
+    const rate = getAssetRateInFiat(ethereumRates, address, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
       tokenValue: t('tokenValue', { value: formattedFee, token: symbol }), fiatValue: formattedFiatValue,

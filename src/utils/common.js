@@ -603,6 +603,6 @@ export const addressAsKey = (address: string): string => {
 };
 
 export const valueForAddress = <RecordValue>(
-  record: Record<RecordValue>,
+  record: ?Record<RecordValue>,
   address: string,
-): ?RecordValue => record[addressAsKey(address)];
+): ?RecordValue => record?.[addressAsKey(address)];

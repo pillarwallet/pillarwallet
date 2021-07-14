@@ -36,7 +36,7 @@ import Toast from 'components/Toast';
 // utils
 import { formatAmount, formatTokenAmount, formatFiat } from 'utils/common';
 import { getAddLiquidityTransactions } from 'utils/liquidityPools';
-import { getFormattedRate, getRate } from 'utils/rates';
+import { getFormattedRate, getAssetRateInFiat } from 'utils/rates';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -79,7 +79,7 @@ const AddLiquidityReviewScreen = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalValue = tokensData.reduce((sum, token, i) => {
-    sum += tokensValues[i] * getRate(ethereumRates, token.address, fiatCurrency);
+    sum += tokensValues[i] * getAssetRateInFiat(ethereumRates, token.address, fiatCurrency);
     return sum;
   }, 0);
 

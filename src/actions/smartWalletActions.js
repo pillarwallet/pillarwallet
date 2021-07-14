@@ -151,6 +151,7 @@ import {
   normalizeWalletAddress,
 } from 'utils/wallet';
 import { nativeAssetPerChain } from 'utils/chains';
+import { fromEthersBigNumber } from 'utils/bigNumber';
 
 // actions
 import {
@@ -1231,7 +1232,7 @@ export const fetchAvailableTxToSettleAction = () => {
         return {
           token: item.token,
           hash: item.hash,
-          value: new BigNumber(formatUnits(item.value, asset?.decimals ?? 18)),
+          value: fromEthersBigNumber(item.value, asset?.decimals ?? 18),
           createdAt: item.updatedAt,
           senderAddress,
         };

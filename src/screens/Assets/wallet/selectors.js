@@ -81,7 +81,7 @@ const buildWalletItem = (
   const { name: title, iconUrl } = asset;
 
   return {
-    key: `${chain}-${assetSymbol}`,
+    key: `${chain}-${assetAddress}`,
     title,
     iconUrl,
     assetSymbol,

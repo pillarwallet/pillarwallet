@@ -35,7 +35,7 @@ import { useFiatCurrency, useChainRates } from 'selectors';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -66,7 +66,7 @@ function WalletListItem({
   const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const rate = getRate(chainRates, assetAddress, currency);
+  const rate = getAssetRateInFiat(chainRates, assetAddress, currency);
   const fiatValue = value.times(rate);
   const tokenValue = formatTokenValue(value, assetSymbol);
   const unitPrice = formatFiatValue(rate, currency);

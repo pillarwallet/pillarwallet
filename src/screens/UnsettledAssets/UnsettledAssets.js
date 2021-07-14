@@ -34,7 +34,7 @@ import Button from 'components/Button';
 import { findAsset, getAssetsAsList } from 'utils/assets';
 import { formatTokenAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -86,7 +86,7 @@ class UnsettledAssets extends React.Component<Props> {
     const paymentNetworkBalanceFormatted = formatTokenAmount(balance, symbol);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
-    const totalInFiat = balance * getRate(ethereumRates, address, fiatCurrency);
+    const totalInFiat = balance * getAssetRateInFiat(ethereumRates, address, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     return (

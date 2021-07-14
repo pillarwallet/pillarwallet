@@ -51,7 +51,7 @@ import {
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -411,6 +411,8 @@ const getAssetBalanceFromFiat = (
   assetAddress: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceFromFiat = fiatBalance ? parseFloat(fiatBalance) / getRate(rates, assetAddress, fiatCurrency) : 0;
+  const assetBalanceFromFiat = fiatBalance
+    ? parseFloat(fiatBalance) / getAssetRateInFiat(rates, assetAddress, fiatCurrency)
+    : 0;
   return assetBalanceFromFiat || 0;
 };

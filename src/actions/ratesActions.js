@@ -85,8 +85,8 @@ export const fetchAssetsRatesAction = () => {
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
-    const assetsAddressPerChain = Object.keys(CHAIN).reduce((
-      combinedAssetsBySymbolPerChain,
+    const assetsByAddressPerChain = Object.keys(CHAIN).reduce((
+      combinedAssetsByAddressPerChain,
       chainKey,
     ) => {
       const chain = CHAIN[chainKey];
@@ -94,7 +94,7 @@ export const fetchAssetsRatesAction = () => {
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
       const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce((
-        combinedAssetsBySymbol,
+        combinedAssetsByAddress,
         accountId,
       ) => {
         const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
@@ -106,15 +106,15 @@ export const fetchAssetsRatesAction = () => {
         );
 
         // $FlowFixMe
-        return { ...combinedAssetsBySymbol, ...assetsByAddress };
+        return { ...combinedAssetsByAddress, ...assetsByAddress };
       }, {});
 
       // $FlowFixMe
-      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsByAddress };
+      return { ...combinedAssetsByAddressPerChain, [chain]: chainAccountsAssetsByAddress };
     }, {});
 
-    await Promise.all(Object.keys(assetsAddressPerChain).map(async (chain) => {
-      const chainAssetsByAddress = assetsAddressPerChain[chain] ?? {};
+    await Promise.all(Object.keys(assetsByAddressPerChain).map(async (chain) => {
+      const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
 
       try {
         const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));

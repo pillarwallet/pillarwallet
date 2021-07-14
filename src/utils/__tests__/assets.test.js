@@ -20,7 +20,7 @@
 
 // utils
 import { getBalance } from 'utils/assets';
-import { convertValueInUsdToFiat, getRate } from 'utils/rates';
+import { convertValueInUsdToFiat, getAssetRateInFiat } from 'utils/rates';
 import { mockEthAddress, mockPlrAddress } from 'testUtils/jestSetup';
 
 // types
@@ -40,17 +40,17 @@ describe('Assets utils', () => {
     [mockPlrAddress]: { GBP: PLR_GBP, USD: PLR_USD },
   };
 
-  describe('getRate', () => {
+  describe('getAssetRateInFiat', () => {
     describe('for ethereum tokens', () => {
       it('returns the rate', () => {
-        const rate = getRate(rates, mockPlrAddress, 'GBP');
+        const rate = getAssetRateInFiat(rates, mockPlrAddress, 'GBP');
 
         expect(rate).toEqual(PLR_GBP);
       });
 
       describe('for invalid token', () => {
         it('returns 0', () => {
-          const rate = getRate(rates, mockInvalidTknAddress, 'GBP');
+          const rate = getAssetRateInFiat(rates, mockInvalidTknAddress, 'GBP');
 
           expect(rate).toEqual(0);
         });
@@ -59,7 +59,7 @@ describe('Assets utils', () => {
 
     describe('for ETH', () => {
       it('returns the rate', () => {
-        const rate = getRate(rates, mockEthAddress, 'GBP');
+        const rate = getAssetRateInFiat(rates, mockEthAddress, 'GBP');
 
         expect(rate).toEqual(ETH_GBP);
       });

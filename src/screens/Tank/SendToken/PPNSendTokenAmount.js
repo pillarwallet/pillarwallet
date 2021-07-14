@@ -36,7 +36,7 @@ import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -190,7 +190,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(ethereumRates, plrAddress, fiatCurrency);
+    const totalInFiat = balance * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // max amount
@@ -200,7 +200,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(ethereumRates, plrAddress, fiatCurrency);
+    const valueInFiat = currentValue * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form

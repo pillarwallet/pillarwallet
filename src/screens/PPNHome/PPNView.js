@@ -83,7 +83,7 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstArchanovaAccount } from 'utils/accounts';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // selectors
 import {
@@ -282,7 +282,7 @@ class PPNView extends React.Component<Props, State> {
         // $FlowFixMe: legacy screen
         const assetBalance = incomingAsset?.balance ?? 0;
         const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const tokenRate = getRate(ethereumRates, assetAddress, fiatCurrency);
+        const tokenRate = getAssetRateInFiat(ethereumRates, assetAddress, fiatCurrency);
         return totalInFiat + (+assetBalance * tokenRate);
       }, 0);
     }

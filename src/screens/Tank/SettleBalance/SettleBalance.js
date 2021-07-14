@@ -57,7 +57,7 @@ import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { formatFiat, formatAmount, groupSectionsByDate } from 'utils/common';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { getThemeColors } from 'utils/themes';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
@@ -183,7 +183,7 @@ class SettleBalance extends React.Component<Props, State> {
     });
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = assetInfo.value.toNumber() * getRate(ethereumRates, assetAddress, fiatCurrency);
+    const totalInFiat = assetInfo.value.toNumber() * getAssetRateInFiat(ethereumRates, assetAddress, fiatCurrency);
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const isChecked = txToSettle.some(({ hash }) => hash === assetInfo.hash);
     const isDisabled = !isChecked && txToSettle.length === MAX_TX_TO_SETTLE;

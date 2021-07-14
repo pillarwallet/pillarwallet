@@ -37,7 +37,7 @@ import { hasServiceAssetBalanceForSymbol } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { mapRecordValues } from 'utils/object';
-import { getFiatValueFromUsd, getRate } from 'utils/rates';
+import { getFiatValueFromUsd, getAssetRateInFiat } from 'utils/rates';
 import { mapAccountCategoryChainRecordValues } from 'utils/totalBalances';
 
 // Types
@@ -164,7 +164,7 @@ const calculateWalletAssetsFiatValue = (
       const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
       if (hasMatchingServiceAsset) return BigNumber(0);
 
-      const rate = getRate(rates, address, currency);
+      const rate = getAssetRateInFiat(rates, address, currency);
       return BigNumber(balance).times(rate);
     },
   );

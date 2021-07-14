@@ -37,7 +37,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 // utils
 import { formatTransactionFee, getFormattedTransactionFeeValue, getCurrencySymbol } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // selectors
 import {
@@ -95,7 +95,7 @@ const FeeLabelToggle = ({
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
   const gasAddress = gasToken?.address || nativeAssetPerChain[chain].address;
-  const feeInFiat = parseFloat(feeValue) * getRate(chainRates, gasAddress, fiatCurrency);
+  const feeInFiat = parseFloat(feeValue) * getAssetRateInFiat(chainRates, gasAddress, fiatCurrency);
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 

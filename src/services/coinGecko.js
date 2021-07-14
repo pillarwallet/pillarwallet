@@ -29,6 +29,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { reportErrorLog, addressAsKey } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
+import { addressesEqual } from 'utils/assets';
 
 // Types
 import type { Asset } from 'models/Asset';
@@ -87,7 +88,9 @@ export const getCoinGeckoTokenPrices = async (
   assets: Asset[],
 ): Promise<?RatesByAssetAddress> => {
   // native asset not always fit into token price endpoint, it is fetched with other API call
-  const assetsWithoutNativeAsset = assets.filter(({ address }) => address !== nativeAssetPerChain[chain].address);
+  const assetsWithoutNativeAsset = assets.filter(({
+    address,
+  }) => !addressesEqual(address, nativeAssetPerChain[chain].address));
 
   const assetsContractAddresses = assetsWithoutNativeAsset.map(({ address }) => address);
 

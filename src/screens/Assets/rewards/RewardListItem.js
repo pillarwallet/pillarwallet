@@ -34,7 +34,7 @@ import { useFiatCurrency, useChainRates } from 'selectors';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { getRate } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -56,7 +56,7 @@ function RewardListItem({ title, subtitle, iconUrl, value, assetSymbol, assetAdd
   const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const fiatValue = value.times(getRate(chainRates, assetAddress, currency));
+  const fiatValue = value.times(getAssetRateInFiat(chainRates, assetAddress, currency));
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
