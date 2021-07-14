@@ -20,7 +20,7 @@
 
 // utils
 import { getBalance } from 'utils/assets';
-import { convertValueInUsdToFiat, getAssetRateInFiat } from 'utils/rates';
+import { getAssetRateInFiat } from 'utils/rates';
 import { mockEthAddress, mockPlrAddress } from 'testUtils/jestSetup';
 
 // types
@@ -80,13 +80,6 @@ describe('Assets utils', () => {
 
       const balance = getBalance(balances, mockEthAddress);
       expect(balance).toEqual(2.321);
-    });
-  });
-
-  describe('convertUSDToFiat', () => {
-    it('converts to GBP', () => {
-      const converted = convertValueInUsdToFiat(100, rates, 'GBP');
-      expect(converted).toEqual(200);
     });
   });
 });

@@ -19,9 +19,6 @@
 */
 import { BigNumber } from 'bignumber.js';
 
-// Constants
-import { ADDRESS_ZERO, USD } from 'constants/assetsConstants';
-
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
 import { valueForAddress } from 'utils/common';
@@ -30,35 +27,10 @@ import { valueForAddress } from 'utils/common';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
 
-export const getUsdToFiatRate = (rates: RatesByAssetAddress, currency: Currency): ?number => {
-  // No need to calculate rate for USD/USD.
-  if (currency === USD) return 1;
-
-  // will select native asset rates to calculate between
-  const nativeAssetRates = valueForAddress(rates, ADDRESS_ZERO);
-  if (!nativeAssetRates || !nativeAssetRates[currency] || !nativeAssetRates[USD]) {
-    return null;
-  }
-
-  return nativeAssetRates[currency] / nativeAssetRates[USD];
-};
-
 export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
 
   return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
-};
-
-export const convertValueInUsdToFiat = (
-  value: number,
-  rates: RatesByAssetAddress = {},
-  fiatCurrency: Currency,
-): number => {
-  const usdToFiatRate = getUsdToFiatRate(rates, fiatCurrency);
-
-  if (!usdToFiatRate) return 0;
-
-  return value * usdToFiatRate;
 };
 
 export const getAssetRateInFiat = (
