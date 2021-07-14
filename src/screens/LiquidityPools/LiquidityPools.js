@@ -49,7 +49,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
 // selectors
-import { usdToFiatRateSelector, useChainSupportedAssets, useRootSelector } from 'selectors';
+import { useChainSupportedAssets, useUsdToFiatRate } from 'selectors';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
@@ -133,7 +133,7 @@ const LiquidityPoolsScreen = ({
   theme,
 }) => {
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const usdToFiatRate = useRootSelector(usdToFiatRateSelector);
+  const usdToFiatRate = useUsdToFiatRate();
 
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 

@@ -61,7 +61,7 @@ import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // selectors
-import { usdToFiatRateSelector, useChainSupportedAssets, useRootSelector } from 'selectors';
+import { useChainSupportedAssets, useUsdToFiatRate } from 'selectors';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -163,7 +163,7 @@ const LiquidityPoolDashboard = ({
   setShownStakingEnabledModal,
 }: Props) => {
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const usdToFiatRate = useRootSelector(usdToFiatRateSelector);
+  const usdToFiatRate = useUsdToFiatRate();
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
