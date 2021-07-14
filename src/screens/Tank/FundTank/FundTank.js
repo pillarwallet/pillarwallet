@@ -252,7 +252,6 @@ class FundTank extends React.Component<Props, State> {
     );
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: token,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });

@@ -254,7 +254,6 @@ class TankWithdrawal extends React.Component<Props, State> {
     );
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: symbol,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });

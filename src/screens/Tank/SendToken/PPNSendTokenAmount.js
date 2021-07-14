@@ -207,7 +207,6 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: symbol,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });
