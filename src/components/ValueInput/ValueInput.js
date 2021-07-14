@@ -46,6 +46,7 @@ import {
   hasTooMuchDecimals,
   noop,
   formatFiat,
+  valueForAddress,
 } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
@@ -168,7 +169,7 @@ const ValueInputComponent = ({
   const assetSymbol = assetData?.symbol || '';
   const chain = assetData?.chain || CHAIN.ETHEREUM;
   const walletBalances = accountAssetsBalances?.[chain]?.wallet ?? {};
-  const assetBalance = (customBalances || walletBalances)?.[assetAddress]?.balance || '0';
+  const assetBalance = valueForAddress(customBalances ?? walletBalances, assetAddress)?.balance || '0';
   const balanceAvailable = calculateMaxAmount(assetSymbol, assetBalance);
 
   const collectibles = collectiblesPerChain[chain] ?? [];

@@ -22,7 +22,6 @@ import { storiesOf } from '@storybook/react-native';
 import { EventDetail as EventDetailsClass } from 'components/EventDetails';
 import { noop } from 'utils/common';
 import { withTheme } from 'styled-components/native';
-import { ethers } from 'ethers';
 
 // constants
 import { PPN_INIT_EVENT, USER_EVENT, WALLET_BACKUP_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
@@ -46,6 +45,7 @@ import {
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
 } from 'constants/liquidityPoolsConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -54,7 +54,7 @@ const placeholderImage = 'https://picsum.photos/200';
 
 // cannot import from test utils, bundler fails
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethers.constants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const reduxData = {
   assetDecimals: 18,

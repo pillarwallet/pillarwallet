@@ -20,11 +20,10 @@
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 import { storiesOf } from '@storybook/react-native';
-import { ethers } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Types
 import { EVENT_TYPE, TRANSACTION_STATUS, type Event } from 'models/History';
@@ -36,7 +35,7 @@ import HistoryList from './HistoryList';
 
 // cannot import from test utils, bundler fails
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethers.constants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const stories = storiesOf('HistoryList', module).addDecorator(WithThemeDecorator);
 

@@ -32,7 +32,7 @@ import * as Etherspot from 'etherspot';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ETH, PLR } from 'constants/assetsConstants';
 import {
   EN_EXTERNAL_TEST_TRANSLATION,
   FR_EXTERNAL_TEST_TRANSLATION,
@@ -233,7 +233,7 @@ jest.setMock('react-native-vector-icons', {
 });
 
 export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
-export const mockEthAddress = ethersConstants.AddressZero;
+export const mockEthAddress = ADDRESS_ZERO;
 
 const mockTokensExchangeRates = {
   [mockPlrAddress]: {

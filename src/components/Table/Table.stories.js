@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { ethers } from 'ethers';
 
 // components
 import { BaseText } from 'components/Typography';
 
 // constants
 import { CHAIN } from 'constants/chainConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // local
 import Table, { TableRow, TableLabel, TableAmount, TableTotal } from './Table';
@@ -49,7 +49,7 @@ storiesOf('Table', module)
       <BaseText large negative>Even weirder component</BaseText>
       <TableRow>
         <TableLabel>Free</TableLabel>
-        <TableAmount amount={0} assetSymbol="ETH" assetAddress={ethers.constants.AddressZero} chain={CHAIN.ETHEREUM} />
+        <TableAmount amount={0} assetSymbol="ETH" assetAddress={ADDRESS_ZERO} chain={CHAIN.ETHEREUM} />
       </TableRow>
       <TableRow>
         <TableLabel>High fees</TableLabel>
