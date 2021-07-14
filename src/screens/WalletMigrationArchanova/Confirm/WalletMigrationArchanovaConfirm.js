@@ -31,6 +31,8 @@ function WalletMigrationArchanovaConfirm() {
   const navigation = useNavigation();
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.confirm');
 
+  const assetsToMigrate = navigation.getParam('assetsToMigrate')Wa
+
   return (
     <Container>
       <HeaderBlock navigation={navigation} noPaddingTop />

@@ -20,11 +20,11 @@
 
 import { BigNumber } from 'bignumber.js';
 
-export type AssetBalanceRecord = {
-  [address: string]: AssetBalance,
-};
-
-export type AssetBalance = {|
+/**
+ * Single asset balance to migrate.
+ * No chain parameter, as archanova supports only ethereum.
+ */
+export type AssetToMigrate = {|
   address: string,
-  balance: ?BigNumber, // null for collectibles
+  amount: ?BigNumber, // null for collectibles
 |};
