@@ -42,6 +42,7 @@ import {
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
+import { getGasAddress } from 'utils/transactions';
 
 // types
 import type {
@@ -152,13 +153,13 @@ export const isEnoughBalanceForTransactionFee = (
     symbol: transactionSymbol,
   } = transaction;
 
-  const gasTokenAddress = gasToken?.address || nativeAssetPerChain[chain].address;
+  const gasAddress = getGasAddress(chain, gasToken);
   const feeSymbol = gasToken?.symbol || nativeAssetPerChain[chain].symbol;
   const feeDecimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
 
-  if (!valueForAddress(balances, gasTokenAddress)) return false;
+  if (!valueForAddress(balances, gasAddress)) return false;
 
-  const balance = getBalance(balances, gasTokenAddress);
+  const balance = getBalance(balances, gasAddress);
 
   // we need to convert balanceInWei to BigNumber as ethers.js utils use different library for Big Numbers
   let balanceInWei = new BigNumber(utils.parseUnits(balance.toString(), feeDecimals));

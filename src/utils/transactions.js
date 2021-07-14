@@ -186,3 +186,11 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
 export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
 };
+
+export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.address ?? nativeAssetPerChain[chain].address;
+};
+
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
+};

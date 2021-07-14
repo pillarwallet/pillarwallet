@@ -50,13 +50,13 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
+import { chainFromChainId } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
-import { getGasSymbol } from 'utils/transactions';
+import { getGasAddress, getGasSymbol } from 'utils/transactions';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -154,7 +154,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   const txFeeInWei = feeInfo?.fee;
   const fee = BigNumber(getFormattedTransactionFeeValue(chain, txFeeInWei, feeInfo?.gasToken)) || null;
   const gasSymbol = getGasSymbol(chain, feeInfo?.gasToken);
-  const gasAddress = feeInfo?.gasToken?.address || nativeAssetPerChain[chain].address;
+  const gasAddress = getGasAddress(chain, feeInfo?.gasToken);
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};

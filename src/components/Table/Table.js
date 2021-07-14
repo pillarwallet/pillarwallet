@@ -23,11 +23,10 @@ import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
-import { nativeAssetPerChain } from 'utils/chains';
 import { getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatUnits, hitSlop20 } from 'utils/common';
-import { getGasSymbol } from 'utils/transactions';
+import { getGasAddress, getGasDecimals, getGasSymbol } from 'utils/transactions';
 
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -129,12 +128,12 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
 };
 
 export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
-  const decimals = gasToken?.decimals || nativeAssetPerChain[chain].decimals;
-  const gasTokenAddress = gasToken?.address || nativeAssetPerChain[chain].address;
+  const decimals = getGasDecimals(chain, gasToken);
+  const gasAddress = getGasAddress(chain, gasToken);
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
   const gasSymbol = getGasSymbol(chain, gasToken);
 
-  return <TableAmount amount={formattedFee} assetSymbol={gasSymbol} assetAddress={gasTokenAddress} chain={chain} />;
+  return <TableAmount amount={formattedFee} assetSymbol={gasSymbol} assetAddress={gasAddress} chain={chain} />;
 };
 
 const Divider = styled.View`
