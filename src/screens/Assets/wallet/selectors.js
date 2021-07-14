@@ -48,6 +48,10 @@ export function useWalletBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountWalletBalancePerChainSelector);
 }
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 export type WalletItem = {|
   key: string,
   title: string,

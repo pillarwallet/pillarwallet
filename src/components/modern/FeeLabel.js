@@ -43,6 +43,10 @@ import type { Chain } from 'models/Chain';
 
 type Mode = 'actual' | 'estimate';
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type Props = {
   value: ?BigNumber,
   assetSymbol: string,

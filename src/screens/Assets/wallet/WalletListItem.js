@@ -40,6 +40,10 @@ import { getAssetRateInFiat } from 'utils/rates';
 // Types
 import type { Chain } from 'models/Chain';
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type Props = {|
   title: ?string,
   iconUrl: ?string,

@@ -37,6 +37,11 @@ export function useRewardsTotalBalance(): BigNumber {
 export function useRewardsBalancePerChain(): ChainRecord<BigNumber> {
   return useRootSelector(accountRewardsBalancePerChainSelector);
 }
+
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 export type RewardItem = {|
   key: string,
   service: string,

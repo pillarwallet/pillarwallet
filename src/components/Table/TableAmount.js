@@ -48,7 +48,10 @@ import {
 import type { Chain } from 'models/Chain';
 import type { Value } from 'utils/common';
 
-
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type Props = {
   amount: Value,
   chain: Chain,

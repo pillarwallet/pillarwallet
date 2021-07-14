@@ -38,6 +38,10 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type Props = {|
   fee: Value,
   assetSymbol: string,
@@ -75,6 +79,10 @@ function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
 
 export default FeeTable;
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type FeeItemProps = {|
   title: string,
   assetSymbol: string,

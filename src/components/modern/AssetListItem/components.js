@@ -68,6 +68,10 @@ export const Name = styled(Text)`
   ${fontStyles.medium};
 `;
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type BalanceProps = {|
   assetSymbol: string,
   assetAddress: string,
