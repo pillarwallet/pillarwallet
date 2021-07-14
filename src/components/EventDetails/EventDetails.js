@@ -431,15 +431,15 @@ export class EventDetail extends React.Component<Props> {
     return isReceived ? event.from : event.to;
   };
 
-  getFormattedGasFee = (formattedFee: number) => {
+  getFormattedGasFee = (fee: number) => {
     const { baseFiatCurrency, ratesPerChain } = this.props;
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const { symbol, address } = nativeAssetPerChain.ethereum;
     const rate = getAssetRateInFiat(ethereumRates, address, fiatCurrency);
-    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
+    const formattedFiatValue = formatFiat(fee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
-      tokenValue: t('tokenValue', { value: formattedFee, token: symbol }), fiatValue: formattedFiatValue,
+      tokenValue: t('tokenValue', { value: fee, token: symbol }), fiatValue: formattedFiatValue,
     });
   };
 
