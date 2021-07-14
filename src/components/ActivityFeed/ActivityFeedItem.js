@@ -363,7 +363,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const relevantAddress = this.getRelevantAddress(event);
 
     // this component is Archanova (Ethereum) only
-    const { assetSymbol = nativeAssetPerChain.ethereum.symbol } = event ?? {};
+    const assetSymbol = event?.assetSymbol ?? nativeAssetPerChain.ethereum.symbol;
 
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
