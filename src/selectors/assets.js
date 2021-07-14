@@ -23,6 +23,7 @@ import { mapValues } from 'lodash';
 
 // Utils
 import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
+import { mapNotNil } from 'utils/array';
 import {
   findAssetByAddress,
   getBalanceBN,
@@ -40,6 +41,9 @@ import {
   ratesPerChainSelector,
   type Selector,
   fiatCurrencySelector,
+  useChainSupportedAssets,
+  useChainRates,
+  useFiatCurrency,
 } from 'selectors';
 import {
   assetsBalancesPerAccountSelector,
@@ -49,9 +53,9 @@ import {
 
 // Types
 import type { Account } from 'models/Account';
-import type { AssetsPerChain, AssetByAddress, Asset } from 'models/Asset';
+import type { AssetsPerChain, AssetByAddress, Asset, AssetInfo } from 'models/Asset';
 import type { AssetBalancesPerAccount, AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
-import type { ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { RatesPerChain, Currency } from 'models/Rates';
 
 
@@ -213,3 +217,31 @@ export const accountAssetsWithBalanceSelector = createSelector(
     }, []);
   },
 );
+
+export function useAssetInfo(chain: Chain, address: string): ?AssetInfo {
+  const supportedAssets = useChainSupportedAssets(chain);
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
+
+  const asset = findAssetByAddress(supportedAssets, address);
+  if (!asset) return null;
+
+  const rateToFiat = rates?.[asset.symbol]?.[currency];
+  return { asset, rateToFiat };
+}
+
+export function useAssetInfoList(chain: Chain, addressList: string[]): AssetInfo[] {
+  const supportedAssets = useChainSupportedAssets(chain);
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
+
+  return mapNotNil(addressList, (address) => {
+    const asset = findAssetByAddress(supportedAssets, address);
+
+    if (!asset) return null;
+
+    const rateToFiat = rates?.[asset.symbol]?.[currency];
+    return { asset, rateToFiat };
+  });
+}
+

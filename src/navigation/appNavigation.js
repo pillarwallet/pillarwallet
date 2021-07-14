@@ -74,9 +74,9 @@ import WebViewScreen from 'screens/WebView/WebViewScreen';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
-import WalletMigrationIntroScreen from 'screens/WalletMigrationArchanova/Intro';
-import WalletMigrationSelectAssetsScreen from 'screens/WalletMigrationArchanova/SelectAssets';
-import WalletMigrationConfirmScreen from 'screens/WalletMigrationArchanova/Confirm';
+import WalletMigrationArchanovaIntroScreen from 'screens/WalletMigrationArchanova/Intro';
+import WalletMigrationArchanovaSelectAssetsScreen from 'screens/WalletMigrationArchanova/SelectAssets';
+import WalletMigrationArchanovaReviewScreen from 'screens/WalletMigrationArchanova/Review';
 import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
@@ -456,9 +456,9 @@ const keyBasedAssetTransferFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 const walletMigrationFlow = createStackNavigator({
-  [WALLET_MIGRATION_INTRO]: WalletMigrationIntroScreen,
-  [WALLET_MIGRATION_SELECT_ASSETS]: WalletMigrationSelectAssetsScreen,
-  [WALLET_MIGRATION_CONFIRM]: WalletMigrationConfirmScreen,
+  [WALLET_MIGRATION_INTRO]: WalletMigrationArchanovaIntroScreen,
+  [WALLET_MIGRATION_SELECT_ASSETS]: WalletMigrationArchanovaSelectAssetsScreen,
+  [WALLET_MIGRATION_CONFIRM]: WalletMigrationArchanovaReviewScreen,
 }, StackNavigatorConfig);
 
 const contactsFlow = createStackNavigator({

@@ -127,3 +127,11 @@ export type AssetDataNavigationParam = {
 }
 
 export type AssetsPerChain = ChainRecord<Asset[]>
+
+/**
+ * Convenience type for working with assets, includes asset definition as well as rate.
+ */
+export type AssetInfo = {|
+  asset: Asset,
+  rateToFiat: ?number,
+|}

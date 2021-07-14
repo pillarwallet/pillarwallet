@@ -1,6 +1,6 @@
 {
-  "name": "WalletMigrationArchanovaConfirm",
+  "name": "WalletMigrationArchanovaReview",
   "version": "0.0.0",
   "private": true,
-  "main": "WalletMigrationArchanovaConfirm.js"
+  "main": "WalletMigrationArchanovaReview.js"
 }

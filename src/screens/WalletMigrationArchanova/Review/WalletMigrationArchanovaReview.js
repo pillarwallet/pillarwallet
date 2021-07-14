@@ -102,7 +102,7 @@ function WalletMigrationArchanovaConfirm() {
   };
 
   const renderCollectibleItem = (collectible: Collectible, index: number) => {
-    if (!tokensToMigrate[collectible.contractAddress]) return null;
+    if (!collectiblesToMigrate[collectible.contractAddress]) return null;
 
     return (
       <Table.Row

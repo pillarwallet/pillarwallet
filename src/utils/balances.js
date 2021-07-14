@@ -29,7 +29,7 @@ import { recordValues } from 'utils/object';
 import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
-import type { Asset } from 'models/Asset';
+import type { Asset, AssetInfo } from 'models/Asset';
 import type {
   AccountAssetBalances,
   WalletAssetBalance,
@@ -37,6 +37,7 @@ import type {
   ServiceAssetBalance,
   CategoryAssetsBalances,
   WalletAssetBalanceInfo,
+  AssetBalanceInfo,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { RatesByAssetAddress, Currency } from 'models/Rates';
@@ -102,3 +103,8 @@ export const buildWalletAssetBalanceInfoList = (
     return { asset, balance, balanceInFiat };
   });
 };
+
+export function buildAssetBalanceInfo(assetInfo: AssetInfo, balance: BigNumber): AssetBalanceInfo {
+  const balanceInFiat = assetInfo.rateToFiat != null ? balance.times(assetInfo.rateToFiat) : null;
+  return { ...assetInfo, balance, balanceInFiat };
+}

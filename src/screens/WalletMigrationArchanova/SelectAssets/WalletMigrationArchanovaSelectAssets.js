@@ -40,7 +40,7 @@ import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // Utils
 import { buildWalletAssetBalanceInfoList } from 'utils/balances';
-import { recordValues, recordWithRemovedKey } from 'utils/object';
+import { recordWithRemovedKey } from 'utils/object';
 
 // Types
 import type { WalletAssetBalanceInfo } from 'models/Balances';
