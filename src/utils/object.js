@@ -48,6 +48,16 @@ export function recordValues<Value>(record: ?Record<Value>): Value[] {
 }
 
 /**
+ * Create a shallow copy of given record with removed key.
+ */
+export function recordWithRemovedKey<Value>(record: Record<Value>, key: string): Record<Value> {
+  const result = { ...record };
+  delete result[key];
+
+  return result;
+}
+
+/**
  * Improved version of lodash mapKeys.
  * Supports flow typing as well as key filtering when new key maps to null or undefined.
  */
@@ -85,4 +95,7 @@ export function mapRecordValues<Value, Target>(
 /**
  * Returns a copy of the object but without any `undefined` or `null` properties.
  */
-export const omitNilProps = <T: { [string]: any }>(object: T): T => omitBy(object, isNil);
+export function omitNilProps<T: { [string]: any }>(object: T): T {
+  omitBy(object, isNil);
+}
+

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { SectionList } from 'react-native';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
@@ -37,36 +38,40 @@ import { fontStyles, appFont, spacing } from 'utils/variables';
 import type { SectionBase } from 'utils/types/react-native';
 import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
-import type { AssetBalanceRecord } from 'models/WalletMigrationArchanova';
+import type {
+  TokensToMigrateByAddress,
+  CollectiblesToMigrateByAddress,
+} from 'models/WalletMigrationArchanova';
 
 
 type Props = {
-  assets: WalletAssetBalanceInfo[],
+  tokens: WalletAssetBalanceInfo[],
+  tokensToMigrate: TokensToMigrateByAddress,
+  onToggleToken: (address: string, balance: BigNumber) => mixed,
   collectibles: Collectible[],
-  selectedAssets: AssetBalanceRecord,
-  onSelectedAssetsChange: (assets: AssetBalanceRecord) => mixed,
+  collectiblesToMigrate: CollectiblesToMigrateByAddress,
+  onToggleCollectible: (address: string) => mixed,
   ListHeaderComponent: React.Element<any>,
 };
 
-const AssetList = ({ assets, collectibles, selectedAssets, onSelectedAssetsChange, ListHeaderComponent }: Props) => {
-  const sections = useSectionsData(assets, collectibles);
+const AssetList = ({
+  tokens,
+  tokensToMigrate,
+  onToggleToken,
+  collectibles,
+  collectiblesToMigrate,
+  onToggleCollectible,
+  ListHeaderComponent,
+}: Props) => {
+  const sections = useSectionsData(tokens, collectibles);
 
   const renderSectionHeader = (section: Section) => <SectionHeader>{section.title}</SectionHeader>;
 
   const renderItem = (item: Item) => (item.collectible ? renderCollectible(item.collectible) : renderToken(item.asset));
 
   const renderToken = ({ asset, balance }: WalletAssetBalanceInfo) => {
-    const isChecked = !!selectedAssets[asset.address];
-    const onCheck = () => {
-      if (isChecked) {
-        const newValue = { ...selectedAssets };
-        delete newValue[asset.address];
-        onSelectedAssetsChange(newValue);
-      } else {
-        const newValue = { ...selectedAssets, [asset.address]: { address: asset.address, balance } };
-        onSelectedAssetsChange(newValue);
-      }
-    };
+    const isChecked = !!tokensToMigrate[asset.address];
+    const onCheck = () => onToggleToken(asset.address, balance);
 
     return (
       <AssetListItem
@@ -88,17 +93,8 @@ const AssetList = ({ assets, collectibles, selectedAssets, onSelectedAssetsChang
   };
 
   const renderCollectible = (collectible: Collectible) => {
-    const isChecked = !!selectedAssets[collectible.contractAddress];
-    const onCheck = () => {
-      if (isChecked) {
-        const newValue = { ...selectedAssets };
-        delete newValue[collectible.contractAddress];
-        onSelectedAssetsChange(newValue);
-      } else {
-        const newValue = { ...selectedAssets, [collectible.contractAddress]: { address: collectible.contractAddress } };
-        onSelectedAssetsChange(newValue);
-      }
-    };
+    const isChecked = !!collectiblesToMigrate[collectible.contractAddress];
+    const onCheck = () => onToggleCollectible(collectible.contractAddress);
 
     return (
       <AssetListItem

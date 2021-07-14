@@ -20,11 +20,8 @@
 
 import { BigNumber } from 'bignumber.js';
 
-/**
- * Single asset balance to migrate.
- * No chain parameter, as archanova supports only ethereum.
- */
-export type AssetToMigrate = {|
-  address: string,
-  amount: ?BigNumber, // null for collectibles
-|};
+export type TokenAssetToMigrate = {| address: string, value: BigNumber |};
+export type CollectibleAssetToMigrate = {| address: string |};
+
+export type TokensToMigrateByAddress = { [address: string]: TokenAssetToMigrate };
+export type CollectiblesToMigrateByAddress = { [address: string]: CollectibleAssetToMigrate };

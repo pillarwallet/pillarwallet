@@ -31,7 +31,7 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {
   value: boolean,
-  onValueChange?: (value: boolean) => void,
+  onValueChange?: (value: boolean) => mixed,
   disabled?: boolean,
   style?: ViewStyleProp
 };
