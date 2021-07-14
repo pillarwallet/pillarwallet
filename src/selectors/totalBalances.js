@@ -25,7 +25,6 @@ import { map, merge } from 'lodash';
 // Selectors
 import {
   activeAccountIdSelector,
-  supportedAssetsPerChainSelector,
   ratesPerChainSelector,
   fiatCurrencySelector,
   usdToFiatRateSelector,
@@ -33,7 +32,7 @@ import {
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
-import { hasServiceAssetBalanceForSymbol } from 'utils/balances';
+import { hasServiceAssetBalanceForAddress } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { mapRecordValues } from 'utils/object';
@@ -42,7 +41,6 @@ import { mapAccountCategoryChainRecordValues } from 'utils/totalBalances';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Asset, AssetsPerChain } from 'models/Asset';
 import type {
   AssetBalancesPerAccount,
   AccountAssetBalances,
@@ -66,12 +64,10 @@ import type {
 
 export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalancesPerAccount> = createSelector(
   assetsBalancesPerAccountSelector,
-  supportedAssetsPerChainSelector,
   ratesPerChainSelector,
   fiatCurrencySelector,
   (
     assetsBalancesPerAccount: AssetBalancesPerAccount,
-    supportedAssetsPerChain: AssetsPerChain,
     ratesPerChain: RatesPerChain,
     currency: Currency,
   ): WalletTotalBalancesPerAccount =>
@@ -79,7 +75,6 @@ export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalances
       mapChainRecordValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances, chain: Chain) =>
         calculateWalletAssetsFiatValue(
           assetBalances ?? {},
-          supportedAssetsPerChain[chain] ?? [],
           ratesPerChain[chain] ?? {},
           currency,
         ),
@@ -152,16 +147,15 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
  */
 const calculateWalletAssetsFiatValue = (
   categoryAssetBalances: CategoryAssetsBalances,
-  supportedAssets: Asset[],
   rates: RatesByAssetAddress,
   currency: Currency,
 ): BigNumber => {
   const assetBalancesInFiat = map(
     categoryAssetBalances.wallet ?? {},
-    ({ symbol, address, balance }: WalletAssetBalance) => {
+    ({ address, balance }: WalletAssetBalance) => {
       if (!balance) return BigNumber(0);
 
-      const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
+      const hasMatchingServiceAsset = hasServiceAssetBalanceForAddress(categoryAssetBalances, address);
       if (hasMatchingServiceAsset) return BigNumber(0);
 
       const rate = getAssetRateInFiat(rates, address, currency);

@@ -190,10 +190,6 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
 };
 
-export const findAllAssetsBySymbol = (assets: Asset[], symbolToFind: ?string): Asset[] => {
-  return assets.filter((asset) => asset.symbol === symbolToFind) ?? [];
-};
-
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
@@ -202,10 +198,8 @@ export const findAsset = (
   userAssets: Asset[],
   supportedAssetsData: Asset[],
   assetAddress: string,
-): ?Asset => {
-  return userAssets.find(({ address }: Asset) => addressesEqual(address, assetAddress))
-  || supportedAssetsData.find(({ address }: Asset) => addressesEqual(address, assetAddress));
-};
+): ?Asset => userAssets.find(({ address }) => addressesEqual(address, assetAddress))
+  ?? supportedAssetsData.find(({ address }) => addressesEqual(address, assetAddress));
 
 export const mapAssetToAssetData = ({
   symbol: token,

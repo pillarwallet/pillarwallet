@@ -22,11 +22,10 @@ import { BigNumber } from 'bignumber.js';
 import { pickBy } from 'lodash';
 
 // Utils
-import { findAllAssetsBySymbol, addressesEqual } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
 
 // Types
-import type { Asset } from 'models/Asset';
 import type {
   AccountAssetBalances,
   WalletAssetBalance,
@@ -69,22 +68,12 @@ export const findServiceAssetBalance = (
   return balances?.find((asset) => addressesEqual(asset.address, addressToFind));
 };
 
-/**
- * Check if user has service asset balances for given asset symbol.
- *
- * Note: given symbol may correspond to 1+ supported asset, so we need to pick them from supported assets.
- */
-export const hasServiceAssetBalanceForSymbol = (
+// Check if user has service asset balances for given asset address.
+export const hasServiceAssetBalanceForAddress = (
   assetBalances: CategoryAssetsBalances,
-  supportedAssets: Asset[],
-  symbol: string,
-): boolean => {
-  const matchingSupportedAssets = findAllAssetsBySymbol(supportedAssets, symbol);
-
-  return matchingSupportedAssets.some(
-    (asset) =>
-      findServiceAssetBalance(assetBalances.deposits, asset.address) ??
-      findServiceAssetBalance(assetBalances.investments, asset.address) ??
-      findServiceAssetBalance(assetBalances.liquidityPools, asset.address),
-  );
-};
+  assetAddress: string,
+): boolean => !!(
+  findServiceAssetBalance(assetBalances.deposits, assetAddress)
+    ?? findServiceAssetBalance(assetBalances.investments, assetAddress)
+    ?? findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
+);
