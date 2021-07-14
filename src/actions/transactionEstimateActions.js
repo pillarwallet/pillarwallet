@@ -145,13 +145,8 @@ export const estimateTransactionsAction = (
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-    const gasTokenAddress = preferredGasTokenSelector(getState()) === PLR
-      ? getPlrAddressForChain(chain)
-      : nativeAssetPerChain[chain].address;
-
-    const gasToken = useGasToken
-      ? findAssetByAddress(chainSupportedAssets, gasTokenAddress)
-      : null;
+    const gasTokenAddress = preferredGasTokenSelector(getState()) === PLR ? getPlrAddressForChain(chain) : null;
+    const gasToken = useGasToken && gasTokenAddress ? findAssetByAddress(chainSupportedAssets, gasTokenAddress) : null;
 
     let errorMessage;
     let estimated;
