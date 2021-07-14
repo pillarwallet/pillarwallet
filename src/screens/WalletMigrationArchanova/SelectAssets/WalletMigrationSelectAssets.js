@@ -45,7 +45,7 @@ import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
 
 const WalletMigrationSelectAssets = () => {
-  const { t } = useTranslationWithPrefix('walletMigration.etherspot.selectAssets');
+  const { t } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const navigation = useNavigation();
 
   const archanovaAccount = useRootSelector(achanovaAccountSelector);

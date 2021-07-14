@@ -45,7 +45,7 @@ import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
-import WalletMigrationBanner from 'screens/WalletMigration/Banner';
+import WalletMigrationBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // constants
 import {

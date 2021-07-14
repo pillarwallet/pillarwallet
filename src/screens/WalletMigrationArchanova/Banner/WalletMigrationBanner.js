@@ -33,7 +33,7 @@ import { WALLET_MIGRATION_INTRO } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { showWalletMigrationSelector } from 'selectors/walletMigration';
+import { showWalletMigrationSelector } from 'selectors/walletMigrationArchanova';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -48,7 +48,7 @@ type Props = {|
 |};
 
 function WalletMigrationBanner({ style }: Props) {
-  const { t } = useTranslationWithPrefix('walletMigration.etherspot.banner');
+  const { t } = useTranslationWithPrefix('walletMigrationArchanova.banner');
   const navigation = useNavigation();
 
   const showMigrationBanner = useRootSelector(showWalletMigrationSelector);

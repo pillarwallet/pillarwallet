@@ -25,7 +25,7 @@ import { archanovaAccountIdSelector } from 'selectors/archanova';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
-import { hasNonNegligileWalletBalances } from 'utils/walletMigration';
+import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
 
 // Types
 import type { Selector } from 'reducers/rootReducer';

@@ -47,7 +47,7 @@ function WalletMigrationIntro() {
   const navigation = useNavigation();
   const darkTheme = getThemeByType(DARK_THEME);
 
-  const { t } = useTranslationWithPrefix('walletMigration.etherspot.intro');
+  const { t } = useTranslationWithPrefix('walletMigrationArchanova.intro');
 
   const navigateToMigration = () => {
     navigation.navigate(WALLET_MIGRATION_SELECT_ASSETS);

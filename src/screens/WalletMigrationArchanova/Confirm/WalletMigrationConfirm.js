@@ -29,7 +29,7 @@ import Text from 'components/modern/Text';
 
 function WalletMigrationConfirm() {
   const navigation = useNavigation();
-  const { t } = useTranslationWithPrefix('walletMigration.etherspot.confirm');
+  const { t } = useTranslationWithPrefix('walletMigrationArchanova.confirm');
 
   return (
     <Container>

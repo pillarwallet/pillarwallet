@@ -36,7 +36,7 @@ type Props = {
 };
 
 const WalletSummary = ({ address, totalValueInFiat }: Props) => {
-  const { t, tRoot } = useTranslationWithPrefix('walletMigration.etherspot.selectAssets');
+  const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const colors = useThemeColors();
 
   return (
