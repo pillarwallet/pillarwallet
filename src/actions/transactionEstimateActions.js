@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 
@@ -133,7 +135,7 @@ export const estimateTransactionsForAccountAction = (
         to,
         accountAddress,
         data,
-        value.toString(),
+        BigNumber(value).toFixed(),
         assetData?.token,
         assetData?.decimals,
         assetData?.tokenType,
@@ -184,7 +186,6 @@ export const estimateTransactionsForAccountAction = (
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
         break;
       case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        console.log("TYPE archa")
         estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
           errorMessage = error?.message;
           return null;
