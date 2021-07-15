@@ -79,7 +79,7 @@ function WalletMigrationArchanovaConfirm() {
   const totalFee = BigNumber(0);
 
   React.useEffect(() => {
-    if (!etherspotAccount) return;
+    if (!archanovaAccount || !etherspotAccount) return;
 
     const transactionsToEstimate = assets.map((item) => mapAssetItemToTransactionToEstimate(item, etherspotAccount));
 

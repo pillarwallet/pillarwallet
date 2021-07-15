@@ -128,6 +128,7 @@ const SendAsset = ({
       assetData: mapToAssetDataType(assetData),
     };
 
+console.log('BBB2', transactionToEstimate);
     estimateTransaction(transactionToEstimate, chain);
   };
 
@@ -214,6 +215,7 @@ const SendAsset = ({
         value: calculatedBalanceAmount.toString(),
         assetData: mapToAssetDataType(assetData),
       };
+      console.log("BBB", transactionToEstimate);
       await estimateTransaction(transactionToEstimate, chain);
     }
 

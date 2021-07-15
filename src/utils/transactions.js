@@ -109,7 +109,6 @@ export const buildEthereumTransaction = async (
   let transaction = { to, value };
 
   if (data) transaction = { ...transaction, data };
-
   return transaction;
 };
 

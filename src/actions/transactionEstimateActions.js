@@ -120,7 +120,7 @@ export const estimateTransactionsForAccountAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(setEstimatingTransactionAction(true));
 
-    const activeAccountAddress = getAccountAddress(account);
+    const accountAddress = getAccountAddress(account);
 
     let transactions;
     try {
@@ -131,9 +131,9 @@ export const estimateTransactionsForAccountAction = (
         assetData,
       }) => buildEthereumTransaction(
         to,
-        activeAccountAddress,
+        accountAddress,
         data,
-        Number(value).toString(),
+        value.toString(),
         assetData?.token,
         assetData?.decimals,
         assetData?.tokenType,
@@ -184,6 +184,7 @@ export const estimateTransactionsForAccountAction = (
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
         break;
       case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+        console.log("TYPE archa")
         estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
           errorMessage = error?.message;
           return null;
