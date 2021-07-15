@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 import { mapValues } from 'lodash';
 
 // Selectors
-import { activeAccountIdSelector } from 'selectors';
+import { useRootSelector, activeAccountIdSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -45,6 +45,15 @@ export const accountCollectiblesSelector = createSelector(
     return collectiblesPerAccount[activeAccountId] || { ethereum: [] };
   },
 );
+
+/**
+ * Returns a chain record of collectibles for given account.
+ */
+export const useCollectiblesForAccount = (accountId: ?string): ChainRecord<Collectible[]> => {
+  const collectiblesPerAccount = useRootSelector(collectiblesPerAccountSelector);
+  return collectiblesPerAccount[accountId ?? ''] ?? {};
+};
+
 
 export const collectiblesHistorySelector = ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
 
