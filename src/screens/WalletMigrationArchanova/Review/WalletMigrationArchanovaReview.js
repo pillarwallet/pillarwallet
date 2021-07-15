@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 
@@ -42,6 +43,9 @@ import { useRootSelector, useFiatCurrency } from 'selectors';
 import { etherspotAccountSelector, achanovaAccountSelector } from 'selectors/accounts';
 import { useTotalMigrationValueInFiat } from 'selectors/walletMigrationArchanova';
 
+// Actions
+import { estimateTransactionsForAccountAction } from 'actions/transactionEstimateActions';
+
 // Utils
 import { BigNumber, humanizeHexString } from 'utils/common';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
@@ -52,12 +56,14 @@ import { spacing } from 'utils/variables';
 import type { Collectible } from 'models/Collectible';
 
 // Local
-import { useAssetItems, type AssetItem, type TokenItem } from './utils';
+import { type AssetItem, type TokenItem, useAssetItems, mapAssetItemToTransactionToEstimate } from './utils';
 
 
 function WalletMigrationArchanovaConfirm() {
   const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.review');
+
+  const dispatch = useDispatch();
 
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
@@ -71,6 +77,15 @@ function WalletMigrationArchanovaConfirm() {
   const hasEnoughGas = true;
   const totalValue = useTotalMigrationValueInFiat();
   const totalFee = BigNumber(0);
+
+  React.useEffect(() => {
+    if (!etherspotAccount) return;
+
+    const transactionsToEstimate = assets.map((item) => mapAssetItemToTransactionToEstimate(item, etherspotAccount));
+
+    dispatch(estimateTransactionsForAccountAction(transactionsToEstimate, CHAIN.ETHEREUM, archanovaAccount));
+    console.log('AAA', transactionsToEstimate);
+  }, []);
 
   const renderItem = (item: AssetItem, index: number) =>
     item.collectible ? renderCollectibleItem(item.collectible, index) : renderTokenItem(item, index);
@@ -98,10 +113,6 @@ function WalletMigrationArchanovaConfirm() {
         separator={index !== 0}
       />
     );
-  };
-
-  const estimateTotalTransactionFees = () => {
-
   };
 
   //  const renderToken = (token: ) => null;
@@ -162,3 +173,21 @@ const SmartWalletLogo = styled(Image)`
 const BalanceLabel = styled(Text)`
   margin-vertical: ${spacing.mediumLarge}px;
 `;
+
+// TODO: map collectible params
+const mapToAssetDataType = ({
+  contractAddress,
+  address,
+  symbol: token,
+  decimals,
+  tokenType,
+  tokenId,
+  name,
+}: Object): AssetData => ({
+  contractAddress: address || contractAddress,
+  token,
+  decimals,
+  tokenType,
+  id: tokenId,
+  name,
+});

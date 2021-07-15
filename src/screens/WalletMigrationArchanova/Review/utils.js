@@ -35,8 +35,10 @@ import { recordValues } from 'utils/object';
 import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
-import type { Asset } from 'models/Asset';
+import type { Account } from 'models/Account';
+import type { Asset, AssetData } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { TransactionToEstimate } from 'models/Transaction';
 
 export type AssetItem = TokenItem | CollectibleItem;
 
@@ -82,4 +84,41 @@ export const useCollectibleItems = (): CollectibleItem[] => {
   return mapNotNil(collectibleValues, (collectible) =>
     findCollectibleByAddress(collectibles, collectible.address),
   ).map((collectible) => ({ collectible }));
+};
+
+export const mapAssetItemToTransactionToEstimate = (item: AssetItem, toAccount: Account): TransactionToEstimate => {
+  if (item.collectible) return mapCollectibleItemToTransactionToEstimate(item, toAccount);
+  return mapTokenItemToTransactionToEstimate(item, toAccount);
+};
+
+export const mapTokenItemToTransactionToEstimate = (
+  tokenItem: TokenItem,
+  toAccount: Account,
+): TransactionToEstimate => {
+  const { token, balance } = tokenItem;
+
+  return {
+    to: toAccount?.id,
+    value: balance.toString(),
+    assetData: {
+      contractAddress: token.address,
+      token: token.symbol,
+      decimals: token.decimals,
+    },
+  };
+};
+
+export const mapCollectibleItemToTransactionToEstimate = (
+  collectibleItem: CollectibleItem,
+  toAccount: Account,
+): TransactionToEstimate => {
+  const { collectible } = collectibleItem;
+
+  // $FlowFixMe: used as in SendCollectibleConfirm
+  return {
+    to: toAccount?.id,
+    value: 0,
+    // $FlowFixMe: used as in SendCollectibleConfirm
+    assetData: collectible,
+  };
 };
