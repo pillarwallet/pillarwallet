@@ -34,7 +34,7 @@ import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Constants
-import { ETH } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
@@ -145,7 +145,7 @@ function WalletMigrationArchanovaConfirm() {
         {tokens.map(renderTokenItem)}
         {collectibles.map(renderCollectibleItem)}
 
-        <FeeTable fee={totalFee} symbol={ETH} chain={CHAIN.ETHEREUM} />
+        <FeeTable fee={totalFee} assetAddress={ADDRESS_ZERO} assetSymbol={ETH} chain={CHAIN.ETHEREUM} />
 
         <Button
           title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}

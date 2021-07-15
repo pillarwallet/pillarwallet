@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -29,52 +30,35 @@ import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Constants
-import { CHAIN } from 'constants/chainConstants';
 import { WALLET_MIGRATION_CONFIRM } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useChainSupportedAssets, useChainRates, useFiatCurrency } from 'selectors';
+import { useRootSelector } from 'selectors';
 import { achanovaAccountSelector } from 'selectors/accounts';
-import { assetsBalancesPerAccountSelector } from 'selectors/balances';
-import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // Utils
-import { buildWalletAssetBalanceInfoList } from 'utils/balances';
 import { recordWithRemovedKey } from 'utils/object';
 
 // Types
-import type { WalletAssetBalanceInfo } from 'models/Balances';
-import type {
-  TokensToMigrateByAddress,
-  CollectiblesToMigrateByAddress,
-} from 'models/WalletMigrationArchanova';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
 // Local
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
+import { useTokenItems, useCollectibles, getTotaValueInFiat } from './utils';
 
 const WalletMigrationArchanovaSelectAssets = () => {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const navigation = useNavigation();
 
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
-  const balancesPerAccount = useRootSelector(assetsBalancesPerAccountSelector);
-  const collectiblesPerAccount = useRootSelector(collectiblesPerAccountSelector);
-  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const rates = useChainRates(CHAIN.ETHEREUM);
-  const currency = useFiatCurrency();
+  const archanovaAccountId = archanovaAccount?.id ?? '';
 
   const [tokensToMigrate, setTokensToMigrate] = React.useState<TokensToMigrateByAddress>({});
   const [collectiblesToMigrate, setCollectiblesToMigrate] = React.useState<CollectiblesToMigrateByAddress>({});
 
-  const archanovaAccountId = archanovaAccount?.id ?? '';
-  const tokens = buildWalletAssetBalanceInfoList(
-    balancesPerAccount[archanovaAccountId]?.ethereum?.wallet,
-    ethereumSupportedAssets,
-    rates,
-    currency,
-  );
-  const collectibles = collectiblesPerAccount[archanovaAccountId]?.ethereum ?? [];
+  const tokens = useTokenItems(archanovaAccountId);
+  const collectibles = useCollectibles(archanovaAccountId);
 
   const handleToggleToken = (address: string, balance: BigNumber) => {
     if (tokensToMigrate[address]) {
@@ -128,16 +112,3 @@ const WalletMigrationArchanovaSelectAssets = () => {
 };
 
 export default WalletMigrationArchanovaSelectAssets;
-
-const getTotaValueInFiat = (tokens: WalletAssetBalanceInfo[], tokensToMigrate: TokensToMigrateByAddress) => {
-  let result = 0;
-
-  tokens.forEach((tokenBalance) => {
-    if (tokensToMigrate[tokenBalance.asset.address]) {
-      // TODO handle partial amount
-      result += tokenBalance.balanceInFiat;
-    }
-  });
-
-  return result;
-};

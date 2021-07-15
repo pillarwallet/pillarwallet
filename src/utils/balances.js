@@ -93,18 +93,19 @@ export const buildWalletAssetBalanceInfoList = (
   currency: Currency,
 ): WalletAssetBalanceInfo[] => {
   const balancesValues = recordValues(balances);
+  console.log("EEE", balancesValues);
   return mapNotNil(balancesValues, (balanceValue) => {
     const asset = findAssetByAddress(supportedAssets, balanceValue.address);
     if (!asset) return null;
 
     const balance = BigNumber(balanceValue.balance);
-    const balanceInFiat = getAssetValueInFiat(balanceValue.address, balance, rates, currency);
+    const balanceInFiat = getAssetValueInFiat(balance, balanceValue.address, rates, currency);
 
     return { asset, balance, balanceInFiat };
   });
 };
 
 export function buildAssetBalanceInfo(assetInfo: AssetInfo, balance: BigNumber): AssetBalanceInfo {
-  const balanceInFiat = assetInfo.rateToFiat != null ? balance.times(assetInfo.rateToFiat) : null;
+  const balanceInFiat = assetInfo.rateToFiat != null ? balance.times(assetInfo.rateToFiat).toNumber() : null;
   return { ...assetInfo, balance, balanceInFiat };
 }

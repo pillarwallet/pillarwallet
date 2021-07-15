@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { SectionList } from 'react-native';
 import styled from 'styled-components/native';
@@ -36,16 +37,18 @@ import { fontStyles, appFont, spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
 import type {
   TokensToMigrateByAddress,
   CollectiblesToMigrateByAddress,
 } from 'models/WalletMigrationArchanova';
 
+// Local
+import type { TokenItem } from './utils';
+
 
 type Props = {
-  tokens: WalletAssetBalanceInfo[],
+  tokens: TokenItem[],
   tokensToMigrate: TokensToMigrateByAddress,
   onToggleToken: (address: string, balance: BigNumber) => mixed,
   collectibles: Collectible[],
@@ -65,15 +68,16 @@ const AssetList = ({
 
   const renderSectionHeader = (section: Section) => <SectionHeader>{section.title}</SectionHeader>;
 
-  const renderItem = (item: Item) => (item.collectible ? renderCollectible(item.collectible) : renderToken(item.asset));
+  const renderItem = (item: Item) => (item.collectible ? renderCollectible(item.collectible) : renderToken(item.token));
 
-  const renderToken = ({ asset, balance }: WalletAssetBalanceInfo) => {
+  const renderToken = ({ asset, balance }: TokenItem) => {
     const isChecked = !!tokensToMigrate[asset.address];
     const onCheck = () => onToggleToken(asset.address, balance);
 
     return (
       <AssetListItem
         name={asset.name}
+        address={asset.address}
         symbol={asset.symbol}
         iconUrl={asset.iconUrl}
         balance={balance}
@@ -122,11 +126,9 @@ type Section = {
   title: string,
 };
 
-type Item = AssetItem | CollectibleItem;
-type AssetItem = {| asset: WalletAssetBalanceInfo |};
-type CollectibleItem = {| collectible: Collectible |};
+type Item = {| token: TokenItem |} | {| collectible: Collectible |};
 
-const useSectionsData = (assets: WalletAssetBalanceInfo[], collectibles: Collectible[]) => {
+const useSectionsData = (assets: TokenItem[], collectibles: Collectible[]) => {
   const { t } = useTranslation();
 
   const sections: Section[] = [];
@@ -135,7 +137,7 @@ const useSectionsData = (assets: WalletAssetBalanceInfo[], collectibles: Collect
     sections.push({
       key: 'tokens',
       title: t('label.tokens'),
-      data: assets.map((asset) => ({ asset })),
+      data: assets.map((token) => ({ token })),
     });
   }
 
