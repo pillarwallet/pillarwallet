@@ -18,35 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { useMemo } from 'react';
-
 // Constants
-import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainSupportedAssets, useChainRates } from 'selectors';
-import { etherspotAccountSelector, archanovaAccountIdSelector } from 'selectors/accounts';
-import { assetsBalancesPerAccountSelector } from 'selectors/balances';
+import { archanovaAccountIdSelector } from 'selectors/accounts';
 import { useCollectiblesForAccount } from 'selectors/collectibles';
 
 // Utils
 import { mapNotNil } from 'utils/array';
 import { findAssetByAddress } from 'utils/assets';
-import { buildWalletAssetBalanceInfoList } from 'utils/balances';
 import { findCollectibleByAddress } from 'utils/collectibles';
-import { BigNumber, humanizeHexString } from 'utils/common';
-import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { useThemedImages } from 'utils/images';
+import { BigNumber } from 'utils/common';
 import { recordValues } from 'utils/object';
 import { getAssetValueInFiat } from 'utils/rates';
-import { spacing } from 'utils/variables';
 
 // Types
 import type { Asset } from 'models/Asset';
-import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
-import type { TokenToMigrate, CollectibleToMigrate } from 'models/WalletMigrationArchanova';
 
 export type AssetItem = TokenItem | CollectibleItem;
 
@@ -60,30 +50,36 @@ export type CollectibleItem = {|
   collectible: Collectible,
 |};
 
-export const useTokenItems = (tokensToMigrate: TokenToMigrate[]): TokenItem[] => {
+export const useAssetItems = () => {
+  const tokenItems = useTokenItems();
+  const collectibleItems = useCollectibleItems();
+  return [...tokenItems, ...collectibleItems];
+};
+
+export const useTokenItems = (): TokenItem[] => {
+  const tokensToMigrate = useRootSelector((root) => root.walletMigrationArchanova.tokensToMigrate);
   const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const rates = useChainRates(CHAIN.ETHEREUM);
   const currency = useFiatCurrency();
 
-  return useMemo(() => {
-    return mapNotNil(tokensToMigrate, (tokenBalance) => {
-      const token = findAssetByAddress(supportedAssets, tokenBalance.address);
-      if (!token) return null;
+  const tokenValues = recordValues(tokensToMigrate);
+  return mapNotNil(tokenValues, (tokenBalance) => {
+    const token = findAssetByAddress(supportedAssets, tokenBalance.address);
+    if (!token) return null;
 
-      const balance = BigNumber(tokenBalance.balance);
-      const balanceInFiat = getAssetValueInFiat(tokenBalance.balance, tokenBalance.address, rates, currency);
-      return { token, balance, balanceInFiat };
-    });
-  }, [tokensToMigrate, supportedAssets, rates, currency]);
+    const balance = BigNumber(tokenBalance.balance);
+    const balanceInFiat = getAssetValueInFiat(tokenBalance.balance, tokenBalance.address, rates, currency);
+    return { token, balance, balanceInFiat };
+  });
 };
 
-export const useCollectibleItems = (collectiblesToMigrate: CollectibleToMigrate[]): CollectibleItem[] => {
+export const useCollectibleItems = (): CollectibleItem[] => {
+  const collectiblesToMigrate = useRootSelector((root) => root.walletMigrationArchanova.collectiblesToMigrate);
   const archanovaAccountId = useRootSelector(archanovaAccountIdSelector);
-  const collectibles = useCollectiblesForAccount(archanovaAccountId)?.ethereum ?? [];
+  const collectibles = useCollectiblesForAccount(archanovaAccountId)?.ethereum;
 
-  return useMemo(() => {
-    return mapNotNil(collectiblesToMigrate, (collectible) =>
-      findCollectibleByAddress(collectibles, collectible.address)?.map((collectible) => ({ collectible })),
-    );
-  }, []);
+  const collectibleValues = recordValues(collectiblesToMigrate);
+  return mapNotNil(collectibleValues, (collectible) =>
+    findCollectibleByAddress(collectibles, collectible.address),
+  ).map((collectible) => ({ collectible }));
 };

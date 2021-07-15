@@ -24,6 +24,6 @@ import { addressesEqual } from 'utils/assets';
 // Types
 import type { Collectible } from 'models/Collectible';
 
-export function findCollectibleByAddress(collectibles: Collectible[], addressToFind: ?string): ?Collectible {
-  return collectibles.find((collectible) => addressesEqual(collectible.contractAddress, addressToFind));
+export function findCollectibleByAddress(collectibles: ?Collectible[], addressToFind: ?string): ?Collectible {
+  return collectibles?.find((collectible) => addressesEqual(collectible.contractAddress, addressToFind));
 }

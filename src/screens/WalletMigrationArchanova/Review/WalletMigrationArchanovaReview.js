@@ -44,18 +44,16 @@ import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // Utils
-import { findAssetByAddress } from 'utils/assets';
-import { buildWalletAssetBalanceInfoList } from 'utils/balances';
 import { BigNumber, humanizeHexString } from 'utils/common';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { Asset } from 'models/Asset';
-import type { WalletAssetBalanceInfo } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
-import type { TokenToMigrate, CollectibleToMigrate } from 'models/WalletMigrationArchanova';
+
+// Local
+import { useAssetItems, type AssetItem, type TokenItem } from './utils';
 
 
 function WalletMigrationArchanovaConfirm() {
@@ -65,36 +63,24 @@ function WalletMigrationArchanovaConfirm() {
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
 
-  const balancesPerAccount = useRootSelector(assetsBalancesPerAccountSelector);
-  const collectiblesPerAccount = useRootSelector(collectiblesPerAccountSelector);
-  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const rates = useChainRates(CHAIN.ETHEREUM);
   const currency = useFiatCurrency();
 
   const images = useThemedImages();
 
-  const tokensToMigrate: TokenToMigrate[] = navigation.getParam('tokens') ?? [];
-  const collectiblesToMigrate: CollectibleToMigrate[] = navigation.getParam('collectibles') ?? [];
-
-  const tokens = buildWalletAssetBalanceInfoList(
-    balancesPerAccount[archanovaAccount?.id ?? '']?.ethereum?.wallet,
-    ethereumSupportedAssets,
-    rates,
-    currency,
-  );
-  const collectibles = collectiblesPerAccount[archanovaAccount?.id ?? '']?.ethereum ?? [];
+  const assets = useAssetItems();
 
   const hasEnoughGas = true;
   const totalValue = BigNumber(0);
   const totalFee = BigNumber(0);
 
-  const renderTokenItem = ({ asset, balance, balanceInFiat }: WalletAssetBalanceInfo, index: number) => {
-    if (!tokensToMigrate[asset.address]) return null;
+  const renderItem = (item: AssetItem, index: number) =>
+    item.collectible ? renderCollectibleItem(item.collectible, index) : renderTokenItem(item, index);
 
+  const renderTokenItem = ({ token, balance, balanceInFiat }: TokenItem, index: number) => {
     return (
-      <Table.RowContainer key={asset.address} separator={index !== 0}>
-        <Table.RowTitle>{asset.name}</Table.RowTitle>
-        <Table.RowValue fontVariant="tabular-nums">{formatTokenValue(balance, asset.symbol)}</Table.RowValue>
+      <Table.RowContainer key={token.address} separator={index !== 0}>
+        <Table.RowTitle>{token.name}</Table.RowTitle>
+        <Table.RowValue fontVariant="tabular-nums">{formatTokenValue(balance, token.symbol)}</Table.RowValue>
         {!!balanceInFiat && (
           <Table.RowValue variant="secondary" fontVariant="tabular-nums">
             {formatFiatValue(balanceInFiat, currency)}
@@ -105,8 +91,6 @@ function WalletMigrationArchanovaConfirm() {
   };
 
   const renderCollectibleItem = (collectible: Collectible, index: number) => {
-    if (!collectiblesToMigrate[collectible.contractAddress]) return null;
-
     return (
       <Table.Row
         key={collectible.contractAddress}
@@ -145,8 +129,7 @@ function WalletMigrationArchanovaConfirm() {
         />
 
         <Table.Header>{t('assets.header')}</Table.Header>
-        {tokens.map(renderTokenItem)}
-        {collectibles.map(renderCollectibleItem)}
+        {assets.map(renderItem)}
 
         <FeeTable fee={totalFee} assetAddress={ADDRESS_ZERO} assetSymbol={ETH} chain={CHAIN.ETHEREUM} />
 
@@ -176,32 +159,3 @@ const SmartWalletLogo = styled(Image)`
 const BalanceLabel = styled(Text)`
   margin-vertical: ${spacing.mediumLarge}px;
 `;
-
-type AssetItem = TokenItem | CollectibleItem;
-
-type TokenItem = {|
-  token: Asset,
-  balance: BigNumber,
-  balanceInFiat: ?number,
-|};
-
-type CollectibleItem = {|
-  collectible: Collectible,
-|};
-
-export const useTokenItems = (tokensToMigrate: TokensToMigrateByAddress): TokenItem[] => {
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const rates = useChainRates(CHAIN.ETHEREUM);
-  const currency = useFiatCurrency();
-
-  return React.useMemo(() => {
-    return mapNotNil(balanceValues, (balanceValue) => {
-      const asset = findAssetByAddress(supportedAssets, balanceValue.address);
-      if (!asset) return null;
-
-      const balance = BigNumber(balanceValue.balance);
-      const balanceInFiat = getAssetValueInFiat(tokenBalance.balance, tokenBalance.address, rates, currency);
-      return { asset, balance, balanceInFiat };
-    });
-  }, [accountId, balancesPerAccount, supportedAssets]);
-};

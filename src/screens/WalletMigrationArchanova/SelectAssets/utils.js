@@ -38,6 +38,7 @@ import { recordValues } from 'utils/object';
 import type { Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
+
 export type TokenItem = {|
   asset: Asset,
   balance: BigNumber,

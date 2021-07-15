@@ -126,18 +126,18 @@ type Section = {
   title: string,
 };
 
-type Item = {| token: TokenItem |} | {| collectible: Collectible |};
+type Item = {| key: string, token: TokenItem |} | {| key: string, collectible: Collectible |};
 
-const useSectionsData = (assets: TokenItem[], collectibles: Collectible[]) => {
+const useSectionsData = (tokens: TokenItem[], collectibles: Collectible[]) => {
   const { t } = useTranslation();
 
   const sections: Section[] = [];
 
-  if (assets.length) {
+  if (tokens.length) {
     sections.push({
       key: 'tokens',
       title: t('label.tokens'),
-      data: assets.map((token) => ({ token })),
+      data: tokens.map((token) => ({ key: token.asset.address, token })),
     });
   }
 
@@ -145,7 +145,7 @@ const useSectionsData = (assets: TokenItem[], collectibles: Collectible[]) => {
     sections.push({
       key: 'collectibles',
       title: t('label.collectibles'),
-      data: collectibles.map((collectible) => ({ collectible })),
+      data: collectibles.map((collectible) => ({ key: collectible.contractAddress, collectible })),
     });
   }
 
