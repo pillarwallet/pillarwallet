@@ -43,9 +43,6 @@ import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
-
 // utils
 import {
   BigNumber,
@@ -59,6 +56,7 @@ import {
   appendNativeAssetIfNeeded,
   buildExchangeOffer,
   buildTransactionFeeInfo,
+  getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
@@ -68,7 +66,6 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type {
@@ -617,9 +614,7 @@ export class EtherspotService {
     }
 
     try {
-      const tokenListName = chain === CHAIN.ETHEREUM && isProdEnv()
-        ? firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM)
-        : null;
+      const tokenListName = getChainTokenListName(chain);
 
       let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
 

@@ -38,6 +38,11 @@ import {
 import { ASSET_CATEGORY, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
+import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -45,6 +50,7 @@ import { findAssetByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
+import { isProdEnv } from 'utils/environment';
 
 // types
 import type {
@@ -237,4 +243,15 @@ export const assetsCategoryFromEtherspotBalancesCategory = {
   [EtherspotAccountDashboardProtocols.Investments]: ASSET_CATEGORY.INVESTMENTS,
   // TODO: enable once rewards available
   // [AccountDashboardProtocols.Rewards]: ASSET_CATEGORY.REWARDS
+};
+
+export const getChainTokenListName = (chain: Chain): ?string => {
+  if (chain === CHAIN.ETHEREUM && isProdEnv()) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
+  }
+
+  if (chain === CHAIN.BINANCE) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_BSC);
+  if (chain === CHAIN.POLYGON) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_POLYGON);
+
+  return null;
 };
