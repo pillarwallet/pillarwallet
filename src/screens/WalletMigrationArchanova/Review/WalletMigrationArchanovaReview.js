@@ -38,10 +38,9 @@ import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainSupportedAssets, useChainRates } from 'selectors';
+import { useRootSelector, useFiatCurrency } from 'selectors';
 import { etherspotAccountSelector, achanovaAccountSelector } from 'selectors/accounts';
-import { assetsBalancesPerAccountSelector } from 'selectors/balances';
-import { collectiblesPerAccountSelector } from 'selectors/collectibles';
+import { useTotalMigrationValueInFiat } from 'selectors/walletMigrationArchanova';
 
 // Utils
 import { BigNumber, humanizeHexString } from 'utils/common';
@@ -70,7 +69,7 @@ function WalletMigrationArchanovaConfirm() {
   const assets = useAssetItems();
 
   const hasEnoughGas = true;
-  const totalValue = BigNumber(0);
+  const totalValue = useTotalMigrationValueInFiat();
   const totalFee = BigNumber(0);
 
   const renderItem = (item: AssetItem, index: number) =>
@@ -99,6 +98,10 @@ function WalletMigrationArchanovaConfirm() {
         separator={index !== 0}
       />
     );
+  };
+
+  const estimateTotalTransactionFees = () => {
+
   };
 
   //  const renderToken = (token: ) => null;

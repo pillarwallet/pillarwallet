@@ -50,8 +50,9 @@ import { PLR } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
+import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
 
 
 export const resetEstimateTransactionAction = () => {
@@ -101,15 +102,25 @@ export const estimateTransactionsAction = (
   chain: Chain,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch(setEstimatingTransactionAction(true));
-
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
       reportErrorLog('estimateTransactionsAction failed: no active account');
       return;
     }
 
-    const activeAccountAddress = getAccountAddress(activeAccount);
+    dispatch(estimateTransactionsForAccountAction(transactionsToEstimate, chain, activeAccount));
+  };
+};
+
+export const estimateTransactionsForAccountAction = (
+  transactionsToEstimate: TransactionToEstimate[],
+  chain: Chain,
+  account: Account,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch(setEstimatingTransactionAction(true));
+
+    const activeAccountAddress = getAccountAddress(account);
 
     let transactions;
     try {
@@ -151,14 +162,14 @@ export const estimateTransactionsAction = (
     let estimated;
     let feeInfo;
 
-    switch (getAccountType(activeAccount)) {
+    switch (getAccountType(account)) {
       case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
         // reset batch, not a promise
         try {
           etherspotService.clearTransactionsBatch(chain);
         } catch (error) {
           dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
-          reportErrorLog('estimateTransactionsAction failed: clear batch was not successful', { error });
+          reportErrorLog('estimateTransactionsForAccountAction failed: clear batch was not successful', { error });
           return;
         }
 
@@ -180,7 +191,7 @@ export const estimateTransactionsAction = (
         feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
         break;
       default:
-        reportErrorLog('estimateTransactionsAction failed: unsupported account type', { activeAccount });
+        reportErrorLog('estimateTransactionsForAccountAction failed: unsupported account type', { account });
         break;
     }
 
