@@ -18,30 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
-// components
+// Components
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, MediumText } from 'components/Typography';
 import Title from 'components/Title';
-import Button from 'components/Button';
+import Button from 'components/modern/Button';
 import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
-// utils
+// Utils
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
+import { useChainConfig } from 'utils/uiConfig';
 
-// constants
-import {
-  SEND_TOKEN_CONFIRM,
-  SEND_COLLECTIBLE_CONFIRM,
-  LIQUIDITY_POOL_DASHBOARD,
-} from 'constants/navigationConstants';
+// Constants
+import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, LIQUIDITY_POOL_DASHBOARD } from 'constants/navigationConstants';
 import {
   LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
@@ -51,32 +49,41 @@ import {
 } from 'constants/liquidityPoolsConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { TRANSACTION_TYPE, ERROR_TYPE } from 'constants/transactionsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-};
+// Types
+import type { TransactionPayload } from 'models/Transaction';
+
+// Selectors
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
 
-const getTransactionErrorMessage = (error: string): string => {
-  const TRANSACTION_ERRORS = {
-    [ERROR_TYPE.TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
-    [ERROR_TYPE.REPLACEMENT_TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
-    [ERROR_TYPE.NOT_OWNED]: t('error.transactionFailed.notOwnedCollectible'),
-    [ERROR_TYPE.CANT_BE_TRANSFERRED]: t('error.transactionFailed.collectibleCantBeTransferred'),
-  };
+const getTransactionErrorMessage = (error: ?string): string => {
+  if (error) {
+    const TRANSACTION_ERRORS = {
+      [ERROR_TYPE.TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+      [ERROR_TYPE.REPLACEMENT_TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+      [ERROR_TYPE.NOT_OWNED]: t('error.transactionFailed.notOwnedCollectible'),
+      [ERROR_TYPE.CANT_BE_TRANSFERRED]: t('error.transactionFailed.collectibleCantBeTransferred'),
+    };
+    return TRANSACTION_ERRORS[error];
+  }
   const transactionFailureText = t('error.transactionFailed.default');
-  return TRANSACTION_ERRORS[error] || transactionFailureText;
+  return transactionFailureText;
 };
 
-const getTransactionSuccessMessage = (transactionType: ?string) => {
+const getTransactionSuccessMessage = (transactionType: ?string, chain: string) => {
   if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
     return t('transactions.paragraph.exchangeTransactionSuccess');
   }
-  return t('transactions.paragraph.transactionSuccess');
+  return t('transactions.paragraph.transactionSuccess', { network: chain });
 };
 
 const getTransactionSuccessTitle = (props) => {
@@ -92,29 +99,32 @@ const getTransactionSuccessTitle = (props) => {
   return t('transactions.title.transactionSuccess');
 };
 
-const CancelText = styled(MediumText)`
-  color: ${themedColors.negative};
-  font-size: ${fontSizes.medium}px;
-`;
+function SendTokenTransaction() {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const fromAddress = useRootSelector(activeAccountAddressSelector);
 
-const ButtonWrapper = styled.View`
-  width: 100%;
-  margin: 0px ${spacing.layoutSides}px 20px;
-`;
+  const isSuccess: boolean = useNavigationParam('isSuccess');
+  const error: ?string = useNavigationParam('error');
+  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
+  const transactionType: ?string = useNavigationParam('transactionType');
+  const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
+  const noRetry: string = useNavigationParam('noRetry');
+  const batchHash: ?string = useNavigationParam('batchHash');
+  const hash: ?string = useNavigationParam('hash');
 
-const FailureButtonsWrapper = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-`;
+  const {
+    tokenType: transactionTokenType,
+    extra: { allowance = {} } = {},
+    chain = CHAIN.ETHEREUM,
+  } = transactionPayload;
 
-class SendTokenTransaction extends React.Component<Props> {
-  handleDismissal = () => {
-    const { navigation } = this.props;
+  const chainConfig = useChainConfig(chain);
 
-    const { isSuccess, transactionPayload, goBackDismiss } = navigation.state.params;
+  const viewOnBlockchain = () =>
+    dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
 
+  const handleDismissal = () => {
     const txTag = transactionPayload?.tag || '';
 
     if (isLiquidityPoolsTransactionTag(txTag)) {
@@ -166,10 +176,7 @@ class SendTokenTransaction extends React.Component<Props> {
     }
   };
 
-  handleNavigationBack = () => {
-    const { navigation } = this.props;
-    const { transactionPayload } = navigation.state.params;
-
+  const handleNavigationBack = () => {
     if (transactionPayload.tokenType === COLLECTIBLES) {
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
       return;
@@ -177,76 +184,83 @@ class SendTokenTransaction extends React.Component<Props> {
     navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
-  renderSuccessButton = () => {
-    const { transactionType } = this.props.navigation.state.params;
+  const renderSuccess = () => {
     const successButtonText = transactionType === TRANSACTION_TYPE.EXCHANGE
       ? t('button.finish')
       : t('button.magic', { exclamation: true });
     return (
-      <ButtonWrapper>
-        <Button onPress={this.handleDismissal} title={successButtonText} />
-      </ButtonWrapper>
+      <ButtonContainer>
+        <ButtonWrapper>
+          <Button onPress={handleDismissal} title={successButtonText} />
+        </ButtonWrapper>
+        <TouchableOpacity onPress={handleDismissal}>
+          <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
+        </TouchableOpacity>
+      </ButtonContainer>
     );
-  }
+  };
 
-  renderFailureButtons = () => {
-    const { noRetry } = this.props.navigation.state.params;
+  const renderFailure = () => {
     return (
-      <FailureButtonsWrapper>
+      <ButtonContainer>
         {!noRetry && (
           <ButtonWrapper>
-            <Button onPress={this.handleNavigationBack} title={t('button.retry')} />
+            <Button onPress={handleNavigationBack} title={t('button.retry')} />
           </ButtonWrapper>
         )}
-        <TouchableOpacity onPress={this.handleDismissal}>
+        <TouchableOpacity onPress={handleDismissal}>
           <CancelText>{t('button.cancel')}</CancelText>
         </TouchableOpacity>
-      </FailureButtonsWrapper>
+      </ButtonContainer>
     );
-  }
+  };
 
-  render() {
-    const { navigation } = this.props;
-    const {
-      isSuccess,
-      error,
-      transactionPayload: {
-        tokenType: transactionTokenType,
-        extra: {
-          allowance = {},
-        } = {},
-      },
-      transactionType,
-    } = navigation.state.params;
-
-    const animationSource = isSuccess ? animationSuccess : animationFailure;
-    const transactionStatusText = isSuccess
-      ? getTransactionSuccessMessage(transactionType)
-      : getTransactionErrorMessage(error);
-    const isAllowanceTransaction = Object.keys(allowance).length;
-    const transactionStatusTitle = isSuccess
-      ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
-      : t('error.transactionFailed.default');
-    const titleStyle = { ...objectFontStyles.large, marginTop: 16, marginBottom: 7 };
-    const textStyle = { ...objectFontStyles.regular, marginBottom: 75 };
-    return (
-      <Container>
-        <Wrapper flex={1} center regularPadding>
-          <Animation source={animationSource} />
-          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot titleStyles={titleStyle} noMargin />
-          <Paragraph light center style={textStyle}>{transactionStatusText}</Paragraph>
-          {isSuccess ? this.renderSuccessButton() : this.renderFailureButtons()}
-        </Wrapper>
-        {/*
+  const animationSource = isSuccess ? animationSuccess : animationFailure;
+  const transactionStatusText = isSuccess
+    ? getTransactionSuccessMessage(transactionType, chainConfig.titleShort)
+    : getTransactionErrorMessage(error);
+  const isAllowanceTransaction = Object.keys(allowance).length;
+  const transactionStatusTitle = isSuccess
+    ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
+    : t('error.transactionFailed.default');
+  const titleStyle = { ...objectFontStyles.large, marginTop: 16, marginBottom: 7 };
+  const textStyle = { ...objectFontStyles.regular, marginBottom: 75 };
+  return (
+    <Container>
+      <Wrapper flex={1} center regularPadding>
+        <Animation source={animationSource} />
+        <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot titleStyles={titleStyle} noMargin />
+        <Paragraph light center style={textStyle}>
+          {transactionStatusText}
+        </Paragraph>
+        {isSuccess ? renderSuccess() : renderFailure()}
+      </Wrapper>
+      {/*
         {isSuccess &&
           <Footer>
             <ShareSocial label="Share the love" facebook instagram twitter />
           </Footer>
         }
         */}
-      </Container>
-    );
-  }
+    </Container>
+  );
 }
 
 export default SendTokenTransaction;
+
+const CancelText = styled(MediumText)`
+  color: ${themedColors.negative};
+  font-size: ${fontSizes.medium}px;
+`;
+
+const ButtonWrapper = styled.View`
+  width: 100%;
+  margin: 0px ${spacing.layoutSides}px 20px;
+`;
+
+const ButtonContainer = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
