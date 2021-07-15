@@ -35,19 +35,19 @@ import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
 // Constants
-import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { useRootSelector, useFiatCurrency } from 'selectors';
 import { etherspotAccountSelector, achanovaAccountSelector } from 'selectors/accounts';
 import { useTotalMigrationValueInFiat } from 'selectors/walletMigrationArchanova';
+import { useTransactionFeeInfo } from 'selectors/transactions';
 
 // Actions
 import { estimateTransactionsForAccountAction } from 'actions/transactionEstimateActions';
 
 // Utils
-import { BigNumber, humanizeHexString } from 'utils/common';
+import { humanizeHexString } from 'utils/common';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
@@ -67,8 +67,8 @@ function WalletMigrationArchanovaConfirm() {
 
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
-
   const currency = useFiatCurrency();
+  const { fee, gasAddress, gasSymbol, isEstimating } = useTransactionFeeInfo(CHAIN.ETHEREUM);
 
   const images = useThemedImages();
 
@@ -76,15 +76,13 @@ function WalletMigrationArchanovaConfirm() {
 
   const hasEnoughGas = true;
   const totalValue = useTotalMigrationValueInFiat();
-  const totalFee = BigNumber(0);
 
   React.useEffect(() => {
     if (!archanovaAccount || !etherspotAccount) return;
 
     const transactionsToEstimate = assets.map((item) => mapAssetItemToTransactionToEstimate(item, etherspotAccount));
-
     dispatch(estimateTransactionsForAccountAction(transactionsToEstimate, CHAIN.ETHEREUM, archanovaAccount));
-    console.log('AAA', transactionsToEstimate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderItem = (item: AssetItem, index: number) =>
@@ -145,7 +143,12 @@ function WalletMigrationArchanovaConfirm() {
         <Table.Header>{t('assets.header')}</Table.Header>
         {assets.map(renderItem)}
 
-        <FeeTable fee={totalFee} assetAddress={ADDRESS_ZERO} assetSymbol={ETH} chain={CHAIN.ETHEREUM} />
+        <FeeTable
+          fee={fee}
+          assetAddress={gasAddress}
+          assetSymbol={gasSymbol}
+          chain={CHAIN.ETHEREUM}
+        />
 
         <Button
           title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
@@ -173,21 +176,3 @@ const SmartWalletLogo = styled(Image)`
 const BalanceLabel = styled(Text)`
   margin-vertical: ${spacing.mediumLarge}px;
 `;
-
-// TODO: map collectible params
-const mapToAssetDataType = ({
-  contractAddress,
-  address,
-  symbol: token,
-  decimals,
-  tokenType,
-  tokenId,
-  name,
-}: Object): AssetData => ({
-  contractAddress: address || contractAddress,
-  token,
-  decimals,
-  tokenType,
-  id: tokenId,
-  name,
-});

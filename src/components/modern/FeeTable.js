@@ -43,7 +43,7 @@ import type { Chain } from 'models/Chain';
  * instead of performing expensive search on whole assets array
  */
 type Props = {|
-  fee: Value,
+  fee: ?Value,
   assetSymbol: string,
   assetAddress: string,
   chain: Chain,
@@ -87,7 +87,7 @@ type FeeItemProps = {|
   title: string,
   assetSymbol: string,
   assetAddress: string,
-  fee: Value,
+  fee: ?Value,
   chain: Chain,
   separator?: boolean,
 |};
@@ -107,7 +107,7 @@ export function FeeRow({
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
 
-  const formattedFee = t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol });
+  const formattedFee = fee ? t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol }) : '';
   const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, assetAddress);
 
   return (

@@ -36,7 +36,7 @@ import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
 import type { Account } from 'models/Account';
-import type { Asset, AssetData } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { TransactionToEstimate } from 'models/Transaction';
 

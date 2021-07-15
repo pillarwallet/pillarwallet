@@ -36,6 +36,14 @@ export const wrapBigNumberOrNil = (value: ?BigNumber | number | string): ?BigNum
   return value != null ? wrapBigNumber(value) : null;
 };
 
+export const fromBaseUnit = (value: BigNumber | number | string, decimals: number): BigNumber => {
+  return BigNumber(value).shiftedBy(-decimals);
+};
+
+export const toBaseUnit = (value: BigNumber | number | string, decimals: number): BigNumber => {
+  return BigNumber(value).shiftedBy(decimals);
+};
+
 export const fromEthersBigNumber = (value: EthersBigNumber, decimals: number): BigNumber => {
   return BigNumber(utils.formatUnits(value, decimals));
 };

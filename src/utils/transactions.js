@@ -28,7 +28,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
-import { fromEthersBigNumber } from 'utils/bigNumber';
+import { fromEthersBigNumber, fromBaseUnit } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // services
@@ -38,8 +38,9 @@ import { buildERC721TransactionData, encodeContractMethod } from 'services/asset
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
+import type { Value } from 'utils/common';
 import type { FeeInfo } from 'models/PaymentNetwork';
-import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
+import type { EthereumTransaction, GasToken, TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
@@ -182,14 +183,31 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
-export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
+
+// TODO: remove
+export type TransactionFeeSummary = {|
+  fee: ?BigNumber,
+  address: string,
+  symbol: string,
+|};
+
+export const getTransactionFeeSummary = (feeInfo: ?TransactionFeeInfo, chain: Chain): TransactionFeeSummary => {
+  const decimals = getGasDecimals(chain, feeInfo?.gasToken);
+  const fee = feeInfo?.fee ? fromBaseUnit(feeInfo.fee, decimals) : null;
+  const address = getGasAddress(chain, feeInfo?.gasToken);
+  const symbol = getGasSymbol(chain, feeInfo?.gasToken);
+
+  return { fee, address, symbol };
+};
+
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
 };
 
 export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.address ?? nativeAssetPerChain[chain].address;
 };
 
-export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
+export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
 };
