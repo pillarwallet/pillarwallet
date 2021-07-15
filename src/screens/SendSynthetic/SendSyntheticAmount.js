@@ -60,7 +60,7 @@ import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 type Props = {
   navigation: NavigationScreenProp<any>,
   isOnline: boolean,
-  fetchSingleEthereumAssetRates: (assetCode: string) => void,
+  fetchSingleEthereumAssetRates: (assetAddress: string) => void,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
   syntheticAssets: AssetOption[],
@@ -168,8 +168,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { intentError } = this.state;
     const { fetchSingleEthereumAssetRates } = this.props;
     let updatedState = { value, assetData };
-    const symbol = assetData?.symbol;
-    if (value && symbol) fetchSingleEthereumAssetRates(symbol);
+    const assetAddress = assetData?.address ?? assetData?.contractAddress;
+    if (value && assetAddress) fetchSingleEthereumAssetRates(assetAddress);
 
     if (intentError) updatedState = { ...updatedState, intentError: null };
     this.setState(updatedState);
@@ -310,8 +310,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchSingleEthereumAssetRates: (
-    assetCode: string,
-  ) => dispatch(fetchSingleChainAssetRatesAction(CHAIN.ETHEREUM, assetCode)),
+    assetAddress: string,
+  ) => dispatch(fetchSingleChainAssetRatesAction(CHAIN.ETHEREUM, assetAddress)),
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 
