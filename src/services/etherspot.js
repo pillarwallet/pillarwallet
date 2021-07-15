@@ -118,8 +118,7 @@ export class EtherspotService {
       const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
-      // FCM only for mainnet, session creation should happen before computing contract account
-      if (fcmToken && networkName === primaryNetworkName) {
+      if (fcmToken) {
         try {
           await this.instances[networkName].createSession({ fcmToken });
         } catch (error) {
