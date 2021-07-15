@@ -17,13 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { EventDetail as EventDetailsClass } from 'components/EventDetails';
 import { noop } from 'utils/common';
 import { withTheme } from 'styled-components/native';
 
+// constants
 import { PPN_INIT_EVENT, USER_EVENT, WALLET_BACKUP_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
@@ -45,10 +45,16 @@ import {
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
 } from 'constants/liquidityPoolsConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
+// local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const placeholderImage = 'https://picsum.photos/200';
+
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
 
 const reduxData = {
   assetDecimals: 18,
@@ -79,17 +85,19 @@ const reduxData = {
   baseFiatCurrency: '',
   user: {},
   supportedAssets: [
-    { symbol: 'PLR', name: 'Pillar' },
-    { symbol: 'ETH', name: 'Ethereum' },
+    { symbol: 'PLR', name: 'Pillar', address: mockPlrAddress },
+    { symbol: 'ETH', name: 'Ethereum', address: mockEthAddress },
   ],
   PPNTransactions: [],
   mergedPPNTransactions: [
     {
-      asset: 'PLR',
+      assetSymbol: 'PLR',
+      assetAddress: mockPlrAddress,
       value: '1000000000000000000',
       hash: '0xHash1',
     }, {
-      asset: 'ETH',
+      assetSymbol: 'ETH',
+      assetAddress: mockEthAddress,
       value: '2000000000000000000',
       hash: '0xHash2',
     },
@@ -642,7 +650,8 @@ storiesOf('EventDetail', module)
         isPPNTransaction: true,
         from: '0xContact',
         to: '0xSmartWallet',
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
         hash: '0xHash',
       }}
@@ -662,7 +671,8 @@ storiesOf('EventDetail', module)
         isPPNTransaction: true,
         from: '0xSmartWallet',
         to: '0xContact',
-        asset: 'PLR',
+        assetSymbol: 'PLR',
+        assetAddress: mockPlrAddress,
         value: '1000000000000000000',
         hash: '0xHash',
       }}
@@ -683,9 +693,11 @@ storiesOf('EventDetail', module)
         extra: [{
           symbol: 'PLR',
           value: '1000000000000000000',
+          address: mockPlrAddress,
           hash: '0xHash1',
         }, {
           symbol: 'ETH',
+          address: mockEthAddress,
           value: '2000000000000000000',
           hash: '0xHash2',
         }],

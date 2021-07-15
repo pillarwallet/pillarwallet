@@ -32,9 +32,9 @@ import TokenIcon from 'components/modern/TokenIcon';
 import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
-import { getRate } from 'utils/assets';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -44,18 +44,19 @@ type Props = {|
   subtitle?: ?string,
   iconUrl: ?string,
   value: BigNumber,
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   chain: Chain,
   onPress?: () => mixed,
 |};
 
-function RewardListItem({ title, subtitle, iconUrl, value, symbol, onPress, chain }: Props) {
+function RewardListItem({ title, subtitle, iconUrl, value, assetSymbol, assetAddress, onPress, chain }: Props) {
   const colors = useThemeColors();
 
   const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const fiatValue = value.times(getRate(chainRates, symbol, currency));
+  const fiatValue = value.times(getAssetRateInFiat(chainRates, assetAddress, currency));
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
@@ -70,7 +71,7 @@ function RewardListItem({ title, subtitle, iconUrl, value, symbol, onPress, chai
 
       <RightAddOn>
         <FiatValueView value={fiatValue} currency={currency} variant="medium" />
-        <TokenValueView value={value} symbol={symbol} color={colors.secondaryText} />
+        <TokenValueView value={value} symbol={assetSymbol} color={colors.secondaryText} />
       </RightAddOn>
     </TouchableContainer>
   );

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers } from 'ethers';
 
 // reducer
 export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
@@ -130,3 +131,11 @@ export const ASSET_CATEGORY = {
   COLLECTIBLES: ('collectibles': 'collectibles'),
   REWARDS: ('rewards': 'rewards'),
 };
+
+export const ADDRESS_ZERO = ethers.constants.AddressZero;
+
+export const PLR_ADDRESS_BSC = '0x790cfdc6ab2e0ee45a433aac5434f183be1f6a20';
+export const PLR_ADDRESS_POLYGON = '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774';
+export const PLR_ADDRESS_XDAI = ''; // TODO: to be added when available
+export const PLR_ADDRESS_ETHEREUM_MAINNET = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET = '0xdd3122831728404a7234e5981677a5fd0a9727fe';

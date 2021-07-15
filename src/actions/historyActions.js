@@ -52,7 +52,6 @@ import {
   findFirstEtherspotAccount,
   findAccountByAddress,
 } from 'utils/accounts';
-import { getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
 import {
   deviceHasGasTokenSupport,
@@ -67,18 +66,13 @@ import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import { parseEtherspotTransactions } from 'utils/etherspot';
 import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
-import { recordValues } from 'utils/object';
 
 // services
 import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // selectors
-import {
-  archanovaAccountEthereumAssetsSelector,
-  ethereumSupportedAssetsSelector,
-  etherspotAccountAssetsSelector,
-} from 'selectors/assets';
+import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 import {
   accountsSelector,
   activeAccountSelector,
@@ -146,9 +140,6 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const accountAddress = getAccountAddress(etherspotAccount);
     const accountId = getAccountId(etherspotAccount);
 
-    const accountAssets = etherspotAccountAssetsSelector(getState());
-    const accountEthereumAssets = accountAssets[CHAIN.ETHEREUM] ?? {};
-
     const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
 
     const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
@@ -159,7 +150,6 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
 
     const etherspotTransactionsHistory = parseEtherspotTransactions(
       etherspotTransactions,
-      recordValues(accountEthereumAssets),
       ethereumSupportedAssets,
     );
 
@@ -219,14 +209,11 @@ export const fetchTransactionsHistoryAction = () => {
       const lastSyncedId = historyLastSyncIds?.[accountId] || lastSyncedArchanovaTransactionId;
       const archanovaTransactions = await archanovaService.getAccountTransactions(+lastSyncedId);
 
-      const accountAssets = archanovaAccountEthereumAssetsSelector(getState());
       const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
-      const assetsList = getAssetsAsList(accountAssets);
 
       const archanovaTransactionsHistory = parseArchanovaTransactions(
         archanovaTransactions,
         ethereumSupportedAssets,
-        assetsList,
         relayerExtensionDevice?.address,
       );
 
@@ -349,8 +336,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       const transactionFee = sdkTransactionInfo.fee;
       if (!isEmpty(gasTokenAddress) && transactionFee) {
         const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
-        const accountAssets = getAssetsAsList(archanovaAccountEthereumAssetsSelector(getState()));
-        const gasToken = getGasTokenDetails(accountAssets, ethereumSupportedAssets, gasTokenAddress);
+        const gasToken = getGasTokenDetails(ethereumSupportedAssets, gasTokenAddress);
         if (!isEmpty(gasToken)) {
           feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         }

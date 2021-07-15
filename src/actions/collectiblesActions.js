@@ -196,7 +196,8 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransacti
     createdAt: (new Date(timestamp).getTime()) / 1000,
     _id: transactionId,
     protocol: 'Ethereum', // eslint-disable-line i18next/no-literal-string
-    asset: collectibleName,
+    assetSymbol: collectibleName,
+    assetAddress: contractAddress,
     contractAddress,
     value: 1,
     blockNumber,
@@ -207,7 +208,7 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransacti
   };
 };
 
-const isCollectibleTransaction = (event: Object): boolean => {
+const isOpenSeaCollectibleTransaction = (event: Object): boolean => {
   const { asset } = event;
   // NOTE: for some rare transactions we don't have information about the asset sent
   if (!asset) return false;
@@ -254,7 +255,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
     }
 
     const accountCollectiblesHistory = openSeaHistory
-      .filter(isCollectibleTransaction)
+      .filter(isOpenSeaCollectibleTransaction)
       .map(collectibleTransaction);
 
     // TODO: implement multichain when available

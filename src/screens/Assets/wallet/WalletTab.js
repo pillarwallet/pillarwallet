@@ -25,7 +25,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { isEmpty } from 'lodash';
 
 // Components
 import BalanceView from 'components/BalanceView';
@@ -51,7 +50,7 @@ import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { findFirstAssetBySymbol } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -88,12 +87,12 @@ function WalletTab() {
   };
 
   const navigateToAssetDetails = (item: WalletItem) => {
-    const { chain, symbol } = item;
+    const { chain, assetAddress } = item;
 
     const chainSupportedAssets = supportedAssets[chain] ?? [];
 
-    const asset = findFirstAssetBySymbol(chainSupportedAssets, symbol);
-    if (isEmpty(asset)) return;
+    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
+    if (!asset) return;
 
     const assetData = buildAssetDataNavigationParam(asset, chain);
     navigation.navigate(ASSET, { assetData });
@@ -124,7 +123,8 @@ function WalletTab() {
         iconUrl={item.iconUrl}
         value={item.value}
         change={item.change}
-        symbol={item.symbol}
+        assetSymbol={item.assetSymbol}
+        assetAddress={item.assetAddress}
         onPress={() => navigateToAssetDetails(item)}
         chain={item.chain}
       />

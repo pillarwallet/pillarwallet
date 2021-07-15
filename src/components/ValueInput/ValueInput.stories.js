@@ -23,7 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 import { Provider } from 'react-redux';
 
 // constants
-import { ETH, GBP, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ETH, GBP, PLR } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
@@ -37,6 +37,10 @@ import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
+
 const activeAccount = {
   id: '0x',
   isActive: true,
@@ -46,7 +50,7 @@ const activeAccount = {
 const ethAsset = {
   symbol: ETH,
   name: 'Ethereum',
-  address: '0x',
+  address: mockEthAddress,
   iconUrl: '',
   decimals: 18,
 };
@@ -54,7 +58,7 @@ const ethAsset = {
 const plrAsset = {
   symbol: PLR,
   name: 'Pillar',
-  address: '0x',
+  address: mockPlrAddress,
   iconUrl: '',
   decimals: 18,
 };
@@ -67,13 +71,15 @@ const store = createTestStore({
       [activeAccount.id]: {
         ethereum: {
           wallet: {
-            [ETH]: {
-              balance: '0.512345',
+            [mockEthAddress]: {
               symbol: ETH,
+              address: mockEthAddress,
+              balance: '0.512345',
             },
-            [PLR]: {
-              balance: '54321',
+            [mockPlrAddress]: {
               symbol: PLR,
+              address: mockPlrAddress,
+              balance: '54321',
             },
           },
         },
@@ -83,8 +89,8 @@ const store = createTestStore({
   rates: {
     data: {
       ethereum: {
-        [ETH]: { [GBP]: 185 },
-        [PLR]: { [GBP]: 0.1 },
+        [mockEthAddress]: { [GBP]: 185 },
+        [mockPlrAddress]: { [GBP]: 0.1 },
       },
     },
   },
@@ -102,7 +108,7 @@ storiesOf('Value Input', module)
         value=""
         onValueChange={() => {}}
         onAssetDataChange={() => {}}
-        assetData={ethAsset}
+        assetData={{ ...ethAsset, contractAddress: ethAsset.address }}
       />
     </Provider>
   ));

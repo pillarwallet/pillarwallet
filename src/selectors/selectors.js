@@ -23,11 +23,11 @@ import { createSelector } from 'reselect';
 import { get } from 'lodash';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, defaultFiatCurrency, USD } from 'constants/assetsConstants';
 
 // utils
 import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
-import { getUsdToFiatRate } from 'utils/rates';
+import { valueForAddress } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -111,7 +111,17 @@ export const useIsExchangeAvailable = (): boolean => {
 export const usdToFiatRateSelector = (root: RootReducerState) => {
   const rates = ratesPerChainSelector(root).ethereum;
   const currency = fiatCurrencySelector(root);
-  return getUsdToFiatRate(rates ?? {}, currency);
+
+  // No need to calculate rate for USD/USD.
+  if (currency === USD) return 1;
+
+  // will select native asset rates to calculate between
+  const nativeAssetRates = valueForAddress(rates, ADDRESS_ZERO);
+  if (!nativeAssetRates || !nativeAssetRates[currency] || !nativeAssetRates[USD]) {
+    return 0;
+  }
+
+  return nativeAssetRates[currency] / nativeAssetRates[USD];
 };
 
 export const useUsdToFiatRate = () => useRootSelector(usdToFiatRateSelector);

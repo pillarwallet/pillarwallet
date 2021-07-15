@@ -46,7 +46,11 @@ import archanovaService from 'services/archanova';
 
 // utils
 import { transformBalancesToObject } from 'utils/assets';
-import { chainFromChainId, getSupportedChains } from 'utils/chains';
+import {
+  chainFromChainId,
+  getSupportedChains,
+  nativeAssetPerChain,
+} from 'utils/chains';
 import { BigNumber, parseTokenAmount, reportErrorLog } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
@@ -99,6 +103,7 @@ export const sendAssetAction = (
       gasToken,
       txFeeInWei,
       chain = CHAIN.ETHEREUM,
+      contractAddress,
     } = transaction;
 
     const to = toChecksumAddress(transaction.to);
@@ -221,7 +226,8 @@ export const sendAssetAction = (
       batchHash: transactionBatchHash,
       from: accountAddress,
       // $FlowFixMe: either will be present
-      asset: isCollectibleTransaction ? transaction.name : symbol,
+      assetSymbol: isCollectibleTransaction ? transaction.name : symbol,
+      assetAddress: contractAddress ?? nativeAssetPerChain[chain].address,
       gasPrice: transaction.gasPrice,
       gasLimit: transaction.gasLimit,
       isPPNTransaction: !!usePPN,
@@ -258,7 +264,7 @@ export const sendAssetAction = (
 
     // update transaction history
     if (isCollectibleTransaction) {
-      const { contractAddress, tokenId } = transaction;
+      const { tokenId } = transaction;
       dispatch({
         type: ADD_COLLECTIBLE_HISTORY_TRANSACTION,
         payload: {
@@ -350,9 +356,11 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
 
       if (isEmpty(newBalances)) return;
 
-      await dispatch(
-        updateAccountWalletAssetsBalancesForChainAction(accountId, chain, transformBalancesToObject(newBalances)),
-      );
+      await dispatch(updateAccountWalletAssetsBalancesForChainAction(
+        accountId,
+        chain,
+        transformBalancesToObject(newBalances),
+      ));
     }));
 
     const accountsTotalBalances = getState().totalBalances.data;

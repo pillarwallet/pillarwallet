@@ -59,8 +59,8 @@ export type Asset = {
   decimals: number,
 };
 
-export type AssetsBySymbol = {
-  [symbol: string]: Asset,
+export type AssetByAddress = {
+  [address: string]: Asset,
 };
 
 export type SyntheticAsset = Asset & {

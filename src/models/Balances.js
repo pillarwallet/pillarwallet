@@ -38,11 +38,11 @@ export type CategoryAssetsBalances = {|
 |};
 
 export type WalletAssetsBalances = {
-  [symbol: string]: WalletAssetBalance,
+  [assetAddress: string]: WalletAssetBalance,
 };
 
 export type WalletAssetBalance = {|
-  symbol: string,
+  address: string,
   balance: string,
 |};
 

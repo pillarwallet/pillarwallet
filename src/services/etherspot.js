@@ -19,7 +19,6 @@
 */
 
 import {
-  constants as EthersConstants,
   utils as EthersUtils,
   Wallet as EthersWallet,
 } from 'ethers';
@@ -229,7 +228,7 @@ export class EtherspotService {
 
     const assetAddresses = supportedAssets
       // 0x0...0 is default native token address in our assets, but it's not a ERC20 token
-      .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
+      .filter(({ address }) => !addressesEqual(address, nativeAssetPerChain[chain].address))
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
@@ -275,7 +274,7 @@ export class EtherspotService {
         return positiveBalances;
       }
 
-      const { decimals, symbol } = supportedAsset;
+      const { decimals, symbol, address } = supportedAsset;
 
       const positiveBalance = EthersUtils.formatUnits(balance, decimals);
 
@@ -286,7 +285,7 @@ export class EtherspotService {
 
       return [
         ...positiveBalances,
-        { symbol, balance: positiveBalance },
+        { symbol, address, balance: positiveBalance },
       ];
     }, []);
   }
