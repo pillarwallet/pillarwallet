@@ -194,7 +194,7 @@ import {
   WALLET_MIGRATION_FLOW,
   WALLET_MIGRATION_INTRO,
   WALLET_MIGRATION_SELECT_ASSETS,
-  WALLET_MIGRATION_CONFIRM,
+  WALLET_MIGRATION_REVIEW,
   CONTACTS_LIST,
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
@@ -458,7 +458,7 @@ const keyBasedAssetTransferFlow = createStackNavigator({
 const walletMigrationFlow = createStackNavigator({
   [WALLET_MIGRATION_INTRO]: WalletMigrationArchanovaIntroScreen,
   [WALLET_MIGRATION_SELECT_ASSETS]: WalletMigrationArchanovaSelectAssetsScreen,
-  [WALLET_MIGRATION_CONFIRM]: WalletMigrationArchanovaReviewScreen,
+  [WALLET_MIGRATION_REVIEW]: WalletMigrationArchanovaReviewScreen,
 }, StackNavigatorConfig);
 
 const contactsFlow = createStackNavigator({

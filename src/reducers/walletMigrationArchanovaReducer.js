@@ -27,31 +27,29 @@ import {
 } from 'constants/walletMigrationArchanovaConstants';
 
 // Types
-import type { WalletAssetsBalances } from 'models/Balances';
-import type { Collectible } from 'models/Collectible';
-
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
 export type WalletMigrationArchanovaReducerState = {|
-  tokensToMigrate: WalletAssetsBalances,
-  collectiblesToMigrate: Collectible[],
-|};
-
-export type WalletMigrationArchanovaReducerAction = SetTokensToMigrateAction | SetCollectiblesToMigrateAction;
-
-type SetTokensToMigrateAction = {|
-  type: typeof ACTION_SET_TOKENS_TO_MIGRATE,
-  payload: WalletAssetsBalances,
-|};
-
-type SetCollectiblesToMigrateAction = {|
-  type: typeof ACTION_SET_COLLECTIBLES_TO_MIGRATE,
-  payload: Collectible[],
+  tokensToMigrate: TokensToMigrateByAddress,
+  collectiblesToMigrate: CollectiblesToMigrateByAddress,
 |};
 
 const initialState = {
   tokensToMigrate: {},
-  collectiblesToMigrate: [],
+  collectiblesToMigrate: {},
 };
+
+export type WalletMigrationArchanovaReducerAction = SetTokensToMigrateAction | SetCollectiblesToMigrateAction;
+
+export type SetTokensToMigrateAction = {|
+  type: typeof ACTION_SET_TOKENS_TO_MIGRATE,
+  payload: TokensToMigrateByAddress,
+|};
+
+export type SetCollectiblesToMigrateAction = {|
+  type: typeof ACTION_SET_COLLECTIBLES_TO_MIGRATE,
+  payload: CollectiblesToMigrateByAddress,
+|};
 
 const walletMigrationArchanovaReducer = (
   state: WalletMigrationArchanovaReducerState = initialState,

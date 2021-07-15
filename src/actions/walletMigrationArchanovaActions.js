@@ -18,8 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type TokenToMigrate = {| address: string, balance: string |};
-export type CollectibleToMigrate = {| address: string |};
+// Constants
+import {
+  ACTION_SET_TOKENS_TO_MIGRATE,
+  ACTION_SET_COLLECTIBLES_TO_MIGRATE,
+} from 'constants/walletMigrationArchanovaConstants';
 
-export type TokensToMigrateByAddress = { [address: string]: TokenToMigrate };
-export type CollectiblesToMigrateByAddress = { [address: string]: CollectibleToMigrate };
+// Types
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
+import type {
+  SetTokensToMigrateAction,
+  SetCollectiblesToMigrateAction,
+} from 'reducers/walletMigrationArchanovaReducer';
+
+export function setTokensToMigrateAction(tokens: TokensToMigrateByAddress): SetTokensToMigrateAction {
+  return {
+    type: ACTION_SET_TOKENS_TO_MIGRATE,
+    payload: tokens,
+  };
+}
+
+export function setCollectiblesToMigrateAction(
+  collectibles: CollectiblesToMigrateByAddress,
+): SetCollectiblesToMigrateAction {
+  return {
+    type: ACTION_SET_COLLECTIBLES_TO_MIGRATE,
+    payload: collectibles,
+  };
+}
