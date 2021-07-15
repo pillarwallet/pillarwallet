@@ -20,11 +20,17 @@
 
 import { createSelector } from 'reselect';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Selectors
+import { useRootSelector, useChainRates, useFiatCurrency } from 'selectors';
 import { archanovaAccountIdSelector } from 'selectors/accounts';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
+import { recordValues } from 'utils/object';
+import { getAssetValueInFiat } from 'utils/rates';
 import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
 
 // Types
@@ -42,3 +48,16 @@ export const showWalletMigrationSelector: Selector<boolean> = createSelector(
     return hasNonNegligileWalletBalances(ethereumWalletBalancs);
   },
 );
+
+export const useTotalMigrationValueInFiat = () => {
+  const tokensToMigrate = useRootSelector(root => root.walletMigrationArchanova.tokensToMigrate);
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const currency = useFiatCurrency();
+
+  let result = 0;
+  recordValues(tokensToMigrate).forEach((tokenBalance) => {
+    result += getAssetValueInFiat(tokenBalance.balance, tokenBalance.address, rates, currency);
+  });
+
+  return result;
+};

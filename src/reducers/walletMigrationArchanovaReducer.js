@@ -22,8 +22,10 @@ import produce from 'immer';
 
 // Constants
 import {
-  ACTION_SET_TOKENS_TO_MIGRATE,
-  ACTION_SET_COLLECTIBLES_TO_MIGRATE,
+  ACTION_SET_TOKEN_TO_MIGRATE,
+  ACTION_REMOVE_TOKEN_TO_MIGRATE,
+  ACTION_SET_COLLECTIBLE_TO_MIGRATE,
+  ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
 } from 'constants/walletMigrationArchanovaConstants';
 
 // Types
@@ -39,16 +41,31 @@ const initialState = {
   collectiblesToMigrate: {},
 };
 
-export type WalletMigrationArchanovaReducerAction = SetTokensToMigrateAction | SetCollectiblesToMigrateAction;
+export type WalletMigrationArchanovaReducerAction =
+  | SetTokenToMigrateAction
+  | RemoveTokenToMigrateAction
+  | SetCollectibleToMigrateAction
+  | RemoveCollectibleToMigrateAction;
 
-export type SetTokensToMigrateAction = {|
-  type: typeof ACTION_SET_TOKENS_TO_MIGRATE,
-  payload: TokensToMigrateByAddress,
+export type SetTokenToMigrateAction = {|
+  type: typeof ACTION_SET_TOKEN_TO_MIGRATE,
+  address: string,
+  balance: string,
 |};
 
-export type SetCollectiblesToMigrateAction = {|
-  type: typeof ACTION_SET_COLLECTIBLES_TO_MIGRATE,
-  payload: CollectiblesToMigrateByAddress,
+export type RemoveTokenToMigrateAction = {|
+  type: typeof ACTION_REMOVE_TOKEN_TO_MIGRATE,
+  address: string,
+|};
+
+export type SetCollectibleToMigrateAction = {|
+  type: typeof ACTION_SET_COLLECTIBLE_TO_MIGRATE,
+  address: string,
+|};
+
+export type RemoveCollectibleToMigrateAction = {|
+  type: typeof ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
+  address: string,
 |};
 
 const walletMigrationArchanovaReducer = (
@@ -56,13 +73,23 @@ const walletMigrationArchanovaReducer = (
   action: WalletMigrationArchanovaReducerAction,
 ): WalletMigrationArchanovaReducerState => {
   switch (action.type) {
-    case ACTION_SET_TOKENS_TO_MIGRATE:
+    case ACTION_SET_TOKEN_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
-        draft.tokensToMigrate = action.payload;
+        const { address, balance } = action;
+        draft.tokensToMigrate[address] = { address, balance };
       });
-    case ACTION_SET_COLLECTIBLES_TO_MIGRATE:
+    case ACTION_REMOVE_TOKEN_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
-        draft.collectiblesToMigrate = action.payload;
+        delete draft.tokensToMigrate[action.address];
+      });
+    case ACTION_SET_COLLECTIBLE_TO_MIGRATE:
+      return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
+        const { address } = action;
+        draft.collectiblesToMigrate[address] = { address };
+      });
+    case ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE:
+      return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
+        delete draft.collectiblesToMigrate[action.address];
       });
     default:
       return state;

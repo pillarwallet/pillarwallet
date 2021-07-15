@@ -36,17 +36,20 @@ import { WALLET_MIGRATION_REVIEW } from 'constants/navigationConstants';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { achanovaAccountSelector } from 'selectors/accounts';
+import { useTotalMigrationValueInFiat } from 'selectors/walletMigrationArchanova';
 
 // Actions
-import { setTokensToMigrateAction, setCollectiblesToMigrateAction } from 'actions/walletMigrationArchanovaActions';
-
-// Utils
-import { recordWithRemovedKey } from 'utils/object';
+import {
+  setTokenToMigrateAction,
+  removeTokenToMigrateAction,
+  setCollectibleToMigrateAction,
+  removeCollectibleToMigrateAction } from 'actions/walletMigrationArchanovaActions';
 
 // Local
-import { useTokenItems, useCollectibles, useTotalValueInFiat } from '../utils';
+import { useTokenItems, useCollectibles } from './utils';
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
+
 
 const WalletMigrationArchanovaSelectAssets = () => {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
@@ -61,21 +64,21 @@ const WalletMigrationArchanovaSelectAssets = () => {
 
   const tokens = useTokenItems(archanovaAccountId);
   const collectibles = useCollectibles(archanovaAccountId);
-  const totalValueInFiat = useTotalValueInFiat(tokensToMigrate);
+  const totalValueInFiat = useTotalMigrationValueInFiat();
 
   const handleToggleToken = (address: string, balance: BigNumber) => {
     if (tokensToMigrate[address]) {
-      dispatch(setTokensToMigrateAction(recordWithRemovedKey(tokensToMigrate, address)));
+      dispatch(removeTokenToMigrateAction(address));
     } else {
-      dispatch(setTokensToMigrateAction({ ...tokensToMigrate, [address]: { address, balance } }));
+      dispatch(setTokenToMigrateAction(address, balance.toString()));
     }
   };
 
   const handleToggleCollectible = (address: string) => {
     if (collectiblesToMigrate[address]) {
-      dispatch(setCollectiblesToMigrateAction(recordWithRemovedKey(collectiblesToMigrate, address)));
+      dispatch(removeCollectibleToMigrateAction(address));
     } else {
-      dispatch(setCollectiblesToMigrateAction({ ...collectiblesToMigrate, [address]: { address } }));
+      dispatch(setCollectibleToMigrateAction(address));
     }
   };
 

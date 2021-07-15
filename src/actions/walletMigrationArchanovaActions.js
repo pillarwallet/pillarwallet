@@ -20,29 +20,45 @@
 
 // Constants
 import {
-  ACTION_SET_TOKENS_TO_MIGRATE,
-  ACTION_SET_COLLECTIBLES_TO_MIGRATE,
+  ACTION_SET_TOKEN_TO_MIGRATE,
+  ACTION_REMOVE_TOKEN_TO_MIGRATE,
+  ACTION_SET_COLLECTIBLE_TO_MIGRATE,
+  ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
 } from 'constants/walletMigrationArchanovaConstants';
 
 // Types
-import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
 import type {
-  SetTokensToMigrateAction,
-  SetCollectiblesToMigrateAction,
+  SetTokenToMigrateAction,
+  RemoveTokenToMigrateAction,
+  SetCollectibleToMigrateAction,
+  RemoveCollectibleToMigrateAction,
 } from 'reducers/walletMigrationArchanovaReducer';
 
-export function setTokensToMigrateAction(tokens: TokensToMigrateByAddress): SetTokensToMigrateAction {
+export function setTokenToMigrateAction(address: string, balance: string): SetTokenToMigrateAction {
   return {
-    type: ACTION_SET_TOKENS_TO_MIGRATE,
-    payload: tokens,
+    type: ACTION_SET_TOKEN_TO_MIGRATE,
+    address,
+    balance,
   };
 }
 
-export function setCollectiblesToMigrateAction(
-  collectibles: CollectiblesToMigrateByAddress,
-): SetCollectiblesToMigrateAction {
+export function removeTokenToMigrateAction(address: string): RemoveTokenToMigrateAction {
   return {
-    type: ACTION_SET_COLLECTIBLES_TO_MIGRATE,
-    payload: collectibles,
+    type: ACTION_REMOVE_TOKEN_TO_MIGRATE,
+    address,
+  };
+}
+
+export function setCollectibleToMigrateAction(address: string): SetCollectibleToMigrateAction {
+  return {
+    type: ACTION_SET_COLLECTIBLE_TO_MIGRATE,
+    address,
+  };
+}
+
+export function removeCollectibleToMigrateAction(address: string): RemoveCollectibleToMigrateAction {
+  return {
+    type: ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
+    address,
   };
 }
