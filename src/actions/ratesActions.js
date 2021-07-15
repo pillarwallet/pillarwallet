@@ -129,7 +129,7 @@ export const fetchAssetsRatesAction = () => {
 
 export const fetchSingleChainAssetRatesAction = (
   chain: Chain,
-  assetCode: string,
+  assetAddress: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -144,10 +144,10 @@ export const fetchSingleChainAssetRatesAction = (
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-    const asset = findAssetByAddress(chainSupportedAssets, assetCode);
+    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
     if (!asset) {
       dispatch(setIsFetchingRatesAction(false));
-      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });
+      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetAddress });
       return;
     }
 
