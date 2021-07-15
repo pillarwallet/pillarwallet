@@ -37,7 +37,6 @@ import type {
   ServiceAssetBalance,
   CategoryAssetsBalances,
   WalletAssetBalanceInfo,
-  AssetBalanceInfo,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 import type { RatesByAssetAddress, Currency } from 'models/Rates';
@@ -104,8 +103,3 @@ export const buildWalletAssetBalanceInfoList = (
     return { asset, balance, balanceInFiat };
   });
 };
-
-export function buildAssetBalanceInfo(assetInfo: AssetInfo, balance: BigNumber): AssetBalanceInfo {
-  const balanceInFiat = assetInfo.rateToFiat != null ? balance.times(assetInfo.rateToFiat).toNumber() : null;
-  return { ...assetInfo, balance, balanceInFiat };
-}

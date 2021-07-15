@@ -43,9 +43,9 @@ import { recordWithRemovedKey } from 'utils/object';
 import type { TokensToMigrateByAddress, CollectiblesToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
 // Local
+import { useTokenItems, useCollectibles, useTotalValueInFiat } from '../utils';
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
-import { useTokenItems, useCollectibles, getTotaValueInFiat } from './utils';
 
 const WalletMigrationArchanovaSelectAssets = () => {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
@@ -59,6 +59,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
 
   const tokens = useTokenItems(archanovaAccountId);
   const collectibles = useCollectibles(archanovaAccountId);
+  const totalValueInFiat = useTotalValueInFiat(tokensToMigrate);
 
   const handleToggleToken = (address: string, balance: BigNumber) => {
     if (tokensToMigrate[address]) {
@@ -84,7 +85,6 @@ const WalletMigrationArchanovaSelectAssets = () => {
   };
 
   const walletAddress = archanovaAccount?.id ?? '';
-  const totalValueInFiat = getTotaValueInFiat(tokens, tokensToMigrate);
   const showNextButton = !isEmpty(tokensToMigrate) || !isEmpty(collectiblesToMigrate);
 
   return (

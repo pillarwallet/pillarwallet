@@ -20,7 +20,7 @@
 
 import { BigNumber } from 'bignumber.js';
 
-export type TokenToMigrate = {| address: string, value: BigNumber |};
+export type TokenToMigrate = {| address: string, balance: BigNumber |};
 export type CollectibleToMigrate = {| address: string |};
 
 export type TokensToMigrateByAddress = { [address: string]: TokenToMigrate };

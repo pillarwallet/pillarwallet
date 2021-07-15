@@ -32,8 +32,8 @@ import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 // Utils
 import { mapNotNil } from 'utils/array';
 import { findAssetByAddress } from 'utils/assets';
-import { getAssetRateInFiat, getAssetValueInFiat } from 'utils/rates';
 import { recordValues } from 'utils/object';
+import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
 import type { Asset } from 'models/Asset';
@@ -42,16 +42,12 @@ import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
 export type TokenItem = {|
   asset: Asset,
-  rateToFiat: ?number,
   balance: BigNumber,
-  balanceInFiat: ?number,
 |};
 
 export const useTokenItems = (accountId: string): TokenItem[] => {
   const balancesPerAccount = useRootSelector(assetsBalancesPerAccountSelector);
   const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const rates = useChainRates(CHAIN.ETHEREUM);
-  const currency = useFiatCurrency();
 
   return useMemo(() => {
     const balanceValues = recordValues(balancesPerAccount[accountId]?.ethereum?.wallet);
@@ -60,12 +56,10 @@ export const useTokenItems = (accountId: string): TokenItem[] => {
       const asset = findAssetByAddress(supportedAssets, balanceValue.address);
       if (!asset) return null;
 
-      const rateToFiat = getAssetRateInFiat(rates, balanceValue.address, currency);
       const balance = BigNumber(balanceValue.balance);
-      const balanceInFiat = getAssetValueInFiat(balance, balanceValue.address, rates, currency);
-      return { asset, rateToFiat, balance, balanceInFiat };
+      return { asset, balance };
     });
-  }, [accountId, balancesPerAccount, supportedAssets, rates, currency]);
+  }, [accountId, balancesPerAccount, supportedAssets]);
 };
 
 export const useCollectibles = (accountId: string): Collectible[] => {
@@ -73,14 +67,13 @@ export const useCollectibles = (accountId: string): Collectible[] => {
   return collectiblesPerAccount[accountId]?.ethereum ?? [];
 };
 
-export const getTotaValueInFiat = (tokens: TokenItem[], tokensToMigrate: TokensToMigrateByAddress) => {
-  let result = 0;
+export const useTotalValueInFiat = (tokensToMigrate: TokensToMigrateByAddress) => {
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const currency = useFiatCurrency();
 
-  tokens.forEach((tokenBalance) => {
-    if (tokensToMigrate[tokenBalance.asset.address]) {
-      // TODO handle partial amount
-      result += tokenBalance.balanceInFiat;
-    }
+  let result = 0;
+  recordValues(tokensToMigrate).forEach((tokenBalance) => {
+    result += getAssetValueInFiat(tokenBalance.balance, tokenBalance.address, rates, currency);
   });
 
   return result;

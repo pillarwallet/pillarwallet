@@ -66,12 +66,3 @@ export type WalletAssetBalanceInfo = {|
   balanceInFiat: ?number,
 |}
 
-/**
- * Convenience type for working with asset balance. Includes asset definiton, balance, balance in fiat,
- */
-export type AssetBalanceInfo = {|
-  asset: Asset,
-  rateToFiat: ?number,
-  balance: BigNumber,
-  balanceInFiat: ?number,
-|};
