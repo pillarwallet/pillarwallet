@@ -60,7 +60,7 @@ export const calculateETHTransactionAmountAfterFee = (
   balances: WalletAssetsBalances,
   totalFeeInEth: BigNumber,
 ): BigNumber => {
-  const ethBalance = new BigNumber(getBalance(balances, ETH));
+  const ethBalance = new BigNumber(getBalance(balances, nativeAssetPerChain.ethereum.address));
   const ethBalanceLeftAfterTransaction = ethBalance
     .minus(totalFeeInEth)
     .minus(ethAmount);
@@ -185,4 +185,12 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
 
 export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
+};
+
+export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.address ?? nativeAssetPerChain[chain].address;
+};
+
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
 };

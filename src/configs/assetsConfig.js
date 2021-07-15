@@ -17,7 +17,24 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { PLR } from 'constants/assetsConstants';
+
+// constants
+import {
+  PLR,
+  PLR_ADDRESS_BSC,
+  PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET,
+  PLR_ADDRESS_ETHEREUM_MAINNET,
+  PLR_ADDRESS_POLYGON,
+  PLR_ADDRESS_XDAI,
+} from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// utils
+import { isProdEnv } from 'utils/environment';
+
+// types
+import type { Chain } from 'models/Chain';
+
 
 export default {
   ICX: {
@@ -35,3 +52,16 @@ export default {
 };
 
 export const PPN_TOKEN = PLR;
+
+/* eslint-disable i18next/no-literal-string */
+export const getPlrAddressForChain = (chain: Chain): string => {
+  if (chain === CHAIN.BINANCE) return PLR_ADDRESS_BSC;
+  if (chain === CHAIN.POLYGON) return PLR_ADDRESS_POLYGON;
+  if (chain === CHAIN.XDAI) return PLR_ADDRESS_XDAI;
+
+  // Ethereum
+  return isProdEnv()
+    ? PLR_ADDRESS_ETHEREUM_MAINNET
+    : PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET;
+};
+/* eslint-enable i18next/no-literal-string */

@@ -68,8 +68,13 @@ export const Name = styled(Text)`
   ${fontStyles.medium};
 `;
 
+/**
+ * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
+ * instead of performing expensive search on whole assets array
+ */
 type BalanceProps = {|
-  symbol: string,
+  assetSymbol: string,
+  assetAddress: string,
   balance: Value,
   chain: Chain,
   onPress: ?(() => mixed),
@@ -77,7 +82,8 @@ type BalanceProps = {|
 |};
 
 export function Balance({
-  symbol,
+  assetSymbol,
+  assetAddress,
   balance,
   chain,
   onPress,
@@ -86,15 +92,15 @@ export function Balance({
   const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
   const chainRates = useChainRates(chain);
 
-  const formattedBalance = formatTokenAmount(balance, symbol);
-  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, chainRates, symbol);
+  const formattedBalance = formatTokenAmount(balance, assetSymbol);
+  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, chainRates, assetAddress);
 
   return (
     <BalanceWrapper onPress={onPress} disabled={!onPress} style={style}>
       {!!formattedFiatValue && <BalanceFiatValue>{formattedFiatValue}</BalanceFiatValue>}
       {balance != null && (
         <BalanceToken>
-          {formattedBalance} {symbol}
+          {formattedBalance} {assetSymbol}
         </BalanceToken>
       )}
     </BalanceWrapper>

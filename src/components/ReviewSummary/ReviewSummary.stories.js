@@ -24,7 +24,7 @@ import { Provider } from 'react-redux';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { EUR, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, EUR, PLR } from 'constants/assetsConstants';
 
 // Utils
 import { createTestStore, initialTestState } from 'testUtils/store';
@@ -36,9 +36,13 @@ import { TokenReviewSummaryComponent } from './TokenReviewSummary';
 import CollectibleReviewSummary from './CollectibleReviewSummary';
 
 
+// cannot import from test utils, bundler fails
+export const mockPlrAddress = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
+export const mockEthAddress = ADDRESS_ZERO;
+
 const plrAsset = {
   isPreferred: false,
-  address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
+  address: mockPlrAddress,
   decimals: 18,
   name: 'Pillar',
   symbol: 'PLR',
@@ -73,7 +77,7 @@ const collectible = {
 const store = createTestStore({
   ...initialTestState,
   assets: { supportedAssets: { ethereum: [plrAsset] } },
-  rates: { data: { ethereum: { [PLR]: { [EUR]: 0.25 } } } },
+  rates: { data: { ethereum: { [mockPlrAddress]: { [EUR]: 0.25 } } } },
   appSettings: { data: { baseFiatCurrency: EUR } },
 });
 

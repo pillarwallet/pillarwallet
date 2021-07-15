@@ -26,7 +26,7 @@ import {
 } from 'constants/ratesConstants';
 
 // types
-import type { RatesPerChain, RatesBySymbol } from 'models/Rates';
+import type { RatesPerChain, RatesByAssetAddress } from 'models/Rates';
 
 
 export type RatesReducerState = {
@@ -48,7 +48,7 @@ export type UpdateChainRatesAction = {|
   type: typeof UPDATE_CHAIN_RATES,
   payload: {
     chain: string,
-    rates: RatesBySymbol,
+    rates: RatesByAssetAddress,
   },
 |};
 

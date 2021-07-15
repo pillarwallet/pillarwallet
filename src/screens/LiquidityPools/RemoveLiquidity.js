@@ -40,12 +40,18 @@ import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationCon
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import { formatAmount } from 'utils/common';
-import { findAssetByAddress, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { formatAmount, addressAsKey } from 'utils/common';
+import {
+  findAssetByAddress,
+  getAssetOption,
+  isEnoughBalanceForTransactionFee,
+  mapAssetToAssetData,
+} from 'utils/assets';
 import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { useChainRates, useChainSupportedAssets, useFiatCurrency } from 'selectors';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -58,12 +64,10 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  supportedAssets: Asset[],
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -103,7 +107,6 @@ const FooterInner = styled.View`
 
 const RemoveLiquidityScreen = ({
   navigation,
-  supportedAssets,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -120,15 +123,18 @@ const RemoveLiquidityScreen = ({
   const [poolTokenAmount, setPoolTokenAmount] = useState('');
   const [obtainedTokenFieldsValid, setObtainedTokenFieldsValid] = useState([true, true]);
   const [poolTokenFieldValid, setPoolTokenFieldValid] = useState(true);
+  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+
+  const rates = useChainRates(CHAIN.ETHEREUM);
+  const fiatCurrency = useFiatCurrency();
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsState);
 
-
   const tokensData = pool.tokensProportions
-    .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
+    .map(({ address: assetAddress }) => findAssetByAddress(ethereumSupportedAssets, assetAddress));
 
-  const poolTokenData = findAssetByAddress(supportedAssets, pool.uniswapPairAddress);
+  const poolTokenData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (
@@ -181,20 +187,19 @@ const RemoveLiquidityScreen = ({
 
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
-    const tokenSymbol = tokensData[tokenIndex]?.symbol;
-    const customBalances: WalletAssetsBalances = tokenSymbol
-      ? {
-        [tokenSymbol]: {
-          balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
-          symbol: tokenSymbol,
-        },
-      }
-      : {};
+    const { symbol: assetSymbol, address: assetAddress } = tokensData[tokenIndex];
+    const customBalances: WalletAssetsBalances = {
+      [addressAsKey(assetAddress)]: {
+        balance: formatAmount(tokenMaxWithdrawn, tokensData[tokenIndex]?.decimals),
+        symbol: assetSymbol,
+        address: assetAddress,
+      },
+    };
 
     return (
       <ValueInput
-        assetData={tokensData[tokenIndex]}
-        customAssets={[tokensData[tokenIndex]]}
+        assetData={mapAssetToAssetData(tokensData[tokenIndex])}
+        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency)]}
         value={obtainedAssetsValues[tokenIndex]}
         onValueChange={(newValue: string, newPercent: number | void) =>
           onObtainedAssetValueChange(tokenIndex, newValue, newPercent)
@@ -243,9 +248,10 @@ const RemoveLiquidityScreen = ({
   );
 
   const poolTokenCustomBalances = poolTokenData && {
-    [poolTokenData.symbol]: {
+    [addressAsKey(poolTokenData.address)]: {
       balance: poolStats?.userLiquidityTokenBalance.toFixed(),
       symbol: poolTokenData.symbol,
+      address: poolTokenData.address,
     },
   };
 
@@ -312,7 +318,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountEthereumWalletAssetsBalancesSelector,
-  supportedAssets: ethereumSupportedAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

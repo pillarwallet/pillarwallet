@@ -26,10 +26,10 @@ import { Spacing } from 'components/Layout';
 import Image from 'components/Image';
 
 // utils
-import { formatTokenAmount, wrapBigNumber } from 'utils/common';
-import { getFormattedRate } from 'utils/assets';
+import { formatFiat, formatTokenAmount, wrapBigNumber } from 'utils/common';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // selectors
 import {
@@ -81,7 +81,8 @@ export const TokenReviewSummaryComponent = ({
     assetIcon = { uri: asset.iconUrl };
     const amountBN = wrapBigNumber(amount);
     if (!fiatAmount) {
-      fiatAmount = getFormattedRate(chainRates, amountBN.toNumber(), asset.symbol, fiatCurrency);
+      const assetRate = getAssetRateInFiat(chainRates, asset.address, fiatCurrency);
+      fiatAmount = formatFiat(amountBN.times(assetRate).toNumber(), fiatCurrency);
     }
   }
 

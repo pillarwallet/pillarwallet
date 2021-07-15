@@ -454,7 +454,7 @@ export const checkIfKeyBasedWalletHasPositiveBalanceAction = () => {
     await dispatch(fetchAvailableBalancesToTransferAction());
 
     const { keyBasedAssetTransfer: { availableBalances, availableCollectibles } } = getState();
-    const assetHasPositiveBalance = (symbol) => !!getBalance(availableBalances, symbol);
+    const assetHasPositiveBalance = (assetAddress) => !!getBalance(availableBalances, assetAddress);
 
     const hasPositiveBalance = !isEmpty(availableCollectibles) || (
       !isEmpty(availableBalances) && Object.keys(availableBalances).some(assetHasPositiveBalance)

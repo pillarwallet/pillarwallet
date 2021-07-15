@@ -18,18 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { constants as EthersConstants } from 'ethers';
-
 // Utils
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import {
-  ETH,
-  MATIC,
-  BNB,
-  XDAI,
-} from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
@@ -72,28 +65,28 @@ export function getSupportedChains(account: ?Account): Chain[] {
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {
   ethereum: {
-    address: EthersConstants.AddressZero,
+    address: ADDRESS_ZERO,
     name: 'Ethereum',
     symbol: ETH,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
   },
   polygon: {
-    address: EthersConstants.AddressZero,
+    address: ADDRESS_ZERO,
     name: 'Matic',
     symbol: MATIC,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
   },
   binance: {
-    address: EthersConstants.AddressZero,
+    address: ADDRESS_ZERO,
     name: 'BNB',
     symbol: BNB,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
   },
   xdai: {
-    address: EthersConstants.AddressZero,
+    address: ADDRESS_ZERO,
     name: 'xDAI',
     symbol: XDAI,
     decimals: 18,

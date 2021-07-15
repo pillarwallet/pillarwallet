@@ -34,6 +34,6 @@ export type Rates = {
   ETH?: number,
 }
 
-export type RatesBySymbol = { [symbol: string]: Rates };
+export type RatesByAssetAddress = { [assetAddress: string]: Rates };
 
-export type RatesPerChain = ChainRecord<RatesBySymbol>;
+export type RatesPerChain = ChainRecord<RatesByAssetAddress>;

@@ -35,20 +35,27 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // configs
-import { PPN_TOKEN } from 'configs/assetsConfig';
+import { getPlrAddressForChain, PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import {
+  getBalance,
+  calculateMaxAmount,
+  isEnoughBalanceForTransactionFee,
+  findAssetByAddress,
+  getAssetsAsList,
+} from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
-import type { AssetsBySymbol } from 'models/Asset';
+import type { AssetByAddress } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency, RatesPerChain } from 'models/Rates';
@@ -102,7 +109,7 @@ const FormWrapper = styled.View`
 `;
 
 type Props = {
-  assets: AssetsBySymbol,
+  assets: AssetByAddress,
   navigation: NavigationScreenProp<*>,
   balances: WalletAssetsBalances,
   session: Object,
@@ -157,10 +164,14 @@ class FundTank extends React.Component<Props, State> {
   };
 
   useMaxValue = () => {
-    const { balances, useGasToken, topUpFee: { feeInfo } } = this.props;
+    const { balances, useGasToken, topUpFee: { feeInfo }, assets } = this.props;
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
+
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+    const { address } = findAssetByAddress(getAssetsAsList(assets), plrAddress) ?? {};
     const token = PPN_TOKEN;
-    const balance = getBalance(balances, token);
+
+    const balance = getBalance(balances, address);
     const gasToken = getGasToken(useGasToken, feeInfo);
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
     this.setState({
@@ -193,17 +204,18 @@ class FundTank extends React.Component<Props, State> {
       topUpFee: { feeInfo },
     } = this.props;
 
-    const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+    const { symbol: token, iconUrl, decimals, address } = findAssetByAddress(getAssetsAsList(assets), plrAddress) ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
     // balance
-    const balance = getBalance(balances, token);
+    const balance = getBalance(balances, address);
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
@@ -226,7 +238,7 @@ class FundTank extends React.Component<Props, State> {
     const maxAmount = parseFloat(calculateMaxAmount(token, balance, txFeeInWei, gasToken));
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
@@ -240,7 +252,6 @@ class FundTank extends React.Component<Props, State> {
     );
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: token,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });

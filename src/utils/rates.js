@@ -19,29 +19,22 @@
 */
 import { BigNumber } from 'bignumber.js';
 
-// Constants
-import { ETH, USD } from 'constants/assetsConstants';
-
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
+import { valueForAddress } from 'utils/common';
 
 // Types
-import type { RatesBySymbol, Currency } from 'models/Rates';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
-export function getUsdToFiatRate(rates: RatesBySymbol, currency: Currency): ?number {
-  // No need to calculate rate for USD/USD.
-  if (currency === USD) return 1;
 
-  const ethRates = rates[ETH];
-  if (!ethRates || !ethRates[currency] || !ethRates[USD]) {
-    return null;
-  }
-
-  return ethRates[currency] / ethRates[USD];
-}
-
-export function getFiatValueFromUsd(valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber {
+export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
 
   return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
-}
+};
+
+export const getAssetRateInFiat = (
+  rates: RatesByAssetAddress,
+  assetAddress: string,
+  fiatCurrency: Currency,
+): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;

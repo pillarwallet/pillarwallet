@@ -46,7 +46,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { getRate } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -76,13 +76,15 @@ import {
   isArchanovaAccount,
   isEtherspotAccount,
 } from 'utils/accounts';
+import { nativeAssetPerChain } from 'utils/chains';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // services
 import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -150,7 +152,6 @@ import {
 } from 'selectors';
 import {
   assetDecimalsSelector,
-  accountEthereumAssetsSelector,
   ethereumSupportedAssetsSelector,
 } from 'selectors/assets';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
@@ -162,7 +163,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { AssetsBySymbol, Asset } from 'models/Asset';
+import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Account } from 'models/Account';
@@ -194,7 +195,6 @@ type SelectorProps = {|
   isArchanovaWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
-  accountAssets: AssetsBySymbol,
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectiblesHistoryStore,
@@ -431,14 +431,15 @@ export class EventDetail extends React.Component<Props> {
     return isReceived ? event.from : event.to;
   };
 
-  getFormattedGasFee = (formattedFee: number, token: string) => {
+  getFormattedGasFee = (fee: number) => {
     const { baseFiatCurrency, ratesPerChain } = this.props;
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const rate = getRate(ethereumRates, token, fiatCurrency);
-    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
+    const { symbol, address } = nativeAssetPerChain.ethereum;
+    const rate = getAssetRateInFiat(ethereumRates, address, fiatCurrency);
+    const formattedFiatValue = formatFiat(fee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
-      tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
+      tokenValue: t('tokenValue', { value: fee, token: symbol }), fiatValue: formattedFiatValue,
     });
   };
 
@@ -454,7 +455,7 @@ export class EventDetail extends React.Component<Props> {
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
-      return this.getFormattedGasFee(formattedFee, ETH);
+      return this.getFormattedGasFee(formattedFee);
     }
     return null;
   };
@@ -918,7 +919,7 @@ export class EventDetail extends React.Component<Props> {
           amount, pool, tokenAmounts,
         } = event.extra;
         const tokensData = pool.tokensProportions.map(
-          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),
@@ -934,7 +935,7 @@ export class EventDetail extends React.Component<Props> {
       case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
         const { amount, pool, tokenAmounts } = event.extra;
         const tokensData = pool.tokensProportions.map(
-          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),
@@ -1249,7 +1250,7 @@ export class EventDetail extends React.Component<Props> {
                 />
               </Row>
               {group.transactions.map(({
-                createdAt, asset, value, hash,
+                createdAt, assetSymbol, value, hash,
               }) => {
                 const formattedDate = formatDate(new Date(createdAt * 1000), 'MMM D HH:mm');
                 const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
@@ -1257,7 +1258,7 @@ export class EventDetail extends React.Component<Props> {
                   <Row marginBottom={13} key={hash}>
                     <BaseText secondary tiny>{formattedDate}</BaseText>
                     <BaseText secondary small>
-                      {getFormattedValue(formattedAmount, asset, { isPositive: !isFailed, noSymbol: !isFailed })}
+                      {getFormattedValue(formattedAmount, assetSymbol, { isPositive: !isFailed, noSymbol: !isFailed })}
                     </BaseText>
                   </Row>
                 );
@@ -1431,9 +1432,8 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   PPNTransactions: PPNTransactionsSelector,
   mergedPPNTransactions: combinedPPNTransactionsSelector,
   isArchanovaWalletActivated: isArchanovaAccountDeployedSelector,
-  assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
+  assetDecimals: assetDecimalsSelector((_, props) => props.event.assetAddress),
   activeAccountAddress: activeAccountAddressSelector,
-  accountAssets: accountEthereumAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: collectiblesHistorySelector,

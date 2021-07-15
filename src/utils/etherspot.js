@@ -20,7 +20,6 @@
 
 import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber } from 'ethers';
-import isEmpty from 'lodash.isempty';
 import {
   type Transaction as EtherspotTransaction,
   type Account as EtherspotAccount,
@@ -39,13 +38,19 @@ import {
 import { ASSET_CATEGORY, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
+import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
-import { getAssetDataByAddress } from 'utils/assets';
+import { findAssetByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
+import { isProdEnv } from 'utils/environment';
 
 // types
 import type {
@@ -74,7 +79,6 @@ export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
 
 export const parseEtherspotTransactions = (
   etherspotTransactions: EtherspotTransaction[],
-  accountAssets: Asset[],
   supportedAssets: Asset[],
 ): Transaction[] => etherspotTransactions
   .reduce((mappedHistoryTransactions, etherspotTransaction) => {
@@ -90,7 +94,7 @@ export const parseEtherspotTransactions = (
       timestamp: createdAt,
     } = etherspotTransaction;
 
-    let asset = ETH;
+    let { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain.ethereum;
     let value = EthersBigNumber.from(0);
 
     if (assetPayload) {
@@ -103,13 +107,13 @@ export const parseEtherspotTransactions = (
       value = assetValue;
 
       if (assetName !== ETH) {
-        const supportedAsset = getAssetDataByAddress(accountAssets, supportedAssets, contractAddress);
-        if (isEmpty(supportedAsset)) {
-          // asset not supported
-          return mappedHistoryTransactions;
-        }
+        const supportedAsset = findAssetByAddress(supportedAssets, contractAddress);
 
-        asset = supportedAsset.symbol;
+        // asset not supported
+        if (!supportedAsset) return mappedHistoryTransactions;
+
+        assetAddress = contractAddress;
+        assetSymbol = supportedAsset.symbol;
       }
     }
 
@@ -136,7 +140,8 @@ export const parseEtherspotTransactions = (
       gasUsed,
       hash,
       value,
-      asset,
+      assetSymbol,
+      assetAddress,
       status,
       createdAt,
     });
@@ -238,4 +243,15 @@ export const assetsCategoryFromEtherspotBalancesCategory = {
   [EtherspotAccountDashboardProtocols.Investments]: ASSET_CATEGORY.INVESTMENTS,
   // TODO: enable once rewards available
   // [AccountDashboardProtocols.Rewards]: ASSET_CATEGORY.REWARDS
+};
+
+export const getChainTokenListName = (chain: Chain): ?string => {
+  if (chain === CHAIN.ETHEREUM && isProdEnv()) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
+  }
+
+  if (chain === CHAIN.BINANCE) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_BSC);
+  if (chain === CHAIN.POLYGON) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_POLYGON);
+
+  return null;
 };

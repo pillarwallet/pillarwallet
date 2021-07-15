@@ -105,12 +105,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     // add unsettled amounts to balances
     const combinedBalances = Object.keys(balances)
-      .reduce((memo, assetName) => {
-        const balanceData: WalletAssetBalance = balances[assetName];
+      .reduce((memo, assetAddress) => {
+        const balanceData: WalletAssetBalance = balances[assetAddress];
         let balance = new BigNumber(balanceData.balance);
         this.txToSettle.forEach(asset => { balance = balance.plus(asset.value); });
         return {
-          [assetName]: {
+          [assetAddress]: {
             ...balanceData,
             balance: balance.toString(),
           },

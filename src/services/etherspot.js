@@ -19,7 +19,6 @@
 */
 
 import {
-  constants as EthersConstants,
   utils as EthersUtils,
   Wallet as EthersWallet,
 } from 'ethers';
@@ -44,9 +43,6 @@ import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
-
 // utils
 import {
   BigNumber,
@@ -60,6 +56,7 @@ import {
   appendNativeAssetIfNeeded,
   buildExchangeOffer,
   buildTransactionFeeInfo,
+  getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
@@ -69,7 +66,6 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type {
@@ -122,8 +118,7 @@ export class EtherspotService {
       const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
 
-      // FCM only for mainnet, session creation should happen before computing contract account
-      if (fcmToken && networkName === primaryNetworkName) {
+      if (fcmToken) {
         try {
           await this.instances[networkName].createSession({ fcmToken });
         } catch (error) {
@@ -229,7 +224,7 @@ export class EtherspotService {
 
     const assetAddresses = supportedAssets
       // 0x0...0 is default native token address in our assets, but it's not a ERC20 token
-      .filter(({ address }) => !addressesEqual(address, EthersConstants.AddressZero))
+      .filter(({ address }) => !addressesEqual(address, nativeAssetPerChain[chain].address))
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
@@ -275,7 +270,7 @@ export class EtherspotService {
         return positiveBalances;
       }
 
-      const { decimals, symbol } = supportedAsset;
+      const { decimals, symbol, address } = supportedAsset;
 
       const positiveBalance = EthersUtils.formatUnits(balance, decimals);
 
@@ -286,7 +281,7 @@ export class EtherspotService {
 
       return [
         ...positiveBalances,
-        { symbol, balance: positiveBalance },
+        { symbol, address, balance: positiveBalance },
       ];
     }, []);
   }
@@ -618,9 +613,7 @@ export class EtherspotService {
     }
 
     try {
-      const tokenListName = chain === CHAIN.ETHEREUM && isProdEnv()
-        ? firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM)
-        : null;
+      const tokenListName = getChainTokenListName(chain);
 
       let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
 

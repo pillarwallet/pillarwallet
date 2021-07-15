@@ -34,9 +34,9 @@ import { TextLink, Label, BaseText } from 'components/Typography';
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { getRate } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -49,7 +49,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
-import { PPN_TOKEN } from 'configs/assetsConfig';
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -181,6 +181,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     const { symbol, iconUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
 
     const ethereumRates = ratesPerChain[CHAIN.ETHEREUM] ?? {};
 
@@ -189,7 +190,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const formattedBalance = formatAmount(balance);
 
     // balance in fiat
-    const totalInFiat = balance * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const totalInFiat = balance * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // max amount
@@ -199,14 +200,13 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
-    const valueInFiat = currentValue * getRate(ethereumRates, PPN_TOKEN, fiatCurrency);
+    const valueInFiat = currentValue * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({
       icon: iconUrl,
-      currency: symbol,
       valueInFiatOutput,
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });

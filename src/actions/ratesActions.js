@@ -31,21 +31,20 @@ import { getExchangeRates } from 'services/assets';
 
 // utils
 import {
-  getAssetData,
+  findAssetByAddress,
   getAssetsAsList,
-  mapWalletAssetsBalancesIntoAssetsBySymbol,
+  mapWalletAssetsBalancesIntoAssetsByAddress,
 } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { supportedAssetsPerChainSelector } from 'selectors';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
-import type { RatesBySymbol } from 'models/Rates';
+import type { RatesByAssetAddress } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -58,7 +57,7 @@ export const setIsFetchingRatesAction = (isFetching: boolean) => ({
 
 export const updateRatesAction = (
   chain: string,
-  rates: RatesBySymbol,
+  rates: RatesByAssetAddress,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
@@ -85,42 +84,42 @@ export const fetchAssetsRatesAction = () => {
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
-    const assetsBySymbolPerChain = Object.keys(CHAIN).reduce((
-      combinedAssetsBySymbolPerChain,
+    const assetsByAddressPerChain = Object.keys(CHAIN).reduce((
+      combinedAssetsByAddressPerChain,
       chainKey,
     ) => {
       const chain = CHAIN[chainKey];
 
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-      const chainAccountsAssetsBySymbol = Object.keys(assetsBalancesPerAccount).reduce((
-        combinedAssetsBySymbol,
+      const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce((
+        combinedAssetsByAddress,
         accountId,
       ) => {
         const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
         const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
 
-        const assetsBySymbol = mapWalletAssetsBalancesIntoAssetsBySymbol(
+        const assetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
           accountWalletAssetsBalances,
           chainSupportedAssets,
         );
 
         // $FlowFixMe
-        return { ...combinedAssetsBySymbol, ...assetsBySymbol };
+        return { ...combinedAssetsByAddress, ...assetsByAddress };
       }, {});
 
       // $FlowFixMe
-      return { ...combinedAssetsBySymbolPerChain, [chain]: chainAccountsAssetsBySymbol };
+      return { ...combinedAssetsByAddressPerChain, [chain]: chainAccountsAssetsByAddress };
     }, {});
 
-    await Promise.all(Object.keys(assetsBySymbolPerChain).map(async (chain) => {
-      const chainAssetsBySymbol = assetsBySymbolPerChain[chain] ?? {};
+    await Promise.all(Object.keys(assetsByAddressPerChain).map(async (chain) => {
+      const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
 
       try {
-        const rates = await getExchangeRates(chain, chainAssetsBySymbol);
+        const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));
         await dispatch(updateRatesAction(chain, rates));
       } catch (error) {
-        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsBySymbol });
+        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
       }
     }));
 
@@ -130,7 +129,7 @@ export const fetchAssetsRatesAction = () => {
 
 export const fetchSingleChainAssetRatesAction = (
   chain: Chain,
-  assetCode: string,
+  assetAddress: string,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -142,20 +141,17 @@ export const fetchSingleChainAssetRatesAction = (
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const accountAssetsPerChain = accountAssetsPerChainSelector(getState());
-    const chainAccountAssets = accountAssetsPerChain[chain] ?? {};
-
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
     const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-    const asset = getAssetData(getAssetsAsList(chainAccountAssets), chainSupportedAssets, assetCode);
+    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
     if (!asset) {
       dispatch(setIsFetchingRatesAction(false));
-      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetCode });
+      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetAddress });
       return;
     }
 
-    const rates = await getExchangeRates(chain, { [asset.symbol]: asset });
+    const rates = await getExchangeRates(chain, [asset]);
 
     if (isEmpty(rates)) {
       dispatch(setIsFetchingRatesAction(false));

@@ -25,7 +25,6 @@ import { map, merge } from 'lodash';
 // Selectors
 import {
   activeAccountIdSelector,
-  supportedAssetsPerChainSelector,
   ratesPerChainSelector,
   fiatCurrencySelector,
   usdToFiatRateSelector,
@@ -33,17 +32,15 @@ import {
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // Utils
-import { getRate } from 'utils/assets';
-import { hasServiceAssetBalanceForSymbol } from 'utils/balances';
+import { hasServiceAssetBalanceForAddress } from 'utils/balances';
 import { sum } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { mapRecordValues } from 'utils/object';
-import { getFiatValueFromUsd } from 'utils/rates';
+import { getFiatValueFromUsd, getAssetRateInFiat } from 'utils/rates';
 import { mapAccountCategoryChainRecordValues } from 'utils/totalBalances';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Asset, AssetsPerChain } from 'models/Asset';
 import type {
   AssetBalancesPerAccount,
   AccountAssetBalances,
@@ -60,19 +57,17 @@ import type {
   WalletTotalBalancesPerAccount,
 } from 'models/TotalBalances';
 import type {
-  RatesBySymbol,
+  RatesByAssetAddress,
   RatesPerChain,
   Currency,
 } from 'models/Rates';
 
 export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalancesPerAccount> = createSelector(
   assetsBalancesPerAccountSelector,
-  supportedAssetsPerChainSelector,
   ratesPerChainSelector,
   fiatCurrencySelector,
   (
     assetsBalancesPerAccount: AssetBalancesPerAccount,
-    supportedAssetsPerChain: AssetsPerChain,
     ratesPerChain: RatesPerChain,
     currency: Currency,
   ): WalletTotalBalancesPerAccount =>
@@ -80,7 +75,6 @@ export const walletTotalBalancesPerAccountSelector: Selector<WalletTotalBalances
       mapChainRecordValues(assetsBalancesPerChain, (assetBalances: CategoryAssetsBalances, chain: Chain) =>
         calculateWalletAssetsFiatValue(
           assetBalances ?? {},
-          supportedAssetsPerChain[chain] ?? [],
           ratesPerChain[chain] ?? {},
           currency,
         ),
@@ -153,19 +147,21 @@ export const accountRewardsBalancePerChainSelector = (root: RootReducerState) =>
  */
 const calculateWalletAssetsFiatValue = (
   categoryAssetBalances: CategoryAssetsBalances,
-  supportedAssets: Asset[],
-  rates: RatesBySymbol,
+  rates: RatesByAssetAddress,
   currency: Currency,
 ): BigNumber => {
-  const assetBalancesInFiat = map(categoryAssetBalances.wallet ?? {}, ({ symbol, balance }: WalletAssetBalance) => {
-    if (!balance) return BigNumber(0);
+  const assetBalancesInFiat = map(
+    categoryAssetBalances.wallet ?? {},
+    ({ address, balance }: WalletAssetBalance) => {
+      if (!balance) return BigNumber(0);
 
-    const hasMatchingServiceAsset = hasServiceAssetBalanceForSymbol(categoryAssetBalances, supportedAssets, symbol);
-    if (hasMatchingServiceAsset) return BigNumber(0);
+      const hasMatchingServiceAsset = hasServiceAssetBalanceForAddress(categoryAssetBalances, address);
+      if (hasMatchingServiceAsset) return BigNumber(0);
 
-    const rate = getRate(rates, symbol, currency);
-    return BigNumber(balance).times(rate);
-  });
+      const rate = getAssetRateInFiat(rates, address, currency);
+      return BigNumber(balance).times(rate);
+    },
+  );
 
   return sum(assetBalancesInFiat);
 };
