@@ -25,7 +25,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content, Footer, Spacing } from 'components/modern/Layout';
 import * as Table from 'components/modern/Table';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/modern/Button';
@@ -33,6 +33,7 @@ import FeeTable from 'components/modern/FeeTable';
 import HeaderBlock from 'components/HeaderBlock';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
+import Spinner from 'components/Spinner';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -89,6 +90,18 @@ function WalletMigrationArchanovaConfirm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (isEstimating) {
+    return (
+      <Container>
+        <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+
+        <SpinnerContent>
+          <Spinner />
+        </SpinnerContent>
+      </Container>
+    );
+  }
+
   const renderItem = (item: AssetItem, index: number) =>
     item.collectible ? renderCollectibleItem(item.collectible, index) : renderTokenItem(item, index);
 
@@ -120,8 +133,6 @@ function WalletMigrationArchanovaConfirm() {
   //  const renderToken = (token: ) => null;
   const handleSubmit = () => {};
 
-  const disableButton = isEstimating || !hasEnoughGas;
-
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
@@ -150,18 +161,26 @@ function WalletMigrationArchanovaConfirm() {
         {items.map(renderItem)}
 
         <FeeTable fee={fee} assetAddress={gasAddress} assetSymbol={gasSymbol} chain={CHAIN.ETHEREUM} />
+      </Content>
 
+      <Footer>
         <Button
           title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
           onPress={handleSubmit}
-          disabled={disableButton}
+          disabled={hasEnoughGas}
         />
-      </Content>
+      </Footer>
     </Container>
   );
 }
 
 export default WalletMigrationArchanovaConfirm;
+
+const SpinnerContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Header = styled.View`
   align-items: center;

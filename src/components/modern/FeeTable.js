@@ -70,7 +70,6 @@ function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
         assetSymbol={assetSymbol}
         assetAddress={assetAddress}
         fee={fee}
-        separator={false}
         chain={chain}
       />
     </View>
