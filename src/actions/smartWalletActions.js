@@ -48,6 +48,7 @@ import {
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
   START_ARCHANOVA_WALLET_DEPLOYMENT,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -1637,7 +1638,7 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
       assetSymbol,
       assetAddress,
       value: 0,
-      extra: { isEnsMigrationToEtherspot: true },
+      tag: ARCHANOVA_WALLET_ENS_MIGRATION,
     });
 
     dispatch({

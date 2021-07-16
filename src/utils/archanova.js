@@ -34,6 +34,7 @@ import {
   ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -334,6 +335,14 @@ export const parseArchanovaTransactions = (
       }
     }
 
+    const migratorContractAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
+    if (addressesEqual(migratorContractAddress, transaction.to)) {
+      transaction = {
+        ...transaction,
+        tag: ARCHANOVA_WALLET_ENS_MIGRATION,
+      };
+    }
+
     const mappedTransaction = buildHistoryTransaction(transaction);
     mapped.push(mappedTransaction);
 
@@ -487,4 +496,18 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
 
       return data;
     });
+};
+
+/**
+ * Checks accounts for migrated ENS in following order:
+ * 1. First checks Etherspot account in case ENS already migrated and was updated on Etherspot back-end.
+ * 2. If there's no ENS yet on Etherspot account or transaction is pending then it checks on Archanova
+ *
+ * Note: Archanova back-end will always return attached ENS name even after migration.
+ */
+export const getMigratedArchanovaEnsName = (accounts: Account[]): string => {
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+  return getAccountEnsName(etherspotAccount) ?? getAccountEnsName(archanovaAccount) ?? '';
 };

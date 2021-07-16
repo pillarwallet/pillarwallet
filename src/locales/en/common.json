@@ -255,7 +255,10 @@
     "multiple": "Multiple",
     "walletToPillarPay": "Wallet → Pillar Pay",
     "pillarPayToWallet": "Pillar Pay → Wallet",
-    "fromToFormat": "{{from}} → {{to}}"
+    "fromToFormat": "{{from}} → {{to}}",
+    "completed": "Completed",
+    "failed": "Failed",
+    "ensMigration": "ENS migration"
   },
 
   "button": {

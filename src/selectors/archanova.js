@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
+import { ARCHANOVA_WALLET_ENS_MIGRATION, ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
@@ -89,7 +89,7 @@ export const isEnsMigrationNeededSelector = createSelector(
       archanovaAccount && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
 
     const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(
-      ({ extra }) => extra?.isEnsMigrationToEtherspot,
+      ({ tag }) => tag === ARCHANOVA_WALLET_ENS_MIGRATION,
     );
 
     return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;
