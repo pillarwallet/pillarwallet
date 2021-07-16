@@ -54,7 +54,7 @@ import { PLR } from 'constants/assetsConstants';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
-import type { TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { TransactionFeeInfo, TransactionToEstimate, EthereumTransaction } from 'models/Transaction';
 
 
 export const resetEstimateTransactionAction = () => {
@@ -162,7 +162,7 @@ export const estimateTransactionsForAccountAction = (
 
     let errorMessage;
     let estimated;
-    let feeInfo;
+    let feeInfo = null;
 
     switch (getAccountType(account)) {
       case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
@@ -186,11 +186,12 @@ export const estimateTransactionsForAccountAction = (
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
         break;
       case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
+        try {
+          feeInfo = await estimateArchanovaTransactions(transactions, useGasToken);
+        } catch (error) {
           errorMessage = error?.message;
-          return null;
-        });
-        feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
+        }
+
         break;
       default:
         reportErrorLog('estimateTransactionsForAccountAction failed: unsupported account type', { account });
@@ -204,6 +205,11 @@ export const estimateTransactionsForAccountAction = (
 
     dispatch(setTransactionsEstimateFeeAction(feeInfo));
   };
+};
+
+const estimateArchanovaTransactions = async (transactions: EthereumTransaction[], useGasToken: boolean) => {
+  const estimated = await archanovaService.estimateAccountTransactions(transactions);
+  return buildArchanovaTxFeeInfo(estimated, useGasToken);
 };
 
 export const estimateTransactionAction = (transaction: TransactionToEstimate, chain: Chain) => {
