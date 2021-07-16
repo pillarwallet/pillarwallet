@@ -28,7 +28,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
-import { fromEthersBigNumber, fromBaseUnit } from 'utils/bigNumber';
+import { fromEthersBigNumber, fromBaseUnit, sumBy } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // services
@@ -43,7 +43,6 @@ import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
   const gasTokenCost = get(feeInfo, 'gasTokenCost');
@@ -183,6 +182,14 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
+export const sumTransactionFeeInfos = (feeInfos: TransactionFeeInfo[]): TransactionFeeInfo => {
+  if (!feeInfos.length) return { fee: null };
+
+  return {
+    fee: sumBy(feeInfos, info => info.fee),
+    gasToken: feeInfos[0].gasToken,
+  };
+};
 
 // TODO: remove
 export type TransactionFeeSummary = {|

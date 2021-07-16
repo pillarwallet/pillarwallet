@@ -21,6 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { getPlrAddressForChain } from 'configs/assetsConfig';
+import { chunk } from 'lodash';
 
 // components
 import Toast from 'components/Toast';
@@ -32,7 +33,7 @@ import etherspotService from 'services/etherspot';
 // utils
 import { reportErrorLog } from 'utils/common';
 import { buildArchanovaTxFeeInfo } from 'utils/archanova';
-import { buildEthereumTransaction } from 'utils/transactions';
+import { buildEthereumTransaction, sumTransactionFeeInfos } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
@@ -207,9 +208,21 @@ export const estimateTransactionsForAccountAction = (
   };
 };
 
+// Handles arbitrary number of transaction, but splitting them into chunks of 5.
 const estimateArchanovaTransactions = async (transactions: EthereumTransaction[], useGasToken: boolean) => {
-  const estimated = await archanovaService.estimateAccountTransactions(transactions);
-  return buildArchanovaTxFeeInfo(estimated, useGasToken);
+  const transactionChunks = chunk(transactions, 5);
+  const chunkPromises = transactionChunks.map((transactionChunk) =>
+    estimateArchanovaTransactionBatch(transactionChunk, useGasToken),
+  );
+
+  const chunkFeeInfos = await Promise.all(chunkPromises);
+  return sumTransactionFeeInfos(chunkFeeInfos);
+};
+
+// Handles at most 5 transactions due to archanova limitation.
+const estimateArchanovaTransactionBatch = async (transactions: EthereumTransaction[], useGasToken: boolean) => {
+  const estimate = await archanovaService.estimateAccountTransactions(transactions);
+  return buildArchanovaTxFeeInfo(estimate, useGasToken);
 };
 
 export const estimateTransactionAction = (transaction: TransactionToEstimate, chain: Chain) => {

@@ -44,7 +44,10 @@ import { useTotalMigrationValueInFiat } from 'selectors/walletMigrationArchanova
 import { useTransactionFeeInfo } from 'selectors/transactions';
 
 // Actions
-import { estimateTransactionsForAccountAction } from 'actions/transactionEstimateActions';
+import {
+  resetEstimateTransactionAction,
+  estimateTransactionsForAccountAction,
+} from 'actions/transactionEstimateActions';
 
 // Utils
 import { humanizeHexString } from 'utils/common';
@@ -60,27 +63,28 @@ import { type AssetItem, type TokenItem, useAssetItems, mapAssetItemToTransactio
 
 
 function WalletMigrationArchanovaConfirm() {
-  const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.review');
+  const navigation = useNavigation();
+  const images = useThemedImages();
 
   const dispatch = useDispatch();
 
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const archanovaAccount = useRootSelector(achanovaAccountSelector);
   const currency = useFiatCurrency();
+
+  const items = useAssetItems();
   const { fee, gasAddress, gasSymbol, isEstimating } = useTransactionFeeInfo(CHAIN.ETHEREUM);
-
-  const images = useThemedImages();
-
-  const assets = useAssetItems();
 
   const hasEnoughGas = true;
   const totalValue = useTotalMigrationValueInFiat();
 
   React.useEffect(() => {
+    dispatch(resetEstimateTransactionAction());
+
     if (!archanovaAccount || !etherspotAccount) return;
 
-    const transactionsToEstimate = assets.map((item) => mapAssetItemToTransactionToEstimate(item, etherspotAccount));
+    const transactionsToEstimate = items.map((item) => mapAssetItemToTransactionToEstimate(item, etherspotAccount));
     dispatch(estimateTransactionsForAccountAction(transactionsToEstimate, CHAIN.ETHEREUM, archanovaAccount));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -116,6 +120,8 @@ function WalletMigrationArchanovaConfirm() {
   //  const renderToken = (token: ) => null;
   const handleSubmit = () => {};
 
+  const disableButton = isEstimating || !hasEnoughGas;
+
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
@@ -141,19 +147,14 @@ function WalletMigrationArchanovaConfirm() {
         />
 
         <Table.Header>{t('assets.header')}</Table.Header>
-        {assets.map(renderItem)}
+        {items.map(renderItem)}
 
-        <FeeTable
-          fee={fee}
-          assetAddress={gasAddress}
-          assetSymbol={gasSymbol}
-          chain={CHAIN.ETHEREUM}
-        />
+        <FeeTable fee={fee} assetAddress={gasAddress} assetSymbol={gasSymbol} chain={CHAIN.ETHEREUM} />
 
         <Button
           title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
           onPress={handleSubmit}
-          disabled={!hasEnoughGas}
+          disabled={disableButton}
         />
       </Content>
     </Container>
