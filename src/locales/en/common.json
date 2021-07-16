@@ -1185,7 +1185,6 @@
     "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
     "languageChanged": "Language changed.",
     "languageChangeFailed": "Can't change language. Please try again.",
-    "smartWalletDeviceAdded": "New linked device added",
     "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
     "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
     "contactUpdated": "{{name}} updated.",

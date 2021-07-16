@@ -639,13 +639,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           && accountUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
-        } else {
-          // otherwise it's actual smart wallet device deployment
-          Toast.show({
-            message: t('toast.smartWalletDeviceAdded'),
-            emoji: 'tada',
-            autoClose: true,
-          });
         }
 
         // gas relayer switch check
