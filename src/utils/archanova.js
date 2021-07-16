@@ -450,15 +450,16 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
     device,
   }) => addressesEqual(device?.address, migratorAddress));
 
-  if (!isMigratorDeviceAdded) {
-    await archanovaService.addAccountDevice(migratorAddress);
-    migrator = migrator.addAccountDevice();
-  }
+  // add device on Archanova back-end if needed
+  if (!isMigratorDeviceAdded) await archanovaService.addAccountDevice(migratorAddress);
+
+  // migrator device add part that will be called on tx
+  migrator = migrator.addAccountDevice();
 
   // we cannot test ENS migration so let's just add simple transaction
   migrator = isKovan
     ? migrator.transferBalance(utils.parseEther('0.001'))
-    : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
+    : migrator.transferENSName(getAccountEnsName(archanovaAccount));
 
   const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
 
