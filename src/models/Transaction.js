@@ -125,10 +125,6 @@ export type AllowanceTransactionExtra = {|
   },
 |};
 
-export type EnsMigrationExtra = {|
-  isEnsMigrationToEtherspot: boolean,
-|};
-
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -139,8 +135,7 @@ export type TransactionExtra = TxSettlementItem[]
   | RariExtra
   | LiquidityPoolsExtra
   | AllowanceTransactionExtra
-  | EtherspotTransactionExtra
-  | EnsMigrationExtra;
+  | EtherspotTransactionExtra;
 
 export type GasToken = {
   address: string,

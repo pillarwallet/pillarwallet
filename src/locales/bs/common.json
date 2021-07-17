@@ -1236,7 +1236,6 @@
     "languageChangeFailed": "Nije moguće promijeniti jezik. Molimo pokušajte ponovo.",
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) povučeno.",
     "sablierCancelStream": "Tok poništen.",
-    "smartWalletDeviceAdded": "Dodan je novi povezani uređaj",
     "cryptoPurchaseLaunchFailed": "Nažalost, imali smo problem pri pokušaju otvaranja ove usluge. Pokušajte ponovo kasnije.",
     "exchangeAllowanceFailed": "Žao nam je. Nije moguće postaviti dozvolu za tokene. Molimo pokušajte ponovo.",
     "contactUpdated": "Kontakt ažuriran",
@@ -1383,7 +1382,7 @@
     "transactionSentConfirmed": "{{tokenValue}} poslan.",
     "receivedCollectible": "Dobili ste kolekcionarstvo.",
     "collectibleSentAndReceived": "Vaša značka je primljena."
-  }, 
+  },
 
   "receiveModal": {
     "etherspotSingleAddressInfo": "Svi lanci koriste jednu adresu novčanika.",
