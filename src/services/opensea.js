@@ -45,17 +45,21 @@ const getOpenSeaAssets = (
   limit: number = 300,
   offset: number = 0,
 ) => {
-  return new Promise(async (resolve) => {
-    const { data: responseData } = await httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig);
-    const assets = responseData?.assets || [];
-    const updatedPaginatedData = [...paginatedData, ...assets];
-    const newOffset = offset + limit;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data: responseData } = await httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig);
+      const assets = responseData?.assets || [];
+      const updatedPaginatedData = [...paginatedData, ...assets];
+      const newOffset = offset + limit;
 
-    const results = assets.length === limit
-      ? await getOpenSeaAssets(url, updatedPaginatedData, limit, newOffset)
-      : updatedPaginatedData;
+      const results = assets.length === limit
+        ? await getOpenSeaAssets(url, updatedPaginatedData, limit, newOffset)
+        : updatedPaginatedData;
 
-    resolve(results);
+      resolve(results);
+    } catch (err) {
+      reject(err);
+    }
   });
 };
 
