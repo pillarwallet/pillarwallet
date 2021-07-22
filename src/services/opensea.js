@@ -75,12 +75,10 @@ export const fetchCollectibles = async (
     '&order_by=listing_date' +
     '&order_direction=asc';
 
-  try {
-    return getOpenSeaAssets(url);
-  } catch (error) {
+  return getOpenSeaAssets(url).catch((error) => {
     reportErrorLog('fetchCollectibles failed', { walletAddress, error });
     return null;
-  }
+  });
 };
 
 export const fetchCollectiblesTransactionHistory = async (
