@@ -42,7 +42,7 @@ const requestConfig = {
 const getOpenSeaAssets = (
   url: string,
   paginatedData: Array<Object> = [],
-  limit: number = 300,
+  limit: number = 50,
   offset: number = 0,
 ) => {
   return new Promise(async (resolve, reject) => {
