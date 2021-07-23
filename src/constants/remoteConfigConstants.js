@@ -46,7 +46,7 @@ export const REMOTE_CONFIG = {
   PRISMIC_PRIVACY_POLICY_DOCUMENT_ID: 'prismic_privacy_policy_document_id',
   PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID: 'prismic_terms_of_policy_document_id',
   PRISMIC_INTERJECTION_DOCUMENT_ID: 'prismic_interjection_document_id',
-  XDAI_RPC_ENDPOINT: 'xdai_rpc_endpoint',
+  XDAI_RPC_ENDPOINT: 'app_xdai_rpc_endpoint',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
