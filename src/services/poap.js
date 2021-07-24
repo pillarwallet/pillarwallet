@@ -22,6 +22,7 @@ import { providers } from 'ethers';
 // services
 import { getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import httpRequest from 'utils/httpRequest';
@@ -33,18 +34,19 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 // constants
 import { CHAIN } from 'constants/chainConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type { Collectible } from 'models/Collectible';
 
 
 /* eslint-disable i18next/no-literal-string */
-const xDaiRpcUrl = 'https://dai.poa.network/';
 const poapContractAddress = '0x22c1f6050e56d2876009903609a2cc3fef83b415';
 const poapSubgraphName = 'poap-xyz/poap-xdai';
 /* eslint-enable i18next/no-literal-string */
 
 export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<Collectible[]> => {
+  const xDaiRpcUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.XDAI_RPC_ENDPOINT);
   const xDaiRpcProvider = new providers.JsonRpcProvider(xDaiRpcUrl);
 
   const collectibleContract = getContract(

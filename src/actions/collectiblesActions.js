@@ -118,18 +118,17 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
 
     const openSeaCollectibles = await fetchCollectibles(walletAddress);
     if (!openSeaCollectibles) {
-      reportErrorLog('fetchCollectiblesAction failed: response not valid', {
+      reportErrorLog('fetchCollectiblesAction failed: fetchCollectibles response not valid', {
         openSeaCollectibles,
         accountId,
         walletAddress,
         account,
       });
-      return;
     }
 
-    let updatedAccountCollectibles = {
-      [CHAIN.ETHEREUM]: openSeaCollectibles.map(collectibleFromResponse),
-    };
+    let updatedAccountCollectibles = openSeaCollectibles
+      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.map(collectibleFromResponse) }
+      : {};
 
     if (isEtherspotAccount(account)) {
       const poapCollectiblesOnXDai = await getPoapCollectiblesOnXDai(walletAddress);
