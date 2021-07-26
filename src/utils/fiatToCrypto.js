@@ -20,9 +20,9 @@
 
 import querystring from 'querystring';
 
-// config
+// Config
 import { getEnv } from 'configs/envConfig';
-import { RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+import { ARCHANOVA_RAMP_CURRENCY_TOKENS, ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
 
 const PILLAR = 'Pillar';
 
@@ -30,6 +30,7 @@ export function rampWidgetUrl(
   address: string,
   fiatCurrency: string,
   fiatValue: string,
+  isEtherspotAccount: boolean,
 ) {
   const params = {
     hostAppName: PILLAR,
@@ -37,7 +38,7 @@ export function rampWidgetUrl(
     fiatValue,
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
-    swapAsset: RAMP_CURRENCY_TOKENS.join(','),
+    swapAsset: isEtherspotAccount ? ETHERSPOT_RAMP_CURRENCY_TOKENS.join(',') : ARCHANOVA_RAMP_CURRENCY_TOKENS,
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;

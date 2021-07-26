@@ -26,12 +26,12 @@ describe('The fiatToCrypto.js utility module', () => {
     const rampStagingUrl = 'https://ri-widget-staging-kovan.firebaseapp.com/';
     const PILLAR = 'Pillar';
 
-    it('successfully returns a RAMP url', () => {
+    it('successfully returns a RAMP url for Etherspot account', () => {
       const fakeEthAddress = '0x123';
       const fakeFiatCurrency = '$';
       const fakeFiatValue = '0.1';
 
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue, true);
 
       const expectedParams = {
         hostAppName: PILLAR,
@@ -40,6 +40,26 @@ describe('The fiatToCrypto.js utility module', () => {
         hostApiKey: null,
         userAddress: fakeEthAddress,
         swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'].join(','),
+      };
+      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
+
+      expect(generatedUrl).toBe(expectedUrl);
+    });
+
+    it('successfully returns a RAMP url for Archanova account', () => {
+      const fakeEthAddress = '0x123';
+      const fakeFiatCurrency = '$';
+      const fakeFiatValue = '0.1';
+
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue, false);
+
+      const expectedParams = {
+        hostAppName: PILLAR,
+        fiatCurrency: fakeFiatCurrency,
+        fiatValue: fakeFiatValue,
+        hostApiKey: null,
+        userAddress: fakeEthAddress,
+        swapAsset: 'ETH',
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 
