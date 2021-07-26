@@ -63,6 +63,10 @@ Here's a few references to get you started:
 - [Create React Native App](https://reactnative.dev/docs/getting-started)
 - [Free Ropsten ETH](https://faucet.ropsten.be/)
 
+### 💬 Community
+
+We at Pillar strongly believe in community, jump into our Discord at https://chat.pillar.fi and say hello! 👋
+
 ### 🏆 Submitting your app
 
 When you're finished, please upload it to a Github repository and get in touch with us [on Discord](https://chat.pillar.fi) or drop an [email here](mailto:kieran@pillarproject.io?subject=App%20Submission).
