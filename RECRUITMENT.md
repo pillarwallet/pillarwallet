@@ -2,7 +2,7 @@
 
 We're always on the lookout for great people to join our team. We don't just look at technical skills, but how you fit into our team and what you can bring to the table.
 
-In return, for permanent employees, we can offer you:
+🇬🇧 In return, for permanent UK employees, we can offer you:
 
 - 💰 Great pay package, dependent on experience
 - ⏰ Flexible working hours - early bird or a night owl? No issue with us.
@@ -14,11 +14,21 @@ In return, for permanent employees, we can offer you:
 - 🛫 All expenses paid travel to work events and conferences
 - 💖 Fantastic, helpful and friendly company culture
 
+🌍 Somewhere else in the world? We still want to hear from you! We always endeavour to look after our team, no matter where you reside.
+
 ### 💻 The technical
 
 Show us the code! We've put together a technical test below to help you show the best of who you are to us. This is what you need to do.
 
-We'd like you to build a basic React Native app with one screen and an input for an Ethereum address and a numberical input.
+We'd like you to build a basic React Native app that utilises the Etherspot platform with one screen minimum (you can add more if you think it works for your app), an input for an Ethereum address and a numberical input for the send amount.
+
+**About the Etherspot Platform**
+
+The Etherspot Platform allows developers and organisations to quickly bootstrap their apps and dApps, with contract management and blockchain interaction handled by the platform itself. All interaction of the Etherspot Platform is handled by the Etherspot SDK. Here are some links that you may find useful:
+
+- [Etherspot Documentation](https://docs.etherspot.dev)
+- [Etherspot SDK Reference](https://sdk.etherspot.dev)
+- [Etherspot Website](https://etherspot.io)
 
 🚏 As part of the React Native app, there are two user journeys:
 
