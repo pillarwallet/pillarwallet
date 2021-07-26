@@ -2,19 +2,20 @@
 
 We're always on the lookout for great people to join our team. We don't just look at technical skills, but how you fit into our team and what you can bring to the table.
 
-🇬🇧 In return, for permanent UK employees, we can offer you:
+🌍 No matter where you are in the world, we can offer you:
 
 - 💰 Great pay package, dependent on experience
-- ⏰ Flexible working hours - early bird or a night owl? No issue with us.
-- 🔒 Pension and National Insurance contributions
+- ⏰ Flexible working hours - early bird or a night owl? No issue with us
 - 😎 Free Pillar swag
-- 🏥 Private medical care for you and your immedidate family
-- 🌴 28 paid vacation days a year
 - 🦄 1 free ride a month on our Unicorn to the Moon and back
-- 🛫 All expenses paid travel to work events and conferences
 - 💖 Fantastic, helpful and friendly company culture
 
-🌍 Somewhere else in the world? We still want to hear from you! We always endeavour to look after our team, no matter where you reside.
+🇬🇧 For permanent UK employees, we can additionally offer you:
+
+- 🏥 Private medical care for you and your immediate family
+- 🌴 28 paid vacation days a year
+- 🛫 All expenses paid travel to work events and conferences
+- 🔒 Pension and National Insurance contributions
 
 ### 💻 The technical
 
