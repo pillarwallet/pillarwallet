@@ -16,7 +16,7 @@ In return, for permanent employees, we can offer you:
 
 ### 💬 Community
 
-We at Pillar strongly believe in community, jump to our Discord at https://chat.pillar.fi and say hello! 👋
+We at Pillar strongly believe in community, jump into our Discord at https://chat.pillar.fi and say hello! 👋
 
 ### 💻 The technical
 
