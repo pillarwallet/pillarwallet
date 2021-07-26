@@ -27,6 +27,7 @@ We'd like you to build a basic React Native app that utilises the Etherspot plat
 The Etherspot Platform allows developers and organisations to quickly bootstrap their apps and dApps, with contract management and blockchain interaction handled by the platform itself. All interaction of the Etherspot Platform is handled by the Etherspot SDK. Here are some links that you may find useful:
 
 - [Etherspot Documentation](https://docs.etherspot.dev)
+- [Etherspot SDK Playground](https://try.etherspot.dev)
 - [Etherspot SDK Reference](https://sdk.etherspot.dev)
 - [Etherspot Website](https://etherspot.io)
 
