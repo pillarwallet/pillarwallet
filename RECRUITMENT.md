@@ -14,6 +14,10 @@ In return, for permanent employees, we can offer you:
 - 🛫 All expenses paid travel to work events and conferences
 - 💖 Fantastic, helpful and friendly company culture
 
+### 💬 Community
+
+We at Pillar strongly believe in community, jump into our Discord at https://chat.pillar.fi and say hello! 👋
+
 ### 💻 The technical
 
 Show us the code! We've put together a technical test below to help you show the best of who you are to us. This is what you need to do.
