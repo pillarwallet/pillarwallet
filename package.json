@@ -183,7 +183,7 @@
     "storyly-react-native": "^1.11.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
-    "styled-components": "^5.3.0",
+    "styled-components": "^5.2.1",
     "styled-theming": "^2.2.0",
     "svg-country-flags": "^1.2.7",
     "tcomb-form-native": "^0.6.11",
