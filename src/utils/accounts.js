@@ -141,7 +141,6 @@ export const normalizeForEns = (value: string): string => {
     .replace(/ /g, '-');
 };
 
-// Archanova back-end will always return attached account ENS name even after migration to Etherspot
 export const getAccountEnsName = (account: ?Account): ?string => {
   if (!account) return null;
 

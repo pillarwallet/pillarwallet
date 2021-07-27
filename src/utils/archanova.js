@@ -505,12 +505,22 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
  * Checks accounts for migrated ENS in following order:
  * 1. First checks Etherspot account in case ENS already migrated and was updated on Etherspot back-end.
  * 2. If there's no ENS yet on Etherspot account or transaction is pending then it checks on Archanova
- *
- * Note: Archanova back-end will always return attached ENS name even after migration.
  */
 export const getMigratedEnsName = (accounts: Account[]): string => {
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   const archanovaAccount = findFirstArchanovaAccount(accounts);
 
   return getAccountEnsName(etherspotAccount) ?? getAccountEnsName(archanovaAccount) ?? '';
+};
+
+// Archanova back-end will always return attached account ENS name even after migration
+export const parseArchanovaAccountExtra = (archanovaAccountExtra: Object, accounts: Account[]): Object => {
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  const etherspotAccountEns = getAccountEnsName(etherspotAccount);
+
+  // in case both accounts ENS name matches this means ENS was migrated, do not display one for Archanova
+  const archanovaAccountEns = archanovaAccountExtra?.ensName;
+  const ensName = archanovaAccountEns === etherspotAccountEns ? null : archanovaAccountEns;
+
+  return { ...archanovaAccountExtra, ensName };
 };

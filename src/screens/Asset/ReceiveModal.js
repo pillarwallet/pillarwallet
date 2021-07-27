@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useCallback, type AbstractComponent, useMemo } from 'react';
+import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
 import { Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
@@ -37,7 +37,7 @@ import TextWithCopy from 'components/modern/TextWithCopy';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { findFirstEtherspotAccount, getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
+import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
 // models and types
@@ -47,7 +47,7 @@ import type { User } from 'models/User';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { activeAccountSelector, useAccounts } from 'selectors';
+import { activeAccountSelector } from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -88,25 +88,11 @@ const ReceiveModal = ({
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
 
-
   const colors = getThemeColors(theme);
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
-  const accounts = useAccounts();
 
   const { username } = user;
-
-  // Archanova back-end will always return attached account ENS name even after migration
-  const ensNameToDisplay = useMemo(() => {
-    const ensName = getAccountEnsName(activeAccount);
-
-    if (isEtherspotAccount(activeAccount)) return ensName;
-
-    const etherspotAccount = findFirstEtherspotAccount(accounts);
-    const etherspotAccountEnsName = getAccountEnsName(etherspotAccount);
-
-    // in case both accounts ENS name matches this means ENS was migrated, do not display one for Archanova
-    return ensName === etherspotAccountEnsName ? null : ensName;
-  }, [accounts, activeAccount]);
+  const ensName = getAccountEnsName(activeAccount);
 
   return (
     <SlideModal
@@ -131,19 +117,19 @@ const ReceiveModal = ({
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
-          {!!ensNameToDisplay && (
+          {!!ensName && (
             <TextWithCopy
-              textToCopy={ensNameToDisplay}
+              textToCopy={ensName}
               toastText={t('toast.ensNameCopiedToClipboard')}
               iconColor={colors.link}
               textStyle={styles.ensName}
               adjustsFontSizeToFit
               numberOfLines={1}
             >
-              {ensNameToDisplay}
+              {ensName}
             </TextWithCopy>
           )}
-          {ensNameToDisplay ? (
+          {ensName ? (
             <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
               {address}
             </WalletAddress>
