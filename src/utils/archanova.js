@@ -35,6 +35,7 @@ import {
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
   ARCHANOVA_WALLET_ENS_MIGRATION,
+  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -201,6 +202,7 @@ export const parseArchanovaTransactions = (
       },
       gasToken: gasTokenAddress,
       fee: transactionFee,
+      inputData,
     } = smartWalletTransaction;
 
     // NOTE: same transaction could have multiple records, those are different by index
@@ -336,7 +338,8 @@ export const parseArchanovaTransactions = (
     }
 
     const migratorContractAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
-    if (addressesEqual(migratorContractAddress, transaction.to)) {
+    if (addressesEqual(migratorContractAddress, transaction.to)
+      && inputData?.includes(ARCHANOVA_ENS_TRANSFER_METHOD_HASH)) {
       transaction = {
         ...transaction,
         tag: ARCHANOVA_WALLET_ENS_MIGRATION,
@@ -505,7 +508,7 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
  *
  * Note: Archanova back-end will always return attached ENS name even after migration.
  */
-export const getMigratedArchanovaEnsName = (accounts: Account[]): string => {
+export const getMigratedEnsName = (accounts: Account[]): string => {
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   const archanovaAccount = findFirstArchanovaAccount(accounts);
 

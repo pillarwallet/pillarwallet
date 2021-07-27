@@ -78,7 +78,7 @@ import {
 } from 'utils/accounts';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
-import { getMigratedArchanovaEnsName } from 'utils/archanova';
+import { getMigratedEnsName } from 'utils/archanova';
 
 // services
 import archanovaService from 'services/archanova';
@@ -983,7 +983,7 @@ export class EventDetail extends React.Component<Props> {
       case ARCHANOVA_WALLET_ENS_MIGRATION:
         eventData = {
           fee: this.getFeeLabel(event),
-          sublabel: getMigratedArchanovaEnsName(accounts),
+          sublabel: getMigratedEnsName(accounts),
           buttons: [],
         };
         break;

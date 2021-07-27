@@ -51,7 +51,7 @@ import {
   formatTokenAmount,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getMigratedArchanovaEnsName } from 'utils/archanova';
+import { getMigratedEnsName } from 'utils/archanova';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -788,7 +788,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         data = {
           label: this.NAMES().ENS_MIGRATION,
           itemImageSource: personIcon,
-          subtext: getMigratedArchanovaEnsName(accounts),
+          subtext: getMigratedEnsName(accounts),
           actionLabel: statusLabel,
         };
         break;
