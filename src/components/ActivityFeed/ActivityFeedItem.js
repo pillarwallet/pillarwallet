@@ -51,6 +51,7 @@ import {
   formatTokenAmount,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { getMigratedEnsName } from 'utils/accounts';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -76,6 +77,7 @@ import {
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
 } from 'constants/archanovaConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
 import {
@@ -199,6 +201,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     PPN_NETWORK: t('pillarNetwork'),
     AAVE_DEPOSIT: t('aaveDeposit'),
     POOL_TOGETHER: t('poolTogether'),
+    ENS_MIGRATION: t('label.ensMigration'),
   });
 
   STATUSES = () => ({
@@ -210,6 +213,9 @@ export class ActivityFeedItem extends React.Component<Props> {
     ACTIVATED: t('label.activated'),
     ADDED: t('label.added'),
     REMOVED: t('label.removed'),
+    COMPLETED: t('label.completed'),
+    FAILED: t('label.failed'),
+    PENDING: t('label.pending'),
   });
 
   FROM = () => ({
@@ -382,6 +388,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       smartWalletIcon,
       PPNIcon,
       roundedPhoneIcon,
+      personIcon,
     } = images(theme);
 
     const fullItemValuePPN = getFormattedValue(formattedFullValue, assetSymbol, {
@@ -774,6 +781,17 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       }
+      case ARCHANOVA_WALLET_ENS_MIGRATION:
+        let statusLabel = isFailed ? this.STATUSES().FAILED : this.STATUSES().PENDING;
+        if (!isFailed && !isPending) statusLabel = this.STATUSES().COMPLETED;
+
+        data = {
+          label: this.NAMES().ENS_MIGRATION,
+          itemImageSource: personIcon,
+          subtext: getMigratedEnsName(accounts),
+          actionLabel: statusLabel,
+        };
+        break;
       default:
         const usernameOrAddress = event.username || ensRegistry[relevantAddress] || formatHexAddress(relevantAddress);
 

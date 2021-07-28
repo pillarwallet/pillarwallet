@@ -42,8 +42,17 @@ import { connectEtherspotAccountAction } from 'actions/etherspotActions';
 import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
 
 // utils
-import { findFirstArchanovaAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
+import {
+  findAccountById,
+  findFirstArchanovaAccount,
+  getAccountId,
+  getActiveAccountType,
+  isArchanovaAccount,
+  isSupportedAccountType,
+} from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+import { isCaseInsensitiveMatch } from 'utils/common';
+import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
 import { navigate } from 'services/navigation';
@@ -54,7 +63,6 @@ import { accountsSelector, activeAccountSelector } from 'selectors';
 // types
 import type { AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { isCaseInsensitiveMatch } from 'utils/common';
 
 
 export const addAccountAction = (
@@ -64,10 +72,15 @@ export const addAccountAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
+
+    const patchedAccountExtra = type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET
+      ? patchArchanovaAccountExtra(accountExtra, accounts)
+      : accountExtra;
+
     const smartWalletAccount = {
       id: accountAddress,
       type,
-      extra: accountExtra,
+      extra: patchedAccountExtra,
       isActive: false,
     };
 
@@ -76,7 +89,7 @@ export const addAccountAction = (
 
     if (existingAccount) {
       // $FlowFixMe: flow gets confused here
-      updatedAccounts.push({ ...existingAccount, extra: accountExtra });
+      updatedAccounts.push({ ...existingAccount, extra: patchedAccountExtra });
     } else {
       // $FlowFixMe: flow gets confused here
       updatedAccounts.push(smartWalletAccount);
@@ -97,15 +110,19 @@ export const updateAccountExtraIfNeededAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
-    const accountIndex = accounts.findIndex((account) => getAccountId(account) === accountId);
-    if (accountIndex === -1) return;
+    const accountToUpdate = findAccountById(accountId, accounts);
+    if (!accountToUpdate) return;
 
-    const accountExtraNeedsUpdate = !isEqual(accounts[accountIndex]?.extra, accountExtra);
+    const patchedAccountExtra = isArchanovaAccount(accountToUpdate)
+      ? patchArchanovaAccountExtra(accountExtra, accounts)
+      : accountExtra;
+
+    const accountExtraNeedsUpdate = !isEqual(accountToUpdate?.extra, patchedAccountExtra);
     if (!accountExtraNeedsUpdate) return;
 
     const updatedAccounts = accounts.reduce((updated, account) => {
       if (getAccountId(account) === accountId) {
-        return [...updated, { ...account, extra: accountExtra }];
+        return [...updated, { ...account, extra: patchedAccountExtra }];
       }
 
       return [...updated, account];

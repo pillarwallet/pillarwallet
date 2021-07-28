@@ -73,6 +73,7 @@ import {
   findAccountByAddress,
   getActiveAccount,
   getActiveAccountAddress,
+  getMigratedEnsName,
   isArchanovaAccount,
   isEtherspotAccount,
 } from 'utils/accounts';
@@ -104,6 +105,7 @@ import {
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
 } from 'constants/archanovaConstants';
 import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
@@ -978,6 +980,13 @@ export class EventDetail extends React.Component<Props> {
         };
         break;
       }
+      case ARCHANOVA_WALLET_ENS_MIGRATION:
+        eventData = {
+          fee: this.getFeeLabel(event),
+          sublabel: getMigratedEnsName(accounts),
+          buttons: [],
+        };
+        break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isBetweenArchanovaAccounts = isArchanovaAccountAddress(event.from, accounts)
@@ -1361,7 +1370,6 @@ export class EventDetail extends React.Component<Props> {
 
   render() {
     let { event } = this.props;
-
     if (event.type === TRANSACTION_EVENT || event.type === COLLECTIBLE_TRANSACTION) {
       const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION) || {};
       event = { ...event, ...txInfo, type: event.type };
