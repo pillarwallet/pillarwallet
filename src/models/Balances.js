@@ -21,7 +21,6 @@
 import { BigNumber } from 'bignumber.js';
 
 // types
-import type { Asset } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
 
 export type AssetBalancesPerAccount = {

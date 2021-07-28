@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 import { mapValues } from 'lodash';
 
 // Selectors
-import { useRootSelector, activeAccountIdSelector } from 'selectors';
+import { activeAccountIdSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
