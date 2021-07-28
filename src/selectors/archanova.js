@@ -38,7 +38,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 
 // local
@@ -63,10 +63,10 @@ export const preferredGasTokenSelector = ({
   return preferredGasToken || ETH;
 };
 
-export const useGasTokenSelector = createSelector(
+export const useGasTokenSelector: Selector<boolean> = createSelector(
   isGasTokenSupportedSelector,
   preferredGasTokenSelector,
-  (isGasTokenSupported, preferredGasToken) => {
+  (isGasTokenSupported: boolean, preferredGasToken: string) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
   },
 );

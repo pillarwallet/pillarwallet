@@ -81,3 +81,4 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
     return BigNumber(plrToFiatRate * ppnBalance);
   },
 );
+

@@ -50,7 +50,6 @@ function MigrateWalletBanner({ onPress, style }: Props) {
 
         <Summary>
           <Title>{t('title')}</Title>
-          <Body>{t('body')}</Body>
         </Summary>
       </BackgroundGradient>
     </TouchableOpacity>
@@ -75,14 +74,10 @@ const Summary = styled.View`
 `;
 
 const Title = styled(Text)`
-  font-family: '${appFont.archiaMedium}';
+  font-family: '${appFont.medium}';
   ${fontStyles.big};
   color: #fcfdff;
   margin-bottom: ${spacing.small}px;
-`;
-
-const Body = styled(Text)`
-  color: #fcfdff;
 `;
 
 export default MigrateWalletBanner;

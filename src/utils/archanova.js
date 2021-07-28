@@ -26,16 +26,20 @@ import { Migrator } from '@etherspot/archanova-migrator';
 import { utils, Wallet } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
+// components
+import Toast from 'components/Toast';
+
 // constants
 import {
-  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_ASSET_MIGRATION,
   ARCHANOVA_WALLET_ENS_MIGRATION,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
   SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -81,6 +85,7 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual, findAssetByAddress } from './assets';
+import { fromBaseUnit } from './bigNumber';
 import { isCaseInsensitiveMatch, reportErrorLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 import { nativeAssetPerChain } from './chains';
@@ -339,11 +344,11 @@ export const parseArchanovaTransactions = (
     }
 
     const migratorContractAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
-    if (addressesEqual(migratorContractAddress, transaction.to)
-      && inputData?.includes(ARCHANOVA_ENS_TRANSFER_METHOD_HASH)) {
+    if (addressesEqual(migratorContractAddress, transaction.to)) {
+      const isEnsMigration = inputData?.includes(ARCHANOVA_ENS_TRANSFER_METHOD_HASH);
       transaction = {
         ...transaction,
-        tag: ARCHANOVA_WALLET_ENS_MIGRATION,
+        tag: isEnsMigration ? ARCHANOVA_WALLET_ENS_MIGRATION : ARCHANOVA_WALLET_ASSET_MIGRATION,
       };
     }
 
@@ -501,6 +506,29 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
       return data;
     });
 };
+
+export async function estimateArchanovaRawTransactions(rawTransactions: string[]): Promise<BigNumber> {
+  if (!rawTransactions?.length) {
+    reportErrorLog('estimateArchanovaRawTransactions: no transactions to estimate');
+    throw new Error(t('error.noTransactionsToEstimate'));
+  }
+
+  try {
+    const eth = nativeAssetPerChain.ethereum;
+    const estimate = (await archanovaService.estimateAccountRawTransactions(rawTransactions)) ?? {};
+    return fromBaseUnit(estimate.ethCost, eth.decimals);
+  } catch (error) {
+    reportErrorLog('estimateArchanovaRawTransactions: estimateAccountRawTransactions threw error', { error });
+
+    Toast.show({
+      message: t('toast.transactionFeeEstimationFailed'),
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+
+    throw new Error(t('error.failedToEstimateTransaction'));
+  }
+}
 
 // Archanova back-end will always return attached account ENS name even after migration
 export const patchArchanovaAccountExtra = (

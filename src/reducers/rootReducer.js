@@ -51,6 +51,7 @@ import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
+import walletMigrationArchanovaReducer from './walletMigrationArchanovaReducer';
 import contactsReducer from './contactsReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
@@ -90,6 +91,10 @@ import type {
   KeyBasedAssetTransferReducerAction,
   KeyBasedAssetTransferReducerState,
 } from './keyBasedAssetTransferReducer';
+import type {
+  WalletMigrationArchanovaReducerState,
+  WalletMigrationArchanovaReducerAction,
+} from './walletMigrationArchanovaReducer';
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
@@ -123,6 +128,7 @@ export type RootReducerState = {|
   ensRegistry: EnsRegistryReducerState,
   insights: InsightsReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
+  walletMigrationArchanova: WalletMigrationArchanovaReducerState,
   contacts: ContactsReducerState,
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
@@ -150,6 +156,7 @@ type RootReducerAction =
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | KeyBasedAssetTransferReducerAction
+  | WalletMigrationArchanovaReducerAction
   | ContactsReducerAction
   | OnboardingReducerAction
   | CacheAction
@@ -197,6 +204,7 @@ const appReducer = combineReducers({
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
+  walletMigrationArchanova: walletMigrationArchanovaReducer,
   contacts: contactsReducer,
   onboarding: onboardingReducer,
   cache: cacheReducer,

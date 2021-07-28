@@ -597,12 +597,13 @@ export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
 
-export const addressAsKey = (address: string): string => {
-  if (!address) return '';
-  return address.toLowerCase();
-};
+export const addressAsKey = (address: string): string => address?.toLowerCase() ?? '';
 
-export const valueForAddress = <RecordValue>(
-  record: ?Record<RecordValue>,
+export const valueForAddress = <V>(
+  record: ?Record<V>,
   address: string,
-): ?RecordValue => record?.[addressAsKey(address)];
+): ?V => record?.[addressAsKey(address)];
+
+export const setValueForAddress = <V>(record: Record<V>, address: string, value: V) => {
+  record[addressAsKey(address)] = value;
+};

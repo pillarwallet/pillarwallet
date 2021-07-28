@@ -26,26 +26,28 @@ import styled from 'styled-components/native';
 import Text from 'components/modern/Text';
 
 // Utils
-import { fontSizes, spacing } from 'utils/variables';
+import { fontStyles, appFont, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 type Variant = 'primary' | 'secondary' | 'text' | 'primary-destructive' | 'text-destructive';
 
+type Size = 'regular' | 'large' | 'compact';
+
 type Props = {|
   title?: string,
   onPress: () => mixed,
   variant?: Variant,
-  compact?: boolean,
+  size?: Size,
   disabled?: boolean,
   style?: ViewStyleProp,
   btnTextStyle?: TextStyleProp,
 |};
 
-function Button({ title, onPress, variant = 'primary', compact, disabled, style, btnTextStyle }: Props) {
+function Button({ title, onPress, variant = 'primary', size = 'regular', disabled, style, btnTextStyle }: Props) {
   return (
-    <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $compact={compact}>
+    <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $size={size}>
       <Title $variant={variant} style={btnTextStyle}>{title}</Title>
     </TouchableContainer>
   );
@@ -58,19 +60,21 @@ const TouchableContainer = styled(TouchableOpacity)`
   align-items: center;
   border-radius: 6px;
   ${({ disabled }) => disabled && 'opacity: 0.5;'}
-  ${({ $compact }) => !$compact && 'width: 100%;'}
-  ${({ $compact }) =>
-    !$compact ? `padding: 14px ${spacing.large}px;` : `padding: 6px ${spacing.medium}px;`}
+  ${({ $size }) => $size === 'regular' && `width: 100%; padding: 14px ${spacing.large}px;`}
+  ${({ $size }) =>
+    $size === 'large' && `width: 100%; padding: ${spacing.largePlus}px ${spacing.large}px; border-radius: 14px;`}
+  ${({ $size }) => $size === 'compact' && `padding: 6px ${spacing.medium}px;`}
   ${({ theme, $variant }) => $variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, $variant }) => $variant === 'primary-destructive' && `background-color: ${theme.colors.negative}`};
   ${({ theme, $variant }) => $variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
 const Title = styled(Text)`
-  font-size: ${fontSizes.medium}px;
+  ${fontStyles.medium};
   ${({ theme, $variant }) => ($variant === 'primary' && `color: ${theme.colors.buttonPrimaryTitle};`)};
   ${({ theme, $variant }) => ($variant === 'primary-destructive' && `color: ${theme.colors.buttonPrimaryTitle};`)};
   ${({ theme, $variant }) => ($variant === 'secondary' && `color: ${theme.colors.buttonSecondaryTitle};`)};
   ${({ theme, $variant }) => ($variant === 'text' && `color: ${theme.colors.buttonTextTitle};`)};
   ${({ theme, $variant }) => ($variant === 'text-destructive' && `color: ${theme.colors.negative};`)};
+  ${({ $size }) => $size === 'large' && `font-family: ${appFont.medium}`};
 `;

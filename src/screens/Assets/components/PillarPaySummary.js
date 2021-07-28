@@ -80,7 +80,7 @@ function PillarPaySummary({ style }: Props) {
       </TitleWrapper>
 
       <FiatValueView value={balance} currency={currency} variant="big" />
-      <Button title={t('topUp')} variant="text" compact onPress={navigateToTopUp} />
+      <Button title={t('topUp')} variant="text" size="compact" onPress={navigateToTopUp} />
     </TouchableContainer>
   );
 }

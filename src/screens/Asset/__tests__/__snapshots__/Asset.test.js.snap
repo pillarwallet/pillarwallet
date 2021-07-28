@@ -166,6 +166,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             "flexGrow": 1,
           },
           Object {
+            "paddingHorizontal": 0,
+            "paddingVertical": 16,
+          },
+          Object {
             "paddingBottom": 120,
           },
         ]

@@ -21,6 +21,12 @@
 // Types
 import type { Chain, ChainRecord } from 'models/Chain';
 
+/** Colectible is uniquly identified by both address & id */
+export type CollectibleId = {|
+  contractAddress: string,
+  id: string,
+|};
+
 export type Collectible = {
   id: string,
   name: string,
