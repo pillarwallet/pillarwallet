@@ -73,12 +73,12 @@ import {
   findAccountByAddress,
   getActiveAccount,
   getActiveAccountAddress,
+  getMigratedEnsName,
   isArchanovaAccount,
   isEtherspotAccount,
 } from 'utils/accounts';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
-import { getMigratedEnsName } from 'utils/archanova';
 
 // services
 import archanovaService from 'services/archanova';

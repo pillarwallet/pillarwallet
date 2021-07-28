@@ -51,7 +51,7 @@ import {
   formatTokenAmount,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
-import { getMigratedEnsName } from 'utils/archanova';
+import { getMigratedEnsName } from 'utils/accounts';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';

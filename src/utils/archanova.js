@@ -28,14 +28,14 @@ import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
-  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
-  ARCHANOVA_WALLET_ENS_MIGRATION,
-  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -45,30 +45,31 @@ import {
   TX_TIMEDOUT_STATUS,
 } from 'constants/historyConstants';
 import {
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
+
 // services
 import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
-import type { Account } from 'models/Account';
+import type { Account, ArchanovaAccountExtra } from 'models/Account';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
-  TransactionFeeInfo,
+  GasToken,
   Transaction,
   TransactionExtra,
-  GasToken,
+  TransactionFeeInfo,
 } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
+import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 
 // utils
 import {
@@ -501,26 +502,19 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
     });
 };
 
-/**
- * Checks accounts for migrated ENS in following order:
- * 1. First checks Etherspot account in case ENS already migrated and was updated on Etherspot back-end.
- * 2. If there's no ENS yet on Etherspot account or transaction is pending then it checks on Archanova
- */
-export const getMigratedEnsName = (accounts: Account[]): string => {
-  const etherspotAccount = findFirstEtherspotAccount(accounts);
-  const archanovaAccount = findFirstArchanovaAccount(accounts);
-
-  return getAccountEnsName(etherspotAccount) ?? getAccountEnsName(archanovaAccount) ?? '';
-};
-
 // Archanova back-end will always return attached account ENS name even after migration
-export const parseArchanovaAccountExtra = (archanovaAccountExtra: Object, accounts: Account[]): Object => {
+export const patchArchanovaAccountExtra = (
+  archanovaAccountExtra: ?ArchanovaAccountExtra,
+  accounts: Account[],
+): ?ArchanovaAccountExtra => {
+  if (!archanovaAccountExtra) return null;
+
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   const etherspotAccountEns = getAccountEnsName(etherspotAccount);
 
   // in case both accounts ENS name matches this means ENS was migrated, do not display one for Archanova
   const archanovaAccountEns = archanovaAccountExtra?.ensName;
-  const ensName = archanovaAccountEns === etherspotAccountEns ? null : archanovaAccountEns;
+  if (!archanovaAccountEns || archanovaAccountEns === etherspotAccountEns) return archanovaAccountExtra;
 
-  return { ...archanovaAccountExtra, ensName };
+  return { ...archanovaAccountExtra, ensName: archanovaAccountEns };
 };

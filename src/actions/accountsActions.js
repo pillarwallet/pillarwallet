@@ -52,7 +52,7 @@ import {
 } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { parseArchanovaAccountExtra } from 'utils/archanova';
+import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
 import { navigate } from 'services/navigation';
@@ -73,14 +73,14 @@ export const addAccountAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
 
-    const parsedAccountExtra = type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET
-      ? parseArchanovaAccountExtra(accountExtra, accounts)
+    const patchedAccountExtra = type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET
+      ? patchArchanovaAccountExtra(accountExtra, accounts)
       : accountExtra;
 
     const smartWalletAccount = {
       id: accountAddress,
       type,
-      extra: parsedAccountExtra,
+      extra: patchedAccountExtra,
       isActive: false,
     };
 
@@ -89,7 +89,7 @@ export const addAccountAction = (
 
     if (existingAccount) {
       // $FlowFixMe: flow gets confused here
-      updatedAccounts.push({ ...existingAccount, extra: parsedAccountExtra });
+      updatedAccounts.push({ ...existingAccount, extra: patchedAccountExtra });
     } else {
       // $FlowFixMe: flow gets confused here
       updatedAccounts.push(smartWalletAccount);
@@ -113,16 +113,16 @@ export const updateAccountExtraIfNeededAction = (
     const accountToUpdate = findAccountById(accountId, accounts);
     if (!accountToUpdate) return;
 
-    const parsedAccountExtra = isArchanovaAccount(accountToUpdate)
-      ? parseArchanovaAccountExtra(accountExtra, accounts)
+    const patchedAccountExtra = isArchanovaAccount(accountToUpdate)
+      ? patchArchanovaAccountExtra(accountExtra, accounts)
       : accountExtra;
 
-    const accountExtraNeedsUpdate = !isEqual(accountToUpdate?.extra, parsedAccountExtra);
+    const accountExtraNeedsUpdate = !isEqual(accountToUpdate?.extra, patchedAccountExtra);
     if (!accountExtraNeedsUpdate) return;
 
     const updatedAccounts = accounts.reduce((updated, account) => {
       if (getAccountId(account) === accountId) {
-        return [...updated, { ...account, extra: parsedAccountExtra }];
+        return [...updated, { ...account, extra: patchedAccountExtra }];
       }
 
       return [...updated, account];
