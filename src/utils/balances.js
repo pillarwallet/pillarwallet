@@ -22,24 +22,18 @@ import { BigNumber } from 'bignumber.js';
 import { pickBy } from 'lodash';
 
 // Utils
-import { mapNotNil } from 'utils/array';
-import { findAssetByAddress, addressesEqual } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
-import { recordValues } from 'utils/object';
-import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
-import type { Asset } from 'models/Asset';
 import type {
   AccountAssetBalances,
   WalletAssetBalance,
   WalletAssetsBalances,
   ServiceAssetBalance,
   CategoryAssetsBalances,
-  WalletAssetBalanceInfo,
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
-import type { RatesByAssetAddress, Currency } from 'models/Rates';
 
 
 export const getChainWalletAssetsBalances = (
@@ -84,21 +78,3 @@ export const hasServiceAssetBalanceForAddress = (
     ?? findServiceAssetBalance(assetBalances.investments, assetAddress)
     ?? findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
 );
-
-export const buildWalletAssetBalanceInfoList = (
-  balances: ?WalletAssetsBalances,
-  supportedAssets: Asset[],
-  rates: RatesByAssetAddress,
-  currency: Currency,
-): WalletAssetBalanceInfo[] => {
-  const balancesValues = recordValues(balances);
-  return mapNotNil(balancesValues, (balanceValue) => {
-    const asset = findAssetByAddress(supportedAssets, balanceValue.address);
-    if (!asset) return null;
-
-    const balance = BigNumber(balanceValue.balance);
-    const balanceInFiat = getAssetValueInFiat(balance, balanceValue.address, rates, currency);
-
-    return { asset, balance, balanceInFiat };
-  });
-};
