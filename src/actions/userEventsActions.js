@@ -32,6 +32,7 @@ import {
   ETHERSPOT_SMART_WALLET_CREATED,
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
@@ -45,6 +46,8 @@ import {
   isNotKeyBasedType,
 } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
+import { getUserEventId } from 'utils/userEvents';
+import { getSupportedChains } from 'utils/chains';
 
 // selectors
 import { accountsSelector } from 'selectors';
@@ -64,7 +67,7 @@ export const addWalletCreationEventAction = (account: Account) => {
     const eventTitle = isEtherspotAccount(account)
       ? ETHERSPOT_SMART_WALLET_CREATED
       : LEGACY_SMART_WALLET_CREATED;
-    const eventId = eventTitle.replace(/ /g, '');
+    const eventId = getUserEventId(eventTitle);
     const createdAtTimestamp = getSmartWalletAccountCreatedAtTimestamp(account);
 
     // this shouldn't happen
@@ -75,8 +78,12 @@ export const addWalletCreationEventAction = (account: Account) => {
 
     const accountCreatedAt = new Date(createdAtTimestamp / 1000);
 
-    const walletCreatedMissing = !userEvents.some(({ id }) => id === eventId);
-    if (walletCreatedMissing) {
+    getSupportedChains(account).forEach((chain) => {
+      const userChainEvents = userEvents?.[chain] ?? [];
+
+      const walletCreatedMissing = !userChainEvents.some(({ id }) => id === eventId);
+      if (!walletCreatedMissing) return;
+
       const walletCreatedEvent = {
         id: eventId,
         eventTitle,
@@ -84,10 +91,15 @@ export const addWalletCreationEventAction = (account: Account) => {
         type: USER_EVENT,
         subType: WALLET_CREATE_EVENT,
       };
-      dispatch({ type: ADD_USER_EVENT, payload: walletCreatedEvent });
-    }
 
-    const ppnCreatedEventMissing = isArchanovaAccount(account) && !userEvents.some(({ id }) => id === PPN_INIT_EVENT);
+      dispatch({
+        type: ADD_USER_EVENT,
+        payload: { chain, userEvent: walletCreatedEvent },
+      });
+    });
+
+    const ppnCreatedEventMissing = isArchanovaAccount(account)
+      && !(userEvents.ethereum ?? []).some(({ id }) => id === PPN_INIT_EVENT);
     if (ppnCreatedEventMissing) {
       const ppnCreatedEvent = {
         id: PPN_INIT_EVENT,
@@ -98,7 +110,7 @@ export const addWalletCreationEventAction = (account: Account) => {
         subType: PPN_INIT_EVENT,
       };
 
-      dispatch({ type: ADD_USER_EVENT, payload: ppnCreatedEvent });
+      dispatch({ type: ADD_USER_EVENT, payload: { chain: CHAIN.ETHEREUM, userEvent: ppnCreatedEvent } });
     }
 
     const { userEvents: { data: updatedUserEvents } } = getState();
@@ -115,11 +127,7 @@ export const getWalletsCreationEventsAction = () => {
 };
 
 export const addWalletBackupEventAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      userEvents: { data: userEvents },
-    } = getState();
-
+  return (dispatch: Dispatch, getState: GetState) => {
     const walletBackupEvent = {
       id: WALLET_BACKUP_EVENT,
       eventTitle: KEY_WALLET,
@@ -128,11 +136,13 @@ export const addWalletBackupEventAction = () => {
       type: USER_EVENT,
       subType: WALLET_BACKUP_EVENT,
     };
-    dispatch({
+
+    Object.values(CHAIN).forEach((chain) => dispatch({
       type: ADD_USER_EVENT,
-      payload: walletBackupEvent,
-    });
-    const updatedUserEvents = [...userEvents, walletBackupEvent];
-    await dispatch(saveDbAction('userEvents', { userEvents: updatedUserEvents }, true));
+      payload: { chain, userEvent: walletBackupEvent },
+    }));
+
+    const updatedUserEvents = getState().userEvents.data;
+    dispatch(saveDbAction('userEvents', { userEvents: updatedUserEvents }, true));
   };
 };

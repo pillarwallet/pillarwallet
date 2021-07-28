@@ -18,15 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
+import {
+  ETHERSPOT_SMART_WALLET_CREATED,
+  LEGACY_SMART_WALLET_CREATED,
+  PPN_INIT_EVENT,
+} from 'constants/userEventsConstants';
+
 // types
-import type { ChainRecord } from 'models/Chain';
+import type { UserEvent } from 'models/userEvent';
 
-export type UserEvent = {
-  id: string,
-  eventTitle: string,
-  createdAt: number,
-  type: string,
-  subType: string,
-};
+export const getUserEventId = (eventTitle: string) => eventTitle.replace(/ /g, '');
 
-export type UserEvents = ChainRecord<UserEvent[]>
+const archanovaUserEventIds = [
+  getUserEventId(LEGACY_SMART_WALLET_CREATED),
+  PPN_INIT_EVENT,
+];
+
+export const isNotArchanovaUserEvent = ({ id }: UserEvent) => !archanovaUserEventIds.includes(id);
+
+export const isNotEtherspotUserEvent = ({ id }: UserEvent) => id !== getUserEventId(ETHERSPOT_SMART_WALLET_CREATED);

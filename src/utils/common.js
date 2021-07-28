@@ -446,7 +446,6 @@ type SectionData = {|
   data: any[],
 |};
 
-
 // all default values makes common sense and usage
 export const groupSectionsByDate = (
   data: any[],
@@ -457,7 +456,8 @@ export const groupSectionsByDate = (
   const sections: { [string]: SectionData } = {};
 
   orderBy(data, [dateField], [sortDirection]).forEach((item) => {
-    const date = new Date(item[dateField] * timestampMultiplier);
+    const safeTimestamp = +parseDate(item[dateField]);
+    const date = new Date(safeTimestamp * timestampMultiplier);
     const key = formatDate(date, 'YYYY-MM-DD');
 
     const existingSection = sections[key];
@@ -606,3 +606,6 @@ export const valueForAddress = <RecordValue>(
   record: ?Record<RecordValue>,
   address: string,
 ): ?RecordValue => record?.[addressAsKey(address)];
+
+
+export const parseDate = (date: Date | string | number): Date => new Date(date);

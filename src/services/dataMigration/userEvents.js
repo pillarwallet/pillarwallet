@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// types
-import type { ChainRecord } from 'models/Chain';
+export default function (storageData: Object) {
+  const userEvents = storageData?.userEvents?.userEvents ?? {};
 
-export type UserEvent = {
-  id: string,
-  eventTitle: string,
-  createdAt: number,
-  type: string,
-  subType: string,
-};
+  // per migration moment current userEvents were Ethereum only
+  if (Array.isArray(userEvents)) {
+    return { ethereum: userEvents };
+  }
 
-export type UserEvents = ChainRecord<UserEvent[]>
+  return userEvents;
+}

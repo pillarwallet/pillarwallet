@@ -92,6 +92,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('history', storageData, dispatch, getState);
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
+      storageData = await migrate('userEvents', storageData);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -130,7 +131,7 @@ export const initAppAndRedirectAction = () => {
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
-      const { userEvents = [] } = get(storageData, 'userEvents', {});
+      const userEvents = storageData?.userEvents?.userEvents ?? {};
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
       const { insights = {} } = get(storageData, 'insights', {});

@@ -64,7 +64,7 @@ const Component = (store, children) => (
 const transaction = (attrs = {}) => {
   return {
     type: TRANSACTION_EVENT,
-    createdAt: '2019-09-09 12:00',
+    createdAt: +new Date('2019-09-09 12:00') / 1000,
     value: '0',
     from: '0x0000000000000000000000000000000000000000',
     to: '0x0000000000000000000000000000000000000000',

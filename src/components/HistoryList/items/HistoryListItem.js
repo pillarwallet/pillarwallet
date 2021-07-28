@@ -39,6 +39,7 @@ import type { TransactionStatus } from 'models/History';
 type Props = {|
   title: ?string,
   subtitle?: ?string,
+  subtitleColor?: ?string,
   iconUrl?: ?string,
   iconName?: IconName,
   iconColor?: string,
@@ -47,11 +48,13 @@ type Props = {|
   valueComponent?: React.Node,
   status?: TransactionStatus,
   onPress?: () => mixed,
+  customIconProps?: Object,
 |};
 
 function HistoryListItem({
   title,
   subtitle,
+  subtitleColor,
   iconUrl,
   iconName,
   iconColor,
@@ -60,6 +63,7 @@ function HistoryListItem({
   valueComponent,
   status,
   onPress,
+  customIconProps = {},
 }: Props) {
   const colors = useThemeColors();
   const isSvg = isSvgImage(iconUrl);
@@ -75,7 +79,7 @@ function HistoryListItem({
         )}
         {!!iconName && (
           <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
-            <Icon name={iconName} color={iconColor ?? colors.neutral} />
+            <Icon name={iconName} color={iconColor ?? colors.neutral} {...customIconProps} />
           </IconCircle>
         )}
         {iconComponent}
@@ -86,7 +90,7 @@ function HistoryListItem({
           {title}
         </Text>
 
-        {!!subtitle && <Text color={colors.basic030}>{subtitle}</Text>}
+        {!!subtitle && <Text color={subtitleColor ?? colors.basic030}>{subtitle}</Text>}
       </MiddleColumn>
 
       {valueComponent && <RightColumn>{valueComponent}</RightColumn>}

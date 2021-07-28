@@ -26,9 +26,15 @@ import Text from 'components/modern/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { useChainsConfig } from 'utils/uiConfig';
+
+// Selectors
+import { useRootSelector } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Types
 import { type WalletEvent, EVENT_TYPE } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import HistoryListItem from './HistoryListItem';
@@ -36,17 +42,29 @@ import HistoryListItem from './HistoryListItem';
 type Props = {|
   event: WalletEvent,
   onPress?: () => mixed,
+  chain: Chain,
 |};
 
-function WalletEventItem({ event, onPress }: Props) {
+function WalletEventItem({ event, onPress, chain }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const chainsConfig = useChainsConfig();
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const subtitle = isDeployedOnChain
+      ? null
+      : t('label.walletNotDeployed');
+
     return (
       <HistoryListItem
-        iconName="wallet"
-        title={t('label.wallet')}
+        iconName={iconName}
+        customIconProps={{ width: 46, height: 46 }} // complete wrapper fill size icon
+        title={title}
+        subtitle={subtitle}
+        subtitleColor={colors.primary}
         valueComponent={<Text color={colors.basic030}>{t('label.created')}</Text>}
         onPress={onPress}
       />

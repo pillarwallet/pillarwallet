@@ -37,12 +37,14 @@ import TransactionStatusText from 'components/modern/TransactionStatusText';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useSmartWalletAccounts } from 'selectors';
+import { useRootSelector, useSmartWalletAccounts } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
 import { getActiveAccountAddress } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import { EVENT_TYPE, type WalletEvent } from 'models/History';
@@ -58,11 +60,11 @@ type Props = {|
 
 function WalletEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
-
   const accounts = useSmartWalletAccounts();
   const dispatch = useDispatch();
-
   const colors = useThemeColors();
+  const chainsConfig = useChainsConfig();
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
 
   const openTopUp = () => {
     const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -82,8 +84,21 @@ function WalletEventDetails({ event, chain }: Props) {
   const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const subtitle = isDeployedOnChain
+      ? null
+      : t('label.walletNotDeployed');
+
     return (
-      <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
+      <BaseEventDetails
+        date={event.date}
+        title={title}
+        subtitle={subtitle}
+        subtitleColor={colors.primary}
+        iconName={iconName}
+        customIconProps={{ width: 62, height: 62 }} // complete wrapper fill size icon
+      >
         <Text variant="large">{t('label.created')}</Text>
         <Spacing h={spacing.extraLarge} />
 

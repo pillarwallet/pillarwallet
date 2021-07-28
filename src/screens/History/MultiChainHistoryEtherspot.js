@@ -39,9 +39,11 @@ import { CHAIN } from 'constants/chainConstants';
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
 import { addressesEqual } from 'utils/assets';
 import { useChainsConfig } from 'utils/uiConfig';
+import { isNotArchanovaUserEvent } from 'utils/userEvents';
+import { parseDate } from 'utils/common';
 
 // Types
-import { EVENT_TYPE, type Event } from 'models/History';
+import { EVENT_TYPE, type Event, type WalletEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
 
 function MultiChainHistoryEtherspot() {
@@ -79,7 +81,13 @@ function MultiChainHistoryEtherspot() {
 export default MultiChainHistoryEtherspot;
 
 function ChainHistoryView({ chain }: { chain: Chain }) {
-  const items = useHistoryEvents(chain);
+  const historyEvents = useHistoryEvents(chain);
+  const walletEvents = useWalletEvents(chain);
+
+  const items = [
+    ...historyEvents,
+    ...walletEvents,
+  ];
 
   return <HistoryList items={items} chain={chain} />;
 }
@@ -139,4 +147,17 @@ function useHistoryEvents(chain: Chain): Event[] {
     ...mappedTransactionsHistory,
     ...mappedCollectiblesHistory,
   ];
+}
+
+function useWalletEvents(chain: Chain): WalletEvent[] {
+  const userEvents = useRootSelector((root) => root.userEvents.data);
+  const chainUserEvents = userEvents?.[chain] ?? [];
+
+  return chainUserEvents
+    .filter(isNotArchanovaUserEvent)
+    .map(({ id, createdAt }) => ({
+      id,
+      date: new Date(+parseDate(createdAt) * 1000),
+      type: EVENT_TYPE.WALLET_CREATED,
+    }));
 }

@@ -37,6 +37,7 @@ import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
+import { isNotEtherspotUserEvent } from 'utils/userEvents';
 
 
 function HistoryListArchanova() {
@@ -61,6 +62,7 @@ export default HistoryListArchanova;
 function useHistoryFeedItems(): any[] {
   const accounts = useRootSelector((root) => root.accounts.data);
   const userEvents = useRootSelector((root) => root.userEvents.data);
+  const archanovaUserEvents = (userEvents.ethereum ?? []).filter(isNotEtherspotUserEvent);
 
   const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
   const mappedTransactions = mapTransactionsHistory(
@@ -84,6 +86,6 @@ function useHistoryFeedItems(): any[] {
   return [
     ...mappedTransactions,
     ...mappedCollectiblesTransactions,
-    ...userEvents,
+    ...archanovaUserEvents,
   ];
 }
