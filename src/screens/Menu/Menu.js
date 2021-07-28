@@ -349,8 +349,8 @@ const LockScreenSection = styled.View`
 `;
 
 const HeaderLogo = styled(Image)`
-  width: 68px;
-  height: 20px;
+  width: 79px;
+  height: 36px;
 `;
 
 const LogoutIcon = styled(Icon)`
