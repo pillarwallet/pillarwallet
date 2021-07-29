@@ -32,6 +32,7 @@ import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 // Utils
 import { mapNotNil } from 'utils/array';
 import { findCollectible } from 'utils/collectibles';
+import { recordValues } from 'utils/object';
 import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
 
 // Types
@@ -40,6 +41,7 @@ import type { WalletAssetsBalances } from 'models/Balances';
 import type { Collectible } from 'models/Collectible';
 import type { RatesByAssetAddress } from 'models/Rates';
 import type { Transaction } from 'models/Transaction';
+import type { CollectiblesToMigrateByCollectibleKey } from 'models/WalletMigrationArchanova';
 
 
 /**
@@ -48,8 +50,14 @@ import type { Transaction } from 'models/Transaction';
 export const collectiblesToMigrateSelector: Selector<Collectible[]> = createSelector(
   archanovaCollectiblesSelector,
   (root: RootReducerState) => root.walletMigrationArchanova.collectiblesToMigrate,
-  (archanovaCollectibles: Collectible[], collectiblesToMigrate: string[]): Collectible[] => {
-    return mapNotNil(collectiblesToMigrate, (id) => findCollectible(archanovaCollectibles, id));
+  (
+    archanovaCollectibles: Collectible[],
+    collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
+  ): Collectible[] => {
+    const collectibleValues = recordValues(collectiblesToMigrate);
+    return mapNotNil(collectibleValues, ({ contractAddress, id }) =>
+      findCollectible(archanovaCollectibles, contractAddress, id),
+    );
   },
 );
 

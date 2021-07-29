@@ -35,7 +35,6 @@ import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress
 import { estimateArchanovaRawTransactions } from 'utils/archanova';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
-import { parseCollectibleKey } from 'utils/collectibles';
 import { valueForAddress, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { recordValues } from 'utils/object';
 import { getAssetValueInFiat } from 'utils/rates';

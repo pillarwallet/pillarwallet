@@ -20,7 +20,7 @@
 
 // Utils
 import { addressAsKey } from 'utils/common';
-
+import { addressesEqual } from 'utils/assets';
 
 // Types
 import type { Collectible } from 'models/Collectible';
@@ -28,14 +28,20 @@ import type { Collectible } from 'models/Collectible';
 /**
  * Build a string key that uniquely identifies a given collectible.
  */
-export function buildCollectibleKey(contractAddress: string, tokenId: string) {
-  return `${addressAsKey(contractAddress)}-${tokenId}`;
+export function buildCollectibleKey(contractAddress: string, id: string) {
+  return `${addressAsKey(contractAddress)}-${id}`;
 }
 
 export function getCollectibleKey({ contractAddress, id }: Collectible) {
   return buildCollectibleKey(contractAddress, id);
 }
 
-export function findCollectible(collectibles: ?(Collectible[]), keyToFind: string): ?Collectible {
-  return collectibles?.find((collectible) => getCollectibleKey(collectible) === keyToFind);
+export function findCollectible(
+  collectibles: ?(Collectible[]),
+  contractAddressToFind: string,
+  idToFind: string,
+): ?Collectible {
+  return collectibles?.find(
+    ({ contractAddress, id }) => addressesEqual(contractAddress, contractAddressToFind) && id === idToFind,
+  );
 }
