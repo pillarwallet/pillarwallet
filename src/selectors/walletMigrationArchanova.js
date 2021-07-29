@@ -25,6 +25,7 @@ import { ARCHANOVA_WALLET_ASSET_MIGRATION } from 'constants/archanovaConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // Selectors
+import { ethereumRatesSelector } from 'selectors';
 import { archanovaWalletAssetsBalancesSelector, archanovaCollectiblesSelector } from 'selectors/archanova';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 
@@ -37,6 +38,7 @@ import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { CollectibleId, Collectible } from 'models/Collectible';
+import type { RatesByAssetAddress } from 'models/Rates';
 import type { Transaction } from 'models/Transaction';
 
 
@@ -55,8 +57,9 @@ export const collectiblesToMigrateSelector: Selector<Collectible[]> = createSele
 export const showWalletMigrationArchanovaSelector: Selector<boolean> = createSelector(
   archanovaWalletAssetsBalancesSelector,
   archanovaCollectiblesSelector,
-  (walletBalances: WalletAssetsBalances, collectibles: Collectible[]): boolean => {
-    return hasNonNegligileWalletBalances(walletBalances) || !!collectibles.length;
+  ethereumRatesSelector,
+  (walletBalances: WalletAssetsBalances, collectibles: Collectible[], rates: RatesByAssetAddress): boolean => {
+    return hasNonNegligileWalletBalances(walletBalances, rates) || !!collectibles.length;
   },
 );
 

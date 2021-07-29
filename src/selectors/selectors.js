@@ -27,13 +27,14 @@ import { ADDRESS_ZERO, defaultFiatCurrency, USD } from 'constants/assetsConstant
 
 // utils
 import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
-import { valueForAddress } from 'utils/common';
+import { valueForAddress, EMPTY_OBJECT, EMPTY_ARRAY } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
+
 
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
@@ -43,9 +44,9 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRatesPerChain = () => useRootSelector(ratesPerChainSelector);
-export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? {};
+export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? EMPTY_OBJECT;
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
-export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? [];
+export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? EMPTY_ARRAY;
 
 //
 // Global selectors here
@@ -76,9 +77,8 @@ export const activeAccountAddressSelector = createSelector(
 
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
-export const supportedAssetsPerChainSelector = (
-  root: RootReducerState,
-): AssetsPerChain => root.assets.supportedAssets ?? {};
+export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
+  root.assets.supportedAssets ?? EMPTY_OBJECT;
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
@@ -86,6 +86,8 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 
 export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
+
+export const ethereumRatesSelector = (root: RootReducerState) => root.rates.data?.ethereum ?? EMPTY_OBJECT;
 
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
 

@@ -24,6 +24,7 @@ import { Migrator } from '@etherspot/archanova-migrator';
 import t from 'translations/translate';
 
 // Constants
+import { USD } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Services
@@ -36,11 +37,13 @@ import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
 import { valueForAddress, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { recordValues } from 'utils/object';
+import { getAssetValueInFiat } from 'utils/rates';
 
 // Types
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, WalletAssetBalance } from 'models/Balances';
 import type { CollectibleId } from 'models/Collectible';
+import type { RatesByAssetAddress } from 'models/Rates';
 import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
 
@@ -129,15 +132,20 @@ export async function estimateMigrationTransactions(
   return fee;
 }
 
-export function hasNonNegligileWalletBalances(balances: ?WalletAssetsBalances) {
+export function hasNonNegligileWalletBalances(balances: ?WalletAssetsBalances, rates: RatesByAssetAddress) {
   if (!balances) return false;
 
-  return Object.keys(balances).some((symbol) => isNonNegligibleBalance(balances[symbol]));
+  return Object.keys(balances).some((symbol) => isNonNegligibleBalance(balances[symbol], rates));
 }
 
-export function isNonNegligibleBalance(balance: WalletAssetBalance) {
-  // TODO: improve this check
-  return BigNumber(balance.balance).gte(1e-12);
+const NON_NEGLIGIBLE_BALANCE_THRESHOLD_IN_TOKEN = '0.25';
+const NON_NEGLIGIBLE_BALANCE_THRESHOLD_IN_USD = 1;
+
+export function isNonNegligibleBalance(balance: WalletAssetBalance, rates: RatesByAssetAddress) {
+  const balanceInUsd = getAssetValueInFiat(balance.balance, balance.address, rates, USD);
+  if (balanceInUsd) return balanceInUsd >= NON_NEGLIGIBLE_BALANCE_THRESHOLD_IN_USD;
+
+  return BigNumber(balance.balance).gte(NON_NEGLIGIBLE_BALANCE_THRESHOLD_IN_TOKEN);
 }
 
 /**
