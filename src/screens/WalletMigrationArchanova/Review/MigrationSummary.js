@@ -69,31 +69,28 @@ function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth 
   const renderItem = (item: AssetItem, index: number) =>
     item.collectible ? renderCollectibleItem(item.collectible, index) : renderTokenItem(item, index);
 
-  const renderTokenItem = ({ token, balance, balanceInFiat }: TokenItem, index: number) => {
-    return (
-      <Table.RowContainer key={token.address} separator={index !== 0}>
-        <Table.RowTitle>{token.name}</Table.RowTitle>
-        <Table.RowValue fontVariant="tabular-nums">{formatTokenValue(balance, token.symbol)}</Table.RowValue>
+  const renderTokenItem = ({ token, balance, balanceInFiat }: TokenItem, index: number) => (
+    <Table.RowContainer key={token.address} separator={index !== 0}>
+      <Table.RowTitle>{token.name}</Table.RowTitle>
+      <Table.RowValue fontVariant="tabular-nums">{formatTokenValue(balance, token.symbol)}</Table.RowValue>
 
-        {!!balanceInFiat && (
-          <Table.RowValue variant="secondary" fontVariant="tabular-nums">
-            {formatFiatValue(balanceInFiat, currency)}
-          </Table.RowValue>
-        )}
-      </Table.RowContainer>
-    );
-  };
+      {!!balanceInFiat && (
+        <Table.RowValue variant="secondary" fontVariant="tabular-nums">
+          {formatFiatValue(balanceInFiat, currency)}
+        </Table.RowValue>
+      )}
+    </Table.RowContainer>
+  );
 
-  const renderCollectibleItem = (collectible: Collectible, index: number) => {
-    return (
-      <Table.Row
-        key={collectible.contractAddress}
-        title={collectible.name}
-        value={tRoot('label.collectible')}
-        separator={index !== 0}
-      />
-    );
-  };
+  const renderCollectibleItem = (collectible: Collectible, index: number) => (
+    <Table.Row
+      key={collectible.contractAddress}
+      title={collectible.name}
+      value={tRoot('label.collectible')}
+      separator={index !== 0}
+    />
+  );
+
 
   return (
     <Container>
