@@ -260,8 +260,8 @@
     "failed": "Failed",
     "assetMigration": "Asset migration",
     "ensMigration": "ENS migration",
-    "archanovaToEtherspot": "Pillar v1 to Etherspot (Pillar v2)",
-    "archanovaToEtherspotShort": "Pillar v1 to Etherspot"
+    "archanovaToEtherspot": "Pillar V1 to Etherspot (Pillar V2)",
+    "archanovaToEtherspotShort": "Pillar V1 to Etherspot"
   },
 
   "button": {
@@ -703,11 +703,11 @@
 
   "walletMigrationArchanova": {
     "banner": {
-      "title": "Migrate assets from Pillar v1 to Etherspot (Pillar v2)"
+      "title": "Migrate assets from Pillar v1 to Etherspot (Pillar V2)"
     },
     "intro": {
       "title": "Migrate your assets",
-      "subtitle": "Switch to Etherspot (Pillar v2)",
+      "subtitle": "Switch to Etherspot (Pillar V2)",
       "header": "Your account is being upgraded to a Pillar Smart Wallet.",
       "body": "Etherspot is multi-chain ready. Polygon, Binance Smart Chain and xDai is currently supported. Migrate assets to your new Pillar v2 wallet and enjoy DeFi with low-to-no fees."
     },
@@ -728,8 +728,8 @@
       "header": "You are migrating",
       "details": {
         "header": "Migration details",
-        "fromWallet": "From Pillar v1",
-        "toWallet": "To Etherspot (Pillar v2)"
+        "fromWallet": "From Pillar V1",
+        "toWallet": "To Etherspot (Pillar V2)"
       },
       "assets": {
         "header": "Selected assets"
@@ -795,7 +795,7 @@
       "walletActivatedScreen": "What's next"
     },
     "banner": {
-      "title": "Migrate assets from key wallet to Etherspot (Pillar v2)"
+      "title": "Migrate assets from key wallet to Etherspot (Pillar V2)"
     },
     "intro": {
       "title": "Time to enhance your crypto experience",
