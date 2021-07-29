@@ -30,12 +30,14 @@ import { findFirstEtherspotAccount, findFirstArchanovaAccount } from 'utils/acco
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
-export const etherspotAccountSelector: Selector<?Account> = createSelector(accountsSelector, (accounts: Account[]) =>
-  findFirstEtherspotAccount(accounts),
+export const etherspotAccountSelector: Selector<?Account> = createSelector(
+  accountsSelector,
+  (accounts: Account[]) => findFirstEtherspotAccount(accounts),
 );
 
-export const archanovaAccountSelector: Selector<?Account> = createSelector(accountsSelector, (accounts: Account[]) =>
-  findFirstArchanovaAccount(accounts),
+export const archanovaAccountSelector: Selector<?Account> = createSelector(
+  accountsSelector,
+  (accounts: Account[]) => findFirstArchanovaAccount(accounts),
 );
 
 export const archanovaAccountIdSelector = (root: RootReducerState) => archanovaAccountSelector(root)?.id;

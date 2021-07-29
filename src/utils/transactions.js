@@ -181,31 +181,6 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
-export const sumTransactionFeeInfos = (feeInfos: TransactionFeeInfo[]): TransactionFeeInfo => {
-  if (!feeInfos.length) return { fee: null };
-
-  return {
-    fee: sumBy(feeInfos, info => info.fee),
-    gasToken: feeInfos[0].gasToken,
-  };
-};
-
-// TODO: remove
-export type TransactionFeeSummary = {|
-  fee: ?BigNumber,
-  address: string,
-  symbol: string,
-|};
-
-export const getTransactionFeeSummary = (feeInfo: ?TransactionFeeInfo, chain: Chain): TransactionFeeSummary => {
-  const decimals = getGasDecimals(chain, feeInfo?.gasToken);
-  const fee = feeInfo?.fee ? fromBaseUnit(feeInfo.fee, decimals) : null;
-  const address = getGasAddress(chain, feeInfo?.gasToken);
-  const symbol = getGasSymbol(chain, feeInfo?.gasToken);
-
-  return { fee, address, symbol };
-};
-
 export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
 };

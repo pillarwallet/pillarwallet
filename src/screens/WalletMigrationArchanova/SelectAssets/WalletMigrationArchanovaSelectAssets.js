@@ -51,6 +51,7 @@ import {
 } from 'actions/walletMigrationArchanovaActions';
 
 // Utils
+import { getAccountAddress } from 'utils/accounts';
 import { buildCollectibleKey } from 'utils/collectibles';
 import { valueForAddress } from 'utils/common';
 
@@ -104,7 +105,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
     navigation.navigate(WALLET_MIGRATION_ARCHANOVA_REVIEW);
   };
 
-  const walletAddress = archanovaAccount?.id ?? '';
+  const walletAddress = getAccountAddress(archanovaAccount);
   const allowNextAction = !isEmpty(tokensToMigrate) || !isEmpty(collectiblesToMigrate);
 
   return (

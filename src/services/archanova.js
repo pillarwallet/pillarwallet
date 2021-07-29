@@ -251,7 +251,7 @@ export class ArchanovaService {
   }
 
   getConnectedAccountDevice(deviceAddress: string): Promise<?ArchanovaAccountDevice> {
-    return this.getSdk().getConnectedAccountDevice(deviceAddress);
+    return this.getSdk().getConnectedAccountDevice(deviceAddress).catch(this.handleError);
   }
 
   async connectAccount(address: string) {
