@@ -39,7 +39,7 @@ import {
 // Selectors
 import { useRootSelector } from 'selectors';
 import { archanovaAccountSelector } from 'selectors/accounts';
-import { archanovaCollectiblesSelector } from 'selectors/walletMigrationArchanova';
+import { archanovaCollectiblesSelector } from 'selectors/archanova';
 
 // Actions
 import { switchToArchanovaAccountIfNeededAction } from 'actions/accountsActions';

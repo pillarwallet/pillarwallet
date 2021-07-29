@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { createSelector } from 'reselect';
 
 // Constants
@@ -24,9 +25,7 @@ import { ARCHANOVA_WALLET_ASSET_MIGRATION } from 'constants/archanovaConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // Selectors
-import { archanovaAccountIdSelector } from 'selectors/accounts';
-import { assetsBalancesPerAccountSelector } from 'selectors/balances';
-import { collectiblesPerAccountSelector } from 'selectors/collectibles';
+import { archanovaWalletAssetsBalancesSelector, archanovaCollectiblesSelector } from 'selectors/archanova';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 
 // Utils
@@ -36,21 +35,10 @@ import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { AssetBalancesPerAccount } from 'models/Balances';
-import type { CollectibleId, Collectible, CollectiblesStore } from 'models/Collectible';
+import type { WalletAssetsBalances } from 'models/Balances';
+import type { CollectibleId, Collectible } from 'models/Collectible';
 import type { Transaction } from 'models/Transaction';
 
-/**
- * Returns all collectibles for archanova account
- */
-export const archanovaCollectiblesSelector: Selector<Collectible[]> = createSelector(
-  collectiblesPerAccountSelector,
-  archanovaAccountIdSelector,
-  (collectiblesPerAccount: CollectiblesStore, archanovaAccountId: ?string): Collectible[] => {
-    if (!archanovaAccountId) return [];
-    return collectiblesPerAccount[archanovaAccountId]?.ethereum ?? [];
-  },
-);
 
 /**
  * Returns archanova account collectibles selected for migration.
@@ -65,16 +53,16 @@ export const collectiblesToMigrateSelector: Selector<Collectible[]> = createSele
 
 // Checks for non-negligible balances
 export const showWalletMigrationArchanovaSelector: Selector<boolean> = createSelector(
-  archanovaAccountIdSelector,
-  assetsBalancesPerAccountSelector,
-  (accountId: ?string, balancesPerAccount: AssetBalancesPerAccount): boolean => {
-    if (!accountId) return false;
-
-    const ethereumWalletBalancs = balancesPerAccount[accountId]?.ethereum?.wallet;
-    return hasNonNegligileWalletBalances(ethereumWalletBalancs);
+  archanovaWalletAssetsBalancesSelector,
+  archanovaCollectiblesSelector,
+  (walletBalances: WalletAssetsBalances, collectibles: Collectible[]): boolean => {
+    return hasNonNegligileWalletBalances(walletBalances) || !!collectibles.length;
   },
 );
 
+/**
+ * Returns are archanova wallet asset migration transactions
+ */
 export const archanovaMigrationTransactionsSelector: Selector<Transaction[]> = createSelector(
   archanovaAccountEthereumHistorySelector,
   (history: Transaction[]): Transaction[] => {
@@ -82,6 +70,9 @@ export const archanovaMigrationTransactionsSelector: Selector<Transaction[]> = c
   },
 );
 
+/**
+ * Returns true when there is a pending asset migration transaction
+ */
 export const hasPendingMigrationTransactionsSelector: Selector<boolean> = createSelector(
   archanovaMigrationTransactionsSelector,
   (migrationTransactions: Transaction[]): boolean => {
