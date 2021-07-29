@@ -41,7 +41,6 @@ import { buildHistoryTransaction } from 'utils/history';
 
 // Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { CollectibleId } from 'models/Collectible';
 import type {
   SetTokenToMigrateAction,
   RemoveTokenToMigrateAction,
@@ -66,17 +65,17 @@ export function removeTokenToMigrateAction(address: string): RemoveTokenToMigrat
   };
 }
 
-export function setCollectibleToMigrateAction(id: CollectibleId): SetCollectibleToMigrateAction {
+export function setCollectibleToMigrateAction(key: string): SetCollectibleToMigrateAction {
   return {
     type: ACTION_SET_COLLECTIBLE_TO_MIGRATE,
-    id,
+    key,
   };
 }
 
-export function removeCollectibleToMigrateAction(id: CollectibleId): RemoveCollectibleToMigrateAction {
+export function removeCollectibleToMigrateAction(key: string): RemoveCollectibleToMigrateAction {
   return {
     type: ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
-    id,
+    key,
   };
 }
 

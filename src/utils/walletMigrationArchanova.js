@@ -35,6 +35,7 @@ import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress
 import { estimateArchanovaRawTransactions } from 'utils/archanova';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
+import { parseCollectibleKey } from 'utils/collectibles';
 import { valueForAddress, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { recordValues } from 'utils/object';
 import { getAssetValueInFiat } from 'utils/rates';
@@ -42,7 +43,6 @@ import { getAssetValueInFiat } from 'utils/rates';
 // Types
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, WalletAssetBalance } from 'models/Balances';
-import type { CollectibleId } from 'models/Collectible';
 import type { RatesByAssetAddress } from 'models/Rates';
 import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
 
@@ -56,7 +56,7 @@ export async function submitMigrationTransactions(
   accounts: Account[],
   walletBalances: ?WalletAssetsBalances,
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: string[],
 ): Promise<string> {
   logBreadcrumb('walletMigrationArchanova', 'estimating migration transactions');
   const fee = await estimateMigrationTransactions(wallet, accounts, tokensToMigrate, collectiblesToMigrate);
@@ -107,7 +107,7 @@ export async function estimateMigrationTransactions(
   wallet: Wallet,
   accounts: Account[],
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: string[],
 ): Promise<BigNumber> {
   logBreadcrumb('walletMigrationArchanova', 'building asset migration raw transactions', {
     accounts,
@@ -185,7 +185,7 @@ const buildAssetMigrationRawTransactions = async (
   wallet: Wallet,
   accounts: Account[],
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: string[],
 ): Promise<string[]> => {
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   if (!etherspotAccount) {
@@ -265,7 +265,7 @@ async function applyAddMigratorDeviceTransactionIfNeeded(migrator: Migrator): Mi
 async function applyAssetTransferTransaction(
   migrator: Migrator,
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: string[],
 ) {
   // Migrate ETH
   const nativeAsset = nativeAssetPerChain[CHAIN.ETHEREUM];
@@ -288,10 +288,13 @@ async function applyAssetTransferTransaction(
   }
 
   // Migrate NFTs
-  const collectibleMigrations = collectiblesToMigrate.map(({ contractAddress, id }) => ({
-    token: contractAddress,
-    id,
-  }));
+  const collectibleMigrations = collectiblesToMigrate.map((key) => {
+    const { contractAddress, id } = parseCollectibleKey(key);
+    return {
+      token: contractAddress,
+      id,
+    };
+  });
   if (collectibleMigrations.length > 0) {
     logBreadcrumb('walletMigrationArchanova', 'add collectibles', { collectibleMigrations });
     migrator.transferERC721Tokens(collectibleMigrations);

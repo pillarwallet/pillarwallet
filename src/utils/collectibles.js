@@ -19,19 +19,34 @@
 */
 
 // Utils
-import { addressesEqual } from 'utils/assets';
+import { addressAsKey } from 'utils/common';
+
 
 // Types
-import type { CollectibleId, Collectible } from 'models/Collectible';
+import type { Collectible } from 'models/Collectible';
 
-export function getCollectibleId(collectible: Collectible): CollectibleId {
-  return { contractAddress: collectible.contractAddress, id: collectible.id };
+/**
+ * Build a string key that uniquely identifies a given collectible.
+ */
+export function buildCollectibleKey(contractAddress: string, tokenId: string) {
+  return `${addressAsKey(contractAddress)}-${tokenId}`;
 }
 
-export function areCollectiblesEqual(first: Collectible | CollectibleId, second: Collectible | CollectibleId) {
-  return addressesEqual(first.contractAddress, second.contractAddress) && addressesEqual(first.id, second.id);
+type CollectibleUniqueIdentifier = {|
+  contractAddress: string,
+  id: string,
+|}
+
+export function parseCollectibleKey(key: string): CollectibleUniqueIdentifier {
+  const parts = key.split('-');
+  return { contractAddress: parts[0], id: parts[1] };
 }
 
-export function findCollectible(collectibles: ?(Collectible[]), idToFind: CollectibleId): ?Collectible {
-  return collectibles?.find((collectible) => areCollectiblesEqual(collectible, idToFind));
+export function getCollectibleKey({ contractAddress, id }: Collectible) {
+  return buildCollectibleKey(contractAddress, id);
 }
+
+export function findCollectible(collectibles: ?(Collectible[]), keyToFind: string): ?Collectible {
+  return collectibles?.find((collectible) => getCollectibleKey(collectible) === keyToFind);
+}
+

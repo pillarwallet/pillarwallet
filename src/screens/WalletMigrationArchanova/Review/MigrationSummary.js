@@ -91,7 +91,6 @@ function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth 
     />
   );
 
-
   return (
     <Container>
       <Header>
