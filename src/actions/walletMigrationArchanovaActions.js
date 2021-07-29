@@ -65,17 +65,22 @@ export function removeTokenToMigrateAction(address: string): RemoveTokenToMigrat
   };
 }
 
-export function setCollectibleToMigrateAction(key: string): SetCollectibleToMigrateAction {
+export function setCollectibleToMigrateAction(contractAddress: string, id: string): SetCollectibleToMigrateAction {
   return {
     type: ACTION_SET_COLLECTIBLE_TO_MIGRATE,
-    key,
+    contractAddress,
+    id,
   };
 }
 
-export function removeCollectibleToMigrateAction(key: string): RemoveCollectibleToMigrateAction {
+export function removeCollectibleToMigrateAction(
+  contractAddress: string,
+  id: string,
+): RemoveCollectibleToMigrateAction {
   return {
     type: ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
-    key,
+    contractAddress,
+    id,
   };
 }
 

@@ -51,6 +51,7 @@ import {
 } from 'actions/walletMigrationArchanovaActions';
 
 // Utils
+import { buildCollectibleKey } from 'utils/collectibles';
 import { valueForAddress } from 'utils/common';
 
 // Local
@@ -86,12 +87,12 @@ const WalletMigrationArchanovaSelectAssets = () => {
     }
   };
 
-  const handleToggleCollectible = (key: string) => {
-    const isIncluded = collectiblesToMigrate.includes(key);
-    if (isIncluded) {
-      dispatch(removeCollectibleToMigrateAction(key));
+  const handleToggleCollectible = (contractAddress: string, id: string) => {
+    const key = buildCollectibleKey(contractAddress, id);
+    if (collectiblesToMigrate[key]) {
+      dispatch(removeCollectibleToMigrateAction(contractAddress, id));
     } else {
-      dispatch(setCollectibleToMigrateAction(key));
+      dispatch(setCollectibleToMigrateAction(contractAddress, id));
     }
   };
 

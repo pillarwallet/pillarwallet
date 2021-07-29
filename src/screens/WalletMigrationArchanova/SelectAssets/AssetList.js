@@ -40,7 +40,7 @@ import { fontStyles, appFont, spacing } from 'utils/variables';
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import type { Collectible } from 'models/Collectible';
-import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByCollectibleKey } from 'models/WalletMigrationArchanova';
 
 // Local
 import type { TokenWithBalance } from './utils';
@@ -52,8 +52,8 @@ type Props = {
   onPressToken: (address: string, balance: BigNumber, decimals: number) => mixed,
   onPressTokenBalance: (address: string, balance: BigNumber) => mixed,
   collectibles: Collectible[],
-  collectiblesToMigrate: string[],
-  onPressCollectible: (key: string) => mixed,
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
+  onPressCollectible: (contractAddress: string, id: string) => mixed,
 };
 
 const AssetList = ({
@@ -96,16 +96,19 @@ const AssetList = ({
   };
 
   const renderCollectible = (collectible: Collectible) => {
-    const isIncluded = collectiblesToMigrate.includes(getCollectibleKey(collectible));
+    const collectibleToMigrate = !!collectiblesToMigrate[getCollectibleKey(collectible)];
 
     return (
       <AssetListItem
         name={collectible.name}
         iconUrl={collectible.icon}
         chain={CHAIN.ETHEREUM}
-        onPress={() => onPressCollectible(getCollectibleKey(collectible))}
+        onPress={() => onPressCollectible(collectible.contractAddress, collectible.id)}
         leftAddOn={
-          <CheckBox value={isIncluded} onValueChange={() => onPressCollectible(getCollectibleKey(collectible))} />
+          <CheckBox
+            value={!!collectibleToMigrate}
+            onValueChange={() => onPressCollectible(collectible.contractAddress, collectible.id)}
+          />
         }
       />
     );
