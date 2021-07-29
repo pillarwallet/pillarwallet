@@ -23,6 +23,7 @@ import { createSelector } from 'reselect';
 // Constants
 import { ARCHANOVA_WALLET_ASSET_MIGRATION } from 'constants/archanovaConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { ethereumRatesSelector } from 'selectors';
@@ -34,6 +35,9 @@ import { mapNotNil } from 'utils/array';
 import { findCollectible } from 'utils/collectibles';
 import { recordValues } from 'utils/object';
 import { hasNonNegligileWalletBalances } from 'utils/walletMigrationArchanova';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
@@ -67,6 +71,9 @@ export const showWalletMigrationArchanovaSelector: Selector<boolean> = createSel
   archanovaCollectiblesSelector,
   ethereumRatesSelector,
   (walletBalances: WalletAssetsBalances, collectibles: Collectible[], rates: RatesByAssetAddress): boolean => {
+    const isEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED);
+    if (!isEnabled) return false;
+
     return hasNonNegligileWalletBalances(walletBalances, rates) || !!collectibles.length;
   },
 );
