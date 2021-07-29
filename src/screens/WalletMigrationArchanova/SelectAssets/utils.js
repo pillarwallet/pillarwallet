@@ -73,6 +73,6 @@ export const useTokensWithBalances = (): TokenWithBalance[] => {
       return { token, balance, balanceInFiat };
     });
 
-    return orderBy(tokens, ['balanceInFiat', 'name'], ['desc', 'asc']);
+    return orderBy(tokens, [(token) => token.balanceInFiat ?? 0, (token) => token.token.name], ['desc', 'asc']);
   }, [walletBalances, supportedAssets, rates, currency]);
 };
