@@ -32,16 +32,6 @@ export function buildCollectibleKey(contractAddress: string, tokenId: string) {
   return `${addressAsKey(contractAddress)}-${tokenId}`;
 }
 
-type CollectibleUniqueIdentifier = {|
-  contractAddress: string,
-  id: string,
-|}
-
-export function parseCollectibleKey(key: string): CollectibleUniqueIdentifier {
-  const parts = key.split('-');
-  return { contractAddress: parts[0], id: parts[1] };
-}
-
 export function getCollectibleKey({ contractAddress, id }: Collectible) {
   return buildCollectibleKey(contractAddress, id);
 }
@@ -49,4 +39,3 @@ export function getCollectibleKey({ contractAddress, id }: Collectible) {
 export function findCollectible(collectibles: ?(Collectible[]), keyToFind: string): ?Collectible {
   return collectibles?.find((collectible) => getCollectibleKey(collectible) === keyToFind);
 }
-
