@@ -33,14 +33,14 @@ import Text from 'components/modern/Text';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { getCollectibleId, areCollectiblesEqual } from 'utils/collectibles';
+import { getCollectibleKey } from 'utils/collectibles';
 import { valueForAddress } from 'utils/common';
 import { fontStyles, appFont, spacing } from 'utils/variables';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
-import type { CollectibleId, Collectible } from 'models/Collectible';
-import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
+import type { Collectible } from 'models/Collectible';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByCollectibleKey } from 'models/WalletMigrationArchanova';
 
 // Local
 import type { TokenWithBalance } from './utils';
@@ -52,8 +52,8 @@ type Props = {
   onPressToken: (address: string, balance: BigNumber, decimals: number) => mixed,
   onPressTokenBalance: (address: string, balance: BigNumber) => mixed,
   collectibles: Collectible[],
-  collectiblesToMigrate: CollectibleId[],
-  onPressCollectible: (id: CollectibleId) => mixed,
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
+  onPressCollectible: (contractAddress: string, id: string) => mixed,
 };
 
 const AssetList = ({
@@ -96,16 +96,19 @@ const AssetList = ({
   };
 
   const renderCollectible = (collectible: Collectible) => {
-    const isIncluded = collectiblesToMigrate.some((collectibleId) => areCollectiblesEqual(collectible, collectibleId));
+    const collectibleToMigrate = !!collectiblesToMigrate[getCollectibleKey(collectible)];
 
     return (
       <AssetListItem
         name={collectible.name}
         iconUrl={collectible.icon}
         chain={CHAIN.ETHEREUM}
-        onPress={() => onPressCollectible(getCollectibleId(collectible))}
+        onPress={() => onPressCollectible(collectible.contractAddress, collectible.id)}
         leftAddOn={
-          <CheckBox value={isIncluded} onValueChange={() => onPressCollectible(getCollectibleId(collectible))} />
+          <CheckBox
+            value={!!collectibleToMigrate}
+            onValueChange={() => onPressCollectible(collectible.contractAddress, collectible.id)}
+          />
         }
       />
     );

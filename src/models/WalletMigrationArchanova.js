@@ -20,3 +20,6 @@
 
 export type TokenToMigrate = {| address: string, balance: string, decimals: number |};
 export type TokensToMigrateByAddress = { [address: string]: TokenToMigrate };
+
+export type CollectibleToMigrate = {| contractAddress: string, id: string |};
+export type CollectiblesToMigrateByCollectibleKey = { [collectibleKey: string]: CollectibleToMigrate };

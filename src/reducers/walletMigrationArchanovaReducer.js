@@ -29,22 +29,21 @@ import {
 } from 'constants/walletMigrationArchanovaConstants';
 
 // Utils
-import { areCollectiblesEqual } from 'utils/collectibles';
+import { buildCollectibleKey } from 'utils/collectibles';
 import { setValueForAddress, addressAsKey } from 'utils/common';
 
 // Types
-import type { CollectibleId } from 'models/Collectible';
-import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByCollectibleKey } from 'models/WalletMigrationArchanova';
 
 
 export type WalletMigrationArchanovaReducerState = {|
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 |};
 
 const initialState = {
   tokensToMigrate: {},
-  collectiblesToMigrate: [],
+  collectiblesToMigrate: {},
 };
 
 export type WalletMigrationArchanovaReducerAction =
@@ -67,12 +66,14 @@ export type RemoveTokenToMigrateAction = {|
 
 export type SetCollectibleToMigrateAction = {|
   type: typeof ACTION_SET_COLLECTIBLE_TO_MIGRATE,
-  id: CollectibleId,
+  contractAddress: string,
+  id: string,
 |};
 
 export type RemoveCollectibleToMigrateAction = {|
   type: typeof ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE,
-  id: CollectibleId,
+  contractAddress: string,
+  id: string,
 |};
 
 const walletMigrationArchanovaReducer = (
@@ -91,14 +92,14 @@ const walletMigrationArchanovaReducer = (
       });
     case ACTION_SET_COLLECTIBLE_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
-        const isIncluded = state.collectiblesToMigrate.some((id) => areCollectiblesEqual(id, action.id));
-        if (!isIncluded) {
-          draft.collectiblesToMigrate = [...state.collectiblesToMigrate, action.id];
-        }
+        const { contractAddress, id } = action;
+        const key = buildCollectibleKey(contractAddress, id);
+        draft.collectiblesToMigrate[key] = { contractAddress, id };
       });
     case ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
-        draft.collectiblesToMigrate = state.collectiblesToMigrate.filter((id) => !areCollectiblesEqual(id, action.id));
+        const key = buildCollectibleKey(action.contractAddress, action.id);
+        delete draft.collectiblesToMigrate[key];
       });
     default:
       return state;

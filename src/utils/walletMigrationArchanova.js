@@ -42,9 +42,8 @@ import { getAssetValueInFiat } from 'utils/rates';
 // Types
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, WalletAssetBalance } from 'models/Balances';
-import type { CollectibleId } from 'models/Collectible';
 import type { RatesByAssetAddress } from 'models/Rates';
-import type { TokensToMigrateByAddress } from 'models/WalletMigrationArchanova';
+import type { TokensToMigrateByAddress, CollectiblesToMigrateByCollectibleKey } from 'models/WalletMigrationArchanova';
 
 
 /**
@@ -56,7 +55,7 @@ export async function submitMigrationTransactions(
   accounts: Account[],
   walletBalances: ?WalletAssetsBalances,
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 ): Promise<string> {
   logBreadcrumb('walletMigrationArchanova', 'estimating migration transactions');
   const fee = await estimateMigrationTransactions(wallet, accounts, tokensToMigrate, collectiblesToMigrate);
@@ -107,7 +106,7 @@ export async function estimateMigrationTransactions(
   wallet: Wallet,
   accounts: Account[],
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 ): Promise<BigNumber> {
   logBreadcrumb('walletMigrationArchanova', 'building asset migration raw transactions', {
     accounts,
@@ -185,7 +184,7 @@ const buildAssetMigrationRawTransactions = async (
   wallet: Wallet,
   accounts: Account[],
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 ): Promise<string[]> => {
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   if (!etherspotAccount) {
@@ -265,7 +264,7 @@ async function applyAddMigratorDeviceTransactionIfNeeded(migrator: Migrator): Mi
 async function applyAssetTransferTransaction(
   migrator: Migrator,
   tokensToMigrate: TokensToMigrateByAddress,
-  collectiblesToMigrate: CollectibleId[],
+  collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 ) {
   // Migrate ETH
   const nativeAsset = nativeAssetPerChain[CHAIN.ETHEREUM];
@@ -288,7 +287,7 @@ async function applyAssetTransferTransaction(
   }
 
   // Migrate NFTs
-  const collectibleMigrations = collectiblesToMigrate.map(({ contractAddress, id }) => ({
+  const collectibleMigrations = recordValues(collectiblesToMigrate).map(({ contractAddress, id }) => ({
     token: contractAddress,
     id,
   }));

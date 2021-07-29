@@ -51,11 +51,8 @@ import {
 } from 'actions/walletMigrationArchanovaActions';
 
 // Utils
+import { buildCollectibleKey } from 'utils/collectibles';
 import { valueForAddress } from 'utils/common';
-import { areCollectiblesEqual } from 'utils/collectibles';
-
-// Types
-import type { CollectibleId } from 'models/Collectible';
 
 // Local
 import WalletSummary from './WalletSummary';
@@ -90,12 +87,12 @@ const WalletMigrationArchanovaSelectAssets = () => {
     }
   };
 
-  const handleToggleCollectible = (id: CollectibleId) => {
-    const isIncluded = collectiblesToMigrate.some((collectibleId) => areCollectiblesEqual(collectibleId, id));
-    if (isIncluded) {
-      dispatch(removeCollectibleToMigrateAction(id));
+  const handleToggleCollectible = (contractAddress: string, id: string) => {
+    const key = buildCollectibleKey(contractAddress, id);
+    if (collectiblesToMigrate[key]) {
+      dispatch(removeCollectibleToMigrateAction(contractAddress, id));
     } else {
-      dispatch(setCollectibleToMigrateAction(id));
+      dispatch(setCollectibleToMigrateAction(contractAddress, id));
     }
   };
 
