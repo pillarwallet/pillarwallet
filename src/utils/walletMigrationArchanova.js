@@ -32,7 +32,7 @@ import archanovaService from 'services/archanova';
 
 // Utils
 import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
-import { estimateArchanovaRawTransactions } from 'utils/archanova';
+import { estimateArchanovaRawTransactions, isArchanovaDeviceDeployed } from 'utils/archanova';
 import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
 import { valueForAddress, reportErrorLog, logBreadcrumb } from 'utils/common';
@@ -120,7 +120,7 @@ export async function estimateMigrationTransactions(
     collectiblesToMigrate,
   );
   if (!transactionsToEstimate?.length) {
-    reportErrorLog('submitMigrationTransactions: transactionsToEstimate is empty');
+    reportErrorLog('estimateMigrationTransactions: transactionsToEstimate is empty');
     throw new Error(t('error.failedToEstimateTransaction'));
   }
 
@@ -244,7 +244,6 @@ const buildAssetMigrationRawTransactions = async (
 
 async function applyAddMigratorDeviceTransactionIfNeeded(migrator: Migrator): Migrator {
   const migratorDevice = await archanovaService.getConnectedAccountDevice(migrator.migratorAddress);
-  const isMigratorDeviceDeployed = migratorDevice?.state === 'Deployed';
   logBreadcrumb('walletMigrationArchanova', 'connected migrator device', {
     migratorAddress: migrator.migratorAddress,
     migratorDevice,
@@ -255,7 +254,7 @@ async function applyAddMigratorDeviceTransactionIfNeeded(migrator: Migrator): Mi
     await archanovaService.addAccountDevice(migrator.migratorAddress);
   }
 
-  if (!isMigratorDeviceDeployed) {
+  if (!isArchanovaDeviceDeployed(migratorDevice)) {
     logBreadcrumb('walletMigrationArchanova', 'migrator add account device transaction');
     migrator = migrator.addAccountDevice();
   }

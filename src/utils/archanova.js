@@ -63,6 +63,7 @@ import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
 import type { Account, ArchanovaAccountExtra } from 'models/Account';
+import type { ArchanovaAccountDevice } from 'models/ArchanovaWalletAccount';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
   GasToken,
@@ -146,10 +147,12 @@ export const getDeployErrorMessage = (errorType: string) => ({
     : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
 
-export const isArchanovaDeviceDeployed = (
-  device: ?$Shape<{ state: ?string, nextState: ?string }>,
-): boolean => [get(device, 'state'), get(device, 'nextState')]
-  .includes(sdkConstants.AccountDeviceStates.Deployed);
+export const isArchanovaDeviceDeployed = (device: ?ArchanovaAccountDevice): boolean => {
+  return (
+    device?.state === sdkConstants.AccountDeviceStates.Deployed ||
+    device?.nextState === sdkConstants.AccountDeviceStates.Deployed
+  );
+};
 
 export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
   return !!get(device, 'features.gasTokenSupported');
