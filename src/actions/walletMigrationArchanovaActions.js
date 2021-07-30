@@ -25,6 +25,7 @@ import { ARCHANOVA_WALLET_ASSET_MIGRATION } from 'constants/archanovaConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { ADD_HISTORY_TRANSACTION } from 'constants/historyConstants';
 import {
+  ACTION_RESET_ASSETS_TO_MIGRATE,
   ACTION_SET_TOKEN_TO_MIGRATE,
   ACTION_REMOVE_TOKEN_TO_MIGRATE,
   ACTION_SET_COLLECTIBLE_TO_MIGRATE,
@@ -48,6 +49,12 @@ import type {
   RemoveCollectibleToMigrateAction,
 } from 'reducers/walletMigrationArchanovaReducer';
 
+
+export function resetAssetsToMigrate() {
+  return {
+    type: ACTION_RESET_ASSETS_TO_MIGRATE,
+  };
+}
 
 export function setTokenToMigrateAction(address: string, balance: string, decimals: number): SetTokenToMigrateAction {
   return {
