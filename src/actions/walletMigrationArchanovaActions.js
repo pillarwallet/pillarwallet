@@ -50,7 +50,7 @@ import type {
 } from 'reducers/walletMigrationArchanovaReducer';
 
 
-export function resetAssetsToMigrate() {
+export function resetAssetsToMigrateAction() {
   return {
     type: ACTION_RESET_ASSETS_TO_MIGRATE,
   };

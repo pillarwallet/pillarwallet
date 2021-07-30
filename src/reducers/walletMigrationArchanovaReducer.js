@@ -22,6 +22,7 @@ import produce from 'immer';
 
 // Constants
 import {
+  ACTION_RESET_ASSETS_TO_MIGRATE,
   ACTION_SET_TOKEN_TO_MIGRATE,
   ACTION_REMOVE_TOKEN_TO_MIGRATE,
   ACTION_SET_COLLECTIBLE_TO_MIGRATE,
@@ -47,10 +48,15 @@ const initialState = {
 };
 
 export type WalletMigrationArchanovaReducerAction =
+  | ResetAssetsToMigateAction
   | SetTokenToMigrateAction
   | RemoveTokenToMigrateAction
   | SetCollectibleToMigrateAction
   | RemoveCollectibleToMigrateAction;
+
+export type ResetAssetsToMigateAction = {|
+  type: typeof ACTION_RESET_ASSETS_TO_MIGRATE,
+|};
 
 export type SetTokenToMigrateAction = {|
   type: typeof ACTION_SET_TOKEN_TO_MIGRATE,
@@ -81,26 +87,33 @@ const walletMigrationArchanovaReducer = (
   action: WalletMigrationArchanovaReducerAction,
 ): WalletMigrationArchanovaReducerState => {
   switch (action.type) {
+    case ACTION_RESET_ASSETS_TO_MIGRATE:
+      return initialState;
+
     case ACTION_SET_TOKEN_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
         const { address, balance, decimals } = action;
         setValueForAddress(draft.tokensToMigrate, address, { address, balance, decimals });
       });
+
     case ACTION_REMOVE_TOKEN_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
         delete draft.tokensToMigrate[addressAsKey(action.address)];
       });
+
     case ACTION_SET_COLLECTIBLE_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
         const { contractAddress, id } = action;
         const key = buildCollectibleKey(contractAddress, id);
         draft.collectiblesToMigrate[key] = { contractAddress, id };
       });
+
     case ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
         const key = buildCollectibleKey(action.contractAddress, action.id);
         delete draft.collectiblesToMigrate[key];
       });
+
     default:
       return state;
   }

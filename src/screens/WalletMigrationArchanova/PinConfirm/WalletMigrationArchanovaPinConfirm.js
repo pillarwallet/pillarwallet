@@ -34,7 +34,10 @@ import { useRootSelector, useAccounts } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Actions
-import { addMigrationTransactionToHistoryAction } from 'actions/walletMigrationArchanovaActions';
+import {
+  addMigrationTransactionToHistoryAction,
+  resetAssetsToMigrateAction,
+} from 'actions/walletMigrationArchanovaActions';
 
 // Utils
 import { reportErrorLog } from 'utils/common';
@@ -66,6 +69,7 @@ function WalletMigrationArchanovaPinConfirm() {
         collectiblesToMigrate,
       );
       dispatch(addMigrationTransactionToHistoryAction(hash));
+      dispatch(resetAssetsToMigrateAction());
       navigation.navigate(SEND_TOKEN_TRANSACTION, { hash, isSuccess: true });
     } catch (error) {
       reportErrorLog('WalletMigrationArchanovaPinConfirm: submit transactions failed', {

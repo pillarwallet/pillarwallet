@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -36,6 +37,9 @@ import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
 
+// Actions
+import { resetAssetsToMigrateAction } from 'actions/walletMigrationArchanovaActions';
+
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
@@ -45,10 +49,15 @@ const smartWalletImage = require('assets/images/logo-wallet-migration.png');
 function WalletMigrationArchanovaIntro() {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.intro');
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const navigateToMigration = () => {
     navigation.navigate(WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS);
   };
+
+  React.useEffect(() => {
+    dispatch(resetAssetsToMigrateAction());
+  }, [dispatch]);
 
   return (
     <Container>
