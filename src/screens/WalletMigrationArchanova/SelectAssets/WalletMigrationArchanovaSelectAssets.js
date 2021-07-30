@@ -105,7 +105,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
     navigation.navigate(WALLET_MIGRATION_ARCHANOVA_REVIEW);
   };
 
-  const walletAddress = archanovaAccount ? getAccountAddress(archanovaAccount) : '';
+  const walletAddress = archanovaAccount ? getAccountAddress(archanovaAccount) : null;
   const allowNextAction = !isEmpty(tokensToMigrate) || !isEmpty(collectiblesToMigrate);
 
   return (

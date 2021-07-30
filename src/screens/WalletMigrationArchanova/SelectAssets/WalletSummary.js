@@ -31,7 +31,7 @@ import { useThemeColors } from 'utils/themes';
 import { objectFontStyles, spacing } from 'utils/variables';
 
 type Props = {
-  walletAddress: string,
+  walletAddress: ?string,
   totalValueInFiat: number,
 };
 
@@ -47,14 +47,16 @@ const WalletSummary = ({ walletAddress, totalValueInFiat }: Props) => {
         {t('migratingFrom')}
       </Text>
 
-      <TextWithCopy
-        textToCopy={walletAddress}
-        toastText={tRoot('toast.addressCopiedToClipboard')}
-        textStyle={styles.address}
-        iconColor={colors.link}
-      >
-        {walletAddress}
-      </TextWithCopy>
+      {!!walletAddress && (
+        <TextWithCopy
+          textToCopy={walletAddress}
+          toastText={tRoot('toast.addressCopiedToClipboard')}
+          textStyle={styles.address}
+          iconColor={colors.link}
+        >
+          {walletAddress}
+        </TextWithCopy>
+      )}
     </Container>
   );
 };
