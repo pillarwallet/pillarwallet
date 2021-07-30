@@ -32,7 +32,7 @@ import {
 } from 'constants/walletMigrationArchanovaConstants';
 
 // Selectors
-import { activeAccountSelector } from 'selectors';
+import { archanovaAccountSelector } from 'selectors/accounts';
 
 // Utils
 import { nativeAssetPerChain } from 'utils/chains';
@@ -86,8 +86,8 @@ export function removeCollectibleToMigrateAction(
 
 export function addMigrationTransactionToHistoryAction(hash: string) {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const activeAccount = activeAccountSelector(getState());
-    if (!activeAccount) {
+    const archanovaAccount = archanovaAccountSelector(getState());
+    if (!archanovaAccount) {
       return;
     }
 
@@ -95,7 +95,7 @@ export function addMigrationTransactionToHistoryAction(hash: string) {
     const migratorAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
 
     const transaction = buildHistoryTransaction({
-      from: activeAccount.id,
+      from: archanovaAccount.id,
       to: migratorAddress,
       hash,
       assetSymbol: eth.symbol,
@@ -109,7 +109,7 @@ export function addMigrationTransactionToHistoryAction(hash: string) {
     dispatch({
       type: ADD_HISTORY_TRANSACTION,
       payload: {
-        accountId: activeAccount.id,
+        accountId: archanovaAccount.id,
         chain: CHAIN.ETHEREUM,
         transaction,
       },

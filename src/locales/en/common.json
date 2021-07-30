@@ -703,7 +703,7 @@
 
   "walletMigrationArchanova": {
     "banner": {
-      "title": "Migrate assets from Pillar v1 to Etherspot (Pillar V2)"
+      "title": "Migrate assets from Pillar V1 to Etherspot (Pillar V2)"
     },
     "intro": {
       "title": "Migrate your assets",
