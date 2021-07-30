@@ -77,6 +77,7 @@ import {
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ARCHANOVA_WALLET_ASSET_MIGRATION,
   ARCHANOVA_WALLET_ENS_MIGRATION,
 } from 'constants/archanovaConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
@@ -201,6 +202,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     PPN_NETWORK: t('pillarNetwork'),
     AAVE_DEPOSIT: t('aaveDeposit'),
     POOL_TOGETHER: t('poolTogether'),
+    ASSET_MIGRATION: t('label.assetMigration'),
     ENS_MIGRATION: t('label.ensMigration'),
   });
 
@@ -778,6 +780,24 @@ export class ActivityFeedItem extends React.Component<Props> {
           fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
           itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case ARCHANOVA_WALLET_ASSET_MIGRATION: {
+        let status;
+        if (isFailed) {
+          status = this.STATUSES().FAILED;
+        } else if (isPending) {
+          status = this.STATUSES().PENDING;
+        } else {
+          status = this.STATUSES().COMPLETED;
+        }
+
+        data = {
+          label: this.NAMES().ASSET_MIGRATION,
+          itemImageSource: smartWalletIcon,
+          subtext: t('label.archanovaToEtherspotShort'),
+          actionLabel: status,
         };
         break;
       }

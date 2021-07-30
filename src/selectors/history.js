@@ -28,6 +28,7 @@ import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
 import { CHAIN } from 'constants/chainConstants';
 
 // types
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { ChainRecord } from 'models/Chain';
 import type { Transaction } from 'models/Transaction';
 
@@ -53,7 +54,7 @@ export const accountHistorySelector = createSelector(
   },
 );
 
-export const archanovaAccountEthereumHistorySelector = createSelector(
+export const archanovaAccountEthereumHistorySelector: Selector<Transaction[]> = createSelector(
   historySelector,
   accountsSelector,
   (history, accounts): Transaction[] => {
@@ -69,3 +70,7 @@ export const archanovaAccountEthereumHistorySelector = createSelector(
     return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
   },
 );
+
+export function isFetchingHistorySelector(root: RootReducerState) {
+  return root.history.isFetching;
+}

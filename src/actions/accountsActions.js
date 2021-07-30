@@ -49,9 +49,10 @@ import {
   getActiveAccountType,
   isArchanovaAccount,
   isSupportedAccountType,
+  getActiveAccount,
 } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { reportErrorLog, isCaseInsensitiveMatch } from 'utils/common';
 import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
@@ -257,5 +258,25 @@ export const fallbackToSmartAccountAction = () => {
      || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
       if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
     }
+  };
+};
+
+/**
+ * Switch active account to archanova.
+ */
+export const switchToArchanovaAccountIfNeededAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    const activeAccount = getActiveAccount(accounts);
+    if (isArchanovaAccount(activeAccount)) return;
+
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    if (!archanovaAccount) {
+      reportErrorLog('switchToArchanovaAccountIfNeeded: no archanova account found', { accounts });
+      return;
+    }
+
+    dispatch(switchAccountAction(archanovaAccount.id));
   };
 };

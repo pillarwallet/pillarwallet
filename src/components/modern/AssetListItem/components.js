@@ -21,22 +21,22 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 
 // Components
 import Text from 'components/modern/Text';
 import TokenIcon from 'components/modern/TokenIcon';
 
 // Selectors
-import { useChainRates, useRootSelector } from 'selectors';
+import { useChainRates, useFiatCurrency } from 'selectors';
 
 // Utils
-import { formatTokenAmount } from 'utils/common';
-import { getFormattedBalanceInFiat } from 'utils/assets';
-import { fontStyles, spacing } from 'utils/variables';
+import { formatTokenValue, formatFiatValue } from 'utils/format';
+import { getAssetValueInFiat } from 'utils/rates';
+import { fontStyles, appFont, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 
 /**
@@ -66,6 +66,7 @@ export const Icon = styled(TokenIcon)`
 export const Name = styled(Text)`
   flex: 1;
   ${fontStyles.medium};
+  font-family: ${appFont.medium};
 `;
 
 /**
@@ -75,34 +76,25 @@ export const Name = styled(Text)`
 type BalanceProps = {|
   assetSymbol: string,
   assetAddress: string,
-  balance: Value,
+  balance: ?BigNumber,
   chain: Chain,
   onPress: ?(() => mixed),
   style?: ViewStyleProp,
 |};
 
-export function Balance({
-  assetSymbol,
-  assetAddress,
-  balance,
-  chain,
-  onPress,
-  style,
-}: BalanceProps) {
-  const fiatCurrency = useRootSelector((root) => root.appSettings.data.baseFiatCurrency);
-  const chainRates = useChainRates(chain);
+export function Balance({ assetSymbol, assetAddress, balance, chain, onPress, style }: BalanceProps) {
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
 
-  const formattedBalance = formatTokenAmount(balance, assetSymbol);
-  const formattedFiatValue = getFormattedBalanceInFiat(fiatCurrency, balance, chainRates, assetAddress);
+  if (!balance) return null;
+
+  const balanceInFiat = getAssetValueInFiat(balance, assetAddress, rates, currency);
 
   return (
     <BalanceWrapper onPress={onPress} disabled={!onPress} style={style}>
-      {!!formattedFiatValue && <BalanceFiatValue>{formattedFiatValue}</BalanceFiatValue>}
-      {balance != null && (
-        <BalanceToken>
-          {formattedBalance} {assetSymbol}
-        </BalanceToken>
-      )}
+      {!!balanceInFiat && <BalanceFiatValue>{formatFiatValue(balanceInFiat, currency)}</BalanceFiatValue>}
+
+      <BalanceToken>{formatTokenValue(balance, assetSymbol)}</BalanceToken>
     </BalanceWrapper>
   );
 }

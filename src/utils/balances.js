@@ -35,6 +35,7 @@ import type {
 } from 'models/Balances';
 import type { ChainRecord } from 'models/Chain';
 
+
 export const getChainWalletAssetsBalances = (
   assetsBalances: ?AccountAssetBalances,
 ): ChainRecord<WalletAssetsBalances> =>
