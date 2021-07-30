@@ -37,3 +37,15 @@ export type InitArchanovaProps = {
   privateKey?: string,
   pin?: string,
 }
+
+export type ArchanovaAccountDevice = {
+  device: {
+    address: string,
+    version: ?number,
+  },
+  type: string,
+  state: string,
+  nextState: ?string,
+  features: {},
+  updatedAt: Date,
+};

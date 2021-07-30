@@ -324,7 +324,15 @@ const ValueInputComponent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
 
+  const isInitialEffectRun = React.useRef(true);
+
   React.useEffect(() => {
+    // Do not reset value on initial effect run
+    if (isInitialEffectRun.current) {
+      isInitialEffectRun.current = false;
+      return;
+    }
+
     if (value) {
       onValueChange?.('0');
       setValueInFiat('0');

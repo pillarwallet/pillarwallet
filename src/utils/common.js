@@ -64,6 +64,20 @@ import { isProdEnv, isTest } from './environment';
 export { BigNumber } from 'bignumber.js';
 export { isIphoneX } from 'react-native-iphone-x-helper';
 
+/**
+ * Empty object with stable reference.
+ *
+ * Can be used as a return value in non-memoized selectors instead of `{}` to prevent unnecessary re-renders.
+ */
+export const EMPTY_OBJECT: {} = Object.freeze({});
+
+/**
+ * Empty array with stable reference.
+ *
+ * Can be used as a return value in non-memoized selectors instead of `[]` to prevent unnecessary re-renders.
+ */
+export const EMPTY_ARRAY = Object.freeze([]);
+
 const WWW_URL_PATTERN = /^www\./i;
 // eslint-disable-next-line i18next/no-literal-string
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
@@ -597,12 +611,13 @@ export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
 
-export const addressAsKey = (address: string): string => {
-  if (!address) return '';
-  return address.toLowerCase();
-};
+export const addressAsKey = (address: string): string => address?.toLowerCase() ?? '';
 
-export const valueForAddress = <RecordValue>(
-  record: ?Record<RecordValue>,
+export const valueForAddress = <V>(
+  record: ?Record<V>,
   address: string,
-): ?RecordValue => record?.[addressAsKey(address)];
+): ?V => record?.[addressAsKey(address)];
+
+export const setValueForAddress = <V>(record: Record<V>, address: string, value: V) => {
+  record[addressAsKey(address)] = value;
+};

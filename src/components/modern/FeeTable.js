@@ -32,6 +32,7 @@ import { useFiatCurrency, useChainRates } from 'selectors';
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { formatTokenAmount, hitSlop20 } from 'utils/common';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -43,15 +44,18 @@ import type { Chain } from 'models/Chain';
  * instead of performing expensive search on whole assets array
  */
 type Props = {|
-  fee: Value,
-  assetSymbol: string,
-  assetAddress: string,
+  fee: ?Value,
+  assetSymbol?: string,
+  assetAddress?: string,
   chain: Chain,
   style?: ViewStyleProp,
 |};
 
 function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('transactions.label');
+
+  assetSymbol = assetSymbol ?? nativeAssetPerChain[chain].symbol;
+  assetAddress = assetAddress ?? nativeAssetPerChain[chain].address;
 
   return (
     <View style={style}>
@@ -70,7 +74,6 @@ function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
         assetSymbol={assetSymbol}
         assetAddress={assetAddress}
         fee={fee}
-        separator={false}
         chain={chain}
       />
     </View>
@@ -87,7 +90,7 @@ type FeeItemProps = {|
   title: string,
   assetSymbol: string,
   assetAddress: string,
-  fee: Value,
+  fee: ?Value,
   chain: Chain,
   separator?: boolean,
 |};
@@ -107,7 +110,7 @@ export function FeeRow({
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
 
-  const formattedFee = t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol });
+  const formattedFee = fee ? t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol }) : '';
   const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, assetAddress);
 
   return (
