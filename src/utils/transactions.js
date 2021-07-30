@@ -28,7 +28,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
-import { fromEthersBigNumber, fromBaseUnit, sumBy } from 'utils/bigNumber';
+import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // services
@@ -39,7 +39,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type { FeeInfo } from 'models/PaymentNetwork';
-import type { EthereumTransaction, GasToken, TransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 

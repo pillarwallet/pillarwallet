@@ -31,11 +31,11 @@ import { useThemeColors } from 'utils/themes';
 import { objectFontStyles, spacing } from 'utils/variables';
 
 type Props = {
-  address: string,
+  walletAddress: string,
   totalValueInFiat: number,
 };
 
-const WalletSummary = ({ address, totalValueInFiat }: Props) => {
+const WalletSummary = ({ walletAddress, totalValueInFiat }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');
   const colors = useThemeColors();
 
@@ -43,15 +43,17 @@ const WalletSummary = ({ address, totalValueInFiat }: Props) => {
     <Container>
       <BalanceView balance={totalValueInFiat} />
 
-      <Text color={colors.secondaryText} style={styles.migratinFrom}>{t('migratingFrom')}</Text>
+      <Text color={colors.secondaryText} style={styles.migratinFrom}>
+        {t('migratingFrom')}
+      </Text>
 
       <TextWithCopy
-        textToCopy={address}
+        textToCopy={walletAddress}
         toastText={tRoot('toast.addressCopiedToClipboard')}
         textStyle={styles.address}
         iconColor={colors.link}
       >
-        {address}
+        {walletAddress}
       </TextWithCopy>
     </Container>
   );
