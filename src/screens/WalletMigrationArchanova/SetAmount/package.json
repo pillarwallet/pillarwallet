@@ -1,0 +1,6 @@
+{
+  "name": "WalletMigrationArchanovaSetAmount",
+  "version": "0.0.0",
+  "private": true,
+  "main": "WalletMigrationArchanovaSetAmount.js"
+}

@@ -106,7 +106,7 @@ function SendTokenTransaction() {
 
   const isSuccess: boolean = useNavigationParam('isSuccess');
   const error: ?string = useNavigationParam('error');
-  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
+  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload') ?? {};
   const transactionType: ?string = useNavigationParam('transactionType');
   const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
   const noRetry: string = useNavigationParam('noRetry');

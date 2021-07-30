@@ -43,7 +43,11 @@ import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common'
 import { mapToEthereumTransactions } from 'utils/transactions';
 
 // types
-import type { ConnectedArchanovaWalletAccount, ArchanovaWalletAccount } from 'models/ArchanovaWalletAccount';
+import type {
+  ConnectedArchanovaWalletAccount,
+  ArchanovaWalletAccount,
+  ArchanovaAccountDevice,
+} from 'models/ArchanovaWalletAccount';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 
 
@@ -246,6 +250,10 @@ export class ArchanovaService {
       .catch(this.handleError);
   }
 
+  getConnectedAccountDevice(deviceAddress: string): Promise<?ArchanovaAccountDevice> {
+    return this.getSdk().getConnectedAccountDevice(deviceAddress).catch(this.handleError);
+  }
+
   async connectAccount(address: string) {
     if (!this.getConnectedAccountFromSdkState()) {
       await this.getSdk().connectAccount(address).catch(this.handleError);
@@ -389,7 +397,6 @@ export class ArchanovaService {
 
   async sendRawTransactions(rawTransactions: string[]): Promise<?string> {
     const estimated = await this.getSdk().estimateAccountRawTransactions(rawTransactions);
-
     return this.getSdk().submitAccountTransaction(estimated);
   }
 

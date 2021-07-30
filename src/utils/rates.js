@@ -38,3 +38,17 @@ export const getAssetRateInFiat = (
   assetAddress: string,
   fiatCurrency: Currency,
 ): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
+
+export const getAssetValueInFiat = (
+  balance: ?BigNumber | string | number,
+  assetAddress: string,
+  rates: RatesByAssetAddress,
+  currency: Currency,
+): ?number => {
+  if (!balance && balance !== 0) return null;
+
+  const rate = getAssetRateInFiat(rates, assetAddress, currency);
+  if (!rate) return null;
+
+  return wrapBigNumber(balance)?.times(rate).toNumber();
+};

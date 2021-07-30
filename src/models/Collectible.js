@@ -21,6 +21,7 @@
 // Types
 import type { Chain, ChainRecord } from 'models/Chain';
 
+
 export type Collectible = {
   id: string,
   name: string,

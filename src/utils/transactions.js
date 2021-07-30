@@ -43,7 +43,6 @@ import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/T
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
-
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
   const gasTokenCost = get(feeInfo, 'gasTokenCost');
   if (useGasToken && gasTokenCost) return gasTokenCost;
@@ -109,7 +108,6 @@ export const buildEthereumTransaction = async (
   let transaction = { to, value };
 
   if (data) transaction = { ...transaction, data };
-
   return transaction;
 };
 
@@ -183,14 +181,14 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
-export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
 };
 
 export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.address ?? nativeAssetPerChain[chain].address;
 };
 
-export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
+export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
+  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
 };

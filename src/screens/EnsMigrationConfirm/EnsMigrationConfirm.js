@@ -84,20 +84,20 @@ const EnsMigrationConfirm = () => {
     errorMessage: estimateErrorMessage,
   } = useRootSelector(({ transactionEstimate }) => transactionEstimate);
 
-  const buildRawTransactions = async () => {
-    const transactions = await buildEnsMigrationRawTransactions(accounts, wallet);
-    setRawTransactions(transactions);
-    setWallet(null);
-  };
-
   useEffect(() => {
+    const buildRawTransactions = async () => {
+      const transactions = await buildEnsMigrationRawTransactions(accounts, wallet);
+      setRawTransactions(transactions);
+      setWallet(null);
+    };
+
     if (wallet) buildRawTransactions();
-  }, [wallet]);
+  }, [wallet, accounts]);
 
   useEffect(() => {
     if (!rawTransactions) return;
     dispatch(estimateEnsMigrationFromArchanovaToEtherspotAction(rawTransactions));
-  }, [rawTransactions]);
+  }, [rawTransactions, dispatch]);
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
 
