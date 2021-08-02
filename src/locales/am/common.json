@@ -1236,7 +1236,6 @@
     "languageChangeFailed": "ቋንቋውን ለመቀየር አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ።",
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) ወጥቷል።",
     "sablierCancelStream": "ተፋሰሱ ተሰርዟል።",
-    "smartWalletDeviceAdded": "አዲስ የተጎዳኘ መሳርያ ተጨምሯል",
     "cryptoPurchaseLaunchFailed": "ይቅርታ ግልጋሎቱን አሁን ለመክፈት አልቻልንም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
     "exchangeAllowanceFailed": "ይቅርታ የቶክኑን የፈቃድ መጠን ለመወሰን አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
     "contactUpdated": "ወዳጅዎ መረጃ ተሻሽሏል።",

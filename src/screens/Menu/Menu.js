@@ -45,6 +45,7 @@ import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Modal from 'components/Modal';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
+import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // constants
 import {
@@ -106,7 +107,7 @@ const Menu = ({
     REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID,
   );
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
-  const showMigrateWallet =
+  const showKeyBasedWalletMigration =
     (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
 
   type MenuItem = {|
@@ -254,17 +255,19 @@ const Menu = ({
         contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         ListFooterComponent={
           <Footer>
-            <MigrateEnsBanner style={{ marginTop: 15 }} />
-            {showMigrateWallet && (
-              <FooterBanner>
-                <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} />
-              </FooterBanner>
-            )}
+            <BannersWrapper>
+              <MigrateEnsBanner style={styles.footerBanner} />
+
+              <WalletMigrationArchanovaBanner style={styles.footerBanner} />
+
+              {showKeyBasedWalletMigration && (
+                <MigrateWalletBanner onPress={navigateToKeyBasedAssetMigration} style={styles.footerBanner} />
+              )}
+            </BannersWrapper>
+
             <LinksSection>
               <LegalTextLink
-                onPress={() =>
-                  openLegalModal(prismicTermsOfPolicyDocumentId, t('settingsContent.button.termOfUse'))
-                }
+                onPress={() => openLegalModal(prismicTermsOfPolicyDocumentId, t('settingsContent.button.termOfUse'))}
               >
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
@@ -277,9 +280,11 @@ const Menu = ({
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>
+
             <LockScreenSection>
               <LockScreenTextLink onPress={lockScreen}>{t('settingsContent.button.lockWallet')}</LockScreenTextLink>
             </LockScreenSection>
+
             <LogoutSection>
               <LogoutIcon name="signout" />
               <LogoutTextLink onPress={deleteWallet}>{t('settingsContent.button.signOut')}</LogoutTextLink>
@@ -318,10 +323,16 @@ export default connect(combinedMapStateToProps, mapDispatchToProps)(Menu);
 
 const SEPARATOR_SYMBOL = '  •  ';
 
+const styles = {
+  footerBanner: {
+    marginVertical: spacing.medium / 2,
+  },
+};
+
 const Footer = styled.View``;
 
-const FooterBanner = styled.View`
-  margin: ${spacing.small}px 0 ${spacing.large}px;
+const BannersWrapper = styled.View`
+  padding: ${spacing.medium / 2}px 0;
 `;
 
 const LinksSection = styled.View`
@@ -349,8 +360,8 @@ const LockScreenSection = styled.View`
 `;
 
 const HeaderLogo = styled(Image)`
-  width: 68px;
-  height: 20px;
+  width: 79px;
+  height: 36px;
 `;
 
 const LogoutIcon = styled(Icon)`

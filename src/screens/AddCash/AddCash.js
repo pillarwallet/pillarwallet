@@ -24,16 +24,16 @@ import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
-// utils
+// Utils
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol, hasTooMuchDecimals } from 'utils/common';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import { rampWidgetUrl } from 'utils/fiatToCrypto';
-import { getActiveAccount, getAccountAddress, isSmartWalletAccount } from 'utils/accounts';
+import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isEtherspotAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 
-// components
+// Components
 import { Container } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import TextInput from 'components/TextInput';
@@ -43,7 +43,7 @@ import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 
-// selectors
+// Selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 
 import AddCashValueInputAccessoryHolder, {
@@ -57,10 +57,9 @@ const AddCash = () => {
   const colors = useThemeColors();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const accounts = useRootSelector(accountsSelector);
+  const activeAccount = getActiveAccount(accounts);
 
   const getCryptoPurchaseAddress = (): string | null => {
-    const activeAccount = getActiveAccount(accounts);
-
     if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
       Modal.open(() => <BuyCryptoAccountNotActiveModal />);
       return null;
@@ -100,7 +99,7 @@ const AddCash = () => {
   const openRamp = () => {
     const address = getCryptoPurchaseAddress();
     if (address === null) return;
-    openUrl(rampWidgetUrl(address, fiatCurrency, value));
+    openUrl(rampWidgetUrl(address, fiatCurrency, value, isEtherspotAccount(activeAccount)));
   };
 
 

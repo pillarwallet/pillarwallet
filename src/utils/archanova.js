@@ -26,14 +26,20 @@ import { Migrator } from '@etherspot/archanova-migrator';
 import { utils, Wallet } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 
+// components
+import Toast from 'components/Toast';
+
 // constants
 import {
-  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_REMOVED,
   ARCHANOVA_WALLET_DEPLOYMENT_ERRORS,
+  ARCHANOVA_WALLET_ASSET_MIGRATION,
+  ARCHANOVA_WALLET_ENS_MIGRATION,
   ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
+  SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
+  ARCHANOVA_ENS_TRANSFER_METHOD_HASH,
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -43,30 +49,32 @@ import {
   TX_TIMEDOUT_STATUS,
 } from 'constants/historyConstants';
 import {
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
 import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
+
 // services
 import archanovaService, { parseEstimatePayload } from 'services/archanova';
 
 // types
-import type { Account } from 'models/Account';
+import type { Account, ArchanovaAccountExtra } from 'models/Account';
+import type { ArchanovaAccountDevice } from 'models/ArchanovaWalletAccount';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type {
-  TransactionFeeInfo,
+  GasToken,
   Transaction,
   TransactionExtra,
-  GasToken,
+  TransactionFeeInfo,
 } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 import type { TranslatedString } from 'models/Translations';
+import type { ArchanovaEstimatePayload, ArchanovaTransactionEstimate } from 'services/archanova';
 
 // utils
 import {
@@ -78,6 +86,7 @@ import {
   isArchanovaAccount,
 } from './accounts';
 import { addressesEqual, findAssetByAddress } from './assets';
+import { fromBaseUnit } from './bigNumber';
 import { isCaseInsensitiveMatch, reportErrorLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 import { nativeAssetPerChain } from './chains';
@@ -138,10 +147,12 @@ export const getDeployErrorMessage = (errorType: string) => ({
     : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
 
-export const isArchanovaDeviceDeployed = (
-  device: ?$Shape<{ state: ?string, nextState: ?string }>,
-): boolean => [get(device, 'state'), get(device, 'nextState')]
-  .includes(sdkConstants.AccountDeviceStates.Deployed);
+export const isArchanovaDeviceDeployed = (device: ?ArchanovaAccountDevice): boolean => {
+  return (
+    device?.state === sdkConstants.AccountDeviceStates.Deployed ||
+    device?.nextState === sdkConstants.AccountDeviceStates.Deployed
+  );
+};
 
 export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
   return !!get(device, 'features.gasTokenSupported');
@@ -200,6 +211,7 @@ export const parseArchanovaTransactions = (
       },
       gasToken: gasTokenAddress,
       fee: transactionFee,
+      inputData,
     } = smartWalletTransaction;
 
     // NOTE: same transaction could have multiple records, those are different by index
@@ -334,6 +346,15 @@ export const parseArchanovaTransactions = (
       }
     }
 
+    const migratorContractAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
+    if (addressesEqual(migratorContractAddress, transaction.to)) {
+      const isEnsMigration = inputData?.includes(ARCHANOVA_ENS_TRANSFER_METHOD_HASH);
+      transaction = {
+        ...transaction,
+        tag: isEnsMigration ? ARCHANOVA_WALLET_ENS_MIGRATION : ARCHANOVA_WALLET_ASSET_MIGRATION,
+      };
+    }
+
     const mappedTransaction = buildHistoryTransaction(transaction);
     mapped.push(mappedTransaction);
 
@@ -446,19 +467,20 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
   const { migratorAddress } = migrator;
   const connectedAccountDevices = await archanovaService.getConnectedAccountDevices();
 
-  const isMigratorDeviceAdded = connectedAccountDevices.some(({
+  const migratorAsArchanovaDevice = connectedAccountDevices.find(({
     device,
   }) => addressesEqual(device?.address, migratorAddress));
 
-  if (!isMigratorDeviceAdded) {
-    await archanovaService.addAccountDevice(migratorAddress);
-    migrator = migrator.addAccountDevice();
-  }
+  // add device on Archanova back-end if needed
+  if (!migratorAsArchanovaDevice) await archanovaService.addAccountDevice(migratorAddress);
+
+  // migrator device add part that will be called on tx if migrator device was not previously deployed
+  if (!isArchanovaDeviceDeployed(migratorAsArchanovaDevice)) migrator = migrator.addAccountDevice();
 
   // we cannot test ENS migration so let's just add simple transaction
   migrator = isKovan
     ? migrator.transferBalance(utils.parseEther('0.001'))
-    : migrator.transferENSName(utils.namehash(getAccountEnsName(archanovaAccount)));
+    : migrator.transferENSName(getAccountEnsName(archanovaAccount));
 
   const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
 
@@ -486,4 +508,44 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
 
       return data;
     });
+};
+
+export async function estimateArchanovaRawTransactions(rawTransactions: string[]): Promise<BigNumber> {
+  if (!rawTransactions?.length) {
+    reportErrorLog('estimateArchanovaRawTransactions: no transactions to estimate');
+    throw new Error(t('error.noTransactionsToEstimate'));
+  }
+
+  try {
+    const eth = nativeAssetPerChain.ethereum;
+    const estimate = (await archanovaService.estimateAccountRawTransactions(rawTransactions)) ?? {};
+    return fromBaseUnit(estimate.ethCost, eth.decimals);
+  } catch (error) {
+    reportErrorLog('estimateArchanovaRawTransactions: estimateAccountRawTransactions threw error', { error });
+
+    Toast.show({
+      message: t('toast.transactionFeeEstimationFailed'),
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+
+    throw new Error(t('error.failedToEstimateTransaction'));
+  }
+}
+
+// Archanova back-end will always return attached account ENS name even after migration
+export const patchArchanovaAccountExtra = (
+  archanovaAccountExtra: ?ArchanovaAccountExtra,
+  accounts: Account[],
+): ?ArchanovaAccountExtra => {
+  if (!archanovaAccountExtra) return null;
+
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  const etherspotAccountEns = getAccountEnsName(etherspotAccount);
+
+  // in case both accounts ENS name matches this means ENS was migrated, do not display one for Archanova
+  const archanovaAccountEns = archanovaAccountExtra?.ensName;
+  if (!archanovaAccountEns || archanovaAccountEns === etherspotAccountEns) return archanovaAccountExtra;
+
+  return { ...archanovaAccountExtra, ensName: archanovaAccountEns };
 };

@@ -66,7 +66,7 @@ function OfferCard({ offer, onPress, disabled }: Props) {
         <LeftColumn />
 
         <RightColumn>
-          <Button title={buttonTitle} onPress={onPress} disabled={disabled} compact />
+          <Button title={buttonTitle} onPress={onPress} disabled={disabled} size="compact" />
         </RightColumn>
       </Row>
     </TouchableContainer>
