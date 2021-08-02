@@ -225,7 +225,7 @@ const SendCollectibleConfirm = ({
             <TableUser address={receiver} />
           </TableRow>
           <TableRow>
-            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
             <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
           <TableRow>
