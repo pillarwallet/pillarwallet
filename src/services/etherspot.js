@@ -297,7 +297,7 @@ export class EtherspotService {
 
   getEnsNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     // if it's address – getENSNode accepts only checksum addresses
-    const nameOrHashOrChecksumAddress = isValidAddress(nameOrHashOrAddress)
+    const nameOrHashOrChecksumAddress = nameOrHashOrAddress.startsWith('0x') && isValidAddress(nameOrHashOrAddress)
       ? toChecksumAddress(nameOrHashOrAddress)
       : nameOrHashOrAddress;
 
