@@ -32,7 +32,7 @@ type Props = {|
   emoji: string,
 |};
 
-function Card({ title, emoji }: Props) {
+function EmojiCard({ title, emoji }: Props) {
   return (
     <Container>
       <Title>{title}</Title>
@@ -43,7 +43,7 @@ function Card({ title, emoji }: Props) {
   );
 }
 
-export default Card;
+export default EmojiCard;
 
 const Container = styled.View`
   flex-direction: row;

@@ -22,7 +22,7 @@ import { createSelector } from 'reselect';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
+import { ARCHANOVA_WALLET_ENS_MIGRATION, ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
@@ -36,14 +36,44 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
+import { archanovaAccountIdSelector } from 'selectors/accounts';
+import { assetsBalancesPerAccountSelector } from 'selectors/balances';
+import { collectiblesPerAccountSelector } from 'selectors/collectibles';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
+import type { AssetBalancesPerAccount, WalletAssetsBalances } from 'models/Balances';
+import type { Collectible, CollectiblesStore } from 'models/Collectible';
 
 // local
 import { accountsSelector } from './selectors';
 import { archanovaAccountEthereumHistorySelector } from './history';
+
+
+/**
+ * Returns all wallet asset balances for archanova account.
+ */
+export const archanovaWalletAssetsBalancesSelector: Selector<WalletAssetsBalances> = createSelector(
+  archanovaAccountIdSelector,
+  assetsBalancesPerAccountSelector,
+  (archanovaAccountId: ?string, balancesPerAccount: AssetBalancesPerAccount): WalletAssetsBalances => {
+    if (!archanovaAccountId) return {};
+    return balancesPerAccount[archanovaAccountId]?.ethereum?.wallet ?? {};
+  },
+);
+
+/**
+ * Returns all collectibles for archanova account.
+ */
+export const archanovaCollectiblesSelector: Selector<Collectible[]> = createSelector(
+  archanovaAccountIdSelector,
+  collectiblesPerAccountSelector,
+  (archanovaAccountId: ?string, collectiblesPerAccount: CollectiblesStore): Collectible[] => {
+    if (!archanovaAccountId) return [];
+    return collectiblesPerAccount[archanovaAccountId]?.ethereum ?? [];
+  },
+);
 
 export const isArchanovaAccountDeployedSelector = ({ accounts: { data: accounts }, smartWallet }: RootReducerState) => {
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWallet);
@@ -63,10 +93,10 @@ export const preferredGasTokenSelector = ({
   return preferredGasToken || ETH;
 };
 
-export const useGasTokenSelector = createSelector(
+export const useGasTokenSelector: Selector<boolean> = createSelector(
   isGasTokenSupportedSelector,
   preferredGasTokenSelector,
-  (isGasTokenSupported, preferredGasToken) => {
+  (isGasTokenSupported: boolean, preferredGasToken: string) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
   },
 );
@@ -89,7 +119,7 @@ export const isEnsMigrationNeededSelector = createSelector(
       archanovaAccount && (!isProdEnv() || getAccountEnsName(archanovaAccount)?.endsWith(getEnsPrefix()));
 
     const isEnsMigrationTransactionAlreadySent = archanovaAccountHistory.some(
-      ({ extra }) => extra?.isEnsMigrationToEtherspot,
+      ({ tag }) => tag === ARCHANOVA_WALLET_ENS_MIGRATION,
     );
 
     return !!isEnsMigrationNeeded && !isEnsMigrationTransactionAlreadySent;

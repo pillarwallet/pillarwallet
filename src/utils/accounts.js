@@ -190,3 +190,15 @@ export const getSmartWalletAccountCreatedAtTimestamp = (account: Account): ?numb
 
   return createdAt ? +createdAt : null;
 };
+
+/**
+ * Checks accounts for migrated ENS in following order:
+ * 1. First checks Etherspot account in case ENS already migrated and was updated on Etherspot back-end.
+ * 2. If there's no ENS yet on Etherspot account or transaction is pending then it checks on Archanova
+ */
+export const getMigratedEnsName = (accounts: Account[]): string => {
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+  return getAccountEnsName(etherspotAccount) ?? getAccountEnsName(archanovaAccount) ?? '';
+};

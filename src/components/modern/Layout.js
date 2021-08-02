@@ -65,18 +65,20 @@ export function Content({
   scrollEventThrottle = 0,
   showsVerticalScrollIndicator,
 }: ContentProps) {
-  const styles = [contentStyles.safeArea, { paddingHorizontal, paddingVertical }];
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={contentStyles.keyboardAvoidingView}
     >
-      <SafeAreaView style={styles}>
+      <SafeAreaView style={contentStyles.safeArea}>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[contentStyles.scrollViewContent, contentContainerStyle]}
+          contentContainerStyle={[
+            contentStyles.scrollViewContent,
+            { paddingHorizontal, paddingVertical },
+            contentContainerStyle,
+          ]}
           refreshControl={refreshControl}
           onScroll={onScroll}
           scrollEventThrottle={scrollEventThrottle}
@@ -99,6 +101,25 @@ const contentStyles = {
   },
   scrollViewContent: {
     flexGrow: 1,
+  },
+};
+
+/**
+ * Floating footer
+ */
+export function Footer({ children, style }: ViewProps) {
+  return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : undefined}>
+      <SafeAreaView style={[footerStyles.safeArea, style]}>{children}</SafeAreaView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const footerStyles = {
+  safeArea: {
+    paddingTop: spacing.small,
+    paddingBottom: spacing.medium,
+    paddingHorizontal: spacing.large,
   },
 };
 

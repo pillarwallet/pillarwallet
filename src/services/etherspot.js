@@ -42,6 +42,7 @@ import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 
 // utils
 import {
@@ -295,8 +296,13 @@ export class EtherspotService {
   }
 
   getEnsNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
-    return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
-      reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
+    // if it's address – getENSNode accepts only checksum addresses
+    const nameOrHashOrChecksumAddress = isValidAddress(nameOrHashOrAddress)
+      ? toChecksumAddress(nameOrHashOrAddress)
+      : nameOrHashOrAddress;
+
+    return this.sdk.getENSNode({ nameOrHashOrAddress: nameOrHashOrChecksumAddress }).catch((error) => {
+      reportErrorLog('getENSNode failed', { nameOrHashOrAddress, nameOrHashOrChecksumAddress, error });
       return null;
     });
   }
