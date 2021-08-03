@@ -174,7 +174,7 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 
   React.useEffect(() => {
     // perform additional check to avoid estimate on request dismiss
-    const requestExists = callRequests.some(({ callId }) => +callId === +request.callId);
+    const requestExists = callRequests.some(({ callId }) => callId === request.callId);
     if (!requestExists) return;
 
     estimateCallRequestTransaction(request);
