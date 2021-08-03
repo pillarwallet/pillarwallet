@@ -35,10 +35,9 @@ import { useFiatCurrency, useChainRates } from 'selectors';
 import { getBalanceInFiat } from 'utils/assets';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
 
 // Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 type Mode = 'actual' | 'estimate';
@@ -56,6 +55,7 @@ type Props = {
   isLoading?: boolean,
   isNotEnough?: boolean,
   style?: ViewStyleProp,
+  textStyle?: TextStyleProp
 };
 
 function FeeLabel({
@@ -66,6 +66,7 @@ function FeeLabel({
   isLoading,
   isNotEnough,
   style,
+  textStyle,
   chain,
 }: Props) {
   const { t } = useTranslation();
@@ -91,7 +92,7 @@ function FeeLabel({
       <Spacing w={8} />
 
       <FeePill onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text variant="small" color="#ffffff">
+        <Text variant="small" color={colors.secondaryText} style={textStyle}>
           {labelValue}
         </Text>
       </FeePill>
@@ -108,7 +109,5 @@ const LabelWrapper = styled.View`
 
 const FeePill = styled.TouchableOpacity`
   justify-content: center;
-  padding: 0 ${spacing.small}px;
   border-radius: 12px;
-  background-color: ${({ theme, $isNotEnough }) => ($isNotEnough ? theme.colors.negative : theme.colors.labelTertiary)};
 `;

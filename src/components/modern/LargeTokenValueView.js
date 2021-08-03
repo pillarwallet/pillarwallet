@@ -28,8 +28,14 @@ import { Spacing } from 'components/modern/Layout';
 import Text from 'components/modern/Text';
 
 // Utils
-import { formatTokenValueWithoutSymbol } from 'utils/format';
+import { formatTokenValue } from 'utils/format';
+import {
+  formatFiat,
+} from 'utils/common';
 import { appFont, spacing } from 'utils/variables';
+
+// Selectors
+import { useFiatCurrency } from 'selectors';
 
 // Types
 import type { TextStyleProp } from 'utils/types/react-native';
@@ -45,15 +51,16 @@ type Props = {|
  * Large (& stylized) component to display token value.
  */
 function LargeTokenValueView({ value, symbol, style }: Props) {
+  const fiatCurrency = useFiatCurrency();
   if (!value) return null;
 
   return (
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
       <RNText>
-        <TokenValue>{formatTokenValueWithoutSymbol(value, symbol, { stripTrailingZeros: true })}</TokenValue>
-        <Spacing w={spacing.extraSmall} />
-        <TokenSymbol>{symbol}</TokenSymbol>
+        <TokenSymbol>{formatFiat(value, fiatCurrency, { skipCents: true })}</TokenSymbol>
+        <Spacing w={spacing.small} />
+        <TokenValue>{formatTokenValue(value, symbol, { stripTrailingZeros: true })}</TokenValue>
       </RNText>
     </Container>
   );
@@ -69,10 +76,11 @@ const Container = styled.View`
 const TokenValue = styled(Text)`
   font-size: 36px;
   font-variant: tabular-nums;
+  font-family: ${appFont.medium};
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
 const TokenSymbol = styled(Text)`
   font-family: ${appFont.medium};
-  font-size: 20px;
-  color: ${({ theme }) => theme.colors.secondaryText};
+  font-size: 36px;
 `;

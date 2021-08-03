@@ -31,12 +31,13 @@ import { Spacing } from 'components/modern/Layout';
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
-import type { ImageSource } from 'utils/types/react-native';
+import type { ImageSource, TextStyleProp } from 'utils/types/react-native';
 
 type Variant = 'default' | 'destructive';
 
 type Props = {|
   title?: ?string,
+  titleStyle ?: TextStyleProp,
   variant?: Variant,
   iconSource?: ImageSource,
   children: React.Node,
@@ -46,7 +47,7 @@ type Instance = {
   close: () => void,
 };
 
-const BottomModal = React.forwardRef<Props, Instance>(({ title, variant, iconSource, children }, ref) => {
+const BottomModal = React.forwardRef<Props, Instance>(({ title, titleStyle, variant, iconSource, children }, ref) => {
   const renderIcon = () => {
     if (!iconSource) return null;
 
@@ -61,7 +62,7 @@ const BottomModal = React.forwardRef<Props, Instance>(({ title, variant, iconSou
     <SlideModal ref={ref} hideHeader noPadding centerFloatingItem={renderIcon()}>
       <SafeAreaContent>
         <Spacing h={iconSource ? 24 : spacing.small} />
-        {!!title && <Title $variant={variant}>{title}</Title>}
+        {!!title && <Title $variant={variant} style={titleStyle}>{title}</Title>}
         <ChildrenWrapper>{children}</ChildrenWrapper>
       </SafeAreaContent>
     </SlideModal>

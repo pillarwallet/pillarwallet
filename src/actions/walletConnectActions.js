@@ -112,7 +112,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         return;
       }
 
-      const { peerId, peerMeta, chainId } = payload?.params?.[0] || {};
+      const { peerId, peerMeta } = payload?.params?.[0] || {};
 
       if (!peerId || !peerMeta) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
@@ -131,7 +131,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
       navigate(NavigationActions.navigate({
         routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-        params: { peerId, peerMeta, chainId },
+        params: { connector },
       }));
     });
   };
