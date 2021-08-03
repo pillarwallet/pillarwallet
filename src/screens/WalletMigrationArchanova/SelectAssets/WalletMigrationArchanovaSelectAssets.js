@@ -89,12 +89,12 @@ const WalletMigrationArchanovaSelectAssets = () => {
     }
   };
 
-  const handleToggleCollectible = (contractAddress: string, id: string) => {
+  const handleToggleCollectible = (contractAddress: string, id: string, isLegacy: boolean) => {
     const key = buildCollectibleKey(contractAddress, id);
     if (collectiblesToMigrate[key]) {
       dispatch(removeCollectibleToMigrateAction(contractAddress, id));
     } else {
-      dispatch(setCollectibleToMigrateAction(contractAddress, id));
+      dispatch(setCollectibleToMigrateAction(contractAddress, id, isLegacy));
     }
   };
 

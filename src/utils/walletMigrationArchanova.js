@@ -286,9 +286,10 @@ async function applyAssetTransferTransaction(
   }
 
   // Migrate NFTs
-  const collectibleMigrations = recordValues(collectiblesToMigrate).map(({ contractAddress, id }) => ({
+  const collectibleMigrations = recordValues(collectiblesToMigrate).map(({ contractAddress, id, isLegacy }) => ({
     token: contractAddress,
     id,
+    useLegacyTransferMethod: isLegacy,
   }));
   if (collectibleMigrations.length > 0) {
     logBreadcrumb('walletMigrationArchanova', 'add collectibles', { collectibleMigrations });
