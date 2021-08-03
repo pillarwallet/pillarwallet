@@ -102,6 +102,7 @@ import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
 import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
+import { addMissingWalletEventsIfNeededAction } from './userEventsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -238,6 +239,8 @@ export const loginAction = (
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
         dispatch(fetchAllAccountsTotalBalancesAction());
       }
+
+      dispatch(addMissingWalletEventsIfNeededAction());
 
       // user is registered
       if (isOnline) {

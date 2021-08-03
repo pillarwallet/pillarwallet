@@ -34,7 +34,6 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNT_ENS } from 'constants/archanovaConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
@@ -56,6 +55,7 @@ import {
   LIQUIDITY_POOLS,
 } from 'constants/liquidityPoolsConstants';
 import { ADDRESS_ZERO } from 'constants/assetsConstants';
+import { EVENT_TYPE } from 'models/History';
 
 // local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -106,28 +106,16 @@ const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
 
 storiesOf('ActivityFeedItem', module)
   .addDecorator(WithThemeDecorator)
-  .add('Key wallet created', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Wallet created' }}
-    />
-  ))
   .add('Smart wallet created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Smart Wallet created' }}
-    />
-  ))
-  .add('Key wallet imported', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Wallet imported' }}
+      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: +(new Date()) }}
     />
   ))
   .add('PPN created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: USER_EVENT, subType: PPN_INIT_EVENT }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
     />
   ))
   .add('Collectible received', () => (
@@ -438,10 +426,7 @@ storiesOf('ActivityFeedItem', module)
   .add('Wallet backup', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{
-        type: USER_EVENT,
-        subType: WALLET_BACKUP_EVENT,
-      }}
+      event={{ type: EVENT_TYPE.WALLET_BACKED_UP, createdAt: +(new Date()) }}
     />
   ))
   .add('Collectible sent from KW to SW', () => (

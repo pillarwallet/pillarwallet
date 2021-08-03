@@ -24,7 +24,6 @@ import { noop } from 'utils/common';
 import { withTheme } from 'styled-components/native';
 
 // constants
-import { PPN_INIT_EVENT, USER_EVENT, WALLET_BACKUP_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -32,7 +31,6 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
-import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
@@ -46,6 +44,7 @@ import {
   LIQUIDITY_POOLS,
 } from 'constants/liquidityPoolsConstants';
 import { ADDRESS_ZERO } from 'constants/assetsConstants';
+import { EVENT_TYPE } from 'models/History';
 
 // local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -143,12 +142,7 @@ storiesOf('EventDetail', module)
       {...actions}
       {...commonProps}
       isArchanovaWalletActivated={false}
-      event={{
-        type: USER_EVENT,
-        subType: WALLET_CREATE_EVENT,
-        eventTitle: 'Smart Wallet created',
-        hash: '0xHash',
-      }}
+      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: +(new Date()) }}
       itemData={{
         label: 'Smart wallet',
         itemImageSource: smartWalletIcon,
@@ -406,188 +400,13 @@ storiesOf('EventDetail', module)
     />
   ))
 
-// KEY WALLET (and related) EVENTS
-  .add('Key wallet created', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: USER_EVENT,
-        subType: WALLET_CREATE_EVENT,
-        eventTitle: 'Wallet created',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'Key wallet',
-        itemImageSource: keyWalletIcon,
-        actionLabel: 'Created',
-      }}
-    />
-  ))
-  .add('Key wallet imported', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Wallet imported' }}
-      itemData={{
-        label: 'Key wallet',
-        itemImageSource: keyWalletIcon,
-        actionLabel: 'Backup secured',
-      }}
-    />
-  ))
-  .add('Key wallet back up', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{ type: USER_EVENT, subType: WALLET_BACKUP_EVENT }}
-      itemData={{
-        label: 'Key wallet',
-        itemImageSource: keyWalletIcon,
-        actionLabel: 'Imported',
-      }}
-    />
-  ))
-  .add('Key wallet Incoming Non-contact', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0x123456789123456789123456789',
-        to: 'KeyWallet',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: '0x1234567...132456789',
-        fullItemValue: '+ 10 PLR',
-        subtext: 'to Key wallet',
-        iconName: 'received',
-        iconColor: 'transactionReceivedIcon',
-        valueColor: 'secondaryAccent140',
-        isReceived: true,
-      }}
-    />
-  ))
-  .add('Key wallet Incoming Contact', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0xContact',
-        to: '0xKeyWallet',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'alexander',
-        fullItemValue: '+ 10 PLR',
-        subtext: 'to Key wallet',
-        iconName: null,
-        iconColor: 'transactionReceivedIcon',
-        valueColor: 'secondaryAccent140',
-        isReceived: true,
-      }}
-    />
-  ))
-  .add('Key wallet Outgoing Non-contact', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0xKeyWallet',
-        to: '0x123456789123456789123456789',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: '0x1234567...132456789',
-        fullItemValue: '- 10 PLR',
-        subtext: 'from Key wallet',
-        iconName: 'sent',
-        iconColor: 'negative',
-        valueColor: 'basic010',
-      }}
-    />
-  ))
-  .add('Key Wallet Top up | SW -> KW', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0xSmartWallet',
-        to: '0xKeyWallet',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'Smart wallet',
-        fullItemValue: '- 10 PLR',
-        itemImageSource: smartWalletIcon,
-        subtext: 'to Key wallet',
-        valueColor: 'basic010',
-      }}
-    />
-  ))
-  .add('Key Wallet Top up | KW <- SW', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0xSmartWallet',
-        to: '0xKeyWallet',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'Key wallet',
-        fullItemValue: '+ 10 PLR',
-        itemImageSource: keyWalletIcon,
-        subtext: 'from Smart wallet',
-        isReceived: true,
-        valueColor: 'secondaryAccent140',
-      }}
-    />
-  ))
-  .add('Key Wallet Collectible from SW', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: COLLECTIBLE_TRANSACTION,
-        from: '0xSmartWallet',
-        to: '0xKeyWallet',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'CryptoKitty',
-        itemImageUrl: placeholderImage,
-        subtext: 'Collectible from Smart Wallet',
-        actionLabel: 'Received',
-        iconBackgroundColor: 'basic060',
-        iconBorder: true,
-        fallbackToGenericToken: true,
-        isReceived: true,
-      }}
-    />
-  ))
-
 // PPN (and related) EVENTS
   .add('Pillar Network Created', () => (
     <EventDetailsStoryItem
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: USER_EVENT, subType: PPN_INIT_EVENT }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
@@ -602,7 +421,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: USER_EVENT, subType: PPN_INIT_EVENT }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,

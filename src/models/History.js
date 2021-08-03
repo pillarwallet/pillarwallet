@@ -32,10 +32,12 @@ export const EVENT_TYPE = {
   COLLECTIBLE_RECEIVED: ('collectibleReceived': 'collectibleReceived'),
   COLLECTIBLE_SENT: ('collectibleSent': 'collectibleSent'),
   TOKEN_EXCHANGE: ('tokenExchange': 'tokenExchange'),
-  EXCHANGE_FROM_FIAT: ('exchangeFromFiat', 'exchangeFromFiat'),
+  EXCHANGE_FROM_FIAT: ('exchangeFromFiat': 'exchangeFromFiat'),
   WALLET_CREATED: ('walletCreated': 'walletCreated'),
+  WALLET_BACKED_UP: ('walletBackedUp': 'walletBackedUp'),
   WALLET_ACTIVATED: ('walletActivated': 'walletActivated'),
   ENS_NAME_REGISTERED: ('ensNameRegistered': 'ensNameRegistered'),
+  PPN_INITIALIZED: ('ppnInitialized': 'ppnInitialized'),
 };
 
 export type EventType = $Values<typeof EVENT_TYPE>;
@@ -148,7 +150,7 @@ export type ExchangeFromFiatEvent = {|
   status: TransactionStatus,
 |};
 
-export type WalletEvent = WalletCreated | WalletActivated;
+export type WalletEvent = WalletCreated | WalletActivated | WalletBackedUp;
 
 export type WalletCreated = {|
   ...EventCommon,
@@ -161,6 +163,11 @@ export type WalletActivated = {|
   hash: string,
   fee: TokenValue,
   status: TransactionStatus,
+|};
+
+export type WalletBackedUp = {|
+  ...EventCommon,
+  type: typeof EVENT_TYPE.WALLET_BACKED_UP,
 |};
 
 export type EnsNameRegisteredEvent = {|
@@ -178,3 +185,5 @@ export type TransactionsStore = {
 export type HistoryLastSyncIds = {
   [accountId: string]: string,
 };
+
+export type AccountWalletEvents = { [accountId: string]: ChainRecord<WalletEvent[]> };

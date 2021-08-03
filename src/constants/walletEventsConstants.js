@@ -18,15 +18,5 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// types
-import type { ChainRecord } from 'models/Chain';
-
-export type UserEvent = {
-  id: string,
-  eventTitle: string,
-  createdAt: number,
-  type: string,
-  subType: string,
-};
-
-export type UserEvents = ChainRecord<UserEvent[]>
+export const ADD_WALLET_EVENT = 'ADD_WALLET_EVENT';
+export const SET_WALLET_EVENTS = 'SET_WALLET_EVENTS';

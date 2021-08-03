@@ -43,8 +43,8 @@ import { fontStyles, spacing } from 'utils/variables';
 // constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { USER_EVENT } from 'constants/userEventsConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import { EVENT_TYPE } from 'models/History';
 
 
 const ActivityFeedList = styled.FlatList`
@@ -214,7 +214,14 @@ class ActivityFeed extends React.Component<Props> {
   };
 
   shouldRenderActivityItem = (item: Object) => {
-    const typesThatRender = [USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION];
+    const typesThatRender = [
+      EVENT_TYPE.WALLET_CREATED,
+      EVENT_TYPE.WALLET_BACKED_UP,
+      EVENT_TYPE.WALLET_ACTIVATED,
+      EVENT_TYPE.ENS_NAME_REGISTERED,
+      TRANSACTION_EVENT,
+      COLLECTIBLE_TRANSACTION,
+    ];
     return typesThatRender.includes(item.type);
   };
 

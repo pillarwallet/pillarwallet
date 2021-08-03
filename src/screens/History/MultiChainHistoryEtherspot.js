@@ -27,6 +27,7 @@ import TabView from 'components/modern/TabView';
 import {
   activeAccountAddressSelector,
   supportedAssetsPerChainSelector,
+  useActiveAccount,
   useRootSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
@@ -39,8 +40,8 @@ import { CHAIN } from 'constants/chainConstants';
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
 import { addressesEqual } from 'utils/assets';
 import { useChainsConfig } from 'utils/uiConfig';
-import { isNotArchanovaUserEvent } from 'utils/userEvents';
 import { parseDate } from 'utils/common';
+import { getAccountId } from 'utils/accounts';
 
 // Types
 import { EVENT_TYPE, type Event, type WalletEvent } from 'models/History';
@@ -150,14 +151,16 @@ function useHistoryEvents(chain: Chain): Event[] {
 }
 
 function useWalletEvents(chain: Chain): WalletEvent[] {
-  const userEvents = useRootSelector((root) => root.userEvents.data);
-  const chainUserEvents = userEvents?.[chain] ?? [];
+  const walletEvents = useRootSelector((root) => root.walletEvents.data);
+  const activeAccount = useActiveAccount();
 
-  return chainUserEvents
-    .filter(isNotArchanovaUserEvent)
-    .map(({ id, createdAt }) => ({
-      id,
-      date: new Date(+parseDate(createdAt) * 1000),
-      type: EVENT_TYPE.WALLET_CREATED,
-    }));
+  if (!activeAccount) return [];
+
+  const activeAccountId = getAccountId(activeAccount);
+  const accountChainWalletEvents = walletEvents?.[activeAccountId]?.[chain] ?? [];
+
+  return accountChainWalletEvents.map((event) => ({
+    ...event,
+    date: parseDate(event.date), // fix mutation after retrieved from storage
+  }));
 }
