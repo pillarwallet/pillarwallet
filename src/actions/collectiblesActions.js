@@ -71,30 +71,22 @@ const parseCollectibleMedia = (data) => {
   };
 };
 
-export const collectibleFromResponse = (responseItem: OpenSeaAsset): Collectible => {
-  const {
-    token_id: id,
-    asset_contract: assetContract,
-    name,
-    description,
-  } = responseItem;
-
-  const { name: category, address: contractAddress } = assetContract;
-  const collectibleName = name || `${category} ${id}`;
-
-  const { image, icon } = parseCollectibleMedia(responseItem);
+export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectible => {
+  const contract = asset.asset_contract;
+  const { image, icon } = parseCollectibleMedia(asset);
 
   return {
-    id,
-    name: collectibleName,
-    description,
-    contractAddress,
+    id: asset.token_id,
+    name: asset.name || `${contract.name} ${asset.token_id}`,
+    description: asset.description,
+    contractAddress: contract.address,
     tokenType: COLLECTIBLES,
     image,
     icon,
     iconUrl: icon,
     imageUrl: image,
     chain: CHAIN.ETHEREUM,
+    isLegacy: contract.nft_version === '1.0',
   };
 };
 
@@ -127,7 +119,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
     }
 
     let updatedAccountCollectibles = openSeaCollectibles
-      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.map(collectibleFromResponse) }
+      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.map(parseCollectibleFromOpenSeaAsset) }
       : {};
 
     if (isEtherspotAccount(account)) {

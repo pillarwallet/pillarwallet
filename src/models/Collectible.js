@@ -34,7 +34,11 @@ export type Collectible = {
   tokenType: string,
   symbol?: void,
   decimals?: void,
-  chain: Chain;
+  chain: Chain,
+
+  // Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties) and require using `transfer` method instead of one
+  // inferred from ABI.
+  isLegacy: boolean,
 };
 
 export type CollectibleTransaction = {
