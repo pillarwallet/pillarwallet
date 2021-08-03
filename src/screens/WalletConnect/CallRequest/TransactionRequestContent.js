@@ -180,21 +180,14 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     estimateCallRequestTransaction(request);
   }, [request, estimateCallRequestTransaction, callRequests]);
 
-  return React.useMemo(() => ({
+  return {
     fee,
     gasSymbol,
     gasAddress,
     hasNotEnoughGas,
     isEstimating,
     estimationErrorMessage,
-  }), [
-    fee,
-    gasSymbol,
-    gasAddress,
-    hasNotEnoughGas,
-    isEstimating,
-    estimationErrorMessage,
-  ]);
+  };
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {
