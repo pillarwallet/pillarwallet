@@ -34,6 +34,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
+import { reportErrorLog } from 'utils/common';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -185,14 +186,38 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
-export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals ?? 18;
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {
+  if (gasToken?.decimals) return gasToken.decimals;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasDecimals failed: no native asset for chain', { chain });
+    return 18;
+  }
+
+  return chainNativeAsset.decimals;
 };
 
-export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.address ?? nativeAssetPerChain[chain].address ?? ADDRESS_ZERO;
+export const getGasAddress = (chain: Chain, gasToken: ?GasToken): string => {
+  if (gasToken?.address) return gasToken.address;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasAddress failed: no native asset for chain', { chain });
+    return ADDRESS_ZERO;
+  }
+
+  return chainNativeAsset.address;
 };
 
-export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
+export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
+  if (gasToken?.symbol) return gasToken.symbol;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasSymbol failed: no native asset for chain', { chain });
+    return ETH;
+  }
+
+  return chainNativeAsset.symbol;
 };
