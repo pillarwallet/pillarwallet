@@ -19,14 +19,15 @@
 */
 
 import * as React from 'react';
+import { BigNumber } from 'bignumber.js';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 
 // Local
 import { Container, LeftAddOn, Icon, Name, Balance } from './components';
+
 
 type Props = {|
   chain: Chain,
@@ -34,7 +35,7 @@ type Props = {|
   iconUrl: ?string,
   address?: string,
   symbol?: string,
-  balance?: ?Value,
+  balance?: ?BigNumber,
   onPress?: () => mixed,
   onPressBalance?: () => mixed,
   leftAddOn?: React.Node,
@@ -66,7 +67,7 @@ function AssetListItem({
       <Icon url={iconUrl} />
       <Name>{name}</Name>
 
-      {!!symbol && !!address && balance != null && (
+      {!!symbol && !!address && (
         <Balance
           chain={chain}
           assetSymbol={symbol}

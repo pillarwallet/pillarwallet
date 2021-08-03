@@ -42,7 +42,8 @@ export function buildRecord<Element, Value>(
 /**
  * Properly typed version of `Object.values`.
  */
-export function recordValues<Value>(record: Record<Value>): Value[] {
+export function recordValues<Value>(record: ?Record<Value>): Value[] {
+  if (!record) return [];
   return Object.keys(record).map((key) => record[key]);
 }
 
@@ -84,4 +85,6 @@ export function mapRecordValues<Value, Target>(
 /**
  * Returns a copy of the object but without any `undefined` or `null` properties.
  */
-export const omitNilProps = <T: { [string]: any }>(object: T): T => omitBy(object, isNil);
+export function omitNilProps<T: { [string]: any }>(object: T): T {
+  return omitBy(object, isNil);
+}

@@ -23,13 +23,18 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import {
+  ADDRESS_ZERO,
+  COLLECTIBLES,
+  ETH,
+} from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
+import { reportErrorLog } from 'utils/common';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -42,7 +47,6 @@ import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
   const gasTokenCost = get(feeInfo, 'gasTokenCost');
@@ -109,7 +113,6 @@ export const buildEthereumTransaction = async (
   let transaction = { to, value };
 
   if (data) transaction = { ...transaction, data };
-
   return transaction;
 };
 
@@ -183,14 +186,38 @@ const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): T
   return { to, amount, symbol: ETH, data, decimals: 18 };
 };
 
-export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;
+export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {
+  if (gasToken?.decimals) return gasToken.decimals;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasDecimals failed: no native asset for chain', { chain });
+    return 18;
+  }
+
+  return chainNativeAsset.decimals;
 };
 
-export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.address ?? nativeAssetPerChain[chain].address;
+export const getGasAddress = (chain: Chain, gasToken: ?GasToken): string => {
+  if (gasToken?.address) return gasToken.address;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasAddress failed: no native asset for chain', { chain });
+    return ADDRESS_ZERO;
+  }
+
+  return chainNativeAsset.address;
 };
 
-export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
-  return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals;
+export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
+  if (gasToken?.symbol) return gasToken.symbol;
+
+  const chainNativeAsset = nativeAssetPerChain[chain];
+  if (!chainNativeAsset) {
+    reportErrorLog('getGasSymbol failed: no native asset for chain', { chain });
+    return ETH;
+  }
+
+  return chainNativeAsset.symbol;
 };

@@ -255,7 +255,10 @@
     "fromToFormat": "{{from}} → {{to}}",
     "completed": "Completed",
     "failed": "Failed",
-    "ensMigration": "ENS migration"
+    "assetMigration": "Asset migration",
+    "ensMigration": "ENS migration",
+    "archanovaToEtherspot": "Pillar V1 to Etherspot (Pillar V2)",
+    "archanovaToEtherspotShort": "Pillar V1 to Etherspot"
   },
 
   "button": {
@@ -531,7 +534,12 @@
     "unableToSendTransaction": "Unable to send transaction. Please try again.",
     "unableToSetTransaction": "Unable to set transaction. Please try again.",
     "unableToResetTransactions": "Unable to reset transactions. Please try again.",
-    "prismicDataFetchFailed": "Can't fetch {{prismicDocument}} data. Please try again."
+    "prismicDataFetchFailed": "Can't fetch {{prismicDocument}} data. Please try again.",
+    "noTransactionsToEstimate": "No transactions to estimate.",
+    "failedToSignMessage": "Failed to sign message",
+    "failedToBuildTransaction": "Failed to build transaction",
+    "failedToEstimateTransaction": "Failed to estimate transaction",
+    "failedToSubmitTransaction": "Failed to submit transaction"
   },
 
   "home": {
@@ -687,6 +695,55 @@
     }
   },
 
+  "walletMigrationArchanova": {
+    "banner": {
+      "title": "Migrate assets from Pillar V1 to Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "Migrate your assets",
+      "subtitle": "Switch to Etherspot (Pillar V2)",
+      "header": "Your account is being upgraded to a Pillar Smart Wallet.",
+      "body": "Etherspot is multi-chain ready. Polygon, Binance Smart Chain and xDai is currently supported. Migrate assets to your new Pillar v2 wallet and enjoy DeFi with low-to-no fees."
+    },
+    "status": {
+      "title": "Migration status",
+      "emptyState": "No migration transactions"
+    },
+    "selectAssets": {
+      "title": "Migration to Smart Wallet",
+      "migratingFrom": "migrating from",
+      "review": "Review"
+    },
+    "setAmount": {
+      "title": "Set amount"
+    },
+    "review": {
+      "title": "Review",
+      "header": "You are migrating",
+      "details": {
+        "header": "Migration details",
+        "fromWallet": "From Pillar V1",
+        "toWallet": "To Etherspot (Pillar V2)"
+      },
+      "assets": {
+        "header": "Selected assets"
+      },
+      "fees": {
+        "header": "Fees",
+        "ethereum": "Max. Ethereum fee",
+        "pillar": "Pillar fee",
+        "total": "Total Fee"
+      },
+      "calculateFee": "Calculate transaction fee",
+      "calculatingFee": "Calculating fee…",
+      "submit": "Submit",
+      "estimatingTransactions": "Estimating transactions…"
+    },
+    "pinConfirm": {
+      "submittingTransactions": "Submitting transactions…"
+    }
+  },
+
   "smartWalletContent": {
     "activationCard": {
       "button": {
@@ -732,8 +789,7 @@
       "walletActivatedScreen": "What's next"
     },
     "banner": {
-      "title": "Migrate to Smart Wallet",
-      "body": "Transfer all your assets to an advanced platform."
+      "title": "Migrate assets from key wallet to Etherspot (Pillar V2)"
     },
     "intro": {
       "title": "Time to enhance your crypto experience",
@@ -1099,11 +1155,12 @@
       "message": "Message",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
+      "maximumFee": "Maximum Fee",
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Max. Ethereum fee",
+      "allowancePlusEthFee": "Allowance + Maximum Fee",
       "migratingFrom": "migrating from",
       "network": "Network"
     },

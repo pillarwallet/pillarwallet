@@ -127,7 +127,6 @@ const SendAsset = ({
       value: currentValue.toString(),
       assetData: mapToAssetDataType(assetData),
     };
-
     estimateTransaction(transactionToEstimate, chain);
   };
 

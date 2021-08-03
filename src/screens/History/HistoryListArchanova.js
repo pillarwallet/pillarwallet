@@ -19,11 +19,13 @@
 */
 
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Components
 import ActivityFeed from 'components/ActivityFeed';
+import RefreshControl from 'components/RefreshControl';
 
 // Constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -33,7 +35,10 @@ import { CHAIN } from 'constants/chainConstants';
 // Selectors
 import { useRootSelector } from 'selectors';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
-import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
+import { archanovaAccountEthereumHistorySelector, isFetchingHistorySelector } from 'selectors/history';
+
+// Actions
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -42,12 +47,23 @@ import { mapTransactionsHistory } from 'utils/feedData';
 function HistoryListArchanova() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
+  const dispatch = useDispatch();
 
+  const isRefreshing = useRootSelector(isFetchingHistorySelector);
   const feedItems = useHistoryFeedItems();
+
+  const handleRefresh = () => {
+    dispatch(fetchTransactionsHistoryAction());
+  };
+
+  const flatListProps = {
+    refreshControl: <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />,
+  };
 
   return (
     <ActivityFeed
       feedData={feedItems}
+      flatListProps={flatListProps}
       contentContainerStyle={{ flexGrow: 1, paddingBottom: safeArea.bottom }}
       navigation={navigation}
       isForAllAccounts

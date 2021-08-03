@@ -147,7 +147,6 @@ export type FeeWithGasToken = {
   feeInWei: BigNumber,
   gasToken: GasToken,
 };
-
 export type Transaction = {
   _id: string,
   hash?: string,
