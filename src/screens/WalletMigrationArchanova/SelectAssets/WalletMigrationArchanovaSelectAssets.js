@@ -39,6 +39,7 @@ import {
 // Selectors
 import { useRootSelector } from 'selectors';
 import { archanovaAccountSelector } from 'selectors/accounts';
+import { archanovaCollectiblesSelector } from 'selectors/archanova';
 
 // Actions
 import { switchToArchanovaAccountIfNeededAction } from 'actions/accountsActions';
@@ -72,8 +73,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
 
   const tokens = useTokensWithBalances();
 
-  // TODO: disabled NTFs because archanova migrator contract does not handle all kinds of NTFs atm (e.g. cryptokitties)
-  const collectibles = []; // useRootSelector(archanovaCollectiblesSelector);
+  const collectibles = useRootSelector(archanovaCollectiblesSelector);
   const totalValueInFiat = useTotalMigrationValueInFiat();
 
   // Force active account to be archanova
