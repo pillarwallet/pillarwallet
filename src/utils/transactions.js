@@ -23,7 +23,11 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import {
+  ADDRESS_ZERO,
+  COLLECTIBLES,
+  ETH,
+} from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -188,6 +192,14 @@ export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
 export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.address ?? nativeAssetPerChain[chain].address;
 };
+
+// export const getGasDecimals = (chain: Chain, gasToken: ?GasToken) => {
+//   return gasToken?.decimals ?? nativeAssetPerChain[chain].decimals ?? 18;
+// };
+//
+// export const getGasAddress = (chain: Chain, gasToken: ?GasToken) => {
+//   return gasToken?.address ?? nativeAssetPerChain[chain].address ?? ADDRESS_ZERO;
+// };
 
 export const getGasSymbol = (chain: Chain, gasToken: ?GasToken) => {
   return gasToken?.symbol ?? nativeAssetPerChain[chain].symbol ?? ETH;

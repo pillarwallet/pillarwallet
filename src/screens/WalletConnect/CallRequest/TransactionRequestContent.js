@@ -170,11 +170,31 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
   };
   const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
 
-  const { estimateCallRequestTransaction } = useWalletConnect();
+  const { estimateCallRequestTransaction, callRequests } = useWalletConnect();
 
-  React.useEffect(() => estimateCallRequestTransaction(request), [request, estimateCallRequestTransaction]);
+  React.useEffect(() => {
+    // perform additional check to avoid estimate on request dismiss
+    const requestExists = callRequests.some(({ callId }) => +callId === +request.callId);
+    if (!requestExists) return;
 
-  return { fee, gasSymbol, gasAddress, hasNotEnoughGas, isEstimating, estimationErrorMessage };
+    estimateCallRequestTransaction(request);
+  }, [request, estimateCallRequestTransaction, callRequests]);
+
+  return React.useMemo(() => ({
+    fee,
+    gasSymbol,
+    gasAddress,
+    hasNotEnoughGas,
+    isEstimating,
+    estimationErrorMessage,
+  }), [
+    fee,
+    gasSymbol,
+    gasAddress,
+    hasNotEnoughGas,
+    isEstimating,
+    estimationErrorMessage,
+  ]);
 };
 
 const useViewData = (request: WalletConnectCallRequest) => {
