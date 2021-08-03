@@ -1161,11 +1161,12 @@
       "message": "Message",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
+      "maximumFee": "Maximum Fee",
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Max. Ethereum fee",
+      "allowancePlusEthFee": "Allowance + Maximum Fee",
       "migratingFrom": "migrating from",
       "network": "Network"
     },
