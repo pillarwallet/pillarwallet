@@ -25,7 +25,7 @@ import { mapValues } from 'lodash';
 import { activeAccountIdSelector } from 'selectors';
 
 // types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { ChainRecord } from 'models/Chain';
 import type {
   Collectible,
@@ -38,7 +38,7 @@ import type {
 export const collectiblesPerAccountSelector = ({ collectibles }: RootReducerState): CollectiblesStore =>
   collectibles.data;
 
-export const accountCollectiblesSelector = createSelector(
+export const accountCollectiblesSelector: Selector<ChainRecord<Collectible[]>> = createSelector(
   collectiblesPerAccountSelector,
   activeAccountIdSelector,
   (collectiblesPerAccount: CollectiblesStore, activeAccountId: ?string): ChainRecord<Collectible[]> => {

@@ -38,6 +38,7 @@ export function buildCollectibleFromCollectibleItem(
     iconUrl,
     contractAddress,
     tokenId,
+    isLegacy,
   } = collectibleItem;
 
   return {
@@ -52,5 +53,6 @@ export function buildCollectibleFromCollectibleItem(
     tokenId,
     chain,
     tokenType: COLLECTIBLES,
+    isLegacy,
   };
 }

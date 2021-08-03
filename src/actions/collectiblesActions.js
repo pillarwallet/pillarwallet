@@ -134,7 +134,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   };
 };
 
-const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransaction => {
+const parseCollectibleTransactionFromOpenSeaHistoryItem = (event: OpenSeaHistoryItem): CollectibleTransaction => {
   const {
     asset,
     transaction,
@@ -142,17 +142,7 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransacti
     from_account: fromAcc,
   } = event;
 
-  const {
-    asset_contract: assetContract,
-    name,
-    token_id: tokenId,
-    description,
-  } = asset;
-
-  const {
-    name: category,
-    address: contractAddress,
-  } = assetContract;
+  const contract = asset.asset_contract;
 
   const {
     transaction_hash: trxHash,
@@ -162,39 +152,24 @@ const collectibleTransaction = (event: OpenSeaHistoryItem): CollectibleTransacti
 
   const transactionId = (+transaction.id).toString();
 
-  const collectibleName = name || `${category} ${tokenId}`;
-
-  const { image, icon } = parseCollectibleMedia(asset);
-
-  const assetData = {
-    id: tokenId,
-    name: collectibleName,
-    description,
-    image,
-    icon,
-    iconUrl: icon,
-    imageUrl: image,
-    contractAddress,
-    tokenType: COLLECTIBLES,
-    chain: CHAIN.ETHEREUM,
-  };
+  const assetData = parseCollectibleFromOpenSeaAsset(asset);
 
   return {
     to: toAcc.address,
     from: fromAcc.address,
     hash: trxHash,
     batchHash: null,
-    createdAt: (new Date(timestamp).getTime()) / 1000,
+    createdAt: new Date(timestamp).getTime() / 1000,
     _id: transactionId,
     protocol: 'Ethereum', // eslint-disable-line i18next/no-literal-string
-    assetSymbol: collectibleName,
-    assetAddress: contractAddress,
-    contractAddress,
+    assetSymbol: assetData.name,
+    assetAddress: contract.address,
+    contractAddress: contract.address,
     value: 1,
     blockNumber,
     status: 'confirmed', // eslint-disable-line i18next/no-literal-string
     type: COLLECTIBLE_TRANSACTION,
-    icon,
+    icon: assetData.icon ?? '',
     assetData,
   };
 };
@@ -247,7 +222,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
 
     const accountCollectiblesHistory = openSeaHistory
       .filter(isOpenSeaCollectibleTransaction)
-      .map(collectibleTransaction);
+      .map(parseCollectibleTransactionFromOpenSeaHistoryItem);
 
     // TODO: implement multichain when available
     const updatedCollectiblesHistory = {
