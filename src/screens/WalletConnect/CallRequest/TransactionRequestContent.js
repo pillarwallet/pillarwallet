@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
+import SwipeButton from 'rn-swipe-button';
 import styled, { useTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
@@ -32,7 +33,6 @@ import LargeTokenValueView from 'components/modern/LargeTokenValueView';
 import Text from 'components/modern/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/modern/Icon';
-import SwiperButton from 'components/modern/SwiperButton';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -140,7 +140,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      <SwiperButton
+      <SwipeButton
         width="100%"
         height={72}
         disabled={isConfirmDisabled}
