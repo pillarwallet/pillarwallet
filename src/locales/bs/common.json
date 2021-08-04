@@ -248,6 +248,7 @@
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Pretplati se",
     "support": "Podrška",
+    "swipeConfirm": "Prevucite za potvrdu",
     "topUp": "Nadopuna",
     "topUpMore": "Nadopuni još",
     "topUpPLRTank": "Nadopuni PLR Tanker",
@@ -988,8 +989,9 @@
       "requestsList": "Zahtjevi",
       "activeConnections": "Aktivne veze",
       "connect": "Spoji",
-      "walletConnectRequests": "WalletConnect Zahtjev",
+      "walletConnectRequests": "Povežite se na {{app}}",
       "walletConnect": "WalletConnect",
+      "description": "Budite DeFi kuhar sa Sushijem. Zamijenite, zaradite novac, složite prinose, posuđujte, posuđujte, iskoristite sve na jednoj decentraliziranoj platformi koju vodi zajednica",
       "requestType": {
         "call": "Zahtjev za poziv",
         "transaction": "Zahtjev za transakciju",

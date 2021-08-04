@@ -248,6 +248,7 @@
     "smartWalletFAQ": "ብልህ ቦርሳ ተደጋጋሚ ጥያቄዎች",
     "subscribe": "ይመዝገቡ",
     "support": "ረዳት",
+    "swipeConfirm": "ለማረጋገጥ ያንሸራትቱ",
     "topUp": "ይሙሉ",
     "topUpMore": "ጨምረው ይሙሉ",
     "topUpPLRTank": "የ PLR በርሜሉን ይሙሉ",
@@ -988,8 +989,9 @@
       "requestsList": "ጥያቄዎች",
       "activeConnections": "ገቢራዊ ግንኙነቶች",
       "connect": "አገናኝ",
-      "walletConnectRequests": "የዎሌት ኮኔክት ጥያቄ",
+      "walletConnectRequests": "ጋር ይገናኙ {{app}}",
       "walletConnect": "ዎሌት ኮኔክት",
+      "description": "ከሱሺ ጋር DeFi f ይሁኑ። ሁሉንም ነገር ይቀያይሩ ፣ ገንዘብ ያግኙ ፣ ያከማቹ ፣ ያበድሩ ፣ ያበድሩ ፣ ሁሉንም ነገር በአንድ ያልተማከለ ማህበረሰብ-ተኮር መድረክ ላይ ይጠቀሙ",
       "requestType": {
         "call": "የጥሪ ጥያቄ",
         "transaction": "የግብይት ጥያቄ",
