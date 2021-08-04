@@ -104,7 +104,7 @@ export function addMigrationTransactionToHistoryAction(hash: string) {
     }
 
     const eth = nativeAssetPerChain.ethereum;
-    const migratorAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
+    const migratorAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_V2_ADDRESS;
 
     const transaction = buildHistoryTransaction({
       from: archanovaAccount.id,

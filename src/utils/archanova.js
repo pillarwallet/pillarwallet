@@ -205,10 +205,7 @@ export const parseArchanovaTransactions = (
       paymentHash,
       tokenValue,
       index,
-      gas: {
-        used: gasUsed,
-        price: gasPrice,
-      },
+      gas: { used: gasUsed, price: gasPrice },
       gasToken: gasTokenAddress,
       fee: transactionFee,
       inputData,
@@ -216,9 +213,10 @@ export const parseArchanovaTransactions = (
 
     // NOTE: same transaction could have multiple records, those are different by index
     // we always leave only one record with the biggest index number
-    const sameHashTransactions = archanovaTransactions.filter(tx => isCaseInsensitiveMatch(tx.hash, hash));
-    if (sameHashTransactions.length > 1) { // don't count current transaction
-      const maxIndex = Math.max(...sameHashTransactions.map(tx => tx.index));
+    const sameHashTransactions = archanovaTransactions.filter((tx) => isCaseInsensitiveMatch(tx.hash, hash));
+    if (sameHashTransactions.length > 1) {
+      // don't count current transaction
+      const maxIndex = Math.max(...sameHashTransactions.map((tx) => tx.index));
       if (index < maxIndex) {
         // don't store transactions with lover index
         return mapped;
@@ -264,8 +262,9 @@ export const parseArchanovaTransactions = (
         };
       } else {
         // Rari tokens are not supported yet but we want events with rari tokens
-        const rariToken = (Object.values(RARI_TOKENS_DATA): any)
-          .find(token => addressesEqual(token.contractAddress, tokenAddress));
+        const rariToken = (Object.values(RARI_TOKENS_DATA): any).find((token) =>
+          addressesEqual(token.contractAddress, tokenAddress),
+        );
         if (rariToken) {
           transaction = {
             ...transaction,
@@ -280,7 +279,7 @@ export const parseArchanovaTransactions = (
 
     if (transactionType === AccountTransactionTypes.Settlement) {
       // get and process all transactions with the same hash
-      const extra = sameHashTransactions.map(tx => {
+      const extra = sameHashTransactions.map((tx) => {
         const txAsset = findAssetByAddress(supportedAssets, tx.tokenAddress);
         const txValue = tx.tokenValue.toString();
         return {
@@ -346,8 +345,10 @@ export const parseArchanovaTransactions = (
       }
     }
 
-    const migratorContractAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
-    if (addressesEqual(migratorContractAddress, transaction.to)) {
+    const isToMigratorContract =
+      addressesEqual(transaction.to, getEnv().ARCHANOVA_MIGRATOR_CONTRACT_V2_ADDRESS) ||
+      addressesEqual(transaction.to, getEnv().ARCHANOVA_MIGRATOR_CONTRACT_V1_ADDRESS);
+    if (isToMigratorContract) {
       const isEnsMigration = inputData?.includes(ARCHANOVA_ENS_TRANSFER_METHOD_HASH);
       transaction = {
         ...transaction,
