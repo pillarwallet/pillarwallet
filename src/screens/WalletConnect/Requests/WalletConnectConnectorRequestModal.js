@@ -40,7 +40,7 @@ import type { WalletConnectConnector } from 'models/WalletConnect';
 
 // Utils
 import { chainFromChainId, mapChainToChainId } from 'utils/chains';
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
@@ -73,7 +73,6 @@ function WalletConnectDisconnectModal({ connector }: Props) {
     <BottomModal
       ref={ref}
       title={t('walletConnectContent.title.walletConnectRequests', { app: appName })}
-      titleStyle={styles.title}
     >
       {!!iconUrl && (
         <Image
@@ -104,9 +103,6 @@ const getViewData = (connector: WalletConnectConnector) => {
 };
 
 const styles = {
-  title: {
-    fontSize: fontSizes.big,
-  },
   icon: {
     width: 64,
     height: 64,
