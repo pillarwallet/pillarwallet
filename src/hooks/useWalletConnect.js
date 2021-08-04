@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 // selectors
@@ -60,26 +60,48 @@ const useWalletConnect = (): UseWalletConnectResult => {
 
   const dispatch = useDispatch();
 
-  const connectToConnector = (uri: string) => dispatch(connectToWalletConnectConnectorAction(uri));
-  const disconnectSessionByUrl = (url: string) => dispatch(disconnectWalletConnectSessionByUrlAction(url));
+  const connectToConnector = useCallback(
+    (uri: string) => dispatch(connectToWalletConnectConnectorAction(uri)),
+    [dispatch],
+  );
 
-  const approveConnectorRequest = (peerId: string, chainId: number) =>
-    dispatch(approveWalletConnectConnectorRequestAction(peerId, chainId));
-  const rejectConnectorRequest = (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId));
+  const disconnectSessionByUrl = useCallback(
+    (url: string) => dispatch(disconnectWalletConnectSessionByUrlAction(url)),
+    [dispatch],
+  );
 
-  const approveCallRequest = (
-    callRequest: WalletConnectCallRequest,
-    result: string,
-  ) => dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result));
+  const approveConnectorRequest = useCallback(
+    (peerId: string, chainId: number) => dispatch(approveWalletConnectConnectorRequestAction(peerId, chainId)),
+    [dispatch],
+  );
 
-  const rejectCallRequest = (
-    callRequest: WalletConnectCallRequest,
-    rejectReasonMessage?: string,
-  ) => dispatch(rejectWalletConnectCallRequestAction(callRequest.callId, rejectReasonMessage));
+  const rejectConnectorRequest = useCallback(
+    (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId)),
+    [dispatch],
+  );
 
-  const estimateCallRequestTransaction = (
-    callRequest: WalletConnectCallRequest,
-  ) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest));
+  const approveCallRequest = useCallback(
+    (
+      callRequest: WalletConnectCallRequest,
+      result: string,
+    ) => dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result)),
+    [dispatch],
+  );
+
+  const rejectCallRequest = useCallback(
+    (
+      callRequest: WalletConnectCallRequest,
+      rejectReasonMessage?: string,
+    ) => dispatch(rejectWalletConnectCallRequestAction(callRequest.callId, rejectReasonMessage)),
+    [dispatch],
+  );
+
+  const estimateCallRequestTransaction = useCallback(
+    (
+      callRequest: WalletConnectCallRequest,
+    ) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest)),
+    [dispatch],
+  );
 
   return useMemo(() => ({
     activeConnectors,
@@ -91,10 +113,16 @@ const useWalletConnect = (): UseWalletConnectResult => {
     disconnectSessionByUrl,
     connectToConnector,
     estimateCallRequestTransaction,
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     activeConnectors,
     callRequests,
+    approveConnectorRequest,
+    rejectConnectorRequest,
+    approveCallRequest,
+    rejectCallRequest,
+    disconnectSessionByUrl,
+    connectToConnector,
+    estimateCallRequestTransaction,
   ]);
 };
 
