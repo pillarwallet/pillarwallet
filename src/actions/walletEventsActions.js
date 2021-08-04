@@ -33,7 +33,6 @@ import {
   getSmartWalletAccountCreatedAtTimestamp,
   isAccountType,
   isArchanovaAccount,
-  isEtherspotAccount,
   isNotKeyBasedType,
 } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
@@ -62,9 +61,7 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
       return;
     }
 
-    const accountCreatedAt = isEtherspotAccount(account)
-      ? new Date(createdAtTimestamp)
-      : new Date(createdAtTimestamp / 1000); // archanova history components use unix
+    const accountCreatedAt = new Date(createdAtTimestamp);
 
     const accountId = getAccountId(account);
 
@@ -131,7 +128,7 @@ export const addWalletBackupEventAction = () => {
         const walletBackupEvent = {
           id: `${accountId}-${chain}-${EVENT_TYPE.WALLET_BACKED_UP}`,
           type: EVENT_TYPE.WALLET_BACKED_UP,
-          date: +new Date() / 1000,
+          date: new Date(),
         };
 
         dispatch({

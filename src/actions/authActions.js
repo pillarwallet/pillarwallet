@@ -102,7 +102,7 @@ import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { getTutorialDataAction } from './cmsActions';
 import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
-import { addMissingWalletEventsIfNeededAction } from './userEventsActions';
+import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 
 
 const storage = Storage.getInstance('db');

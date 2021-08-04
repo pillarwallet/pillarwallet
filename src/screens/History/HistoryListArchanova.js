@@ -43,6 +43,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getAccountId } from 'utils/accounts';
+import { parseDate } from 'utils/common';
 
 
 function HistoryListArchanova() {
@@ -84,6 +85,11 @@ function useHistoryFeedItems(): any[] {
     ? walletEvents?.[getAccountId(activeAccount)]?.ethereum ?? []
     : [];
 
+  const mappedArchanovaEthereumWalletEvents = archanovaEthereumWalletEvents.map((walletEvent) => ({
+    ...walletEvent,
+    createdAt: new Date(+parseDate(walletEvent.date) / 1000),
+  }));
+
   const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
   const mappedTransactions = mapTransactionsHistory(
     transactions,
@@ -106,6 +112,6 @@ function useHistoryFeedItems(): any[] {
   return [
     ...mappedTransactions,
     ...mappedCollectiblesTransactions,
-    ...archanovaEthereumWalletEvents,
+    ...mappedArchanovaEthereumWalletEvents,
   ];
 }

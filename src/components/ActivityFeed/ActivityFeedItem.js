@@ -299,7 +299,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     return iconUrl ? { uri: iconUrl } : null;
   };
 
-  getUserEventData = (event: Object) => {
+  getWalletEventData = (event: Object) => {
     const { isArchanovaWalletActivated, theme } = this.props;
     const { keyWalletIcon, PPNIcon, smartWalletIcon } = images(theme);
     switch (event.type) {
@@ -915,7 +915,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       case EVENT_TYPE.WALLET_BACKED_UP:
       case EVENT_TYPE.WALLET_CREATED:
       case EVENT_TYPE.PPN_INITIALIZED:
-        return this.getUserEventData(event);
+        return this.getWalletEventData(event);
       case TRANSACTION_EVENT:
         return this.getTransactionEventData(event);
       case COLLECTIBLE_TRANSACTION:

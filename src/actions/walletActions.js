@@ -48,7 +48,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 // actions
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
-import { addWalletBackupEventAction } from './userEventsActions';
+import { addWalletBackupEventAction } from './walletEventsActions';
 import { changeUseBiometricsAction } from './appSettingsActions';
 
 

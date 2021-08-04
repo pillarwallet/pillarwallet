@@ -618,7 +618,7 @@ export class EventDetail extends React.Component<Props> {
     );
   };
 
-  getUserEventData = (event: Object): ?EventData => {
+  getWalletEventData = (event: Object): ?EventData => {
     const { isPPNActivated, isArchanovaWalletActivated } = this.props;
 
     switch (event.type) {
@@ -1115,7 +1115,7 @@ export class EventDetail extends React.Component<Props> {
     switch (event.type) {
       case EVENT_TYPE.WALLET_CREATED:
       case EVENT_TYPE.PPN_INITIALIZED:
-        eventData = this.getUserEventData(event);
+        eventData = this.getWalletEventData(event);
         break;
       case TRANSACTION_EVENT:
       case TRANSACTION_PENDING_EVENT:
