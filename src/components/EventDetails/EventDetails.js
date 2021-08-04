@@ -301,7 +301,7 @@ const ItemIcon = styled(Icon)`
 const ActionIcon = styled(Icon)`
   margin-left: 4px;
   color: ${({ iconColor, theme }) => iconColor || theme.colors.secondaryText};
-  font-size: ${fontSizes.big};
+  font-size: ${fontSizes.big}px;
 `;
 
 const Row = styled.View`

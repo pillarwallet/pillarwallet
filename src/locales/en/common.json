@@ -32,10 +32,7 @@
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
-  "ofTotalTokenValue": "of {{value}} {{token}} total",
   "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
-  "maxTokenValue": "Max {{value}} {{token}}",
-  "minTokenValue": "Min {{value}} {{token}}",
   "lessThanSignValue": "<{{value}}",
   "moreThanSignValue": ">{{value}}",
   "rangeValues": "{{fromValue}} - {{toValue}}",
@@ -473,7 +470,6 @@
       "notOwnedCollectible": "You no longer own this NFT",
       "collectibleCantBeTransferred": "This NFT can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
-      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}",
       "cantCalculateFee": "Unable to calculate transaction fee"
     },
     "emptyAddress": "Address cannot be empty",
@@ -488,7 +484,6 @@
     "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
     "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
     "notEnoughTokenForFee": "Not enough {{token}} for the transaction fee",
-    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again.",
     "noCameraPermission": "Camera permissions not granted - cannot open the QR scanner.",
     "noField": {
       "address": "No address to show",
@@ -506,7 +501,6 @@
       "shouldNotHaveDecimals": "Amount should not contain decimal places",
       "notProvided": "Amount should be specified",
       "shouldBeGreaterThanValue": "Amount should be greater than {{value}} {{token}}",
-      "shouldNotBeGreaterThanBalanceValue": "Amount should not be bigger than your balance - {{balance}} {{token}}",
       "amountShouldBeBiggerThanZero": "Amount should be bigger than 0",
       "notEnoughToken": "Not enough {{token}}",
       "shouldBeGreaterThan1Wei": "Amount should be greater than 1 Wei (0.000000000000000001 ETH)"
