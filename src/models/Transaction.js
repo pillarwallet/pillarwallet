@@ -20,6 +20,9 @@
 
 import { BigNumber } from 'bignumber.js';
 
+// constants
+import { ERC721_TRANSFER_METHODS } from 'constants/transactionsConstants';
+
 // types
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
@@ -195,6 +198,19 @@ export type TransactionPayload = {
   usePPN?: boolean,
   sequentialTransactions?: TransactionPayload[],
   chain?: Chain,
+};
+
+export type Erc721TransferMethod = $Values<typeof ERC721_TRANSFER_METHODS>;
+
+export type Erc721TransactionPayload = {
+  from: string,
+  to: string,
+  contractAddress: string,
+  tokenId: string,
+
+  // Transaction should use legacy `transfer` method instead of determining the method from ABI. 
+  // This is useful of pre-721 NTFs like cryptokitties.
+  useLegacyTransferMethod: boolean,
 };
 
 export type CollectibleTransactionPayload = $Shape<TransactionPayload>;

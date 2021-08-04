@@ -23,7 +23,7 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
 
 // utils
 import {
@@ -51,6 +51,7 @@ import {
 
 // types
 import type { Asset } from 'models/Asset';
+import type { Erc721TransactionPayload, Erc721TransferMethod } from 'models/Transaction';
 import type { RatesByAssetAddress } from 'models/Rates';
 
 
@@ -164,11 +165,11 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
 
   if (!isReceiverContractAddress && contractHasMethod(code, safeTransferFromHash)) {
-    return 'safeTransferFrom';
+    return ERC721_TRANSFER_METHODS.SAFE_TRANSFER_FROM;
   } else if (contractHasMethod(code, transferFromHash)) {
-    return 'transferFrom';
+    return ERC721_TRANSFER_METHODS.TRANSFER_FROM;
   } else if (contractHasMethod(code, transferHash)) {
-    return 'transfer';
+    return ERC721_TRANSFER_METHODS.TRANSFER;
   }
 
   /**
@@ -176,7 +177,7 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
    * let's fallback to transferFrom which belongs to EIP 721/1155 standard
    */
 
-  return 'transferFrom';
+  return ERC721_TRANSFER_METHODS.TRANSFER_FROM;
 }
 /* eslint-enable i18next/no-literal-string */
 
@@ -206,15 +207,15 @@ export const buildERC721TransactionData = async (transaction: Object, customProv
 
   try {
     switch (contractTransferMethod) {
-      case 'safeTransferFrom':
+      case ERC721_TRANSFER_METHODS.SAFE_TRANSFER_FROM:
         contractAbi = ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM;
         params = [from, to, tokenId];
         break;
-      case 'transfer':
+      case ERC721_TRANSFER_METHODS.TRANSFER:
         contractAbi = ERC721_CONTRACT_ABI_TRANSFER;
         params = [to, tokenId];
         break;
-      case 'transferFrom':
+      case ERC721_TRANSFER_METHODS.TRANSFER_FROM:
         contractAbi = ERC721_CONTRACT_ABI_TRANSFER_FROM;
         params = [from, to, tokenId];
         break;
