@@ -95,9 +95,10 @@ export const semanticLightThemeColors = {
   hazardIconColor: '#8b939e',
   refreshControl: '#0000004C',
   interjectionPointText: '#0a1427',
-  walletConnectRequestBody: '#818eb3',
+  walletConnectMessage: '#818eb3',
   swiperButtonPrimaryBackground: lightThemeColors.basic000,
   swiperButtonThumbBackground: baseColors.white,
+  handleBarBackground: '#ededed',
 };
 
 export const semanticDarkThemeColors = {
@@ -153,9 +154,10 @@ export const semanticDarkThemeColors = {
   hazardIconColor: '#8b939e',
   refreshControl: '#FFFFFF4C',
   interjectionPointText: '#0a1427',
-  walletConnectRequestBody: '#a7a7a7',
+  walletConnectMessage: '#a7a7a7',
   swiperButtonPrimaryBackground: '#520f8c',
   swiperButtonThumbBackground: baseColors.electricViolet,
+  handleBarBackground: '#4d4d4d',
 };
 
 export const themedColors = {
@@ -271,9 +273,9 @@ export const themedColors = {
     lightTheme: semanticLightThemeColors.interjectionPointText,
     darkTheme: semanticDarkThemeColors.interjectionPointText,
   }),
-  walletConnectRequestBody: theme('current', {
-    lightTheme: semanticLightThemeColors.walletConnectRequestBody,
-    darkTheme: semanticDarkThemeColors.walletConnectRequestBody,
+  walletConnectMessage: theme('current', {
+    lightTheme: semanticLightThemeColors.walletConnectMessage,
+    darkTheme: semanticDarkThemeColors.walletConnectMessage,
   }),
   swiperButtonPrimaryBackground: theme('current', {
     lightTheme: semanticLightThemeColors.swiperButtonPrimaryBackground,
@@ -282,6 +284,10 @@ export const themedColors = {
   swiperButtonThumbBackground: theme('current', {
     lightTheme: semanticLightThemeColors.swiperButtonThumbBackground,
     darkTheme: semanticDarkThemeColors.swiperButtonThumbBackground,
+  }),
+  handleBarBackground: theme('current', {
+    lightTheme: semanticLightThemeColors.handleBarBackground,
+    darkTheme: semanticDarkThemeColors.handleBarBackground,
   }),
 };
 

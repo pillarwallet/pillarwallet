@@ -225,6 +225,7 @@ export const objectFontStyles = {
 export const spacing = {
   rhythm: 20,
   extraSmall: 4,
+  rSmall: 6,
   small: 8,
   medium: 12,
   mediumLarge: 16,

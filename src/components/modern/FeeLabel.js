@@ -37,7 +37,7 @@ import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 type Mode = 'actual' | 'estimate';
@@ -55,7 +55,6 @@ type Props = {
   isLoading?: boolean,
   isNotEnough?: boolean,
   style?: ViewStyleProp,
-  textStyle?: TextStyleProp
 };
 
 function FeeLabel({
@@ -66,7 +65,6 @@ function FeeLabel({
   isLoading,
   isNotEnough,
   style,
-  textStyle,
   chain,
 }: Props) {
   const { t } = useTranslation();
@@ -91,11 +89,11 @@ function FeeLabel({
 
       <Spacing w={8} />
 
-      <FeePill onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text variant="small" color={colors.secondaryText} style={textStyle}>
+      <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
+        <Text color={colors.secondaryText}>
           {labelValue}
         </Text>
-      </FeePill>
+      </FeeValue>
     </LabelWrapper>
   );
 }
@@ -107,7 +105,6 @@ const LabelWrapper = styled.View`
   align-items: center;
 `;
 
-const FeePill = styled.TouchableOpacity`
+const FeeValue = styled.TouchableOpacity`
   justify-content: center;
-  border-radius: 12px;
 `;

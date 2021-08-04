@@ -62,8 +62,8 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
   return (
     <Container style={style}>
       <Icon name="warning" color={colors.negative} />
-      <Title color={colors.negative}>
-        {t('label.transactionDeploymentWarning', { chain: chainConfig.titleShort })}
+      <Title>
+        {t('label.transactionDeploymentWarning', { chain: chainConfig.title })}
       </Title>
     </Container>
   );
@@ -73,11 +73,10 @@ export default TransactionDeploymentWarning;
 
 const Container = styled.View`
   flex-direction: row;
-  align-items: center;
 `;
 
 const Title = styled(Text)`
   flex: 1;
   margin-left: ${spacing.mediumLarge}px;
-  color: ${({ theme }) => theme.colors.negative};
+  color: ${({ theme }) => theme.colors.walletConnectMessage};
 `;

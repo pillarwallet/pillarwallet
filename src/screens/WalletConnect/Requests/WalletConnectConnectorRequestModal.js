@@ -110,8 +110,8 @@ const styles = {
   icon: {
     width: 64,
     height: 64,
-    marginTop: spacing.large,
-    marginBottom: spacing.extraLarge,
+    marginTop: spacing.largePlus,
+    marginBottom: spacing.largePlus,
     borderRadius: 32,
   },
   button: {
@@ -122,7 +122,7 @@ const styles = {
 
 const Description = styled(Text)`
  text-align: center;
- margin-bottom: ${spacing.extraLarge}px;
- color: ${({ theme }) => theme.colors.walletConnectRequestBody};
+ margin-bottom: ${spacing.largePlus}px;
+ color: ${({ theme }) => theme.colors.walletConnectMessage};
  ${fontStyles.medium};
 `;
