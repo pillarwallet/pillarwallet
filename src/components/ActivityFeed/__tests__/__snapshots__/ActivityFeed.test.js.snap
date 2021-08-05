@@ -37,7 +37,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         },
         Object {
           "item": Object {
-            "createdAt": 1568019600,
+            "createdAt": 1568030400,
             "from": "0x0000000000000000000000000000000000000000",
             "to": "0x0000000000000000000000000000000000000000",
             "type": "transactionEvent",
@@ -410,7 +410,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         },
         Object {
           "item": Object {
-            "createdAt": 1568019600,
+            "createdAt": 1568030400,
             "from": "0x0000000000000000000000000000000000000000",
             "to": "0x0000000000000000000000000000000000000000",
             "type": "transactionEvent",

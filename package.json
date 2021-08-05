@@ -19,9 +19,9 @@
     "flow": "flow",
     "flow-stop": "flow stop",
     "validate": "run-p flow test lint",
-    "jest": "jest --colors",
-    "jest-watch": "jest --colors --watchAll",
-    "jest-update": "jest --colors -u",
+    "jest": "TZ=UTC jest --colors",
+    "jest-watch": "TZ=UTC jest --colors --watchAll",
+    "jest-update": "TZ=UTC jest --colors -u",
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && patch-package && jetifier",
     "storybook": "start-storybook -p 7007",
     "prestorybook": "rnstl"
