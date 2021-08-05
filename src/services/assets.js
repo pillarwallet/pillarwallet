@@ -51,7 +51,7 @@ import {
 
 // types
 import type { Asset } from 'models/Asset';
-import type { Erc721TransactionPayload, Erc721TransferMethod } from 'models/Transaction';
+import type { Erc721TransferMethod } from 'models/Transaction';
 import type { RatesByAssetAddress } from 'models/Rates';
 
 
@@ -150,7 +150,7 @@ function getERC721ContractTransferMethod(
   code: any,
   isReceiverContractAddress: boolean,
   useLegacyTransferMethod?: boolean,
-): string {
+): Erc721TransferMethod {
   if (useLegacyTransferMethod) {
     return ERC721_TRANSFER_METHODS.TRANSFER;
   }
@@ -189,7 +189,8 @@ function getERC721ContractTransferMethod(
   return ERC721_TRANSFER_METHODS.TRANSFER_FROM;
 }
 /* eslint-enable i18next/no-literal-string */
-type Erc721Transaction = {
+
+type Erc721TransactionPayload = {
   from: string,
   to: string,
   contractAddress: string,
@@ -198,7 +199,7 @@ type Erc721Transaction = {
 }
 
 export const buildERC721TransactionData = async (
-  transaction: Erc721Transaction,
+  transaction: Erc721TransactionPayload,
   customProvider?: any,
 ): any => {
   const { from, to, tokenId, contractAddress, useLegacyTransferMethod } = transaction;

@@ -204,17 +204,6 @@ export type TransactionPayload = {
 
 export type Erc721TransferMethod = $Values<typeof ERC721_TRANSFER_METHODS>;
 
-export type Erc721TransactionPayload = {
-  from: string,
-  to: string,
-  contractAddress: string,
-  tokenId: string,
-
-  // Transaction should use legacy `transfer` method instead of determining the method from ABI. 
-  // This is useful of pre-721 NTFs like cryptokitties.
-  useLegacyTransferMethod: boolean,
-};
-
 export type CollectibleTransactionPayload = {
   to: string,
   contractAddress: string,
@@ -277,7 +266,7 @@ export type EthereumTransaction = {
 export type TransactionToEstimate = {
   to: string,
   value: Value,
-  assetData?: AssetData | Collectible,
+  assetData?: AssetData,
   data?: string,
 };
 

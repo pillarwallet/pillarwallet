@@ -24,10 +24,9 @@ import { BigNumber } from 'bignumber.js';
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Types
-import type {
-  Chain,
-  ChainRecord,
-} from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
+
 
 export type AssetType = $Values<typeof ASSET_TYPES>;
 
@@ -37,20 +36,20 @@ export type AssetCore = {
   decimals: number,
 };
 
-export type AssetData = {|
-  token: string,
+export type AssetData = TokenData | Collectible;
+
+export type TokenData = {|
+  tokenType?: typeof ASSET_TYPES.TOKEN,
   contractAddress: string,
-  tokenType?: AssetType,
+  decimals: number,
+  token: string,
   name?: string,
   icon?: string,
   iconColor?: string,
 
-  // Token specific
-  decimals: number,
-
-  // Collectible specific
-  id?: string,
-  isLegacy?: boolean,
+  // Improve cooperation with Collectible
+  id?: void,
+  isLegacy?: void,
 |};
 
 export type Asset = {

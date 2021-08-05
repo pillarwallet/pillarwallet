@@ -289,10 +289,10 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
-export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
+export const parseTokenBigNumberAmount = (amount: number | string, decimals: ?number): utils.BigNumber => {
   let formatted = amount.toString();
   const [whole, fraction] = formatted.split('.');
-  if (decimals > 0) {
+  if (decimals != null && decimals > 0) {
     if (fraction && fraction.length > decimals) {
       formatted = `${whole}.${fraction.substring(0, decimals)}`;
     }

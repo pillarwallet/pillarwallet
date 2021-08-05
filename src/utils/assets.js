@@ -46,9 +46,9 @@ import type {
   AssetOption,
   AssetOptionBalance,
   AssetsPerChain,
+  TokenData,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
-import type { Collectible } from 'models/Collectible';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
@@ -209,21 +209,6 @@ export const mapAssetToAssetData = ({
   icon: iconUrl,
 });
 
-export const mapCollectibleToAssetData = ({
-  contractAddress,
-  name,
-  id,
-  icon,
-}: Collectible): AssetData => ({
-  token: '',
-  decimals: 0,
-  contractAddress,
-  name,
-  id: id.toString(),
-  icon: icon || '',
-  tokenType: ASSET_TYPES.COLLECTIBLE,
-});
-
 export const getBalanceInFiat = (
   baseFiatCurrency: ?Currency,
   assetBalance: ?Value,
@@ -293,7 +278,7 @@ export const getAssetOption = (
 };
 
 export const mapAssetDataToAssetOption = (
-  assetData: AssetData,
+  assetData: TokenData,
   balances?: ?WalletAssetsBalances,
   rates?: ?RatesByAssetAddress,
   fiatCurrency?: ?Currency,

@@ -66,16 +66,13 @@ import type { Account } from 'models/Account';
 import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
-const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: Object) => {
-  if (asset?.tokenType === ASSET_TYPES.COLLECTIBLE) {
-    const { id: tokenId, contractAddress } = asset;
-    return { tokenId, contractAddress, ...transactionExtra };
+const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: any) => {
+  if (asset.tokenType === ASSET_TYPES.COLLECTIBLE) {
+    const { contractAddress, id: tokenId } = asset;
+    return { contractAddress, tokenId, ...transactionExtra };
   }
-  const {
-    token: symbol,
-    contractAddress,
-    decimals,
-  } = asset;
+
+  const { token: symbol, contractAddress, decimals } = asset;
   return {
     symbol,
     contractAddress,

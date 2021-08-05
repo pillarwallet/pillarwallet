@@ -53,7 +53,6 @@ import {
   getBalance,
   getBalanceBN,
   mapAssetToAssetData,
-  mapCollectibleToAssetData,
   getBalanceInFiat,
   findAssetByAddress,
 } from 'utils/assets';
@@ -142,11 +141,9 @@ const KeyBasedAssetTransferChoose = ({
       .filter(Boolean)
       .map(mapAssetToAssetData);
 
-    const collectibles = availableCollectibles.map(mapCollectibleToAssetData);
-
     return compactFalsy([
       !!assets?.length && { title: t('label.tokens'), data: assets },
-      !!collectibles?.length && { title: t('label.collectibles'), data: collectibles },
+      !!availableCollectibles?.length && { title: t('label.collectibles'), data: availableCollectibles },
     ]);
   };
 

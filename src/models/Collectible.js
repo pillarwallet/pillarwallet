@@ -27,17 +27,15 @@ import type { Chain, ChainRecord } from 'models/Chain';
 
 export type Collectible = {
   tokenType: typeof ASSET_TYPES.COLLECTIBLE,
+  contractAddress: string,
   id: string,
+  chain: Chain,
   name: string,
   description: ?string,
   icon: ?string,
   iconUrl: ?string,
   image: ?string,
   imageUrl: ?string,
-  contractAddress: string,
-  symbol?: void,
-  decimals?: void,
-  chain: Chain,
 
   /**
    * Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties)
@@ -45,8 +43,12 @@ export type Collectible = {
    */
   isLegacy: boolean,
 
-  // Collectible is frequently passed to AssetData
+  // Cooperation with AssetData/TokenData model
   token?: void,
+  decimals?: void,
+
+  // Cooperation with AssetOption model
+  symbol?: void,
 };
 
 export type CollectibleTransaction = {
