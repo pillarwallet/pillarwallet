@@ -51,12 +51,15 @@ import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { useActiveAccount, useRootSelector } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // types
 import type {
@@ -103,6 +106,7 @@ const SendCollectibleConfirm = ({
   const receiver: string = useNavigationParam('receiver');
   const navigationSource: ?string = useNavigationParam('source');
   const chain: Chain = useNavigationParam('chain');
+  const activeAccount = useActiveAccount();
 
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
@@ -206,6 +210,12 @@ const SendCollectibleConfirm = ({
     ? t('label.gettingFee')
     : t('transactions.button.send');
 
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
+  const feeTooltip = isEtherspotAccount(activeAccount)
+    && chain
+    && !isDeployedOnChain
+    && t('tooltip.includesDeploymentFee');
+
   return (
     <ContainerWithHeader
       headerProps={{
@@ -225,7 +235,7 @@ const SendCollectibleConfirm = ({
             <TableUser address={receiver} />
           </TableRow>
           <TableRow>
-            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
+            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
             <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
           <TableRow>

@@ -1518,6 +1518,7 @@
   },
 
   "tooltip": {
-    "switchAccountsByTappingHere": "You can switch accounts by tapping here"
+    "switchAccountsByTappingHere": "You can switch accounts by tapping here",
+    "includesDeploymentFee": "Including the one-time Smart Wallet deployment fee"
   }
 }

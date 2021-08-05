@@ -38,9 +38,11 @@ import TransactionDeploymentWarning from 'components/other/TransactionDeployment
 // utils
 import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // types
 import type { TransactionPayload } from 'models/Transaction';
@@ -49,12 +51,14 @@ import type { TransactionPayload } from 'models/Transaction';
 const SendTokenConfirm = () => {
   const session = useRootSelector(({ session: sessionState }) => sessionState.data);
   const navigation = useNavigation();
+  const activeAccount = useActiveAccount();
 
   const source: ?string = useNavigationParam('source');
   const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
   const { chain = CHAIN.ETHEREUM } = transactionPayload;
   const { title: chainTitle, color: chainColor } = useChainConfig(chain);
+
 
   const handleFormSubmit = () => {
     Keyboard.dismiss();
@@ -69,6 +73,12 @@ const SendTokenConfirm = () => {
     symbol,
     gasToken,
   } = transactionPayload;
+
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
+  const feeTooltip = isEtherspotAccount(activeAccount)
+    && chain
+    && !isDeployedOnChain
+    && t('tooltip.includesDeploymentFee');
 
   return (
     <Container>
@@ -96,7 +106,7 @@ const SendTokenConfirm = () => {
             <TableUser ensName={receiverEnsName} address={to} />
           </TableRow>
           <TableRow>
-            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
+            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
             <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
           </TableRow>
           <TableRow>
