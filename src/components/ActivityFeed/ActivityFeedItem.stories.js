@@ -109,13 +109,13 @@ storiesOf('ActivityFeedItem', module)
   .add('Smart wallet created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: 1628166454530 }}
     />
   ))
   .add('PPN created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: 1628166454530 }}
     />
   ))
   .add('Collectible received', () => (
