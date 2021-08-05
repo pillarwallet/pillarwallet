@@ -71,7 +71,7 @@ type ERC20TransferOptions = {
 };
 
 type ERC721TransferOptions = {
-  contractAddress: ?string,
+  contractAddress: string,
   from: Address,
   to: Address,
   tokenId: string,
@@ -80,6 +80,7 @@ type ERC721TransferOptions = {
   signOnly?: ?boolean,
   gasLimit?: ?number,
   gasPrice?: ?number,
+  useLegacyTransferMethod: boolean,
 };
 
 type ETHTransferOptions = {
@@ -145,7 +146,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 }
 
 /* eslint-disable i18next/no-literal-string */
-export function getERC721ContractTransferMethod(
+function getERC721ContractTransferMethod(
   code: any,
   isReceiverContractAddress: boolean,
   useLegacyTransferMethod?: boolean,
@@ -188,14 +189,16 @@ export function getERC721ContractTransferMethod(
   return ERC721_TRANSFER_METHODS.TRANSFER_FROM;
 }
 /* eslint-enable i18next/no-literal-string */
-
-export const getContractMethodAbi = (
-  contractAbi: Object[],
-  methodName: string,
-): ?Object => contractAbi.find(item => item.name === methodName);
+type Erc721Transaction = {
+  from: string,
+  to: string,
+  contractAddress: string,
+  tokenId: string,
+  useLegacyTransferMethod: boolean,
+}
 
 export const buildERC721TransactionData = async (
-  transaction: Object,
+  transaction: Erc721Transaction,
   customProvider?: any,
 ): any => {
   const { from, to, tokenId, contractAddress, useLegacyTransferMethod } = transaction;
@@ -209,7 +212,11 @@ export const buildERC721TransactionData = async (
   const receiverCode = await provider.getCode(to);
   // regular address will return exactly 0x while contract address will return 0x...0
   const isReceiverContractAddress = receiverCode && receiverCode.length > 2;
-  const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress, useLegacyTransferMethod);
+  const contractTransferMethod = getERC721ContractTransferMethod(
+    code,
+    isReceiverContractAddress,
+    useLegacyTransferMethod,
+  );
   console.log('TRANSFER METHOD', useLegacyTransferMethod, contractTransferMethod);
 
   try {

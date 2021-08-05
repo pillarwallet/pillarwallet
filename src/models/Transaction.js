@@ -215,7 +215,34 @@ export type Erc721TransactionPayload = {
   useLegacyTransferMethod: boolean,
 };
 
-export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
+//export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
+
+export type CollectibleTransactionPayload = {
+  to: string,
+  contractAddress: string,
+  tokenId: string,
+  useLegacyTransferMethod: boolean,
+  gasLimit?: number,
+  gasPrice?: number,
+  signOnly?: ?boolean,
+  // receiverEnsName?: string,
+  // name?: string,
+  // tokenType?: string,
+  // txSpeed?: string,
+  // txFeeInWei?: ?Value,
+  // signedHash?: ?string,
+  // note?: ?string,
+  // gasToken?: ?GasToken,
+  // amount: number | string,
+  // symbol?: string,
+  // decimals?: number,
+  // data?: string,
+  // tag?: string,
+  // extra?: Object,
+  // usePPN?: boolean,
+  // sequentialTransactions?: TransactionPayload[],
+  // chain?: Chain,
+};
 
 export type TransactionEthers = {
   from: string,
