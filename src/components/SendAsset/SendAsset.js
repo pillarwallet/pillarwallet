@@ -127,7 +127,6 @@ const SendAsset = ({
       value: currentValue.toString(),
       assetData: mapToAssetDataType(assetData),
     };
-    console.log("ESTIMATE", transactionToEstimate.assetData.name, transactionToEstimate.assetData.isLegacy);
     estimateTransaction(transactionToEstimate, chain);
   };
 

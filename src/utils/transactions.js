@@ -98,7 +98,6 @@ export const buildEthereumTransaction = async (
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress && tokenId) {
-    console.log("BUILD", tokenType, symbol, useLegacyTransferMethod);
     data = await buildERC721TransactionData({
       from,
       to,

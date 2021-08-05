@@ -115,8 +115,6 @@ const SendCollectibleConfirm = ({
     isLegacy,
   } = assetData;
 
-  console.log("COLLECTIBLE CONFIRM", name, isLegacy);
-
   let transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
     name,
