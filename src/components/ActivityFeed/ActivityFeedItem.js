@@ -860,7 +860,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: usernameOrAddress,
             fullItemValue: event.tag === WBTC_PENDING_TRANSACTION
               ? getFormattedValue(String(event.value / 1000000000000000000), assetSymbol)
-              : getFormattedValue(formattedFullValue, event.asset, {
+              : getFormattedValue(formattedFullValue, assetSymbol, {
                 isPositive: isReceived,
                 noSymbol: !formattedFullValue,
               }),
