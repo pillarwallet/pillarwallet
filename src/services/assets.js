@@ -98,12 +98,12 @@ export const encodeContractMethod = (
   contractAbi: string | Object[],
   method: string,
   params: any,
-) => {
+): string => {
   const contractInterface = new ethers.utils.Interface(contractAbi);
   return contractInterface.encodeFunctionData(method, params);
 };
 
-function contractHasMethod(contractCode, encodedMethodName) {
+function contractHasMethod(contractCode: string, encodedMethodName: string): boolean {
   return contractCode.includes(encodedMethodName);
 }
 
@@ -151,6 +151,7 @@ function getERC721ContractTransferMethod(
   isReceiverContractAddress: boolean,
   useLegacyTransferMethod?: boolean,
 ): Erc721TransferMethod {
+  // Legacy NFTs (like cryptokitties) always require use of `transfer` method.
   if (useLegacyTransferMethod) {
     return ERC721_TRANSFER_METHODS.TRANSFER;
   }
@@ -201,7 +202,7 @@ type Erc721TransactionPayload = {
 export const buildERC721TransactionData = async (
   transaction: Erc721TransactionPayload,
   customProvider?: any,
-): any => {
+): string => {
   const { from, to, tokenId, contractAddress, useLegacyTransferMethod } = transaction;
 
   let contractAbi;
@@ -258,26 +259,26 @@ export async function transferERC721(options: ERC721TransferOptions) {
   const wallet = walletInstance.connect(getEthereumProvider(getEnv().COLLECTIBLES_NETWORK));
   const data = await buildERC721TransactionData(options, wallet.provider);
 
-  if (data) {
-    const transaction = {
-      gasLimit,
-      gasPrice: EthersBigNumber.from(gasPrice),
-      to: contractAddress,
-      nonce,
-      data,
-    };
-
-    if (signOnly) return wallet.signTransaction({ ...transaction, data });
-
-    return wallet.sendTransaction(transaction);
+  if (!data) {
+    reportLog('Could not transfer collectible', {
+      networkProvider: getEnv().COLLECTIBLES_NETWORK,
+      contractAddress,
+      tokenId,
+    });
+    return { error: ERROR_TYPE.CANT_BE_TRANSFERRED, noRetry: true };
   }
 
-  reportLog('Could not transfer collectible', {
-    networkProvider: getEnv().COLLECTIBLES_NETWORK,
-    contractAddress,
-    tokenId,
-  });
-  return { error: ERROR_TYPE.CANT_BE_TRANSFERRED, noRetry: true };
+  const transaction = {
+    to: contractAddress,
+    data,
+    nonce,
+    gasLimit,
+    gasPrice: EthersBigNumber.from(gasPrice),
+  };
+
+  if (signOnly) return wallet.signTransaction({ ...transaction, data });
+
+  return wallet.sendTransaction(transaction);
 }
 
 export async function transferETH(options: ETHTransferOptions) {
