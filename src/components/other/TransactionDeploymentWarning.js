@@ -63,7 +63,7 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
     <Container style={style}>
       <Icon name="warning" color={colors.negative} />
       <Title>
-        {t('label.transactionDeploymentWarning', { chain: chainConfig.title })}
+        {t('label.transactionDeploymentWarning', { chain: chainConfig.titleShort })}
       </Title>
     </Container>
   );

@@ -29,10 +29,8 @@ import Text from 'components/modern/Text';
 
 // Utils
 import { formatTokenValue } from 'utils/format';
-import {
-  formatFiat,
-} from 'utils/common';
-import { appFont, spacing } from 'utils/variables';
+import { formatFiat } from 'utils/common';
+import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
@@ -58,7 +56,7 @@ function LargeTokenValueView({ value, symbol, style }: Props) {
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
       <RNText>
-        <TokenSymbol>{formatFiat(value, fiatCurrency, { skipCents: true })}</TokenSymbol>
+        <FiatValue>{formatFiat(value, fiatCurrency, { skipCents: true })}</FiatValue>
         <Spacing w={spacing.small} />
         <TokenValue>{formatTokenValue(value, symbol, { stripTrailingZeros: true })}</TokenValue>
       </RNText>
@@ -74,13 +72,13 @@ const Container = styled.View`
 `;
 
 const TokenValue = styled(Text)`
-  font-size: 36px;
+  font-size: ${fontSizes.giant}px;
   font-variant: tabular-nums;
   font-family: ${appFont.medium};
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
-const TokenSymbol = styled(Text)`
+const FiatValue = styled(Text)`
   font-family: ${appFont.medium};
-  font-size: 36px;
+  font-size: ${fontSizes.giant}px;
 `;
