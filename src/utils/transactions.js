@@ -39,6 +39,7 @@ import { buildERC721TransactionData, encodeContractMethod } from 'services/asset
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
+import type { TokenType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -80,7 +81,7 @@ export const buildEthereumTransaction = async (
   amount: string,
   symbol: ?string,
   decimals: number = 18,
-  tokenType: ?string,
+  tokenType: ?TokenType,
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,

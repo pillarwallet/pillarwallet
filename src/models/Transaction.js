@@ -27,7 +27,7 @@ import { ERC721_TRANSFER_METHODS } from 'constants/transactionsConstants';
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import type { AssetData } from 'models/Asset';
+import type { AssetData, TokenType } from 'models/Asset';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
@@ -182,7 +182,7 @@ export type TransactionPayload = {
   name?: string,
   contractAddress?: string,
   tokenId?: string,
-  tokenType?: string,
+  tokenType?: TokenType,
   txSpeed?: string,
   gasPrice?: number,
   txFeeInWei?: ?Value,
@@ -215,8 +215,6 @@ export type Erc721TransactionPayload = {
   useLegacyTransferMethod: boolean,
 };
 
-//export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
-
 export type CollectibleTransactionPayload = {
   to: string,
   contractAddress: string,
@@ -227,7 +225,7 @@ export type CollectibleTransactionPayload = {
   signOnly?: ?boolean,
   // receiverEnsName?: string,
   // name?: string,
-  // tokenType?: string,
+  // tokenType?: TokenType,
   // txSpeed?: string,
   // txFeeInWei?: ?Value,
   // signedHash?: ?string,
