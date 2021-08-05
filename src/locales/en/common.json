@@ -596,10 +596,8 @@
     },
     "requests": {
       "messageRequest": "Signature request",
-      "transactionRequest": {
-        "title": "{{app}} on {{chain}}",
-        "transactionRequest":"Transaction request"
-      },
+      "transactionRequest": "Transaction request",
+      "transactionRequestFormat": "{{app}} on {{chain}}",
       "unsupportedRequest": "Unsupported request"
     },
     "connectedApps": {
@@ -1082,8 +1080,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "Connect to {{app}}",
-      "description": "Be a DeFi chef with Sushi. Swap, earn, stack yields, lend, borrow, leverage all on one decentalized, community driven platform"
+      "walletConnectRequests": "Connect to {{app}}"
     },
     "label": {
       "unknownRequestName": "Unknown",

@@ -181,14 +181,12 @@ export const getWalletConnectCallRequestType = (
   }
 };
 
-export function formatRequestType(type: WalletConnectCallRequestType, appName?: string, chainName?: string) {
+export function formatRequestType(type: WalletConnectCallRequestType) {
   switch (type) {
     case REQUEST_TYPE.MESSAGE:
       return t('walletConnect.requests.messageRequest');
     case REQUEST_TYPE.TRANSACTION:
-      return chainName && appName
-        ? t('walletConnect.requests.transactionRequest.title', { app: appName, chain: chainName })
-        : t('walletConnect.requests.transactionRequest.transactionRequest');
+      return t('walletConnect.requests.transactionRequest');
     default:
       return t('walletConnect.requests.unsupportedRequest');
   }

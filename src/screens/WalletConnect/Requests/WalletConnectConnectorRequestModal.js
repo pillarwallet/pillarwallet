@@ -48,11 +48,11 @@ type Props = {|
   connector: WalletConnectConnector,
 |};
 
-function WalletConnectDisconnectModal({ connector }: Props) {
+function WalletConnectConnectorRequestModal({ connector }: Props) {
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
   const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
-  const { app: appName, peerID, chain, iconUrl } = getViewData(connector);
+  const { app: appName, description, peerID, chain, iconUrl } = getViewData(connector);
 
   // Note: this will map chain id to testnet in test env.
   const chainId = mapChainToChainId(chain);
@@ -84,22 +84,23 @@ function WalletConnectDisconnectModal({ connector }: Props) {
         />
       )}
 
-      <Description>{t('walletConnectContent.title.description')}</Description>
+      {!!description && <Description>{description}</Description>}
 
-      <Button title={t('button.approve')} onPress={onApprovePress} style={styles.button} />
-      <Button title={t('button.reject')} onPress={onRejectPress} variant="text" style={styles.button} />
+      <Button title={t('button.approve')} size="large" onPress={onApprovePress} />
+      <Button title={t('button.reject')} size="large" onPress={onRejectPress} variant="text" />
     </BottomModal>
   );
 }
 
-export default WalletConnectDisconnectModal;
+export default WalletConnectConnectorRequestModal;
 
 const getViewData = (connector: WalletConnectConnector) => {
   const app = parsePeerName(connector.peerMeta?.name);
+  const description = connector.peerMeta?.description;
   const peerID = connector.peerId;
   const chain = chainFromChainId[connector.chainId] ?? CHAIN.ETHEREUM;
   const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
-  return { app, peerID, chain, iconUrl };
+  return { app, peerID, description, chain, iconUrl };
 };
 
 const styles = {
@@ -110,15 +111,11 @@ const styles = {
     marginBottom: spacing.largePlus,
     borderRadius: 32,
   },
-  button: {
-    height: 72,
-    borderRadius: 14,
-  },
 };
 
 const Description = styled(Text)`
  text-align: center;
  margin-bottom: ${spacing.largePlus}px;
- color: ${({ theme }) => theme.colors.walletConnectMessage};
+ color: ${({ theme }) => theme.colors.tertiaryText};
  ${fontStyles.medium};
 `;

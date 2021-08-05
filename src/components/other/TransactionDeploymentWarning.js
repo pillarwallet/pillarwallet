@@ -78,5 +78,5 @@ const Container = styled.View`
 const Title = styled(Text)`
   flex: 1;
   margin-left: ${spacing.mediumLarge}px;
-  color: ${({ theme }) => theme.colors.walletConnectMessage};
+  color: ${({ theme }) => theme.colors.tertiaryText};
 `;

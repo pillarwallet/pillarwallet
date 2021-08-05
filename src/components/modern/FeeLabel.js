@@ -85,14 +85,14 @@ function FeeLabel({
 
   return (
     <LabelWrapper style={style}>
-      <Text color={colors.basic030}>{mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}</Text>
+      <Text color={isNotEnough ? colors.negative : colors.basic030}>
+        {mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}
+      </Text>
 
       <Spacing w={8} />
 
       <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text color={colors.secondaryText}>
-          {labelValue}
-        </Text>
+        <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
       </FeeValue>
     </LabelWrapper>
   );

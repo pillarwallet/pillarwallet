@@ -991,7 +991,6 @@
       "connect": "አገናኝ",
       "walletConnectRequests": "ጋር ይገናኙ {{app}}",
       "walletConnect": "ዎሌት ኮኔክት",
-      "description": "ከሱሺ ጋር DeFi f ይሁኑ። ሁሉንም ነገር ይቀያይሩ ፣ ገንዘብ ያግኙ ፣ ያከማቹ ፣ ያበድሩ ፣ ያበድሩ ፣ ሁሉንም ነገር በአንድ ያልተማከለ ማህበረሰብ-ተኮር መድረክ ላይ ይጠቀሙ",
       "requestType": {
         "call": "የጥሪ ጥያቄ",
         "transaction": "የግብይት ጥያቄ",

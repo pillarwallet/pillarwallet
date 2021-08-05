@@ -114,13 +114,6 @@ const getTheme = (props: Props) => {
   return themes.default;
 };
 
-const getModalContentPadding = (showHeader: boolean) => {
-  if (showHeader) {
-    return '0';
-  }
-  return `${spacing.rhythm}px 0 0`;
-};
-
 class SlideModal extends React.Component<Props, State> {
   _modalRef = React.createRef<Modal>();
 
@@ -302,6 +295,13 @@ export type SlideModalInstance = SlideModal;
 const ThemedSlideModal: React.AbstractComponent<OwnProps, SlideModal> = withTheme(SlideModal);
 export default ThemedSlideModal;
 
+const getModalContentPadding = (showHeader: boolean) => {
+  if (showHeader) {
+    return '0';
+  }
+  return `${spacing.rhythm}px 0 0`;
+};
+
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
@@ -354,7 +354,7 @@ const ModalOverflow = styled.View`
 const HandleBar = styled.TouchableOpacity`
   width: 38px;
   height: 5px;
-  background-color: ${({ theme }) => theme.colors.handleBarBackground};
+  background-color: ${({ theme }) => theme.colors.modalHandleBar};
   border-radius: 2.5px;
   margin-top: ${spacing.medium}px;
   align-self: center;

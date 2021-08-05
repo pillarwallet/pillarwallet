@@ -72,6 +72,14 @@ type Props = {|
   onReject: () => mixed,
 |};
 
+const SwiperIconComponent = () => {
+  return (
+    <View style={styles.swiperView}>
+      <Icon name="arrow-right" />
+    </View>
+  );
+};
+
 function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
   const chainConfigs = useChainsConfig();
@@ -100,14 +108,6 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage;
 
-  const SwiperIconComponent = () => {
-    return (
-      <View style={styles.swiperView}>
-        <Icon name="arrow-right" />
-      </View>
-    );
-  };
-
   return (
     <>
       <IconView>
@@ -116,10 +116,16 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       </IconView>
 
       <Text color={colors.secondaryText} style={styles.body}>
-        {t('walletConnect.requests.transactionRequest.transactionRequest')}
+        {t('walletConnect.requests.transactionRequest')}
       </Text>
 
-      <LargeTokenValueView value={value} symbol={symbol} style={styles.tokenValue} />
+      <LargeTokenValueView
+        value={value}
+        assetAddress={gasAddress}
+        chain={chain}
+        symbol={symbol}
+        style={styles.tokenValue}
+      />
 
       {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
 
@@ -140,27 +146,31 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      <SwipeButton
-        width="100%"
-        height={72}
-        disabled={isConfirmDisabled}
-        title={confirmTitle}
-        titleFontSize={fontSizes.medium}
-        titleColor={colors.buttonPrimaryTitle}
-        titleStyles={styles.swiperBtnTitle}
-        containerStyles={styles.swiperBtncontainer}
-        railBorderColor={colors.swiperButtonPrimaryBackground}
-        railBackgroundColor={colors.swiperButtonPrimaryBackground}
-        railFillBackgroundColor="transparent"
-        railFillBorderColor={colors.swiperButtonPrimaryBackground}
-        thumbIconComponent={SwiperIconComponent}
-        thumbIconWidth={84}
-        thumbIconBackgroundColor={colors.swiperButtonThumbBackground}
-        thumbIconBorderColor={colors.swiperButtonThumbBackground}
-        thumbIconStyles={styles.swiperBtnthumbIcon}
-        onSwipeSuccess={handleConfirm}
-      />
-      <Button title={t('button.reject')} onPress={onReject} variant="text" style={styles.button} />
+      {!isConfirmDisabled ? (
+        <SwipeButton
+          width="100%"
+          height={72}
+          disabled={isConfirmDisabled}
+          title={confirmTitle}
+          titleFontSize={fontSizes.medium}
+          titleColor={colors.buttonPrimaryTitle}
+          titleStyles={styles.swiperButtonTitle}
+          containerStyles={styles.swiperButtonContainer}
+          railBorderColor={colors.swiperButtonTrack}
+          railBackgroundColor={colors.swiperButtonTrack}
+          railFillBackgroundColor="transparent"
+          railFillBorderColor={colors.swiperButtonTrack}
+          thumbIconComponent={SwiperIconComponent}
+          thumbIconWidth={84}
+          thumbIconBackgroundColor={colors.swiperButtonThumb}
+          thumbIconBorderColor={colors.swiperButtonThumb}
+          thumbIconStyles={styles.swiperBtnthumbIcon}
+          onSwipeSuccess={handleConfirm}
+        />
+      ) : (
+        <Button title={confirmTitle} disabled size="large" />
+      )}
+      <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" />
     </>
   );
 }
@@ -269,7 +279,7 @@ const useViewData = (request: WalletConnectCallRequest) => {
 const styles = {
   chainIcon: {
     position: 'absolute',
-    marginTop: spacing.rSmall,
+    marginTop: 6,
   },
   body: {
     marginTop: spacing.largePlus,
@@ -285,9 +295,6 @@ const styles = {
     justifyContent: 'center',
     paddingLeft: spacing.medium,
   },
-  button: {
-    height: 72,
-  },
   transactionDeploymentWarning: {
     marginTop: spacing.mediumLarge,
   },
@@ -295,11 +302,11 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  swiperBtnTitle: {
+  swiperButtonTitle: {
     paddingLeft: spacing.extraPlusLarge,
     fontFamily: appFont.regular,
   },
-  swiperBtncontainer: {
+  swiperButtonContainer: {
     borderRadius: 14,
   },
   swiperBtnthumbIcon: {
@@ -313,7 +320,7 @@ const ErrorMessage = styled(Text)`
   color: ${({ theme }) => theme.colors.negative};
 `;
 
-const IconView = styled(View)`
+const IconView = styled.View`
   margin-top: ${spacing.largePlus}px;
   text-align: center;
   flexDirection: row;
@@ -329,7 +336,7 @@ const ServiceIcon = styled(Image)`
   overflow: hidden;
 `;
 
-const FeeView = styled(View)`
+const FeeView = styled.View`
   flex-direction: row;
   margin-top: ${spacing.large}px;
   margin-bottom: ${spacing.large}px;

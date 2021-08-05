@@ -37,7 +37,7 @@ type Size = 'regular' | 'large' | 'compact';
 
 type Props = {|
   title?: string,
-  onPress: () => mixed,
+  onPress?: () => mixed,
   variant?: Variant,
   size?: Size,
   disabled?: boolean,
