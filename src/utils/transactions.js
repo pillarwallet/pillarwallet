@@ -85,7 +85,7 @@ export const buildEthereumTransaction = async (
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,
-  isLegacyCollectible?: boolean,
+  useLegacyTransferMethod?: boolean,
 ): Promise<EthereumTransaction> => {
   let value;
 
@@ -98,13 +98,13 @@ export const buildEthereumTransaction = async (
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress && tokenId) {
-    console.log("BUILD", tokenType, symbol, isLegacyCollectible);
+    console.log("BUILD", tokenType, symbol, useLegacyTransferMethod);
     data = await buildERC721TransactionData({
       from,
       to,
       tokenId,
       contractAddress,
-      useLegacyTransferMethod: !!isLegacyCollectible,
+      useLegacyTransferMethod: !!useLegacyTransferMethod,
     });
     to = contractAddress;
     value = EthersBigNumber.from(0);
@@ -131,6 +131,7 @@ export const mapToEthereumTransactions = async (
     decimals = 18,
     sequentialTransactions = [],
     chain = CHAIN.ETHEREUM,
+    useLegacyTransferMethod,
   } = transactionPayload;
 
   const transaction = await buildEthereumTransaction(
@@ -144,6 +145,7 @@ export const mapToEthereumTransactions = async (
     contractAddress,
     tokenId,
     chain,
+    useLegacyTransferMethod,
   );
 
   let transactions = [transaction];

@@ -176,19 +176,14 @@ const SendAsset = ({
       return;
     }
 
-    // $FlowFixMe
     const transactionPayload: TransactionPayload = {
       to: selectedContact.ethAddress,
-      // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
       amount: truncateAmount(currentValue.toString(), assetData.decimals),
-      // $FlowFixMe: bignumber.js types
       txFeeInWei: feeInfo.fee,
       // $FlowFixMe: flow update to 0.122
-      symbol: assetData.token,
-      // $FlowFixMe: flow update to 0.122
+      symbol: assetData.symbol || assetData.token,
       contractAddress: assetData.contractAddress,
-      // $FlowFixMe: flow update to 0.122
       decimals: assetData.decimals,
       chain,
     };

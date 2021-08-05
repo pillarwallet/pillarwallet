@@ -178,7 +178,7 @@ export type Transaction = {
 export type TransactionPayload = {
   gasLimit?: number,
   to: string,
-  receiverEnsName?: string,
+  receiverEnsName?: ?string,
   name?: string,
   contractAddress?: string,
   tokenId?: string,
@@ -212,23 +212,6 @@ export type CollectibleTransactionPayload = {
   gasLimit?: number,
   gasPrice?: number,
   signOnly?: ?boolean,
-  // receiverEnsName?: string,
-  // name?: string,
-  // tokenType?: AssetType,
-  // txSpeed?: string,
-  // txFeeInWei?: ?Value,
-  // signedHash?: ?string,
-  // note?: ?string,
-  // gasToken?: ?GasToken,
-  // amount: number | string,
-  // symbol?: string,
-  // decimals?: number,
-  // data?: string,
-  // tag?: string,
-  // extra?: Object,
-  // usePPN?: boolean,
-  // sequentialTransactions?: TransactionPayload[],
-  // chain?: Chain,
 };
 
 export type TransactionEthers = {
