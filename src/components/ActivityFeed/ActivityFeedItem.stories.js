@@ -144,7 +144,7 @@ storiesOf('ActivityFeedItem', module)
       }}
     />
   ))
-  .add('Key wallet incoming', () => (
+  .add('Wallet incoming', () => (
     <ActivityFeedItem
       {...reduxData}
       event={{
@@ -158,7 +158,7 @@ storiesOf('ActivityFeedItem', module)
       }}
     />
   ))
-  .add('Key wallet incoming pending', () => (
+  .add('Wallet incoming pending', () => (
     <ActivityFeedItem
       {...reduxData}
       event={{
@@ -170,63 +170,6 @@ storiesOf('ActivityFeedItem', module)
         assetAddress: mockEthAddress,
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
-      }}
-    />
-  ))
-  .add('Key wallet outgoing', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TRANSACTION_EVENT,
-        to: '0x000000',
-        from: '0x222222',
-        accountType: ACCOUNT_TYPES.KEY_BASED,
-        assetSymbol: 'ETH',
-        assetAddress: mockEthAddress,
-        value: '1000000000000000000',
-      }}
-    />
-  ))
-  .add('Key wallet outgoing pending', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TRANSACTION_EVENT,
-        to: '0x000000',
-        from: '0x222222',
-        accountType: ACCOUNT_TYPES.KEY_BASED,
-        assetSymbol: 'ETH',
-        assetAddress: mockEthAddress,
-        value: '1000000000000000000',
-        status: TX_PENDING_STATUS,
-      }}
-    />
-  ))
-  .add('Key wallet incoming contact', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0x111111',
-        to: '0x000000',
-        accountType: ACCOUNT_TYPES.KEY_BASED,
-        assetSymbol: 'ETH',
-        assetAddress: mockEthAddress,
-        value: '1000000000000000000',
-      }}
-    />
-  ))
-  .add('Key wallet outgoing contact', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TRANSACTION_EVENT,
-        to: '0x111111',
-        from: '0x000000',
-        accountType: ACCOUNT_TYPES.KEY_BASED,
-        assetSymbol: 'ETH',
-        assetAddress: mockEthAddress,
-        value: '1000000000000000000',
       }}
     />
   ))

@@ -43,7 +43,7 @@ export const EVENT_TYPE = {
 export type EventType = $Values<typeof EVENT_TYPE>;
 
 /**
- * Transaction status for events that relate to trasactions.
+ * Transaction status for events that relate to transactions.
  */
 export const TRANSACTION_STATUS = {
   CONFIRMED: ('confirmed': 'confirmed'),

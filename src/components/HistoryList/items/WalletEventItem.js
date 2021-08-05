@@ -72,11 +72,19 @@ function WalletEventItem({ event, onPress, chain }: Props) {
   }
 
   if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const subtitle = isDeployedOnChain
+      ? null
+      : t('label.walletDeployment');
+
     return (
       <HistoryListItem
-        iconName="wallet"
-        title={t('label.wallet')}
-        valueComponent={<Text color={colors.basic030}>{t('label.activated')}</Text>}
+        iconName={iconName}
+        customIconProps={{ width: 46, height: 46 }} // complete wrapper fill size icon
+        title={title}
+        subtitle={subtitle}
+        valueComponent={isDeployedOnChain && <Text color={colors.basic030}>{t('label.deployed')}</Text>}
         onPress={onPress}
       />
     );

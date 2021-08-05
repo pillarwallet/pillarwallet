@@ -159,6 +159,7 @@ function useWalletEvents(chain: Chain): WalletEvent[] {
   const activeAccountId = getAccountId(activeAccount);
   const accountChainWalletEvents = walletEvents?.[activeAccountId]?.[chain] ?? [];
 
+  // $FlowFixMe: does not cover WalletActivated and flow fails
   return accountChainWalletEvents.map((event) => ({
     ...event,
     date: parseDate(event.date), // fix mutation after retrieved from storage

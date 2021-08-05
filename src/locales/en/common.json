@@ -261,7 +261,9 @@
     "assetMigration": "Asset migration",
     "ensMigration": "ENS migration",
     "archanovaToEtherspot": "Pillar V1 to Etherspot (Pillar V2)",
-    "archanovaToEtherspotShort": "Pillar V1 to Etherspot"
+    "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
+    "deployed": "Deployed",
+    "walletDeployment": "Wallet deployment"
   },
 
   "button": {

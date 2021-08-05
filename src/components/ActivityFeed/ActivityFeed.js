@@ -217,8 +217,6 @@ class ActivityFeed extends React.Component<Props> {
     const typesThatRender = [
       EVENT_TYPE.WALLET_CREATED,
       EVENT_TYPE.WALLET_BACKED_UP,
-      EVENT_TYPE.WALLET_ACTIVATED,
-      EVENT_TYPE.ENS_NAME_REGISTERED,
       TRANSACTION_EVENT,
       COLLECTIBLE_TRANSACTION,
     ];

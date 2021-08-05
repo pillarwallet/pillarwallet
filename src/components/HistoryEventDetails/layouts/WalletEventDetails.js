@@ -108,10 +108,21 @@ function WalletEventDetails({ event, chain }: Props) {
   }
 
   if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const deploymentLabel = isDeployedOnChain
+      ? t('label.deployed')
+      : t('label.walletDeployment');
+
+
     return (
-      <BaseEventDetails date={event.date} title={t('label.wallet')} iconName="wallet">
+      <BaseEventDetails
+        date={event.date}
+        title={title}
+        iconName={iconName}
+      >
         <Row>
-          <Text variant="large">{t('label.activated')}</Text>
+          <Text variant="large">{deploymentLabel}</Text>
           <TransactionStatusIcon status={event.status} size={24} />
         </Row>
         <TransactionStatusText status={event.status} color={colors.basic030} variant="medium" />
