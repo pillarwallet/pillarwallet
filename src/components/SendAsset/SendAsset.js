@@ -127,6 +127,7 @@ const SendAsset = ({
       value: currentValue.toString(),
       assetData: mapToAssetDataType(assetData),
     };
+    console.log("ESTIMATE", transactionToEstimate.assetData.name, transactionToEstimate.assetData.isLegacy);
     estimateTransaction(transactionToEstimate, chain);
   };
 
@@ -363,6 +364,7 @@ const mapToAssetDataType = ({
   tokenType,
   tokenId,
   name,
+  isLegacy,
 }: Object): AssetData => ({
   contractAddress: address || contractAddress,
   token,
@@ -370,4 +372,5 @@ const mapToAssetDataType = ({
   tokenType,
   id: tokenId,
   name,
+  isLegacy,
 });

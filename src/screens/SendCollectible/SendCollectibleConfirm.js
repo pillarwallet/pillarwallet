@@ -112,7 +112,10 @@ const SendCollectibleConfirm = ({
     tokenType,
     id: tokenId,
     contractAddress,
+    isLegacy,
   } = assetData;
+
+  console.log("COLLECTIBLE CONFIRM", name, isLegacy);
 
   let transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
@@ -122,6 +125,7 @@ const SendCollectibleConfirm = ({
     tokenId,
     amount: 0,
     chain,
+    useLegacyTransferMethod: isLegacy,
   };
 
   if (receiverEnsName) {

@@ -197,6 +197,7 @@ export type TransactionPayload = {
   tag?: string,
   extra?: Object,
   usePPN?: boolean,
+  useLegacyTransferMethod?: boolean,
   sequentialTransactions?: TransactionPayload[],
   chain?: Chain,
 };

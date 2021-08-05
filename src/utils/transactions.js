@@ -101,12 +101,13 @@ export const buildEthereumTransaction = async (
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress) {
+    console.log("BUILD", tokenType, symbol, isLegacyCollectible);
     data = await buildERC721TransactionData({
       from,
       to,
       tokenId,
       contractAddress,
-      isLegacyCollectible,
+      useLegacyTransferMethod: isLegacyCollectible,
     });
     to = contractAddress;
     value = EthersBigNumber.from(0);

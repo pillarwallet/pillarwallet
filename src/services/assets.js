@@ -145,7 +145,15 @@ export async function transferERC20(options: ERC20TransferOptions) {
 }
 
 /* eslint-disable i18next/no-literal-string */
-export function getERC721ContractTransferMethod(code: any, isReceiverContractAddress: boolean): string {
+export function getERC721ContractTransferMethod(
+  code: any,
+  isReceiverContractAddress: boolean,
+  useLegacyTransferMethod?: boolean,
+): string {
+  if (useLegacyTransferMethod) {
+    return ERC721_TRANSFER_METHODS.TRANSFER;
+  }
+
   /**
    * sending to contract with "safeTransferFrom" will fail if contract doesn't have
    * "onERC721Received" event implemented, just to make everything more
@@ -189,13 +197,8 @@ export const getContractMethodAbi = (
 export const buildERC721TransactionData = async (
   transaction: Object,
   customProvider?: any,
-  isLegacy?: boolean,
 ): any => {
-  if (isLegacy) {
-    return ERC721_TRANSFER_METHODS.TRANSFER;
-  }
-
-  const { from, to, tokenId, contractAddress } = transaction;
+  const { from, to, tokenId, contractAddress, useLegacyTransferMethod } = transaction;
 
   let contractAbi;
   let params;
@@ -206,8 +209,8 @@ export const buildERC721TransactionData = async (
   const receiverCode = await provider.getCode(to);
   // regular address will return exactly 0x while contract address will return 0x...0
   const isReceiverContractAddress = receiverCode && receiverCode.length > 2;
-  const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress);
-  console.log('TRANSFER METHOD', isLegacy, contractTransferMethod);
+  const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress, useLegacyTransferMethod);
+  console.log('TRANSFER METHOD', useLegacyTransferMethod, contractTransferMethod);
 
   try {
     switch (contractTransferMethod) {
