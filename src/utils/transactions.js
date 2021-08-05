@@ -88,6 +88,7 @@ export const buildEthereumTransaction = async (
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,
+  isLegacyCollectible?: boolean,
 ): Promise<EthereumTransaction> => {
   let value;
 
@@ -105,6 +106,7 @@ export const buildEthereumTransaction = async (
       to,
       tokenId,
       contractAddress,
+      isLegacyCollectible,
     });
     to = contractAddress;
     value = EthersBigNumber.from(0);

@@ -45,10 +45,15 @@ export type AssetData = {|
   contractAddress: string,
   tokenType?: TokenType,
   name?: string,
-  decimals: number,
   icon?: string,
   iconColor?: string,
+
+  // Token specific
+  decimals: number,
+
+  // Collectible specific
   id?: string,
+  isLegacy?: boolean,
 |};
 
 export type Asset = {

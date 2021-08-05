@@ -18,11 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// Constants
+import { COLLECTIBLES } from 'constants/assetsConstants';
+
 // Types
 import type { Chain, ChainRecord } from 'models/Chain';
 
 
 export type Collectible = {
+  tokenType: typeof COLLECTIBLES,
   id: string,
   name: string,
   description: ?string,
@@ -31,7 +35,6 @@ export type Collectible = {
   image: ?string,
   imageUrl: ?string,
   contractAddress: string,
-  tokenType: string,
   symbol?: void,
   decimals?: void,
   chain: Chain,
@@ -41,6 +44,9 @@ export type Collectible = {
    * and require using `transfer` method instead of one inferred from ABI.
    */
   isLegacy: boolean,
+
+  // Collectible is frequently passed to AssetData
+  token?: void,
 };
 
 export type CollectibleTransaction = {

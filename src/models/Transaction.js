@@ -30,6 +30,7 @@ import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/
 import type { AssetData } from 'models/Asset';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
 
 
 export type TxSettlementItem = {
@@ -250,7 +251,7 @@ export type EthereumTransaction = {
 export type TransactionToEstimate = {
   to: string,
   value: Value,
-  assetData?: AssetData,
+  assetData?: AssetData | Collectible,
   data?: string,
 };
 

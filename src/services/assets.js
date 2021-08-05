@@ -186,13 +186,16 @@ export const getContractMethodAbi = (
   methodName: string,
 ): ?Object => contractAbi.find(item => item.name === methodName);
 
-export const buildERC721TransactionData = async (transaction: Object, customProvider?: any): any => {
-  const {
-    from,
-    to,
-    tokenId,
-    contractAddress,
-  } = transaction;
+export const buildERC721TransactionData = async (
+  transaction: Object,
+  customProvider?: any,
+  isLegacy?: boolean,
+): any => {
+  if (isLegacy) {
+    return ERC721_TRANSFER_METHODS.TRANSFER;
+  }
+
+  const { from, to, tokenId, contractAddress } = transaction;
 
   let contractAbi;
   let params;
@@ -204,6 +207,7 @@ export const buildERC721TransactionData = async (transaction: Object, customProv
   // regular address will return exactly 0x while contract address will return 0x...0
   const isReceiverContractAddress = receiverCode && receiverCode.length > 2;
   const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress);
+  console.log('TRANSFER METHOD', isLegacy, contractTransferMethod);
 
   try {
     switch (contractTransferMethod) {
