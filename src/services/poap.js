@@ -33,7 +33,7 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 
 // constants
 import { CHAIN } from 'constants/chainConstants';
-import { TOKEN_TYPES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
@@ -104,7 +104,7 @@ export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<
     image: imageUrl,
     imageUrl,
     contractAddress: poapContractAddress,
-    tokenType: TOKEN_TYPES.COLLECTIBLE,
+    tokenType: ASSET_TYPES.COLLECTIBLE,
     chain: CHAIN.XDAI,
   }));
 };

@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import { ADDRESS_ZERO, TOKEN_TYPES, ETH } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ASSET_TYPES, ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -39,7 +39,7 @@ import { buildERC721TransactionData, encodeContractMethod } from 'services/asset
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
-import type { TokenType } from 'models/Asset';
+import type { AssetType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -81,7 +81,7 @@ export const buildEthereumTransaction = async (
   amount: string,
   symbol: ?string,
   decimals: number = 18,
-  tokenType: ?TokenType,
+  tokenType: ?AssetType,
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,
@@ -89,7 +89,7 @@ export const buildEthereumTransaction = async (
 ): Promise<EthereumTransaction> => {
   let value;
 
-  if (tokenType !== TOKEN_TYPES.COLLECTIBLE) {
+  if (tokenType !== ASSET_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {

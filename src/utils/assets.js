@@ -22,7 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import { get, mapValues, orderBy } from 'lodash';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR, TOKEN_TYPES } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR, ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -205,7 +205,7 @@ export const mapAssetToAssetData = ({
   contractAddress,
   name,
   decimals,
-  tokenType: TOKEN_TYPES.TOKEN,
+  tokenType: ASSET_TYPES.TOKEN,
   icon: iconUrl,
 });
 
@@ -221,7 +221,7 @@ export const mapCollectibleToAssetData = ({
   name,
   id: id.toString(),
   icon: icon || '',
-  tokenType: TOKEN_TYPES.COLLECTIBLE,
+  tokenType: ASSET_TYPES.COLLECTIBLE,
 });
 
 export const getBalanceInFiat = (
@@ -304,7 +304,7 @@ export const mapAssetDataToAssetOption = (
     decimals: assetData.decimals,
     name: assetData.name ?? '',
     imageUrl: assetData.icon,
-    tokenType: assetData.tokenType ?? TOKEN_TYPES.TOKEN,
+    tokenType: assetData.tokenType ?? ASSET_TYPES.TOKEN,
     balance: getAssetOptionBalance(assetData.token, assetData.contractAddress, balances, rates, fiatCurrency),
     chain: CHAIN.ETHEREUM,
   };

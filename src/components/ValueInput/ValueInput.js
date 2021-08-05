@@ -54,7 +54,7 @@ import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 
 import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
-import { TOKEN_TYPES, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ASSET_TYPES, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // selectors
@@ -343,7 +343,7 @@ const ValueInputComponent = ({
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
-  const { tokenType = TOKEN_TYPES.TOKEN } = assetData;
+  const { tokenType = ASSET_TYPES.TOKEN } = assetData;
 
   const toggleDisplayFiat = () => {
     // when switching at error state, reset values to avoid new errors
@@ -356,7 +356,7 @@ const ValueInputComponent = ({
 
   return (
     <>
-      {tokenType === TOKEN_TYPES.TOKEN && (
+      {tokenType === ASSET_TYPES.TOKEN && (
         <TextInput
           style={{ width: '100%' }}
           hasError={!!errorMessage}
@@ -376,7 +376,7 @@ const ValueInputComponent = ({
           inputWrapperStyle={{ zIndex: 10 }}
         />
       )}
-      {tokenType === TOKEN_TYPES.COLLECTIBLE && (
+      {tokenType === ASSET_TYPES.COLLECTIBLE && (
         <CollectibleWrapper>
           <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>
             {assetData.name}

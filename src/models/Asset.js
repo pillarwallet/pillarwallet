@@ -21,7 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import { TOKEN_TYPES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Types
 import type {
@@ -29,7 +29,7 @@ import type {
   ChainRecord,
 } from 'models/Chain';
 
-export type TokenType = $Values<typeof TOKEN_TYPES>;
+export type AssetType = $Values<typeof ASSET_TYPES>;
 
 export type AssetCore = {
   address: string,
@@ -40,7 +40,7 @@ export type AssetCore = {
 export type AssetData = {|
   token: string,
   contractAddress: string,
-  tokenType?: TokenType,
+  tokenType?: AssetType,
   name?: string,
   icon?: string,
   iconColor?: string,
@@ -89,7 +89,7 @@ export type AssetOption = {
   imageUrl: string,
   name: string,
   symbol: string,
-  tokenType?: TokenType,
+  tokenType?: AssetType,
   chain: Chain,
 
   // Additional props

@@ -19,7 +19,7 @@
 */
 
 // Types
-import type { TokenType } from 'models/Asset';
+import type { AssetType } from 'models/Asset';
 
 
 export type Option = {
@@ -42,7 +42,7 @@ export type Option = {
   formattedBalanceInFiat?: string,
   id?: string,
   decimals?: number,
-  tokenType?: TokenType,
+  tokenType?: AssetType,
   contractAddress?: string,
   address?: string,
   balance?: {

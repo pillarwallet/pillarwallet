@@ -19,14 +19,14 @@
 */
 
 // Constants
-import { TOKEN_TYPES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Types
 import type { Chain, ChainRecord } from 'models/Chain';
 
 
 export type Collectible = {
-  tokenType: typeof TOKEN_TYPES.COLLECTIBLE,
+  tokenType: typeof ASSET_TYPES.COLLECTIBLE,
   id: string,
   name: string,
   description: ?string,

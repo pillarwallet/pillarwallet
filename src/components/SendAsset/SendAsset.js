@@ -29,7 +29,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { TOKEN_TYPES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // components
 import Button from 'components/Button';
@@ -110,7 +110,7 @@ const SendAsset = ({
   const balance = getBalanceBN(balances, assetAddress);
   const currentValue = wrapBigNumber(amount || 0);
 
-  const isCollectible = assetData?.tokenType === TOKEN_TYPES.COLLECTIBLE;
+  const isCollectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE;
 
   const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
 
@@ -164,7 +164,7 @@ const SendAsset = ({
 
     setSubmitPressed(true);
 
-    if (assetData.tokenType === TOKEN_TYPES.COLLECTIBLE) {
+    if (assetData.tokenType === ASSET_TYPES.COLLECTIBLE) {
       setSubmitPressed(false);
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData,

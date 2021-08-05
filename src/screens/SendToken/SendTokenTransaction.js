@@ -47,7 +47,7 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
 } from 'constants/liquidityPoolsConstants';
-import { TOKEN_TYPES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 import { TRANSACTION_TYPE, ERROR_TYPE } from 'constants/transactionsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -93,7 +93,7 @@ const getTransactionSuccessTitle = (props) => {
       return t('transactions.title.allowanceTransactionSuccess');
     }
     return t('transactions.title.exchangeTransactionSuccess');
-  } else if (transactionTokenType === TOKEN_TYPES.COLLECTIBLE) {
+  } else if (transactionTokenType === ASSET_TYPES.COLLECTIBLE) {
     return t('transactions.title.collectibleTransactionSuccess');
   }
   return t('transactions.title.transactionSuccess');
@@ -177,7 +177,7 @@ function SendTokenTransaction() {
   };
 
   const handleNavigationBack = () => {
-    if (transactionPayload.tokenType === TOKEN_TYPES.COLLECTIBLE) {
+    if (transactionPayload.tokenType === ASSET_TYPES.COLLECTIBLE) {
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
       return;
     }
