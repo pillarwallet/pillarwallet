@@ -109,13 +109,13 @@ storiesOf('ActivityFeedItem', module)
   .add('Smart wallet created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: 1628166454530 }}
+      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: 1628171166055 }}
     />
   ))
   .add('PPN created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: 1628166454530 }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: 1628171166055 }}
     />
   ))
   .add('Collectible received', () => (
@@ -369,7 +369,7 @@ storiesOf('ActivityFeedItem', module)
   .add('Wallet backup', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: EVENT_TYPE.WALLET_BACKED_UP, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.WALLET_BACKED_UP, createdAt: 1628171166055 }}
     />
   ))
   .add('Collectible sent from KW to SW', () => (

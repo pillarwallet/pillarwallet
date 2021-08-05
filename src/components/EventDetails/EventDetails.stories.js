@@ -142,7 +142,7 @@ storiesOf('EventDetail', module)
       {...actions}
       {...commonProps}
       isArchanovaWalletActivated={false}
-      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.WALLET_CREATED, createdAt: 1628171166055 }}
       itemData={{
         label: 'Smart wallet',
         itemImageSource: smartWalletIcon,
@@ -406,7 +406,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: 1628171166055 }}
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
@@ -421,7 +421,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: +(new Date()) }}
+      event={{ type: EVENT_TYPE.PPN_INITIALIZED, createdAt: 1628171166055 }}
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
