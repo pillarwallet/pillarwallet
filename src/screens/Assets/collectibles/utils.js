@@ -19,7 +19,7 @@
 */
 
 // constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { TOKEN_TYPES } from 'constants/assetsConstants';
 
 // types
 import type { Collectible } from 'models/Collectible';
@@ -52,7 +52,7 @@ export function buildCollectibleFromCollectibleItem(
     contractAddress,
     tokenId,
     chain,
-    tokenType: COLLECTIBLES,
+    tokenType: TOKEN_TYPES.COLLECTIBLE,
     isLegacy,
   };
 }

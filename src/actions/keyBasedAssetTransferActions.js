@@ -26,7 +26,7 @@ import { formatEther } from 'ethers/lib/utils';
 import Toast from 'components/Toast';
 
 // constants
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import { TOKEN_TYPES, ETH } from 'constants/assetsConstants';
 import {
   SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
@@ -67,7 +67,7 @@ import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
 const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: Object) => {
-  if (asset?.tokenType === COLLECTIBLES) {
+  if (asset?.tokenType === TOKEN_TYPES.COLLECTIBLE) {
     const { id: tokenId, contractAddress } = asset;
     return { tokenId, contractAddress, ...transactionExtra };
   }
@@ -110,7 +110,7 @@ const signKeyBasedAssetTransferTransaction = async (
   });
 
   let signedTransaction;
-  if (keyBasedAssetTransfer?.assetData?.tokenType === COLLECTIBLES) {
+  if (keyBasedAssetTransfer?.assetData?.tokenType === TOKEN_TYPES.COLLECTIBLE) {
     // $FlowFixMe note: added per current implementation
     signedTransaction = await walletProvider.transferERC721(
       keyBasedAccount,
@@ -148,7 +148,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
 
     // filter out matching
     const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.filter(({ assetData: transferAssetData }) => {
-      if (transferAssetData?.tokenType !== COLLECTIBLES) return transferAssetData?.token !== assetData.token;
+      if (transferAssetData?.tokenType !== TOKEN_TYPES.COLLECTIBLE) return transferAssetData?.token !== assetData.token;
       const isMatchingCollectible = transferAssetData?.id === assetData?.id
         && addressesEqual(transferAssetData?.contractAddress, assetData?.contractAddress);
       return !isMatchingCollectible;

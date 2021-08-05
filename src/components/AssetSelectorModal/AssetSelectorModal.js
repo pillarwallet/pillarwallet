@@ -30,7 +30,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
 // Constants
-import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { TOKEN_TYPES } from 'constants/assetsConstants';
 
 // Utils
 import { defaultSortAssetOptions } from 'utils/assets';
@@ -58,19 +58,19 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
   const modalRef = React.useRef(null);
 
   const [query, setQuery] = React.useState('');
-  const [activeTabId, setActiveTabId] = React.useState(TOKENS);
+  const [activeTabId, setActiveTabId] = React.useState(TOKEN_TYPES.TOKEN);
 
   const tabs = collectibles
     ? [
       {
-        id: TOKENS,
+        id: TOKEN_TYPES.TOKEN,
         name: t('label.tokens'),
-        onPress: () => setActiveTabId(TOKENS),
+        onPress: () => setActiveTabId(TOKEN_TYPES.TOKEN),
       },
       {
-        id: COLLECTIBLES,
+        id: TOKEN_TYPES.COLLECTIBLE,
         name: t('label.collectibles'),
-        onPress: () => setActiveTabId(COLLECTIBLES),
+        onPress: () => setActiveTabId(TOKEN_TYPES.COLLECTIBLE),
       },
     ]
     : null;
@@ -119,9 +119,11 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
 
         {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22, paddingBottom: 12 }} />}
 
-        {activeTabId === TOKENS && <TokenList items={getAssets(options, query)} onSelectItem={selectOption} />}
+        {activeTabId === TOKEN_TYPES.TOKEN && (
+          <TokenList items={getAssets(options, query)} onSelectItem={selectOption} />
+        )}
 
-        {activeTabId === COLLECTIBLES && (
+        {activeTabId === TOKEN_TYPES.COLLECTIBLE && (
           <CollectibleList
             items={getCollectibles(collectibles, query)}
             onSelectItem={selectCollectible}

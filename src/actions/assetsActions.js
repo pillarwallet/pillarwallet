@@ -23,7 +23,7 @@ import t from 'translations/translate';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, COLLECTIBLES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, USD } from 'constants/assetsConstants';
+import { ETH, TOKEN_TYPES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, USD } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
   SET_ACCOUNT_ASSETS_BALANCES,
@@ -107,7 +107,7 @@ export const sendAssetAction = (
     } = transaction;
 
     const to = toChecksumAddress(transaction.to);
-    const isCollectibleTransaction = tokenType === COLLECTIBLES;
+    const isCollectibleTransaction = tokenType === TOKEN_TYPES.COLLECTIBLE;
 
     // used for logging purpose omnly
     let logTransactionType;

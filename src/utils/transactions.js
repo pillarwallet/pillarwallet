@@ -23,11 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import {
-  ADDRESS_ZERO,
-  COLLECTIBLES,
-  ETH,
-} from 'constants/assetsConstants';
+import { ADDRESS_ZERO, TOKEN_TYPES, ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -92,7 +88,7 @@ export const buildEthereumTransaction = async (
 ): Promise<EthereumTransaction> => {
   let value;
 
-  if (tokenType !== COLLECTIBLES) {
+  if (tokenType !== TOKEN_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {

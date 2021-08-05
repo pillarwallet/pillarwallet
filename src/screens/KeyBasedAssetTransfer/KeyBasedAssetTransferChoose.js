@@ -61,7 +61,7 @@ import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { TOKEN_TYPES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -157,7 +157,7 @@ const KeyBasedAssetTransferChoose = ({
   };
 
   const renderItem = (item: AssetData) => {
-    if (item.tokenType === COLLECTIBLES) {
+    if (item.tokenType === TOKEN_TYPES.COLLECTIBLE) {
       const isChecked = keyBasedAssetsToTransfer.some((assetToTransfer) =>
         isMatchingAssetToTransfer(assetToTransfer, item),
       );
@@ -299,7 +299,7 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
 );
 
 const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, asset: AssetData) => {
-  if (asset?.tokenType === COLLECTIBLES) {
+  if (asset?.tokenType === TOKEN_TYPES.COLLECTIBLE) {
     return (
       assetToTransfer?.assetData?.id === asset?.id &&
       addressesEqual(assetToTransfer?.assetData?.contractAddress, asset?.contractAddress)

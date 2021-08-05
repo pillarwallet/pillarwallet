@@ -21,10 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import {
-  COLLECTIBLES,
-  TOKENS,
-} from 'constants/assetsConstants';
+import { TOKEN_TYPES } from 'constants/assetsConstants';
 
 // Types
 import type {
@@ -32,7 +29,7 @@ import type {
   ChainRecord,
 } from 'models/Chain';
 
-export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
+export type TokenType = $Values<typeof TOKEN_TYPES>;
 
 export type AssetCore = {
   address: string,
