@@ -150,7 +150,6 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
         <SwipeButton
           width="100%"
           height={72}
-          disabled={isConfirmDisabled}
           title={confirmTitle}
           titleFontSize={fontSizes.medium}
           titleColor={colors.buttonPrimaryTitle}

@@ -25,22 +25,26 @@ import { BigNumber } from 'bignumber.js';
 
 // Components
 import { Spacing } from 'components/modern/Layout';
-import Text from 'components/modern/Text';
+import TokenValueView from 'components/modern/TokenValueView';
+import FiatValueView from 'components/modern/FiatValueView';
 
 // Utils
-import { formatTokenValue } from 'utils/format';
-import { formatFiat } from 'utils/common';
-import { appFont, spacing, fontSizes } from 'utils/variables';
+import { appFont, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
+import { getAssetValueInFiat } from 'utils/rates';
+import { wrapBigNumber } from 'utils/bigNumber';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Types
 import type { TextStyleProp } from 'utils/types/react-native';
-
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   value: ?BigNumber,
+  assetAddress: string,
+  chain: Chain,
   symbol: string,
   style?: TextStyleProp,
 |};
@@ -48,17 +52,27 @@ type Props = {|
 /**
  * Large (& stylized) component to display token value.
  */
-function LargeTokenValueView({ value, symbol, style }: Props) {
+function LargeTokenValueView({ value, assetAddress, chain, symbol, style }: Props) {
   const fiatCurrency = useFiatCurrency();
-  if (!value) return null;
+  const colors = useThemeColors();
+  const rates = useChainRates(chain);
+  const balanceInFiat = getAssetValueInFiat(value, assetAddress, rates, fiatCurrency);
+  const balanceInFiatNumber = balanceInFiat ? wrapBigNumber(balanceInFiat) : null;
+  if (!value || !balanceInFiatNumber) return null;
 
   return (
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
       <RNText>
-        <FiatValue>{formatFiat(value, fiatCurrency, { skipCents: true })}</FiatValue>
+        <FiatValueView value={balanceInFiatNumber} currency={fiatCurrency} variant="giant" style={styles.fiatValue} />
         <Spacing w={spacing.small} />
-        <TokenValue>{formatTokenValue(value, symbol, { stripTrailingZeros: true })}</TokenValue>
+        <TokenValueView
+          value={value}
+          symbol={symbol}
+          variant="giant"
+          color={colors.secondaryText}
+          style={styles.tokenValue}
+        />
       </RNText>
     </Container>
   );
@@ -66,19 +80,16 @@ function LargeTokenValueView({ value, symbol, style }: Props) {
 
 export default LargeTokenValueView;
 
+const styles = {
+  fiatValue: {
+    fontFamily: appFont.medium,
+  },
+  tokenValue: {
+    fontFamily: appFont.medium,
+  },
+};
+
 const Container = styled.View`
   flex-direction: row;
   align-items: baseline;
-`;
-
-const TokenValue = styled(Text)`
-  font-size: ${fontSizes.giant}px;
-  font-variant: tabular-nums;
-  font-family: ${appFont.medium};
-  color: ${({ theme }) => theme.colors.secondaryText};
-`;
-
-const FiatValue = styled(Text)`
-  font-family: ${appFont.medium};
-  font-size: ${fontSizes.giant}px;
 `;

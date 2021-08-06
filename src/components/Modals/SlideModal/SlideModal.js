@@ -196,7 +196,7 @@ class SlideModal extends React.Component<Props, State> {
             {...headerProps}
           />
         ) : (
-          <HandleBar onPress={this.close} />
+          <HandleBar />
         )}
         <ModalContent
           fullScreen={fullScreen}
@@ -314,7 +314,7 @@ const FillSpacer = styled.View`
   height: 100%;
 `;
 
-const Backdrop = styled.TouchableWithoutFeedback`
+const Backdrop = styled.View`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -351,7 +351,7 @@ const ModalOverflow = styled.View`
   background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
-const HandleBar = styled.TouchableOpacity`
+const HandleBar = styled.View`
   width: 38px;
   height: 5px;
   background-color: ${({ theme }) => theme.colors.modalHandleBar};

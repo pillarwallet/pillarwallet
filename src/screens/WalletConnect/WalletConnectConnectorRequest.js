@@ -31,12 +31,13 @@ import WalletConnectRequestModal from './Requests/WalletConnectConnectorRequestM
 function WalletConnectConnectorRequestScreen() {
   const navigation = useNavigation();
   const connector = navigation.getParam('connector');
+  const chainId = navigation.getParam('chainId');
 
   React.useLayoutEffect(() => {
     navigation.goBack(null);
     if (!connector) return;
-    Modal.open(() => <WalletConnectRequestModal connector={connector} />);
-  }, [connector, navigation]);
+    Modal.open(() => <WalletConnectRequestModal connector={connector} chainId={chainId} />);
+  }, [connector, navigation, chainId]);
 
   return null;
 }

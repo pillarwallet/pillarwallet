@@ -29,9 +29,6 @@ import Button from 'components/modern/Button';
 import Image from 'components/Image';
 import Text from 'components/modern/Text';
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
@@ -44,22 +41,28 @@ import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 type Props = {|
   connector: WalletConnectConnector,
+  chainId: number,
 |};
 
-function WalletConnectConnectorRequestModal({ connector }: Props) {
+function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
-  const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
-  const { app: appName, description, peerID, chain, iconUrl } = getViewData(connector);
+  const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
 
   // Note: this will map chain id to testnet in test env.
-  const chainId = mapChainToChainId(chain);
+  const mappedChainId = mapChainToChainId(chain);
+
+  const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
+  const { app: appName, description, peerID, iconUrl } = getViewData(connector);
 
   const onApprovePress = () => {
     Keyboard.dismiss();
-    approveConnectorRequest(peerID, chainId);
+    approveConnectorRequest(peerID, mappedChainId);
     ref.current?.close();
   };
 
@@ -98,9 +101,8 @@ const getViewData = (connector: WalletConnectConnector) => {
   const app = parsePeerName(connector.peerMeta?.name);
   const description = connector.peerMeta?.description;
   const peerID = connector.peerId;
-  const chain = chainFromChainId[connector.chainId] ?? CHAIN.ETHEREUM;
   const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
-  return { app, peerID, description, chain, iconUrl };
+  return { app, peerID, description, iconUrl };
 };
 
 const styles = {
