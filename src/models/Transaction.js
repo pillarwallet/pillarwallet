@@ -30,7 +30,6 @@ import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/
 import type { AssetData, AssetType } from 'models/Asset';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
-import type { Collectible } from 'models/Collectible';
 
 
 export type TxSettlementItem = {
