@@ -121,7 +121,7 @@ export const logBreadcrumb = (
     else printLog(`${level} - ${category}: ${message}`);
   }
   Sentry.addBreadcrumb({
-    category, message, level, data: { extra },
+    category, message, level, data: extra,
   });
 };
 
