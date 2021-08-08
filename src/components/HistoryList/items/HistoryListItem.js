@@ -48,6 +48,7 @@ type Props = {|
   valueComponent?: React.Node,
   status?: TransactionStatus,
   onPress?: () => mixed,
+  onSubtitlePress?: () => mixed,
   customIconProps?: Object,
 |};
 
@@ -63,6 +64,7 @@ function HistoryListItem({
   valueComponent,
   status,
   onPress,
+  onSubtitlePress,
   customIconProps = {},
 }: Props) {
   const colors = useThemeColors();
@@ -90,7 +92,11 @@ function HistoryListItem({
           {title}
         </Text>
 
-        {!!subtitle && <Text color={subtitleColor ?? colors.basic030}>{subtitle}</Text>}
+        {!!subtitle && (
+          <SubtitleButton onPress={onSubtitlePress} disabled={!onSubtitlePress}>
+            <Text color={subtitleColor ?? colors.basic030}>{subtitle}</Text>
+          </SubtitleButton>
+        )}
       </MiddleColumn>
 
       {valueComponent && <RightColumn>{valueComponent}</RightColumn>}
@@ -108,6 +114,8 @@ const TouchableContainer = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.basic070};
   min-height: 64px;
 `;
+
+const SubtitleButton = styled.TouchableOpacity``;
 
 const LeftColumn = styled.View`
   justify-content: center;

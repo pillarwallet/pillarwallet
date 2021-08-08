@@ -28,9 +28,8 @@ import Text from 'components/modern/Text';
 import { useThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 
-// Selectors
-import { useRootSelector } from 'selectors';
-import { isDeployedOnChainSelector } from 'selectors/chains';
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
 import { type WalletEvent, EVENT_TYPE } from 'models/History';
@@ -49,12 +48,12 @@ function WalletEventItem({ event, onPress, chain }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const chainsConfig = useChainsConfig();
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const subtitle = isDeployedOnChain
+    const subtitle = isDeployedOnChain?.[chain]
       ? null
       : t('label.walletNotDeployed');
 
@@ -65,6 +64,7 @@ function WalletEventItem({ event, onPress, chain }: Props) {
         title={title}
         subtitle={subtitle}
         subtitleColor={colors.primary}
+        onSubtitlePress={() => showDeploymentInterjection(chain)}
         valueComponent={<Text color={colors.basic030}>{t('label.created')}</Text>}
         onPress={onPress}
       />

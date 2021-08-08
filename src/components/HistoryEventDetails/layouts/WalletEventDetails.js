@@ -37,8 +37,10 @@ import TransactionStatusText from 'components/modern/TransactionStatusText';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useRootSelector, useSmartWalletAccounts } from 'selectors';
-import { isDeployedOnChainSelector } from 'selectors/chains';
+import { useSmartWalletAccounts } from 'selectors';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
 import { getActiveAccountAddress } from 'utils/accounts';
@@ -64,7 +66,7 @@ function WalletEventDetails({ event, chain }: Props) {
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const chainsConfig = useChainsConfig();
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const openTopUp = () => {
     const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -86,7 +88,7 @@ function WalletEventDetails({ event, chain }: Props) {
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const subtitle = isDeployedOnChain
+    const subtitle = isDeployedOnChain?.[chain]
       ? null
       : t('label.walletNotDeployed');
 
@@ -96,6 +98,7 @@ function WalletEventDetails({ event, chain }: Props) {
         title={title}
         subtitle={subtitle}
         subtitleColor={colors.primary}
+        onSubtitlePress={() => showDeploymentInterjection(chain)}
         iconName={iconName}
         customIconProps={{ width: 62, height: 62 }} // complete wrapper fill size icon
       >

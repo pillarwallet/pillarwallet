@@ -44,6 +44,7 @@ type Props = {|
   iconBorderColor?: string,
   iconComponent?: React.Node,
   customIconProps?: Object,
+  onSubtitlePress?: () => mixed,
   children?: React.Node,
 |};
 
@@ -58,6 +59,7 @@ const BaseEventDetails = ({
   iconBorderColor,
   iconComponent,
   children,
+  onSubtitlePress,
   customIconProps = {},
 }: Props) => {
   const colors = useThemeColors();
@@ -68,7 +70,11 @@ const BaseEventDetails = ({
         <Timestamp>{formatDate(date, DATE_FORMAT)}</Timestamp>
 
         <Title>{title}</Title>
-        {!!subtitle && <Subtitle color={subtitleColor}>{subtitle}</Subtitle>}
+        {!!subtitle && (
+          <SubtitleButton onPress={onSubtitlePress} disabled={!onSubtitlePress}>
+            <Subtitle color={subtitleColor}>{subtitle}</Subtitle>
+          </SubtitleButton>
+        )}
 
         <IconWrapper>
           {!!iconUrl && (
@@ -114,6 +120,8 @@ const Title = styled(Text)`
 const Subtitle = styled(Text)`
   color: ${({ theme, color }) => color ?? theme.colors.basic030};
 `;
+
+const SubtitleButton = styled.TouchableOpacity``;
 
 const IconWrapper = styled.View`
   margin-top: ${spacing.large}px;
