@@ -174,8 +174,8 @@ export type EnsNameRegisteredEvent = {|
   ...EventCommon,
   type: typeof EVENT_TYPE.ENS_NAME_REGISTERED,
   ensName: string,
-  hash: string,
-  fee: TokenValue,
+  hash: ?string,
+  fee: ?TokenValue,
 |};
 
 export type TransactionsStore = {

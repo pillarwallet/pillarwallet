@@ -27,25 +27,28 @@ import TabView from 'components/modern/TabView';
 import {
   activeAccountAddressSelector,
   supportedAssetsPerChainSelector,
+  useAccounts,
   useActiveAccount,
   useRootSelector,
 } from 'selectors';
-import { accountHistorySelector } from 'selectors/history';
+import { accountHistorySelector, archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { ARCHANOVA_WALLET_ENS_MIGRATION } from 'constants/archanovaConstants';
 
 // Utils
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
 import { addressesEqual } from 'utils/assets';
 import { useChainsConfig } from 'utils/uiConfig';
 import { parseDate } from 'utils/common';
-import { getAccountId } from 'utils/accounts';
+import { getAccountId, getMigratedEnsName } from 'utils/accounts';
 
 // Types
 import { EVENT_TYPE, type Event, type WalletEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
+import type { EnsNameRegisteredEvent } from 'models/History';
 
 function MultiChainHistoryEtherspot() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -84,11 +87,16 @@ export default MultiChainHistoryEtherspot;
 function ChainHistoryView({ chain }: { chain: Chain }) {
   const historyEvents = useHistoryEvents(chain);
   const walletEvents = useWalletEvents(chain);
+  const ensRegisteredEvent = useEnsRegisteredEvent(chain);
 
-  const items = [
+  let items = [
     ...historyEvents,
     ...walletEvents,
   ];
+
+  if (ensRegisteredEvent) {
+    items = [...items, ensRegisteredEvent];
+  }
 
   return <HistoryList items={items} chain={chain} />;
 }
@@ -162,6 +170,50 @@ function useWalletEvents(chain: Chain): WalletEvent[] {
   // $FlowFixMe: does not cover WalletActivated and flow fails
   return accountChainWalletEvents.map((event) => ({
     ...event,
-    date: parseDate(event.date), // fix mutation after retrieved from storage
+    date: parseDate(event.date),
   }));
+}
+
+function useEnsRegisteredEvent(chain: Chain): ?EnsNameRegisteredEvent {
+  const archanovaAccountHistory = useRootSelector(archanovaAccountEthereumHistorySelector);
+  const accountHistory = useHistoryEvents(chain);
+  const accounts = useAccounts();
+  const activeAccount = useActiveAccount();
+
+  // $FlowFixMe: fails getting exact extra
+  const createdAt = activeAccount?.extra?.ethereum?.createdAt;
+
+  // ENS is registered on Ethereum only, createdAt might not be pulled yet
+  if (chain !== CHAIN.ETHEREUM || !createdAt) return null;
+
+  const migratedEnsTransaction = archanovaAccountHistory.find(({ tag }) => tag === ARCHANOVA_WALLET_ENS_MIGRATION);
+  const accountActivatedTransaction = accountHistory.find(({ type }) => type === EVENT_TYPE.WALLET_ACTIVATED);
+
+  const ensRegisteredDate = migratedEnsTransaction
+    ? parseDate(migratedEnsTransaction.createdAt)
+    : accountActivatedTransaction?.date;
+
+  const transactionHash = migratedEnsTransaction
+    ? migratedEnsTransaction.hash
+    // $FlowFixMe: fails to get hash from different event types
+    : accountActivatedTransaction?.hash;
+
+  const transactionFee = migratedEnsTransaction
+    ? parseHistoryEventFee(
+      chain,
+      migratedEnsTransaction?.feeWithGasToken,
+      migratedEnsTransaction?.gasUsed,
+      migratedEnsTransaction?.gasPrice,
+    )
+    // $FlowFixMe: fails to fee hash from different event types
+    : accountActivatedTransaction?.fee;
+
+  return {
+    id: `ethereum-${EVENT_TYPE.ENS_NAME_REGISTERED}`,
+    type: EVENT_TYPE.ENS_NAME_REGISTERED,
+    date: ensRegisteredDate ?? new Date(+createdAt - 1), // -1 to list it before smart wallet is created (per AC),
+    ensName: getMigratedEnsName(accounts),
+    hash: transactionHash,
+    fee: transactionFee,
+  };
 }

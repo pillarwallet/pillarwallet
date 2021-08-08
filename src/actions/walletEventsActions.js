@@ -88,7 +88,7 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
     const accountEthereumWalletEvents = walletEvents?.[accountId]?.ethereum ?? [];
 
     if (isArchanovaAccount(account)) {
-      const isPpnCreatedEventMissing = accountEthereumWalletEvents.some(({
+      const isPpnCreatedEventMissing = !accountEthereumWalletEvents.some(({
         type,
       }) => type === EVENT_TYPE.PPN_INITIALIZED);
       if (isPpnCreatedEventMissing) {
