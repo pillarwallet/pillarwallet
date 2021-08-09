@@ -120,8 +120,10 @@ export const logBreadcrumb = (
     if (extra != null) printLog(`${level} - ${category}: ${message}`, extra);
     else printLog(`${level} - ${category}: ${message}`);
   }
+
+  const data = extra != null && typeof extra === 'object' ? extra : { extra };
   Sentry.addBreadcrumb({
-    category, message, level, data: extra,
+    category, message, level, data,
   });
 };
 
