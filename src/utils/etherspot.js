@@ -200,13 +200,14 @@ export const buildExchangeOffer = (
   toAsset: AssetCore,
   fromAmount: BigNumber,
   offer: EtherspotExchangeOffer,
+  chain: Chain,
 ): ExchangeOffer => {
   const { exchangeRate, transactions } = offer;
   const provider = parseExchangeProvider(offer.provider);
   const toAmount = fromEthersBigNumber(offer.receiveAmount, toAsset.decimals);
 
   // Note: etherspot exchange rate is quoted as FROM / TO, so we need to reverse it.
-  return { provider, fromAsset, toAsset, fromAmount, toAmount, exchangeRate: 1 / exchangeRate, transactions };
+  return { provider, fromAsset, toAsset, fromAmount, toAmount, exchangeRate: 1 / exchangeRate, transactions, chain };
 };
 
 export const appendNativeAssetIfNeeded = (chain: Chain, assets: Asset[]): Asset[] => {

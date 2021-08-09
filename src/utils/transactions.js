@@ -23,11 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import {
-  ADDRESS_ZERO,
-  COLLECTIBLES,
-  ETH,
-} from 'constants/assetsConstants';
+import { ADDRESS_ZERO, COLLECTIBLES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -165,25 +161,34 @@ export const mapToEthereumTransactions = async (
 };
 
 // TODO: gasToken support
-export const mapTransactionsToTransactionPayload = (transactions: EthereumTransaction[]): TransactionPayload => {
-  let transactionPayload = mapTransactionToTransactionPayload(transactions[0]);
+export const mapTransactionsToTransactionPayload = (
+  chain: Chain,
+  transactions: EthereumTransaction[],
+): TransactionPayload => {
+  let transactionPayload = mapTransactionToTransactionPayload(chain, transactions[0]);
 
   if (transactions.length > 1) {
     transactionPayload = {
       ...transactionPayload,
-      sequentialTransactions: transactions.slice(1).map(mapTransactionToTransactionPayload),
+      sequentialTransactions: transactions.slice(1).map((
+        transaction,
+      ) => mapTransactionToTransactionPayload(chain, transaction)),
     };
   }
 
-  return transactionPayload;
+  return { ...transactionPayload, chain };
 };
 
 // TODO: gas token support
-const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): TransactionPayload => {
+const mapTransactionToTransactionPayload = (
+  chain: Chain,
+  transaction: EthereumTransaction,
+): TransactionPayload => {
+  const { symbol } = nativeAssetPerChain[chain];
   const { to, value, data } = transaction;
   const amount = fromEthersBigNumber(value, 18).toFixed();
 
-  return { to, amount, symbol: ETH, data, decimals: 18 };
+  return { to, amount, symbol, data, decimals: 18 };
 };
 
 export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {
@@ -216,7 +221,7 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
   const chainNativeAsset = nativeAssetPerChain[chain];
   if (!chainNativeAsset) {
     reportErrorLog('getGasSymbol failed: no native asset for chain', { chain });
-    return ETH;
+    return nativeAssetPerChain.ethereum.symbol;
   }
 
   return chainNativeAsset.symbol;
