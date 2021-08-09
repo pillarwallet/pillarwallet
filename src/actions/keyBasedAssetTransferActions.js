@@ -43,7 +43,7 @@ import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstan
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
-import { collectibleFromResponse } from 'actions/collectiblesActions';
+import { parseCollectibleFromOpenSeaAsset } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -209,7 +209,7 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
     if (!fetchedCollectibles) {
       reportLog('Failed to fetch key based wallet collectibles', { requestResult: fetchedCollectibles });
     } else {
-      availableCollectibles = fetchedCollectibles.map(collectibleFromResponse);
+      availableCollectibles = fetchedCollectibles.map(parseCollectibleFromOpenSeaAsset);
     }
 
     dispatch({ type: SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER, payload: availableCollectibles });

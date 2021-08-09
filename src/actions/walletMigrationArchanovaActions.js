@@ -72,11 +72,16 @@ export function removeTokenToMigrateAction(address: string): RemoveTokenToMigrat
   };
 }
 
-export function setCollectibleToMigrateAction(contractAddress: string, id: string): SetCollectibleToMigrateAction {
+export function setCollectibleToMigrateAction(
+  contractAddress: string,
+  id: string,
+  isLegacy: boolean,
+): SetCollectibleToMigrateAction {
   return {
     type: ACTION_SET_COLLECTIBLE_TO_MIGRATE,
     contractAddress,
     id,
+    isLegacy,
   };
 }
 
@@ -99,7 +104,7 @@ export function addMigrationTransactionToHistoryAction(hash: string) {
     }
 
     const eth = nativeAssetPerChain.ethereum;
-    const migratorAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_ADDRESS;
+    const migratorAddress = getEnv().ARCHANOVA_MIGRATOR_CONTRACT_V2_ADDRESS;
 
     const transaction = buildHistoryTransaction({
       from: archanovaAccount.id,

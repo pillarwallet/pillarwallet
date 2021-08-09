@@ -25,6 +25,7 @@ export type OpenSeaAssetAccount = {|
 export type OpenSeaAssetContract = {|
   name: string,
   address: string,
+  nft_version?: string,
 |};
 
 export type OpenSeaAssetTransaction = {|
