@@ -36,8 +36,10 @@ export type Collectible = {
   decimals?: void,
   chain: Chain,
 
-  // Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties) and require using `transfer` method instead of one
-  // inferred from ABI.
+  /**
+   * Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties)
+   * and require using `transfer` method instead of one inferred from ABI.
+   */
   isLegacy: boolean,
 };
 
