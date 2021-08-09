@@ -22,7 +22,7 @@ import { getEnv } from 'configs/envConfig';
 import { mapValues } from 'lodash';
 
 // Constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
@@ -80,7 +80,7 @@ export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectib
     name: asset.name || `${contract.name} ${asset.token_id}`,
     description: asset.description,
     contractAddress: contract.address,
-    tokenType: COLLECTIBLES,
+    tokenType: ASSET_TYPES.COLLECTIBLE,
     image,
     icon,
     iconUrl: icon,

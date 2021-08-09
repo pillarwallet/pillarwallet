@@ -18,29 +18,37 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// Constants
+import { ASSET_TYPES } from 'constants/assetsConstants';
+
 // Types
 import type { Chain, ChainRecord } from 'models/Chain';
 
 
 export type Collectible = {
+  tokenType: typeof ASSET_TYPES.COLLECTIBLE,
+  contractAddress: string,
   id: string,
+  chain: Chain,
   name: string,
   description: ?string,
   icon: ?string,
   iconUrl: ?string,
   image: ?string,
   imageUrl: ?string,
-  contractAddress: string,
-  tokenType: string,
-  symbol?: void,
-  decimals?: void,
-  chain: Chain,
 
   /**
    * Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties)
    * and require using `transfer` method instead of one inferred from ABI.
    */
   isLegacy: boolean,
+
+  // Cooperation with AssetData/TokenData model
+  token?: void,
+  decimals?: void,
+
+  // Cooperation with AssetOption model
+  symbol?: void,
 };
 
 export type CollectibleTransaction = {

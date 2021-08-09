@@ -21,18 +21,14 @@
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import {
-  COLLECTIBLES,
-  TOKENS,
-} from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Types
-import type {
-  Chain,
-  ChainRecord,
-} from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
 
-export type TokenType = typeof TOKENS | typeof COLLECTIBLES;
+
+export type AssetType = $Values<typeof ASSET_TYPES>;
 
 export type AssetCore = {
   address: string,
@@ -40,15 +36,20 @@ export type AssetCore = {
   decimals: number,
 };
 
-export type AssetData = {|
-  token: string,
+export type AssetData = TokenData | Collectible;
+
+export type TokenData = {|
+  tokenType?: typeof ASSET_TYPES.TOKEN,
   contractAddress: string,
-  tokenType?: TokenType,
-  name?: string,
   decimals: number,
+  token: string,
+  name?: string,
   icon?: string,
   iconColor?: string,
-  id?: string,
+
+  // Improve cooperation with Collectible
+  id?: void,
+  isLegacy?: void,
 |};
 
 export type Asset = {
@@ -87,7 +88,7 @@ export type AssetOption = {
   imageUrl: string,
   name: string,
   symbol: string,
-  tokenType?: TokenType,
+  tokenType?: AssetType,
   chain: Chain,
 
   // Additional props

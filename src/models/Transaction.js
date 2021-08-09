@@ -20,11 +20,14 @@
 
 import { BigNumber } from 'bignumber.js';
 
+// constants
+import { ERC721_TRANSFER_METHODS } from 'constants/transactionsConstants';
+
 // types
 import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import type { AssetData } from 'models/Asset';
+import type { AssetData, AssetType } from 'models/Asset';
 import type { Value } from 'utils/common';
 import type { Chain } from 'models/Chain';
 
@@ -174,11 +177,11 @@ export type Transaction = {
 export type TransactionPayload = {
   gasLimit?: number,
   to: string,
-  receiverEnsName?: string,
+  receiverEnsName?: ?string,
   name?: string,
   contractAddress?: string,
   tokenId?: string,
-  tokenType?: string,
+  tokenType?: AssetType,
   txSpeed?: string,
   gasPrice?: number,
   txFeeInWei?: ?Value,
@@ -193,11 +196,22 @@ export type TransactionPayload = {
   tag?: string,
   extra?: Object,
   usePPN?: boolean,
+  useLegacyTransferMethod?: boolean,
   sequentialTransactions?: TransactionPayload[],
   chain?: Chain,
 };
 
-export type CollectibleTransactionPayload = $Shape<TransactionPayload>;
+export type Erc721TransferMethod = $Values<typeof ERC721_TRANSFER_METHODS>;
+
+export type CollectibleTransactionPayload = {
+  to: string,
+  contractAddress: string,
+  tokenId: string,
+  useLegacyTransferMethod: boolean,
+  gasLimit?: number,
+  gasPrice?: number,
+  signOnly?: ?boolean,
+};
 
 export type TransactionEthers = {
   from: string,

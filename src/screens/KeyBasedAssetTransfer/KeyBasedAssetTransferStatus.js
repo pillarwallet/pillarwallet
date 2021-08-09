@@ -25,7 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 // actions
@@ -99,9 +99,9 @@ const KeyBasedAssetTransferStatus = ({
       to: signedTransaction?.to || '',
       hash: transactionHash || '',
       status,
-      value: amount && parseTokenBigNumberAmount(amount, assetData?.decimals),
-      type: assetData?.tokenType === COLLECTIBLES ? COLLECTIBLE_TRANSACTION : TRANSACTION_EVENT,
-      assetSymbol: assetData?.token,
+      value: amount ? parseTokenBigNumberAmount(amount, assetData?.decimals) : undefined,
+      type: assetData?.tokenType === ASSET_TYPES.COLLECTIBLE ? COLLECTIBLE_TRANSACTION : TRANSACTION_EVENT,
+      assetSymbol: assetData?.token ?? '',
       assetAddress: assetData?.contractAddress,
     }),
     assetData,
