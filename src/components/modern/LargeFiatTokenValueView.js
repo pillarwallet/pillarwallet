@@ -29,10 +29,9 @@ import TokenValueView from 'components/modern/TokenValueView';
 import FiatValueView from 'components/modern/FiatValueView';
 
 // Utils
-import { appFont, spacing } from 'utils/variables';
+import { appFont, spacing, fontSizes } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
 import { getAssetValueInFiat } from 'utils/rates';
-import { wrapBigNumber } from 'utils/bigNumber';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';
@@ -52,19 +51,18 @@ type Props = {|
 /**
  * Large (& stylized) component to display token value.
  */
-function LargeTokenValueView({ value, assetAddress, chain, symbol, style }: Props) {
+function LargeFiatTokenValueView({ value, assetAddress, chain, symbol, style }: Props) {
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const rates = useChainRates(chain);
   const balanceInFiat = getAssetValueInFiat(value, assetAddress, rates, fiatCurrency);
-  const balanceInFiatNumber = balanceInFiat ? wrapBigNumber(balanceInFiat) : null;
-  if (!value || !balanceInFiatNumber) return null;
+  if (!value) return null;
 
   return (
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
-      <RNText>
-        <FiatValueView value={balanceInFiatNumber} currency={fiatCurrency} variant="giant" style={styles.fiatValue} />
+      <RNText style={styles.fiatTokenText} numberOfLines={1} adjustsFontSizeToFit>
+        <FiatValueView value={balanceInFiat} currency={fiatCurrency} variant="giant" style={styles.fiatValue} />
         <Spacing w={spacing.small} />
         <TokenValueView
           value={value}
@@ -78,9 +76,12 @@ function LargeTokenValueView({ value, assetAddress, chain, symbol, style }: Prop
   );
 }
 
-export default LargeTokenValueView;
+export default LargeFiatTokenValueView;
 
 const styles = {
+  fiatTokenText: {
+    fontSize: fontSizes.giant,
+  },
   fiatValue: {
     fontFamily: appFont.medium,
   },

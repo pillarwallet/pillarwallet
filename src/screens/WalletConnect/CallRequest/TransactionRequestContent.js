@@ -29,7 +29,7 @@ import { useTranslation } from 'translations/translate';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
-import LargeTokenValueView from 'components/modern/LargeTokenValueView';
+import LargeFiatTokenValueView from 'components/modern/LargeFiatTokenValueView';
 import Text from 'components/modern/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/modern/Icon';
@@ -119,7 +119,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
         {t('walletConnect.requests.transactionRequest')}
       </Text>
 
-      <LargeTokenValueView
+      <LargeFiatTokenValueView
         value={value}
         assetAddress={gasAddress}
         chain={chain}
