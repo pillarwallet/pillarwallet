@@ -101,7 +101,7 @@ function Exchange() {
   const walletBalancesPerChain = getChainWalletAssetsBalances(accountBalances);
 
   const fromOptions = React.useMemo(
-    () => supportedExchangeChains.reduce((multiChainOptions, supportedChain) => {
+    () => exchangeSupportedChains.reduce((multiChainOptions, supportedChain) => {
       const chainOptions = getExchangeFromAssetOptions(
         assetsPerChain,
         supportedAssetsPerChain,
@@ -116,7 +116,7 @@ function Exchange() {
   );
 
   const toOptions = React.useMemo(
-    () => supportedExchangeChains.reduce((multiChainOptions, supportedChain) => {
+    () => exchangeSupportedChains.reduce((multiChainOptions, supportedChain) => {
       const chainOptions = getExchangeToAssetOptions(
         supportedAssetsPerChain,
         walletBalancesPerChain,
@@ -144,7 +144,7 @@ function Exchange() {
     [toOptions, chain, nativeChainAssetAddress],
   );
 
-  const offersQuery = useOffersQuery(fromAsset, toAsset, fromAmount, chain);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromAmount);
   const offers = sortOffers(offersQuery.data);
 
   // Focus on from amount input after user changes from or to asset
@@ -263,17 +263,17 @@ function Exchange() {
 
 export default Exchange;
 
-const supportedExchangeChains = [
+const exchangeSupportedChains = [
   CHAIN.ETHEREUM,
   CHAIN.BINANCE,
   CHAIN.POLYGON,
 ];
 
 function useOffersQuery(
+  chain: Chain,
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
-  chain: Chain,
 ): QueryResult<ExchangeOffer[]> {
   const enabled = shouldTriggerSearch(fromAsset, toAsset, fromAmount);
 

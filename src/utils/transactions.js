@@ -189,11 +189,11 @@ const mapTransactionToTransactionPayload = (
   chain: Chain,
   transaction: EthereumTransaction,
 ): TransactionPayload => {
-  const { symbol } = nativeAssetPerChain[chain];
+  const { symbol, decimals } = nativeAssetPerChain[chain];
   const { to, value, data } = transaction;
-  const amount = fromEthersBigNumber(value, 18).toFixed();
+  const amount = fromEthersBigNumber(value, decimals).toFixed();
 
-  return { to, amount, symbol, data, decimals: 18 };
+  return { to, amount, symbol, data, decimals };
 };
 
 export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {

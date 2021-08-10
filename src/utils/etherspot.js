@@ -196,11 +196,11 @@ export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI }
 };
 
 export const buildExchangeOffer = (
+  chain: Chain,
   fromAsset: AssetCore,
   toAsset: AssetCore,
   fromAmount: BigNumber,
   offer: EtherspotExchangeOffer,
-  chain: Chain,
 ): ExchangeOffer => {
   const { exchangeRate, transactions } = offer;
   const provider = parseExchangeProvider(offer.provider);
