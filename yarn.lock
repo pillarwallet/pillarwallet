@@ -1357,17 +1357,17 @@
     testrpc "0.0.1"
     web3-utils "^1.0.0-beta.31"
 
-"@etherspot/archanova-contracts-migrator@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/archanova-contracts-migrator/-/archanova-contracts-migrator-1.0.0.tgz#f3ee8ad4fef214a2f6b269e5fbf89307f82a21f8"
-  integrity sha512-X9cuWkoOOpxGPRf7uOUkDbuXKtQ02b0tVp0X16h9OxshkG2mTY1plKoRreL3lFgVZvprWrNuLlVyYnzSHBUtGQ==
+"@etherspot/archanova-contracts-migrator@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@etherspot/archanova-contracts-migrator/-/archanova-contracts-migrator-2.2.0.tgz#7fc096f4692abe9fafc12e177cba8171effb3bcf"
+  integrity sha512-Xjh2vPCcMTNgVIQWNn8P6zYktwaReAVDWvSdWynHkwpuX9O420M4eE0KI4wrWbTr5fjbtjQN0GSxOsB1xt3rGw==
 
-"@etherspot/archanova-migrator@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/archanova-migrator/-/archanova-migrator-1.0.0.tgz#6c7ca7bbc0b15bb22d1087478fb007713b457e76"
-  integrity sha512-J3xGHVxJAEB0/Ly4TxthPd7uTJDYrHUsZD4QnqDKbE6jwj+b3PxAPn9kk7a49Ih83gOi3hFoZChRZ6b0VHBt5w==
+"@etherspot/archanova-migrator@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@etherspot/archanova-migrator/-/archanova-migrator-2.2.0.tgz#8563bb69f09f4e57478a29918160578fb6dfca35"
+  integrity sha512-7IGjS28nlVI4qLA0Ss2Oqwy3NCbzdceAp8mnU3WgonRRP6UDjp5+CkMd29vgMMUodFytvErpwSz5ByqeRBVv+A==
   dependencies:
-    "@etherspot/archanova-contracts-migrator" "1.0.0"
+    "@etherspot/archanova-contracts-migrator" "2.2.0"
 
 "@etherspot/contracts@1.2.3":
   version "1.2.3"

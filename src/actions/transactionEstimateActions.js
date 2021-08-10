@@ -129,6 +129,7 @@ export const estimateTransactionsAction = (
         assetData?.contractAddress,
         assetData?.id,
         chain,
+        assetData?.isLegacy,
       )));
     } catch (error) {
       dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));

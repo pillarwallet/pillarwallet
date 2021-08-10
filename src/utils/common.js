@@ -113,14 +113,17 @@ export const reportErrorLog = (
 export const logBreadcrumb = (
   category: string,
   message: string,
-  extra: Object,
+  extra: any,
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
   if (__DEV__) {
-    printLog(`${level} - ${category}: ${message}`, extra);
+    if (extra != null) printLog(`${level} - ${category}: ${message}`, extra);
+    else printLog(`${level} - ${category}: ${message}`);
   }
+
+  const data = extra != null && typeof extra === 'object' ? extra : { extra };
   Sentry.addBreadcrumb({
-    category, message, level, data: { extra },
+    category, message, level, data,
   });
 };
 
@@ -288,10 +291,10 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
-export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
+export const parseTokenBigNumberAmount = (amount: number | string, decimals: ?number): utils.BigNumber => {
   let formatted = amount.toString();
   const [whole, fraction] = formatted.split('.');
-  if (decimals > 0) {
+  if (decimals != null && decimals > 0) {
     if (fraction && fraction.length > decimals) {
       formatted = `${whole}.${fraction.substring(0, decimals)}`;
     }

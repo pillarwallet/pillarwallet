@@ -69,8 +69,10 @@ const OBTC = 'OBTC';
 const wBTC = 'wBTC'; // testnet
 const testBTC = 'testBTC'; // testnet
 
-export const TOKENS = ('TOKENS': 'TOKENS');
-export const COLLECTIBLES = ('COLLECTIBLES': 'COLLECTIBLES');
+export const ASSET_TYPES = {
+  TOKEN: ('TOKENS': 'TOKENS'),
+  COLLECTIBLE: ('COLLECTIBLES': 'COLLECTIBLES'),
+};
 
 export const SYNTHETIC = 'SYNTHETIC';
 export const NONSYNTHETIC = 'NONSYNTHETIC';

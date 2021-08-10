@@ -70,6 +70,7 @@ import type {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
 
 
 type Props = {
@@ -102,7 +103,7 @@ const SendCollectibleConfirm = ({
   const navigation = useNavigation();
 
   const receiverEnsName: ?string = useNavigationParam('receiverEnsName');
-  const assetData = useNavigationParam('assetData');
+  const assetData: Collectible = useNavigationParam('assetData');
   const receiver: string = useNavigationParam('receiver');
   const navigationSource: ?string = useNavigationParam('source');
   const chain: Chain = useNavigationParam('chain');
@@ -115,6 +116,7 @@ const SendCollectibleConfirm = ({
     tokenType,
     id: tokenId,
     contractAddress,
+    isLegacy,
   } = assetData;
 
   let transactionPayload: CollectibleTransactionPayload = {
@@ -125,6 +127,7 @@ const SendCollectibleConfirm = ({
     tokenId,
     amount: 0,
     chain,
+    useLegacyTransferMethod: isLegacy,
   };
 
   if (receiverEnsName) {

@@ -22,6 +22,12 @@ export const TRANSACTION_TYPE = {
   EXCHANGE: ('EXCHANGE': 'EXCHANGE'),
 };
 
+export const ERC721_TRANSFER_METHODS = {
+  TRANSFER: ('transfer': 'transfer'),
+  TRANSFER_FROM: ('transferFrom': 'transferFrom'),
+  SAFE_TRANSFER_FROM: ('safeTransferFrom': 'safeTransferFrom'),
+};
+
 export const AAVE_LENDING_DEPOSIT_TRANSACTION = 'AAVE_LENDING_DEPOSIT_TRANSACTION';
 export const AAVE_LENDING_WITHDRAW_TRANSACTION = 'AAVE_LENDING_WITHDRAW_TRANSACTION';
 

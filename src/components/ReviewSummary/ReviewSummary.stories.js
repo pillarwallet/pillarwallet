@@ -24,7 +24,7 @@ import { Provider } from 'react-redux';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { ADDRESS_ZERO, EUR, PLR } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, EUR, PLR, ASSET_TYPES } from 'constants/assetsConstants';
 
 // Utils
 import { createTestStore, initialTestState } from 'testUtils/store';
@@ -65,13 +65,14 @@ const collectible = {
   id: '5191',
   name: 'CryptoKittiesRinkeby 5191',
   contractAddress: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
-  tokenType: 'COLLECTIBLES',
+  tokenType: ASSET_TYPES.COLLECTIBLE,
   image: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk',
   imageUrl: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk',
   icon: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk=s250',
   iconUrl: 'https://lh3.googleusercontent.com/_xZzagx4SF8SL0y959uaWtk_qHwo5Q0ztJrsLYMaxOTr991UrisNXo4MS0Ny7EV9hgcCEL7MNQbz29_ji5Z-XEnk=s250',
   description: '',
   chain: CHAIN.ETHEREUM,
+  isLegacy: true,
 };
 
 const store = createTestStore({

@@ -53,7 +53,6 @@ import {
   getBalance,
   getBalanceBN,
   mapAssetToAssetData,
-  mapCollectibleToAssetData,
   getBalanceInFiat,
   findAssetByAddress,
 } from 'utils/assets';
@@ -61,7 +60,7 @@ import { BigNumber } from 'utils/common';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Constants
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -142,11 +141,9 @@ const KeyBasedAssetTransferChoose = ({
       .filter(Boolean)
       .map(mapAssetToAssetData);
 
-    const collectibles = availableCollectibles.map(mapCollectibleToAssetData);
-
     return compactFalsy([
       !!assets?.length && { title: t('label.tokens'), data: assets },
-      !!collectibles?.length && { title: t('label.collectibles'), data: collectibles },
+      !!availableCollectibles?.length && { title: t('label.collectibles'), data: availableCollectibles },
     ]);
   };
 
@@ -157,7 +154,7 @@ const KeyBasedAssetTransferChoose = ({
   };
 
   const renderItem = (item: AssetData) => {
-    if (item.tokenType === COLLECTIBLES) {
+    if (item.tokenType === ASSET_TYPES.COLLECTIBLE) {
       const isChecked = keyBasedAssetsToTransfer.some((assetToTransfer) =>
         isMatchingAssetToTransfer(assetToTransfer, item),
       );
@@ -299,7 +296,7 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
 );
 
 const isMatchingAssetToTransfer = (assetToTransfer: KeyBasedAssetTransfer, asset: AssetData) => {
-  if (asset?.tokenType === COLLECTIBLES) {
+  if (asset?.tokenType === ASSET_TYPES.COLLECTIBLE) {
     return (
       assetToTransfer?.assetData?.id === asset?.id &&
       addressesEqual(assetToTransfer?.assetData?.contractAddress, asset?.contractAddress)

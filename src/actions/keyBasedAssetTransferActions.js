@@ -26,7 +26,7 @@ import { formatEther } from 'ethers/lib/utils';
 import Toast from 'components/Toast';
 
 // constants
-import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import { ASSET_TYPES, ETH } from 'constants/assetsConstants';
 import {
   SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
@@ -43,7 +43,7 @@ import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstan
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
-import { collectibleFromResponse } from 'actions/collectiblesActions';
+import { parseCollectibleFromOpenSeaAsset } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
@@ -66,16 +66,13 @@ import type { Account } from 'models/Account';
 import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
 
-const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: Object) => {
-  if (asset?.tokenType === COLLECTIBLES) {
-    const { id: tokenId, contractAddress } = asset;
-    return { tokenId, contractAddress, ...transactionExtra };
+const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: any) => {
+  if (asset.tokenType === ASSET_TYPES.COLLECTIBLE) {
+    const { contractAddress, id: tokenId } = asset;
+    return { contractAddress, tokenId, ...transactionExtra };
   }
-  const {
-    token: symbol,
-    contractAddress,
-    decimals,
-  } = asset;
+
+  const { token: symbol, contractAddress, decimals } = asset;
   return {
     symbol,
     contractAddress,
@@ -110,7 +107,7 @@ const signKeyBasedAssetTransferTransaction = async (
   });
 
   let signedTransaction;
-  if (keyBasedAssetTransfer?.assetData?.tokenType === COLLECTIBLES) {
+  if (keyBasedAssetTransfer?.assetData?.tokenType === ASSET_TYPES.COLLECTIBLE) {
     // $FlowFixMe note: added per current implementation
     signedTransaction = await walletProvider.transferERC721(
       keyBasedAccount,
@@ -148,7 +145,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
 
     // filter out matching
     const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.filter(({ assetData: transferAssetData }) => {
-      if (transferAssetData?.tokenType !== COLLECTIBLES) return transferAssetData?.token !== assetData.token;
+      if (transferAssetData?.tokenType !== ASSET_TYPES.COLLECTIBLE) return transferAssetData?.token !== assetData.token;
       const isMatchingCollectible = transferAssetData?.id === assetData?.id
         && addressesEqual(transferAssetData?.contractAddress, assetData?.contractAddress);
       return !isMatchingCollectible;
@@ -209,7 +206,7 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
     if (!fetchedCollectibles) {
       reportLog('Failed to fetch key based wallet collectibles', { requestResult: fetchedCollectibles });
     } else {
-      availableCollectibles = fetchedCollectibles.map(collectibleFromResponse);
+      availableCollectibles = fetchedCollectibles.map(parseCollectibleFromOpenSeaAsset);
     }
 
     dispatch({ type: SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER, payload: availableCollectibles });

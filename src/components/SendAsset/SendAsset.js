@@ -29,7 +29,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // components
 import Button from 'components/Button';
@@ -110,7 +110,7 @@ const SendAsset = ({
   const balance = getBalanceBN(balances, assetAddress);
   const currentValue = wrapBigNumber(amount || 0);
 
-  const isCollectible = assetData?.tokenType === COLLECTIBLES;
+  const isCollectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE;
 
   const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
 
@@ -163,7 +163,7 @@ const SendAsset = ({
 
     setSubmitPressed(true);
 
-    if (assetData.tokenType === COLLECTIBLES) {
+    if (assetData.tokenType === ASSET_TYPES.COLLECTIBLE) {
       setSubmitPressed(false);
       navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
         assetData,
@@ -175,19 +175,14 @@ const SendAsset = ({
       return;
     }
 
-    // $FlowFixMe
     const transactionPayload: TransactionPayload = {
       to: selectedContact.ethAddress,
-      // $FlowFixMe: flow update to 0.122
       receiverEnsName: selectedContact.ensName,
       amount: truncateAmount(currentValue.toString(), assetData.decimals),
-      // $FlowFixMe: bignumber.js types
       txFeeInWei: feeInfo.fee,
       // $FlowFixMe: flow update to 0.122
-      symbol: assetData.token,
-      // $FlowFixMe: flow update to 0.122
+      symbol: assetData.symbol || assetData.token,
       contractAddress: assetData.contractAddress,
-      // $FlowFixMe: flow update to 0.122
       decimals: assetData.decimals,
       chain,
     };
@@ -363,6 +358,7 @@ const mapToAssetDataType = ({
   tokenType,
   tokenId,
   name,
+  isLegacy,
 }: Object): AssetData => ({
   contractAddress: address || contractAddress,
   token,
@@ -370,4 +366,5 @@ const mapToAssetDataType = ({
   tokenType,
   id: tokenId,
   name,
+  isLegacy,
 });
