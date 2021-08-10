@@ -89,7 +89,7 @@ function HistoryList({ items, chain }: Props) {
         return <ExchangeFromFiatItem event={event} onPress={() => showEventDetails(event)} />;
       case EVENT_TYPE.WALLET_CREATED:
       case EVENT_TYPE.WALLET_ACTIVATED:
-        return <WalletEventItem event={event} onPress={() => showEventDetails(event)} />;
+        return <WalletEventItem event={event} onPress={() => showEventDetails(event)} chain={chain} />;
       case EVENT_TYPE.ENS_NAME_REGISTERED:
         return <EnsNameItem event={event} onPress={() => showEventDetails(event)} />;
       default:

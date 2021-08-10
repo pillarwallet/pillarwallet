@@ -26,9 +26,14 @@ import Text from 'components/modern/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { useChainsConfig } from 'utils/uiConfig';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
 import { type WalletEvent, EVENT_TYPE } from 'models/History';
+import type { Chain } from 'models/Chain';
 
 // Local
 import HistoryListItem from './HistoryListItem';
@@ -36,17 +41,30 @@ import HistoryListItem from './HistoryListItem';
 type Props = {|
   event: WalletEvent,
   onPress?: () => mixed,
+  chain: Chain,
 |};
 
-function WalletEventItem({ event, onPress }: Props) {
+function WalletEventItem({ event, onPress, chain }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const chainsConfig = useChainsConfig();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const subtitle = isDeployedOnChain?.[chain]
+      ? null
+      : t('label.walletNotDeployed');
+
     return (
       <HistoryListItem
-        iconName="wallet"
-        title={t('label.wallet')}
+        iconName={iconName}
+        customIconProps={{ width: 46, height: 46 }} // complete wrapper fill size icon
+        title={title}
+        subtitle={subtitle}
+        subtitleColor={colors.primary}
+        onSubtitlePress={() => showDeploymentInterjection(chain)}
         valueComponent={<Text color={colors.basic030}>{t('label.created')}</Text>}
         onPress={onPress}
       />
@@ -54,11 +72,19 @@ function WalletEventItem({ event, onPress }: Props) {
   }
 
   if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
+    const { iconName, title } = chainsConfig[chain];
+
+    const subtitle = isDeployedOnChain
+      ? null
+      : t('label.walletDeployment');
+
     return (
       <HistoryListItem
-        iconName="wallet"
-        title={t('label.wallet')}
-        valueComponent={<Text color={colors.basic030}>{t('label.activated')}</Text>}
+        iconName={iconName}
+        customIconProps={{ width: 46, height: 46 }} // complete wrapper fill size icon
+        title={title}
+        subtitle={subtitle}
+        valueComponent={isDeployedOnChain && <Text color={colors.basic030}>{t('label.deployed')}</Text>}
         onPress={onPress}
       />
     );

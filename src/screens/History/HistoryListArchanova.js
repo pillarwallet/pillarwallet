@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,7 +33,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { archanovaAccountEthereumHistorySelector, isFetchingHistorySelector } from 'selectors/history';
 
@@ -42,6 +42,8 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
+import { getAccountId } from 'utils/accounts';
+import { parseTimestamp } from 'utils/common';
 
 
 function HistoryListArchanova() {
@@ -76,30 +78,48 @@ export default HistoryListArchanova;
 // Extracted from legacy `Home` screen
 function useHistoryFeedItems(): any[] {
   const accounts = useRootSelector((root) => root.accounts.data);
-  const userEvents = useRootSelector((root) => root.userEvents.data);
+  const walletEvents = useRootSelector((root) => root.walletEvents.data);
+  const activeAccount = useActiveAccount();
+
+  const mappedArchanovaEthereumWalletEvents = useMemo(() => {
+    const archanovaEthereumWalletEvents = activeAccount
+      ? walletEvents?.[getAccountId(activeAccount)]?.ethereum ?? []
+      : [];
+
+    return archanovaEthereumWalletEvents.map((walletEvent) => ({
+      ...walletEvent,
+      createdAt: new Date(parseTimestamp(walletEvent.date) / 1000),
+    }));
+  }, [activeAccount, walletEvents]);
 
   const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
-  const mappedTransactions = mapTransactionsHistory(
-    transactions,
-    accounts,
-    TRANSACTION_EVENT,
-    true,
-    true,
+  const mappedTransactions = useMemo(
+    () => mapTransactionsHistory(
+      transactions,
+      accounts,
+      TRANSACTION_EVENT,
+      true,
+      true,
+    ),
+    [transactions, accounts],
   );
 
   // archanova supports only Ethereum mainnet
   const accountCollectiblesHistory = useRootSelector(accountCollectiblesHistorySelector);
-  const collectiblesTransactions = accountCollectiblesHistory[CHAIN.ETHEREUM] ?? [];
-  const mappedCollectiblesTransactions = mapTransactionsHistory(
-    collectiblesTransactions,
-    accounts,
-    COLLECTIBLE_TRANSACTION,
-    true,
-  );
+  const mappedCollectiblesTransactions = useMemo(() => {
+    const collectiblesTransactions = accountCollectiblesHistory[CHAIN.ETHEREUM] ?? [];
+
+    return mapTransactionsHistory(
+      collectiblesTransactions,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+      true,
+    );
+  }, [accountCollectiblesHistory, accounts]);
 
   return [
     ...mappedTransactions,
     ...mappedCollectiblesTransactions,
-    ...userEvents,
+    ...mappedArchanovaEthereumWalletEvents,
   ];
 }

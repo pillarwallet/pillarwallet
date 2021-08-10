@@ -285,7 +285,7 @@ describe('Onboarding actions', () => {
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
       badges: { data: [] },
-      userEvents: { data: [] },
+      walletEvents: { data: [] },
       totalBalances: {},
     });
 

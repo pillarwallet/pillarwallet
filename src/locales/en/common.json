@@ -258,7 +258,9 @@
     "assetMigration": "Asset migration",
     "ensMigration": "ENS migration",
     "archanovaToEtherspot": "Pillar V1 to Etherspot (Pillar V2)",
-    "archanovaToEtherspotShort": "Pillar V1 to Etherspot"
+    "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
+    "deployed": "Deployed",
+    "walletDeployment": "Wallet deployment"
   },
 
   "button": {
@@ -1512,6 +1514,7 @@
   },
 
   "tooltip": {
-    "switchAccountsByTappingHere": "You can switch accounts by tapping here"
+    "switchAccountsByTappingHere": "You can switch accounts by tapping here",
+    "includesDeploymentFee": "Including the one-time Smart Wallet deployment fee"
   }
 }

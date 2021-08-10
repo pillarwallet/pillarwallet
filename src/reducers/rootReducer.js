@@ -45,7 +45,7 @@ import assetsBalancesReducer from './assetsBalancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
-import userEventsReducer from './userEventsReducer';
+import walletEventsReducer from './walletEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
@@ -82,7 +82,7 @@ import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
-import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
+import type { WalletEventsReducerAction, WalletEventsReducerState } from './walletEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
@@ -122,7 +122,7 @@ export type RootReducerState = {|
   paymentNetwork: PaymentNetworkReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
-  userEvents: UserEventsReducerState,
+  walletEvents: WalletEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
@@ -149,7 +149,7 @@ type RootReducerAction =
   | WalletConnectReducerAction
   | WalletConnectSessionsReducerAction
   | UserSettingsReducerAction
-  | UserEventsReducerAction
+  | WalletEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction
@@ -198,7 +198,7 @@ const appReducer = combineReducers({
   paymentNetwork: paymentNetworkReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
-  userEvents: userEventsReducer,
+  walletEvents: walletEventsReducer,
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,

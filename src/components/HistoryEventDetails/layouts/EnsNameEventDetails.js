@@ -37,7 +37,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Types
-import { type EnsNameRegisteredEvent, EVENT_TYPE } from 'models/History';
+import { type EnsNameRegisteredEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
 
 // Local
@@ -58,7 +58,7 @@ function EnsNameEventDetails({ event, chain }: Props) {
   return (
     <BaseEventDetails
       date={event.date}
-      title={t(EVENT_TYPE.ENS_NAME_REGISTERED)}
+      title={t('ensName')}
       subtitle={event.ensName}
       iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} width={64} height={64} />}
     >
@@ -76,7 +76,7 @@ function EnsNameEventDetails({ event, chain }: Props) {
       )}
       <Spacing h={spacing.mediumLarge} />
 
-      <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
+      {!!event?.hash && <Button variant="secondary" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />}
     </BaseEventDetails>
   );
 }
