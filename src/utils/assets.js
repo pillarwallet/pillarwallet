@@ -22,13 +22,7 @@ import { BigNumber } from 'bignumber.js';
 import { get, mapValues, orderBy } from 'lodash';
 
 // constants
-import {
-  COLLECTIBLES,
-  defaultFiatCurrency,
-  ETH,
-  PLR,
-  TOKENS,
-} from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR, ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -52,9 +46,9 @@ import type {
   AssetOption,
   AssetOptionBalance,
   AssetsPerChain,
+  TokenData,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
-import type { Collectible } from 'models/Collectible';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
@@ -211,23 +205,8 @@ export const mapAssetToAssetData = ({
   contractAddress,
   name,
   decimals,
-  tokenType: TOKENS,
+  tokenType: ASSET_TYPES.TOKEN,
   icon: iconUrl,
-});
-
-export const mapCollectibleToAssetData = ({
-  contractAddress,
-  name,
-  id,
-  icon,
-}: Collectible): AssetData => ({
-  token: '',
-  decimals: 0,
-  contractAddress,
-  name,
-  id: id.toString(),
-  icon: icon || '',
-  tokenType: COLLECTIBLES,
 });
 
 export const getBalanceInFiat = (
@@ -300,7 +279,7 @@ export const getAssetOption = (
 };
 
 export const mapAssetDataToAssetOption = (
-  assetData: AssetData,
+  assetData: TokenData,
   balances?: ?WalletAssetsBalances,
   rates?: ?RatesByAssetAddress,
   fiatCurrency?: ?Currency,
@@ -311,7 +290,7 @@ export const mapAssetDataToAssetOption = (
     decimals: assetData.decimals,
     name: assetData.name ?? '',
     imageUrl: assetData.icon,
-    tokenType: assetData.tokenType ?? TOKENS,
+    tokenType: assetData.tokenType ?? ASSET_TYPES.TOKEN,
     balance: getAssetOptionBalance(assetData.token, assetData.contractAddress, balances, rates, fiatCurrency),
     chain: CHAIN.ETHEREUM,
   };

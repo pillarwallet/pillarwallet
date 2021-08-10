@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import { ADDRESS_ZERO, COLLECTIBLES } from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -39,6 +39,7 @@ import { buildERC721TransactionData, encodeContractMethod } from 'services/asset
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
+import type { AssetType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -80,14 +81,15 @@ export const buildEthereumTransaction = async (
   amount: string,
   symbol: ?string,
   decimals: number = 18,
-  tokenType: ?string,
+  tokenType: ?AssetType,
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,
+  useLegacyTransferMethod?: boolean,
 ): Promise<EthereumTransaction> => {
   let value;
 
-  if (tokenType !== COLLECTIBLES) {
+  if (tokenType !== ASSET_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {
@@ -95,12 +97,13 @@ export const buildEthereumTransaction = async (
       to = contractAddress;
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
-  } else if (contractAddress) {
+  } else if (contractAddress && tokenId) {
     data = await buildERC721TransactionData({
       from,
       to,
       tokenId,
       contractAddress,
+      useLegacyTransferMethod: !!useLegacyTransferMethod,
     });
     to = contractAddress;
     value = EthersBigNumber.from(0);
@@ -127,6 +130,7 @@ export const mapToEthereumTransactions = async (
     decimals = 18,
     sequentialTransactions = [],
     chain = CHAIN.ETHEREUM,
+    useLegacyTransferMethod,
   } = transactionPayload;
 
   const transaction = await buildEthereumTransaction(
@@ -140,6 +144,7 @@ export const mapToEthereumTransactions = async (
     contractAddress,
     tokenId,
     chain,
+    useLegacyTransferMethod,
   );
 
   let transactions = [transaction];

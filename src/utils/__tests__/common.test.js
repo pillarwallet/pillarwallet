@@ -38,6 +38,7 @@ import {
   formatTokenAmount,
   addressAsKey,
   valueForAddress,
+  parseTimestamp,
 } from 'utils/common';
 
 import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
@@ -374,6 +375,20 @@ describe('Common utils', () => {
       expect(valueForAddress(record, undefined)).toEqual(undefined);
       // $FlowFixMe: address value passed only to validate test
       expect(valueForAddress(record, null)).toEqual(undefined);
+    });
+  });
+  describe('parseTimestamp', () => {
+    const mockDateString = '2021-07-28 13:37';
+    const mockDate = new Date(mockDateString);
+    const mockDateTimestamp = new Date(mockDateString).getTime();
+    it('parses timestamp from number', () => {
+      expect(parseTimestamp(mockDateTimestamp)).toEqual(mockDateTimestamp);
+    });
+    it('parses timestamp from Date', () => {
+      expect(parseTimestamp(mockDate)).toEqual(mockDateTimestamp);
+    });
+    it('parses timestamp from string', () => {
+      expect(parseTimestamp(mockDateString)).toEqual(mockDateTimestamp);
     });
   });
 });

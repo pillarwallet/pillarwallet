@@ -53,7 +53,7 @@ type Props = {
   onPressTokenBalance: (address: string, balance: BigNumber) => mixed,
   collectibles: Collectible[],
   collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
-  onPressCollectible: (contractAddress: string, id: string) => mixed,
+  onPressCollectible: (contractAddress: string, id: string, isLegacy: boolean) => mixed,
 };
 
 const AssetList = ({
@@ -103,11 +103,11 @@ const AssetList = ({
         name={collectible.name}
         iconUrl={collectible.icon}
         chain={CHAIN.ETHEREUM}
-        onPress={() => onPressCollectible(collectible.contractAddress, collectible.id)}
+        onPress={() => onPressCollectible(collectible.contractAddress, collectible.id, collectible.isLegacy)}
         leftAddOn={
           <CheckBox
             value={!!collectibleToMigrate}
-            onValueChange={() => onPressCollectible(collectible.contractAddress, collectible.id)}
+            onValueChange={() => onPressCollectible(collectible.contractAddress, collectible.id, collectible.isLegacy)}
           />
         }
       />

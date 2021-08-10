@@ -37,11 +37,14 @@ type Props = {|
   date?: Date,
   title: ?string,
   subtitle?: ?string,
+  subtitleColor?: ?string,
   iconUrl?: ?string,
   iconName?: IconName,
   iconColor?: string,
   iconBorderColor?: string,
   iconComponent?: React.Node,
+  customIconProps?: Object,
+  onSubtitlePress?: () => mixed,
   children?: React.Node,
 |};
 
@@ -49,12 +52,15 @@ const BaseEventDetails = ({
   date,
   title,
   subtitle,
+  subtitleColor,
   iconUrl,
   iconName,
   iconColor,
   iconBorderColor,
   iconComponent,
   children,
+  onSubtitlePress,
+  customIconProps = {},
 }: Props) => {
   const colors = useThemeColors();
 
@@ -64,7 +70,11 @@ const BaseEventDetails = ({
         <Timestamp>{formatDate(date, DATE_FORMAT)}</Timestamp>
 
         <Title>{title}</Title>
-        {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
+        {!!subtitle && (
+          <SubtitleButton onPress={onSubtitlePress} disabled={!onSubtitlePress}>
+            <Subtitle color={subtitleColor}>{subtitle}</Subtitle>
+          </SubtitleButton>
+        )}
 
         <IconWrapper>
           {!!iconUrl && (
@@ -75,7 +85,7 @@ const BaseEventDetails = ({
 
           {!!iconName && (
             <IconCircle $color={iconBorderColor ?? colors.neutralWeak}>
-              <Icon name={iconName} color={iconColor ?? colors.neutral} width={40} height={40} />
+              <Icon name={iconName} color={iconColor ?? colors.neutral} width={40} height={40} {...customIconProps} />
             </IconCircle>
           )}
 
@@ -108,8 +118,10 @@ const Title = styled(Text)`
 `;
 
 const Subtitle = styled(Text)`
-  color: ${({ theme }) => theme.colors.basic030};
+  color: ${({ theme, color }) => color ?? theme.colors.basic030};
 `;
+
+const SubtitleButton = styled.TouchableOpacity``;
 
 const IconWrapper = styled.View`
   margin-top: ${spacing.large}px;

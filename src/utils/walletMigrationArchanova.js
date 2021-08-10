@@ -256,7 +256,7 @@ async function applyAddMigratorDeviceTransactionIfNeeded(migrator: Migrator): Mi
 
   if (!isArchanovaDeviceDeployed(migratorDevice)) {
     logBreadcrumb('walletMigrationArchanova', 'migrator add account device transaction');
-    migrator = migrator.addAccountDevice();
+    migrator.addAccountDevice();
   }
 }
 
@@ -270,7 +270,7 @@ async function applyAssetTransferTransaction(
   const nativeAssetToMigrate = valueForAddress(tokensToMigrate, nativeAsset.address);
   if (nativeAssetToMigrate) {
     logBreadcrumb('walletMigrationArchanova', 'add ETH balance', { balance: nativeAssetToMigrate.balance });
-    migrator = migrator.transferBalance(utils.parseEther(nativeAssetToMigrate.balance));
+    migrator.transferBalance(utils.parseEther(nativeAssetToMigrate.balance));
   }
 
   // Migrate tokens (except ETH)
@@ -286,9 +286,10 @@ async function applyAssetTransferTransaction(
   }
 
   // Migrate NFTs
-  const collectibleMigrations = recordValues(collectiblesToMigrate).map(({ contractAddress, id }) => ({
+  const collectibleMigrations = recordValues(collectiblesToMigrate).map(({ contractAddress, id, isLegacy }) => ({
     token: contractAddress,
     id,
+    useLegacyTransferMethod: isLegacy,
   }));
   if (collectibleMigrations.length > 0) {
     logBreadcrumb('walletMigrationArchanova', 'add collectibles', { collectibleMigrations });

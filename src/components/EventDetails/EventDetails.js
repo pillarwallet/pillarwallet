@@ -54,6 +54,7 @@ import {
   formatTransactionFee,
   findEnsNameCaseInsensitive,
   getDecimalPlaces,
+  parseTimestamp,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -99,7 +100,6 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import {
   SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
@@ -176,6 +176,7 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { TransactionsStore } from 'models/History';
 import type { Currency, RatesPerChain } from 'models/Rates';
+import { EVENT_TYPE } from 'models/History';
 
 
 type StateProps = {|
@@ -250,15 +251,12 @@ type EventData = {
 // i.e. getEventData(event) === null
 export const shouldShowEventDetails = (event: Object): boolean => {
   switch (event.type) {
-    case USER_EVENT:
-      return [
-        WALLET_CREATE_EVENT,
-        PPN_INIT_EVENT,
-        WALLET_BACKUP_EVENT,
-      ].includes(event.subType);
     case TRANSACTION_EVENT:
     case TRANSACTION_PENDING_EVENT:
       return event.tag !== SABLIER_CANCEL_STREAM;
+    case EVENT_TYPE.WALLET_CREATED:
+    case EVENT_TYPE.WALLET_BACKED_UP:
+    case EVENT_TYPE.PPN_INITIALIZED:
     case COLLECTIBLE_TRANSACTION:
       return true;
     default:
@@ -620,10 +618,11 @@ export class EventDetail extends React.Component<Props> {
     );
   };
 
-  getWalletCreatedEventData = (event: Object): ?EventData => {
-    const { isArchanovaWalletActivated } = this.props;
-    switch (event.eventTitle) {
-      case 'Smart Wallet created':
+  getWalletEventData = (event: Object): ?EventData => {
+    const { isPPNActivated, isArchanovaWalletActivated } = this.props;
+
+    switch (event.type) {
+      case EVENT_TYPE.WALLET_CREATED:
         const activateButton = {
           title: t('button.activate'),
           onPress: this.activateSW,
@@ -638,18 +637,7 @@ export class EventDetail extends React.Component<Props> {
         return {
           buttons: isArchanovaWalletActivated ? [topUpButton] : [activateButton],
         };
-      default:
-        return null;
-    }
-  };
-
-  getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated, isArchanovaWalletActivated } = this.props;
-
-    switch (event.subType) {
-      case WALLET_CREATE_EVENT:
-        return this.getWalletCreatedEventData(event);
-      case PPN_INIT_EVENT:
+      case EVENT_TYPE.PPN_INITIALIZED:
         if (isPPNActivated) {
           return {
             actionTitle: t('label.activated'),
@@ -1125,8 +1113,9 @@ export class EventDetail extends React.Component<Props> {
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
     switch (event.type) {
-      case USER_EVENT:
-        eventData = this.getUserEventData(event);
+      case EVENT_TYPE.WALLET_CREATED:
+      case EVENT_TYPE.PPN_INITIALIZED:
+        eventData = this.getWalletEventData(event);
         break;
       case TRANSACTION_EVENT:
       case TRANSACTION_PENDING_EVENT:
@@ -1138,10 +1127,10 @@ export class EventDetail extends React.Component<Props> {
       default:
         eventData = null;
     }
-    if (eventData) {
+    if (eventData && event.createdAt) {
       eventData = {
         ...eventData,
-        date: event.createdAt,
+        date: parseTimestamp(event.createdAt),
       };
     }
     return eventData;

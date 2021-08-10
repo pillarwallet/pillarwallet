@@ -51,11 +51,11 @@ import { BigNumber, formatAmount } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // types
-import type { AssetData } from 'models/Asset';
+import type { TokenData } from 'models/Asset';
 
 function KeyBasedAssetTransferEditAmount() {
   const navigation = useNavigation();
-  const assetData: ?AssetData = navigation.getParam('assetData');
+  const assetData: ?TokenData = navigation.getParam('assetData');
   const initialValue: ?number = navigation.getParam('value');
 
   const inputRef = React.useRef();

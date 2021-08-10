@@ -59,6 +59,7 @@ export default class KeyBasedWalletProvider {
       to,
       contractAddress,
       tokenId,
+      useLegacyTransferMethod,
       gasLimit,
       gasPrice,
       signOnly = false,
@@ -85,6 +86,7 @@ export default class KeyBasedWalletProvider {
       gasLimit,
       gasPrice,
       signOnly,
+      useLegacyTransferMethod,
     })
       .then(result => {
         if (!signOnly) return { ...result, transactionCount };

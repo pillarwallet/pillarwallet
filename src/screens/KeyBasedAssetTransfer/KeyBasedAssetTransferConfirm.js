@@ -36,7 +36,7 @@ import Spinner from 'components/Spinner';
 import Text from 'components/modern/Text';
 
 // Constants
-import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
+import { ETH, ASSET_TYPES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -89,7 +89,7 @@ const KeyBasedAssetTransferConfirm = () => {
   const handleSubmit = () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK);
 
   const renderItem = ({ assetData, amount }: KeyBasedAssetTransfer, index: number) => {
-    if (assetData.tokenType === COLLECTIBLES) {
+    if (assetData.tokenType === ASSET_TYPES.COLLECTIBLE) {
       return (
         <Table.Row
           key={assetData.id}
@@ -223,7 +223,7 @@ const sortAssetTransfers = (
   return orderBy(
     assetTransfers,
     [
-      (transfer: KeyBasedAssetTransfer) => (transfer.assetData.tokenType !== COLLECTIBLES ? 1 : 0),
+      (transfer: KeyBasedAssetTransfer) => (transfer.assetData.tokenType !== ASSET_TYPES.COLLECTIBLE ? 1 : 0),
       (transfer: KeyBasedAssetTransfer) =>
         getBalanceInFiat(fiatCurrency, transfer.amount ?? 0, rates, transfer.assetData.contractAddress) ?? 0,
       (transfer: KeyBasedAssetTransfer) => transfer.assetData.name?.trim().toLowerCase(),

@@ -91,6 +91,7 @@ describe('Auth actions', () => {
       smartWallet: { upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
       assetsBalances: { data: {} },
       user: { data: { username: 'test-username' } },
+      walletEvents: { data: {} },
     });
   });
 
