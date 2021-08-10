@@ -72,7 +72,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { getWalletsCreationEventsAction } from 'actions/walletEventsActions';
+import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { fetchAssetsRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
@@ -268,7 +268,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       'onboarding',
       'setupAppServicesAction: dispatching getWalletsCreationEventsAction',
     );
-    dispatch(getWalletsCreationEventsAction());
+    dispatch(addMissingWalletEventsIfNeededAction());
 
     // if wallet was imported let's check its balance for key based assets migration
     if (backupStatus.isImported) {

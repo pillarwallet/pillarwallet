@@ -38,7 +38,7 @@ import {
   formatTokenAmount,
   addressAsKey,
   valueForAddress,
-  parseDate,
+  parseTimestamp,
 } from 'utils/common';
 
 import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
@@ -377,17 +377,18 @@ describe('Common utils', () => {
       expect(valueForAddress(record, null)).toEqual(undefined);
     });
   });
-  describe('parseDate', () => {
+  describe('parseTimestamp', () => {
     const mockDateString = '2021-07-28 13:37';
     const mockDate = new Date(mockDateString);
-    it('parses date from number', () => {
-      expect(parseDate(+mockDate)).toEqual(mockDate);
+    const mockDateTimestamp = new Date(mockDateString).getTime();
+    it('parses timestamp from number', () => {
+      expect(parseTimestamp(mockDateTimestamp)).toEqual(mockDateTimestamp);
     });
-    it('parses Date from date', () => {
-      expect(parseDate(mockDate)).toEqual(mockDate);
+    it('parses timestamp from Date', () => {
+      expect(parseTimestamp(mockDate)).toEqual(mockDateTimestamp);
     });
-    it('parses date from string', () => {
-      expect(parseDate(mockDateString)).toEqual(mockDate);
+    it('parses timestamp from string', () => {
+      expect(parseTimestamp(mockDateString)).toEqual(mockDateTimestamp);
     });
   });
 });

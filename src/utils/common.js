@@ -473,7 +473,7 @@ export const groupSectionsByDate = (
   const sections: { [string]: SectionData } = {};
 
   orderBy(data, [dateField], [sortDirection]).forEach((item) => {
-    const safeTimestamp = +parseDate(item[dateField]);
+    const safeTimestamp = parseTimestamp(item[dateField]);
     const date = new Date(safeTimestamp * timestampMultiplier);
     const key = formatDate(date, 'YYYY-MM-DD');
 
@@ -625,5 +625,4 @@ export const setValueForAddress = <V>(record: Record<V>, address: string, value:
   record[addressAsKey(address)] = value;
 };
 
-
-export const parseDate = (date: Date | string | number): Date => new Date(date);
+export const parseTimestamp = (date: Date | string | number): number => new Date(date).getTime();

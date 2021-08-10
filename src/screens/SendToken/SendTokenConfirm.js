@@ -40,9 +40,11 @@ import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { isEtherspotAccount } from 'utils/accounts';
 
+// hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
 // selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
-import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // types
 import type { TransactionPayload } from 'models/Transaction';
@@ -74,11 +76,10 @@ const SendTokenConfirm = () => {
     gasToken,
   } = transactionPayload;
 
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
-  const feeTooltip = isEtherspotAccount(activeAccount)
-    && chain
-    && !isDeployedOnChain
-    && t('tooltip.includesDeploymentFee');
+  const { isDeployedOnChain } = useDeploymentStatus();
+  const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
+    ? t('tooltip.includesDeploymentFee')
+    : undefined;
 
   return (
     <Container>

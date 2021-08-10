@@ -33,7 +33,6 @@ import {
   getSmartWalletAccountCreatedAtTimestamp,
   isAccountType,
   isArchanovaAccount,
-  isNotKeyBasedType,
 } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { getSupportedChains } from 'utils/chains';
@@ -107,14 +106,6 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
 
     const updatedWalletEvents = getState().walletEvents.data;
     dispatch(saveDbAction('walletEvents', { walletEvents: updatedWalletEvents }, true));
-  };
-};
-
-export const getWalletsCreationEventsAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    accountsSelector(getState())
-      .filter(isNotKeyBasedType)
-      .forEach((account) => dispatch(addWalletCreationEventIfNeededAction(account)));
   };
 };
 

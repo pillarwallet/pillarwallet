@@ -56,10 +56,12 @@ import { isEtherspotAccount } from 'utils/accounts';
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
 
+// hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
-import { useActiveAccount, useRootSelector } from 'selectors';
-import { isDeployedOnChainSelector } from 'selectors/chains';
+import { useActiveAccount } from 'selectors';
 
 // types
 import type {
@@ -213,11 +215,10 @@ const SendCollectibleConfirm = ({
     ? t('label.gettingFee')
     : t('transactions.button.send');
 
-  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector)?.[chain];
-  const feeTooltip = isEtherspotAccount(activeAccount)
-    && chain
-    && !isDeployedOnChain
-    && t('tooltip.includesDeploymentFee');
+  const { isDeployedOnChain } = useDeploymentStatus();
+  const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
+    ? t('tooltip.includesDeploymentFee')
+    : undefined;
 
   return (
     <ContainerWithHeader

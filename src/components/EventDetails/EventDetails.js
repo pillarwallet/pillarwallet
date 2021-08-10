@@ -54,7 +54,7 @@ import {
   formatTransactionFee,
   findEnsNameCaseInsensitive,
   getDecimalPlaces,
-  parseDate,
+  parseTimestamp,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -1130,7 +1130,7 @@ export class EventDetail extends React.Component<Props> {
     if (eventData && event.createdAt) {
       eventData = {
         ...eventData,
-        date: +parseDate(event.createdAt),
+        date: parseTimestamp(event.createdAt),
       };
     }
     return eventData;

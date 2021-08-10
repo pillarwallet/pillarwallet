@@ -258,79 +258,88 @@ export const getHistoryEventsFromTransactions = (
   chain: Chain,
   activeAccountAddress: string,
   supportedAssets: Asset[],
-): Event[] => orderBy(transactions, ['date'], ['desc']).reduce((
-  historyEvents,
-  {
-    _id,
-    hash,
-    batchHash,
-    value: rawValue,
-    assetAddress,
-    createdAt,
-    from: fromAddress,
-    to: toAddress,
-    extra,
-    gasUsed,
-    gasPrice,
-    feeWithGasToken,
-    status,
-  },
-) => {
-  const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
-  const asset = findAssetByAddress(supportedAssets, assetAddress);
+): Event[] => {
+  let successfulOrPendingDeploymentEventAdded = false;
 
-  const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
-  const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};
+  return orderBy(transactions, ['date'], ['desc']).reduce((
+    historyEvents,
+    {
+      _id,
+      hash,
+      batchHash,
+      value: rawValue,
+      assetAddress,
+      createdAt,
+      from: fromAddress,
+      to: toAddress,
+      extra,
+      gasUsed,
+      gasPrice,
+      feeWithGasToken,
+      status,
+    },
+  ) => {
+    const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
+    const asset = findAssetByAddress(supportedAssets, assetAddress);
 
-  const value = {
-    value: wrapBigNumber(formatUnits(rawValue, decimals)),
-    address: assetAddress,
-    symbol,
-  };
+    const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
+    const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};
 
-  let historyEvent = {
-    id: _id,
-    value,
-    date: new Date(+createdAt * 1000),
-    fromAddress,
-    toAddress,
-    status: TRANSACTION_STATUS[status],
-    batchHash,
-    hash,
-    fee,
-  };
-
-  let eventType = addressesEqual(fromAddress, activeAccountAddress)
-    ? EVENT_TYPE.TOKEN_SENT
-    : EVENT_TYPE.TOKEN_RECEIVED;
-
-  if (extra?.ensName) {
-    eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
-    historyEvent = { ...historyEvent, ensName: extra.ensName };
-  }
-
-  historyEvent = { ...historyEvent, type: eventType };
-
-  if (addressesEqual(fromAddress, activeAccountAddress)) {
-    const deploymentFee = gasPrice && addressesEqual(fee?.address, nativeAssetPerChain.ethereum.address)
-      ? wrapBigNumber(gasPrice).multipliedBy(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT)
-      : null;
-
-    const deploymentHistoryEvent = {
-      ...historyEvent,
-      date: new Date((+createdAt - 1) * 1000), // -1 to make it earlier than followed transaction
-      id: `${historyEvent.id}-deployment`,
-      type: EVENT_TYPE.WALLET_ACTIVATED,
-      fee: deploymentFee,
+    const value = {
+      value: wrapBigNumber(formatUnits(rawValue, decimals)),
+      address: assetAddress,
+      symbol,
     };
 
-    // $FlowFixMe: TODO: fix return for different event types
-    return [...historyEvents, historyEvent, deploymentHistoryEvent];
-  }
+    let historyEvent = {
+      id: _id,
+      value,
+      date: new Date(+createdAt * 1000),
+      fromAddress,
+      toAddress,
+      status: TRANSACTION_STATUS[status],
+      batchHash,
+      hash,
+      fee,
+    };
 
-  // $FlowFixMe: TODO: fix return for different event types
-  return [...historyEvents, historyEvent];
-}, []);
+    let eventType = addressesEqual(fromAddress, activeAccountAddress)
+      ? EVENT_TYPE.TOKEN_SENT
+      : EVENT_TYPE.TOKEN_RECEIVED;
+
+    if (extra?.ensName) {
+      eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
+      historyEvent = { ...historyEvent, ensName: extra.ensName };
+    }
+
+    historyEvent = { ...historyEvent, type: eventType };
+
+    if (!successfulOrPendingDeploymentEventAdded && addressesEqual(fromAddress, activeAccountAddress)) {
+      const deploymentFee = gasPrice && addressesEqual(fee?.address, nativeAssetPerChain.ethereum.address)
+        ? wrapBigNumber(gasPrice).multipliedBy(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT)
+        : null;
+
+      const deploymentHistoryEvent = {
+        ...historyEvent,
+        date: new Date((+createdAt - 1) * 1000), // -1 to make it earlier than followed transaction
+        id: `${historyEvent.id}-deployment`,
+        type: EVENT_TYPE.WALLET_ACTIVATED,
+        fee: deploymentFee,
+      };
+
+      successfulOrPendingDeploymentEventAdded = [
+        TRANSACTION_STATUS.CONFIRMED,
+        TRANSACTION_STATUS.PENDING,
+      ].includes(TRANSACTION_STATUS[historyEvent.status]);
+
+      // $FlowFixMe: TODO: fix return for different event types
+      return [...historyEvents, historyEvent, deploymentHistoryEvent];
+    }
+
+    // $FlowFixMe: TODO: fix return for different event types
+    return [...historyEvents, historyEvent];
+  }, []);
+};
 
 export const getHistoryEventsFromCollectiblesTransactions = (
   transactions: CollectibleTransaction[],
