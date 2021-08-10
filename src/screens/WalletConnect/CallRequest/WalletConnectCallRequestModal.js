@@ -29,7 +29,6 @@ import Toast from 'components/Toast';
 // Constants
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import { REQUEST_TYPE } from 'constants/walletConnectConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -62,7 +61,10 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const { rejectCallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
-  const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
+  const chain = chainFromChainId[request.chainId];
+
+  if (!chain) return null;
+
   const { title: chainName } = chainsConfig[chain];
   const appName = parsePeerName(request.name);
 
