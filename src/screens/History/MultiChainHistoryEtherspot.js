@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 // Components
 import HistoryList from 'components/HistoryList';
@@ -42,7 +42,6 @@ import { ARCHANOVA_WALLET_ENS_MIGRATION } from 'constants/archanovaConstants';
 import { getHistoryEventsFromTransactions, parseHistoryEventFee } from 'utils/history';
 import { addressesEqual } from 'utils/assets';
 import { useChainsConfig } from 'utils/uiConfig';
-import { parseDate } from 'utils/common';
 import { getAccountId, getMigratedEnsName } from 'utils/accounts';
 
 // Types
@@ -162,16 +161,19 @@ function useWalletEvents(chain: Chain): WalletEvent[] {
   const walletEvents = useRootSelector((root) => root.walletEvents.data);
   const activeAccount = useActiveAccount();
 
-  if (!activeAccount) return [];
+  return useMemo(() => {
+    if (!activeAccount) return [];
 
-  const activeAccountId = getAccountId(activeAccount);
-  const accountChainWalletEvents = walletEvents?.[activeAccountId]?.[chain] ?? [];
+    const activeAccountId = getAccountId(activeAccount);
 
-  // $FlowFixMe: does not cover WalletActivated and flow fails
-  return accountChainWalletEvents.map((event) => ({
-    ...event,
-    date: parseDate(event.date),
-  }));
+    const accountChainWalletEvents = walletEvents?.[activeAccountId]?.[chain] ?? [];
+
+    // $FlowFixMe: does not cover WalletActivated and flow fails
+    return accountChainWalletEvents.map((event) => ({
+      ...event,
+      date: new Date(event.date),
+    }));
+  }, [activeAccount, walletEvents, chain]);
 }
 
 function useEnsRegisteredEvent(chain: Chain): ?EnsNameRegisteredEvent {
@@ -180,40 +182,42 @@ function useEnsRegisteredEvent(chain: Chain): ?EnsNameRegisteredEvent {
   const accounts = useAccounts();
   const activeAccount = useActiveAccount();
 
-  // $FlowFixMe: fails getting exact extra
-  const createdAt = activeAccount?.extra?.ethereum?.createdAt;
+  return useMemo(() => {
+    // $FlowFixMe: fails getting exact extra
+    const createdAt = activeAccount?.extra?.ethereum?.createdAt;
 
-  // ENS is registered on Ethereum only, createdAt might not be pulled yet
-  if (chain !== CHAIN.ETHEREUM || !createdAt) return null;
+    // ENS is registered on Ethereum only, createdAt might not be pulled yet
+    if (chain !== CHAIN.ETHEREUM || !createdAt) return null;
 
-  const migratedEnsTransaction = archanovaAccountHistory.find(({ tag }) => tag === ARCHANOVA_WALLET_ENS_MIGRATION);
-  const accountActivatedTransaction = accountHistory.find(({ type }) => type === EVENT_TYPE.WALLET_ACTIVATED);
+    const migratedEnsTransaction = archanovaAccountHistory.find(({ tag }) => tag === ARCHANOVA_WALLET_ENS_MIGRATION);
+    const accountActivatedTransaction = accountHistory.find(({ type }) => type === EVENT_TYPE.WALLET_ACTIVATED);
 
-  const ensRegisteredDate = migratedEnsTransaction
-    ? parseDate(migratedEnsTransaction.createdAt)
-    : accountActivatedTransaction?.date;
+    const ensRegisteredDate = migratedEnsTransaction
+      ? new Date(migratedEnsTransaction.createdAt)
+      : accountActivatedTransaction?.date;
 
-  const transactionHash = migratedEnsTransaction
-    ? migratedEnsTransaction.hash
-    // $FlowFixMe: fails to get hash from different event types
-    : accountActivatedTransaction?.hash;
+    const transactionHash = migratedEnsTransaction
+      ? migratedEnsTransaction.hash
+      // $FlowFixMe: fails to get hash from different event types
+      : accountActivatedTransaction?.hash;
 
-  const transactionFee = migratedEnsTransaction
-    ? parseHistoryEventFee(
-      chain,
-      migratedEnsTransaction?.feeWithGasToken,
-      migratedEnsTransaction?.gasUsed,
-      migratedEnsTransaction?.gasPrice,
-    )
-    // $FlowFixMe: fails to fee hash from different event types
-    : accountActivatedTransaction?.fee;
+    const transactionFee = migratedEnsTransaction
+      ? parseHistoryEventFee(
+        chain,
+        migratedEnsTransaction?.feeWithGasToken,
+        migratedEnsTransaction?.gasUsed,
+        migratedEnsTransaction?.gasPrice,
+      )
+      // $FlowFixMe: fails to fee hash from different event types
+      : accountActivatedTransaction?.fee;
 
-  return {
-    id: `ethereum-${EVENT_TYPE.ENS_NAME_REGISTERED}`,
-    type: EVENT_TYPE.ENS_NAME_REGISTERED,
-    date: ensRegisteredDate ?? new Date(+createdAt - 1), // -1 to list it before smart wallet is created (per AC),
-    ensName: getMigratedEnsName(accounts),
-    hash: transactionHash,
-    fee: transactionFee,
-  };
+    return {
+      id: `ethereum-${EVENT_TYPE.ENS_NAME_REGISTERED}`,
+      type: EVENT_TYPE.ENS_NAME_REGISTERED,
+      date: ensRegisteredDate ?? new Date(+createdAt - 1), // -1 to list it before smart wallet is created (per AC),
+      ensName: getMigratedEnsName(accounts),
+      hash: transactionHash,
+      fee: transactionFee,
+    };
+  }, [chain, archanovaAccountHistory, accountHistory, accounts, activeAccount]);
 }
