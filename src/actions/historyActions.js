@@ -59,8 +59,6 @@ import {
   parseArchanovaTransactionStatus,
   parseArchanovaTransactions,
 } from 'utils/archanova';
-import { mapTransactionsHistoryWithAave } from 'utils/aave';
-import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
@@ -217,9 +215,7 @@ export const fetchTransactionsHistoryAction = () => {
         relayerExtensionDevice?.address,
       );
 
-      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, archanovaTransactionsHistory);
-      const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, archanovaTransactionsHistory);
       const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, ethereumSupportedAssets);
       const finalArchanovaTransactionsHistory = await mapTransactionsHistoryWithLiquidityPools(
         accountAddress,

@@ -689,6 +689,23 @@ export class EtherspotService {
       return [];
     }
   }
+
+  getContract<T>(
+    chain: Chain,
+    address: string,
+    abi: string,
+  ): T | null {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    try {
+      // contract name is for internal use, just to not pollute let's create contracts under chain-address
+      return sdk.registerContract(`${chain}-${address}`, abi, address);
+    } catch (error) {
+      reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
+      return null;
+    }
+  }
 }
 
 const etherspot = new EtherspotService();

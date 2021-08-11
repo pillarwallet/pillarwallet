@@ -68,7 +68,6 @@ import {
   findCollectibleTransactionAcrossAccounts,
   findTransactionAcrossAccounts,
 } from 'utils/history';
-import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 import {
   findAccountByAddress,
@@ -1023,10 +1022,6 @@ export class EventDetail extends React.Component<Props> {
               },
             ];
           }
-        } else if (isPoolTogetherAddress(event.to)) {
-          eventData = {
-            name: t('poolTogether'),
-          };
         } else {
           eventData = {
             actionTitle: fullItemValue,

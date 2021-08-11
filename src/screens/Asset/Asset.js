@@ -49,7 +49,6 @@ import { formatFiat } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
-import { isAaveTransactionTag } from 'utils/aave';
 import {
   getHistoryEventsFromTransactions,
   getTokenTransactionsFromHistory,
@@ -131,8 +130,7 @@ const AssetScreen = ({
             && isArchanovaAccountAddress(to, accounts);
 
           return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-            && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
-            && !isAaveTransactionTag(tag);
+            && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts));
         });
       }
 

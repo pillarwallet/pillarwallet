@@ -17,12 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { providers } from 'ethers';
 
 // services
-import { getContract } from 'services/assets';
+import etherspotService from 'services/etherspot';
 import { callSubgraph } from 'services/theGraph';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import httpRequest from 'utils/httpRequest';
@@ -34,7 +32,6 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 // constants
 import { CHAIN } from 'constants/chainConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type { Collectible } from 'models/Collectible';
@@ -45,14 +42,13 @@ const poapContractAddress = '0x22c1f6050e56d2876009903609a2cc3fef83b415';
 const poapSubgraphName = 'poap-xyz/poap-xdai';
 /* eslint-enable i18next/no-literal-string */
 
-export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<Collectible[]> => {
-  const xDaiRpcUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.XDAI_RPC_ENDPOINT);
-  const xDaiRpcProvider = new providers.JsonRpcProvider(xDaiRpcUrl);
+type ERC721Contract = { tokenURI: (tokenId: string) => Promise<?string> };
 
-  const collectibleContract = getContract(
+export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<Collectible[]> => {
+  const collectibleContract = etherspotService.getContract<?ERC721Contract>(
+    CHAIN.XDAI,
     poapContractAddress,
     ERC721_CONTRACT_ABI,
-    xDaiRpcProvider,
   );
 
   if (!collectibleContract) return [];

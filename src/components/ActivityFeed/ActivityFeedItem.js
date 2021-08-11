@@ -41,7 +41,6 @@ import {
 } from 'utils/feedData';
 import { formatHexAddress } from 'utils/format';
 import { images, isSvgImage } from 'utils/images';
-import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 import {
   formatAmount,
@@ -839,12 +838,6 @@ export class ActivityFeedItem extends React.Component<Props> {
               );
             }
           }
-        } else if (isPoolTogetherAddress(event.to)) {
-          data = {
-            label: this.NAMES().POOL_TOGETHER,
-            itemImageSource: poolTogetherLogo,
-            itemImageRoundedSquare: true,
-          };
         } else {
           const additionalInfo = {};
 

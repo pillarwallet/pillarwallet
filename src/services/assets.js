@@ -353,19 +353,9 @@ export function fetchTransactionReceipt(hash: string, network?: string): Promise
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
-export function fetchLastBlockNumber(network?: string): Promise<number> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getBlockNumber().then(parseInt).catch(() => 0);
-}
-
 export function transferSigned(signed: ?string) {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   return provider.sendTransaction(signed);
-}
-
-export function waitForTransaction(hash: string) {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.waitForTransaction(hash);
 }
 
 export const DEFAULT_GAS_LIMIT = 500000;
