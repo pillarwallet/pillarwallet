@@ -73,7 +73,7 @@ function WalletConnectHome() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
-  const enableURLInAppBrowser = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
+  const enableURLInAppBrowser = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
 
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
