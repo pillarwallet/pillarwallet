@@ -220,6 +220,8 @@ const ValueInputComponent = ({
   }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {
+    if (!assetData) return;
+
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
@@ -338,12 +340,12 @@ const ValueInputComponent = ({
       setValueInFiat('0');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetData.name]);
+  }, [assetData?.name]);
 
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
-  const { tokenType = ASSET_TYPES.TOKEN } = assetData;
+  const { tokenType = ASSET_TYPES.TOKEN } = assetData ?? {};
 
   const toggleDisplayFiat = () => {
     // when switching at error state, reset values to avoid new errors
