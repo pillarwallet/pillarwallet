@@ -106,6 +106,6 @@ const useAssetOption = (assetAddress: string): ?AssetOption => {
   const asset = findAssetByAddress(supportedAssets, assetAddress);
   if (!asset) return null;
 
-  const assetOption = getAssetOption(asset, walletBalances, rates, currency);
+  const assetOption = getAssetOption(asset, walletBalances, rates, currency, CHAIN.ETHEREUM);
   return assetOption;
 };
