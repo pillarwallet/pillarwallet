@@ -199,7 +199,7 @@ const RemoveLiquidityScreen = ({
     return (
       <ValueInput
         assetData={mapAssetToAssetData(tokensData[tokenIndex])}
-        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency)]}
+        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency, CHAIN.ETHEREUM)]}
         value={obtainedAssetsValues[tokenIndex]}
         onValueChange={(newValue: string, newPercent: number | void) =>
           onObtainedAssetValueChange(tokenIndex, newValue, newPercent)
