@@ -27,7 +27,6 @@ import Toast from 'components/Toast';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
-import { CHAIN_NAMES, CHAIN_SHORT } from 'constants/chainConstants';
 
 // actions
 import {
@@ -39,7 +38,6 @@ import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { logEventAction } from 'actions/analyticsActions';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -49,7 +47,6 @@ import {
   accountsSelector,
   historySelector,
   supportedAssetsPerChainSelector,
-  activeAccountSelector,
 } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -65,16 +62,13 @@ import {
   findFirstEtherspotAccount,
   getAccountAddress,
   getAccountId,
-  isEtherspotAccount,
 } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
-import { isLogV2AppEvents } from 'utils/environment';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
-import type { EtherspotAccountExtra } from 'models/Account';
 
 
 export const connectEtherspotAccountAction = (accountId: string) => {
@@ -174,8 +168,6 @@ export const refreshEtherspotAccountsAction = () => {
       user: { data: user },
     } = getState();
 
-    const account = activeAccountSelector(getState());
-
     if (!session.isOnline) return; // offline, nothing to dp
 
     if (!etherspotService?.sdk) {
@@ -199,42 +191,10 @@ export const refreshEtherspotAccountsAction = () => {
     await Promise.all(
       etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
         const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
-        if (isEtherspotAccount(account)) handleAccountStateChange(extra, account?.extra, dispatch);
         dispatch(updateAccountExtraIfNeededAction(etherspotAccountAddress, extra));
       }),
     );
   };
-};
-
-const getChain = (chain: Chain) => {
-  switch (chain) {
-    case CHAIN_NAMES.ETHEREUM:
-      return CHAIN_SHORT.ETHEREUM.toLowerCase();
-    case CHAIN_NAMES.BINANCE:
-      return CHAIN_SHORT.BINANCE.toLowerCase();
-    case CHAIN_NAMES.XDAI:
-      return CHAIN_SHORT.XDAI.toLowerCase();
-    case CHAIN_NAMES.POLYGON:
-      return CHAIN_SHORT.POLYGON.toLowerCase();
-    default:
-      return '';
-  }
-};
-
-const handleAccountStateChange = (
-  etherspotAccountExtra: EtherspotAccountExtra,
-  initialEtherspotAccountExtra: EtherspotAccountExtra,
-  dispatch: Dispatch,
-) => {
-  const chains = Object.keys(etherspotAccountExtra);
-  chains.forEach((chainName) => {
-    if (
-      initialEtherspotAccountExtra[chainName]?.state !== etherspotAccountExtra[chainName]?.state &&
-      isLogV2AppEvents()
-    ) {
-      dispatch(logEventAction(`v2_account_deployed_${getChain(chainName)}`));
-    }
-  });
 };
 
 export const reserveEtherspotEnsNameAction = (username: string) => {

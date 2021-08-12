@@ -22,4 +22,3 @@ import { getEnv } from 'configs/envConfig';
 
 export const isProdEnv = (): boolean => getEnv().NETWORK_PROVIDER === 'homestead';
 export const isTest = !!process.env.IS_TEST;
-export const isLogV2AppEvents = (): boolean => isProdEnv() && !isTest && !__DEV__;

@@ -60,7 +60,6 @@ import {
   extractUsernameFromEnsName,
 } from 'utils/common';
 import { getAccountEnsName } from 'utils/accounts';
-import { isLogV2AppEvents } from 'utils/environment';
 
 // services
 import { navigate } from 'services/navigation';
@@ -148,7 +147,6 @@ export const setupUserAction = (username: ?string) => {
 
       logBreadcrumb('onboarding', 'setupUserAction: dispatching logEventAction: wallet created');
       dispatch(logEventAction('wallet_created'));
-      isLogV2AppEvents() && dispatch(logEventAction('v2_account_created'));
     }
 
     logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_USER');
@@ -361,7 +359,6 @@ export const finishOnboardingAction = (retry?: boolean) => {
       'onboarding',
       'finishOnboardingAction: completed, dispatching SET_FINISHING_ONBOARDING',
     );
-    isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };
 };
@@ -472,7 +469,6 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
 
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
-    isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Words Phrase' }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
@@ -551,7 +547,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       'checkUsernameAvailabilityAction: done, dispatching SET_ONBOARDING_USER',
       username,
     );
-    isLogV2AppEvents() && dispatch(logEventAction('v2_ens_claimed'));
+
     dispatch({
       type: SET_ONBOARDING_USER,
       payload: { username },

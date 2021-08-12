@@ -23,7 +23,6 @@ import { ScrollView, Keyboard, Platform } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
 
 // Utils
 import { fontSizes, appFont } from 'utils/variables';
@@ -33,7 +32,6 @@ import { openInAppBrowser } from 'utils/inAppBrowser';
 import { rampWidgetUrl } from 'utils/fiatToCrypto';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isEtherspotAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
-import { isLogV2AppEvents } from 'utils/environment';
 
 // Components
 import { Container } from 'components/modern/Layout';
@@ -48,16 +46,12 @@ import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActive
 // Selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 
-// Actions
-import { logEventAction } from 'actions/analyticsActions';
-
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from './components/AddCashAccessory/AddCashValueInputAccessoryHolder';
 
 const AddCash = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [value, setValue] = React.useState('0');
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
@@ -105,7 +99,6 @@ const AddCash = () => {
   const openRamp = () => {
     const address = getCryptoPurchaseAddress();
     if (address === null) return;
-    isLogV2AppEvents() && dispatch(logEventAction('v2_add_cash_started'));
     openUrl(rampWidgetUrl(address, fiatCurrency, value, isEtherspotAccount(activeAccount)));
   };
 

@@ -48,7 +48,6 @@ import { activeAccountSelector } from 'selectors';
 import { getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { hasKeyBasedWalletConnectSession } from 'utils/walletConnect';
-import { isLogV2AppEvents } from 'utils/environment';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -144,7 +143,6 @@ export const disconnectWalletConnectSessionByPeerIdAction = (peerId: string) => 
     });
 
     dispatch(logEventAction('walletconnect_session_disconnected'));
-    isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_disconnect'));
     dispatch({ type: REMOVE_WALLETCONNECT_SESSION, payload: { peerId } });
     dispatch({ type: REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { peerId } });
   };
