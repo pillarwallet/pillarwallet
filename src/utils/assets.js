@@ -259,6 +259,7 @@ export const getAssetOption = (
   balances: ?WalletAssetsBalances,
   rates: ?RatesByAssetAddress,
   baseFiatCurrency: ?Currency,
+  chain: Chain,
 ): AssetOption => {
   const { symbol, iconUrl, address } = asset;
 
@@ -273,7 +274,7 @@ export const getAssetOption = (
     icon: iconUrl,
     assetBalance: formattedAssetBalance,
     balance: getAssetOptionBalance(symbol, address, balances, rates, baseFiatCurrency),
-    chain: CHAIN.ETHEREUM,
+    chain,
   };
 };
 

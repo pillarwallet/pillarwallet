@@ -159,7 +159,7 @@ const AssetScreen = ({
     !isArchanovaAccount(activeAccount) && {
       title: t('button.swap'),
       iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE, { fromAssetCode: token }),
+      onPress: () => navigation.navigate(EXCHANGE, { fromAssetAddress: contractAddress, chain }),
     },
     {
       title: t('button.send'),

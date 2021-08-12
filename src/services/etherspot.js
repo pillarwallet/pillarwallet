@@ -683,7 +683,7 @@ export class EtherspotService {
         fromAmount: fromAmountEthers,
       });
 
-      return offers.map((offer) => buildExchangeOffer(fromAsset, toAsset, fromAmount, offer));
+      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer));
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

@@ -37,7 +37,6 @@ import Spinner from 'components/Spinner';
 import ValueInput from 'components/ValueInput';
 
 // Constants
-import { ETH, PLR } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 
@@ -48,19 +47,27 @@ import etherspotService from 'services/etherspot';
 import {
   useRootSelector,
   useFiatCurrency,
-  useChainSupportedAssets,
-  useChainRates,
+  useSupportedAssetsPerChain,
+  useRatesPerChain,
+  useActiveAccount,
 } from 'selectors';
-import { accountEthereumAssetsSelector } from 'selectors/assets';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { accountAssetsPerChainSelector } from 'selectors/assets';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
+import { getSupportedChains, nativeAssetPerChain } from 'utils/chains';
+import { addressesEqual } from 'utils/assets';
+import { getChainWalletAssetsBalances } from 'utils/balances';
+
+// Configs
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
+import type { Chain } from 'models/Chain';
 
 // Local
 import OfferCard from './OfferCard';
@@ -73,46 +80,69 @@ function Exchange() {
   const fromInputRef = React.useRef();
 
   const fiatCurrency = useFiatCurrency();
-  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
-  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
-  const assets = useRootSelector(accountEthereumAssetsSelector);
 
-  const initialFromSymbol: string = navigation.getParam('fromAssetCode') || ETH;
-  const initialToSymbol: string = navigation.getParam('toAssetCode') || PLR;
+  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const { address: nativeChainAssetAddress } = nativeAssetPerChain[initialChain];
+  const initialFromAddress: string = navigation.getParam('fromAssetAddress') || nativeChainAssetAddress;
+  const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
 
-  const [fromSymbol, setFromSymbol] = React.useState(initialFromSymbol);
-  const [toSymbol, setToSymbol] = React.useState(initialToSymbol);
+  const [chain, setChain] = React.useState(initialChain);
+  const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
+  const [toAddress, setToAddress] = React.useState(initialToAddress);
 
   const [rawFromAmount, setFromAmount] = React.useState('');
   const [fromAmount]: [string] = useDebounce(rawFromAmount, 500);
 
-  const chainConfig = useChainConfig(CHAIN.ETHEREUM);
-  const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
+  const chainConfig = useChainConfig(chain);
+
+  const assetsPerChain = useRootSelector(accountAssetsPerChainSelector);
+  const supportedAssetsPerChain = useSupportedAssetsPerChain();
+  const ratesPerChain = useRatesPerChain();
+  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
+  const walletBalancesPerChain = getChainWalletAssetsBalances(accountBalances);
+
+  const activeAccount = useActiveAccount();
+  const supportedChains = getSupportedChains(activeAccount);
 
   const fromOptions = React.useMemo(
-    () => getExchangeFromAssetOptions(assets, ethereumSupportedAssets, balances, fiatCurrency, ethereumRates),
-    [assets, ethereumSupportedAssets, balances, fiatCurrency, ethereumRates],
+    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
+      const chainOptions = getExchangeFromAssetOptions(
+        assetsPerChain,
+        supportedAssetsPerChain,
+        walletBalancesPerChain,
+        fiatCurrency,
+        ratesPerChain,
+        supportedChain,
+      );
+      return [...multiChainOptions, ...chainOptions];
+    }, []),
+    [supportedChains, assetsPerChain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
   );
 
-  const toOptions = React.useMemo(() => getExchangeToAssetOptions(
-    ethereumSupportedAssets,
-    balances,
-    fiatCurrency,
-    ethereumRates,
-  ), [
-    ethereumSupportedAssets,
-    balances,
-    fiatCurrency,
-    ethereumRates,
-  ]);
+  const toOptions = React.useMemo(
+    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
+      const chainOptions = getExchangeToAssetOptions(
+        supportedAssetsPerChain,
+        walletBalancesPerChain,
+        fiatCurrency,
+        ratesPerChain,
+        supportedChain,
+      );
+      return [...multiChainOptions, ...chainOptions];
+    }, []),
+    [supportedChains, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
+  );
 
-  const fromAsset = React.useMemo(() => fromOptions.find((a) => a.symbol === fromSymbol), [fromOptions, fromSymbol]);
-  const toAsset = React.useMemo(() => toOptions.find((a) => a.symbol === toSymbol), [toOptions, toSymbol]);
+  const fromAsset = React.useMemo(
+    () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
+    [fromOptions, fromAddress, chain],
+  );
+  const toAsset = React.useMemo(
+    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
+    [toOptions, toAddress, chain],
+  );
 
-  // ValueInput crashes without asset.
-  const fallbackAsset = React.useMemo(() => toOptions.find((a) => a.symbol === ETH), [toOptions]);
-
-  const offersQuery = useOffersQuery(fromAsset, toAsset, fromAmount);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromAmount);
   const offers = sortOffers(offersQuery.data);
 
   // Focus on from amount input after user changes from or to asset
@@ -132,13 +162,13 @@ function Exchange() {
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
-  const allowSwap = fromOptions.some((option) => option.symbol === toSymbol);
+  const allowSwap = fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
 
   const handleSwapAssets = () => {
     if (!allowSwap) return;
 
-    setFromSymbol(toSymbol);
-    setToSymbol(fromSymbol);
+    setFromAddress(toAddress);
+    setToAddress(fromAddress);
     setFromAmount('');
   };
 
@@ -162,8 +192,12 @@ function Exchange() {
       <Content onScroll={() => Keyboard.dismiss()}>
         <FormWrapper>
           <ValueInput
-            assetData={fromAsset || fallbackAsset}
-            onAssetDataChange={(asset) => setFromSymbol(asset.symbol)}
+            disabled={!fromAsset}
+            assetData={fromAsset}
+            onAssetDataChange={(asset) => {
+              if (asset.chain !== chain) setChain(asset.chain);
+              setFromAddress(asset.address);
+            }}
             value={rawFromAmount}
             onValueChange={handleFromAmountChange}
             selectorOptionsTitle={t('label.sell')}
@@ -182,8 +216,11 @@ function Exchange() {
           <ValueInput
             disabled
             value={formattedToAmount}
-            assetData={toAsset || fallbackAsset}
-            onAssetDataChange={(asset) => setToSymbol(asset.symbol)}
+            assetData={toAsset}
+            onAssetDataChange={(asset) => {
+              if (asset.chain !== chain) setChain(asset.chain);
+              setToAddress(asset.address);
+            }}
             selectorOptionsTitle={t('label.buy')}
             customAssets={toOptions}
             leftSideSymbol="plus"
@@ -226,6 +263,7 @@ function Exchange() {
 export default Exchange;
 
 function useOffersQuery(
+  chain: Chain,
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
@@ -234,7 +272,7 @@ function useOffersQuery(
 
   return useQuery(
     ['ExchangeOffers', fromAsset, toAsset, fromAmount],
-    () => etherspotService.getExchangeOffers(CHAIN.ETHEREUM, fromAsset, toAsset, BigNumber(fromAmount)),
+    () => etherspotService.getExchangeOffers(chain, fromAsset, toAsset, BigNumber(fromAmount)),
     { enabled, cacheTime: 0 },
   );
 }
