@@ -34,6 +34,7 @@ import TabBar from 'components/modern/TabBar';
 import Text from 'components/modern/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
@@ -45,16 +46,21 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Services
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
 import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
 import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
+import { openInAppBrowser } from 'utils/inAppBrowser';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
+
+// Constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
@@ -67,6 +73,7 @@ function WalletConnectHome() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
+  const enableURLInAppBrowser = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
 
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
@@ -93,13 +100,33 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
+  const openUrl = async (url: string | null) => {
+    if (url) {
+      if (enableURLInAppBrowser) {
+        await openInAppBrowser(url).catch(showDAppServiceLaunchError);
+      } else {
+        Linking.openURL(url);
+      }
+    } else {
+      showDAppServiceLaunchError();
+    }
+  };
+
+  const showDAppServiceLaunchError = () => {
+    Toast.show({
+      message: t('toast.showDAppServiceLaunchError'),
+      emoji: 'hushed',
+      supportLink: true,
+    });
+  };
+
   const renderItem = (item: WalletConnectCmsApp) => (
     <WalletConnectListItem
       key={item.id}
       title={item.title}
       iconUrl={item.iconUrl}
       width={columnWidth}
-      onPress={() => Linking.openURL(item.url)}
+      onPress={() => openUrl(item.url)}
     />
   );
 

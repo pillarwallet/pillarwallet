@@ -591,7 +591,10 @@
     "home": {
       "title": "WalletConnect",
       "headerStories": "New and Noteworthy",
-      "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}."
+      "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
+      "toast": {
+        "showDAppServiceLaunchError": "Sorry, we had a problem trying to open this dApp. Please try again later."
+      }
     },
     "requests": {
       "messageRequest": "Signature request",
