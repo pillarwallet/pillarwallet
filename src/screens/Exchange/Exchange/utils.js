@@ -90,7 +90,7 @@ export const shouldTriggerSearch = (
     !!toAsset &&
     !!+fromAmount &&
     fromAmount[fromAmount.length - 1] !== '.' &&
-    fromAsset.address !== toAsset.address &&
+    !addressesEqual(fromAsset.address, toAsset.address) &&
     fromAsset.chain === toAsset.chain &&
     isEnoughAssetBalance(fromAsset.assetBalance, fromAmount)
   );

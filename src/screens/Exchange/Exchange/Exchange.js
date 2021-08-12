@@ -49,13 +49,14 @@ import {
   useFiatCurrency,
   useSupportedAssetsPerChain,
   useRatesPerChain,
+  useActiveAccount,
 } from 'selectors';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
-import { nativeAssetPerChain } from 'utils/chains';
+import { getSupportedChains, nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { getChainWalletAssetsBalances } from 'utils/balances';
 
@@ -100,8 +101,11 @@ function Exchange() {
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
   const walletBalancesPerChain = getChainWalletAssetsBalances(accountBalances);
 
+  const activeAccount = useActiveAccount();
+  const supportedChains = getSupportedChains(activeAccount);
+
   const fromOptions = React.useMemo(
-    () => exchangeSupportedChains.reduce((multiChainOptions, supportedChain) => {
+    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
       const chainOptions = getExchangeFromAssetOptions(
         assetsPerChain,
         supportedAssetsPerChain,
@@ -112,11 +116,11 @@ function Exchange() {
       );
       return [...multiChainOptions, ...chainOptions];
     }, []),
-    [assetsPerChain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
+    [supportedChains, assetsPerChain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
   );
 
   const toOptions = React.useMemo(
-    () => exchangeSupportedChains.reduce((multiChainOptions, supportedChain) => {
+    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
       const chainOptions = getExchangeToAssetOptions(
         supportedAssetsPerChain,
         walletBalancesPerChain,
@@ -126,7 +130,7 @@ function Exchange() {
       );
       return [...multiChainOptions, ...chainOptions];
     }, []),
-    [supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
+    [supportedChains, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
   );
 
   const fromAsset = React.useMemo(
@@ -262,12 +266,6 @@ function Exchange() {
 }
 
 export default Exchange;
-
-const exchangeSupportedChains = [
-  CHAIN.ETHEREUM,
-  CHAIN.BINANCE,
-  CHAIN.POLYGON,
-];
 
 function useOffersQuery(
   chain: Chain,
