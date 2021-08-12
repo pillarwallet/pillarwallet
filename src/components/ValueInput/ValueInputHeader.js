@@ -21,14 +21,19 @@
 import * as React from 'react';
 import styled, { useTheme } from 'styled-components/native';
 
+// utils
 import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
+import { fontStyles } from 'utils/variables';
+import { useTranslation } from 'translations/translate';
+
+// components
 import Icon from 'components/Icon';
 import Image from 'components/Image';
-import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
+// types
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 
@@ -91,18 +96,22 @@ const ValueInputHeader = ({
   onAssetPress,
   disableAssetSelection,
 }: Props) => {
-  const { name, iconUrl, imageUrl } = asset;
-  const optionImageSource = resolveAssetSource(imageUrl || iconUrl);
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const { genericToken } = images(theme);
+
+  const { name, iconUrl, imageUrl } = asset ?? {};
+
+  const optionImageSource = iconUrl || imageUrl
+    ? resolveAssetSource(imageUrl || iconUrl)
+    : genericToken;
 
   return (
     <Wrapper>
       <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress}>
         <StyledImage
           source={optionImageSource}
-          fallbackSource={optionImageSource.uri !== undefined && genericToken}
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
@@ -117,7 +126,7 @@ const ValueInputHeader = ({
       </SideWrapper>
 
       <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>
-        {name}
+        {name ?? t('label.pleaseSelect')}
       </AssetName>
 
       <Spacing w={8} />

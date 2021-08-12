@@ -142,12 +142,6 @@ function Exchange() {
     [toOptions, toAddress, chain],
   );
 
-  // ValueInput crashes without asset.
-  const fallbackAsset = React.useMemo(
-    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, nativeChainAssetAddress)),
-    [toOptions, chain, nativeChainAssetAddress],
-  );
-
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromAmount);
   const offers = sortOffers(offersQuery.data);
 
@@ -198,7 +192,8 @@ function Exchange() {
       <Content onScroll={() => Keyboard.dismiss()}>
         <FormWrapper>
           <ValueInput
-            assetData={fromAsset || fallbackAsset}
+            disabled={!fromAsset}
+            assetData={fromAsset}
             onAssetDataChange={(asset) => {
               if (asset.chain !== chain) setChain(asset.chain);
               setFromAddress(asset.address);
@@ -221,7 +216,7 @@ function Exchange() {
           <ValueInput
             disabled
             value={formattedToAmount}
-            assetData={toAsset || fallbackAsset}
+            assetData={toAsset}
             onAssetDataChange={(asset) => {
               if (asset.chain !== chain) setChain(asset.chain);
               setToAddress(asset.address);
