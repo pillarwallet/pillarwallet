@@ -169,7 +169,7 @@ const AddLiquidityScreen = ({
     return (
       <ValueInput
         assetData={mapAssetToAssetData(tokensData[tokenIndex])}
-        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency)]}
+        customAssets={[getAssetOption(tokensData[tokenIndex], balances, rates, fiatCurrency, CHAIN.ETHEREUM)]}
         value={assetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {

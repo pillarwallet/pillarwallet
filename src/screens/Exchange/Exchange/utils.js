@@ -20,9 +20,6 @@
 
 import { BigNumber } from 'bignumber.js';
 
-// Constants
-import { ETH } from 'constants/assetsConstants';
-
 // Utils
 import {
   getBalance,
@@ -30,38 +27,57 @@ import {
   getAssetOption,
   addressesEqual,
 } from 'utils/assets';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
-import type { Asset, AssetByAddress, AssetOption } from 'models/Asset';
+import type {
+  Asset,
+  AssetByAddress,
+  AssetOption,
+  AssetsPerChain,
+} from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { Currency, RatesByAssetAddress } from 'models/Rates';
+import type { Currency, RatesPerChain } from 'models/Rates';
+import type { Chain, ChainRecord } from 'models/Chain';
 
 export const getExchangeFromAssetOptions = (
-  assets: AssetByAddress,
-  supportedAssets: Asset[],
-  balances: WalletAssetsBalances,
+  assetsPerChain: ChainRecord<AssetByAddress>,
+  supportedAssetsPerChain: AssetsPerChain,
+  balancesPerChain: ChainRecord<WalletAssetsBalances>,
   currency: Currency,
-  rates: RatesByAssetAddress,
+  ratesPerChain: RatesPerChain,
+  chain: Chain,
 ): AssetOption[] => {
-  const isMatching = (asset: Asset) => asset.symbol === ETH || getBalance(balances, asset.address) !== 0;
+  const chainNativeAssetAddress = nativeAssetPerChain[chain].address;
+  const chainAssets = assetsPerChain?.[chain] ?? {};
+  const chainSupportedAssets = supportedAssetsPerChain?.[chain] ?? [];
+  const chainRates = ratesPerChain?.[chain] ?? {};
+  const chainBalances = balancesPerChain?.[chain] ?? {};
+
+  const isMatching = (
+    asset: Asset,
+  ) => asset.address === chainNativeAssetAddress || getBalance(chainBalances, asset.address) !== 0;
   const isSupported = (
     asset: Asset,
-  ) => supportedAssets.some((supportedAsset) => addressesEqual(asset.address, supportedAsset.address));
+  ) => chainSupportedAssets.some((supportedAsset) => addressesEqual(asset.address, supportedAsset.address));
 
-  return sortAssets(assets)
+  return sortAssets(chainAssets)
     .filter((asset) => isMatching(asset) && isSupported(asset))
-    .map((asset) => getAssetOption(asset, balances, rates, currency));
+    .map((asset) => getAssetOption(asset, chainBalances, chainRates, currency, chain));
 };
 
 export const getExchangeToAssetOptions = (
-  supportedAssets: Asset[],
-  balances: WalletAssetsBalances,
+  supportedAssetsPerChain: AssetsPerChain,
+  balancesPerChain: ChainRecord<WalletAssetsBalances>,
   currency: Currency,
-  rates: RatesByAssetAddress,
+  ratesPerChain: RatesPerChain,
+  chain: Chain,
 ): AssetOption[] => {
-  if (!Array.isArray(supportedAssets)) return [];
+  const chainSupportedAssets = supportedAssetsPerChain?.[chain] ?? [];
+  const chainRates = ratesPerChain?.[chain] ?? {};
+  const chainBalances = balancesPerChain?.[chain] ?? {};
 
-  return supportedAssets.map((asset) => getAssetOption(asset, balances, rates, currency));
+  return chainSupportedAssets.map((asset) => getAssetOption(asset, chainBalances, chainRates, currency, chain));
 };
 
 export const shouldTriggerSearch = (
@@ -74,7 +90,8 @@ export const shouldTriggerSearch = (
     !!toAsset &&
     !!+fromAmount &&
     fromAmount[fromAmount.length - 1] !== '.' &&
-    fromAsset.symbol !== toAsset.symbol &&
+    !addressesEqual(fromAsset.address, toAsset.address) &&
+    fromAsset.chain === toAsset.chain &&
     isEnoughAssetBalance(fromAsset.assetBalance, fromAmount)
   );
 };
