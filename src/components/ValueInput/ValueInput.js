@@ -296,7 +296,7 @@ const ValueInputComponent = ({
         onAssetPress={openAssetSelector}
         labelText={labelText}
         onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
-        disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetChange !== undefined ? disableAssetChange : assetsOptions.length <= 1}
       />
     );
   };
