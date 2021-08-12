@@ -27,6 +27,7 @@ import { BigNumber } from 'bignumber.js';
 import { useDebounce } from 'use-debounce';
 import { orderBy, maxBy } from 'lodash';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -56,11 +57,15 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
+import { isLogV2AppEvents } from 'utils/environment';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
+
+// Actions
+import { logEventAction } from 'actions/analyticsActions';
 
 // Local
 import OfferCard from './OfferCard';
@@ -69,6 +74,7 @@ import { shouldTriggerSearch, getExchangeFromAssetOptions, getExchangeToAssetOpt
 function Exchange() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const fromInputRef = React.useRef();
 
@@ -123,10 +129,12 @@ function Exchange() {
       if (!isCancelled) fromInputRef.current?.focus();
     }, 650);
 
+    isLogV2AppEvents() && dispatch(logEventAction('v2_exchange_pair_selected'));
+
     return () => {
       isCancelled = true;
     };
-  }, [fromAsset, toAsset]);
+  }, [fromAsset, toAsset, dispatch]);
 
   const handleOfferPress = (offer: ExchangeOffer) => {
     navigation.navigate(EXCHANGE_CONFIRM, { offer });

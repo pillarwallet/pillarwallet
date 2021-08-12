@@ -21,23 +21,25 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
-// components
+// Components
 import CheckAuth from 'components/CheckAuth';
 
-// actions
+// Actions
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
 
-// constants
+// Constants
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
-// types
+// Types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
+// Utils
+import { isLogV2AppEvents } from 'utils/environment';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -93,6 +95,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       isChecking: true,
     }, () => {
       logEvent('transaction_sent', { source: this.source });
+      isLogV2AppEvents() && logEvent('v2_transaction_sent', { source: this.source });
       sendAsset(transactionPayload, this.navigateToTransactionState);
     });
   };
