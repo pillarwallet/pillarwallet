@@ -60,6 +60,7 @@ import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
+import { isLogV2AppEvents } from 'utils/environment';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
@@ -105,6 +106,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
     }
 
     dispatch(logEventAction('walletconnect_connector_requested'));
+    isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_connect'));
 
     connector.on(WALLETCONNECT_EVENT.SESSION_REQUEST, (error: Error | null, payload: any) => {
       if (error) {
