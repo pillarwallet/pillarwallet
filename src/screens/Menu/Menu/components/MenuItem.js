@@ -22,7 +22,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import { Separator } from 'components/modern/Layout';
 import Icon, { type IconName } from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
@@ -43,7 +42,6 @@ const MenuItem = ({ title, icon, onPress }: Props) => {
         <ItemIcon name={icon} width={16} height={16} />
         <Title>{title}</Title>
       </TouchableContainer>
-      <Separator inset={spacing.large} />
     </Container>
   );
 };

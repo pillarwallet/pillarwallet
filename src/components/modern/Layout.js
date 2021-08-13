@@ -164,14 +164,3 @@ export const Spacing: React.ComponentType<SpacingProps> = styled.View`
   width: ${({ w }) => w ?? 0}px;
   ${({ flex }) => (flex != null ? `flex: ${flex}` : '')};
 `;
-
-type SeparatorProps = {|
-  inset?: number,
-|};
-
-export const Separator: React.ComponentType<SeparatorProps> = styled.View`
-  align-self: stretch;
-  height: 1px;
-  margin: 0 ${({ inset }) => inset}px;
-  background-color: ${({ theme }) => theme.colors.separator};
-`;
