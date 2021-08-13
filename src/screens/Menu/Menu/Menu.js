@@ -35,11 +35,12 @@ import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Ban
 import { MENU_SETTINGS, CONTACTS_FLOW } from 'constants/navigationConstants';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
+import { useIsDarkTheme } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Assets
-import PillarLogo from 'assets/images/svg/pillar-logo-small.svg';
+import PillarLogo from 'assets/images/pillar-logo-small.svg';
+import PillarLogoDark from 'assets/images/pillar-logo-small-dark.svg';
 
 // Local
 import MenuItem from './components/MenuItem';
@@ -48,7 +49,7 @@ import SocialMediaLinks from './components/SocialMediaLinks';
 
 const Menu = () => {
   const { t } = useTranslationWithPrefix('menu');
-  const colors = useThemeColors();
+  const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
@@ -59,16 +60,14 @@ const Menu = () => {
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ custom: <PillarLogo fill={colors.pillarText} /> }]}
+        centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo /> }]}
         navigation={navigation}
       />
 
       <Content paddingHorizontal={0}>
-        <MenuItemsContainer>
-          <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
-          <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-          <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
-        </MenuItemsContainer>
+        <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
+        <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
+        <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
 
         <SocialMediaLinks />
 
