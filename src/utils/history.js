@@ -24,8 +24,6 @@ import {
   TRANSACTION_CONFIRMATION_EVENT,
   TRANSACTION_CONFIRMATION_SENDER_EVENT,
   TRANSACTION_PENDING_EVENT,
-  TX_CONFIRMED_STATUS,
-  TX_FAILED_STATUS,
   TX_PENDING_STATUS,
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
@@ -53,9 +51,6 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
-
-// services
-import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
 
 export const buildHistoryTransaction = ({
   from,
@@ -190,23 +185,6 @@ export const findCollectibleTransactionAcrossAccounts = (
     .flatMap((accountId) => getCrossChainAccountCollectiblesHistory(history[accountId]))
     .find((transaction) => isCaseInsensitiveMatch(hash ?? '', transaction?.hash)
       || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
-};
-
-export const getTrxInfo = async (hash: string, network?: string) => {
-  const [txInfo, txReceipt] = await Promise.all([
-    fetchTransactionInfo(hash, network),
-    fetchTransactionReceipt(hash, network),
-  ]);
-
-  if (!txInfo || !txReceipt) return null;
-
-  const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
-
-  return {
-    txInfo,
-    txReceipt,
-    status,
-  };
 };
 
 export const getTokenTransactionsFromHistory = (

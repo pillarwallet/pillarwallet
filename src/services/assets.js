@@ -341,18 +341,6 @@ export async function getExchangeRates(
   }), {});
 }
 
-// from the getTransaction() method you'll get the the basic tx info without the status
-export function fetchTransactionInfo(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getTransaction(hash).catch(() => null);
-}
-
-// receipt available for mined transactions only, here you can get the status of the tx
-export function fetchTransactionReceipt(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getTransactionReceipt(hash).catch(() => null);
-}
-
 export function transferSigned(signed: ?string) {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   return provider.sendTransaction(signed);

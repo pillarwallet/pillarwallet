@@ -1443,8 +1443,8 @@ const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| .
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(CHAIN.ETHEREUM, hash)),
+  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(CHAIN.ETHEREUM, hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 

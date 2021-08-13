@@ -706,6 +706,18 @@ export class EtherspotService {
       return null;
     }
   }
+
+  async getTransaction(chain: Chain, hash: string): Promise<?EtherspotTransaction> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    try {
+      return sdk.getTransaction({ hash });
+    } catch (error) {
+      reportErrorLog('EtherspotService getTransaction failed', { chain, hash, error });
+      return null;
+    }
+  }
 }
 
 const etherspot = new EtherspotService();
