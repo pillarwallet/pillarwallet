@@ -93,15 +93,26 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       return;
     }
     const senderAccountAddress = getActiveAccountAddress(accounts);
-    const { to: recipient } = transactionPayload;
+    const { to: recipient, symbol, amount, chain } = transactionPayload;
 
-    this.setState({
-      isChecking: true,
-    }, () => {
-      logEvent('transaction_sent', { source: this.source });
-      isLogV2AppEvents() && logEvent('v2_transaction_sent', { to: recipient, from: senderAccountAddress });
-      sendAsset(transactionPayload, this.navigateToTransactionState);
-    });
+    this.setState(
+      {
+        isChecking: true,
+      },
+      () => {
+        logEvent('transaction_sent', { source: this.source });
+        isLogV2AppEvents() &&
+          logEvent('v2_transaction_sent', {
+            fromSymbol: symbol,
+            fromContractAddress: senderAccountAddress,
+            toSymbol: symbol,
+            toContractAddress: recipient,
+            amount,
+            chain,
+          });
+        sendAsset(transactionPayload, this.navigateToTransactionState);
+      },
+    );
   };
 
   navigateToTransactionState = (params: ?Object) => {
