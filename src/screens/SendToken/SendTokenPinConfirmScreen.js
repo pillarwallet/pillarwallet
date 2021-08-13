@@ -40,7 +40,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // Utils
 import { isLogV2AppEvents } from 'utils/environment';
-import { getActiveAccountAddress } from 'utils/accounts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -82,7 +81,6 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       sendAsset,
       isOnline,
       logEvent,
-      accounts,
     } = this.props;
     const { transactionPayload } = this.state;
 
@@ -92,8 +90,8 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       });
       return;
     }
-    const senderAccountAddress = getActiveAccountAddress(accounts);
-    const { to: recipient, symbol, amount, chain } = transactionPayload;
+
+    const { to: recipient, contractAddress, symbol, amount, chain } = transactionPayload;
 
     this.setState(
       {
@@ -104,7 +102,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
         isLogV2AppEvents() &&
           logEvent('v2_transaction_sent', {
             fromSymbol: symbol,
-            fromContractAddress: senderAccountAddress,
+            fromContractAddress: contractAddress,
             toSymbol: symbol,
             toContractAddress: recipient,
             amount,
