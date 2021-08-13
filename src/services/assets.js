@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
+import ethers, { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
@@ -403,20 +403,6 @@ export async function calculateGasEstimate(transaction: Object) {
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 }
-
-export const getContract = (
-  address: string,
-  abi: string,
-  // for wallet calls set wallet provider, for general purpose use default
-  provider: Object = getEthereumProvider(getEnv().NETWORK_PROVIDER),
-) => {
-  try {
-    return new Contract(address, abi, provider);
-  } catch (error) {
-    reportLog('Failed to create Contract', { error });
-    return null;
-  }
-};
 
 export const buildERC20ApproveTransactionData = (
   spenderAddress: string,

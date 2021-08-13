@@ -692,8 +692,8 @@ export class EtherspotService {
 
   getContract<T>(
     chain: Chain,
+    abi: Object[],
     address: string,
-    abi: string,
   ): T | null {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;

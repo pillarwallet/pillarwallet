@@ -35,6 +35,7 @@ import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // types
 import type { Collectible } from 'models/Collectible';
+import type { EtherspotErc721Interface } from 'models/Etherspot';
 
 
 /* eslint-disable i18next/no-literal-string */
@@ -42,13 +43,11 @@ const poapContractAddress = '0x22c1f6050e56d2876009903609a2cc3fef83b415';
 const poapSubgraphName = 'poap-xyz/poap-xdai';
 /* eslint-enable i18next/no-literal-string */
 
-type ERC721Contract = { tokenURI: (tokenId: string) => Promise<?string> };
-
 export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<Collectible[]> => {
-  const collectibleContract = etherspotService.getContract<?ERC721Contract>(
+  const collectibleContract = etherspotService.getContract<?EtherspotErc721Interface>(
     CHAIN.XDAI,
-    poapContractAddress,
     ERC721_CONTRACT_ABI,
+    poapContractAddress,
   );
 
   if (!collectibleContract) return [];
@@ -68,7 +67,7 @@ export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<
   const tokenIds = (result?.tokens ?? []).map(({ id }) => id);
 
   const tokensWithMetadata = await Promise.all(tokenIds.map(async (tokenId) => {
-    const tokenMetadataUri = await collectibleContract.tokenURI(tokenId).catch(() => null);
+    const tokenMetadataUri = await collectibleContract.callTokenURI(tokenId).catch(() => null);
     if (!tokenMetadataUri) return null;
 
     try {
