@@ -92,8 +92,6 @@ const styles = {
   },
 };
 
-const MenuItemsContainer = styled.View``;
-
 const BannersContainer = styled.View`
   padding: ${spacing.medium}px ${spacing.large}px ${spacing.large}px;
 `;

@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content, Spacing } from 'components/modern/Layout';
 import CheckAuth from 'components/CheckAuth';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/modern/Text';
@@ -86,6 +86,7 @@ const Settings = () => {
         <BiometricLoginSetting wallet={wallet} pin={pin} />
         <ChangePinSetting />
 
+        <Spacing h={spacing.large} />
         <Header>{t('walletBackup')}</Header>
 
         <ViewBackupPhraseSetting wallet={wallet} />
