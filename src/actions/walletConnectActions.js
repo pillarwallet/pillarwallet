@@ -106,7 +106,6 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
     }
 
     dispatch(logEventAction('walletconnect_connector_requested'));
-    isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_connect'));
 
     connector.on(WALLETCONNECT_EVENT.SESSION_REQUEST, (error: Error | null, payload: any) => {
       if (error) {
@@ -125,6 +124,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         dispatch(setWalletConnectErrorAction(t('toast.walletConnectUnsupportedApp')));
         return;
       }
+
+      isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_connect'));
 
       dispatch({
         type: SET_WALLETCONNECT_CONNECTOR_REQUEST,

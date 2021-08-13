@@ -34,9 +34,9 @@ export const CHAIN_NAMES = {
 
 export const CHAIN_SHORT = {
   ETHEREUM: 'Mainnet',
-  POLYGON: 'BSC',
-  BINANCE: 'xDai',
-  XDAI: 'Polygon',
+  POLYGON: 'Polygon',
+  BINANCE: 'BSC',
+  XDAI: 'xDai',
 };
 
 // Based on: https://chainid.network/

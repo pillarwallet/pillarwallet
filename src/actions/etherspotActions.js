@@ -298,6 +298,12 @@ export const subscribeToEtherspotNotificationsAction = () => {
           case EtherspotNotificationTypes.GatewayBatchUpdated:
             handleGatewayBatchUpdatedNotification(notification, chain, dispatch, getState);
             break;
+          case EtherspotNotificationTypes.ENSNodeUpdated:
+            isLogV2AppEvents() && dispatch(logEventAction('v2_ens_claimed'));
+            break;
+          case EtherspotNotificationTypes.TransactionUpdated:
+            isLogV2AppEvents() && dispatch(logEventAction('v2_transaction_received'));
+            break;
           default:
             break;
         }

@@ -40,6 +40,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // Utils
 import { isLogV2AppEvents } from 'utils/environment';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,7 +68,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = props;
-    const transactionPayload = navigation.getParam('transactionPayload', { });
+    const transactionPayload = navigation.getParam('transactionPayload', {});
     this.source = navigation.getParam('source', '');
     this.goBackDismiss = navigation.getParam('goBackDismiss', false);
     this.state = {
@@ -81,6 +82,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       sendAsset,
       isOnline,
       logEvent,
+      accounts,
     } = this.props;
     const { transactionPayload } = this.state;
 
@@ -90,12 +92,14 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       });
       return;
     }
+    const senderAccountAddress = getActiveAccountAddress(accounts);
+    const { to: recipient } = transactionPayload;
 
     this.setState({
       isChecking: true,
     }, () => {
       logEvent('transaction_sent', { source: this.source });
-      isLogV2AppEvents() && logEvent('v2_transaction_sent', { source: this.source });
+      isLogV2AppEvents() && logEvent('v2_transaction_sent', { to: recipient, from: senderAccountAddress });
       sendAsset(transactionPayload, this.navigateToTransactionState);
     });
   };

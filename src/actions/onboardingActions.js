@@ -472,7 +472,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
 
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
-    isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Words Phrase' }));
+    isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Seed phrase' }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
@@ -551,7 +551,6 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       'checkUsernameAvailabilityAction: done, dispatching SET_ONBOARDING_USER',
       username,
     );
-    isLogV2AppEvents() && dispatch(logEventAction('v2_ens_claimed'));
     dispatch({
       type: SET_ONBOARDING_USER,
       payload: { username },

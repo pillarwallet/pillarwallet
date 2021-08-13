@@ -152,10 +152,8 @@ import {
 } from 'utils/wallet';
 import { nativeAssetPerChain } from 'utils/chains';
 import { fromEthersBigNumber } from 'utils/bigNumber';
-import { isLogV2AppEvents } from 'utils/environment';
 
 // actions
-import { logEventAction } from 'actions/analyticsActions';
 import {
   addAccountAction,
   initOnLoginArchanovaAccountAction,
@@ -825,7 +823,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         && [ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_PPN_PAYMENT_PROCESSED].includes(txStatus)) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === ARCHANOVA_PPN_PAYMENT_COMPLETED) {
-          isLogV2AppEvents() && dispatch(logEventAction('v2_transaction_received'));
           Toast.show({
             message: t('toast.transactionReceived', { paymentInfo }),
             emoji: 'ok_hand',
