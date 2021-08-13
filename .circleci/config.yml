@@ -196,7 +196,7 @@ aliases:
     run:
       name: Generate and upload sourcemap for Android and iOS on AppCenter
       command: |
-        if [ "$CIRCLE_BRANCH" = "improvement/instabug-sourcemap-pipeline" ]; then
+        if [ "$CIRCLE_BRANCH" = "develop" ]; then
           env
           echo "Version is: " $CIRCLE_BUILD_NUM
           yarn android:sourcemap & yarn ios:sourcemap
