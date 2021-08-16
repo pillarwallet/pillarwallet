@@ -353,6 +353,10 @@ export class EtherspotService {
 
     const { account: etherspotAccount } = sdk.state;
     if (etherspotAccount.state === AccountStates.UnDeployed) {
+      /**
+       * batchDeployAccount on back-end additionally checks if account is deployed
+       * regardless of our state check and either skips or adds deployment transaction.
+       */
       await sdk.batchDeployAccount();
     }
 
