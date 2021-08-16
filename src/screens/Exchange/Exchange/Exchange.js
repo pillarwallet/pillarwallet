@@ -215,6 +215,8 @@ function Exchange() {
               fromInputRef.current = ref;
             }}
             onBlur={() => fromInputRef.current?.blur()}
+            disableAssetChange={false}
+            hideMaxSend={!fromAsset}
           />
 
           <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap}>
