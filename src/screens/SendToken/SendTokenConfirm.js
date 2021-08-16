@@ -48,6 +48,8 @@ import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
 import type { TransactionPayload } from 'models/Transaction';
+import { wrapBigNumber } from 'utils/common';
+import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
 
 
 const SendTokenConfirm = () => {
@@ -71,7 +73,7 @@ const SendTokenConfirm = () => {
     amount,
     to,
     receiverEnsName,
-    txFeeInWei,
+    txFeeInWei: totalFeeInWei,
     symbol,
     gasToken,
   } = transactionPayload;
@@ -80,6 +82,16 @@ const SendTokenConfirm = () => {
   const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
     ? t('tooltip.includesDeploymentFee')
     : undefined;
+
+  const isUndeployedEtherspotAccount = isEtherspotAccount(activeAccount) && !isDeployedOnChain;
+
+  const etherspotDeploymentFeeInWei = isUndeployedEtherspotAccount
+    ? wrapBigNumber(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT).times(15)
+    : null;
+
+  const transactionSendFeeInWei = isUndeployedEtherspotAccount
+    ? wrapBigNumber(totalFeeInWei).minus(etherspotDeploymentFeeInWei)
+    : totalFeeInWei;
 
   return (
     <Container>
@@ -107,16 +119,22 @@ const SendTokenConfirm = () => {
             <TableUser ensName={receiverEnsName} address={to} />
           </TableRow>
           <TableRow>
-            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
+            <TableFee txFeeInWei={transactionSendFeeInWei} gasToken={gasToken} chain={chain} />
           </TableRow>
+          {!!etherspotDeploymentFeeInWei && (
+            <TableRow>
+              <TableLabel tooltip={feeTooltip}>{t('transactions.label.deploymentFee')}</TableLabel>
+              <TableFee txFeeInWei={etherspotDeploymentFeeInWei} gasToken={gasToken} chain={chain} />
+            </TableRow>
+          )}
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
             <TableAmount amount={0} chain={chain} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableFee txFeeInWei={totalFeeInWei} gasToken={gasToken} chain={chain} />
           </TableRow>
         </Table>
 
