@@ -74,6 +74,7 @@ export type SetCollectibleToMigrateAction = {|
   type: typeof ACTION_SET_COLLECTIBLE_TO_MIGRATE,
   contractAddress: string,
   id: string,
+  isLegacy: boolean,
 |};
 
 export type RemoveCollectibleToMigrateAction = {|
@@ -103,9 +104,9 @@ const walletMigrationArchanovaReducer = (
 
     case ACTION_SET_COLLECTIBLE_TO_MIGRATE:
       return produce(state, (draft: WalletMigrationArchanovaReducerState) => {
-        const { contractAddress, id } = action;
+        const { contractAddress, id, isLegacy } = action;
         const key = buildCollectibleKey(contractAddress, id);
-        draft.collectiblesToMigrate[key] = { contractAddress, id };
+        draft.collectiblesToMigrate[key] = { contractAddress, id, isLegacy };
       });
 
     case ACTION_REMOVE_COLLECTIBLE_TO_MIGRATE:

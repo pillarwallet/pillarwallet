@@ -54,7 +54,7 @@ import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 
 import { getAssetRateInFiat } from 'utils/rates';
 
 // constants
-import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ASSET_TYPES, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // selectors
@@ -220,6 +220,8 @@ const ValueInputComponent = ({
   }, [txFeeInfo, calculateBalanceSendPercent]);
 
   const handleValueChange = (newValue: string) => {
+    if (!assetData) return;
+
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
@@ -294,7 +296,7 @@ const ValueInputComponent = ({
         onAssetPress={openAssetSelector}
         labelText={labelText}
         onLabelPress={() => !disabled ? handleUsePercent(100) : undefined}
-        disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetChange !== undefined ? disableAssetChange : assetsOptions.length <= 1}
       />
     );
   };
@@ -338,12 +340,12 @@ const ValueInputComponent = ({
       setValueInFiat('0');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetData.name]);
+  }, [assetData?.name]);
 
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
-  const { tokenType = TOKENS } = assetData;
+  const { tokenType = ASSET_TYPES.TOKEN } = assetData ?? {};
 
   const toggleDisplayFiat = () => {
     // when switching at error state, reset values to avoid new errors
@@ -356,7 +358,7 @@ const ValueInputComponent = ({
 
   return (
     <>
-      {tokenType === TOKENS && (
+      {tokenType === ASSET_TYPES.TOKEN && (
         <TextInput
           style={{ width: '100%' }}
           hasError={!!errorMessage}
@@ -376,7 +378,7 @@ const ValueInputComponent = ({
           inputWrapperStyle={{ zIndex: 10 }}
         />
       )}
-      {tokenType === COLLECTIBLES && (
+      {tokenType === ASSET_TYPES.COLLECTIBLE && (
         <CollectibleWrapper>
           <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>
             {assetData.name}

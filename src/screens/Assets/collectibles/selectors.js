@@ -35,6 +35,7 @@ export type CollectibleItem = {|
   imageUrl: ?string,
   contractAddress: string,
   tokenId: string,
+  isLegacy: boolean,
 |};
 
 export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
@@ -49,6 +50,7 @@ export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
       icon: iconUrl,
       image: imageUrl,
       name: title,
+      isLegacy,
     }) => ({
       key: `${contractAddress}-${id}`,
       id,
@@ -58,6 +60,7 @@ export function useCollectibleAssets(): ChainRecord<CollectibleItem[]> {
       imageUrl,
       contractAddress,
       tokenId: id,
+      isLegacy,
     })),
   );
 }

@@ -18,6 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// Types
+import type { AssetType } from 'models/Asset';
+
+
 export type Option = {
   name: string,
   value: string,
@@ -38,7 +42,7 @@ export type Option = {
   formattedBalanceInFiat?: string,
   id?: string,
   decimals?: number,
-  tokenType?: string,
+  tokenType?: AssetType,
   contractAddress?: string,
   address?: string,
   balance?: {

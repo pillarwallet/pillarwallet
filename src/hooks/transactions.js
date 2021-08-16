@@ -26,18 +26,16 @@ import t from 'translations/translate';
 // Components
 import Toast from 'components/Toast';
 
-// Constants
-import { ETH } from 'constants/assetsConstants';
-
 // Services
 import etherspotService from 'services/etherspot';
 
 // Selectors
 import { useRootSelector } from 'selectors';
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
@@ -93,7 +91,9 @@ export function useTransactionFeeCheck(
   txAsset?: ?AssetCore,
   txValue?: ?BigNumber,
 ): UseTransactionFeeCheckResult {
-  const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
+  const { gasSymbol } = useChainConfig(chain);
+  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
+  const chainBalances = accountBalances?.[chain]?.wallet ?? {};
 
   if (!feeInfo) return { isEnoughForFee: true };
 
@@ -105,10 +105,10 @@ export function useTransactionFeeCheck(
     amount: txValue,
   };
 
-  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, transaction, chain);
+  const isEnoughForFee = isEnoughBalanceForTransactionFee(chainBalances, transaction, chain);
 
   const errorMessage = !isEnoughForFee
-    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || gasSymbol })
     : undefined;
 
   return { isEnoughForFee, errorMessage };

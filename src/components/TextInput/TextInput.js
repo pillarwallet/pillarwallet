@@ -502,7 +502,7 @@ class TextInput extends React.Component<Props, State> {
     const { fullWidth: fullWidthSelector } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText || !!leftSideSymbol;
-    const showRightAddon = !!iconProps || loading || rightPlaceholder;
+    const showRightAddon = !!iconProps || !!loading || !!rightPlaceholder;
 
     const selectorOptionsCount = this.getSelectorOptionsCount(selectorOptions);
 

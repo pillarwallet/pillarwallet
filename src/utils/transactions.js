@@ -23,11 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
 // constants
-import {
-  ADDRESS_ZERO,
-  COLLECTIBLES,
-  ETH,
-} from 'constants/assetsConstants';
+import { ADDRESS_ZERO, ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -43,6 +39,7 @@ import { buildERC721TransactionData, encodeContractMethod } from 'services/asset
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
+import type { AssetType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -84,14 +81,15 @@ export const buildEthereumTransaction = async (
   amount: string,
   symbol: ?string,
   decimals: number = 18,
-  tokenType: ?string,
+  tokenType: ?AssetType,
   contractAddress: ?string,
   tokenId: ?string,
   chain: Chain,
+  useLegacyTransferMethod?: boolean,
 ): Promise<EthereumTransaction> => {
   let value;
 
-  if (tokenType !== COLLECTIBLES) {
+  if (tokenType !== ASSET_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {
@@ -99,12 +97,13 @@ export const buildEthereumTransaction = async (
       to = contractAddress;
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
-  } else if (contractAddress) {
+  } else if (contractAddress && tokenId) {
     data = await buildERC721TransactionData({
       from,
       to,
       tokenId,
       contractAddress,
+      useLegacyTransferMethod: !!useLegacyTransferMethod,
     });
     to = contractAddress;
     value = EthersBigNumber.from(0);
@@ -131,6 +130,7 @@ export const mapToEthereumTransactions = async (
     decimals = 18,
     sequentialTransactions = [],
     chain = CHAIN.ETHEREUM,
+    useLegacyTransferMethod,
   } = transactionPayload;
 
   const transaction = await buildEthereumTransaction(
@@ -144,6 +144,7 @@ export const mapToEthereumTransactions = async (
     contractAddress,
     tokenId,
     chain,
+    useLegacyTransferMethod,
   );
 
   let transactions = [transaction];
@@ -165,25 +166,34 @@ export const mapToEthereumTransactions = async (
 };
 
 // TODO: gasToken support
-export const mapTransactionsToTransactionPayload = (transactions: EthereumTransaction[]): TransactionPayload => {
-  let transactionPayload = mapTransactionToTransactionPayload(transactions[0]);
+export const mapTransactionsToTransactionPayload = (
+  chain: Chain,
+  transactions: EthereumTransaction[],
+): TransactionPayload => {
+  let transactionPayload = mapTransactionToTransactionPayload(chain, transactions[0]);
 
   if (transactions.length > 1) {
     transactionPayload = {
       ...transactionPayload,
-      sequentialTransactions: transactions.slice(1).map(mapTransactionToTransactionPayload),
+      sequentialTransactions: transactions.slice(1).map((
+        transaction,
+      ) => mapTransactionToTransactionPayload(chain, transaction)),
     };
   }
 
-  return transactionPayload;
+  return { ...transactionPayload, chain };
 };
 
 // TODO: gas token support
-const mapTransactionToTransactionPayload = (transaction: EthereumTransaction): TransactionPayload => {
+const mapTransactionToTransactionPayload = (
+  chain: Chain,
+  transaction: EthereumTransaction,
+): TransactionPayload => {
+  const { symbol, decimals } = nativeAssetPerChain[chain];
   const { to, value, data } = transaction;
-  const amount = fromEthersBigNumber(value, 18).toFixed();
+  const amount = fromEthersBigNumber(value, decimals).toFixed();
 
-  return { to, amount, symbol: ETH, data, decimals: 18 };
+  return { to, amount, symbol, data, decimals };
 };
 
 export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {
@@ -216,7 +226,7 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
   const chainNativeAsset = nativeAssetPerChain[chain];
   if (!chainNativeAsset) {
     reportErrorLog('getGasSymbol failed: no native asset for chain', { chain });
-    return ETH;
+    return nativeAssetPerChain.ethereum.symbol;
   }
 
   return chainNativeAsset.symbol;

@@ -55,7 +55,7 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_WALLET_EVENTS } from 'constants/walletEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
@@ -130,8 +130,8 @@ export const initAppAndRedirectAction = () => {
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
-      const { userEvents = [] } = get(storageData, 'userEvents', {});
-      dispatch({ type: SET_USER_EVENTS, payload: userEvents });
+      const walletEvents = storageData?.walletEvents?.walletEvents ?? {};
+      dispatch({ type: SET_WALLET_EVENTS, payload: walletEvents });
 
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });

@@ -32,7 +32,6 @@ import Toast from 'components/Toast';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
-import { CHAIN } from 'constants/chainConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
@@ -65,11 +64,11 @@ const ExchangeConfirmScreen = () => {
   const navigation = useNavigation();
 
   const offer: ExchangeOffer = navigation.getParam('offer');
-  const { fromAsset, toAsset, fromAmount, toAmount, provider } = offer;
+  const { fromAsset, toAsset, fromAmount, toAmount, provider, chain } = offer;
+  const toAssetSymbol = toAsset.symbol;
 
   const fiatCurrency = useFiatCurrency();
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
-  const chain = CHAIN.ETHEREUM;
 
   const chainRates = useChainRates(chain);
 
@@ -92,10 +91,11 @@ const ExchangeConfirmScreen = () => {
       return;
     }
 
-    const transactionPayload = mapTransactionsToTransactionPayload(offer.transactions);
+    const transactionPayload = mapTransactionsToTransactionPayload(chain, offer.transactions);
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      toAssetSymbol,
       goBackDismiss: true,
       transactionType: TRANSACTION_TYPE.EXCHANGE,
     });

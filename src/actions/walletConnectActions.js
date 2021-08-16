@@ -60,6 +60,7 @@ import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
+import { isLogV2AppEvents } from 'utils/environment';
 
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
@@ -123,6 +124,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         dispatch(setWalletConnectErrorAction(t('toast.walletConnectUnsupportedApp')));
         return;
       }
+
+      isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_connect'));
 
       dispatch({
         type: SET_WALLETCONNECT_CONNECTOR_REQUEST,

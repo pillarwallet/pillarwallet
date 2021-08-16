@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isEmpty, mapValues } from 'lodash';
+import { isEmpty, mapValues, orderBy } from 'lodash';
 
 // constants
 import {
@@ -31,6 +31,7 @@ import {
 } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT } from 'constants/paymentNetworkConstants';
 import { EVENT_TYPE, TRANSACTION_STATUS } from 'models/History';
+import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
 
 // types
 import type {
@@ -240,7 +241,7 @@ export const parseHistoryEventFee = (
   }
 
   if (gasUsed && gasPrice) {
-    const feeValue = wrapBigNumber(gasPrice).multipliedBy(gasPrice);
+    const feeValue = wrapBigNumber(gasUsed).multipliedBy(gasPrice);
     const { decimals, address, symbol } = nativeAssetPerChain[chain];
     return {
       value: wrapBigNumber(formatUnits(feeValue, decimals)),
@@ -257,57 +258,88 @@ export const getHistoryEventsFromTransactions = (
   chain: Chain,
   activeAccountAddress: string,
   supportedAssets: Asset[],
-): Event[] => transactions.map(({
-  _id,
-  hash,
-  batchHash,
-  value: rawValue,
-  assetAddress,
-  createdAt,
-  from: fromAddress,
-  to: toAddress,
-  extra,
-  gasUsed,
-  gasPrice,
-  feeWithGasToken,
-  status,
-}) => {
-  const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
-  const asset = findAssetByAddress(supportedAssets, assetAddress);
+): Event[] => {
+  let successfulOrPendingDeploymentEventAdded = false;
 
-  const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
-  const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};
+  return orderBy(transactions, ['date'], ['desc']).reduce((
+    historyEvents,
+    {
+      _id,
+      hash,
+      batchHash,
+      value: rawValue,
+      assetAddress,
+      createdAt,
+      from: fromAddress,
+      to: toAddress,
+      extra,
+      gasUsed,
+      gasPrice,
+      feeWithGasToken,
+      status,
+    },
+  ) => {
+    const fee = parseHistoryEventFee(chain, feeWithGasToken, gasUsed, gasPrice);
+    const asset = findAssetByAddress(supportedAssets, assetAddress);
 
-  const value = {
-    value: wrapBigNumber(formatUnits(rawValue, decimals)),
-    address: assetAddress,
-    symbol,
-  };
+    const { decimals: nativeAssetDecimals, symbol: nativeAssetSymbol } = nativeAssetPerChain[chain];
+    const { decimals = nativeAssetDecimals, symbol = nativeAssetSymbol } = asset ?? {};
 
-  let historyEvent = {
-    id: _id,
-    value,
-    date: new Date(+createdAt * 1000),
-    fromAddress,
-    toAddress,
-    status: TRANSACTION_STATUS[status],
-    batchHash,
-    hash,
-    fee,
-  };
+    const value = {
+      value: wrapBigNumber(formatUnits(rawValue, decimals)),
+      address: assetAddress,
+      symbol,
+    };
 
-  let eventType = addressesEqual(fromAddress, activeAccountAddress)
-    ? EVENT_TYPE.TOKEN_SENT
-    : EVENT_TYPE.TOKEN_RECEIVED;
+    let historyEvent = {
+      id: _id,
+      value,
+      date: new Date(+createdAt * 1000),
+      fromAddress,
+      toAddress,
+      status: TRANSACTION_STATUS[status],
+      batchHash,
+      hash,
+      fee,
+    };
 
-  if (extra?.ensName) {
-    eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
-    historyEvent = { ...historyEvent, ensName: extra.ensName };
-  }
+    let eventType = addressesEqual(fromAddress, activeAccountAddress)
+      ? EVENT_TYPE.TOKEN_SENT
+      : EVENT_TYPE.TOKEN_RECEIVED;
 
-  // $FlowFixMe: TODO: fix return for different event types
-  return { ...historyEvent, type: eventType };
-});
+    if (extra?.ensName) {
+      eventType = EVENT_TYPE.ENS_NAME_REGISTERED;
+      historyEvent = { ...historyEvent, ensName: extra.ensName };
+    }
+
+    historyEvent = { ...historyEvent, type: eventType };
+
+    if (!successfulOrPendingDeploymentEventAdded && addressesEqual(fromAddress, activeAccountAddress)) {
+      const deploymentFee = gasPrice && addressesEqual(fee?.address, nativeAssetPerChain.ethereum.address)
+        ? wrapBigNumber(gasPrice).multipliedBy(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT)
+        : null;
+
+      const deploymentHistoryEvent = {
+        ...historyEvent,
+        date: new Date((+createdAt - 1) * 1000), // -1 to make it earlier than followed transaction
+        id: `${historyEvent.id}-deployment`,
+        type: EVENT_TYPE.WALLET_ACTIVATED,
+        fee: deploymentFee,
+      };
+
+      successfulOrPendingDeploymentEventAdded = [
+        TRANSACTION_STATUS.CONFIRMED,
+        TRANSACTION_STATUS.PENDING,
+      ].includes(TRANSACTION_STATUS[historyEvent.status]);
+
+      // $FlowFixMe: TODO: fix return for different event types
+      return [...historyEvents, historyEvent, deploymentHistoryEvent];
+    }
+
+    // $FlowFixMe: TODO: fix return for different event types
+    return [...historyEvents, historyEvent];
+  }, []);
+};
 
 export const getHistoryEventsFromCollectiblesTransactions = (
   transactions: CollectibleTransaction[],

@@ -71,7 +71,6 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import {
   SET_ARCHANOVA_WALLET_ACCOUNT_ENS,
   ARCHANOVA_WALLET_ACCOUNT_DEVICE_ADDED,
@@ -124,6 +123,7 @@ import type { Account } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
+import { EVENT_TYPE } from 'models/History';
 
 type Props = {
   type?: string,
@@ -299,50 +299,27 @@ export class ActivityFeedItem extends React.Component<Props> {
     return iconUrl ? { uri: iconUrl } : null;
   };
 
-  getWalletCreatedEventData = (event: Object) => {
+  getWalletEventData = (event: Object) => {
     const { isArchanovaWalletActivated, theme } = this.props;
-    const { keyWalletIcon, smartWalletIcon } = images(theme);
-    switch (event.eventTitle) {
-      case 'Wallet created':
-        return {
-          label: this.NAMES().KEY_WALLET,
-          itemImageSource: keyWalletIcon,
-          actionLabel: this.STATUSES().CREATED,
-        };
-      case 'Smart Wallet created':
+    const { keyWalletIcon, PPNIcon, smartWalletIcon } = images(theme);
+    switch (event.type) {
+      case EVENT_TYPE.WALLET_CREATED:
         return {
           label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().CREATED,
           badge: isArchanovaWalletActivated ? null : t('label.needToActivate'),
         };
-      case 'Wallet imported':
-        return {
-          label: this.NAMES().KEY_WALLET,
-          itemImageSource: keyWalletIcon,
-          actionLabel: this.STATUSES().IMPORTED,
-        };
-      default:
-        return null;
-    }
-  };
-
-  getUserEventData = (event: Object) => {
-    const { isArchanovaWalletActivated, theme } = this.props;
-    const { keyWalletIcon, PPNIcon } = images(theme);
-    switch (event.subType) {
-      case WALLET_CREATE_EVENT:
-        return this.getWalletCreatedEventData(event);
-      case PPN_INIT_EVENT:
+      case EVENT_TYPE.PPN_INITIALIZED:
         return {
           label: this.NAMES().PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: this.STATUSES().CREATED,
           badge: isArchanovaWalletActivated ? null : t('label.needToActivate'),
         };
-      case WALLET_BACKUP_EVENT:
+      case EVENT_TYPE.WALLET_BACKED_UP:
         return {
-          label: this.NAMES().KEY_WALLET,
+          label: this.NAMES().LEGACY_SMART_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: this.STATUSES().BACKUP,
         };
@@ -883,7 +860,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: usernameOrAddress,
             fullItemValue: event.tag === WBTC_PENDING_TRANSACTION
               ? getFormattedValue(String(event.value / 1000000000000000000), assetSymbol)
-              : getFormattedValue(formattedFullValue, event.asset, {
+              : getFormattedValue(formattedFullValue, assetSymbol, {
                 isPositive: isReceived,
                 noSymbol: !formattedFullValue,
               }),
@@ -935,8 +912,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getEventData = (event: Object): ?EventData => {
     switch (event.type) {
-      case USER_EVENT:
-        return this.getUserEventData(event);
+      case EVENT_TYPE.WALLET_BACKED_UP:
+      case EVENT_TYPE.WALLET_CREATED:
+      case EVENT_TYPE.PPN_INITIALIZED:
+        return this.getWalletEventData(event);
       case TRANSACTION_EVENT:
         return this.getTransactionEventData(event);
       case COLLECTIBLE_TRANSACTION:

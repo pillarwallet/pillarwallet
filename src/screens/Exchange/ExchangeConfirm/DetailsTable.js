@@ -29,7 +29,6 @@ import { BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
 // Constants
-import { CHAIN } from 'constants/chainConstants';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 // Utils
@@ -46,9 +45,9 @@ type Props = {
 };
 
 const DetailsTable = ({ offer, feeInfo }: Props) => {
-  const { exchangeRate, fromAsset, toAsset } = offer;
+  const { exchangeRate, fromAsset, toAsset, chain } = offer;
 
-  const chainConfig = useChainConfig(CHAIN.ETHEREUM);
+  const chainConfig = useChainConfig(chain);
   const providerConfig = useProviderConfig(offer.provider);
   const providerName = providerConfig?.title ?? offer.provider;
 
@@ -81,15 +80,15 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
           <TableLabel tooltip={t('exchangeContent.tooltip.feeFormat', { provider: providerName })}>
             {t('transactions.label.allowancePlusEthFee')}
           </TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-          <TableAmount amount={0} chain={CHAIN.ETHEREUM} />
+          <TableAmount amount={0} chain={chain} />
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={CHAIN.ETHEREUM} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
         </TableRow>
       </Table>
     </>

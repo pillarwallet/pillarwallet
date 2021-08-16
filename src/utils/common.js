@@ -113,14 +113,17 @@ export const reportErrorLog = (
 export const logBreadcrumb = (
   category: string,
   message: string,
-  extra: Object,
+  extra: any,
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
   if (__DEV__) {
-    printLog(`${level} - ${category}: ${message}`, extra);
+    if (extra != null) printLog(`${level} - ${category}: ${message}`, extra);
+    else printLog(`${level} - ${category}: ${message}`);
   }
+
+  const data = extra != null && typeof extra === 'object' ? extra : { extra };
   Sentry.addBreadcrumb({
-    category, message, level, data: { extra },
+    category, message, level, data,
   });
 };
 
@@ -288,10 +291,10 @@ export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
-export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
+export const parseTokenBigNumberAmount = (amount: number | string, decimals: ?number): utils.BigNumber => {
   let formatted = amount.toString();
   const [whole, fraction] = formatted.split('.');
-  if (decimals > 0) {
+  if (decimals != null && decimals > 0) {
     if (fraction && fraction.length > decimals) {
       formatted = `${whole}.${fraction.substring(0, decimals)}`;
     }
@@ -460,7 +463,6 @@ type SectionData = {|
   data: any[],
 |};
 
-
 // all default values makes common sense and usage
 export const groupSectionsByDate = (
   data: any[],
@@ -471,7 +473,8 @@ export const groupSectionsByDate = (
   const sections: { [string]: SectionData } = {};
 
   orderBy(data, [dateField], [sortDirection]).forEach((item) => {
-    const date = new Date(item[dateField] * timestampMultiplier);
+    const safeTimestamp = parseTimestamp(item[dateField]);
+    const date = new Date(safeTimestamp * timestampMultiplier);
     const key = formatDate(date, 'YYYY-MM-DD');
 
     const existingSection = sections[key];
@@ -621,3 +624,5 @@ export const valueForAddress = <V>(
 export const setValueForAddress = <V>(record: Record<V>, address: string, value: V) => {
   record[addressAsKey(address)] = value;
 };
+
+export const parseTimestamp = (date: Date | string | number): number => new Date(date).getTime();

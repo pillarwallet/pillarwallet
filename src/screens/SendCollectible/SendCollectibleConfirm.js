@@ -51,12 +51,17 @@ import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // services
 import { fetchRinkebyETHBalance } from 'services/assets';
 
+// hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { useActiveAccount } from 'selectors';
 
 // types
 import type {
@@ -67,6 +72,7 @@ import type {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
 
 
 type Props = {
@@ -99,10 +105,11 @@ const SendCollectibleConfirm = ({
   const navigation = useNavigation();
 
   const receiverEnsName: ?string = useNavigationParam('receiverEnsName');
-  const assetData = useNavigationParam('assetData');
+  const assetData: Collectible = useNavigationParam('assetData');
   const receiver: string = useNavigationParam('receiver');
   const navigationSource: ?string = useNavigationParam('source');
   const chain: Chain = useNavigationParam('chain');
+  const activeAccount = useActiveAccount();
 
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
@@ -111,6 +118,7 @@ const SendCollectibleConfirm = ({
     tokenType,
     id: tokenId,
     contractAddress,
+    isLegacy,
   } = assetData;
 
   let transactionPayload: CollectibleTransactionPayload = {
@@ -121,6 +129,7 @@ const SendCollectibleConfirm = ({
     tokenId,
     amount: 0,
     chain,
+    useLegacyTransferMethod: isLegacy,
   };
 
   if (receiverEnsName) {
@@ -206,6 +215,11 @@ const SendCollectibleConfirm = ({
     ? t('label.gettingFee')
     : t('transactions.button.send');
 
+  const { isDeployedOnChain } = useDeploymentStatus();
+  const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
+    ? t('tooltip.includesDeploymentFee')
+    : undefined;
+
   return (
     <ContainerWithHeader
       headerProps={{
@@ -225,7 +239,7 @@ const SendCollectibleConfirm = ({
             <TableUser address={receiver} />
           </TableRow>
           <TableRow>
-            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
+            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
             <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
           <TableRow>
