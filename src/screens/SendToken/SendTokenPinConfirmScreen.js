@@ -81,8 +81,10 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       sendAsset,
       isOnline,
       logEvent,
+      navigation,
     } = this.props;
     const { transactionPayload } = this.state;
+    const toAssetSymbol = navigation.getParam('toAssetSymbol', '');
 
     if (!isOnline) {
       this.setState({
@@ -103,7 +105,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
           logEvent('v2_transaction_sent', {
             fromSymbol: symbol,
             fromContractAddress: contractAddress,
-            toSymbol: symbol,
+            toSymbol: toAssetSymbol,
             toContractAddress: recipient,
             amount,
             chain,
