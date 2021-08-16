@@ -346,6 +346,6 @@ const ServiceIcon = styled(Image)`
 
 const FeeView = styled.View`
   flex-direction: row;
-  margin-top: ${spacing.large}px;
+  margin-top: ${spacing.largePlus}px;
   margin-bottom: ${spacing.large}px;
 `;
