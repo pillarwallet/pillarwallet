@@ -261,7 +261,7 @@ export const getHistoryEventsFromTransactions = (
 ): Event[] => {
   let successfulOrPendingDeploymentEventAdded = false;
 
-  return orderBy(transactions, ['date'], ['desc']).reduce((
+  return orderBy(transactions, ['createdAt'], ['asc']).reduce((
     historyEvents,
     {
       _id,
