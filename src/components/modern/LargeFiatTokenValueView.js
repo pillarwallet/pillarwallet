@@ -29,7 +29,7 @@ import TokenValueView from 'components/modern/TokenValueView';
 import FiatValueView from 'components/modern/FiatValueView';
 
 // Utils
-import { appFont, spacing, fontSizes } from 'utils/variables';
+import { appFont, spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
 import { getAssetValueInFiat } from 'utils/rates';
 
@@ -80,7 +80,7 @@ export default LargeFiatTokenValueView;
 
 const styles = {
   fiatTokenText: {
-    fontSize: fontSizes.giant,
+    fontSize: 30,
   },
   fiatValue: {
     fontFamily: appFont.medium,

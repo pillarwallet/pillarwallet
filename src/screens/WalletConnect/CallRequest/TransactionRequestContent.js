@@ -169,7 +169,13 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       ) : (
         <Button title={confirmTitle} disabled size="large" />
       )}
-      <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" />
+      <Button
+        title={t('button.reject')}
+        size="large"
+        onPress={onReject}
+        variant="text"
+        style={styles.buttonStyle}
+      />
     </>
   );
 }
@@ -303,13 +309,16 @@ const styles = {
   },
   swiperButtonTitle: {
     paddingLeft: spacing.extraPlusLarge,
-    fontFamily: appFont.regular,
+    fontFamily: appFont.medium,
   },
   swiperButtonContainer: {
     borderRadius: 14,
   },
   swiperBtnthumbIcon: {
     borderRadius: 12,
+  },
+  buttonStyle: {
+    marginTop: spacing.mediumLarge,
   },
 };
 

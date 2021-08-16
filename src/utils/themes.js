@@ -96,7 +96,7 @@ export const semanticLightThemeColors = {
   refreshControl: '#0000004C',
   interjectionPointText: '#0a1427',
   swiperButtonTrack: lightThemeColors.basic000,
-  swiperButtonThumb: baseColors.white,
+  swiperButtonThumb: '#ebf0f6',
   modalHandleBar: '#ededed',
 };
 

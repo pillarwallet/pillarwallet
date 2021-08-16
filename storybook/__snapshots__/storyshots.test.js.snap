@@ -57,9 +57,6 @@ exports[`Storyshots ActionModal default 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -20000,9 +19997,6 @@ exports[`Storyshots DetailModal Layout L 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -20396,9 +20390,6 @@ exports[`Storyshots DetailModal Layout M 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -20810,9 +20801,6 @@ exports[`Storyshots DetailModal Layout S 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -21163,9 +21151,6 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -21495,9 +21480,6 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -21992,9 +21974,6 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -22283,9 +22262,6 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -22758,9 +22734,6 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -23233,9 +23206,6 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -23577,9 +23547,6 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -23920,9 +23887,6 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -24264,9 +24228,6 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -24815,9 +24776,6 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -25305,9 +25263,6 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -25590,9 +25545,6 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -25875,9 +25827,6 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -26502,9 +26451,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -26847,9 +26793,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -27192,9 +27135,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -27537,9 +27477,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -27882,9 +27819,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -28183,9 +28117,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -28484,9 +28415,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -28785,9 +28713,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -29086,9 +29011,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -29381,9 +29303,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -29725,9 +29644,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -30048,9 +29964,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -30420,9 +30333,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -30715,9 +30625,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -31059,9 +30966,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -31382,9 +31286,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -31754,9 +31655,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -32099,9 +31997,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -32444,9 +32339,6 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -32772,9 +32664,6 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -33039,9 +32928,6 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]
@@ -43517,9 +43403,6 @@ exports[`Storyshots SlideModal default 1`] = `
               Array [
                 Object {
                   "height": "100%",
-                  "left": 0,
-                  "position": "absolute",
-                  "top": 0,
                   "width": "100%",
                 },
               ]

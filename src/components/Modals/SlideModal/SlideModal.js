@@ -317,9 +317,6 @@ const FillSpacer = styled.View`
 const Backdrop = styled.View`
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
 `;
 
 const ModalBackground = styled.View`

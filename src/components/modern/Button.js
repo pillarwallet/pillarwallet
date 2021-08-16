@@ -48,7 +48,7 @@ type Props = {|
 function Button({ title, onPress, variant = 'primary', size = 'regular', disabled, style, btnTextStyle }: Props) {
   return (
     <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $size={size}>
-      <Title $variant={variant} style={btnTextStyle}>{title}</Title>
+      <Title $size={size} $variant={variant} style={btnTextStyle}>{title}</Title>
     </TouchableContainer>
   );
 }
