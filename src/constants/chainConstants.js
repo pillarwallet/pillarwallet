@@ -25,6 +25,20 @@ export const CHAIN = {
   XDAI: ('xdai': 'xdai'),
 };
 
+export const CHAIN_NAMES = {
+  ETHEREUM: 'ethereum',
+  POLYGON: 'polygon',
+  BINANCE: 'binance',
+  XDAI: 'xdai',
+};
+
+export const CHAIN_SHORT = {
+  ETHEREUM: 'Mainnet',
+  POLYGON: 'Polygon',
+  BINANCE: 'BSC',
+  XDAI: 'xDai',
+};
+
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
   ETHEREUM_MAINNET: 1,

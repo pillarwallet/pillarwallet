@@ -65,6 +65,7 @@ const ExchangeConfirmScreen = () => {
 
   const offer: ExchangeOffer = navigation.getParam('offer');
   const { fromAsset, toAsset, fromAmount, toAmount, provider, chain } = offer;
+  const toAssetSymbol = toAsset.symbol;
 
   const fiatCurrency = useFiatCurrency();
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
@@ -94,6 +95,7 @@ const ExchangeConfirmScreen = () => {
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
+      toAssetSymbol,
       goBackDismiss: true,
       transactionType: TRANSACTION_TYPE.EXCHANGE,
     });
