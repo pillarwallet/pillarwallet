@@ -37,6 +37,7 @@ import {
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
   ENSNodeStates,
+  AccountStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -350,8 +351,12 @@ export class EtherspotService {
       throw new Error(t('error.unableToSetTransaction'));
     }
 
-    // check if ENS setup transaction needs to be included
     const { account: etherspotAccount } = sdk.state;
+    if (etherspotAccount.state === AccountStates.UnDeployed) {
+      await sdk.batchDeployAccount();
+    }
+
+    // check if ENS setup transaction needs to be included
     if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
       const ensNode = await this.getEnsNode(etherspotAccount.address);
       if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
