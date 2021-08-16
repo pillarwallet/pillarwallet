@@ -297,7 +297,7 @@ export const getHistoryEventsFromTransactions = (
       date: new Date(+createdAt * 1000),
       fromAddress,
       toAddress,
-      status: TRANSACTION_STATUS[status],
+      status,
       batchHash,
       hash,
       fee,
@@ -330,7 +330,7 @@ export const getHistoryEventsFromTransactions = (
       successfulOrPendingDeploymentEventAdded = [
         TRANSACTION_STATUS.CONFIRMED,
         TRANSACTION_STATUS.PENDING,
-      ].includes(TRANSACTION_STATUS[historyEvent.status]);
+      ].includes(historyEvent.status);
 
       // $FlowFixMe: TODO: fix return for different event types
       return [...historyEvents, historyEvent, deploymentHistoryEvent];
@@ -366,7 +366,7 @@ export const getHistoryEventsFromCollectiblesTransactions = (
     date: new Date(+createdAt * 1000),
     fromAddress,
     toAddress,
-    status: TRANSACTION_STATUS[status],
+    status,
     batchHash,
     hash,
     imageUrl,
