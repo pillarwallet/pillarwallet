@@ -83,8 +83,8 @@ const SendTokenConfirm = () => {
     : undefined;
 
   const transactionFeeLabel = deploymentFee
-    ? t('tooltip.maxTransactionFee')
-    : t('tooltip.maximumFee');
+    ? t('transactions.label.maxTransactionFee')
+    : t('transactions.label.maximumFee');
 
   return (
     <Container>
