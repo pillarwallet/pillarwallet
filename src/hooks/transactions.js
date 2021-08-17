@@ -41,6 +41,7 @@ import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
+import { wrapBigNumber } from 'utils/common';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -142,12 +143,12 @@ export function useEtherspotDeploymentFee(
     || !gasPrice
     || !isPaidWithNativeToken
     || !isEtherspotAccount(activeAccount)
-    || isDeployedOnChain?.[chain]) {
+    || !isDeployedOnChain?.[chain]) {
     return { deploymentFee: null, feeWithoutDeployment: transactionFee };
   }
 
   const deploymentFee = gasPrice.times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
-  const feeWithoutDeployment = deploymentFee.minus(transactionFee);
+  const feeWithoutDeployment = wrapBigNumber(transactionFee).minus(deploymentFee);
 
   return { deploymentFee, feeWithoutDeployment };
 }
