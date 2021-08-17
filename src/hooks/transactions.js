@@ -143,7 +143,7 @@ export function useEtherspotDeploymentFee(
     || !gasPrice
     || !isPaidWithNativeToken
     || !isEtherspotAccount(activeAccount)
-    || !isDeployedOnChain?.[chain]) {
+    || isDeployedOnChain?.[chain]) {
     return { deploymentFee: null, feeWithoutDeployment: transactionFee };
   }
 
