@@ -42,14 +42,13 @@ import { isEtherspotAccount } from 'utils/accounts';
 
 // hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
 // selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
 
 // types
 import type { TransactionPayload } from 'models/Transaction';
-import { wrapBigNumber } from 'utils/common';
-import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
 
 
 const SendTokenConfirm = () => {
@@ -60,38 +59,32 @@ const SendTokenConfirm = () => {
   const source: ?string = useNavigationParam('source');
   const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
-  const { chain = CHAIN.ETHEREUM } = transactionPayload;
-  const { title: chainTitle, color: chainColor } = useChainConfig(chain);
+  const {
+    amount,
+    to,
+    receiverEnsName,
+    txFeeInWei: totalFee,
+    symbol,
+    gasToken,
+    chain = CHAIN.ETHEREUM,
+  } = transactionPayload;
 
+  const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, totalFee, gasToken);
+  const { title: chainTitle, color: chainColor } = useChainConfig(chain);
 
   const handleFormSubmit = () => {
     Keyboard.dismiss();
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, source });
   };
 
-  const {
-    amount,
-    to,
-    receiverEnsName,
-    txFeeInWei: totalFeeInWei,
-    symbol,
-    gasToken,
-  } = transactionPayload;
-
   const { isDeployedOnChain } = useDeploymentStatus();
   const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
     ? t('tooltip.includesDeploymentFee')
     : undefined;
 
-  const isUndeployedEtherspotAccount = isEtherspotAccount(activeAccount) && !isDeployedOnChain;
-
-  const etherspotDeploymentFeeInWei = isUndeployedEtherspotAccount
-    ? wrapBigNumber(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT).times(15)
-    : null;
-
-  const transactionSendFeeInWei = isUndeployedEtherspotAccount
-    ? wrapBigNumber(totalFeeInWei).minus(etherspotDeploymentFeeInWei)
-    : totalFeeInWei;
+  const transactionFeeLabel = deploymentFee
+    ? t('tooltip.maxTransactionFee')
+    : t('tooltip.maximumFee');
 
   return (
     <Container>
@@ -119,13 +112,13 @@ const SendTokenConfirm = () => {
             <TableUser ensName={receiverEnsName} address={to} />
           </TableRow>
           <TableRow>
-            <TableLabel>{t('transactions.label.maximumFee')}</TableLabel>
-            <TableFee txFeeInWei={transactionSendFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableLabel>{transactionFeeLabel}</TableLabel>
+            <TableFee txFeeInWei={feeWithoutDeployment} gasToken={gasToken} chain={chain} />
           </TableRow>
-          {!!etherspotDeploymentFeeInWei && (
+          {!!deploymentFee && (
             <TableRow>
               <TableLabel tooltip={feeTooltip}>{t('transactions.label.deploymentFee')}</TableLabel>
-              <TableFee txFeeInWei={etherspotDeploymentFeeInWei} gasToken={gasToken} chain={chain} />
+              <TableFee txFeeInWei={deploymentFee} gasToken={gasToken} chain={chain} />
             </TableRow>
           )}
           <TableRow>
@@ -134,7 +127,7 @@ const SendTokenConfirm = () => {
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={totalFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableFee txFeeInWei={totalFee} gasToken={gasToken} chain={chain} />
           </TableRow>
         </Table>
 
