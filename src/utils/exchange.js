@@ -50,12 +50,12 @@ const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthe
 const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
 const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
 const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
-const sushiswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png'); // TODO: replace with sushsiswap once provided
-const sushiswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png'); // TODO: replace with sushsiswap once provided
-const sushiswapLightMonochrome = require('assets/images/exchangeProviders/uniswapLightMonochrome.png'); // TODO: replace with sushsiswap once provided
-const sushiswapDarkVertical = require('assets/images/exchangeProviders/uniswapDarkVertical.png'); // TODO: replace with sushsiswap once provided
-const sushiswapDarkHorizontal = require('assets/images/exchangeProviders/uniswapDarkHorizontal.png'); // TODO: replace with sushsiswap once provided
-const sushiswapDarkMonochrome = require('assets/images/exchangeProviders/uniswapDarkMonochrome.png'); // TODO: replace with sushsiswap once provided
+const sushiswapLightVertical = require('assets/images/exchangeProviders/sushiswapLightVertical.png');
+const sushiswapLightHorizontal = require('assets/images/exchangeProviders/sushiswapLightHorizontal.png');
+const sushiswapLightMonochrome = require('assets/images/exchangeProviders/sushiswapLightMonochrome.png');
+const sushiswapDarkVertical = require('assets/images/exchangeProviders/sushiswapDarkVertical.png');
+const sushiswapDarkHorizontal = require('assets/images/exchangeProviders/sushiswapDarkHorizontal.png');
+const sushiswapDarkMonochrome = require('assets/images/exchangeProviders/sushiswapDarkMonochrome.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
