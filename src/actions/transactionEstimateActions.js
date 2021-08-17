@@ -69,7 +69,7 @@ export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
 
 export const setTransactionsEstimateFeeAction = (feeInfo: ?TransactionFeeInfo) => {
   return (dispatch: Dispatch) => {
-    if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gt(0))) {
+    if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gte(0))) {
       dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
       return;
     }
