@@ -99,6 +99,12 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
     // reset any previous
     dispatch(resetWalletConnectConnectorRequestAction());
 
+    Toast.show({
+      message: t('toast.walletConnectConnection'),
+      emoji: 'hourglass',
+      autoClose: true,
+    });
+
     const connector = createConnector({ uri });
     if (!connector) {
       dispatch(setWalletConnectErrorAction(t('toast.walletConnectFailed')));
