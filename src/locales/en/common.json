@@ -1294,7 +1294,8 @@
     "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed.",
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
-    "failedToGetGasPrices": "Failed to get gas prices."
+    "failedToGetGasPrices": "Failed to get gas prices.",
+    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…"
   },
 
   "exchangeContent": {
