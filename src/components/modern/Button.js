@@ -137,6 +137,4 @@ const Title = styled(Text)`
   ${({ $size }) => $size === 'large' && `font-family: ${appFont.medium}`};
 `;
 
-const LeftIcon = styled(Icon)`
-  margin-top: 1px;
-`;
+const LeftIcon = styled(Icon)``;
