@@ -50,7 +50,7 @@ export type HistoryAction = {
 export const initialState = {
   data: {},
   gasInfo: {
-    gasPrice: {},
+    gasPrice: null,
     isFetched: false,
   },
   isFetched: false,
@@ -102,9 +102,8 @@ export default function historyReducer(
         updatingTransaction: null,
       };
     case SET_GAS_INFO:
-      const gasPriceInfo = action.payload;
-      const isGasFetched = !!Object.keys(gasPriceInfo).length;
-      return { ...state, gasInfo: { gasPrice: gasPriceInfo, isFetched: isGasFetched } };
+      const { gasPrice } = action.payload;
+      return { ...state, gasInfo: { gasPrice, isFetched: !!gasPrice } };
     case SET_UPDATING_TRANSACTION:
       return { ...state, updatingTransaction: action.payload };
     case SET_HISTORY_LAST_SYNC_IDS:

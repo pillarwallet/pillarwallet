@@ -4493,7 +4493,7 @@ aws4@^1.6.0, aws4@^1.8.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.0.tgz#a17b3a8ea811060e74d47d306122400ad4497ae2"
 
-axios@^0.19.0, axios@^0.19.2:
+axios@^0.19.0:
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   dependencies:
@@ -4932,10 +4932,6 @@ big.js@^5.2.2:
 bignumber.js@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
-
-bignumber.js@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
 
 "bignumber.js@git+https://github.com/debris/bignumber.js#master":
   version "2.0.7"
@@ -8869,13 +8865,6 @@ ganache-cli@^6.1.0:
     ethereumjs-util "6.1.0"
     source-map-support "0.5.12"
     yargs "13.2.4"
-
-gas-price-oracle@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/gas-price-oracle/-/gas-price-oracle-0.1.4.tgz#56ffde61866ff12419d1f0e430277531bcc95638"
-  dependencies:
-    axios "^0.19.2"
-    bignumber.js "^9.0.0"
 
 gauge@~2.7.3:
   version "2.7.4"
