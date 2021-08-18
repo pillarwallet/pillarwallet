@@ -7978,10 +7978,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.14.1:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.14.1.tgz#f44c03412510ee03c1b84c03ce09dac789dbfe7d"
-  integrity sha512-iM9ymMpZxaZnWXlcCn93jsn+ERLRisj10eFP5fIbNWcJiiPQwwkieTlMwZg088nRMjPDygyTtXiJdLGnCbdGwg==
+etherspot@^1.16.2:
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.16.2.tgz#28a5079388b4e021d6cb4124bbdbb572ab1f0a03"
+  integrity sha512-fchs6cNlBZHtxH53Jt1m6AwwA9H1+dClhWwqwJk9zyB/FrDvmkSGSwXakF8sE22h0bYyH96Y6n6drqjZor0nyw==
   dependencies:
     "@apollo/client" "3.3.11"
     "@etherspot/contracts" "1.2.3"

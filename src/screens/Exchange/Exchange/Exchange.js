@@ -126,17 +126,14 @@ function Exchange() {
   );
 
   const toOptions = React.useMemo(
-    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
-      const chainOptions = getExchangeToAssetOptions(
-        supportedAssetsPerChain,
-        walletBalancesPerChain,
-        fiatCurrency,
-        ratesPerChain,
-        supportedChain,
-      );
-      return [...multiChainOptions, ...chainOptions];
-    }, []),
-    [supportedChains, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
+    () => getExchangeToAssetOptions(
+      supportedAssetsPerChain,
+      walletBalancesPerChain,
+      fiatCurrency,
+      ratesPerChain,
+      chain,
+    ),
+    [chain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
   );
 
   const fromAsset = React.useMemo(
