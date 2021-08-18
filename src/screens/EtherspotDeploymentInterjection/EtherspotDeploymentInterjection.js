@@ -22,6 +22,8 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+import { TouchableOpacity } from 'react-native';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
@@ -30,19 +32,39 @@ import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/modern/Text';
+import Spinner from 'components/Spinner';
+import Tooltip from 'components/Tooltip';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
+
+// Actions
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+import {
+  useRootSelector,
+  activeAccountAddressSelector,
+  useFiatCurrency,
+  useChainRates,
+} from 'selectors';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { mapFromDocumentDataToString } from 'utils/prismic';
-import { reportErrorLog } from 'utils/common';
+import {
+  formatAmount,
+  formatFiat,
+  formatUnits,
+  hitSlop10,
+  reportErrorLog,
+  wrapBigNumber,
+} from 'utils/common';
+import { getAssetRateInFiat } from 'utils/rates';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -55,15 +77,45 @@ import { firebaseRemoteConfig } from 'services/firebase';
  * Interjection screen used when Etherspot smart wallet is not yet deployed on given chain.
  */
 function EtherspotDeploymentInterjection() {
-  const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
+  const { t, tRoot } = useTranslationWithPrefix('etherspot.deploymentInterjection');
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const fiatCurrency = useFiatCurrency();
   const [interjectionPrismicContent, setInterjectionPrismicContent] = React.useState({});
   const [introductionText, setIntroductionText] = React.useState('');
   const [isPrismicContentFetched, setIsPrismicContentFetched] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [showDeploymentFeeInToken, setShowDeploymentFeeInToken] = React.useState(false);
+  const gasInfo = useRootSelector((root) => root.history.gasInfo);
 
   const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
+
+  const chainRates = useChainRates(chain);
+
+  React.useEffect(() => {
+    dispatch(fetchGasInfoAction(chain));
+  }, [dispatch, chain]);
+
   const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
+
+  const deploymentFee = React.useMemo(() => {
+    if (!gasInfo.gasPrice?.fast) return null; // fast used by Etherspot
+
+    const { address, symbol, decimals } = nativeAssetPerChain[chain];
+
+    const deploymentFeeWei = gasInfo.gasPrice.fast
+      .times(1.1) // 10% to price is added on Etherspot back-end (ref – Jegor)
+      .times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
+
+    const deploymentFeeBN = wrapBigNumber(formatUnits(deploymentFeeWei, decimals));
+    const assetRate = getAssetRateInFiat(chainRates, address, fiatCurrency);
+    const fiatValue = formatFiat(deploymentFeeBN.times(assetRate).toNumber(), fiatCurrency);
+    const formattedAmount = formatAmount(deploymentFeeBN);
+
+    const tokenValue = tRoot('tokenValue', { value: formattedAmount, token: symbol });
+
+    return { tokenValue, fiatValue };
+  }, [gasInfo, chainRates, chain, fiatCurrency, tRoot]);
 
   const address = useRootSelector(activeAccountAddressSelector);
   const { title: chainTitle, color: chainColor, gasSymbol: chainGasSymbol } = useChainConfig(chain);
@@ -127,6 +179,22 @@ function EtherspotDeploymentInterjection() {
               btnTextStyle={styles.btnTextStyle}
             />
           </ButtonContainer>
+          {!gasInfo.isFetched && <SpinnerWrapper><Spinner size={20} trackWidth={2} /></SpinnerWrapper>}
+          {!!deploymentFee && (
+            <Tooltip
+              body={deploymentFee.tokenValue}
+              isVisible={showDeploymentFeeInToken}
+              positionOnBottom={false}
+            >
+              <TouchableOpacity
+                hitSlop={hitSlop10}
+                activeOpacity={1}
+                onPress={() => setShowDeploymentFeeInToken(!showDeploymentFeeInToken)}
+              >
+                <FeeText>{t('cost', { cost: deploymentFee.fiatValue })}</FeeText>
+              </TouchableOpacity>
+            </Tooltip>
+          )}
           <BottomText>{t('bottomText')}</BottomText>
         </Content>
       )}
@@ -206,4 +274,15 @@ const ErrorMessage = styled(Text)`
   margin: ${spacing.large}px;
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
+`;
+
+const FeeText = styled(Text)`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.hazardIconColor};
+  font-size: ${fontSizes.medium}px;
+  margin: ${spacing.large}px ${spacing.large}px 0;
+`;
+
+const SpinnerWrapper = styled.View`
+  margin-top: 25px;
 `;
