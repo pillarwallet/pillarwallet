@@ -22,6 +22,7 @@ export const EXCHANGE_PROVIDER = {
   UNISWAP: ('Uniswap': 'Uniswap'),
   ONE_INCH: ('OneInch': 'OneInch'),
   SYNTHETIX: ('Synthetix': 'Synthetix'),
+  SUSHISWAP: ('Sushiswap': 'Sushiswap'),
 };
 
 // Hardcoded in Etherspot backend

@@ -1300,7 +1300,8 @@
     "providers": {
       "uniswap": "Uniswap",
       "oneInch": "1 Inch",
-      "synthetix": "Synthetix"
+      "synthetix": "Synthetix",
+      "sushiswap": "Sushiswap"
     },
     "modal": {
       "smartWalletIsNotActive": {
