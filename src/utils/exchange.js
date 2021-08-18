@@ -50,6 +50,12 @@ const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthe
 const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
 const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
 const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
+const sushiswapLightHorizontal = require('assets/images/exchangeProviders/sushiswapLightHorizontal.png');
+const sushiswapLightVertical = require('assets/images/exchangeProviders/sushiswapLightVertical.png');
+const sushiswapLightMonochrome = require('assets/images/exchangeProviders/sushiswapLightMonochrome.png');
+const sushiswapDarkVertical = require('assets/images/exchangeProviders/sushiswapDarkVertical.png');
+const sushiswapDarkHorizontal = require('assets/images/exchangeProviders/sushiswapDarkHorizontal.png');
+const sushiswapDarkMonochrome = require('assets/images/exchangeProviders/sushiswapDarkMonochrome.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
@@ -88,6 +94,12 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconVertical: isDarkTheme ? synthetixDarkVertical : synthetixLightVertical,
       iconHorizontal: isDarkTheme ? synthetixDarkHorizontal : synthetixLightHorizontal,
       iconMonochrome: isDarkTheme ? synthetixDarkMonochrome : synthetixLightMonochrome,
+    },
+    [PROVIDER.SUSHISWAP]: {
+      title: t('exchangeContent.providers.sushiswap'),
+      iconVertical: isDarkTheme ? sushiswapDarkVertical : sushiswapLightVertical,
+      iconHorizontal: isDarkTheme ? sushiswapDarkHorizontal : sushiswapLightHorizontal,
+      iconMonochrome: isDarkTheme ? sushiswapDarkMonochrome : sushiswapLightMonochrome,
     },
   };
 }
