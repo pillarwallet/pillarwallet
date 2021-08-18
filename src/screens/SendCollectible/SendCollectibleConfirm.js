@@ -58,6 +58,7 @@ import { fetchRinkebyETHBalance } from 'services/assets';
 
 // hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
 // selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -110,6 +111,7 @@ const SendCollectibleConfirm = ({
   const navigationSource: ?string = useNavigationParam('source');
   const chain: Chain = useNavigationParam('chain');
   const activeAccount = useActiveAccount();
+  const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, feeInfo?.fee, feeInfo?.gasToken);
 
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
@@ -220,6 +222,10 @@ const SendCollectibleConfirm = ({
     ? t('tooltip.includesDeploymentFee')
     : undefined;
 
+  const transactionFeeLabel = deploymentFee
+    ? t('transactions.label.maxTransactionFee')
+    : t('transactions.label.maximumFee');
+
   return (
     <ContainerWithHeader
       headerProps={{
@@ -239,9 +245,15 @@ const SendCollectibleConfirm = ({
             <TableUser address={receiver} />
           </TableRow>
           <TableRow>
-            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
+            <TableLabel tooltip={feeTooltip}>{transactionFeeLabel}</TableLabel>
+            <TableFee txFeeInWei={feeWithoutDeployment} gasToken={feeInfo?.gasToken} chain={chain} />
           </TableRow>
+          {!!deploymentFee && (
+            <TableRow>
+              <TableLabel tooltip={feeTooltip}>{t('transactions.label.deploymentFee')}</TableLabel>
+              <TableFee txFeeInWei={deploymentFee} gasToken={feeInfo?.gasToken} chain={chain} />
+            </TableRow>
+          )}
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
             <TableAmount amount={0} chain={chain} />
