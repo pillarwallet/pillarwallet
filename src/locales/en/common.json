@@ -1293,7 +1293,7 @@
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
     "failedToGetGasPrices": "Failed to get gas prices.",
-    "walletConnectConnection": "Waiting for WalletConnect service…"
+    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…"
   },
 
   "exchangeContent": {
