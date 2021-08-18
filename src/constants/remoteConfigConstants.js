@@ -67,8 +67,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_SOCIAL_DISCORD]: 'https://chat.pillar.fi',
   [REMOTE_CONFIG.APP_SOCIAL_TWITTER]: 'https://twitter.com/pillarwallet',
   [REMOTE_CONFIG.APP_SOCIAL_YOUTUBE]: 'https://www.youtube.com/channel/UCXIvBMfmYVmrV6dHIqIxEYA',
-  [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]:
-    'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
+  [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
   [REMOTE_CONFIG.FEATURE_ONBOARDING]: false,
   [REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED]: true,
   [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
