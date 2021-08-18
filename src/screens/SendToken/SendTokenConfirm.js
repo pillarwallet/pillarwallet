@@ -42,6 +42,7 @@ import { isEtherspotAccount } from 'utils/accounts';
 
 // hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
 // selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -58,28 +59,32 @@ const SendTokenConfirm = () => {
   const source: ?string = useNavigationParam('source');
   const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
 
-  const { chain = CHAIN.ETHEREUM } = transactionPayload;
-  const { title: chainTitle, color: chainColor } = useChainConfig(chain);
+  const {
+    amount,
+    to,
+    receiverEnsName,
+    txFeeInWei: totalFee,
+    symbol,
+    gasToken,
+    chain = CHAIN.ETHEREUM,
+  } = transactionPayload;
 
+  const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, totalFee, gasToken);
+  const { title: chainTitle, color: chainColor } = useChainConfig(chain);
 
   const handleFormSubmit = () => {
     Keyboard.dismiss();
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, source });
   };
 
-  const {
-    amount,
-    to,
-    receiverEnsName,
-    txFeeInWei,
-    symbol,
-    gasToken,
-  } = transactionPayload;
-
   const { isDeployedOnChain } = useDeploymentStatus();
   const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
     ? t('tooltip.includesDeploymentFee')
     : undefined;
+
+  const transactionFeeLabel = deploymentFee
+    ? t('transactions.label.maxTransactionFee')
+    : t('transactions.label.maximumFee');
 
   return (
     <Container>
@@ -107,16 +112,22 @@ const SendTokenConfirm = () => {
             <TableUser ensName={receiverEnsName} address={to} />
           </TableRow>
           <TableRow>
-            <TableLabel tooltip={feeTooltip}>{t('transactions.label.maximumFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableLabel>{transactionFeeLabel}</TableLabel>
+            <TableFee txFeeInWei={feeWithoutDeployment} gasToken={gasToken} chain={chain} />
           </TableRow>
+          {!!deploymentFee && (
+            <TableRow>
+              <TableLabel tooltip={feeTooltip}>{t('transactions.label.deploymentFee')}</TableLabel>
+              <TableFee txFeeInWei={deploymentFee} gasToken={gasToken} chain={chain} />
+            </TableRow>
+          )}
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
             <TableAmount amount={0} chain={chain} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} chain={chain} />
+            <TableFee txFeeInWei={totalFee} gasToken={gasToken} chain={chain} />
           </TableRow>
         </Table>
 

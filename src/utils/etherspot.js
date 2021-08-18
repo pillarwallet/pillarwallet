@@ -154,8 +154,10 @@ export const buildEtherspotTxFeeInfo = (
 
   const ethCost = new BigNumber(estimatedGasPrice.mul(estimatedGas).toString());
 
+  const gasPrice = new BigNumber(estimatedGasPrice.toString());
+
   if (!useGasToken || !gasToken) {
-    return { fee: ethCost };
+    return { fee: ethCost, gasPrice };
   }
 
   const gasTokenCost = null;
@@ -163,6 +165,7 @@ export const buildEtherspotTxFeeInfo = (
   return {
     fee: gasTokenCost,
     gasToken,
+    gasPrice,
   };
 };
 
