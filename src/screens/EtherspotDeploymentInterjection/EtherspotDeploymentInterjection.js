@@ -103,7 +103,7 @@ function EtherspotDeploymentInterjection() {
 
     const { address, symbol, decimals } = nativeAssetPerChain[chain];
 
-    const deploymentFeeWei = gasInfo.gasPrice.fast
+    const deploymentFeeWei = gasInfo.gasPrice.fast // fast is strategy on Etherspot back-end
       .times(1.1) // 10% to price is added on Etherspot back-end (ref – Jegor)
       .times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
 
