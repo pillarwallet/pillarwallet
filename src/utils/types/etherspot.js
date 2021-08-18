@@ -45,7 +45,7 @@ export type ExchangeOffer = {
   transactions: TransactionData[],
 };
 
-export type ExchangeProviders = 'OneInch' | 'Synthetix' | 'Uniswap';
+export type ExchangeProviders = 'OneInch' | 'Synthetix' | 'Uniswap' | 'Sushiswap';
 
 export type TransactionData = {
   data?: string,
