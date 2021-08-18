@@ -237,6 +237,7 @@ export type TransactionEthers = {
 export type TransactionFeeInfo = {
   fee: ?BigNumber,
   gasToken?: ?GasToken,
+  gasPrice?: ?BigNumber,
 };
 
 export type EthereumTransaction = {
