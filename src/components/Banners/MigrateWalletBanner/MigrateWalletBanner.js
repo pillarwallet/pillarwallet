@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -27,8 +28,20 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import Text from 'components/modern/Text';
 
+// Constants
+import { KEY_BASED_ASSET_TRANSFER_INTRO, KEY_BASED_ASSET_TRANSFER_STATUS } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Selectors
+import { useRootSelector } from 'selectors';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
+
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -36,15 +49,30 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
 
 type Props = {|
-  onPress: () => void;
-  style?: ViewStyleProp;
+  style?: ViewStyleProp,
 |};
 
-function MigrateWalletBanner({ onPress, style }: Props) {
+function MigrateWalletBanner({ style }: Props) {
   const { t } = useTranslationWithPrefix('smartWalletContent.banner');
+  const navigation = useNavigation();
+
+  const keyBasedWalletHasPositiveBalance = useRootSelector(keyBasedWalletHasPositiveBalanceSelector);
+  const hasKeyBasedAssetsTransferInProgress = useRootSelector(hasKeyBasedAssetsTransferInProgressSelector);
+
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
+  const showKeyBasedWalletMigration =
+    (hasKeyBasedAssetsTransferInProgress || keyBasedWalletHasPositiveBalance) && isKeyBasedAssetsMigrationEnabled;
+
+  if (!showKeyBasedWalletMigration) return null;
+
+  const handlePress = () => {
+    navigation.navigate(
+      hasKeyBasedAssetsTransferInProgress ? KEY_BASED_ASSET_TRANSFER_STATUS : KEY_BASED_ASSET_TRANSFER_INTRO,
+    );
+  };
 
   return (
-    <TouchableOpacity onPress={onPress} style={style}>
+    <TouchableOpacity onPress={handlePress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
         <Icon source={smartWalletIcon} />
 
@@ -77,7 +105,6 @@ const Title = styled(Text)`
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   color: #fcfdff;
-  margin-bottom: ${spacing.small}px;
 `;
 
 export default MigrateWalletBanner;

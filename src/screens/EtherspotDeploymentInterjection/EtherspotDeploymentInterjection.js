@@ -112,7 +112,7 @@ function EtherspotDeploymentInterjection() {
             <MiddleContainer key={index}>
               <PointView style={{ backgroundColor: chainColor }}>
                 <PointNumber>{index + 1}</PointNumber>
-              </PointView >
+              </PointView>
               <TextView>
                 <PointText>
                   {points.replace('{{network}}', chainTitle).replace('{{gasToken}}', chainGasSymbol)}
@@ -124,7 +124,7 @@ function EtherspotDeploymentInterjection() {
             <Button
               title={t('depositFormat', { chain: chainTitle, symbol: chainGasSymbol })}
               onPress={showReceiveModal}
-              btnTextStyle={styles.btnTextStyle}
+              titleStyle={styles.buttonTitle}
             />
           </ButtonContainer>
           <BottomText>{t('bottomText')}</BottomText>
@@ -137,7 +137,7 @@ function EtherspotDeploymentInterjection() {
 export default EtherspotDeploymentInterjection;
 
 const styles = {
-  btnTextStyle: {
+  buttonTitle: {
     textAlign: 'center',
   },
 };

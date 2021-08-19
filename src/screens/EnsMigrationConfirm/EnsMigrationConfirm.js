@@ -58,7 +58,6 @@ import { useBiometricsSelector } from 'selectors/appSettings';
 // types
 import type { TransactionStatus } from 'models/Transaction';
 
-
 const Title = styled(MediumText)`
   ${fontStyles.large};
 `;
@@ -77,12 +76,10 @@ const EnsMigrationConfirm = () => {
   const { t, tRoot } = useTranslationWithPrefix('migrateENSContent.details');
   const accounts = useRootSelector(accountsSelector);
   const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
-  const useBiometrics = useRootSelector(useBiometricsSelector);
-  const {
-    feeInfo,
-    isEstimating,
-    errorMessage: estimateErrorMessage,
-  } = useRootSelector(({ transactionEstimate }) => transactionEstimate);
+  const useBiometrics = useBiometricsSelector();
+  const { feeInfo, isEstimating, errorMessage: estimateErrorMessage } = useRootSelector(
+    ({ transactionEstimate }) => transactionEstimate,
+  );
 
   useEffect(() => {
     const buildRawTransactions = async () => {
@@ -147,11 +144,7 @@ const EnsMigrationConfirm = () => {
 
   if (!rawTransactions) {
     return (
-      <CheckAuth
-        onPinValid={onPinValid}
-        headerProps={{ onBack: onLockedNavigationBack }}
-        enforcePin={!useBiometrics}
-      />
+      <CheckAuth onPinValid={onPinValid} headerProps={{ onBack: onLockedNavigationBack }} enforcePin={!useBiometrics} />
     );
   }
 
@@ -187,12 +180,7 @@ const EnsMigrationConfirm = () => {
             {errorMessage}
           </BaseText>
         )}
-        <Button
-          disabled={submitDisabled}
-          title={submitTitle}
-          isLoading={isSubmitting}
-          onPress={onSubmit}
-        />
+        <Button disabled={submitDisabled} title={submitTitle} isLoading={isSubmitting} onPress={onSubmit} />
       </ScrollWrapper>
     </ContainerWithHeader>
   );

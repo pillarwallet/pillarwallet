@@ -19,8 +19,8 @@
 */
 
 import * as React from 'react';
-import { Platform, ScrollView, KeyboardAvoidingView } from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
+import { Platform, View, ScrollView, KeyboardAvoidingView } from 'react-native';
+import SafeAreaView, { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 // Utils
@@ -56,8 +56,8 @@ type ContentProps = {|
  */
 export function Content({
   children,
-  paddingHorizontal = spacing.layoutSides,
-  paddingVertical = spacing.layoutSides,
+  paddingHorizontal = spacing.large,
+  paddingVertical = spacing.large,
   contentContainerStyle,
   scrollEnabled,
   refreshControl,
@@ -65,42 +65,42 @@ export function Content({
   scrollEventThrottle = 0,
   showsVerticalScrollIndicator,
 }: ContentProps) {
+  const safeArea = useSafeAreaInsets();
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={contentStyles.keyboardAvoidingView}
     >
-      <SafeAreaView style={contentStyles.safeArea}>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
-            contentStyles.scrollViewContent,
-            { paddingHorizontal, paddingVertical },
-            contentContainerStyle,
-          ]}
-          refreshControl={refreshControl}
-          onScroll={onScroll}
-          scrollEventThrottle={scrollEventThrottle}
-          showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-          scrollEnabled={scrollEnabled}
-        >
-          {children}
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView
+        contentContainerStyle={[
+          contentStyles.scrollViewContent,
+          { paddingHorizontal, paddingVertical },
+          contentContainerStyle,
+        ]}
+        contentInsetAdjustmentBehavior="never"
+        keyboardShouldPersistTaps="handled"
+        refreshControl={refreshControl}
+        onScroll={onScroll}
+        scrollEventThrottle={scrollEventThrottle}
+        showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        scrollEnabled={scrollEnabled}
+      >
+        <View style={[contentStyles.safeAreaContent, { paddingBottom: safeArea.bottom }]}>{children}</View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const contentStyles = {
-  safeArea: {
-    flex: 1,
-  },
   keyboardAvoidingView: {
     flex: 1,
   },
   scrollViewContent: {
     flexGrow: 1,
+  },
+  safeAreaContent: {
+    flex: 1,
   },
 };
 
