@@ -53,7 +53,7 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { chainFromChainId } from 'utils/chains';
+import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
 import { fontSizes, spacing, appFont } from 'utils/variables';
@@ -105,6 +105,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfig = chainConfigs[chain];
   const value = wrapBigNumberOrNil(transactionPayload?.amount);
   const symbol = transactionPayload?.symbol;
+  const assetAddress = transactionPayload?.contractAddress ?? nativeAssetPerChain[chain].address;
   const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage;
 
@@ -121,7 +122,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       <LargeFiatTokenValueView
         value={value}
-        assetAddress={gasAddress}
+        assetAddress={assetAddress}
         chain={chain}
         symbol={symbol}
         style={styles.tokenValue}
