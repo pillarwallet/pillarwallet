@@ -20,7 +20,8 @@
 
 import * as React from 'react';
 import { Platform, View, ScrollView, KeyboardAvoidingView } from 'react-native';
-import SafeAreaView, { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
