@@ -242,9 +242,8 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
     Instabug.setUserAttribute('activeAccountAddress', activeAccountAddress);
     Instabug.setUserAttribute('etherspotAccountAddress', etherspotAccountAddress);
     Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress);
+    Instabug.setUserAttribute(IS_APP_VERSION_V3, 'true');
     /* eslint-enable i18next/no-literal-string */
-
-    Instabug.setUserAttribute(IS_APP_VERSION_V3, true);
 
     if (username) Instabug.setUserAttribute('ENS', username);
   };
