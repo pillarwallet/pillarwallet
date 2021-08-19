@@ -108,7 +108,7 @@ export default function historyReducer(
       return {
         ...state,
         gasInfo: {
-          ...(state.gasInfo ?? {}),
+          ...state.gasInfo,
           [chain]: { gasPrice, isFetched: !!gasPrice },
         },
       };
