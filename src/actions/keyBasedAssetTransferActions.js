@@ -245,12 +245,13 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
 
     await dispatch(fetchGasInfoAction(CHAIN.ETHEREUM));
     const { history: { gasInfo } } = getState();
-    if (!gasInfo.isFetched || !gasInfo.gasPrice) {
+    const ethereumGasInfo = gasInfo?.[CHAIN.ETHEREUM];
+    if (!ethereumGasInfo?.isFetched || !ethereumGasInfo?.gasPrice) {
       reportLog('calculateKeyBasedAssetsToTransferTransactionGasAction failed: no gas price.');
       return;
     }
 
-    const gasPrice = gasInfo.gasPrice.instant;
+    const gasPrice = ethereumGasInfo.gasPrice.instant;
 
     let keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {

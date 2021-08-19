@@ -19,6 +19,7 @@
 */
 
 import type { BigNumber } from 'utils/common';
+import type { ChainRecord } from 'models/Chain';
 
 export type GasPrice = {
   standard: BigNumber,
@@ -30,3 +31,5 @@ export type GasInfo = {
   gasPrice: ?GasPrice,
   isFetched: boolean,
 }
+
+export type GasInfoPerChain = ChainRecord<GasInfo>;

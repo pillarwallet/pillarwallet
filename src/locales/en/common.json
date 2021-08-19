@@ -620,7 +620,6 @@
     "deploymentInterjection": {
       "title": "Smart Wallet deployment",
       "depositFormat": "Deposit {{symbol}} on {{chain}}",
-      "bottomText": "Do not send ETH to this wallet if you don’t wish to activate it",
       "error": "Can't fetch Smart Wallet Deployment Interjection data. Please try again.",
       "cost": "{{cost}} deployment cost will be added to your first transaction."
     }

@@ -257,7 +257,7 @@ export const fetchGasInfoAction = (chain: Chain) => {
       return;
     }
 
-    dispatch({ type: SET_GAS_INFO, payload: { gasPrice } });
+    dispatch({ type: SET_GAS_INFO, payload: { gasPrice, chain } });
   };
 };
 

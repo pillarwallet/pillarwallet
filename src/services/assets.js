@@ -312,16 +312,16 @@ export async function getExchangeRates(
 ): Promise<?RatesByAssetAddress> {
   if (isEmpty(assets)) {
     reportLog('getExchangeRates received empty assets', { assets });
-    return null;
   }
 
   // $FlowFixMe
-  let rates = await getCoinGeckoTokenPrices(chain, assets);
+  let rates = !isEmpty(assets) ? await getCoinGeckoTokenPrices(chain, assets) : {};
 
   const nativeAssetAddress = nativeAssetPerChain[chain].address;
   const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
 
-  if (listHasNativeAsset) {
+  // if empty assets still proceed to fetch native token rate for deployment calculations
+  if (listHasNativeAsset || isEmpty(assets)) {
     const coinId = chainToCoinGeckoCoinId[chain];
     const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
     if (!isEmpty(nativeAssetPrice)) {
