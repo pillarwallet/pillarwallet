@@ -104,16 +104,16 @@ function EtherspotDeploymentInterjection() {
       .times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
 
     const deploymentFeeBN = fromBaseUnit(deploymentFeeWei, decimals);
-    const assetValue = getAssetValueInFiat(deploymentFeeBN, assetAddress, chainRates, fiatCurrency);
+    const fiatValue = getAssetValueInFiat(deploymentFeeBN, assetAddress, chainRates, fiatCurrency);
 
     // covers scenario per Dmitry's request show <0.01 in case it's lower than that
-    const isInvisibleAssetValue = assetValue && assetValue < 0.01;
-    let fiatValue = formatFiatValue(isInvisibleAssetValue ? 0.01 : assetValue, fiatCurrency);
-    if (isInvisibleAssetValue && fiatValue) fiatValue = `<${fiatValue}`;
+    const isInvisibleFiatValue = fiatValue && fiatValue < 0.01;
+    let formattedFiatValue = formatFiatValue(isInvisibleFiatValue ? 0.01 : fiatValue, fiatCurrency);
+    if (isInvisibleFiatValue && formattedFiatValue) formattedFiatValue = `<${formattedFiatValue}`;
 
     const tokenValue = formatTokenValue(deploymentFeeBN, symbol);
 
-    return { tokenValue, fiatValue };
+    return { tokenValue, fiatValue: formattedFiatValue };
   }, [gasInfo, chainRates, chain, fiatCurrency]);
 
   const address = useRootSelector(activeAccountAddressSelector);
