@@ -45,7 +45,6 @@ import { estimateMigrationTransactions } from 'utils/walletMigrationArchanova';
 import MigrationSummary from './MigrationSummary';
 import { useAssetItemsAfterFee, hasEnoughEthBalance } from './utils';
 
-
 function WalletMigrationArchanovaReview() {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.review');
   const navigation = useNavigation();
@@ -55,9 +54,9 @@ function WalletMigrationArchanovaReview() {
   const archanovaAccount = findFirstArchanovaAccount(accounts);
 
   const walletBalances = useRootSelector(accountAssetsBalancesSelector)?.ethereum?.wallet;
-  const tokensToMigrate = useRootSelector(root => root.walletMigrationArchanova.tokensToMigrate);
-  const collectiblesToMigrate = useRootSelector(root => root.walletMigrationArchanova.collectiblesToMigrate);
-  const useBiometrics = useRootSelector(useBiometricsSelector);
+  const tokensToMigrate = useRootSelector((root) => root.walletMigrationArchanova.tokensToMigrate);
+  const collectiblesToMigrate = useRootSelector((root) => root.walletMigrationArchanova.collectiblesToMigrate);
+  const useBiometrics = useBiometricsSelector();
 
   const [showCheckAuth, setShowCheckAuth] = React.useState(false);
   const [isEstimating, setIsEstimating] = React.useState(false);

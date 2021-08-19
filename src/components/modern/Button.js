@@ -24,12 +24,16 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/modern/Text';
+import Icon, { type IconName } from 'components/modern/Icon';
 
 // Utils
 import { fontStyles, appFont, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
+import type { ThemeColors } from 'models/Theme';
+
 
 type Variant = 'primary' | 'secondary' | 'text' | 'primary-destructive' | 'text-destructive';
 
@@ -37,25 +41,84 @@ type Size = 'regular' | 'large' | 'compact';
 
 type Props = {|
   title?: string,
+  leftIcon?: IconName,
   onPress: () => mixed,
   variant?: Variant,
   size?: Size,
   disabled?: boolean,
   style?: ViewStyleProp,
-  btnTextStyle?: TextStyleProp,
+  titleColor?: string,
+  titleStyle?: TextStyleProp,
+  leftIconStyle?: ViewStyleProp,
 |};
 
-function Button({ title, onPress, variant = 'primary', size = 'regular', disabled, style, btnTextStyle }: Props) {
+function Button({
+  title,
+  leftIcon,
+  onPress,
+  variant = 'primary',
+  size = 'regular',
+  disabled,
+  style,
+  titleColor,
+  titleStyle,
+  leftIconStyle,
+}: Props) {
+  const [localDisabled, setLocalDisabled] = React.useState(false);
+  const colors = useThemeColors();
+
+  // Debounce press event
+  const handlePress = () => {
+    setLocalDisabled(true);
+
+    setTimeout(() => {
+      setLocalDisabled(false);
+    }, 300);
+
+    onPress();
+  };
+
+  if (!titleColor) {
+    titleColor = getTitleColor(colors, variant);
+  }
+
   return (
-    <TouchableContainer onPress={onPress} disabled={disabled} style={style} $variant={variant} $size={size}>
-      <Title $variant={variant} style={btnTextStyle}>{title}</Title>
+    <TouchableContainer
+      onPress={handlePress}
+      disabled={disabled || localDisabled}
+      style={style}
+      $variant={variant}
+      $size={size}
+    >
+      {leftIcon && <LeftIcon name={leftIcon} color={titleColor} style={leftIconStyle} />}
+
+      <Title $size={size} color={titleColor} style={titleStyle}>
+        {title}
+      </Title>
     </TouchableContainer>
   );
 }
 
 export default Button;
 
+const getTitleColor = (colors: ThemeColors, variant: Variant): string => {
+  switch (variant) {
+    case 'primary':
+      return colors.buttonPrimaryTitle;
+    case 'secondary':
+      return colors.buttonSecondaryTitle;
+    case 'text':
+      return colors.buttonTextTitle;
+    case 'primary-destructive':
+    case 'text-destructive':
+      return colors.negative;
+    default:
+      return colors.text;
+  }
+};
+
 const TouchableContainer = styled(TouchableOpacity)`
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   border-radius: 6px;
@@ -71,10 +134,7 @@ const TouchableContainer = styled(TouchableOpacity)`
 
 const Title = styled(Text)`
   ${fontStyles.medium};
-  ${({ theme, $variant }) => ($variant === 'primary' && `color: ${theme.colors.buttonPrimaryTitle};`)};
-  ${({ theme, $variant }) => ($variant === 'primary-destructive' && `color: ${theme.colors.buttonPrimaryTitle};`)};
-  ${({ theme, $variant }) => ($variant === 'secondary' && `color: ${theme.colors.buttonSecondaryTitle};`)};
-  ${({ theme, $variant }) => ($variant === 'text' && `color: ${theme.colors.buttonTextTitle};`)};
-  ${({ theme, $variant }) => ($variant === 'text-destructive' && `color: ${theme.colors.negative};`)};
   ${({ $size }) => $size === 'large' && `font-family: ${appFont.medium}`};
 `;
+
+const LeftIcon = styled(Icon)``;
