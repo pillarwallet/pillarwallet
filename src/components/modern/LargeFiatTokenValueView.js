@@ -42,7 +42,7 @@ import type { Chain } from 'models/Chain';
 
 type Props = {|
   value: ?BigNumber,
-  assetAddress: string,
+  assetAddress: ?string,
   chain: Chain,
   symbol: string,
   style?: TextStyleProp,
@@ -55,8 +55,8 @@ function LargeFiatTokenValueView({ value, assetAddress, chain, symbol, style }: 
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const rates = useChainRates(chain);
+  if (!value || !assetAddress) return null;
   const balanceInFiat = getAssetValueInFiat(value, assetAddress, rates, fiatCurrency);
-  if (!value) return null;
 
   return (
     <Container style={style}>
