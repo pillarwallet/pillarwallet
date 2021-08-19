@@ -105,7 +105,12 @@ function EtherspotDeploymentInterjection() {
 
     const deploymentFeeBN = fromBaseUnit(deploymentFeeWei, decimals);
     const assetValue = getAssetValueInFiat(deploymentFeeBN, assetAddress, chainRates, fiatCurrency);
-    const fiatValue = formatFiatValue(assetValue, fiatCurrency);
+
+    // per Dmitry's request show <0.01 in case it's lower than that
+    const fiatValue = assetValue < 0.01
+      ? `<${formatFiatValue(0.01, fiatCurrency)}`
+      : formatFiatValue(assetValue, fiatCurrency);
+
     const tokenValue = formatTokenValue(deploymentFeeBN, symbol);
 
     return { tokenValue, fiatValue };
