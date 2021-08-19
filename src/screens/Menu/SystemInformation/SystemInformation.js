@@ -46,6 +46,12 @@ const SystemInformation = () => {
       <Content>
         <InfoItem title={t('buildNumber')} value={env.BUILD_NUMBER} />
         <InfoItem title={t('environment')} value={env.ENVIRONMENT} />
+        <InfoItem title="TX_DETAILS_URL_ETHEREUM" value={env.TX_DETAILS_URL_ETHEREUM} />
+        <InfoItem title="TX_DETAILS_URL_POLYGON" value={env.TX_DETAILS_URL_POLYGON} />
+        <InfoItem title="TX_DETAILS_URL_BINANCE" value={env.TX_DETAILS_URL_BINANCE} />
+        <InfoItem title="TX_DETAILS_URL_XDAI" value={env.TX_DETAILS_URL_XDAI} />
+        <InfoItem title="NETWORK_PROVIDER" value={env.NETWORK_PROVIDER} />
+        <InfoItem title="COLLECTIBLES_NETWORK" value={env.COLLECTIBLES_NETWORK} />
       </Content>
     </Container>
   );
