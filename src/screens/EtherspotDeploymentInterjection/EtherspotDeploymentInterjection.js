@@ -99,17 +99,17 @@ function EtherspotDeploymentInterjection() {
 
     const { address: assetAddress, symbol, decimals } = nativeAssetPerChain[chain];
 
-    const deploymentFeeWei = gasInfo.gasPrice.fast // fast is strategy on Etherspot back-end
+    const deploymentFeeWei = gasInfo.gasPrice.fast // fast is strategy on Etherspot back-end (ref – Jegor)
       .times(1.1) // 10% to price is added on Etherspot back-end (ref – Jegor)
       .times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
 
     const deploymentFeeBN = fromBaseUnit(deploymentFeeWei, decimals);
     const assetValue = getAssetValueInFiat(deploymentFeeBN, assetAddress, chainRates, fiatCurrency);
 
-    // per Dmitry's request show <0.01 in case it's lower than that
-    const fiatValue = assetValue < 0.01
-      ? `<${formatFiatValue(0.01, fiatCurrency)}`
-      : formatFiatValue(assetValue, fiatCurrency);
+    // covers scenario per Dmitry's request show <0.01 in case it's lower than that
+    const isInvisibleAssetValue = assetValue && assetValue < 0.01;
+    let fiatValue = formatFiatValue(isInvisibleAssetValue ? 0.01 : assetValue, fiatCurrency);
+    if (isInvisibleAssetValue && fiatValue) fiatValue = `<${fiatValue}`;
 
     const tokenValue = formatTokenValue(deploymentFeeBN, symbol);
 

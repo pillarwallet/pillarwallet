@@ -37,6 +37,7 @@ import etherspotService from 'services/etherspot';
 // test utils
 import {
   mockEthAddress,
+  mockEtherExchangeRates,
   mockExchangeRates,
   mockPlrAddress,
   mockSupportedAssets,
@@ -116,11 +117,16 @@ describe('Assets actions', () => {
       assets: mockSupportedAssets,
     };
 
+    const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
+
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
       { type: SET_FETCHING_RATES, payload: true },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },

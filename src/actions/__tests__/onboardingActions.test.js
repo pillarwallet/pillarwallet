@@ -58,6 +58,7 @@ import {
   mockEtherspotAccountExtra,
   mockEthAddress,
   mockPlrAddress,
+  mockEtherExchangeRates,
 } from 'testUtils/jestSetup';
 
 // types
@@ -240,6 +241,8 @@ describe('Onboarding actions', () => {
       totalBalances: {},
     });
 
+    const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
+
     const expectedActions = [
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
 
@@ -255,6 +258,9 @@ describe('Onboarding actions', () => {
       { type: SET_FETCHING_RATES, payload: true },
       { type: SET_FETCHING_HISTORY, payload: false },
 
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
 
@@ -289,6 +295,8 @@ describe('Onboarding actions', () => {
       totalBalances: {},
     });
 
+    const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
+
     const expectedActions = [
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
 
@@ -306,9 +314,15 @@ describe('Onboarding actions', () => {
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
+
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
+
       { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
 
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
+
       { type: SET_FETCHING_RATES, payload: false },
 
       // TODO: etherspot history update tba with separate PR
