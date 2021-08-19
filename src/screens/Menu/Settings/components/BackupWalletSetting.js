@@ -48,7 +48,7 @@ function BackupWalletSetting({ wallet }: Props) {
 
   const isBackedUp = useIsWalletBackedUp();
 
-  if (isBackedUp) return null;
+  if (isBackedUp || !wallet) return null;
 
   const goToBackupWallet = () =>
     navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, {

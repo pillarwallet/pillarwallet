@@ -71,8 +71,9 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
   const handleBiometricPress = async () => {
     if (!pin || !wallet) return;
 
-    const shouldRequestPermission =
-      !useBiometrics && Platform.OS === 'ios' && supportedBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
+    const shouldRequestPermission = !useBiometrics
+      && Platform.OS === 'ios'
+      && supportedBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID;
     if (!shouldRequestPermission) {
       dispatch(changeUseBiometricsAction(!useBiometrics, { ...wallet, pin }));
       return;
@@ -93,7 +94,7 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
 
   const showBiometricSetting = !!supportedBiometryType;
 
-  if (!showBiometricSetting) return null;
+  if (!showBiometricSetting || !wallet || !pin) return null;
 
   return (
     <SettingsToggle

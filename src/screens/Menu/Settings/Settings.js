@@ -69,10 +69,6 @@ const Settings = () => {
     );
   }
 
-  if (!wallet) {
-    return null;
-  }
-
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} />
