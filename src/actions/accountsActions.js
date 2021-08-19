@@ -50,6 +50,8 @@ import {
   isArchanovaAccount,
   isSupportedAccountType,
   getActiveAccount,
+  isEtherspotAccount,
+  findFirstEtherspotAccount,
 } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { reportErrorLog, isCaseInsensitiveMatch } from 'utils/common';
@@ -277,6 +279,26 @@ export const switchToArchanovaAccountIfNeededAction = () => {
       return;
     }
 
-    dispatch(switchAccountAction(archanovaAccount.id));
+    dispatch(switchAccountAction(getAccountId(archanovaAccount)));
+  };
+};
+
+/**
+ * Switch active account to Etherspot.
+ */
+export const switchToEtherspotAccountIfNeededAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    const activeAccount = getActiveAccount(accounts);
+    if (isEtherspotAccount(activeAccount)) return;
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportErrorLog('switchToEtherspotAccountIfNeededAction: no Eterspot account found', { accounts });
+      return;
+    }
+
+    dispatch(switchAccountAction(getAccountId(etherspotAccount)));
   };
 };
