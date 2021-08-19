@@ -19,7 +19,6 @@
 */
 
 import * as Sentry from '@sentry/react-native';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
@@ -52,7 +51,6 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // types
 import type { Chain } from 'models/Chain';
-import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Record } from 'utils/object';
@@ -421,12 +419,6 @@ export const lookupAddress = async (address: string): Promise<?string> => {
   const resolved = await etherspotService.getEnsNode(address);
 
   return resolved?.name;
-};
-
-export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
-  const gasPrice = get(gasInfo, 'gasPrice.max', 0);
-
-  return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
 export const formatUnits = (val: Value = '0', decimals: number): string => {

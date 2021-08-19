@@ -19,6 +19,8 @@
 */
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
+
+// constants
 import { ETH, WETH } from 'constants/assetsConstants';
 import {
   LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
@@ -31,9 +33,20 @@ import {
   UNISWAP_ROUTER_ADDRESS,
   UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
-import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
+import { CHAIN } from 'constants/chainConstants';
+
+// services
+import { buildERC20ApproveTransactionData, encodeContractMethod } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
-import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';
+import etherspotService from 'services/etherspot';
+
+// utils
+import {
+  parseTokenBigNumberAmount,
+  formatUnits,
+  reportErrorLog,
+} from 'utils/common';
 import { addressesEqual, isSupportedAssetAddress } from 'utils/assets';
 import {
   getStakeTransactions as getUnipoolStakeTransactions,
@@ -41,13 +54,18 @@ import {
   getClaimRewardsTransaction as getUnipoolClaimRewardsTransaction,
 } from 'utils/unipool';
 import { getDeadline } from 'utils/uniswap';
-import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
+
+// abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
+
+// types
 import type { Asset } from 'models/Asset';
 import type { LiquidityPool, UnipoolLiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
 import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { EtherspotErc20Interface } from 'models/Etherspot';
+
 
 export const fetchPoolData = async (poolAddress: string, userAddress: string): Promise<Object> => {
   /* eslint-disable i18next/no-literal-string */
@@ -126,10 +144,25 @@ export const getAddLiquidityTransactions = async (
   let addLiquidityTransactions = [];
 
   const addApproveTransaction = async (tokenAmount, tokenAmountBN, tokenAsset) => {
-    const erc20Contract = getContract(tokenAsset.address, ERC20_CONTRACT_ABI);
-    const approvedAmountBN = erc20Contract
-      ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
-      : null;
+    const erc20Contract = etherspotService.getContract<?EtherspotErc20Interface>(
+      CHAIN.ETHEREUM,
+      ERC20_CONTRACT_ABI,
+      tokenAsset.address,
+    );
+
+    if (!erc20Contract) {
+      reportErrorLog('getAddLiquidityTransactions failed: no erc20Contract on addApproveTransaction', {
+        tokenAsset,
+      });
+      return;
+    }
+
+    let approvedAmountBN;
+    try {
+      approvedAmountBN = await erc20Contract.callAllowance(sender, UNISWAP_ROUTER_ADDRESS);
+    } catch (error) {
+      reportErrorLog('getAddLiquidityTransactions failed: callAllowance failed', { tokenAsset, error });
+    }
 
     if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
       addLiquidityTransactions = [
@@ -269,10 +302,23 @@ export const getRemoveLiquidityTransactions = async (
     symbol: ETH,
   }];
 
-  const erc20Contract = getContract(poolToken.address, ERC20_CONTRACT_ABI);
-  const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
-    : null;
+  const erc20Contract = etherspotService.getContract<?EtherspotErc20Interface>(
+    CHAIN.ETHEREUM,
+    ERC20_CONTRACT_ABI,
+    poolToken.address,
+  );
+
+  if (!erc20Contract) {
+    reportErrorLog('getRemoveLiquidityTransactions: no erc20Contract', { poolToken });
+    return removeLiquidityTransactions;
+  }
+
+  let approvedAmountBN;
+  try {
+    approvedAmountBN = await erc20Contract.callAllowance(sender, UNISWAP_ROUTER_ADDRESS);
+  } catch (error) {
+    reportErrorLog('getRemoveLiquidityTransactions failed: callAllowance failed', { poolToken, error });
+  }
 
   if (!approvedAmountBN || poolTokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(

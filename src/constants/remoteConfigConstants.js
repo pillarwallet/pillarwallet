@@ -30,6 +30,9 @@ export const REMOTE_CONFIG = {
   APP_FEES_PAID_WITH_PLR: 'app_fees_paid_with_plr',
   APP_LOCALES_URL: 'app_locales_url',
   APP_LOCALES_LATEST_TIMESTAMP: 'app_locales_latest_timestamp',
+  APP_SOCIAL_DISCORD: 'app_social_discord',
+  APP_SOCIAL_TWITTER: 'app_social_twitter',
+  APP_SOCIAL_YOUTUBE: 'app_social_youtube',
   LEGAL_HTML_ENDPOINT_PREFIX: 'app_legal_html_endpoint_prefix',
   FEATURE_ONBOARDING: 'feature_onboarding',
   WALLET_MIGRATION_ARCHANOVA_ENABLED: 'feature_archanova_migrator_tool',
@@ -47,7 +50,6 @@ export const REMOTE_CONFIG = {
   PRISMIC_PRIVACY_POLICY_DOCUMENT_ID: 'prismic_privacy_policy_document_id',
   PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID: 'prismic_terms_of_policy_document_id',
   PRISMIC_INTERJECTION_DOCUMENT_ID: 'prismic_interjection_document_id',
-  XDAI_RPC_ENDPOINT: 'app_xdai_rpc_endpoint',
   FEATURE_WC_DASHBOARD_INAPPBROWSER: 'feature_wc_dashboard_inappbrowser',
 };
 
@@ -61,6 +63,9 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR]: false,
   [REMOTE_CONFIG.APP_LOCALES_URL]: 'test',
   [REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP]: '1',
+  [REMOTE_CONFIG.APP_SOCIAL_DISCORD]: 'https://chat.pillar.fi',
+  [REMOTE_CONFIG.APP_SOCIAL_TWITTER]: 'https://twitter.com/pillarwallet',
+  [REMOTE_CONFIG.APP_SOCIAL_YOUTUBE]: 'https://www.youtube.com/channel/UCXIvBMfmYVmrV6dHIqIxEYA',
   [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
   [REMOTE_CONFIG.FEATURE_ONBOARDING]: false,
   [REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED]: true,
@@ -78,6 +83,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID]: 'YNGoWxIAACMAsjF2',
   [REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID]: 'YNGo8hIAACMAsjRR',
   [REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID]: 'YNsHjxIAACIAw0ca',
-  [REMOTE_CONFIG.XDAI_RPC_ENDPOINT]: 'https://rpc.xdaichain.com/',
   [REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER]: false,
 };

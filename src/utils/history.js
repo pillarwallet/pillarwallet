@@ -24,8 +24,6 @@ import {
   TRANSACTION_CONFIRMATION_EVENT,
   TRANSACTION_CONFIRMATION_SENDER_EVENT,
   TRANSACTION_PENDING_EVENT,
-  TX_CONFIRMED_STATUS,
-  TX_FAILED_STATUS,
   TX_PENDING_STATUS,
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
@@ -53,9 +51,6 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
-
-// services
-import { fetchTransactionInfo, fetchTransactionReceipt } from 'services/assets';
 
 export const buildHistoryTransaction = ({
   from,
@@ -192,23 +187,6 @@ export const findCollectibleTransactionAcrossAccounts = (
       || isCaseInsensitiveMatch(batchHash ?? '', transaction?.batchHash));
 };
 
-export const getTrxInfo = async (hash: string, network?: string) => {
-  const [txInfo, txReceipt] = await Promise.all([
-    fetchTransactionInfo(hash, network),
-    fetchTransactionReceipt(hash, network),
-  ]);
-
-  if (!txInfo || !txReceipt) return null;
-
-  const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
-
-  return {
-    txInfo,
-    txReceipt,
-    status,
-  };
-};
-
 export const getTokenTransactionsFromHistory = (
   history: Transaction[],
   accounts: Account[],
@@ -261,7 +239,7 @@ export const getHistoryEventsFromTransactions = (
 ): Event[] => {
   let successfulOrPendingDeploymentEventAdded = false;
 
-  return orderBy(transactions, ['date'], ['desc']).reduce((
+  return orderBy(transactions, ['createdAt'], ['asc']).reduce((
     historyEvents,
     {
       _id,
@@ -297,7 +275,7 @@ export const getHistoryEventsFromTransactions = (
       date: new Date(+createdAt * 1000),
       fromAddress,
       toAddress,
-      status: TRANSACTION_STATUS[status],
+      status,
       batchHash,
       hash,
       fee,
@@ -330,7 +308,7 @@ export const getHistoryEventsFromTransactions = (
       successfulOrPendingDeploymentEventAdded = [
         TRANSACTION_STATUS.CONFIRMED,
         TRANSACTION_STATUS.PENDING,
-      ].includes(TRANSACTION_STATUS[historyEvent.status]);
+      ].includes(historyEvent.status);
 
       // $FlowFixMe: TODO: fix return for different event types
       return [...historyEvents, historyEvent, deploymentHistoryEvent];
@@ -366,7 +344,7 @@ export const getHistoryEventsFromCollectiblesTransactions = (
     date: new Date(+createdAt * 1000),
     fromAddress,
     toAddress,
-    status: TRANSACTION_STATUS[status],
+    status,
     batchHash,
     hash,
     imageUrl,

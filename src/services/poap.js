@@ -17,12 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { providers } from 'ethers';
 
 // services
-import { getContract } from 'services/assets';
+import etherspotService from 'services/etherspot';
 import { callSubgraph } from 'services/theGraph';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import httpRequest from 'utils/httpRequest';
@@ -34,10 +32,10 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 // constants
 import { CHAIN } from 'constants/chainConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // types
 import type { Collectible } from 'models/Collectible';
+import type { EtherspotErc721Interface } from 'models/Etherspot';
 
 
 /* eslint-disable i18next/no-literal-string */
@@ -46,13 +44,10 @@ const poapSubgraphName = 'poap-xyz/poap-xdai';
 /* eslint-enable i18next/no-literal-string */
 
 export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<Collectible[]> => {
-  const xDaiRpcUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.XDAI_RPC_ENDPOINT);
-  const xDaiRpcProvider = new providers.JsonRpcProvider(xDaiRpcUrl);
-
-  const collectibleContract = getContract(
-    poapContractAddress,
+  const collectibleContract = etherspotService.getContract<?EtherspotErc721Interface>(
+    CHAIN.XDAI,
     ERC721_CONTRACT_ABI,
-    xDaiRpcProvider,
+    poapContractAddress,
   );
 
   if (!collectibleContract) return [];
@@ -72,7 +67,7 @@ export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<
   const tokenIds = (result?.tokens ?? []).map(({ id }) => id);
 
   const tokensWithMetadata = await Promise.all(tokenIds.map(async (tokenId) => {
-    const tokenMetadataUri = await collectibleContract.tokenURI(tokenId).catch(() => null);
+    const tokenMetadataUri = await collectibleContract.callTokenURI(tokenId).catch(() => null);
     if (!tokenMetadataUri) return null;
 
     try {

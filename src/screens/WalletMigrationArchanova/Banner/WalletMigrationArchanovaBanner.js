@@ -103,5 +103,4 @@ const Title = styled(Text)`
   font-family: '${appFont.medium}';
   ${fontStyles.big};
   color: #fcfdff;
-  margin-bottom: ${spacing.small}px;
 `;

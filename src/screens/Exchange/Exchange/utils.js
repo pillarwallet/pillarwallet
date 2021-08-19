@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { uniqBy } from 'lodash';
 
 // Utils
 import {
@@ -50,7 +51,7 @@ export const getExchangeFromAssetOptions = (
 ): AssetOption[] => {
   const chainNativeAssetAddress = nativeAssetPerChain[chain].address;
   const chainAssets = assetsPerChain?.[chain] ?? {};
-  const chainSupportedAssets = supportedAssetsPerChain?.[chain] ?? [];
+  const chainSupportedAssets = uniqBy(supportedAssetsPerChain?.[chain] ?? [], 'address');
   const chainRates = ratesPerChain?.[chain] ?? {};
   const chainBalances = balancesPerChain?.[chain] ?? {};
 
@@ -73,7 +74,7 @@ export const getExchangeToAssetOptions = (
   ratesPerChain: RatesPerChain,
   chain: Chain,
 ): AssetOption[] => {
-  const chainSupportedAssets = supportedAssetsPerChain?.[chain] ?? [];
+  const chainSupportedAssets = uniqBy(supportedAssetsPerChain?.[chain] ?? [], 'address');
   const chainRates = ratesPerChain?.[chain] ?? {};
   const chainBalances = balancesPerChain?.[chain] ?? {};
 

@@ -28,14 +28,14 @@ import {
   SET_HISTORY_LAST_SYNC_IDS,
   SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
-import type { GasInfo } from 'models/GasInfo';
 import type { TransactionsStore, HistoryLastSyncIds } from 'models/History';
 import type { ChainRecord } from 'models/Chain';
 import type { Transaction } from 'models/Transaction';
+import type { GasInfoPerChain } from 'models/GasInfo';
 
 export type HistoryReducerState = {
   data: TransactionsStore,
-  gasInfo: GasInfo,
+  gasInfo: GasInfoPerChain,
   isFetched: boolean,
   updatingTransaction: ?string,
   historyLastSyncIds?: HistoryLastSyncIds,
@@ -50,8 +50,10 @@ export type HistoryAction = {
 export const initialState = {
   data: {},
   gasInfo: {
-    gasPrice: {},
-    isFetched: false,
+    ethereum: {
+      gasPrice: null,
+      isFetched: false,
+    },
   },
   isFetched: false,
   updatingTransaction: null,
@@ -102,9 +104,14 @@ export default function historyReducer(
         updatingTransaction: null,
       };
     case SET_GAS_INFO:
-      const gasPriceInfo = action.payload;
-      const isGasFetched = !!Object.keys(gasPriceInfo).length;
-      return { ...state, gasInfo: { gasPrice: gasPriceInfo, isFetched: isGasFetched } };
+      const { gasPrice, chain } = action.payload;
+      return {
+        ...state,
+        gasInfo: {
+          ...state.gasInfo,
+          [chain]: { gasPrice, isFetched: !!gasPrice },
+        },
+      };
     case SET_UPDATING_TRANSACTION:
       return { ...state, updatingTransaction: action.payload };
     case SET_HISTORY_LAST_SYNC_IDS:

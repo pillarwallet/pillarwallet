@@ -32,16 +32,15 @@ const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAG
 const KEYCHAIN_DATA_KEY = 'data';
 
 export type KeyChainData = {
-  privateKey?: string,
-  mnemonic?: string,
-  pin?: string,
+  privateKey?: ?string,
+  mnemonic?: ?string,
+  pin?: ?string,
 };
 
-export const resetKeychainDataObject = () => Keychain
-  .resetGenericPassword({
+export const resetKeychainDataObject = () =>
+  Keychain.resetGenericPassword({
     service: KEYCHAIN_SERVICE,
-  })
-  .catch(() => null);
+  }).catch(() => null);
 
 export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?boolean) => {
   await resetKeychainDataObject();
@@ -63,8 +62,8 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
   return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch(() => null);
 };
 
-export const getKeychainDataObject = (errorHandler?: Function) => Keychain
-  .getGenericPassword({
+export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChainData> =>
+  Keychain.getGenericPassword({
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: {
       title: t('title.unlockWithBiometrics'),
@@ -72,11 +71,13 @@ export const getKeychainDataObject = (errorHandler?: Function) => Keychain
       description: '', // required as empty
     },
   })
-  .then(({ password = '{}' }) => JSON.parse(password))
-  .catch(errorHandler || (() => null));
+    .then(({ password = '{}' }) => JSON.parse(password))
+    .catch(errorHandler || (() => null));
 
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
-  Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
+  Keychain.getSupportedBiometryType()
+    .then(resHandler)
+    .catch(errorHandler || (() => null));
 };
 
 export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
@@ -85,7 +86,7 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 };
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
-  return (!data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic'));
+  return !data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic');
 };
 
 export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) => {

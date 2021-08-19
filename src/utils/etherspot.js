@@ -70,6 +70,13 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   REVERTED: 'Reverted',
 };
 
+export const parseEtherspotTransactionStatus = (transactionStatus: string) => {
+  if (transactionStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED) return TRANSACTION_STATUS.CONFIRMED;
+  if (transactionStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.REVERTED) return TRANSACTION_STATUS.FAILED;
+
+  return TRANSACTION_STATUS.PENDING;
+};
+
 export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
   if (!isEtherspotAccount(account)) return false;
 
@@ -117,20 +124,7 @@ export const parseEtherspotTransactions = (
       }
     }
 
-    let status;
-    switch (rawStatus) {
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED:
-        status = TRANSACTION_STATUS.CONFIRMED;
-        break;
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.PENDING:
-        status = TRANSACTION_STATUS.PENDING;
-        break;
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.REVERTED:
-        status = TRANSACTION_STATUS.FAILED;
-        break;
-      default:
-        status = TRANSACTION_STATUS.PENDING;
-    }
+    const status = parseEtherspotTransactionStatus(rawStatus);
 
     const mappedTransaction = buildHistoryTransaction({
       from,
@@ -160,8 +154,10 @@ export const buildEtherspotTxFeeInfo = (
 
   const ethCost = new BigNumber(estimatedGasPrice.mul(estimatedGas).toString());
 
+  const gasPrice = new BigNumber(estimatedGasPrice.toString());
+
   if (!useGasToken || !gasToken) {
-    return { fee: ethCost };
+    return { fee: ethCost, gasPrice };
   }
 
   const gasTokenCost = null;
@@ -169,6 +165,7 @@ export const buildEtherspotTxFeeInfo = (
   return {
     fee: gasTokenCost,
     gasToken,
+    gasPrice,
   };
 };
 
@@ -232,6 +229,7 @@ const exchangeProviderFromEtherspot = {
   [EtherspotExchangeProviders.OneInch]: EXCHANGE_PROVIDER.ONE_INCH,
   [EtherspotExchangeProviders.Uniswap]: EXCHANGE_PROVIDER.UNISWAP,
   [EtherspotExchangeProviders.Synthetix]: EXCHANGE_PROVIDER.SYNTHETIX,
+  [EtherspotExchangeProviders.Sushiswap]: EXCHANGE_PROVIDER.SUSHISWAP,
 };
 
 export const parseExchangeProvider = (provider: string): ?ExchangeProvider => {

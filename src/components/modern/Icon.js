@@ -27,6 +27,8 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
+import type { SvgImage } from 'utils/types/svg-stub';
+import type { Record } from 'utils/object';
 
 // Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
@@ -36,6 +38,7 @@ import IconArrowDown from 'assets/icons/svg/icon-24-arrow-down.svg';
 import IconArrowLeft from 'assets/icons/svg/icon-24-arrow-left.svg';
 import IconArrowUp from 'assets/icons/svg/icon-24-arrow-up.svg';
 import IconArrowUpDown from 'assets/icons/svg/icon-24-arrow-up-down.svg';
+import IconBiometrics16 from 'assets/icons/svg/icon-16-biometrics.svg';
 import IconBullet from 'assets/icons/svg/icon-24-bullet.svg';
 import IconCancel from 'assets/icons/svg/icon-24-cancel.svg';
 import IconCheckmark from 'assets/icons/svg/icon-24-checkmark.svg';
@@ -47,6 +50,8 @@ import IconClose from 'assets/icons/svg/icon-24-close.svg';
 import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
 import IconContacts from 'assets/icons/svg/icon-24-contacts.svg';
 import IconCopy from 'assets/icons/svg/icon-24-copy.svg';
+import IconCurrency16 from 'assets/icons/svg/icon-16-currency.svg';
+import IconDarkMode16 from 'assets/icons/svg/icon-16-dark-mode.svg';
 import IconDataset from 'assets/icons/svg/icon-24-dataset.svg';
 import IconDeposit from 'assets/icons/svg/icon-24-deposit.svg';
 import IconDots from 'assets/icons/svg/icon-24-dots.svg';
@@ -60,17 +65,21 @@ import IconImage from 'assets/icons/svg/icon-24-image.svg';
 import IconInfo from 'assets/icons/svg/icon-24-info.svg';
 import IconInvestment from 'assets/icons/svg/icon-24-investment.svg';
 import IconKey from 'assets/icons/svg/icon-24-key.svg';
+import IconKey16 from 'assets/icons/svg/icon-16-key.svg';
+import IconLanguage16 from 'assets/icons/svg/icon-16-language.svg';
 import IconLifebuoy from 'assets/icons/svg/icon-24-lifebuoy.svg';
 import IconLiquidityPool from 'assets/icons/svg/icon-24-liquidity-pool.svg';
 import IconLogout from 'assets/icons/svg/icon-24-logout.svg';
 import IconMail from 'assets/icons/svg/icon-24-mail.svg';
 import IconMenu from 'assets/icons/svg/icon-24-menu.svg';
+import IconMessage from 'assets/icons/svg/icon-16-message.svg';
 import IconMinus from 'assets/icons/svg/icon-24-minus.svg';
 import IconMute from 'assets/icons/svg/icon-24-mute.svg';
 import IconNote from 'assets/icons/svg/icon-24-note.svg';
 import IconPending from 'assets/icons/svg/icon-24-pending.svg';
 import IconPercentCircle from 'assets/icons/svg/icon-24-percent-circle.svg';
 import IconPhone from 'assets/icons/svg/icon-24-phone.svg';
+import IconPin16 from 'assets/icons/svg/icon-16-pin.svg';
 import IconPlus from 'assets/icons/svg/icon-24-plus.svg';
 import IconProfile from 'assets/icons/svg/icon-48-profile.svg';
 import IconPower from 'assets/icons/svg/icon-24-power.svg';
@@ -100,7 +109,7 @@ import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 
-const components = {
+const components: Record<SvgImage> = {
   // Generic icons
   'add-cash': IconAddCash,
   'add-contact': IconAddContact,
@@ -109,6 +118,7 @@ const components = {
   'arrow-left': IconArrowLeft,
   'arrow-up': IconArrowUp,
   'arrow-up-down': IconArrowUpDown,
+  biometrics16: IconBiometrics16,
   bullet: IconBullet,
   cancel: IconCancel,
   checkmark: IconCheckmark,
@@ -120,6 +130,8 @@ const components = {
   collectible: IconCollectible,
   contacts: IconContacts,
   copy: IconCopy,
+  currency16: IconCurrency16,
+  darkMode16: IconDarkMode16,
   dataset: IconDataset,
   deposit: IconDeposit,
   dots: IconDots,
@@ -133,17 +145,21 @@ const components = {
   info: IconInfo,
   investment: IconInvestment,
   key: IconKey,
+  key16: IconKey16,
+  language16: IconLanguage16,
   lifebuoy: IconLifebuoy,
   'liquidity-pool': IconLiquidityPool,
   logout: IconLogout,
   mail: IconMail,
   menu: IconMenu,
+  message: IconMessage,
   minus: IconMinus,
   mute: IconMute,
   note: IconNote,
   pending: IconPending,
   'percent-circle': IconPercentCircle,
   phone: IconPhone,
+  pin16: IconPin16,
   plus: IconPlus,
   profile: IconProfile,
   power: IconPower,
@@ -195,12 +211,7 @@ type Props = {|
  * @note Use it only for small icon-like images.
  * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
  */
-function Icon({
-  name,
-  color,
-  style,
-  ...rest
-}: Props) {
+function Icon({ name, color, style, ...rest }: Props) {
   const colors = useThemeColors();
 
   const Component = components[name];

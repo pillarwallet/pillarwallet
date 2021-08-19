@@ -17,10 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'bignumber.js';
+import { BigNumber } from 'ethers';
 
-export type EtherspotTransactionEstimate = {|
-  refundAmount: BigNumber,
-  estimatedGas: number,
-  estimatedGasPrice: BigNumber,
-|};
+// feel free to update with new methods that can be called
+export type EtherspotErc721Interface = {
+  callTokenURI: (tokenId: string) => Promise<?string>,
+};
+
+// feel free to update with new methods that can be called
+export type EtherspotErc20Interface = {
+  callAllowance: (senderAddress: string, spenderAddress: string) => Promise<?BigNumber>,
+};
+
+// feel free to update with new methods that can be called
+export type EtherspotUnipoolInterface = {
+  callBalanceOf: (address: string) => Promise<?BigNumber>,
+  callEarned: (address: string) => Promise<?BigNumber>,
+};

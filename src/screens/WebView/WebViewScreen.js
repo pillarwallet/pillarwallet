@@ -25,22 +25,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import WebView from 'components/WebView';
 
 type Props = {
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
 };
 
-const WebViewScreen = ({
-  navigation,
-}: Props) => {
+const WebViewScreen = ({ navigation }: Props) => {
   const title = navigation.getParam('title');
   const url = navigation.getParam('url');
-  return (
-    <WebView
-      title={title}
-      url={url}
-      navigation={navigation}
-      goBackDismiss
-    />
-  );
+  return <WebView title={title} url={url} navigation={navigation} />;
 };
 
 export default WebViewScreen;
