@@ -70,6 +70,13 @@ const ETHERSPOT_TRANSACTION_HISTORY_STATUS = {
   REVERTED: 'Reverted',
 };
 
+export const parseEtherspotTransactionStatus = (transactionStatus: string) => {
+  if (transactionStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED) return TRANSACTION_STATUS.CONFIRMED;
+  if (transactionStatus === ETHERSPOT_TRANSACTION_HISTORY_STATUS.REVERTED) return TRANSACTION_STATUS.FAILED;
+
+  return TRANSACTION_STATUS.PENDING;
+};
+
 export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
   if (!isEtherspotAccount(account)) return false;
 
@@ -117,20 +124,7 @@ export const parseEtherspotTransactions = (
       }
     }
 
-    let status;
-    switch (rawStatus) {
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.COMPLETED:
-        status = TRANSACTION_STATUS.CONFIRMED;
-        break;
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.PENDING:
-        status = TRANSACTION_STATUS.PENDING;
-        break;
-      case ETHERSPOT_TRANSACTION_HISTORY_STATUS.REVERTED:
-        status = TRANSACTION_STATUS.FAILED;
-        break;
-      default:
-        status = TRANSACTION_STATUS.PENDING;
-    }
+    const status = parseEtherspotTransactionStatus(rawStatus);
 
     const mappedTransaction = buildHistoryTransaction({
       from,

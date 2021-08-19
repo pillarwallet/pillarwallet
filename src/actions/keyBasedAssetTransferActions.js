@@ -54,7 +54,7 @@ import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
 // services
-import { calculateGasEstimate, fetchTransactionInfo, transferSigned } from 'services/assets';
+import { calculateGasEstimate, transferSigned } from 'services/assets';
 import KeyBasedWallet from 'services/keyBasedWallet';
 import etherspotService from 'services/etherspot';
 import { fetchCollectibles } from 'services/opensea';
@@ -331,7 +331,7 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
         const { transactionHash, status } = keyBasedAssetToTransfer;
         if (transactionHash && status !== TX_CONFIRMED_STATUS) {
-          const transactionInfo = await fetchTransactionInfo(transactionHash);
+          const transactionInfo = await etherspotService.getTransaction(CHAIN.ETHEREUM, transactionHash);
           if (!isEmpty(transactionInfo)) {
             return { ...keyBasedAssetToTransfer, status: TX_CONFIRMED_STATUS };
           }

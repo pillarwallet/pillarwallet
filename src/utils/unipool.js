@@ -17,39 +17,71 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as Sentry from '@sentry/react-native';
+
+// constants
 import { ETH } from 'constants/assetsConstants';
-import { reportLog, parseTokenBigNumberAmount, formatUnits } from 'utils/common';
-import { getContract, buildERC20ApproveTransactionData, encodeContractMethod } from 'services/assets';
+import { CHAIN } from 'constants/chainConstants';
+
+// utils
+import {
+  parseTokenBigNumberAmount,
+  formatUnits,
+  reportErrorLog,
+} from 'utils/common';
+
+// services
+import { buildERC20ApproveTransactionData, encodeContractMethod } from 'services/assets';
+import etherspotService from 'services/etherspot';
+
+// abi
 import UNIPOOL_CONTRACT from 'abi/unipoolPool.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
+// types
 import type { Asset } from 'models/Asset';
+import type { EtherspotUnipoolInterface } from 'models/Etherspot';
 
 
-export const getStakedAmount = async (unipoolAddress: string, userAddress: string): Promise<?number> => {
-  const contract = getContract(unipoolAddress, UNIPOOL_CONTRACT);
-  if (!contract) return null;
-  return contract.balanceOf(userAddress)
-    .then(balance => formatUnits(balance, 18))
-    .catch((e) => {
-      reportLog('Error getting unipool balance', {
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
+export const getStakedAmount = async (unipoolAddress: string, userAddress: string): Promise<?string> => {
+  const unipoolContract = etherspotService.getContract<?EtherspotUnipoolInterface>(
+    CHAIN.ETHEREUM,
+    UNIPOOL_CONTRACT,
+    unipoolAddress,
+  );
+
+  if (!unipoolContract) {
+    reportErrorLog('getStakedAmount failed: no unipoolContract', { unipoolAddress });
+    return null;
+  }
+
+  try {
+    const balanceBN = await unipoolContract.callBalanceOf(userAddress);
+    return balanceBN ? formatUnits(balanceBN, 18) : null;
+  } catch (error) {
+    reportErrorLog('getStakedAmount failed: callBalanceOf failed', { unipoolAddress, error });
+    return null;
+  }
 };
 
-export const getEarnedAmount = async (unipoolAddress: string, userAddress: string): Promise<?number> => {
-  const contract = getContract(unipoolAddress, UNIPOOL_CONTRACT);
-  if (!contract) return null;
-  return contract.earned(userAddress)
-    .then(balance => formatUnits(balance, 18))
-    .catch((e) => {
-      reportLog('Error getting unipool earned amount', {
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
+export const getEarnedAmount = async (unipoolAddress: string, userAddress: string): Promise<?string> => {
+  const unipoolContract = etherspotService.getContract<?EtherspotUnipoolInterface>(
+    CHAIN.ETHEREUM,
+    UNIPOOL_CONTRACT,
+    unipoolAddress,
+  );
+
+  if (!unipoolContract) {
+    reportErrorLog('getEarnedAmount failed: no unipoolContract', { unipoolAddress });
+    return null;
+  }
+
+  try {
+    const earnedBN = await unipoolContract.callEarned(userAddress);
+    return earnedBN ? formatUnits(earnedBN, 18) : null;
+  } catch (error) {
+    reportErrorLog('getEarnedAmount failed: callEarned failed', { unipoolAddress, error });
+    return null;
+  }
 };
 
 export const getStakeTransactions = async (
@@ -72,10 +104,18 @@ export const getStakeTransactions = async (
     symbol: ETH,
   }];
 
-  const erc20Contract = getContract(token.address, ERC20_CONTRACT_ABI);
-  const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, unipoolAddress)
-    : null;
+  const erc20Contract = etherspotService.getContract(CHAIN.ETHEREUM, ERC20_CONTRACT_ABI, token.address);
+  if (!erc20Contract) {
+    reportErrorLog('getStakeTransactions failed: no erc20Contract', { token });
+    return stakeTransactions;
+  }
+
+  let approvedAmountBN;
+  try {
+    approvedAmountBN = await erc20Contract.callAllowance(sender, unipoolAddress);
+  } catch (error) {
+    reportErrorLog('getStakeTransactions: callAllowance failed', { token, error });
+  }
 
   if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData =

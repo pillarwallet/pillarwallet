@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
+import ethers, { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { getEnv } from 'configs/envConfig';
 import isEmpty from 'lodash.isempty';
 
@@ -341,31 +341,9 @@ export async function getExchangeRates(
   }), {});
 }
 
-// from the getTransaction() method you'll get the the basic tx info without the status
-export function fetchTransactionInfo(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getTransaction(hash).catch(() => null);
-}
-
-// receipt available for mined transactions only, here you can get the status of the tx
-export function fetchTransactionReceipt(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getTransactionReceipt(hash).catch(() => null);
-}
-
-export function fetchLastBlockNumber(network?: string): Promise<number> {
-  const provider = getEthereumProvider(network || getEnv().NETWORK_PROVIDER);
-  return provider.getBlockNumber().then(parseInt).catch(() => 0);
-}
-
 export function transferSigned(signed: ?string) {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   return provider.sendTransaction(signed);
-}
-
-export function waitForTransaction(hash: string) {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.waitForTransaction(hash);
 }
 
 export const DEFAULT_GAS_LIMIT = 500000;
@@ -413,20 +391,6 @@ export async function calculateGasEstimate(transaction: Object) {
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 }
-
-export const getContract = (
-  address: string,
-  abi: string,
-  // for wallet calls set wallet provider, for general purpose use default
-  provider: Object = getEthereumProvider(getEnv().NETWORK_PROVIDER),
-) => {
-  try {
-    return new Contract(address, abi, provider);
-  } catch (error) {
-    reportLog('Failed to create Contract', { error });
-    return null;
-  }
-};
 
 export const buildERC20ApproveTransactionData = (
   spenderAddress: string,
