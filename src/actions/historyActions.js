@@ -39,7 +39,6 @@ import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import {
-  getTrxInfo,
   parseFeeWithGasToken,
   updateAccountHistoryForChain,
   updateHistoryRecord,
@@ -59,12 +58,10 @@ import {
   parseArchanovaTransactionStatus,
   parseArchanovaTransactions,
 } from 'utils/archanova';
-import { mapTransactionsHistoryWithAave } from 'utils/aave';
-import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
-import { parseEtherspotTransactions } from 'utils/etherspot';
+import { parseEtherspotTransactions, parseEtherspotTransactionStatus } from 'utils/etherspot';
 import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
 
 // services
@@ -217,9 +214,7 @@ export const fetchTransactionsHistoryAction = () => {
         relayerExtensionDevice?.address,
       );
 
-      const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, archanovaTransactionsHistory);
-      const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+      const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, archanovaTransactionsHistory);
       const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, ethereumSupportedAssets);
       const finalArchanovaTransactionsHistory = await mapTransactionsHistoryWithLiquidityPools(
         accountAddress,
@@ -272,7 +267,7 @@ const setUpdatingTransactionAction = (hash: ?string) => ({
   payload: hash,
 });
 
-export const updateTransactionStatusAction = (hash: string) => {
+export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isOnline } } } = getState();
 
@@ -285,7 +280,8 @@ export const updateTransactionStatusAction = (hash: string) => {
 
     dispatch(setUpdatingTransactionAction(hash));
 
-    const trxInfo = await getTrxInfo(hash);
+    const transactionInfo = await etherspotService.getTransaction(chain, hash);
+    const transactionStatus = transactionInfo ? parseEtherspotTransactionStatus(transactionInfo.status) : null;
 
     let sdkTransactionInfo;
     let sdkToAppStatus;
@@ -299,12 +295,12 @@ export const updateTransactionStatusAction = (hash: string) => {
       sdkToAppStatus = parseArchanovaTransactionStatus(sdkTransactionInfo.state);
 
       // NOTE: if trxInfo is not null, that means transaction was mined or failed
-      if (sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+      if (sdkToAppStatus === TX_PENDING_STATUS && transactionStatus) {
         reportLog('Wrong transaction status', {
           hash,
           sdkToAppStatus,
           sdkStatus: sdkTransactionInfo?.state,
-          blockchainStatus: trxInfo.status,
+          blockchainStatus: transactionStatus,
         });
         dispatch(setUpdatingTransactionAction(null));
         return;
@@ -314,7 +310,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
     const stillPending = isArchanovaAccountActive
       ? sdkToAppStatus === TX_PENDING_STATUS
-      : !trxInfo;
+      : !transactionStatus;
 
     if (stillPending) {
       dispatch(setUpdatingTransactionAction(null));
@@ -341,12 +337,9 @@ export const updateTransactionStatusAction = (hash: string) => {
           feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         }
       }
-    } else if (trxInfo) {
-      ({
-        txInfo: { gasPrice },
-        txReceipt: { gasUsed },
-        status,
-      } = trxInfo);
+    } else if (transactionInfo) {
+      status = transactionStatus;
+      ({ gasPrice, gasUsed } = transactionInfo);
     }
 
     const { history: { data: currentHistory } } = getState();
@@ -357,7 +350,7 @@ export const updateTransactionStatusAction = (hash: string) => {
         ...transaction,
         status,
         gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
-        gasUsed: gasUsed ? gasUsed.toNumber() : transaction.gasUsed,
+        gasUsed: gasUsed ?? transaction.gasUsed,
         feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
       }));
 

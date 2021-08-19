@@ -22,12 +22,11 @@ import DeviceInfo from 'react-native-device-info';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
-import { getEnv } from 'configs/envConfig';
 import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
 // eslint-disable-next-line camelcase
 import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 
-import { getRandomInt, getEthereumProvider, printLog, reportLog, reportErrorLog } from 'utils/common';
+import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import type { Dispatch } from 'reducers/rootReducer';
@@ -75,9 +74,7 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 }
 
 // handle eth_signTransaction
-export function signTransaction(trx: Object, walletInstance: Object): Promise<string> {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const wallet = walletInstance.connect(provider);
+export function signTransaction(trx: Object, wallet: Object): Promise<string> {
   const signTx = trx ? { ...trx } : trx;
   if (signTx && signTx.from) {
     delete signTx.from;
@@ -108,11 +105,8 @@ export function hashPersonalMessage(message: string): string {
 // handle eth_sign
 export function signMessage(
   message: any,
-  walletInstance: Object,
+  wallet: Object,
 ): string {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const wallet = walletInstance.connect(provider);
-
   const data = isHexString(message) ? ethers.utils.arrayify(message) : message;
 
   return wallet.signMessage(data);
@@ -121,12 +115,9 @@ export function signMessage(
 // handle personal_sign
 export function signPersonalMessage(
   messageHex: string,
-  walletInstance: Object,
+  wallet: Object,
   isLegacyEip1271: boolean = false, // EIP-1271 had few proposals that went live
 ): Promise<string> {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const wallet = walletInstance.connect(provider);
-
   let data = messageHex;
   if (isLegacyEip1271) {
     const actualMessage = ethers.utils.toUtf8String(messageHex);
@@ -162,12 +153,9 @@ export function hashTypedDataMessage(message: string): string {
 // handle eth_signTypedData
 export function signTypedData(
   data: string,
-  walletInstance: Object,
+  wallet: Object,
   isLegacyEip1271: boolean = false, // EIP-1271 had few proposals that went live
 ): Promise<string> {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  const wallet = walletInstance.connect(provider);
-
   if (isLegacyEip1271) {
     const hashedTypedData = hashTypedDataMessage(data);
     return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
@@ -207,30 +195,15 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
 }
 
 export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
-  if (wallet) {
-    wallet = wallet.connect(provider);
-  }
-  return wallet;
+  return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
 }
 
 export function constructWalletFromPrivateKey(privateKey: string): Object {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let wallet = new ethers.Wallet(privateKey);
-  if (wallet) {
-    wallet = wallet.connect(provider);
-  }
-  return wallet;
+  return new ethers.Wallet(privateKey);
 }
 
 export function constructWalletFromMnemonic(mnemonic: string): Object {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let wallet = ethers.Wallet.fromMnemonic(mnemonic);
-  if (wallet) {
-    wallet = wallet.connect(provider);
-  }
-  return wallet;
+  return ethers.Wallet.fromMnemonic(mnemonic);
 }
 
 export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {

@@ -50,7 +50,6 @@ export const REMOTE_CONFIG = {
   PRISMIC_PRIVACY_POLICY_DOCUMENT_ID: 'prismic_privacy_policy_document_id',
   PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID: 'prismic_terms_of_policy_document_id',
   PRISMIC_INTERJECTION_DOCUMENT_ID: 'prismic_interjection_document_id',
-  XDAI_RPC_ENDPOINT: 'app_xdai_rpc_endpoint',
   FEATURE_WC_DASHBOARD_INAPPBROWSER: 'feature_wc_dashboard_inappbrowser',
 };
 
@@ -84,6 +83,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID]: 'YNGoWxIAACMAsjF2',
   [REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID]: 'YNGo8hIAACMAsjRR',
   [REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID]: 'YNsHjxIAACIAw0ca',
-  [REMOTE_CONFIG.XDAI_RPC_ENDPOINT]: 'https://rpc.xdaichain.com/',
   [REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER]: false,
 };
