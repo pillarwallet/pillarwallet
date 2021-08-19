@@ -86,6 +86,7 @@ import type {
   TransactionResult,
   TransactionFeeInfo,
 } from 'models/Transaction';
+import type { GasPrice } from 'models/GasInfo';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
