@@ -1161,9 +1161,11 @@
       "message": "Message",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
-      "maximumFee": "Maximum Fee",
+      "maximumFee": "Maximum fee",
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
+      "deploymentFee": "Smart Wallet deployment fee",
+      "maxTransactionFee": "Max. transaction fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
       "allowancePlusEthFee": "Allowance + Maximum Fee",
@@ -1292,7 +1294,8 @@
     "ensMigrationCannotProceed": "Sorry, ENS migration cannot proceed.",
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
-    "failedToGetGasPrices": "Failed to get gas prices."
+    "failedToGetGasPrices": "Failed to get gas prices.",
+    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…"
   },
 
   "exchangeContent": {
@@ -1520,6 +1523,6 @@
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
-    "includesDeploymentFee": "Including the one-time Smart Wallet deployment fee"
+    "includesDeploymentFee": "One-time Smart Wallet deployment fee"
   }
 }
