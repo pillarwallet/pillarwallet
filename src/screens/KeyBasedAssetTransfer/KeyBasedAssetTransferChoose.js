@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { SectionList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -33,6 +33,7 @@ import {
   fetchAvailableCollectiblesToTransferAction,
   removeKeyBasedAssetToTransferAction,
 } from 'actions/keyBasedAssetTransferActions';
+import { switchToEtherspotAccountIfNeededAction } from 'actions/accountsActions';
 
 // Components
 import { Wrapper } from 'components/Layout';
@@ -107,6 +108,11 @@ const KeyBasedAssetTransferChoose = ({
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(switchToEtherspotAccountIfNeededAction());
+  }, [dispatch]);
 
   const onAvailableBalancesRefresh = () => {
     if (isFetchingAvailableBalances) return;
