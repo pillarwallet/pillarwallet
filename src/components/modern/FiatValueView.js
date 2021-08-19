@@ -53,11 +53,11 @@ function FiatValueView({
 }: Props) {
   const colors = useThemeColors();
 
+  if (!value) return null;
+
   const valueBN = wrapBigNumberOrNil(value);
 
-  if (!valueBN) {
-    return null;
-  }
+  if (!valueBN) return null;
 
   if (mode === 'change') {
     const changeColor = color ?? (valueBN.gte(0) ? colors?.positive : colors?.text);
@@ -71,7 +71,7 @@ function FiatValueView({
 
   return (
     <Text variant={variant} color={color} style={[styles.textStyle, style]}>
-      {formatFiatValue(value, currency)}
+      {formatFiatValue(valueBN, currency)}
     </Text>
   );
 }
