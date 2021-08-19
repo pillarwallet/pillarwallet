@@ -20,6 +20,7 @@
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 import Asset from 'screens/Asset';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -64,15 +65,18 @@ jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => 
 
 const AssetScreen = createAppContainer(createSwitchNavigator({ screen: Asset }));
 
-const Component = (store) => renderer.create(
-  <ThemeProvider theme={defaultTheme}>
-    <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
-        <AssetScreen />
-      </I18nextProvider>
-    </Provider>
-  </ThemeProvider>,
-);
+const Component = (store) =>
+  renderer.create(
+    <SafeAreaProvider>
+      <ThemeProvider theme={defaultTheme}>
+        <Provider store={store}>
+          <I18nextProvider i18n={i18n}>
+            <AssetScreen />
+          </I18nextProvider>
+        </Provider>
+      </ThemeProvider>
+    </SafeAreaProvider>,
+  );
 
 describe('Asset', () => {
   beforeEach(() => {

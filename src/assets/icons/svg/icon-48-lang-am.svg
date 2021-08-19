@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="37px" viewBox="0 0 48 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>48/flag/አማርኛ</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="48" height="37" rx="4.36363636"></rect>
+    </defs>
+    <g id="48/flag/አማርኛ" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Mask" fill="#FF0000" xlink:href="#path-1"></use>
+        <g id="Flag_of_Ethiopia" mask="url(#mask-2)">
+            <g transform="translate(-16.000000, -1.000000)">
+                <polygon id="Path" fill="#DA121A" fill-rule="nonzero" points="0 0 80 0 80 40 0 40"></polygon>
+                <polygon id="Path" fill="#FCDD09" fill-rule="nonzero" points="0 0 80 0 80 26.6666667 0 26.6666667"></polygon>
+                <polygon id="Path" fill="#078930" fill-rule="nonzero" points="0 0 80 0 80 13.3333333 0 13.3333333"></polygon>
+                <g id="Group" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(26.523809, 6.666666)">
+                    <circle id="Oval" fill="#0F47AF" fill-rule="nonzero" cx="13.4761907" cy="13.3333336" r="13.3333336"></circle>
+                    <g id="a" transform="translate(12.031746, 2.666667)" fill-rule="nonzero">
+                        <polygon id="Path" fill="#FCDD09" points="1.44444447 0 0.977127908 1.43825247 2.90462728 7.37048559 0.334749118 7.37048559 0.0459315565 8.2593745 8.28622817 8.2593745 9.50967886 7.37048559 3.83926041 7.37048559"></polygon>
+                        <line x1="6.01769494" y1="1.48542341" x2="6.01769494" y2="7.2632013" id="Path" stroke="#FCDD09" stroke-width="0.571428571" fill="#000000" transform="translate(6.017695, 4.374312) rotate(-144.000000) translate(-6.017695, -4.374312) "></line>
+                    </g>
+                    <g id="a-link" transform="translate(20.439767, 14.809263) rotate(72.000000) translate(-20.439767, -14.809263) translate(15.439767, 10.309263)" fill-rule="nonzero">
+                        <g id="a" transform="translate(-0.000000, -0.000000)">
+                            <polygon id="Path" fill="#FCDD09" points="1.44444447 0 0.977127908 1.43825247 2.90462728 7.37048559 0.334749118 7.37048559 0.0459315565 8.2593745 8.28622817 8.2593745 9.50967886 7.37048559 3.83926041 7.37048559"></polygon>
+                            <line x1="6.01769494" y1="1.48542341" x2="6.01769494" y2="7.2632013" id="Path" stroke="#FCDD09" stroke-width="0.571428571" fill="#000000" transform="translate(6.017695, 4.374312) rotate(-144.000000) translate(-6.017695, -4.374312) "></line>
+                        </g>
+                    </g>
+                    <g id="a-link" transform="translate(14.224362, 20.412175) rotate(144.000000) translate(-14.224362, -20.412175) translate(9.224362, 15.912175)" fill-rule="nonzero">
+                        <g id="a" transform="translate(0.000000, -0.000000)">
+                            <polygon id="Path" fill="#FCDD09" points="1.44444447 0 0.977127908 1.43825247 2.90462728 7.37048559 0.334749118 7.37048559 0.0459315565 8.2593745 8.28622817 8.2593745 9.50967886 7.37048559 3.83926041 7.37048559"></polygon>
+                            <line x1="6.01769494" y1="1.48542341" x2="6.01769494" y2="7.2632013" id="Path" stroke="#FCDD09" stroke-width="0.571428571" fill="#000000" transform="translate(6.017695, 4.374312) rotate(-144.000000) translate(-6.017695, -4.374312) "></line>
+                        </g>
+                    </g>
+                    <g id="a-link" transform="translate(6.975010, 16.232369) rotate(-144.000000) translate(-6.975010, -16.232369) translate(1.975010, 11.732369)" fill-rule="nonzero">
+                        <g id="a">
+                            <polygon id="Path" fill="#FCDD09" points="1.44444447 0 0.977127908 1.43825247 2.90462728 7.37048559 0.334749118 7.37048559 0.0459315565 8.2593745 8.28622817 8.2593745 9.50967886 7.37048559 3.83926041 7.37048559"></polygon>
+                            <line x1="6.01769494" y1="1.48542341" x2="6.01769494" y2="7.2632013" id="Path" stroke="#FCDD09" stroke-width="0.571428571" fill="#000000" transform="translate(6.017695, 4.374312) rotate(-144.000000) translate(-6.017695, -4.374312) "></line>
+                        </g>
+                    </g>
+                    <g id="a-link" transform="translate(8.710069, 8.046194) rotate(-72.000000) translate(-8.710069, -8.046194) translate(3.710069, 3.546194)" fill-rule="nonzero">
+                        <g id="a" transform="translate(0.000000, -0.000000)">
+                            <polygon id="Path" fill="#FCDD09" points="1.44444447 0 0.977127908 1.43825247 2.90462728 7.37048559 0.334749118 7.37048559 0.0459315565 8.2593745 8.28622817 8.2593745 9.50967886 7.37048559 3.83926041 7.37048559"></polygon>
+                            <line x1="6.01769494" y1="1.48542341" x2="6.01769494" y2="7.2632013" id="Path" stroke="#FCDD09" stroke-width="0.571428571" fill="#000000" transform="translate(6.017695, 4.374312) rotate(-144.000000) translate(-6.017695, -4.374312) "></line>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

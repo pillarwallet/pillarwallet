@@ -31,7 +31,7 @@ import {
   UPDATE_WALLET_BACKUP_STATUS,
   SET_WALLET_IS_ENCRYPTING,
 } from 'constants/walletConstants';
-import { WALLET_SETTINGS } from 'constants/navigationConstants';
+import { MENU_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getSaltedPin } from 'utils/wallet';
@@ -138,7 +138,7 @@ export const checkForWalletBackupToastAction = () => {
       autoClose: false,
       onPress: () => {
         const action = NavigationActions.navigate({
-          routeName: WALLET_SETTINGS,
+          routeName: MENU_SETTINGS,
         });
         navigate(action);
       },
