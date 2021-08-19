@@ -49,7 +49,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getBalance, transformBalancesToObject } from 'utils/assets';
-import { BigNumber, truncateAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
+import { BigNumber, truncateAmount, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -243,9 +243,15 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     if (isCalculatingGas) return;
     dispatch({ type: SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS, payload: true });
 
-    await dispatch(fetchGasInfoAction());
+    await dispatch(fetchGasInfoAction(CHAIN.ETHEREUM));
     const { history: { gasInfo } } = getState();
-    const gasPrice = getGasPriceWei(gasInfo);
+    const ethereumGasInfo = gasInfo?.[CHAIN.ETHEREUM];
+    if (!ethereumGasInfo?.isFetched || !ethereumGasInfo?.gasPrice) {
+      reportLog('calculateKeyBasedAssetsToTransferTransactionGasAction failed: no gas price.');
+      return;
+    }
+
+    const gasPrice = ethereumGasInfo.gasPrice.instant;
 
     let keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {

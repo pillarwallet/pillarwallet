@@ -243,7 +243,7 @@ const mockTokensExchangeRates = {
   },
 };
 
-const mockEtherExchangeRates = {
+export const mockEtherExchangeRates = {
   EUR: 624.21,
   GBP: 544.57,
   USD: 748.92,

@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { isEmpty } from 'lodash';
-import { GasPriceOracle } from 'gas-price-oracle';
 import t from 'translations/translate';
 
 // components
@@ -241,24 +240,19 @@ export const fetchTransactionsHistoryAction = () => {
   };
 };
 
-export const fetchGasInfoAction = () => {
+export const fetchGasInfoAction = (chain: Chain) => {
   return async (dispatch: Dispatch) => {
-    const gasPriceOracle = new GasPriceOracle();
-    try {
-      const {
-        low: min,
-        standard: avg,
-        fast: max,
-      } = await gasPriceOracle.fetchGasPricesOffChain();
-      dispatch({ type: SET_GAS_INFO, payload: { min, avg, max } });
-    } catch (error) {
-      reportLog('fetchGasInfoAction failed', { error });
+    const gasPrice = await etherspotService.getGasPrice(chain);
+    if (!gasPrice) {
       Toast.show({
         message: t('toast.failedToGetGasPrices'),
         emoji: 'fuelpump',
         supportLink: true,
       });
+      return;
     }
+
+    dispatch({ type: SET_GAS_INFO, payload: { gasPrice, chain } });
   };
 };
 

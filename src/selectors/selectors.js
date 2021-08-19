@@ -47,6 +47,8 @@ export const useRatesPerChain = () => useRootSelector(ratesPerChainSelector);
 export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? EMPTY_OBJECT;
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
 export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? EMPTY_ARRAY;
+export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
+export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
 
 //
 // Global selectors here
