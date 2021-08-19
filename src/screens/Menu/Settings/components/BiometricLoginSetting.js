@@ -35,6 +35,7 @@ import { useBiometricsSelector } from 'selectors/appSettings';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
 
 // Utils
+import { reportErrorLog } from 'utils/common';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // Types
@@ -88,6 +89,7 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
 
       dispatch(changeUseBiometricsAction(!useBiometrics, { ...wallet, pin }));
     } catch (error) {
+      reportErrorLog('error while requesting FACE_ID permission', error);
       showFaceIdFailedMessage();
     }
   };
