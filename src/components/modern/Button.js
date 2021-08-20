@@ -110,6 +110,7 @@ const getTitleColor = (colors: ThemeColors, variant: Variant): string => {
     case 'text':
       return colors.buttonTextTitle;
     case 'primary-destructive':
+      return colors.buttonPrimaryTitle;
     case 'text-destructive':
       return colors.negative;
     default:
