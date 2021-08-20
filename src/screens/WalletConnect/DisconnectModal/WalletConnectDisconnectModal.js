@@ -85,7 +85,7 @@ function WalletConnectDisconnectModal({ connector }: Props) {
 
       <Text style={styles.body}>{t('body', { app, chain: config.title })}</Text>
 
-      <Button title={t('disconnect')} onPress={disconnect} style={styles.button} variant="primary-destructive" />
+      <Button title={t('disconnect')} onPress={disconnect} style={styles.button} variant="destructive" />
       <Button title={tRoot('button.cancel')} onPress={close} variant="text" style={styles.button} />
     </BottomModal>
   );

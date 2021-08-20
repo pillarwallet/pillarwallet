@@ -35,7 +35,7 @@ import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
 
-type Variant = 'primary' | 'secondary' | 'text' | 'primary-destructive' | 'text-destructive';
+type Variant = 'primary' | 'secondary' | 'text' | 'destructive';
 
 type Size = 'regular' | 'large' | 'compact';
 
@@ -109,9 +109,7 @@ const getTitleColor = (colors: ThemeColors, variant: Variant): string => {
       return colors.buttonSecondaryTitle;
     case 'text':
       return colors.buttonTextTitle;
-    case 'primary-destructive':
-      return colors.buttonPrimaryTitle;
-    case 'text-destructive':
+    case 'destructive':
       return colors.negative;
     default:
       return colors.text;
@@ -129,7 +127,6 @@ const TouchableContainer = styled(TouchableOpacity)`
     $size === 'large' && `width: 100%; padding: ${spacing.largePlus}px ${spacing.large}px; border-radius: 14px;`}
   ${({ $size }) => $size === 'compact' && `padding: 6px ${spacing.medium}px;`}
   ${({ theme, $variant }) => $variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
-  ${({ theme, $variant }) => $variant === 'primary-destructive' && `background-color: ${theme.colors.negative}`};
   ${({ theme, $variant }) => $variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
 `;
 
