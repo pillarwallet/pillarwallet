@@ -61,7 +61,7 @@ export const semanticLightThemeColors = {
   card: '#FFFFFF',
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
-  separator: lightThemeColors.basic080,
+  separator: lightThemeColors.basic060,
   inputField: lightThemeColors.basic060,
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
@@ -94,6 +94,8 @@ export const semanticLightThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#0000004C',
+  pillarText: '#000000',
+  exchangeScheme: lightThemeColors.basic080,
   interjectionPointText: '#0a1427',
   swiperButtonTrack: lightThemeColors.basic000,
   swiperButtonThumb: '#ebf0f6',
@@ -119,7 +121,7 @@ export const semanticDarkThemeColors = {
   card: darkThemeColors.basic050,
   tertiary: '#171F31',
   control: '#FCFDFF',
-  separator: darkThemeColors.basic040,
+  separator: darkThemeColors.basic080,
   inputField: darkThemeColors.basic080,
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
@@ -152,6 +154,8 @@ export const semanticDarkThemeColors = {
   recieveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#FFFFFF4C',
+  pillarText: '#e7e7e7',
+  exchangeScheme: darkThemeColors.basic040,
   interjectionPointText: '#0a1427',
   swiperButtonTrack: '#520f8c',
   swiperButtonThumb: baseColors.electricViolet,
@@ -266,10 +270,6 @@ export const themedColors = {
   hazardIconColor: theme('current', {
     lightTheme: semanticLightThemeColors.hazardIconColor,
     darkTheme: semanticDarkThemeColors.hazardIconColor,
-  }),
-  interjectionPointText: theme('current', {
-    lightTheme: semanticLightThemeColors.interjectionPointText,
-    darkTheme: semanticDarkThemeColors.interjectionPointText,
   }),
 };
 

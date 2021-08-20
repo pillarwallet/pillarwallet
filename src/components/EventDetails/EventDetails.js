@@ -68,7 +68,6 @@ import {
   findCollectibleTransactionAcrossAccounts,
   findTransactionAcrossAccounts,
 } from 'utils/history';
-import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 import {
   findAccountByAddress,
@@ -1023,10 +1022,6 @@ export class EventDetail extends React.Component<Props> {
               },
             ];
           }
-        } else if (isPoolTogetherAddress(event.to)) {
-          eventData = {
-            name: t('poolTogether'),
-          };
         } else {
           eventData = {
             actionTitle: fullItemValue,
@@ -1448,8 +1443,8 @@ const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| .
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(CHAIN.ETHEREUM, hash)),
+  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(CHAIN.ETHEREUM, hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 

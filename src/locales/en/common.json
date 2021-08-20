@@ -562,6 +562,44 @@
     }
   },
 
+  "menu": {
+    "item": {
+      "settings": "Settings",
+      "addressBook": "Address book",
+      "supportChat": "Support chat"
+    },
+    "footer": {
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of service",
+      "systemInformation": "System information",
+      "signOut": "Sign out"
+    },
+    "settings": {
+      "title": "Settings",
+      "appSettings": "App settings",
+      "darkMode": "Dark mode",
+      "language": "Language",
+      "fiatCurrency": "Local fiat currency",
+      "biometricLogin": "Biometric login",
+      "changePin": "Change PIN",
+      "walletBackup": "Wallet backup",
+      "viewBackupPhrase": "View 12 words",
+      "backupNotFinished": "Backup not finished",
+      "backupNotFinishedWarning": "Warning"
+    },
+    "selectLanguage": {
+      "title": "Language"
+    },
+    "selectCurrency": {
+      "title": "Currency"
+    },
+    "systemInformation": {
+      "title": "System Information",
+      "environment": "Environment",
+      "buildNumber": "Build number"
+    }
+  },
+
   "history": {
     "title": "Transactions history"
   },
@@ -622,8 +660,8 @@
     "deploymentInterjection": {
       "title": "Smart Wallet deployment",
       "depositFormat": "Deposit {{symbol}} on {{chain}}",
-      "bottomText": "Do not send ETH to this wallet if you don’t wish to activate it",
-      "error": "Can't fetch Smart Wallet Deployment Interjection data. Please try again."
+      "error": "Can't fetch Smart Wallet Deployment Interjection data. Please try again.",
+      "cost": "{{cost}} deployment cost will be added to your first transaction."
     }
   },
 
@@ -837,22 +875,6 @@
     }
   },
 
-  "assetSearchContent": {
-    "title": "Tokens",
-    "tabs": {
-      "visible": {
-        "title": "Displayed",
-        "emptyState": {
-          "title": "Token not found",
-          "paragraph": "Check if the name was entered correctly or add custom token"
-        }
-      },
-      "withBalance": {
-        "title": "All non-zero"
-      }
-    }
-  },
-
   "collectiblesList": {
     "emptyState": {
       "noCollectibles": {
@@ -866,27 +888,6 @@
     }
   },
 
-  "phoneBookContactsList": {
-    "emptyState": {
-      "couldNotGetContacts": {
-        "title": "Could not fetch contacts"
-      },
-      "noneFound": {
-        "title": "Nobody found",
-        "paragraph": "Make sure you entered phone or email address correctly"
-      }
-    }
-  },
-
-  "countryList": {
-    "emptyState": {
-      "noneFound": {
-        "title": "Nothing found",
-        "paragraph": "Make sure you entered the country correctly"
-      }
-    }
-  },
-
   "settingsContent": {
     "settingsItem": {
       "analytics": {
@@ -895,111 +896,7 @@
           "agreeSharingInfo": "I'm happy to share anonymous application usage statistics",
           "legal": "By sharing application usage statistics you are helping Pillar build a better wallet. \nUsage statistics do not include any personal information from you or your contacts."
         }
-      },
-      "appSettings": {
-        "title": "App settings"
-      },
-      "backup": {
-        "title": "Backup not finished",
-        "label": {
-          "notFinished": "Warning"
-        }
-      },
-      "backupPhrase": {
-        "title": "View 12 words"
-      },
-      "biometricLogin": {
-        "title": "Biometric login"
-      },
-      "changePIN": {
-        "title": "Change PIN"
-      },
-      "community": {
-        "title": "Community",
-        "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
-        "label": {
-          "follow": "Follow us"
-        }
-      },
-      "darkMode": {
-        "title": "Dark mode"
-      },
-      "fiatCurrency": {
-        "title": "Local fiat currency",
-        "screenTitle": "Choose your base currency"
-      },
-      "faq": {
-        "title": "Knowledge base"
-      },
-      "inviteFriends": {
-        "title": "Invite friends"
-      },
-      "linkedDevices": {
-        "title": "Linked devices",
-        "subtitle": "Assign your contacts as recovery agents for restoring the wallet"
-      },
-      "payFeeWithPillar": {
-        "title": "Pay fees with PLR"
-      },
-      "privateKey": {
-        "title": "View private key"
-      },
-      "securitySettings": {
-        "title": "Security settings",
-        "screenTitle": "Security settings",
-        "label": {
-          "globalSettings": "Global",
-          "smartWalletSettings": "Smart Wallet"
-        }
-      },
-      "systemInfo": {
-        "title": "System info"
-      },
-      "spendingLimits": {
-        "title": "Spending limits",
-        "subtitle": "Secure your funds by restricting larger transactions",
-        "label": {
-          "notAvailableYet": "soon"
-        }
-      },
-      "support": {
-        "title": "Chat with support"
-      },
-      "recoverySettings": {
-        "title": "Recovery settings",
-        "screenTitle": "Recovery",
-        "label": {
-          "notFinished": "Warning",
-          "globalSettings": "Global",
-          "keyWalletSettings": "Key wallet"
-        }
-      },
-      "referFriends": {
-        "title": "Refer friends"
-      },
-      "requirePinOnLogin": {
-        "title": "Require PIN on login"
-      },
-      "userProfile": {
-        "title": "User profile"
-      },
-      "addressBook": {
-        "title": "Address book"
-      },
-      "language": {
-        "title": "Language",
-        "screenTitle": "Select preferred language"
-      },
-      "walletSettings": {
-        "title": "Wallet settings",
-        "screenTitle": "Wallet settings"
       }
-    },
-    "button": {
-      "termOfUse": "Terms of Use",
-      "privacyPolicy": "Privacy policy",
-      "lockWallet": "Lock wallet",
-      "signOut": "Sign out from wallet"
     }
   },
 
@@ -1187,27 +1084,10 @@
   },
 
   "toast": {
-    "cantUpdateUser": "Changes have not been saved. Please try again later",
-    "cantVerifyCode": "We can't verify your code at this time. Please try again later",
-    "cantVerifyInfo": {
-      "phone": "We can't verify your phone at this time. Please try again later",
-      "email": "We can't verify your email at this time. Please try again later",
-      "default": "We can't verify your data at this time. Please try again later"
-    },
-    "verificationSuccess": {
-      "email": "Email verification was successful",
-      "phone": "Phone verification was successful"
-    },
     "userIsOffline": "It seems you're offline. Please check your internet connection.",
     "biometricLoginEnabled": "Biometric login enabled.",
     "biometricLoginDisabled": "Biometric login disabled.",
-    "assetAdded": "{{assetName}} ({{assetSymbol}}) added.",
-    "unableToAddDevice": "Couldn't add device, please try again.",
-    "linkedDeviceRemoved": "Linked device removed.",
-    "linkedDeviceNotFound": " Linked device not found.",
-    "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) to {{toAssetName}} ({{toAssetSymbol}}) exchange enabled.",
     "keyWalletAssetsTransfered": "Assets transferred. Enjoy using your Smart Wallet!",
-    "walletRecovered": "Your wallet is now recovered. Enjoy using Pillar!",
     "somethingWentWrong": "Something went wrong, we are already investigating it. Don't worry, your funds are safe. Please try again or contact support.",
     "failedToLogIn": "There was a problem logging you in, please try again.",
     "PPNTopUpSuccess": "{{paymentInfo}} added to Pillar Tank.",
@@ -1219,16 +1099,12 @@
     "PPNTopUp": "{{paymentInfo}} sent to Pillar Tank.",
     "PPNWithdraw": "Withdraw of {{paymentInfo}} started. You will receive tokens soon.",
     "PPNSettle": "Settlement started. You will receive tokens soon.",
-    "failedToAddDevice": "Can't add device. Please try again.",
-    "failedToRemoveDevice": "Can't remove device. Please try again.",
     "switchRelayerTokenFailed": "Can't switch fee token. Please try again.",
     "syntheticTransactionFailed": "Can't make this transaction. Please try again.",
     "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) removed.",
     "ensureBackup": "Please ensure you backup your wallet now.",
     "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
     "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
-    "walletConnectSessionTimedOut": "Request timeout. Give it another try.",
-    "walletConnectSmartWalletNotActive": "Can't use WalletConnect without Smart Wallet activated",
     "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
     "incorrectQRCode": "QR code is incorrect.",
     "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",

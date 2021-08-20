@@ -177,6 +177,7 @@
         "keyboardShouldPersistTaps",
         "keyboardType",
         "keyExtractor",
+        "leftIcon",
         "leftIconName",
         "leftSideSymbol",
         "listKey",

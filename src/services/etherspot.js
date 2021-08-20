@@ -86,6 +86,7 @@ import type {
   TransactionResult,
   TransactionFeeInfo,
 } from 'models/Transaction';
+import type { GasPrice } from 'models/GasInfo';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -696,6 +697,54 @@ export class EtherspotService {
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];
+    }
+  }
+
+  async getGasPrice(chain: Chain): Promise<?GasPrice> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    try {
+      const { standard, fast, instant } = await sdk.getGatewayGasInfo();
+
+      // maps from ethers.js BigNumber
+      return {
+        standard: new BigNumber(standard.toString()),
+        fast: new BigNumber(fast.toString()),
+        instant: new BigNumber(instant.toString()),
+      };
+    } catch (error) {
+      reportErrorLog('EtherspotService getGasPrice failed', { chain, error });
+      return null;
+    }
+  }
+
+  getContract<T>(
+    chain: Chain,
+    abi: Object[],
+    address: string,
+  ): T | null {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    try {
+      // contract name is for internal use, just to not pollute let's create contracts under chain-address
+      return sdk.registerContract(`${chain}-${address}`, abi, address);
+    } catch (error) {
+      reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
+      return null;
+    }
+  }
+
+  async getTransaction(chain: Chain, hash: string): Promise<?EtherspotTransaction> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    try {
+      return sdk.getTransaction({ hash });
+    } catch (error) {
+      reportErrorLog('EtherspotService getTransaction failed', { chain, hash, error });
+      return null;
     }
   }
 }

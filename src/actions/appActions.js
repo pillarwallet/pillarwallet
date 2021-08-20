@@ -238,13 +238,14 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
     });
 
     /* eslint-disable i18next/no-literal-string */
-    Instabug.setUserAttribute('keyWalletAddress', keyWalletAddress);
-    Instabug.setUserAttribute('activeAccountAddress', activeAccountAddress);
-    Instabug.setUserAttribute('etherspotAccountAddress', etherspotAccountAddress);
-    Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress);
-    /* eslint-enable i18next/no-literal-string */
+    Instabug.setUserAttribute('keyWalletAddress', keyWalletAddress ?? '');
+    Instabug.setUserAttribute('activeAccountAddress', activeAccountAddress ?? '');
+    Instabug.setUserAttribute('etherspotAccountAddress', etherspotAccountAddress ?? '');
+    Instabug.setUserAttribute(IS_APP_VERSION_V3, 'true');
 
-    Instabug.setUserAttribute(IS_APP_VERSION_V3, true);
+    // archanova account may not be present so do not bother with empty values if it doesn't exist
+    if (archanovaAccount) Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress ?? '');
+    /* eslint-enable i18next/no-literal-string */
 
     if (username) Instabug.setUserAttribute('ENS', username);
   };
