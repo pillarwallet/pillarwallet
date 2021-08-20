@@ -37,6 +37,7 @@ import type { ScrollEvent, LayoutEvent } from 'utils/types/react-native';
 import { spacing } from 'utils/variables';
 import { mapFromDocumentDataToString } from 'utils/prismic';
 import { reportErrorLog } from 'utils/common';
+import { useThemeColors } from 'utils/themes';
 
 // Services
 import * as Prismic from 'services/prismic';
@@ -50,6 +51,7 @@ type Props = {|
 const PrismicDocumentModal = ({ prismicDocumentId, prismicDocumentName }: Props) => {
   const scrollViewRef = React.useRef(null);
   const modalRef = React.useRef();
+  const colors = useThemeColors();
   const [isPrismicHTMLFetched, setIsPrismicHTMLFetched] = React.useState(false);
   const [documentHTMLData, setDocumentHTMLData] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -126,7 +128,7 @@ const PrismicDocumentModal = ({ prismicDocumentId, prismicDocumentName }: Props)
             onLayout={handleContentOnLayout}
             onContentSizeChange={handleOnContentSizeChange}
           >
-            <HTML source={{ html: documentHTMLData }} />
+            <HTML source={{ html: documentHTMLData }} baseFontStyle={{ color: colors.text }} />
           </ScrollView>
         )}
       </Container>
