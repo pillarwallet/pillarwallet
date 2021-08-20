@@ -121,8 +121,10 @@ function SendTokenTransaction() {
 
   const chainConfig = useChainConfig(chain);
 
-  const viewOnBlockchain = () =>
+  const viewOnBlockchain = () => {
+    handleDismissal();
     dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
+  };
 
   const handleDismissal = () => {
     const txTag = transactionPayload?.tag || '';
@@ -193,9 +195,7 @@ function SendTokenTransaction() {
         <ButtonWrapper>
           <Button onPress={handleDismissal} title={successButtonText} />
         </ButtonWrapper>
-        <TouchableOpacity onPress={handleDismissal}>
-          <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
-        </TouchableOpacity>
+        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
       </ButtonContainer>
     );
   };

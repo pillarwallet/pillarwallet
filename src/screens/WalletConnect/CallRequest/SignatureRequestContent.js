@@ -91,7 +91,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
       <Button
         title={t('button.reject')}
         onPress={onReject}
-        variant="text-destructive"
+        variant="destructive"
         style={styles.button}
       />
     </>

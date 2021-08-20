@@ -126,7 +126,7 @@ const MenuFooter = () => {
           title={t('signOut')}
           leftIcon="logout"
           onPress={handleSignOut}
-          variant="text-destructive"
+          variant="destructive"
           size="compact"
           style={styles.button}
           titleStyle={styles.buttonTitle}
