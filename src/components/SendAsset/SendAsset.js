@@ -23,6 +23,7 @@ import { Keyboard } from 'react-native';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -34,12 +35,12 @@ import { ASSET_TYPES } from 'constants/assetsConstants';
 // components
 import Button from 'components/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 
 // utils
-import { wrapBigNumber, truncateAmount, reportErrorLog } from 'utils/common';
+import { truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { isValidTransferValue } from 'utils/transactions';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -61,6 +62,8 @@ import type { Contact } from 'models/Contact';
 import type { AccountAssetBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 
+// Local
+import SendContainer from './SendContainer';
 
 type Props = {
   defaultContact: ?Contact,
@@ -98,9 +101,9 @@ const SendAsset = ({
     ...defaultAssetData,
     symbol: defaultAssetData.token,
   };
+
   const [assetData, setAssetData] = useState<AssetOption | Collectible>(defaultAssetOption || assetsWithBalance[0]);
-  const [amount, setAmount] = useState('');
-  const [inputIsValid, setInputIsValid] = useState(false);
+  const [value, setValue] = useState(null);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
@@ -108,17 +111,17 @@ const SendAsset = ({
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);
-  const currentValue = wrapBigNumber(amount || 0);
 
   const isCollectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE;
+  const isValidValue = isCollectible || isValidTransferValue(value, balance);
 
-  const isValidAmount = (currentValue.isFinite() && !currentValue.isZero()) || isCollectible;
+  const currentValue = value ?? BigNumber(0);
 
   const isAboveBalance = currentValue.gt(balance);
 
   const updateTxFee = () => {
     // specified amount is always valid and not necessarily matches input amount
-    if ((!isCollectible && (!isValidAmount || isAboveBalance)) || !assetData || !selectedContact) {
+    if (!isValidValue || !assetData || !selectedContact) {
       return;
     }
 
@@ -133,7 +136,7 @@ const SendAsset = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateTxFeeDebounced = useCallback(
     debounce(updateTxFee, 100),
-    [amount, selectedContact, useGasToken, assetData],
+    [value, selectedContact, useGasToken, assetData],
   );
 
   useEffect(() => {
@@ -197,41 +200,24 @@ const SendAsset = ({
     });
   };
 
-  const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
-    const calculatedBalanceAmount = balance.multipliedBy(percentageModifier);
-
-    // update fee only on max balance
-    if (percentageModifier === 1.00 && selectedContact) {
-      // await needed for initial max available send calculation to get estimate before showing max available after fees
-      const transactionToEstimate = {
-        to: selectedContact.ethAddress,
-        value: calculatedBalanceAmount.toString(),
-        assetData: mapToAssetDataType(assetData),
-      };
-      await estimateTransaction(transactionToEstimate, chain);
-    }
-
-    return null;
-  };
-
   const hasAllFeeData = !isEstimating && !!selectedContact;
 
-  const showFeeForAsset = !isAboveBalance && hasAllFeeData && isValidAmount;
+  const showFeeForAsset = !isAboveBalance && hasAllFeeData && isValidValue;
   const showFee = isCollectible ? hasAllFeeData : showFeeForAsset;
 
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
-    : (inputIsValid && !!selectedContact && !!currentValue);
+    : (isValidValue && !!selectedContact && !!currentValue);
 
   // perform actual balance check only if all values set
   let enoughBalanceForTransaction = true;
-  if (feeInfo && assetData && isValidAmount) {
+  if (feeInfo && assetData && isValidValue) {
     const balanceCheckTransaction = {
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
       // $FlowFixMe: collectible does not have `decimals`
       decimals: assetData.decimals,
-      amount,
+      amount: truncateAmount(currentValue.toString(), assetData.decimals),
       // $FlowFixMe: collectible does not have `token`
       symbol: assetData.token,
     };
@@ -249,7 +235,7 @@ const SendAsset = ({
   // note: fee toggle component renders one more button on error message, no need to show disabled next button
   const showNextButton = hasAllData && (!errorMessage || isEstimating);
 
-  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid || !isValidAmount;
+  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !isValidValue;
 
   return (
     <SendContainer
@@ -258,17 +244,12 @@ const SendAsset = ({
         selectedContact,
         onSelectContact: setSelectedContact,
       }}
-      customValueSelectorProps={{
-        value: amount,
-        onValueChange: setAmount,
-        assetData,
-        onAssetDataChange: (asset) => setAssetData(asset),
-        onCollectibleAssetDataChange: (collectible) => setAssetData(collectible),
-        showCollectibles: true,
-        txFeeInfo: feeInfo,
-        updateTxFee: calculateBalancePercentTxFee,
-        onFormValid: setInputIsValid,
-      }}
+      assetData={assetData}
+      onAssetDataChange={(asset) => setAssetData(asset)}
+      onCollectibleAssetDataChange={(collectible) => setAssetData(collectible)}
+      value={value}
+      onValueChange={setValue}
+      txFeeInfo={feeInfo}
       footerProps={{
         isNextButtonVisible: showNextButton,
         buttonProps: {
@@ -276,14 +257,9 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(
-          feeInfo,
-          showFee,
-          chain,
-          errorMessage,
-          isEstimating,
-          enoughBalanceForTransaction,
-        ),
+        footerTopAddon:
+          !!selectedContact &&
+          renderFeeToggle(feeInfo, showFee, chain, errorMessage, isEstimating, enoughBalanceForTransaction),
         isLoading: isEstimating,
       }}
     />

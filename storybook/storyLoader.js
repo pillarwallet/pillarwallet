@@ -34,7 +34,7 @@ function loadStories() {
 	require('../src/components/TextInput/TextInput.stories');
 	require('../src/components/Toast/ToastCard.stories');
 	require('../src/components/Tooltip/Tooltip.stories');
-	require('../src/components/ValueInput/ValueInput.stories');
+	require('../src/components/legacy/ValueInput/ValueInput.stories');
 	require('../src/components/modern/CheckBox/CheckBox.stories');
 }
 
@@ -69,7 +69,7 @@ const stories = [
 	'../src/components/TextInput/TextInput.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',
-	'../src/components/ValueInput/ValueInput.stories',
+	'../src/components/legacy/ValueInput/ValueInput.stories',
 	'../src/components/modern/CheckBox/CheckBox.stories'
 ];
 

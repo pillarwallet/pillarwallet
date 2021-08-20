@@ -136,6 +136,11 @@ const getErrorMessage = (
   return '';
 };
 
+/**
+ * This is a legacy component. Avoid using it in any new code.
+ *
+ * @deprecated Use TokenValueInput to assemble your own asset selector.
+ */
 const ValueInputComponent = ({
   disabled,
   assets,

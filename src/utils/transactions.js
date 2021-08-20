@@ -231,3 +231,16 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
 
   return chainNativeAsset.symbol;
 };
+
+export const isValidTransferValue = (value: ?BigNumber, maxValue: ?BigNumber): boolean => {
+  if (!value || !value.isFinite() || !value.gt(0)) return false;
+
+  if (!maxValue) return true;
+
+  return value.lte(maxValue);
+};
+
+export const isBalanceEnoughForTransfer = (balance: ?BigNumber, value: ?BigNumber): boolean => {
+  if (!balance) return true;
+  return !value || value?.lte(balance);
+};

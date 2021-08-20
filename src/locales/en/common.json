@@ -29,6 +29,7 @@
   "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
+  "estimatedValue": "≈ {{value}}",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
@@ -158,6 +159,7 @@
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
     "notEnoughGas": "Insufficient gas",
+    "notEnoughBalance": "Insufficient {{symbol}} balance",
     "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",
@@ -261,7 +263,9 @@
     "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
     "deployed": "Deployed",
     "walletDeployment": "Wallet deployment",
-    "pleaseSelect": "Please select"
+    "pleaseSelect": "Please select",
+    "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "Balance {{balance}}"
   },
 
   "button": {
@@ -365,7 +369,11 @@
     "back": "Back",
     "native": "I know Crypto",
     "new": "I'm new to Crypto",
-    "copyAddress": "Copy address"
+    "copyAddress": "Copy address",
+    "sendMax": "Send max",
+    "spendMax": "Spend max",
+    "useMax": "Use max",
+    "selectToken": "Select token..."
   },
 
   "paragraph": {

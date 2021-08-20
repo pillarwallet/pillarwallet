@@ -35,13 +35,13 @@ export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRa
 
 export const getAssetRateInFiat = (
   rates: RatesByAssetAddress,
-  assetAddress: string,
+  assetAddress: ?string,
   fiatCurrency: Currency,
 ): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
 
 export const getAssetValueInFiat = (
   assetValue: ?BigNumber | string | number,
-  assetAddress: string,
+  assetAddress: ?string,
   rates: RatesByAssetAddress,
   currency: Currency,
 ): ?number => {
@@ -51,4 +51,18 @@ export const getAssetValueInFiat = (
   if (!rate) return null;
 
   return wrapBigNumber(assetValue)?.times(rate).toNumber();
+};
+
+export const getAssetValueFromFiat = (
+  fiatValue: ?BigNumber | string | number,
+  assetAddress: ?string,
+  rates: RatesByAssetAddress,
+  currency: Currency,
+): ?BigNumber => {
+  if (!fiatValue && fiatValue !== 0) return null;
+
+  const rate = getAssetRateInFiat(rates, assetAddress, currency);
+  if (!rate) return null;
+
+  return wrapBigNumber(fiatValue)?.dividedBy(rate);
 };

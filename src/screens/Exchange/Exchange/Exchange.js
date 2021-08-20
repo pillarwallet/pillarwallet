@@ -21,62 +21,45 @@
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useQuery } from 'react-query';
-import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
-import { useDebounce } from 'use-debounce';
-import { orderBy, maxBy } from 'lodash';
-import { useTranslation } from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import { useDebounce } from 'use-debounce';
+import { maxBy } from 'lodash';
+import styled from 'styled-components/native';
+import { useTranslation } from 'translations/translate';
+
+// Configs
+import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content, Spacing } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/modern/Icon';
 import Spinner from 'components/Spinner';
-import ValueInput from 'components/ValueInput';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 
-// Services
-import etherspotService from 'services/etherspot';
-
-// Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  useSupportedAssetsPerChain,
-  useRatesPerChain,
-  useActiveAccount,
-} from 'selectors';
-import { accountAssetsPerChainSelector } from 'selectors/assets';
-import { accountAssetsBalancesSelector } from 'selectors/balances';
-
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
 import { isLogV2AppEvents } from 'utils/environment';
-import { getSupportedChains, nativeAssetPerChain } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
-import { getChainWalletAssetsBalances } from 'utils/balances';
-
-// Configs
-import { getPlrAddressForChain } from 'configs/assetsConfig';
-
-// Types
-import type { QueryResult } from 'utils/types/react-query';
-import type { AssetOption } from 'models/Asset';
-import type { ExchangeOffer } from 'models/Exchange';
-import type { Chain } from 'models/Chain';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
 
+// Types
+import type { AssetOption } from 'models/Asset';
+import type { ExchangeOffer } from 'models/Exchange';
+import type { Chain } from 'models/Chain';
+
 // Local
+import FromAssetSelector from './FromAssetSelector';
+import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { shouldTriggerSearch, getExchangeFromAssetOptions, getExchangeToAssetOptions } from './utils';
+import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
 function Exchange() {
   const { t } = useTranslation();
@@ -85,77 +68,34 @@ function Exchange() {
 
   const fromInputRef = React.useRef();
 
-  const fiatCurrency = useFiatCurrency();
-
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
-  const { address: nativeChainAssetAddress } = nativeAssetPerChain[initialChain];
-  const initialFromAddress: string = navigation.getParam('fromAssetAddress') || nativeChainAssetAddress;
+  const initialFromAddress: string =
+    navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
   const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
 
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
 
-  const [rawFromAmount, setFromAmount] = React.useState('');
-  const [fromAmount]: [string] = useDebounce(rawFromAmount, 500);
+  const [fromValue, setFromValue] = React.useState(null);
+  const [debouncedFromValue]: [string] = useDebounce(fromValue, 500);
+
+  const fromOptions = useFromAssets();
+  const toOptions = useToAssets(chain);
 
   const chainConfig = useChainConfig(chain);
-
-  const assetsPerChain = useRootSelector(accountAssetsPerChainSelector);
-  const supportedAssetsPerChain = useSupportedAssetsPerChain();
-  const ratesPerChain = useRatesPerChain();
-  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
-
-  // memoize to not cause fromOptions rerender
-  const walletBalancesPerChain = React.useMemo(
-    () => getChainWalletAssetsBalances(accountBalances),
-    [accountBalances],
-  );
-
-  const activeAccount = useActiveAccount();
-
-  // memoize to not cause fromOptions rerender
-  const supportedChains = React.useMemo(
-    () => getSupportedChains(activeAccount),
-    [activeAccount],
-  );
-
-  const fromOptions = React.useMemo(
-    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
-      const chainOptions = getExchangeFromAssetOptions(
-        assetsPerChain,
-        supportedAssetsPerChain,
-        walletBalancesPerChain,
-        fiatCurrency,
-        ratesPerChain,
-        supportedChain,
-      );
-      return [...multiChainOptions, ...chainOptions];
-    }, []),
-    [supportedChains, assetsPerChain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
-  );
-
-  const toOptions = React.useMemo(
-    () => getExchangeToAssetOptions(
-      supportedAssetsPerChain,
-      walletBalancesPerChain,
-      fiatCurrency,
-      ratesPerChain,
-      chain,
-    ),
-    [chain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
-  );
 
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
     [fromOptions, fromAddress, chain],
   );
+
   const toAsset = React.useMemo(
     () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
     [toOptions, toAddress, chain],
   );
 
-  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromAmount);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
 
   // Focus on from amount input after user changes fromAsset
@@ -166,32 +106,46 @@ function Exchange() {
       if (!isCancelled) fromInputRef.current?.focus();
     }, 650);
 
-    isLogV2AppEvents() && dispatch(logEventAction('v2_exchange_pair_selected'));
-
     return () => {
       isCancelled = true;
     };
-  }, [fromAsset, dispatch]);
+  }, [dispatch, fromAsset]);
+
+  React.useEffect(() => {
+    if (isLogV2AppEvents()) {
+      dispatch(logEventAction('v2_exchange_pair_selected'));
+    }
+  }, [dispatch, chain, fromAddress, toAddress]);
+
+  const handleSelectFromAsset = (asset: AssetOption) => {
+    setChain(asset.chain);
+    setFromAddress(asset.address);
+    if (chain !== asset.chain) {
+      setToAddress(null);
+    }
+  };
+
+  const handleSelectToAsset = (asset: AssetOption) => {
+    setToAddress(asset.address);
+  };
 
   const handleOfferPress = (offer: ExchangeOffer) => {
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
-  const allowSwap = fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
+  const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
 
   const handleSwapAssets = () => {
     if (!allowSwap) return;
 
+    // Needed to update keyboard accessory view (add/remove 100% option)
+    Keyboard.dismiss();
     setFromAddress(toAddress);
     setToAddress(fromAddress);
-    setFromAmount('');
+    setFromValue(null);
   };
 
-  const handleFromAmountChange = (input: string) => {
-    setFromAmount(input.replace(/,/g, '.'));
-  };
-
-  const formattedToAmount = maxBy(offers, (offer) => offer.toAmount)?.toAmount.toFixed();
+  const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
 
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
@@ -205,46 +159,28 @@ function Exchange() {
       />
 
       <Content onScroll={() => Keyboard.dismiss()}>
-        <FormWrapper>
-          <ValueInput
-            disabled={!fromAsset}
-            assetData={fromAsset}
-            onAssetDataChange={(asset) => {
-              if (asset.chain !== chain) setChain(asset.chain);
-              setFromAddress(asset.address);
-            }}
-            value={rawFromAmount}
-            onValueChange={handleFromAmountChange}
-            selectorOptionsTitle={t('label.sell')}
-            customAssets={fromOptions}
-            leftSideSymbol="minus"
-            getInputRef={(ref) => {
-              fromInputRef.current = ref;
-            }}
-            onBlur={() => fromInputRef.current?.blur()}
-            disableAssetChange={false}
-            hideMaxSend={!fromAsset}
-          />
+        <FromAssetSelector
+          assets={fromOptions}
+          selectedAsset={fromAsset}
+          onSelectAsset={handleSelectFromAsset}
+          value={fromValue}
+          onValueChange={setFromValue}
+          editable={!!fromAsset}
+          valueInputRef={fromInputRef}
+        />
 
-          <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap}>
-            <Icon name="arrow-up-down" />
-          </TouchableSwapIcon>
+        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap}>
+          {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
+        </TouchableSwapIcon>
 
-          <ValueInput
-            disabled
-            value={formattedToAmount}
-            assetData={toAsset}
-            onAssetDataChange={(asset) => {
-              if (asset.chain !== chain) setChain(asset.chain);
-              setToAddress(asset.address);
-            }}
-            selectorOptionsTitle={t('label.buy')}
-            customAssets={toOptions}
-            leftSideSymbol="plus"
-            onBlur={() => fromInputRef.current?.blur()}
-            hideMaxSend
-          />
-        </FormWrapper>
+        <ToAssetSelector
+          assets={toOptions}
+          selectedAsset={toAsset}
+          onSelectAsset={handleSelectToAsset}
+          value={toValue}
+        />
+
+        <Spacing h={40} />
 
         {showLoading && (
           <EmptyStateWrapper>
@@ -279,35 +215,9 @@ function Exchange() {
 
 export default Exchange;
 
-function useOffersQuery(
-  chain: Chain,
-  fromAsset: ?AssetOption,
-  toAsset: ?AssetOption,
-  fromAmount: string,
-): QueryResult<ExchangeOffer[]> {
-  const enabled = shouldTriggerSearch(fromAsset, toAsset, fromAmount);
-
-  return useQuery(
-    ['ExchangeOffers', fromAsset, toAsset, fromAmount],
-    () => etherspotService.getExchangeOffers(chain, fromAsset, toAsset, BigNumber(fromAmount)),
-    { enabled, cacheTime: 0 },
-  );
-}
-
-function sortOffers(offers: ?(ExchangeOffer[])): ?(ExchangeOffer[]) {
-  if (!offers) return null;
-
-  return orderBy(offers, [(offer) => offer.toAmount.toNumber()], ['desc']);
-}
-
-const FormWrapper = styled.View`
-  padding: 24px 20px 40px;
-`;
-
 const TouchableSwapIcon = styled.TouchableOpacity`
-  width: 100%;
-  margin: 10px 0 20px;
-  align-items: center;
+  margin: 8px 0 8px;
+  align-self: center;
 `;
 
 const EmptyStateWrapper = styled.View`
