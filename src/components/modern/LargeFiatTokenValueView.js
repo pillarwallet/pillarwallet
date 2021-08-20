@@ -62,14 +62,13 @@ function LargeFiatTokenValueView({ value, assetAddress, chain, symbol, style }: 
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
       <RNText style={styles.fiatTokenText} numberOfLines={1} adjustsFontSizeToFit>
-        <FiatValueView value={balanceInFiat} currency={fiatCurrency} variant="giant" style={styles.fiatValue} />
+        <FiatValueView value={balanceInFiat} currency={fiatCurrency} style={styles.fiatTokenValue} />
         <Spacing w={spacing.small} />
         <TokenValueView
           value={value}
           symbol={symbol}
-          variant="giant"
           color={colors.secondaryText}
-          style={styles.tokenValue}
+          style={styles.fiatTokenValue}
         />
       </RNText>
     </Container>
@@ -81,12 +80,12 @@ export default LargeFiatTokenValueView;
 const styles = {
   fiatTokenText: {
     fontSize: 30,
+    lineHeight: 30,
   },
-  fiatValue: {
+  fiatTokenValue: {
     fontFamily: appFont.medium,
-  },
-  tokenValue: {
-    fontFamily: appFont.medium,
+    fontSize: 30,
+    lineHeight: 30,
   },
 };
 
