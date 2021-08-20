@@ -193,7 +193,7 @@ function SendTokenTransaction() {
         <ButtonWrapper>
           <Button onPress={handleDismissal} title={successButtonText} />
         </ButtonWrapper>
-        <TouchableOpacity onPress={handleDismissal}>
+        <TouchableOpacity onPress={handleDismissal} style={styles.viewBlockchainButton}>
           <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
         </TouchableOpacity>
       </ButtonContainer>
@@ -247,6 +247,12 @@ function SendTokenTransaction() {
 }
 
 export default SendTokenTransaction;
+
+const styles = {
+  viewBlockchainButton: {
+    width: '100%',
+  },
+};
 
 const CancelText = styled(MediumText)`
   color: ${themedColors.negative};
