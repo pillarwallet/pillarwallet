@@ -80,7 +80,7 @@ import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
-import { getTutorialDataAction } from 'actions/cmsActions';
+import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeeplinkExecutedAction } from 'actions/appSettingsActions';
 
 // types
@@ -327,9 +327,6 @@ export const finishOnboardingAction = (retry?: boolean) => {
       reportErrorLog('finishOnboardingAction: errors recieved retry will happen in application', errorMessage);
     }
 
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching getTutorialDataAction');
-    await dispatch(getTutorialDataAction());
-
     /**
      * initial deep link executed setting is used to prevent deep links from execution before PIN screen,
      * at this point user us authorized and we can let deep links to go through safely
@@ -340,11 +337,11 @@ export const finishOnboardingAction = (retry?: boolean) => {
     );
     dispatch(initialDeeplinkExecutedAction());
 
-    logBreadcrumb('onboarding', 'finishOnboardingAction: checking for FEATURE_ONBOARDING flag for enable onboarding');
-    const enableOnboarding = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching getTutorialDataAction');
+    await dispatch(fetchTutorialDataIfNeededAction());
 
     const { onboarding: { tutorialData } } = getState();
-    const routeName = tutorialData && enableOnboarding ? TUTORIAL_FLOW : HOME;
+    const routeName = tutorialData ? TUTORIAL_FLOW : HOME;
 
     // check if tutorial needs to bw shown and navigate accordingly
     logBreadcrumb(

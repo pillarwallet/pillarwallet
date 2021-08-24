@@ -99,7 +99,7 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
-import { getTutorialDataAction } from './cmsActions';
+import { fetchTutorialDataIfNeededAction } from './cmsActions';
 import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
@@ -136,7 +136,7 @@ export const loginAction = (
     const {
       appSettings: {
         data: {
-          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted, hasSeenTutorial,
+          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted,
         },
       },
       session: { data: { isOnline } },
@@ -267,7 +267,8 @@ export const loginAction = (
         routeName: lastActiveScreen || MAIN_FLOW,
         params: lastActiveScreenParams,
       });
-      if (!hasSeenTutorial) await dispatch(getTutorialDataAction());
+
+      await dispatch(fetchTutorialDataIfNeededAction());
       const { onboarding: { tutorialData } } = getState();
 
       const navigateToAppAction = NavigationActions.navigate({

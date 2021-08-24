@@ -19,39 +19,54 @@
 */
 
 import { Predicates } from '@prismicio/client';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
-import prismicClient from 'services/prismic';
-import { reportErrorLog, logBreadcrumb } from 'utils/common';
+
+// constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
-import type { CmsData } from 'models/CMSData';
+
+// services
+import prismicClient from 'services/prismic';
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// utils
+import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { getTutorialDataObject, isValidTutorialData } from 'utils/cms';
+
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { CmsData } from 'models/CMSData';
+
 
 const {
   ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
   ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
 } = CMS_DATA_TYPES;
 
-export const getTutorialDataAction = () => async (dispatch: Dispatch, getState: GetState) => {
-  const { appSettings: { data: { hasSeenTutorial } } } = getState();
-  // no need to do anything if user has already completed tutorial
-  if (hasSeenTutorial) return;
+export const fetchTutorialDataIfNeededAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const enableOnboardingTutorial = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
 
-  try {
-    const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
-    const tutorialData = getTutorialDataObject(response);
-    if (!isValidTutorialData(tutorialData)) {
-      return;
+    const { appSettings: { data: { hasSeenTutorial } } } = getState();
+    // no need to do anything if user has already completed tutorial
+    if (hasSeenTutorial || !enableOnboardingTutorial) return;
+
+    try {
+      const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
+      const tutorialData = getTutorialDataObject(response);
+      if (!isValidTutorialData(tutorialData)) {
+        reportErrorLog('fetchTutorialDataIfNeededAction tutorialData bot valid: ', { tutorialData });
+        return;
+      }
+
+      // eslint-disable-next-line no-template-curly-in-string
+      logBreadcrumb('tutorial', 'cmsActions.js: Dispatching action: ${ SET_TUTORIAL_DATA }');
+      dispatch({
+        type: SET_TUTORIAL_DATA,
+        payload: tutorialData,
+      });
+    } catch (error) {
+      reportErrorLog('fetchTutorialDataIfNeededAction failed', { error });
     }
-
-    /* eslint-disable no-template-curly-in-string */
-    /* eslint-disable i18next/no-literal-string */
-    logBreadcrumb('tutorial', 'cmsActions.js: Dispatching action: ${ SET_TUTORIAL_DATA }');
-    dispatch({
-      type: SET_TUTORIAL_DATA,
-      payload: tutorialData,
-    });
-  } catch (e) {
-    reportErrorLog('set tutorial data error', e);
-  }
+  };
 };
