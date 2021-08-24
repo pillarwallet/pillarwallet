@@ -21,6 +21,9 @@
 import * as React from 'react';
 import { Image } from 'react-native';
 
+// Utils
+import { useThemedImages } from 'utils/images';
+
 // Types
 import type { ImageStyleProp } from 'utils/types/react-native';
 import type { Currency } from 'models/Rates';
@@ -37,7 +40,9 @@ type Props = {|
 |};
 
 function FiatIcon({ currency, size = 48, style }: Props) {
-  const source = iconSoureForCurrency[currency];
+  const { genericToken } = useThemedImages();
+
+  const source = iconSoureForCurrency[currency] ?? genericToken;
   const sizeStyle = { width: size, height: size };
 
   return <Image source={source} style={[sizeStyle, style]} />;
