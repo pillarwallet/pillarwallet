@@ -45,7 +45,7 @@ const {
 
 export const fetchTutorialDataIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const enableOnboardingTutorial = firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
 
     const { appSettings: { data: { hasSeenTutorial } } } = getState();
     // no need to do anything if user has already completed tutorial

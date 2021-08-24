@@ -45,7 +45,6 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -64,7 +63,7 @@ import { isLogV2AppEvents } from 'utils/environment';
 
 // services
 import { navigate } from 'services/navigation';
-import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
+import { firebaseMessaging } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
 
 // actions
