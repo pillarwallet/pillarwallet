@@ -336,7 +336,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
     );
     dispatch(initialDeeplinkExecutedAction());
 
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching getTutorialDataAction');
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
     await dispatch(fetchTutorialDataIfNeededAction());
 
     const { onboarding: { tutorialData } } = getState();
