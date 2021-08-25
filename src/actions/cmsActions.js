@@ -21,13 +21,11 @@
 import { Predicates } from '@prismicio/client';
 
 // constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
 import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
 
 // services
 import prismicClient from 'services/prismic';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { reportErrorLog, logBreadcrumb } from 'utils/common';
@@ -45,11 +43,9 @@ const {
 
 export const fetchTutorialDataIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
-
     const { appSettings: { data: { hasSeenTutorial } } } = getState();
     // no need to do anything if user has already completed tutorial
-    if (hasSeenTutorial || !enableOnboardingTutorial) return;
+    if (hasSeenTutorial) return;
 
     try {
       const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));

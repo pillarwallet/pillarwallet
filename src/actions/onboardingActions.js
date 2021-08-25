@@ -45,6 +45,7 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -63,7 +64,7 @@ import { isLogV2AppEvents } from 'utils/environment';
 
 // services
 import { navigate } from 'services/navigation';
-import { firebaseMessaging } from 'services/firebase';
+import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
 
 // actions
@@ -336,11 +337,15 @@ export const finishOnboardingAction = (retry?: boolean) => {
     );
     dispatch(initialDeeplinkExecutedAction());
 
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
-    await dispatch(fetchTutorialDataIfNeededAction());
+    let routeName = HOME;
 
-    const { onboarding: { tutorialData } } = getState();
-    const routeName = tutorialData ? TUTORIAL_FLOW : HOME;
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
+    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+    if (enableOnboardingTutorial) {
+      await dispatch(fetchTutorialDataIfNeededAction());
+      const { onboarding: { tutorialData } } = getState();
+      if (tutorialData) routeName = TUTORIAL_FLOW;
+    }
 
     // check if tutorial needs to bw shown and navigate accordingly
     logBreadcrumb(
