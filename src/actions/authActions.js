@@ -46,6 +46,7 @@ import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { delay, reportLog, reportOrWarn } from 'utils/common';
@@ -67,7 +68,12 @@ import { isTest } from 'utils/environment';
 // services
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
-import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
+import {
+  firebaseIid,
+  firebaseCrashlytics,
+  firebaseMessaging,
+  firebaseRemoteConfig,
+} from 'services/firebase';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 
@@ -99,7 +105,7 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
-import { getTutorialDataAction } from './cmsActions';
+import { fetchTutorialDataIfNeededAction } from './cmsActions';
 import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
@@ -136,7 +142,7 @@ export const loginAction = (
     const {
       appSettings: {
         data: {
-          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted, hasSeenTutorial,
+          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted,
         },
       },
       session: { data: { isOnline } },
@@ -262,18 +268,23 @@ export const loginAction = (
       }
 
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
-      const navigateToLastActiveScreen = NavigationActions.navigate({
+      let navigateAction = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
         routeName: lastActiveScreen || MAIN_FLOW,
         params: lastActiveScreenParams,
       });
-      if (!hasSeenTutorial) await dispatch(getTutorialDataAction());
-      const { onboarding: { tutorialData } } = getState();
+
+      const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+      if (enableOnboardingTutorial) {
+        await dispatch(fetchTutorialDataIfNeededAction());
+        const { onboarding: { tutorialData } } = getState();
+        if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
+      }
 
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: tutorialData ? NavigationActions.navigate({ routeName: TUTORIAL_FLOW }) : navigateToLastActiveScreen,
+        action: navigateAction,
       });
 
       if (!initialDeeplinkExecuted) {
