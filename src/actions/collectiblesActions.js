@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getEnv } from 'configs/envConfig';
 import { mapValues } from 'lodash';
 
 // Constants
@@ -34,6 +33,7 @@ import {
 // Services
 import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
 import { getPoapCollectiblesOnXDai } from 'services/poap';
+import etherspotService from 'services/etherspot';
 
 // Utils
 import {
@@ -43,8 +43,8 @@ import {
   getActiveAccountId,
   isEtherspotAccount,
 } from 'utils/accounts';
-import { getTrxInfo } from 'utils/history';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { parseEtherspotTransactionStatus } from 'utils/etherspot';
 
 // Selectors
 import { activeAccountSelector } from 'selectors';
@@ -54,6 +54,7 @@ import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
+import type { Chain } from 'models/Chain';
 
 // Actions
 import { saveDbAction } from './dbActions';
@@ -271,7 +272,7 @@ export const fetchAllCollectiblesDataAction = () => {
   };
 };
 
-export const updateCollectibleTransactionAction = (hash: string) => {
+export const updateCollectibleTransactionAction = (chain: Chain, hash: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: { isOnline } },
@@ -280,16 +281,14 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     if (!isOnline) return;
 
     dispatch(collectibleTransactionUpdate(hash));
-    const trxInfo = await getTrxInfo(hash, getEnv().COLLECTIBLES_NETWORK);
-    if (!trxInfo) {
+    const transactionInfo = await etherspotService.getTransaction(chain, hash);
+    if (!transactionInfo) {
       dispatch(collectibleTransactionUpdate(''));
       return;
     }
-    const {
-      txInfo,
-      txReceipt,
-      status,
-    } = trxInfo;
+
+    const status = parseEtherspotTransactionStatus(transactionInfo.status);
+    const { gasPrice, gasUsed } = transactionInfo;
 
     const accounts = Object.keys(collectiblesHistory);
     const updatedHistory = accounts.reduce((history, accountId) => {
@@ -299,11 +298,12 @@ export const updateCollectibleTransactionAction = (hash: string) => {
           if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
             return transaction;
           }
+
           return {
             ...transaction,
             status,
-            gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
-            gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+            gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
+            gasUsed: gasUsed ?? transaction.gasUsed,
           };
         }),
       );

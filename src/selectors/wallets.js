@@ -23,6 +23,9 @@ import { createSelector } from 'reselect';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// selectors
+import { useRootSelector } from 'selectors';
+
 // utils
 import { isSmartWalletAccount } from 'utils/accounts';
 
@@ -70,3 +73,8 @@ export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
     (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
   ),
 );
+
+export function useIsWalletBackedUp() {
+  const backupStatus = useRootSelector((root) => root.wallet.backupStatus);
+  return backupStatus.isImported || backupStatus.isBackedUp;
+}

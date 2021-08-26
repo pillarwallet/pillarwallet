@@ -23,6 +23,9 @@ import { useQuery } from 'react-query';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
+// Constants
+import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
+
 // Components
 import Toast from 'components/Toast';
 
@@ -30,18 +33,25 @@ import Toast from 'components/Toast';
 import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { useChainConfig } from 'utils/uiConfig';
+import { nativeAssetPerChain } from 'utils/chains';
+import { isEtherspotAccount } from 'utils/accounts';
+import { wrapBigNumber } from 'utils/common';
+
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { AssetCore } from 'models/Asset';
 import type { Chain } from 'models/Chain';
-import type { EthereumTransaction, TransactionFeeInfo } from 'models/Transaction';
+import type { EthereumTransaction, GasToken, TransactionFeeInfo } from 'models/Transaction';
+import type { Value } from 'utils/common';
 
 type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,
@@ -112,4 +122,33 @@ export function useTransactionFeeCheck(
     : undefined;
 
   return { isEnoughForFee, errorMessage };
+}
+
+export function useEtherspotDeploymentFee(
+  chain: Chain,
+  transactionFee: ?Value,
+  gasToken: ?GasToken,
+): { deploymentFee: ?BigNumber, feeWithoutDeployment: ?Value } {
+  const { isDeployedOnChain } = useDeploymentStatus();
+  const activeAccount = useActiveAccount();
+
+  const gasPrice = useRootSelector((root) => root.transactionEstimate?.feeInfo?.gasPrice);
+
+  const nativeAssetAddress = nativeAssetPerChain?.[chain]?.address;
+
+  // we cannot calculate fee based on non native gas token
+  const isPaidWithNativeToken = !gasToken?.address || addressesEqual(gasToken.address, nativeAssetAddress);
+
+  if (!transactionFee
+    || !gasPrice
+    || !isPaidWithNativeToken
+    || !isEtherspotAccount(activeAccount)
+    || isDeployedOnChain?.[chain]) {
+    return { deploymentFee: null, feeWithoutDeployment: transactionFee };
+  }
+
+  const deploymentFee = gasPrice.times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
+  const feeWithoutDeployment = wrapBigNumber(transactionFee).minus(deploymentFee);
+
+  return { deploymentFee, feeWithoutDeployment };
 }

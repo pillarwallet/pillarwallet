@@ -54,7 +54,7 @@ type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
-  checkPrivateKey: (privateKey: string, onValidPin: Function) => void,
+  checkPrivateKey: (privateKey: ?string, onValidPin: Function) => void,
   wallet: Object,
   revealMnemonic: boolean,
   onPinValid: ValidPinCallback,
@@ -284,7 +284,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   checkPin: (pin: string, onValidPin: ValidPinCallback, withMnemonic: boolean) => {
     dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic));
   },
-  checkPrivateKey: (privateKey: string, onValidPin: ValidPinCallback) => {
+  checkPrivateKey: (privateKey: ?string, onValidPin: ValidPinCallback) => {
     dispatch(checkAuthAction(null, privateKey, onValidPin));
   },
 });

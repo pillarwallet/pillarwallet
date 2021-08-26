@@ -105,10 +105,20 @@ function Exchange() {
   const supportedAssetsPerChain = useSupportedAssetsPerChain();
   const ratesPerChain = useRatesPerChain();
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
-  const walletBalancesPerChain = getChainWalletAssetsBalances(accountBalances);
+
+  // memoize to not cause fromOptions rerender
+  const walletBalancesPerChain = React.useMemo(
+    () => getChainWalletAssetsBalances(accountBalances),
+    [accountBalances],
+  );
 
   const activeAccount = useActiveAccount();
-  const supportedChains = getSupportedChains(activeAccount);
+
+  // memoize to not cause fromOptions rerender
+  const supportedChains = React.useMemo(
+    () => getSupportedChains(activeAccount),
+    [activeAccount],
+  );
 
   const fromOptions = React.useMemo(
     () => supportedChains.reduce((multiChainOptions, supportedChain) => {
@@ -126,17 +136,14 @@ function Exchange() {
   );
 
   const toOptions = React.useMemo(
-    () => supportedChains.reduce((multiChainOptions, supportedChain) => {
-      const chainOptions = getExchangeToAssetOptions(
-        supportedAssetsPerChain,
-        walletBalancesPerChain,
-        fiatCurrency,
-        ratesPerChain,
-        supportedChain,
-      );
-      return [...multiChainOptions, ...chainOptions];
-    }, []),
-    [supportedChains, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
+    () => getExchangeToAssetOptions(
+      supportedAssetsPerChain,
+      walletBalancesPerChain,
+      fiatCurrency,
+      ratesPerChain,
+      chain,
+    ),
+    [chain, supportedAssetsPerChain, walletBalancesPerChain, fiatCurrency, ratesPerChain],
   );
 
   const fromAsset = React.useMemo(
@@ -151,7 +158,7 @@ function Exchange() {
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromAmount);
   const offers = sortOffers(offersQuery.data);
 
-  // Focus on from amount input after user changes from or to asset
+  // Focus on from amount input after user changes fromAsset
   React.useEffect(() => {
     let isCancelled = false;
 
@@ -164,7 +171,7 @@ function Exchange() {
     return () => {
       isCancelled = true;
     };
-  }, [fromAsset, toAsset, dispatch]);
+  }, [fromAsset, dispatch]);
 
   const handleOfferPress = (offer: ExchangeOffer) => {
     navigation.navigate(EXCHANGE_CONFIRM, { offer });

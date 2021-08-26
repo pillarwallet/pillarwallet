@@ -65,15 +65,22 @@ import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
+import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
+
+// selectors
+import { accountsSelector, activeAccountAddressSelector } from 'selectors';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
+
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
 const storage = Storage.getInstance('db');
 
 export const initAppAndRedirectAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: RESET_APP_LOADED });
 
     let storageData = await storage.getAll();
@@ -83,7 +90,7 @@ export const initAppAndRedirectAction = () => {
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch);
 
     if (walletTimestamp) {
       // migrations
@@ -206,21 +213,40 @@ export const initAppAndRedirectAction = () => {
 };
 
 export const setupSentryAction = (user: ?Object, wallet: Object) => {
-  return async () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const accounts = accountsSelector(getState());
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+
+    const etherspotAccountAddress = etherspotAccount ? getAccountAddress(etherspotAccount) : null;
+    const archanovaAccountAddress = archanovaAccount ? getAccountAddress(archanovaAccount) : null;
+
     const { username } = user || {};
-    const { address } = wallet;
+    const { address: keyWalletAddress } = wallet;
+
     Sentry.setUser({
       username,
       extra: {
-        ethAddress: address,
+        keyWalletAddress,
+        activeAccountAddress,
+        etherspotAccountAddress,
+        archanovaAccountAddress,
         [IS_APP_VERSION_V3]: true,
       },
     });
-    // eslint-disable-next-line i18next/no-literal-string
-    Instabug.setUserAttribute('address', address);
-    Instabug.setUserAttribute(IS_APP_VERSION_V3, true);
-    if (username) {
-      Instabug.setUserAttribute('ENS', username);
-    }
+
+    /* eslint-disable i18next/no-literal-string */
+    Instabug.setUserAttribute('keyWalletAddress', keyWalletAddress ?? '');
+    Instabug.setUserAttribute('activeAccountAddress', activeAccountAddress ?? '');
+    Instabug.setUserAttribute('etherspotAccountAddress', etherspotAccountAddress ?? '');
+    Instabug.setUserAttribute(IS_APP_VERSION_V3, 'true');
+
+    // archanova account may not be present so do not bother with empty values if it doesn't exist
+    if (archanovaAccount) Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress ?? '');
+    /* eslint-enable i18next/no-literal-string */
+
+    if (username) Instabug.setUserAttribute('ENS', username);
   };
 };

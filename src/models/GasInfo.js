@@ -18,13 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { BigNumber } from 'utils/common';
+import type { ChainRecord } from 'models/Chain';
+
 export type GasPrice = {
-  min?: number,
-  avg?: number,
-  max?: number,
+  standard: BigNumber,
+  fast: BigNumber,
+  instant: BigNumber,
 }
 
 export type GasInfo = {
-  gasPrice: GasPrice,
+  gasPrice: ?GasPrice,
   isFetched: boolean,
 }
+
+export type GasInfoPerChain = ChainRecord<GasInfo>;

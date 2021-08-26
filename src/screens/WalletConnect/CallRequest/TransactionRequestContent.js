@@ -121,7 +121,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
 
       <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
-      <Button title={t('button.reject')} onPress={onReject} variant="text-destructive" style={styles.button} />
+      <Button title={t('button.reject')} onPress={onReject} variant="destructive" style={styles.button} />
     </>
   );
 }

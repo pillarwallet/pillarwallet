@@ -61,7 +61,7 @@ function UnsupportedRequestContent({ request, onReject }: Props) {
 
       <ErrorMessage>{t('walletConnectContent.error.unsupportedRequestCallRequestType')}</ErrorMessage>
 
-      <Button title={t('button.reject')} onPress={onReject} variant="primary-destructive" style={styles.button} />
+      <Button title={t('button.reject')} onPress={onReject} variant="destructive" style={styles.button} />
     </>
   );
 }
