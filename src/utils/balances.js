@@ -23,6 +23,7 @@ import { pickBy } from 'lodash';
 
 // Utils
 import { addressesEqual } from 'utils/assets';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { mapChainRecordValues } from 'utils/chains';
 import { valueForAddress } from 'utils/common';
 
@@ -84,5 +85,5 @@ export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetA
   if (!balances || !assetAddress) return null;
 
   const balance = valueForAddress(balances, assetAddress)?.balance;
-  return BigNumber(balance ?? '0');
+  return wrapBigNumberOrNil(balance);
 };

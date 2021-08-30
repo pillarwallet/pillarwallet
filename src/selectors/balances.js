@@ -28,6 +28,7 @@ import { CHAIN } from 'constants/chainConstants';
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
 import { getChainWalletAssetsBalances } from 'utils/balances';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { valueForAddress } from 'utils/common';
 
 // Selectors
@@ -91,12 +92,8 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
 
 export const useWalletAssetBalance = (chain: ?Chain, assetAddress: ?string): ?BigNumber => {
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
-
   if (!chain || !assetAddress) return null;
 
-  const walletBalances = accountBalances[chain]?.wallet;
-  const assetBalance = valueForAddress(walletBalances, assetAddress)?.balance;
-  if (!assetBalance) return null;
-
-  return BigNumber(assetBalance);
+  const balance = valueForAddress(accountBalances[chain]?.wallet, assetAddress)?.balance;
+  return wrapBigNumberOrNil(balance);
 };
