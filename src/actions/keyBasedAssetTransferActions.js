@@ -155,7 +155,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
   };
 };
 
-export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount: BigNumber) => {
+export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: BigNumber) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
     const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, draftAmount: amount });

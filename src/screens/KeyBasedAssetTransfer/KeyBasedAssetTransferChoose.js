@@ -83,7 +83,7 @@ type Props = {
   isFetchingAvailableCollectibles: boolean,
   availableBalances: WalletAssetsBalances,
   availableCollectibles: Collectible[],
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: BigNumber) => void,
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
@@ -137,7 +137,7 @@ const KeyBasedAssetTransferChoose = ({
     );
 
     removeKeyBasedAssetToTransfer(assetData);
-    if (!assetExist && amount) addKeyBasedAssetToTransfer(assetData, amount);
+    if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };
 
   const prepareSectionsData = () => {
@@ -278,7 +278,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: BigNumber) => dispatch(
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => dispatch(
     addKeyBasedAssetToTransferAction(assetData, amount),
   ),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
