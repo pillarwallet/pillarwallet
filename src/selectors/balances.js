@@ -28,7 +28,6 @@ import { CHAIN } from 'constants/chainConstants';
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
 import { getChainWalletAssetsBalances } from 'utils/balances';
-import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { valueForAddress } from 'utils/common';
 
 // Selectors
