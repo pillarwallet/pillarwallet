@@ -90,7 +90,7 @@ function getExchangeFromAssetOptions(
   const rates = ratesPerChain?.[chain] ?? {};
 
   const isMatching = (asset: Asset) =>
-    addressesEqual(asset.address, nativeAssetAddress) || getWalletBalanceForAsset(walletBalances, asset.address)?.gt(0);
+    addressesEqual(asset.address, nativeAssetAddress) || getWalletBalanceForAsset(walletBalances, asset.address).gt(0);
   const isSupported = (asset: Asset) =>
     supportedAssets.some((supportedAsset) => addressesEqual(asset.address, supportedAsset.address));
 

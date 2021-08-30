@@ -81,9 +81,9 @@ export const hasServiceAssetBalanceForAddress = (
     ?? findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
 );
 
-export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetAddress: ?string): ?BigNumber => {
-  if (!balances || !assetAddress) return null;
+export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetAddress: ?string): BigNumber => {
+  if (!balances || !assetAddress) return BigNumber(0);
 
   const balance = valueForAddress(balances, assetAddress)?.balance;
-  return wrapBigNumberOrNil(balance);
+  return BigNumber(balance ?? 0);
 };
