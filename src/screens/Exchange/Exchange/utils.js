@@ -29,6 +29,7 @@ import {
   addressesEqual,
 } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
+import { reportErrorLog } from 'utils/common';
 
 // Types
 import type {
@@ -63,7 +64,14 @@ export const getExchangeFromAssetOptions = (
   ) => chainSupportedAssets.some((supportedAsset) => addressesEqual(asset.address, supportedAsset.address));
 
   return sortAssets(chainAssets)
-    .filter((asset) => isMatching(asset) && isSupported(asset))
+    .filter((asset) => {
+      if (!asset) {
+        // debug and safe return for Sentry issue #2605322771
+        reportErrorLog('getExchangeFromAssetOptions failed: no asset', { asset, chainAssets });
+        return false;
+      }
+      return isMatching(asset) && isSupported(asset);
+    })
     .map((asset) => getAssetOption(asset, chainBalances, chainRates, currency, chain));
 };
 
