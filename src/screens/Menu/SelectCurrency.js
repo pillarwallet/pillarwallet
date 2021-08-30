@@ -28,6 +28,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
+import FiatIcon from 'components/Icons/FiatIcon';
 import Icon from 'components/modern/Icon';
 import Text from 'components/modern/Text';
 
@@ -44,34 +45,27 @@ import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
 import { fontStyles, spacing } from 'utils/variables';
 
 // Types
-import type { ImageSource } from 'utils/types/react-native';
 import type { Currency } from 'models/Rates';
-
-// Assets
-const iconUSD = require('assets/icons/icon-48-fiat-usd.png');
-const iconEUR = require('assets/icons/icon-48-fiat-eur.png');
-const iconGBP = require('assets/icons/icon-48-fiat-gbp.png');
 
 function SelectCurrency() {
   const { t } = useTranslationWithPrefix('menu.selectCurrency');
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const items = useCurrencyItems();
   const selectedValue = useFiatCurrency();
 
-  const renderItem = (item: Item) => {
+  const renderItem = (currency: Currency) => {
     const handePress = () => {
       navigation.goBack(null);
-      dispatch(saveBaseFiatCurrencyAction(item.value));
+      dispatch(saveBaseFiatCurrencyAction(currency));
     };
 
     return (
       <ItemContainer onPress={handePress}>
-        <ItemImage source={item.iconSource} />
-        <ItemTitle>{item.title}</ItemTitle>
+        <FiatIcon currency={currency} style={styles.icon} />
+        <ItemTitle>{currency}</ItemTitle>
 
-        {item.value === selectedValue && <Icon name="checkmark" />}
+        {currency === selectedValue && <Icon name="checkmark" />}
       </ItemContainer>
     );
   };
@@ -80,34 +74,14 @@ function SelectCurrency() {
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} />
       <FlatList
-        data={items}
+        data={supportedFiatCurrencies}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => item.value}
+        keyExtractor={(item) => item}
         contentContainerStyle={styles.contentContainerStyle}
         contentInsetAdjustmentBehavior="scrollableAxes"
       />
     </Container>
   );
-}
-
-const iconForCurrency = {
-  USD: iconUSD,
-  EUR: iconEUR,
-  GBP: iconGBP,
-};
-
-type Item = {
-  title: string,
-  value: Currency,
-  iconSource: ?ImageSource,
-};
-
-function useCurrencyItems(): Item[] {
-  return supportedFiatCurrencies.map((currency) => ({
-    title: currency,
-    value: currency,
-    iconSource: iconForCurrency[currency],
-  }));
 }
 
 export default SelectCurrency;
@@ -116,18 +90,15 @@ const styles = {
   contentContainerStyle: {
     paddingTop: spacing.large,
   },
+  icon: {
+    marginRight: spacing.medium,
+  },
 };
 
 const ItemContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 14px ${spacing.large}px;
-`;
-
-const ItemImage = styled.Image`
-  height: 48px;
-  width: 48px;
-  margin-right: ${spacing.medium}px;
 `;
 
 const ItemTitle = styled(Text)`
