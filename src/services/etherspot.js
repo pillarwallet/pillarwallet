@@ -68,6 +68,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+import { PROJECT_KEY } from 'constants/etherspotConstants';
 
 // types
 import type {
@@ -119,7 +120,7 @@ export class EtherspotService {
      */
     await Promise.all(this.supportedNetworks.map(async (networkName) => {
       const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
-      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName });
+      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName, projectKey: PROJECT_KEY });
 
       if (fcmToken) {
         try {
