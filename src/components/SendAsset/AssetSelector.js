@@ -132,6 +132,7 @@ const AssetSelector = ({
       balanceAfterFee={tokenBalanceAfterFee}
       disableMaxValue={disableMaxValue}
       onTokenPress={handleSelectAsset}
+      showChainIcon
     />
   );
 };

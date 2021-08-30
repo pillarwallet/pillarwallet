@@ -54,6 +54,7 @@ type Props = {|
   textStyle?: TextStyleProp,
   onTokenPress?: () => mixed,
   onPercentInput?: () => mixed,
+  showChainIcon?: boolean,
 |};
 
 type Instance = typeof RNTextInput;
@@ -65,6 +66,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
   const {
     value,
     onValueChange,
+    chain,
     asset,
     maxValue,
     referenceValue,
@@ -73,6 +75,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     style,
     textStyle,
     onTokenPress,
+    showChainIcon,
   } = props;
 
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
       {!!asset && (
         <TouchableTokenInfo disabled={!onTokenPress} onPress={onTokenPress}>
           <TokenSymbol>{asset?.symbol}</TokenSymbol>
-          <TokenIcon url={asset?.iconUrl} size={24} />
+          <TokenIcon url={asset?.iconUrl} size={24} chain={showChainIcon ? chain : undefined} />
         </TouchableTokenInfo>
       )}
       {!asset && onTokenPress && (

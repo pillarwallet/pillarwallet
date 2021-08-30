@@ -52,6 +52,7 @@ type Props = {|
   balanceAfterFee?: ?BigNumber, // Used for max value valiation
   disableMaxValue?: boolean, // Disable use max and use 100% (normally used for native assets)
   onTokenPress?: () => mixed,
+  showChainIcon?: boolean,
   style?: ViewStyleProp,
   tokenInputRef?: React.Ref<typeof TextInput>,
 |};
@@ -68,6 +69,7 @@ const TokenFiatValueInputs = ({
   balanceAfterFee,
   disableMaxValue,
   onTokenPress,
+  showChainIcon,
   style,
   tokenInputRef,
 }: Props) => {
@@ -114,6 +116,7 @@ const TokenFiatValueInputs = ({
         referenceValue={balance}
         referenceDisableMax={disableMaxValue}
         onTokenPress={onTokenPress}
+        showChainIcon={showChainIcon}
       />
 
       <TokenBalanceAccessory

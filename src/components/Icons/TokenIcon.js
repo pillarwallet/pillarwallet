@@ -59,6 +59,7 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
   };
 
   const ChainIcon = chain ? IconComponentPerChain[chain] : undefined;
+
   const chainIconSize = size / 2;
   const chainIconSizeStyle = { borderRadius: chainIconSize / 2, borderColor: colors.card };
 
@@ -67,11 +68,9 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
       <Image source={source} style={[imageSizeStyle, imageStyle]} />
 
       {!!ChainIcon && (
-        <ChainIcon
-          width={chainIconSize}
-          height={chainIconSize}
-          style={[styles.chainIcon, chainIconSizeStyle, chainIconStyle]}
-        />
+        <View style={[styles.chainIconWrapper, chainIconSizeStyle, chainIconStyle]}>
+          <ChainIcon width={chainIconSize} height={chainIconSize} />
+        </View>
       )}
     </View>
   );
@@ -87,10 +86,10 @@ const IconComponentPerChain = {
 };
 
 const styles = {
-  chainIcon: {
+  chainIconWrapper: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: -1,
+    right: -1,
     borderWidth: 1,
   },
 };
