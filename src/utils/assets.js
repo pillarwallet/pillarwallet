@@ -332,10 +332,17 @@ export const isMatchingCollectible = (
 export const mapWalletAssetsBalancesIntoAssetsByAddress = (
   walletAssetsBalances: WalletAssetsBalances,
   chainSupportedAssets: Asset[],
-): AssetByAddress => mapValues(
-  walletAssetsBalances,
-  ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
-);
+): AssetByAddress => {
+  const walletAssets = Object.keys(walletAssetsBalances)
+    .map((assetAddress) => findAssetByAddress(chainSupportedAssets, assetAddress));
+
+  return walletAssets.reduce((assetsByAddress, asset) => {
+    // filter out no longer supported
+    if (!asset) return assetsByAddress;
+
+    return { ...assetsByAddress, [addressAsKey(asset.address)]: asset };
+  }, {});
+};
 
 export const sortSupportedAssets = (
   supportedChainAssets: AssetsPerChain,
