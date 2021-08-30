@@ -109,7 +109,7 @@ describe('Auth actions', () => {
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
 
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
-      { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
+      { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
     ];
 

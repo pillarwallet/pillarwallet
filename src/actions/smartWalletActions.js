@@ -108,6 +108,7 @@ import type {
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionStatus } from 'models/Transaction';
+import type { EthereumWallet } from 'models/Wallet';
 
 // utils
 import {
@@ -147,6 +148,7 @@ import {
   reportLog,
 } from 'utils/common';
 import {
+  formatToRawPrivateKey,
   getPrivateKeyFromPin,
   normalizeWalletAddress,
 } from 'utils/wallet';
@@ -1516,10 +1518,12 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     if (!smartWalletNeedsInit) return;
 
-    dispatch(lockScreenAction(
-      (privateKey: string) => dispatch(initOnLoginArchanovaAccountAction(privateKey)),
-      t('paragraph.sessionExpiredReEnterPin'),
-    ));
+    const onLoginSuccess = (pin: string, wallet: EthereumWallet) => {
+      const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
+      dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
+    };
+
+    dispatch(lockScreenAction(onLoginSuccess, t('paragraph.sessionExpiredReEnterPin')));
   };
 };
 

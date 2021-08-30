@@ -110,8 +110,6 @@ import UsernameFailed from 'components/UsernameFailed';
 
 // actions
 import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
-import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
@@ -567,14 +565,12 @@ type Props = {
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
   initWalletConnectSessions: (resetExisting: boolean) => void,
-  fetchAllAccountsAssetsBalances: () => Function,
   notifications: Notification[],
   showHomeUpdateIndicator: boolean,
   navigation: NavigationScreenProp<*>,
   wallet: ?EthereumWallet,
   backupStatus: BackupStatus,
   isPickingImage: boolean,
-  fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   isBrowsingWebView: boolean,
   isOnline: boolean,
@@ -602,8 +598,6 @@ class AppFlow extends React.Component<Props, State> {
   componentDidMount() {
     const {
       startListeningNotifications,
-      fetchAllAccountsAssetsBalances,
-      fetchAllCollectiblesData,
       initWalletConnectSessions,
       checkArchanovaSession,
     } = this.props;
@@ -616,9 +610,6 @@ class AppFlow extends React.Component<Props, State> {
       SMART_WALLET_SESSION_CHECK_INTERVAL,
     );
 
-    // the following actions are useless if user is not yet registered on back-end
-    fetchAllAccountsAssetsBalances();
-    fetchAllCollectiblesData();
     initWalletConnectSessions(true);
   }
 
@@ -742,8 +733,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   initWalletConnectSessions: (resetExisting: boolean) => dispatch(initWalletConnectSessionsAction(resetExisting)),
-  fetchAllAccountsAssetsBalances: () => dispatch(fetchAllAccountsAssetsBalancesAction()),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),

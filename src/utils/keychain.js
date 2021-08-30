@@ -89,8 +89,15 @@ export const shouldUpdateKeychainObject = (data: KeyChainData) => {
   return !data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic');
 };
 
-export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) => {
-  const keychainData: KeyChainData = await getKeychainDataObject();
+export const getDecryptedWalletFromKeychain = async (
+  pin: string,
+  withMnemonic?: boolean,
+  keychainData?: KeyChainData,
+) => {
+  if (!keychainData) {
+    keychainData = await getKeychainDataObject();
+  }
+
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
   const mnemonicPhrase = typeof mnemonic === 'string' ? mnemonic : mnemonic?.phrase; // needed for ethers v5 migration
   if (pin && pin === pinFromKeychain && privateKey) {

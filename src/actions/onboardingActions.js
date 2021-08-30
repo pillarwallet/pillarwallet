@@ -81,7 +81,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
-import { initialDeeplinkExecutedAction } from 'actions/appSettingsActions';
+import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -335,7 +335,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
       'onboarding',
       'finishOnboardingAction: dispatching initialDeeplinkExecutedAction',
     );
-    dispatch(initialDeeplinkExecutedAction());
+    dispatch(initialDeepLinkExecutedAction());
 
     let routeName = HOME;
 

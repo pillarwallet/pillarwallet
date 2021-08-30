@@ -28,6 +28,7 @@ import Instabug from 'instabug-reactnative';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
+import { firebaseCrashlytics } from 'services/firebase';
 
 // constants
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
@@ -62,6 +63,7 @@ import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
+import { SET_USER } from 'constants/userConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -152,6 +154,9 @@ export const initAppAndRedirectAction = () => {
       const totalBalances = storageData?.totalBalances?.data ?? {};
       dispatch({ type: SET_TOTAL_BALANCES, payload: totalBalances });
 
+      const user = storageData?.user?.user ?? {};
+      dispatch({ type: SET_USER, payload: user });
+
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
       dispatch({
@@ -212,8 +217,15 @@ export const initAppAndRedirectAction = () => {
   };
 };
 
-export const setupSentryAction = (user: ?Object, wallet: Object) => {
+export const setupLoggingServicesAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
+    if (__DEV__) return;
+
+    const {
+      user: { data: user },
+      wallet: { data: wallet },
+    } = getState();
+
     const activeAccountAddress = activeAccountAddressSelector(getState());
     const accounts = accountsSelector(getState());
 
@@ -223,8 +235,8 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
     const etherspotAccountAddress = etherspotAccount ? getAccountAddress(etherspotAccount) : null;
     const archanovaAccountAddress = archanovaAccount ? getAccountAddress(archanovaAccount) : null;
 
-    const { username } = user || {};
-    const { address: keyWalletAddress } = wallet;
+    const { username } = user ?? {};
+    const { address: keyWalletAddress } = wallet ?? {};
 
     Sentry.setUser({
       username,
@@ -247,6 +259,9 @@ export const setupSentryAction = (user: ?Object, wallet: Object) => {
     if (archanovaAccount) Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress ?? '');
     /* eslint-enable i18next/no-literal-string */
 
-    if (username) Instabug.setUserAttribute('ENS', username);
+    if (username) {
+      Instabug.setUserAttribute('ENS', username);
+      firebaseCrashlytics.setUserId(username);
+    }
   };
 };

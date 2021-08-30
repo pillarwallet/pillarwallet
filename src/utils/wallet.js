@@ -26,10 +26,19 @@ import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
 // eslint-disable-next-line camelcase
 import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 
-import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
-import Storage from 'services/storage';
+// actions
 import { saveDbAction } from 'actions/dbActions';
+
+// utils
+import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
+import { getDecryptedWalletFromKeychain, getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
+
+// services
+import Storage from 'services/storage';
+
+// types
 import type { Dispatch } from 'reducers/rootReducer';
+
 
 const storage = Storage.getInstance('db');
 
@@ -48,7 +57,7 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
+export async function getSaltedPin(pin: string, dispatch: Dispatch): Promise<string> {
   let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
   if (!deviceUniqueId) {
     deviceUniqueId = DeviceInfo.getUniqueId();
@@ -194,21 +203,64 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
   };
 }
 
-export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
+export async function decryptWalletFromObject(encryptedWallet: Object, saltedPin: string): Promise<ethers.Wallet> {
   return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
 }
 
-export function constructWalletFromPrivateKey(privateKey: string): Object {
+export function constructWalletFromPrivateKey(privateKey: string): ethers.Wallet {
   return new ethers.Wallet(privateKey);
 }
 
-export function constructWalletFromMnemonic(mnemonic: string): Object {
+export function constructWalletFromMnemonic(mnemonic: string): ethers.Wallet {
   return ethers.Wallet.fromMnemonic(mnemonic);
 }
 
-export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {
+export async function decryptWalletFromStorage(pin: string, dispatch: Dispatch): Promise<ethers.Wallet> {
   const { wallet: encryptedWallet } = await storage.get('wallet');
   const saltedPin = await getSaltedPin(pin, dispatch);
-  const wallet = await decryptWallet(encryptedWallet, saltedPin);
-  return get(wallet, 'signingKey.privateKey');
+
+  return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
+}
+
+export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch): Promise<?string> {
+  const wallet = await decryptWalletFromStorage(pin, dispatch);
+
+  return wallet?.signingKey?.privateKey;
+}
+
+export async function getDecryptedWallet(
+  pin: string,
+  privateKey: ?string,
+  dispatch: Dispatch,
+  biometricsEnabled: boolean,
+  withMnemonic: boolean = false,
+): Promise<?ethers.Wallet> {
+  if (privateKey) {
+    return constructWalletFromPrivateKey(privateKey);
+  }
+
+  if (!pin) return null;
+
+  const keychainData = await getKeychainDataObject();
+  if (keychainData?.pin) {
+    return getDecryptedWalletFromKeychain(pin, withMnemonic, keychainData);
+  }
+
+  const wallet = await decryptWalletFromStorage(pin, dispatch);
+
+  // migrate older users for keychain access
+  const keychainDataObject = {
+    pin,
+    privateKey: wallet?.privateKey,
+    mnemonic: wallet?.mnemonic?.phrase,
+  };
+  await setKeychainDataObject(keychainDataObject, biometricsEnabled);
+
+  return wallet;
+}
+
+export function formatToRawPrivateKey(privateKey: string): string {
+  return privateKey.indexOf('0x') === 0
+    ? privateKey.slice(2)
+    : privateKey;
 }
