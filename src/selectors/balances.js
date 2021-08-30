@@ -90,10 +90,10 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
   },
 );
 
-export const useWalletAssetBalance = (chain: ?Chain, assetAddress: ?string): ?BigNumber => {
+export const useWalletAssetBalance = (chain: ?Chain, assetAddress: ?string): BigNumber => {
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
-  if (!chain || !assetAddress) return null;
+  if (!chain || !assetAddress) return BigNumber(0);
 
   const balance = valueForAddress(accountBalances[chain]?.wallet, assetAddress)?.balance;
-  return wrapBigNumberOrNil(balance);
+  return BigNumber(balance ?? 0);
 };

@@ -232,15 +232,16 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
   return chainNativeAsset.symbol;
 };
 
-export const isValidTransferValue = (value: ?BigNumber, maxValue: ?BigNumber): boolean => {
-  if (!value || !value.isFinite() || !value.gt(0)) return false;
-
-  if (!maxValue) return true;
-
-  return value.lte(maxValue);
+/**
+ * Standard check to allow transfer: value value, greater than zero & less than or equal to balance.
+ */
+export const isValidValueForTransfer = (value: ?BigNumber, balance: BigNumber): boolean %checks => {
+  return !!value && value.isFinite() && value.gt(0) && value.lte(balance);
 };
 
-export const isBalanceEnoughForTransfer = (balance: ?BigNumber, value: ?BigNumber): boolean => {
-  if (!balance) return true;
-  return !value || value?.lte(balance);
+/**
+ * Standard check to trigger not enough balance error message. Treats null value as zero.
+ */
+export const isLessThanOrEqualToBalance = (value: ?BigNumber, maxValue: BigNumber): boolean %checks => {
+  return value?.lte(maxValue) ?? true;
 };

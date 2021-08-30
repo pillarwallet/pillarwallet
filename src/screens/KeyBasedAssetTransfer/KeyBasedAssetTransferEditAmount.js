@@ -47,7 +47,7 @@ import {
 import { mapAssetDataToAsset } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { valueForAddress } from 'utils/common';
-import { isValidTransferValue, isBalanceEnoughForTransfer } from 'utils/transactions';
+import { isValidValueForTransfer, isLessThanOrEqualToBalance } from 'utils/transactions';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -82,8 +82,8 @@ function KeyBasedAssetTransferEditAmount() {
     );
   }
 
-  const isValidValue = isValidTransferValue(value, balance);
-  const hasEnoughBalance = isBalanceEnoughForTransfer(balance, value);
+  const isValidValue = isValidValueForTransfer(value, balance);
+  const hasEnoughBalance = isLessThanOrEqualToBalance(value, balance);
 
   const handleUseMax = () => {
     setValue(balance);
@@ -135,10 +135,8 @@ export default KeyBasedAssetTransferEditAmount;
 function useAssetBalance(address: ?string) {
   const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
 
-  const assetBalance = valueForAddress(keyWalletBalances, address)?.balance;
-  if (!assetBalance) return null;
-
-  return BigNumber(assetBalance);
+  const balance = valueForAddress(keyWalletBalances, address)?.balance;
+  return BigNumber(balance ?? 0);
 }
 
 const Content = styled.View`

@@ -44,7 +44,7 @@ import { setTokenToMigrateAction } from 'actions/walletMigrationArchanovaActions
 
 // Utils
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { isValidTransferValue, isBalanceEnoughForTransfer } from 'utils/transactions';
+import { isValidValueForTransfer, isLessThanOrEqualToBalance } from 'utils/transactions';
 
 function WalletMigrationArchanovaSetAmount() {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.setAmount');
@@ -70,8 +70,8 @@ function WalletMigrationArchanovaSetAmount() {
     InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
   }, []);
 
-  const isValid = isValidTransferValue(value, balance);
-  const hasEnoughBalance = isBalanceEnoughForTransfer(balance, value);
+  const isValid = isValidValueForTransfer(value, balance);
+  const hasEnoughBalance = isLessThanOrEqualToBalance(value, balance);
 
   const handleUseMax = () => {
     setValue(balance);

@@ -38,7 +38,7 @@ import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 // utils
 import { parseNumber, valueForAddress, addressAsKey } from 'utils/common';
 import { getReceiverWithEnsName } from 'utils/contacts';
-import { isValidTransferValue } from 'utils/transactions';
+import { isValidValueForTransfer } from 'utils/transactions';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -260,7 +260,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     const resolvedAssetData = assetData ?? defaultAssetData;
     const balance = BigNumber(valueForAddress(customBalances, resolvedAssetData?.contractAddress)?.balance || 0);
-    const isNextButtonDisabled = !isValidTransferValue(value, balance) || !isOnline || !!intentError;
+    const isNextButtonDisabled = !isValidValueForTransfer(value, balance) || !isOnline || !!intentError;
 
     return (
       <SendContainer

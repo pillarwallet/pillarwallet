@@ -40,7 +40,7 @@ import Toast from 'components/Toast';
 // utils
 import { truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { isValidTransferValue } from 'utils/transactions';
+import { isValidValueForTransfer } from 'utils/transactions';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -113,7 +113,7 @@ const SendAsset = ({
   const balance = getBalanceBN(balances, assetAddress);
 
   const isCollectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE;
-  const isValidValue = isCollectible || isValidTransferValue(value, balance);
+  const isValidValue = isCollectible || isValidValueForTransfer(value, balance);
 
   const currentValue = value ?? BigNumber(0);
 
