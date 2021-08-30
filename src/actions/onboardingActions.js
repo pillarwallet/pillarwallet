@@ -339,9 +339,9 @@ export const finishOnboardingAction = (retry?: boolean) => {
 
     let routeName = HOME;
 
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
     const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
     if (enableOnboardingTutorial) {
+      logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
       await dispatch(fetchTutorialDataIfNeededAction());
       const { onboarding: { tutorialData } } = getState();
       if (tutorialData) routeName = TUTORIAL_FLOW;

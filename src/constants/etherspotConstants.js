@@ -18,3 +18,4 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 export const ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT = 461000; // avg
+export const PROJECT_KEY = 'pillarapp'; // project key name for sdk
