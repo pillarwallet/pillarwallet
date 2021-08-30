@@ -53,6 +53,7 @@ import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
 import type { Value } from 'utils/common';
+import { omitNilProps } from 'utils/object';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -332,10 +333,15 @@ export const isMatchingCollectible = (
 export const mapWalletAssetsBalancesIntoAssetsByAddress = (
   walletAssetsBalances: WalletAssetsBalances,
   chainSupportedAssets: Asset[],
-): AssetByAddress => mapValues(
-  walletAssetsBalances,
-  ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
-);
+): AssetByAddress => {
+  const assetsByAddress = mapValues(
+    walletAssetsBalances,
+    ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
+  );
+
+  // removes assets that were not found / no longer supported
+  return omitNilProps(assetsByAddress);
+};
 
 export const sortSupportedAssets = (
   supportedChainAssets: AssetsPerChain,
