@@ -40,7 +40,7 @@ import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 
 type Props = {|
   url: ?string,
-  chain?: Chain,
+  chain?: ?Chain,
   size?: number,
   style?: ViewStyleProp,
   imageStyle?: ImageStyleProp,
