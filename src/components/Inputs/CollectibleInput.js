@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
@@ -45,26 +46,23 @@ type Props = {|
  * TextInput for handling token value input.
  */
 function CollectibleInput({ collectible, onRequestSelect, style }: Props) {
+  const { width: screenWidth } = useWindowDimensions();
+
   const chainConfig = useChainConfig(collectible.chain);
+  const images = useThemedImages();
+
   const title = collectible.name;
-
-  const { towellie: genericCollectible } = useThemedImages();
-
-  const source = collectible.imageUrl ? { uri: collectible.imageUrl } : genericCollectible;
+  const source = collectible.imageUrl ? { uri: collectible.imageUrl } : images.towellie;
+  const imageSize = screenWidth - (2 * spacing.large);
 
   return (
     <Container style={style}>
       <TouchableTitleContainer onPress={onRequestSelect}>
         <Title>{title}</Title>
-        <ChainIcon name={chainConfig.iconName} />
+        <ChainIcon name={chainConfig.iconName} width={16} height={16} />
       </TouchableTitleContainer>
 
-      <CollectibleImage
-        source={source}
-        resizeMode="contain"
-        width={180}
-        height={180}
-      />
+      <CollectibleImage source={source} resizeMode="contain" width={imageSize} height={imageSize} />
     </Container>
   );
 }
@@ -79,7 +77,7 @@ const Container = styled.View`
 const TouchableTitleContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing.large}px;
 `;
 
 const Title = styled(Text)`

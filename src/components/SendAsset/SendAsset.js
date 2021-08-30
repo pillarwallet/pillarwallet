@@ -246,7 +246,7 @@ const SendAsset = ({
       }}
       assetData={assetData}
       onAssetDataChange={(asset) => setAssetData(asset)}
-      onCollectibleAssetDataChange={(collectible) => setAssetData(collectible)}
+      onCollectibleChange={(collectible) => setAssetData(collectible)}
       value={value}
       onValueChange={setValue}
       txFeeInfo={feeInfo}
