@@ -27,7 +27,7 @@ import t from 'translations/translate';
 // Components
 import { Spacing } from 'components/modern/Layout';
 import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenBalanceAccessory from 'components/Inputs/TokenBalanceAccessory';
+import TokenBalanceAccessory from 'components/Inputs/TokenValueInput/TokenBalanceAccessory';
 import FiatValueInput from 'components/Inputs/FiatValueInput';
 
 // Selectors

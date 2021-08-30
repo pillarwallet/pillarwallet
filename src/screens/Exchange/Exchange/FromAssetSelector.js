@@ -28,7 +28,7 @@ import { useTranslation } from 'translations/translate';
 import AssetSelectorModal from 'components/AssetSelectorModal';
 import Modal from 'components/Modal';
 import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenFiatValueAccessory from 'components/Inputs/TokenFiatValueAccessory';
+import TokenFiatValueAccessory from 'components/Inputs/TokenValueInput/TokenFiatValueAccessory';
 
 // Selectors
 import { useWalletAssetBalance } from 'selectors/balances';

@@ -29,7 +29,7 @@ import t from 'translations/translate';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenBalanceAccessory from 'components/Inputs/TokenBalanceAccessory';
+import TokenBalanceAccessory from 'components/Inputs/TokenValueInput/TokenBalanceAccessory';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
