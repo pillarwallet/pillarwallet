@@ -37,16 +37,17 @@ type Props = {
   placeholder?: string,
   inputRef?: React.Ref<typeof RNTextInput>,
   style?: TextStyleProp,
+  error?: boolean,
 };
 
-function SearchInput({ query, onQueryChange, placeholder, inputRef, style }: Props) {
+function SearchInput({ query, onQueryChange, placeholder, inputRef, style, error }: Props) {
   const colors = useThemeColors();
 
   const handleChangeText = (text: string) => {
     onQueryChange(text);
   };
 
-  const styleList = [styles.input, { opacity: query ? 1 : 0.4 }, style];
+  const styleList = [styles.input, { opacity: query ? 1 : 0.4, color: error ? colors.negative : colors.text }, style];
 
   return (
     <MultilineTextInput
