@@ -237,7 +237,11 @@ export async function getDecryptedWallet(
 
   if (!pin) return null;
 
-  const keychainData = await getKeychainDataObject();
+  /**
+   * Tries to retrieve from keychain without biometrics (basic secure chip approach),
+   * actual biometric unlock attempt happens on component level.
+   */
+  const keychainData = biometricsEnabled ? null : await getKeychainDataObject();
   if (keychainData?.pin) {
     const {
       pin: keychainPin,
