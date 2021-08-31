@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 // Components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SearchBar from 'components/legacy/SearchBar';
+import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
@@ -96,7 +96,6 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
     <SlideModal
       ref={modalRef}
       fullScreen
-      onModalShow={() => searchInputRef.current?.focus()}
       noSwipeToDismiss
       noClose
       backgroundColor={colors.basic050}
@@ -112,9 +111,9 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
       >
         <SearchBar
           query={query}
-          onChangeQuery={(text) => setQuery(text?.trim() ?? '')}
+          onQueryChange={(text) => setQuery(text?.trim() ?? '')}
+          placeholder={t('label.filterByName')}
           inputRef={searchInputRef}
-          iconProps={{ persistIconOnFocus: true }}
         />
 
         {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22, paddingBottom: 12 }} />}

@@ -28,21 +28,25 @@ import MultilineTextInput from 'components/Inputs/MultilineTextInput';
 import { useThemeColors } from 'utils/themes';
 import { fontSizes, lineHeights } from 'utils/variables';
 
+// Types
+import type { TextStyleProp } from 'utils/types/react-native';
+
 type Props = {
   query: string,
   onQueryChange: (query: string) => mixed,
   placeholder?: string,
   inputRef?: React.Ref<typeof RNTextInput>,
+  style?: TextStyleProp,
 };
 
-function SearchInput({ query, onQueryChange, placeholder, inputRef }: Props) {
+function SearchInput({ query, onQueryChange, placeholder, inputRef, style }: Props) {
   const colors = useThemeColors();
 
   const handleChangeText = (text: string) => {
     onQueryChange(text);
   };
 
-  const styleList = [styles.input, { opacity: query ? 1 : 0.4 }];
+  const styleList = [styles.input, { opacity: query ? 1 : 0.4 }, style];
 
   return (
     <MultilineTextInput
@@ -52,6 +56,8 @@ function SearchInput({ query, onQueryChange, placeholder, inputRef }: Props) {
       placeholder={placeholder}
       placeholderTextColor={colors.tertiaryText}
       style={styleList}
+      autoCapitalize="none"
+      autoCorrect={false}
     />
   );
 }

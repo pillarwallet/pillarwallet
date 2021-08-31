@@ -37,7 +37,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
-import SearchBar from 'components/legacy/SearchBar';
+import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 
 // Selectors
@@ -93,6 +93,10 @@ const ContactSelectorOptions = ({
   const handleInputChange = (input: string) => {
     input = input?.trim() ?? '';
     setQuery(input);
+
+    // TODO improve error handling
+    const error = validateSearch(input);
+    if (error) { return; }
 
     if (allowCustomAddress) {
       const isValid = isValidAddressOrEnsName(input) && !filterContacts(contacts, input).length;
@@ -208,12 +212,9 @@ const ContactSelectorOptions = ({
       >
         <SearchBar
           query={query}
-          onChangeQuery={handleInputChange}
-          validator={validateSearch}
-          inputRef={searchInputRef}
+          onQueryChange={handleInputChange}
           placeholder={searchPlaceholder}
-          iconProps={{ persistIconOnFocus: true }}
-          showPasteButton
+          inputRef={searchInputRef}
         />
 
         <FlatList
