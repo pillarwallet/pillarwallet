@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import Text from 'components/modern/Text';
 import FiatValueView from 'components/modern/FiatValueView';
 import FiatChangeView from 'components/modern/FiatChangeView';
-import TokenIcon from 'components/modern/TokenIcon';
+import TokenIcon from 'components/Icons/TokenIcon';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';

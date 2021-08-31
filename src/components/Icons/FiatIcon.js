@@ -19,34 +19,39 @@
 */
 
 import * as React from 'react';
-
-// Components
-import Image from 'components/Image';
+import { Image } from 'react-native';
 
 // Utils
 import { useThemedImages } from 'utils/images';
 
 // Types
-import type { ViewStyleProp } from 'utils/types/react-native';
+import type { ImageStyleProp } from 'utils/types/react-native';
+import type { Currency } from 'models/Rates';
+
+// Assets
+const iconUSD = require('assets/icons/icon-48-fiat-usd.png');
+const iconEUR = require('assets/icons/icon-48-fiat-eur.png');
+const iconGBP = require('assets/icons/icon-48-fiat-gbp.png');
 
 type Props = {|
-  url: ?string,
-  diameter?: number,
-  style?: ViewStyleProp
+  currency: Currency,
+  size?: number,
+  style?: ImageStyleProp,
 |};
 
-function TokenIcon({ url, diameter = 48, style }: Props) {
+function FiatIcon({ currency, size = 48, style }: Props) {
   const { genericToken } = useThemedImages();
 
-  const source = url ? { uri: url } : genericToken;
+  const source = iconSoureForCurrency[currency] ?? genericToken;
+  const sizeStyle = { width: size, height: size };
 
-  const basicStyle = {
-    width: diameter,
-    height: diameter,
-    borderRadius: diameter / 2,
-  };
-
-  return <Image source={source} style={[basicStyle, style]} />;
+  return <Image source={source} style={[sizeStyle, style]} />;
 }
 
-export default TokenIcon;
+export default FiatIcon;
+
+const iconSoureForCurrency = {
+  USD: iconUSD,
+  EUR: iconEUR,
+  GBP: iconGBP,
+};
