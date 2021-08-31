@@ -25,10 +25,7 @@ import {
   Platform,
   TextInput as RNInput,
   TouchableWithoutFeedback,
-  Keyboard,
 } from 'react-native';
-import get from 'lodash.get';
-import t from 'translations/translate';
 
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
@@ -38,13 +35,10 @@ import Image from 'components/Image';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
-import SelectorOptions from 'components/SelectorOptions';
 import Tooltip from 'components/Tooltip';
-import Modal from 'components/Modal';
 
 import { fontSizes, fontStyles } from 'utils/variables';
-import { getColorByTheme, getThemeColors } from 'utils/themes';
-import { noop } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
 
@@ -52,7 +46,7 @@ import type { ChangeEvent } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
-import type { InputPropsType, SelectorOptions as SelectorOptionsType } from 'models/TextInput';
+import type { InputPropsType } from 'models/TextInput';
 import type { Option } from 'models/Selector';
 
 type Props = {
@@ -73,13 +67,9 @@ type Props = {
   leftSideText?: string,
   numeric?: boolean,
   iconProps?: IconButtonProps,
-  selectorOptions?: SelectorOptionsType,
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
   fallbackToGenericToken?: boolean,
-  renderOption?: (item: Option, selectOption: (option: Option) => void) => React.Node,
-  renderSelector?: (selector: Object) => React.Node,
-  optionKeyExtractor?: (item: Object) => string,
   hasError?: boolean,
   customInputHeight?: number,
   onLeftSideTextPress?: () => void,
@@ -145,13 +135,6 @@ const RightSideWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const StyledImage = styled(Image)`
-  height: 24px;
-  width: 24px;
-  resize-mode: contain;
-  ${({ source, theme }) => !source && `tint-color: ${theme.colors.basic010};`}
-`;
-
 const AddonRegularText = styled(BaseText)`
   color: ${({ theme }) => theme.colors.basic030};
   flex-wrap: wrap;
@@ -164,48 +147,9 @@ const AddonIcon = styled(Icon)`
   margin-right: 9px;
 `;
 
-const Selector = styled.TouchableOpacity`
-  height: ${({ height }) => height}px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 16px;
-  padding-right: ${({ paddingRight }) => paddingRight || 10}px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border: 1px solid ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })};
-  ${({ fullWidth }) => fullWidth && `
-    flex: 1;
-    border-radius: 4px;
-  `}
-  margin: 0;
-`;
-
-const ValueWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const Placeholder = styled(MediumText)`
-  ${fontStyles.big};
-`;
-
 const PlaceholderRight = styled(MediumText)`
   ${fontStyles.big};
   ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
-`;
-
-const SelectorValue = styled(MediumText)`
-  ${fontStyles.big};
-  color: ${({ theme }) => theme.colors.basic010};
-  margin-left: 8px;
-`;
-
-const SelectorChevron = styled(Icon)`
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.basic020};
-  margin-left: 15px;
 `;
 
 const InputLabel = styled(MediumText)`
@@ -314,39 +258,6 @@ class TextInput extends React.Component<Props, State> {
     if (onSubmit) onSubmit();
   };
 
-  openSelector = () => {
-    const {
-      selectorOptions = {},
-      renderOption,
-    } = this.props;
-
-    const {
-      options = [],
-      selectorModalTitle,
-      optionsSearchPlaceholder,
-    } = selectorOptions;
-
-    Keyboard.dismiss();
-    Modal.open(() => (
-      <SelectorOptions
-        onHide={this.props.inputProps.onSelectorClose}
-        title={selectorModalTitle}
-        options={options}
-        searchPlaceholder={optionsSearchPlaceholder}
-        optionKeyExtractor={this.optionKeyExtractor}
-        onOptionSelect={this.selectValue}
-        renderOption={renderOption}
-        onOpen={this.props.inputProps.onSelectorOpen}
-      />
-    ));
-  };
-
-  selectValue = (selectedValue: Option) => {
-    const { inputProps: { onChange, selectorValue } } = this.props;
-    const { input } = selectorValue;
-    if (onChange) onChange({ selector: (selectedValue: $FlowFixMe), input });
-  };
-
   focusInput = () => {
     if (this.searchInput) this.searchInput.focus();
   };
@@ -359,58 +270,6 @@ class TextInput extends React.Component<Props, State> {
     const { onLeftSideTextPress } = this.props;
     if (onLeftSideTextPress) onLeftSideTextPress();
     this.focusMultilineInput();
-  };
-
-  renderSelector = () => {
-    const {
-      theme, inputProps, selectorOptions = {}, renderSelector,
-    } = this.props;
-    const { genericToken } = images(theme);
-    const selector = get(inputProps, 'selectorValue.selector', {});
-
-    if (renderSelector) return renderSelector(selector);
-
-    const {
-      icon: selectedOptionIcon,
-      iconFallback: selectedOptionFallback,
-      value: selectedValue,
-    } = selector;
-
-    const shouldDisplaySpinner = this.getSelectorOptionsCount(selectorOptions) < 1;
-
-    if (!selectedValue) {
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          <Placeholder>{selectorOptions.selectorPlaceholder || t('label.select')}</Placeholder>
-          {shouldDisplaySpinner && <Spinner size={30} trackWidth={3} style={{ paddingLeft: 15 }} />}
-        </View>
-      );
-    }
-
-    if (shouldDisplaySpinner) {
-      return <Spinner size={30} trackWidth={3} />;
-    }
-
-    const optionImageSource = resolveAssetSource(selectedOptionIcon);
-    return (
-      <ValueWrapper>
-        <StyledImage
-          key={selectedValue}
-          source={optionImageSource}
-          fallbackSource={selectedOptionFallback || genericToken}
-          resizeMode="contain"
-        />
-        <SelectorValue>{selectedValue}</SelectorValue>
-      </ValueWrapper>
-    );
-  };
-
-  optionKeyExtractor = (option) => {
-    const { optionKeyExtractor } = this.props;
-    if (optionKeyExtractor) {
-      return optionKeyExtractor(option);
-    }
-    return option?.value;
   };
 
   renderInputHeader = () => {
@@ -448,10 +307,6 @@ class TextInput extends React.Component<Props, State> {
     );
   };
 
-  getSelectorOptionsCount = (selectorOptions?: SelectorOptionsType): number => {
-    return selectorOptions?.options?.length ?? 0;
-  }
-
   render() {
     const { isFocused, selectionStart } = this.state;
     const {
@@ -470,7 +325,6 @@ class TextInput extends React.Component<Props, State> {
       numeric,
       iconProps,
       rightPlaceholder,
-      selectorOptions = {},
       customInputHeight,
       inputWrapperStyle = {},
       itemHolderStyle,
@@ -499,16 +353,10 @@ class TextInput extends React.Component<Props, State> {
 
     const customStyle = multiline ? { paddingTop: 10 } : {};
 
-    const { fullWidth: fullWidthSelector } = selectorOptions;
-
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText || !!leftSideSymbol;
     const showRightAddon = !!iconProps || !!loading || !!rightPlaceholder;
 
-    const selectorOptionsCount = this.getSelectorOptionsCount(selectorOptions);
-
     const imageSource = resolveAssetSource(innerImageURI);
-
-    const disabledSelector = selectorOptionsCount <= 1;
 
     const defaultInputStyle = {
       fontSize: getFontSize(value, numeric),
@@ -533,17 +381,6 @@ class TextInput extends React.Component<Props, State> {
                 isFocused={isFocused}
                 height={inputHeight}
               >
-                {!!Object.keys(selectorOptions).length &&
-                <Selector
-                  fullWidth={fullWidthSelector}
-                  onPress={!disabledSelector ? this.openSelector : noop}
-                  disabled={disabledSelector}
-                  height={inputHeight}
-                  paddingRight={disabledSelector && 16}
-                >
-                  {this.renderSelector()}
-                  {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
-                </Selector>}
                 {showLeftAddon &&
                 <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
                   <LeftSideWrapper>
@@ -556,8 +393,7 @@ class TextInput extends React.Component<Props, State> {
                     {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                   </LeftSideWrapper>
                 </TouchableWithoutFeedback>}
-                {!fullWidthSelector && (
-                /* $FlowFixMe: incorrect RN flow types */
+                {/* $FlowFixMe: incorrect RN flow types */}
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
 
@@ -589,7 +425,6 @@ class TextInput extends React.Component<Props, State> {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-                )}
                 {showRightAddon &&
                 <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
                   {!!rightPlaceholder &&
