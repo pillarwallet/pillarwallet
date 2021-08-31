@@ -31,7 +31,7 @@ import { saveDbAction } from 'actions/dbActions';
 
 // utils
 import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
-import { getDecryptedWalletFromKeychain, getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
+import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -203,10 +203,6 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
   };
 }
 
-export async function decryptWalletFromObject(encryptedWallet: Object, saltedPin: string): Promise<ethers.Wallet> {
-  return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
-}
-
 export function constructWalletFromPrivateKey(privateKey: string): ethers.Wallet {
   return new ethers.Wallet(privateKey);
 }
@@ -243,7 +239,21 @@ export async function getDecryptedWallet(
 
   const keychainData = await getKeychainDataObject();
   if (keychainData?.pin) {
-    return getDecryptedWalletFromKeychain(pin, withMnemonic, keychainData);
+    const {
+      pin: keychainPin,
+      privateKey: keychainPrivateKey,
+      mnemonic: keychainMnemonic,
+    } = keychainData;
+
+    const mnemonicPhrase = typeof keychainMnemonic === 'string'
+      ? keychainMnemonic
+      : keychainMnemonic?.phrase; // needed for ethers v5 migration
+
+    if (pin && pin === keychainPin && keychainPrivateKey) {
+      return withMnemonic && mnemonicPhrase
+        ? constructWalletFromMnemonic(mnemonicPhrase)
+        : constructWalletFromPrivateKey(keychainPrivateKey);
+    }
   }
 
   const wallet = await decryptWalletFromStorage(pin, dispatch);

@@ -22,10 +22,11 @@ import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
-
 import { getEnv } from 'configs/envConfig';
-import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
+
+// constants
 import { STAGING } from 'constants/envConstants';
+
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
 
@@ -87,26 +88,6 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
   return !data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic');
-};
-
-export const getDecryptedWalletFromKeychain = async (
-  pin: string,
-  withMnemonic?: boolean,
-  keychainData?: KeyChainData,
-) => {
-  if (!keychainData) {
-    keychainData = await getKeychainDataObject();
-  }
-
-  const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
-  const mnemonicPhrase = typeof mnemonic === 'string' ? mnemonic : mnemonic?.phrase; // needed for ethers v5 migration
-  if (pin && pin === pinFromKeychain && privateKey) {
-    return withMnemonic && mnemonicPhrase
-      ? constructWalletFromMnemonic(mnemonicPhrase)
-      : constructWalletFromPrivateKey(privateKey);
-  }
-
-  throw new Error(); // wrong pin
 };
 
 // check biometrics because we don't want users with BM on to trigger getKeychainDataObject
