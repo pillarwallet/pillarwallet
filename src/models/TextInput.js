@@ -54,17 +54,6 @@ export type InputPropsType = {
   customRightLabel?: React.Node,
 };
 
-export type SelectorOptions = {
-  options?: Option[],
-  selectorPlaceholder?: 'string',
-  fullWidth?: boolean,
-  showOptionsTitles?: boolean,
-  optionsTitle?: string,
-  selectorModalTitle?: string,
-  optionsSearchPlaceholder?: string,
-  displayFiatOptionsFirst?: boolean,
-};
-
 export type FormSelector = {
   selector: Object,
   input: string,

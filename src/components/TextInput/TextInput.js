@@ -47,7 +47,6 @@ import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 import type { InputPropsType } from 'models/TextInput';
-import type { Option } from 'models/Selector';
 
 type Props = {
   errorMessage?: string,
