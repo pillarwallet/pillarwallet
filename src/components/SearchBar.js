@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Icon from 'components/modern/Icon';
-import MultilineTextInput from 'components/Inputs/MultilineTextInput';
+import MultilineTextInput from 'components/inputs/MultilineTextInput';
 import Text from 'components/modern/Text';
 
 // Utils

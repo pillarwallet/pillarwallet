@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import type { Option } from './Selector';
 
 type Value = string | number;
 
