@@ -1,6 +1,0 @@
-{
-  "name": "SearchBlock",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./SearchBlock.js"
-}
