@@ -333,7 +333,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
      */
     logBreadcrumb(
       'onboarding',
-      'finishOnboardingAction: dispatching initialDeeplinkExecutedAction',
+      'finishOnboardingAction: dispatching initialDeepLinkExecutedAction',
     );
     dispatch(initialDeepLinkExecutedAction());
 

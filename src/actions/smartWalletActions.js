@@ -21,7 +21,7 @@
 import { sdkConstants, sdkModules } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
+import { utils, type Wallet as EthersWallet } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -108,7 +108,6 @@ import type {
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionStatus } from 'models/Transaction';
-import type { EthereumWallet } from 'models/Wallet';
 
 // utils
 import {
@@ -1518,9 +1517,9 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     if (!smartWalletNeedsInit) return;
 
-    const onLoginSuccess = (pin: string, wallet: EthereumWallet) => {
+    const onLoginSuccess = async (pin: ?string, wallet: EthersWallet) => {
       const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
-      dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
+      await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
     };
 
     dispatch(lockScreenAction(onLoginSuccess, t('paragraph.sessionExpiredReEnterPin')));

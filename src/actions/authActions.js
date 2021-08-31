@@ -61,6 +61,7 @@ import archanovaService from 'services/archanova';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { OnValidPinCallback } from 'models/Wallet';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -104,7 +105,7 @@ export const updateFcmTokenAction = () => {
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
-  onLoginSuccess: ?Function,
+  onLoginSuccess: ?OnValidPinCallback,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -219,7 +220,7 @@ export const loginAction = (
 export const checkAuthAction = (
   pin: ?string,
   decryptedPrivateKey: ?string,
-  onValidPin?: Function,
+  onValidPin: ?OnValidPinCallback,
   withMnemonic: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -248,7 +249,7 @@ export const checkAuthAction = (
     // private key checked and removed on every root navigation component update, make sure it stays this way
     dispatch({ type: SET_WALLET, payload: { privateKey, address } });
 
-    if (onValidPin) onValidPin(pin, wallet);
+    if (onValidPin) onValidPin(pin, privateKey);
   };
 };
 
@@ -275,7 +276,10 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
 export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR });
 
-export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
+export const lockScreenAction = (
+  onLoginSuccess: ?OnValidPinCallback,
+  errorMessage?: string,
+) => {
   return () => {
     navigate(NavigationActions.navigate({
       routeName: AUTH_FLOW,

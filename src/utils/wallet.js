@@ -229,10 +229,10 @@ export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch): Pro
 }
 
 export async function getDecryptedWallet(
-  pin: string,
+  pin: ?string,
   privateKey: ?string,
   dispatch: Dispatch,
-  biometricsEnabled: boolean,
+  biometricsEnabled: boolean = false,
   withMnemonic: boolean = false,
 ): Promise<?ethers.Wallet> {
   if (privateKey) {

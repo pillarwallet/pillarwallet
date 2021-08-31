@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
+import { type Wallet as EthersWallet } from 'ethers';
 
 // actions
 import {
@@ -123,7 +124,7 @@ const EnsMigrationConfirm = () => {
     });
   };
 
-  const onPinValid = (pin: string, unlockedWallet: Object) => {
+  const onPinValid = (pin: string, unlockedWallet: EthersWallet) => {
     setWallet(unlockedWallet);
   };
 
