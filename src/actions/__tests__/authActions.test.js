@@ -20,7 +20,6 @@ import ReduxAsyncQueue from 'redux-async-queue';
 
 // constants
 import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'constants/walletConstants';
-import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
@@ -29,6 +28,10 @@ import {
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
+import { SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -44,6 +47,7 @@ import {
   mockArchanovaAccount,
   mockArchanovaConnectedAccount,
   mockEtherspotAccountExtra,
+  mockSupportedAssets,
 } from 'testUtils/jestSetup';
 
 
@@ -53,6 +57,7 @@ const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const mockWallet: Object = {
   address: '0x9c',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 
 const mockUser: Object = {
@@ -80,6 +85,7 @@ describe('Auth actions', () => {
       assets: { data: {} },
       navigation: {},
       wallet: {
+        data: mockWallet,
         backupStatus: { isBackedUp: false, isImported: false },
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
@@ -99,18 +105,28 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
       { type: SET_WALLET_IS_DECRYPTING },
-      { type: SET_USER, payload: mockUser },
+      { type: SET_WALLET_IS_DECRYPTING, payload: false },
+
       { type: SET_WALLET, payload: mockWallet },
+      { type: SET_WALLET, payload: { address: mockWallet.address } },
+
+      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
+      { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
+
+      { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
+
       { type: SET_ARCHANOVA_SDK_INIT, payload: true },
       { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
 
-      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
-      { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
-      { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
+      { type: SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER },
+      { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
+
+      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+
     ];
 
     const pin = '123456';

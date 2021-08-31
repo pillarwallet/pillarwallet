@@ -244,8 +244,8 @@ describe('Onboarding actions', () => {
     const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
 
     const expectedActions = [
+      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
-
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
@@ -298,8 +298,8 @@ describe('Onboarding actions', () => {
     const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
 
     const expectedActions = [
+      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
-
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova
