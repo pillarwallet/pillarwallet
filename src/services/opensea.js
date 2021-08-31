@@ -69,11 +69,7 @@ export const fetchCollectibles = async (
 ): Promise<?OpenSeaAsset[]> => {
   if (!walletAddress) return null;
 
-  const url = `${getEnv().OPEN_SEA_API}/assets/` +
-    `?owner=${walletAddress}` +
-    '&exclude_currencies=true' +
-    '&order_by=listing_date' +
-    '&order_direction=asc';
+  const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}`;
 
   return getOpenSeaAssets(url).catch((error) => {
     reportErrorLog('fetchCollectibles failed', { walletAddress, error });
@@ -87,7 +83,6 @@ export const fetchCollectiblesTransactionHistory = async (
   try {
     const url = `${getEnv().OPEN_SEA_API}/events/` +
       `?account_address=${walletAddress}` +
-      '&exclude_currencies=true' +
       '&event_type=transfer';
 
     const { data } = await httpRequest.get(url, requestConfig);
