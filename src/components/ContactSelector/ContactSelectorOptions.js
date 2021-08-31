@@ -37,7 +37,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/legacy/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 
 // Selectors

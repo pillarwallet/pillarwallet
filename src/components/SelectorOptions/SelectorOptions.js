@@ -24,7 +24,7 @@ import { TextInput, Keyboard, FlatList } from 'react-native';
 import t from 'translations/translate';
 
 import { MediumText } from 'components/Typography';
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/legacy/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -36,7 +36,7 @@ import { getMatchingSortedData } from 'utils/textInput';
 
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
-import type { IconProps } from 'components/SearchBar';
+import type { IconProps } from 'components/legacy/SearchBar';
 import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 type OwnProps = {|

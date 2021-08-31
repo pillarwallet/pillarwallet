@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 // Components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/legacy/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import Tabs from 'components/Tabs';
 
