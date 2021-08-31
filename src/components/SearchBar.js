@@ -20,46 +20,72 @@
 
 import * as React from 'react';
 import { TextInput as RNTextInput } from 'react-native';
+import styled from 'styled-components/native';
 
 // Components
+import Icon from 'components/modern/Icon';
 import MultilineTextInput from 'components/Inputs/MultilineTextInput';
+import Text from 'components/modern/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { fontSizes, lineHeights } from 'utils/variables';
+import { fontStyles, objectFontStyles } from 'utils/variables';
 
 // Types
-import type { TextStyleProp } from 'utils/types/react-native';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 type Props = {
   query: string,
   onQueryChange: (query: string) => mixed,
   placeholder?: string,
-  inputRef?: React.Ref<typeof RNTextInput>,
-  style?: TextStyleProp,
   error?: boolean,
+  showSearchIcon?: boolean,
+  style?: ViewStyleProp,
+  inputStyle?: TextStyleProp,
+  inputRef?: React.Ref<typeof RNTextInput>,
 };
 
-function SearchInput({ query, onQueryChange, placeholder, inputRef, style, error }: Props) {
+function SearchInput({
+  query,
+  onQueryChange,
+  placeholder,
+  error,
+  showSearchIcon = true,
+  style,
+  inputStyle,
+  inputRef,
+}: Props) {
   const colors = useThemeColors();
 
   const handleChangeText = (text: string) => {
-    onQueryChange(text);
+    const input = text.trimLeft().replace(/\s\s/g, ' ');
+    onQueryChange(input);
   };
 
-  const styleList = [styles.input, { opacity: query ? 1 : 0.4, color: error ? colors.negative : colors.text }, style];
+  const inputStyles = [styles.input, { color: error ? colors.negative : colors.text }, inputStyle];
 
   return (
-    <MultilineTextInput
-      ref={inputRef}
-      value={query}
-      onChangeText={handleChangeText}
-      placeholder={placeholder}
-      placeholderTextColor={colors.tertiaryText}
-      style={styleList}
-      autoCapitalize="none"
-      autoCorrect={false}
-    />
+    <Container style={style}>
+      <MultilineTextInput
+        ref={inputRef}
+        value={query}
+        onChangeText={handleChangeText}
+        style={inputStyles}
+        autoCapitalize="none"
+        autoCompleteType="off"
+        autoCorrect={false}
+        blurOnSubmit
+      />
+
+      {!query && (
+        <PlacerholderContainer>
+          {showSearchIcon && <Icon name="search" color={colors.tertiaryText} />}
+          <PlaceholderText color={colors.tertiaryText} style={inputStyle}>
+            {placeholder}
+          </PlaceholderText>
+        </PlacerholderContainer>
+      )}
+    </Container>
   );
 }
 
@@ -67,11 +93,29 @@ export default SearchInput;
 
 const styles = {
   input: {
+    ...objectFontStyles.large,
     textAlign: 'center',
-    fontSize: fontSizes.large,
-    lineHeight: lineHeights.large,
     paddingTop: 18,
     paddingBottom: 32,
     paddingHorizontal: 42,
   },
 };
+
+const Container = styled.View``;
+
+const PlacerholderContainer = styled.View`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 6px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  z-index: -100;
+  opacity: 0.4;
+`;
+
+const PlaceholderText = styled(Text)`
+  ${fontStyles.large};
+`;

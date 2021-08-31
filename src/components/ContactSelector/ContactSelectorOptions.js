@@ -94,7 +94,6 @@ const ContactSelectorOptions = ({
   };
 
   const handleInputChange = (input: string) => {
-    input = input?.trim() ?? '';
     setQuery(input);
 
     const error = validateSearch(input);

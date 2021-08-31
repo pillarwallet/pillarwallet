@@ -111,8 +111,9 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
       >
         <SearchBar
           query={query}
-          onQueryChange={(text) => setQuery(text?.trim() ?? '')}
+          onQueryChange={setQuery}
           placeholder={t('label.filterByName')}
+          showSearchIcon={false}
           inputRef={searchInputRef}
         />
 
