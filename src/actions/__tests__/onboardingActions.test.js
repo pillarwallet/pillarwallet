@@ -59,6 +59,7 @@ import {
   mockEthAddress,
   mockPlrAddress,
   mockEtherExchangeRates,
+  mockDeviceUniqueId,
 } from 'testUtils/jestSetup';
 
 // types
@@ -128,6 +129,7 @@ describe('Onboarding actions', () => {
   it(`should expect series of actions with payload to be dispatched
   on setupWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
+      appSettings: { data: { deviceUniqueId: mockDeviceUniqueId } },
       session: { data: { isOnline: true } },
       onboarding: mockOnboarding,
     });
@@ -149,6 +151,7 @@ describe('Onboarding actions', () => {
   it(`should expect series of actions with payload to be
   dispatched on setupWalletAction execution when wallet was imported`, () => {
     store = mockStore({
+      appSettings: { data: { deviceUniqueId: mockDeviceUniqueId } },
       session: { data: { isOnline: true } },
       onboarding: {
         ...mockOnboarding,

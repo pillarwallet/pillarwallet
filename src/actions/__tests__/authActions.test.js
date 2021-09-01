@@ -48,6 +48,7 @@ import {
   mockArchanovaConnectedAccount,
   mockEtherspotAccountExtra,
   mockSupportedAssets,
+  mockDeviceUniqueId,
 } from 'testUtils/jestSetup';
 
 
@@ -91,7 +92,7 @@ describe('Auth actions', () => {
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [mockActiveSmartWalletAccount] },
       featureFlags: { data: {} },
-      appSettings: { data: { hasSeenTutorial: true } },
+      appSettings: { data: { hasSeenTutorial: true, deviceUniqueId: mockDeviceUniqueId } },
       onboarding: { tutorialData: null },
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
