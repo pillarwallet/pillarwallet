@@ -96,7 +96,6 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
     <SlideModal
       ref={modalRef}
       fullScreen
-      onModalShow={() => searchInputRef.current?.focus()}
       noSwipeToDismiss
       noClose
       backgroundColor={colors.basic050}
@@ -112,9 +111,10 @@ const AssetSelectorModal = ({ options, collectibles, onSelectOption, onSelectCol
       >
         <SearchBar
           query={query}
-          onChangeQuery={(text) => setQuery(text?.trim() ?? '')}
+          onQueryChange={setQuery}
+          placeholder={t('label.filterByName')}
+          showSearchIcon={false}
           inputRef={searchInputRef}
-          iconProps={{ persistIconOnFocus: true }}
         />
 
         {!!tabs && <Tabs tabs={tabs} activeTab={activeTabId} wrapperStyle={{ paddingTop: 22, paddingBottom: 12 }} />}

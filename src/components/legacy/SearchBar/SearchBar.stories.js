@@ -22,7 +22,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 import SearchBar from './SearchBar';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
 const stories = storiesOf('SearchBar', module).addDecorator(WithThemeDecorator);
 

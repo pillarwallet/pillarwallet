@@ -206,7 +206,7 @@
     "whereToSend": "Where to send",
     "sendTo": "Send To",
     "walletAddress": "Wallet address",
-    "walletAddressEnsUser": "Wallet address, ENS, user",
+    "addressEnsUsername": "Address, ENS, username",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
@@ -265,7 +265,8 @@
     "walletDeployment": "Wallet deployment",
     "pleaseSelect": "Please select",
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
-    "balanceTokenFormat": "Balance {{balance}}"
+    "balanceTokenFormat": "Balance {{balance}}",
+    "filterByName": "Filter by name"
   },
 
   "button": {
