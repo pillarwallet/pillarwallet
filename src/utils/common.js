@@ -47,6 +47,7 @@ import {
 import etherspotService from 'services/etherspot';
 
 // utils
+import { wrapBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // types
@@ -187,11 +188,6 @@ export const pipe = (...fns: Function[]) => {
 };
 
 export const noop = () => {};
-
-export const wrapBigNumber = (value: Value): BigNumber => {
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
-};
 
 /**
  * formatMoney(n, x, s, c)

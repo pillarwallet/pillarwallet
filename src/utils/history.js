@@ -47,7 +47,8 @@ import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Co
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
-import { formatUnits, isCaseInsensitiveMatch, wrapBigNumber } from 'utils/common';
+import { formatUnits, isCaseInsensitiveMatch } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 

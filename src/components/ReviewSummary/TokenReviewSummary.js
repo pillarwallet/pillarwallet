@@ -26,7 +26,8 @@ import { Spacing } from 'components/Layout';
 import Image from 'components/Image';
 
 // utils
-import { formatFiat, formatTokenAmount, wrapBigNumber } from 'utils/common';
+import { formatFiat, formatTokenAmount } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
 import { getAssetRateInFiat } from 'utils/rates';

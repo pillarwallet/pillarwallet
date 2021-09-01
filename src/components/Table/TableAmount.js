@@ -23,12 +23,8 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // utils
-import {
-  formatAmount,
-  formatFiat,
-  hitSlop10,
-  wrapBigNumber,
-} from 'utils/common';
+import { formatAmount, formatFiat, hitSlop10 } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
 import { getAssetRateInFiat } from 'utils/rates';
@@ -39,10 +35,7 @@ import { BaseText } from 'components/Typography';
 import Tooltip from 'components/Tooltip';
 
 // selectors
-import {
-  useChainRates,
-  useFiatCurrency,
-} from 'selectors';
+import { useChainRates, useFiatCurrency } from 'selectors';
 
 // types
 import type { Chain } from 'models/Chain';
@@ -71,13 +64,7 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const TableAmount = ({
-  amount,
-  assetSymbol,
-  assetAddress,
-  chain,
-  highFees,
-}: Props) => {
+const TableAmount = ({ amount, assetSymbol, assetAddress, chain, highFees }: Props) => {
   const theme = useTheme();
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
@@ -87,7 +74,9 @@ const TableAmount = ({
   const [showTokenAmount, setShowTokenAmount] = useState<boolean>(false);
   if (amountBN.isZero()) {
     return (
-      <BaseText regular positive>{t('label.free')}</BaseText>
+      <BaseText regular positive>
+        {t('label.free')}
+      </BaseText>
     );
   }
 

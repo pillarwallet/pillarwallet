@@ -41,7 +41,7 @@ import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
-import { wrapBigNumber } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';

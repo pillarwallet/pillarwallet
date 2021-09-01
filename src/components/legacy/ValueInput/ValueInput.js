@@ -42,12 +42,12 @@ import Modal from 'components/Modal';
 import {
   formatAmount,
   isValidNumber,
-  wrapBigNumber,
   hasTooMuchDecimals,
   noop,
   formatFiat,
   valueForAddress,
 } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
