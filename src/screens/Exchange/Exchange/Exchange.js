@@ -115,7 +115,7 @@ function Exchange() {
     if (isLogV2AppEvents()) {
       dispatch(logEventAction('v2_exchange_pair_selected'));
     }
-  }, [dispatch, chain, fromAddress, toAddress]);
+  }, [dispatch, fromAsset, toAsset]);
 
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
