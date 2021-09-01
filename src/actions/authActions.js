@@ -189,6 +189,8 @@ export const loginAction = (
     // further calls require network connection
     if (!isOnline) return;
 
+    await dispatch(updateFcmTokenAction());
+
     // init Etherspot SDK
     await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 

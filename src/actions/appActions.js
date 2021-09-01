@@ -221,11 +221,6 @@ export const setupLoggingServicesAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (__DEV__) return;
 
-    const {
-      user: { data: user },
-      wallet: { data: wallet },
-    } = getState();
-
     const activeAccountAddress = activeAccountAddressSelector(getState());
     const accounts = accountsSelector(getState());
 
@@ -235,8 +230,8 @@ export const setupLoggingServicesAction = () => {
     const etherspotAccountAddress = etherspotAccount ? getAccountAddress(etherspotAccount) : null;
     const archanovaAccountAddress = archanovaAccount ? getAccountAddress(archanovaAccount) : null;
 
-    const { username } = user ?? {};
-    const { address: keyWalletAddress } = wallet ?? {};
+    const username = getState().user.data?.username;
+    const keyWalletAddress = getState().wallet.data?.address;
 
     Sentry.setUser({
       username,

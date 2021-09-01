@@ -40,7 +40,6 @@ import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { updateFcmTokenAction } from 'actions/authActions';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -103,8 +102,6 @@ export const connectEtherspotAccountAction = (accountId: string) => {
 
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(updateFcmTokenAction());
-
     const {
       session: { data: { isOnline, fcmToken } },
     } = getState();

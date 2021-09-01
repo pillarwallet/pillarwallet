@@ -76,7 +76,7 @@ import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { fetchAssetsRatesAction } from 'actions/ratesActions';
-import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
+import { resetAppServicesAction, resetAppStateAction, updateFcmTokenAction } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
@@ -222,6 +222,12 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // all the calls below require user to be online
     if (!isOnline) return;
+
+    logBreadcrumb(
+      'onboarding',
+      'setupAppServicesAction: dispatching updateFcmTokenAction',
+    );
+    await dispatch(updateFcmTokenAction());
 
     // active Etherspot service is required to proceed
     logBreadcrumb(
