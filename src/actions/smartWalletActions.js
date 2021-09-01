@@ -174,6 +174,7 @@ import {
   setTransactionsEstimateErrorAction,
   setTransactionsEstimateFeeAction,
 } from './transactionEstimateActions';
+import { updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
@@ -1400,10 +1401,13 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
 };
 
 export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitArchanovaProps) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     let privateKey = _privateKey;
     if (!_privateKey && pin) {
-      privateKey = await getPrivateKeyFromPin(pin, dispatch);
+      await dispatch(updateDeviceUniqueIdIfNeededAction());
+      const { deviceUniqueId } = getState().appSettings.data;
+
+      privateKey = await getPrivateKeyFromPin(pin, deviceUniqueId);
     }
     if (!privateKey) return;
     await dispatch(initArchanovaSdkAction(privateKey));

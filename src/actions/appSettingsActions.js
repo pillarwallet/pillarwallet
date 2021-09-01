@@ -20,6 +20,7 @@
 import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 import t from 'translations/translate';
+import DeviceInfo from 'react-native-device-info';
 
 // constants
 import {
@@ -34,6 +35,7 @@ import Toast from 'components/Toast';
 
 // services
 import { firebaseAnalytics } from 'services/firebase';
+import Storage from 'services/storage';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
@@ -47,6 +49,8 @@ import type { KeyChainData } from 'utils/keychain';
 import { saveDbAction } from './dbActions';
 import { logUserPropertyAction, logEventAction } from './analyticsActions';
 
+
+const storage = Storage.getInstance('db');
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
@@ -242,5 +246,21 @@ export const dismissAccountSwitchTooltipAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { accountSwitchTooltipDismissed: true } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { accountSwitchTooltipDismissed: true } });
+  };
+};
+
+export const updateDeviceUniqueIdIfNeededAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { deviceUniqueId: currentDeviceUniqueId } = getState().appSettings.data;
+    if (currentDeviceUniqueId) return;
+
+    let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+
+    if (!deviceUniqueId) {
+      deviceUniqueId = DeviceInfo.getUniqueId();
+      dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
+    }
+
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { deviceUniqueId } });
   };
 };

@@ -49,7 +49,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
-import { changeUseBiometricsAction } from './appSettingsActions';
+import { changeUseBiometricsAction, updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 
 export const backupWalletAction = () => {
@@ -92,10 +92,13 @@ export const encryptAndSaveWalletAction = (
   backupStatus: BackupStatus,
   enableBiometrics: boolean = false,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
 
-    const saltedPin = await getSaltedPin(pin, dispatch);
+    await dispatch(updateDeviceUniqueIdIfNeededAction());
+    const { deviceUniqueId } = getState().appSettings.data;
+
+    const saltedPin = await getSaltedPin(pin, deviceUniqueId);
     const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));

@@ -69,7 +69,7 @@ import { setupLoggingServicesAction } from './appActions';
 import { initOnLoginArchanovaAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { setAppThemeAction, setAppLanguageAction } from './appSettingsActions';
+import { setAppThemeAction, setAppLanguageAction, updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { checkInitialDeepLinkAction } from './deepLinkActions';
@@ -230,10 +230,13 @@ export const checkAuthAction = (
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING });
 
+    await dispatch(updateDeviceUniqueIdIfNeededAction());
+    const { deviceUniqueId } = getState().appSettings.data;
+
     let wallet;
     let decryptError;
     try {
-      wallet = await getDecryptedWallet(pin, decryptedPrivateKey, dispatch, useBiometrics, withMnemonic);
+      wallet = await getDecryptedWallet(pin, decryptedPrivateKey, deviceUniqueId, useBiometrics, withMnemonic);
     } catch (error) {
       decryptError = error;
     }
@@ -265,7 +268,10 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
-    const wallet = await decryptWalletFromStorage(currentPin, dispatch);
+    await dispatch(updateDeviceUniqueIdIfNeededAction());
+    const { deviceUniqueId } = getState().appSettings.data;
+
+    const wallet = await decryptWalletFromStorage(currentPin, deviceUniqueId);
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: false });
 

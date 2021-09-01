@@ -49,6 +49,7 @@ export type AppSettingsReducerState = {
     isPickingImage?: boolean,
     isBrowsingWebView?: boolean,
     accountSwitchTooltipDismissed?: boolean,
+    deviceUniqueId?: string,
   },
   isFetched: boolean,
 };

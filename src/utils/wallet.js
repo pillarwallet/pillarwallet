@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { ethers, utils } from 'ethers';
-import DeviceInfo from 'react-native-device-info';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
@@ -57,13 +56,15 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-export async function getSaltedPin(pin: string, dispatch: Dispatch): Promise<string> {
-  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+export async function getSaltedPin(pin: string, deviceUniqueId: ?string): Promise<string> {
   if (!deviceUniqueId) {
-    deviceUniqueId = DeviceInfo.getUniqueId();
-    await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
+    // report and return unsalted
+    reportErrorLog('getSaltedPin failed: no deviceUniqueId');
+    // eslint-disable-next-line i18next/no-literal-string
+    throw new Error('Unable to get deviceUniqueId.');
   }
-  return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
+
+  return `${deviceUniqueId}${pin}${deviceUniqueId.slice(0, 5)}`;
 }
 
 export function normalizeWalletAddress(walletAddress: string): string {
@@ -211,15 +212,15 @@ export function constructWalletFromMnemonic(mnemonic: string): ethers.Wallet {
   return ethers.Wallet.fromMnemonic(mnemonic);
 }
 
-export async function decryptWalletFromStorage(pin: string, dispatch: Dispatch): Promise<ethers.Wallet> {
+export async function decryptWalletFromStorage(pin: string, deviceUniqueId: ?string): Promise<ethers.Wallet> {
   const { wallet: encryptedWallet } = await storage.get('wallet');
-  const saltedPin = await getSaltedPin(pin, dispatch);
+  const saltedPin = await getSaltedPin(pin, deviceUniqueId);
 
   return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
 }
 
-export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch): Promise<?string> {
-  const wallet = await decryptWalletFromStorage(pin, dispatch);
+export async function getPrivateKeyFromPin(pin: string, deviceUniqueId: ?string): Promise<?string> {
+  const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
 
   return wallet?.signingKey?.privateKey;
 }
@@ -227,7 +228,7 @@ export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch): Pro
 export async function getDecryptedWallet(
   pin: ?string,
   privateKey: ?string,
-  dispatch: Dispatch,
+  deviceUniqueId: ?string,
   biometricsEnabled: boolean = false,
   withMnemonic: boolean = false,
 ): Promise<?ethers.Wallet> {
@@ -260,7 +261,7 @@ export async function getDecryptedWallet(
     }
   }
 
-  const wallet = await decryptWalletFromStorage(pin, dispatch);
+  const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
 
   // migrate older users for keychain access
   const keychainDataObject = {
