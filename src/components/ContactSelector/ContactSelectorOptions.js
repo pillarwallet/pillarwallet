@@ -70,7 +70,7 @@ const ContactSelectorOptions = ({
   allowCustomAddress = true,
   allowAddContact = true,
   title = t('label.sendTo'),
-  searchPlaceholder = t('label.walletAddressEnsUser'),
+  searchPlaceholder = t('label.addressEnsUsername'),
 }: Props) => {
   const theme = useTheme();
   const colors = getThemeColors(theme);
@@ -80,10 +80,13 @@ const ContactSelectorOptions = ({
 
   const [query, setQuery] = React.useState('');
   const [customAddressContact, setCustomAddressContact] = React.useState(null);
-  const [hasSearchError, setHasSearchError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState(null);
 
   const dispatch = useDispatch();
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+
+  // Hide contact for current address
+  contacts = contacts.filter((contact) => !addressesEqual(contact.ethAddress, activeAccountAddress));
 
   const close = () => {
     Keyboard.dismiss();
@@ -91,9 +94,15 @@ const ContactSelectorOptions = ({
   };
 
   const handleInputChange = (input: string) => {
-    input = input?.trim() ?? '';
     setQuery(input);
 
+    const error = validateSearch(input);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+
+    setErrorMessage(null);
     if (allowCustomAddress) {
       const isValid = isValidAddressOrEnsName(input) && !filterContacts(contacts, input).length;
       setCustomAddressContact(isValid ? { ethAddress: input, name: '' } : null);
@@ -123,12 +132,7 @@ const ContactSelectorOptions = ({
 
   const validateSearch = (searchQuery: string) => {
     if (addressesEqual(searchQuery, activeAccountAddress)) {
-      setHasSearchError(true);
       return t('error.cannotSendYourself');
-    }
-
-    if (hasSearchError) {
-      setHasSearchError(false);
     }
 
     return null;
@@ -157,9 +161,11 @@ const ContactSelectorOptions = ({
       );
     }
 
+    const emptyMessage = errorMessage ?? t('error.invalid.address');
+
     return (
       <EmptyStateWrapper>
-        <EmptyStateParagraph title={allowCustomAddress ? t('error.invalid.address') : t('label.nothingFound')} />
+        <EmptyStateParagraph title={allowCustomAddress ? emptyMessage : t('label.nothingFound')} />
       </EmptyStateWrapper>
     );
   };
@@ -167,7 +173,7 @@ const ContactSelectorOptions = ({
   let items: Contact[] = [];
   if (filteredContacts.length) {
     items = [...filteredContacts];
-  } else if (!hasSearchError && customAddressContact) {
+  } else if (!errorMessage && customAddressContact) {
     items = [customAddressContact];
   }
 
@@ -183,7 +189,6 @@ const ContactSelectorOptions = ({
     <SlideModal
       ref={modalRef}
       fullScreen
-      onModalShow={() => searchInputRef.current?.focus()}
       noSwipeToDismiss
       noClose
       backgroundColor={colors.basic050}
@@ -208,12 +213,10 @@ const ContactSelectorOptions = ({
       >
         <SearchBar
           query={query}
-          onChangeQuery={handleInputChange}
-          validator={validateSearch}
-          inputRef={searchInputRef}
+          onQueryChange={handleInputChange}
           placeholder={searchPlaceholder}
-          iconProps={{ persistIconOnFocus: true }}
-          showPasteButton
+          inputRef={searchInputRef}
+          error={!!errorMessage}
         />
 
         <FlatList
@@ -225,7 +228,7 @@ const ContactSelectorOptions = ({
           contentContainerStyle={styles.flatListContantContainer}
         />
 
-        {allowAddContact && customAddressContact && !hasSearchError && (
+        {allowAddContact && customAddressContact && !errorMessage && (
           <ActionButtonsContainer>
             <Button
               title={t('button.addToAddressBook')}
