@@ -99,7 +99,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
   };
 
   const handleTokenBalancePress = (address: string, balance: BigNumber) => {
-    navigation.navigate(WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT, { address, balance: balance.toFixed() });
+    navigation.navigate(WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT, { address, value: balance.toFixed() });
   };
 
   const navigateToReview = () => {

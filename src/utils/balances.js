@@ -24,6 +24,7 @@ import { pickBy } from 'lodash';
 // Utils
 import { addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
+import { valueForAddress } from 'utils/common';
 
 // Types
 import type {
@@ -78,3 +79,10 @@ export const hasServiceAssetBalanceForAddress = (
     ?? findServiceAssetBalance(assetBalances.investments, assetAddress)
     ?? findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
 );
+
+export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetAddress: ?string): BigNumber => {
+  if (!balances || !assetAddress) return BigNumber(0);
+
+  const balance = valueForAddress(balances, assetAddress)?.balance;
+  return BigNumber(balance ?? 0);
+};

@@ -26,7 +26,8 @@ import PercentsInputAccessory from './PercentsInputAccessory';
 type State = {
   isVisible: boolean,
   isActive: boolean,
-  handleUsePercentCallback: (number) => any,
+  onUsePercent: (number) => any,
+  disableMaxValue: boolean,
 };
 
 export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
@@ -34,25 +35,26 @@ export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
 class PercentsInputAccessoryHolder extends React.Component<{}, State> {
   static instances: Object[] = [];
 
-  static addAccessory = (handleUsePercentCallback: (number) => any) => {
+  static addAccessory = (onUsePercent: (number) => mixed, disableMaxValue: boolean = false) => {
     const instance = this.instances[this.instances.length - 1];
     if (instance) {
-      instance.handleAddAccessory(handleUsePercentCallback);
+      instance.handleAddAccessory(onUsePercent, disableMaxValue);
     }
-  }
+  };
 
   static removeAccessory = () => {
-    this.instances.forEach(instance => {
+    this.instances.forEach((instance) => {
       if (instance.isActive()) {
         instance.handleRemoveAccessory();
       }
     });
-  }
+  };
 
   state = {
     isVisible: false,
     isActive: false,
-    handleUsePercentCallback: noop,
+    onUsePercent: noop,
+    disableMaxValue: false,
   };
 
   componentDidMount() {
@@ -66,44 +68,44 @@ class PercentsInputAccessoryHolder extends React.Component<{}, State> {
     PercentsInputAccessoryHolder.instances.splice(PercentsInputAccessoryHolder.instances.length - 1);
   }
 
-  handleAddAccessory = (handleUsePercentCallback: (number) => any) => {
+  handleAddAccessory = (onUsePercent: (number) => mixed, disableMaxValue: boolean) => {
     this.setState({
       isActive: true,
-      handleUsePercentCallback,
+      onUsePercent,
+      disableMaxValue,
     });
-  }
+  };
 
   handleRemoveAccessory = () => {
     this.setState({ isActive: false });
-  }
+  };
 
   handleKeyboardDidShow = () => {
     this.setState({ isVisible: true });
-  }
+  };
 
   isActive = () => {
     return this.state.isActive;
-  }
+  };
 
   handleKeyboardDidHide = () => {
     this.setState({ isVisible: false });
-  }
+  };
 
   render() {
-    const { isVisible, isActive, handleUsePercentCallback } = this.state;
+    const { isVisible, isActive, onUsePercent, disableMaxValue } = this.state;
     if (Platform.OS !== 'android') {
       return (
         <InputAccessoryView nativeID={INPUT_ACCESSORY_NATIVE_ID}>
-          <PercentsInputAccessory handleUsePercent={handleUsePercentCallback} />
+          <PercentsInputAccessory handleUsePercent={onUsePercent} disableMaxValue={disableMaxValue} />
         </InputAccessoryView>
       );
     }
     if (!isVisible || !isActive) {
       return null;
     }
-    return (
-      <PercentsInputAccessory handleUsePercent={handleUsePercentCallback} />
-    );
+
+    return <PercentsInputAccessory handleUsePercent={onUsePercent} disableMaxValue={disableMaxValue} />;
   }
 }
 
