@@ -24,6 +24,11 @@ import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 
 export type ImageProps = FastImageProps;
 
+type Props = {
+  fallbackSource?: string,
+  fallback?: boolean,
+}
+
 const getValidSource = (source: FastImageSource | number) => {
   if (typeof source?.uri !== 'string') return source;
 
@@ -36,15 +41,15 @@ const getValidSource = (source: FastImageSource | number) => {
 // This can be refactored to FC as soon as we update Styled Componenents.
 
 // eslint-disable-next-line react/prefer-stateless-function
-class Image extends React.Component<ImageProps> {
+class Image extends React.Component<ImageProps, Props> {
   static resizeMode = FastImage.resizeMode;
   static priority = FastImage.priority;
   static cacheControl = FastImage.cacheControl;
   static preload = FastImage.preload;
 
   render() {
-    const { source, ...rest } = this.props;
-    return <FastImage source={getValidSource(source)} {...rest} />;
+    const { source, fallback, fallbackSource, ...rest } = this.props;
+    return <FastImage source={getValidSource(source)} fallback={fallback} defaultSource={fallbackSource} {...rest} />;
   }
 }
 

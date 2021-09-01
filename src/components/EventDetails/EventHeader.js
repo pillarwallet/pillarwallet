@@ -198,6 +198,7 @@ const EventHeader = (props: Props) => {
           <EventImage
             key={imageKey}
             source={{ uri: iconUrl }}
+            fallback
             fallbackSource={genericToken}
             resizeMode="contain"
             imageDiameter={imageDiameter}

@@ -111,6 +111,7 @@ const ProfileImage = (props: ProfileImageProps) => {
           source={{ uri }}
           diameter={diameter}
           additionalImageStyle={imageStyle}
+          fallback
           fallbackSource={IMAGE_LOAD_FAILED}
         />
       )}

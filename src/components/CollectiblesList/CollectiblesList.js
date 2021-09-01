@@ -109,6 +109,7 @@ const CollectiblesList = ({ collectibles, onCollectiblePress, isSearching }: Pro
             width={collectibleSize}
             height={collectibleSize}
             source={{ uri: icon }}
+            fallback
             fallbackSource={genericToken}
             resizeMode="contain"
           />

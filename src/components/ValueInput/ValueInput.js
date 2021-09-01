@@ -387,6 +387,7 @@ const ValueInputComponent = ({
           <Spacing h={16} />
           <CollectibleImage
             source={{ uri: assetData.imageUrl }}
+            fallback
             fallbackSource={genericCollectible}
             resizeMode="contain"
             width={180}
