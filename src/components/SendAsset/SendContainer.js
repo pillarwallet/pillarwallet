@@ -78,7 +78,7 @@ const SendContainer = ({
   customScreenTitle,
 }: Props) => {
   const chain = assetData?.chain ?? CHAIN.ETHEREUM;
-  const { title: chainTitle } = useChainConfig(chain);
+  const { titleShort: chainTitle } = useChainConfig(chain);
 
   // Bridge props from legacy value input data to modern token value input data
   const selectedToken: ?AssetOption = assetData?.tokenType !== ASSET_TYPES.COLLECTIBLE ? (assetData: any) : null;

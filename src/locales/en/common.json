@@ -204,7 +204,7 @@
     "to": "To",
     "from": "From",
     "whereToSend": "Where to send",
-    "sendTo": "Send To",
+    "sendTo": "Send to",
     "walletAddress": "Wallet address",
     "addressEnsUsername": "Address, ENS, username",
     "walletNotDeployed": "Wallet is not deployed",
@@ -674,6 +674,18 @@
     }
   },
 
+  "contactSelector": {
+    "title": "Send to",
+    "button": {
+      "addContact": "Add to address book",
+      "skip": "Skip and just send"
+    },
+    "error": {
+      "incorrectAddress": "Incorrect address",
+      "cannotSendToYourself": "Cannot send to yourself"
+    }
+  },
+
   "ppnContent": {
     "tabs": {
       "incoming": {
@@ -1028,6 +1040,7 @@
   "transactions": {
     "title": {
       "sendScreen": "Send on {{chain}}",
+      "sendScreenPPN": "Send on PPN",
       "valueSelectorModal": "Choose asset",
       "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",

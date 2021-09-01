@@ -41,7 +41,7 @@ const MutlilineTextInput = React.forwardRef<Props, Instance>(({ style, ...rest }
   // eslint-disable-next-line i18next/no-literal-string
   const keyboardAppearance = isDarkTheme ? 'dark' : 'light';
 
-  const styleList = React.useMemo(() => [styles.base, { color: colors.text }, style], [style, colors.text]);
+  const styleList = [styles.base, { color: colors.text }, style];
 
   return (
     <RNTextInput
