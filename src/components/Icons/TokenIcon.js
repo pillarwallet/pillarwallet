@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
 // Components
 import Image from 'components/Image';
@@ -64,15 +64,15 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
   const chainIconSizeStyle = { borderRadius: chainIconSize / 2, borderColor: colors.card };
 
   return (
-    <View style={style}>
+    <Container style={style}>
       <Image source={source} style={[imageSizeStyle, imageStyle]} />
 
       {!!ChainIcon && (
-        <View style={[styles.chainIconWrapper, chainIconSizeStyle, chainIconStyle]}>
+        <ChainIconWrapper style={[chainIconSizeStyle, chainIconStyle]}>
           <ChainIcon width={chainIconSize} height={chainIconSize} />
-        </View>
+        </ChainIconWrapper>
       )}
-    </View>
+    </Container>
   );
 }
 
@@ -85,11 +85,11 @@ const IconComponentPerChain = {
   xdai: IconXdai,
 };
 
-const styles = {
-  chainIconWrapper: {
-    position: 'absolute',
-    top: -1,
-    right: -1,
-    borderWidth: 1,
-  },
-};
+const Container = styled.View``;
+
+const ChainIconWrapper = styled.View`
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  border-width: 1px;
+`;
