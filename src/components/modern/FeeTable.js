@@ -36,7 +36,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 import type { Chain } from 'models/Chain';
 
 /**

@@ -18,94 +18,105 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { InteractionManager } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
+import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content, Footer } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
-import ValueInput from 'components/ValueInput';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import { useRootSelector, useChainSupportedAssets, useChainRates, useFiatCurrency } from 'selectors';
-import { accountAssetsBalancesSelector } from 'selectors/balances';
+import { useSupportedAsset } from 'selectors/assets';
+import { useWalletAssetBalance } from 'selectors/balances';
 
 // Actions
 import { switchToArchanovaAccountIfNeededAction } from 'actions/accountsActions';
 import { setTokenToMigrateAction } from 'actions/walletMigrationArchanovaActions';
 
 // Utils
-import { findAssetByAddress, getAssetOption } from 'utils/assets';
-
-// Types
-import type { AssetOption } from 'models/Asset';
-
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { isValidValueForTransfer, isLessThanOrEqualToBalance } from 'utils/transactions';
 
 function WalletMigrationArchanovaSetAmount() {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.setAmount');
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const inputRef = React.useRef();
+
   const address: string = navigation.getParam('address');
-  const initialBalance: string = navigation.getParam('balance');
+  const initialValue = wrapBigNumberOrNil(navigation.getParam('value'));
 
-  const assetOption = useAssetOption(address);
+  const asset = useSupportedAsset(CHAIN.ETHEREUM, address);
+  const balance = useWalletAssetBalance(CHAIN.ETHEREUM, address);
 
-  const [balance, setBalance] = React.useState(initialBalance ?? '');
-  const [isValid, setIsValid] = React.useState(true);
+  const [value, setValue] = React.useState<?BigNumber>(initialValue);
 
   // Force active account to be archanova
   React.useEffect(() => {
     dispatch(switchToArchanovaAccountIfNeededAction());
   }, [dispatch]);
 
-  const handleSubmit = () => {
-    if (!assetOption || !isValid) return;
+  React.useEffect(() => {
+    const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    return () => { promise.cancel(); };
+  }, []);
 
-    dispatch(setTokenToMigrateAction(address, balance, assetOption.decimals));
+  const isValid = isValidValueForTransfer(value, balance);
+  const hasEnoughBalance = isLessThanOrEqualToBalance(value, balance);
+
+  const handleUseMax = () => {
+    setValue(balance);
+  };
+
+  const handleSubmit = () => {
+    if (!asset || !value || !isValid) return;
+
+    dispatch(setTokenToMigrateAction(address, value.toFixed(), asset.decimals));
     navigation.goBack(null);
   };
+
+  const buttonTitle = hasEnoughBalance
+    ? tRoot('button.confirm')
+    : tRoot('label.notEnoughBalance', { symbol: asset?.symbol });
 
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <Content>
-        {assetOption != null && (
-          <ValueInput
-            value={balance}
-            onValueChange={setBalance}
-            onFormValid={setIsValid}
-            assetData={assetOption}
-            customAssets={[]}
-            autoFocus={false}
-          />
+        {!!asset && (
+          <>
+            <TokenValueInput
+              // $FlowFixMe: ref type inference
+              ref={inputRef}
+              value={value}
+              onValueChange={setValue}
+              maxValue={balance}
+              referenceValue={balance}
+              chain={CHAIN.ETHEREUM}
+              asset={asset}
+            />
+
+            <TokenBalanceAccessory balance={balance} onUseMax={handleUseMax} chain={CHAIN.ETHEREUM} asset={asset} />
+          </>
         )}
       </Content>
 
       <Footer>
-        <Button title={tRoot('button.confirm')} onPress={handleSubmit} disabled={!isValid} />
+        <Button title={buttonTitle} onPress={handleSubmit} disabled={!isValid} />
       </Footer>
     </Container>
   );
 }
 
 export default WalletMigrationArchanovaSetAmount;
-
-const useAssetOption = (assetAddress: string): ?AssetOption => {
-  const walletBalances = useRootSelector(accountAssetsBalancesSelector)?.ethereum?.wallet;
-  const supportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
-  const rates = useChainRates(CHAIN.ETHEREUM);
-  const currency = useFiatCurrency();
-
-  const asset = findAssetByAddress(supportedAssets, assetAddress);
-  if (!asset) return null;
-
-  const assetOption = getAssetOption(asset, walletBalances, rates, currency, CHAIN.ETHEREUM);
-  return assetOption;
-};
