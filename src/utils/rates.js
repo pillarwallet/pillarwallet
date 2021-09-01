@@ -24,6 +24,7 @@ import { wrapBigNumber } from 'utils/bigNumber';
 import { valueForAddress } from 'utils/common';
 
 // Types
+import type { Value } from 'models/Value';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
 
@@ -40,7 +41,7 @@ export const getAssetRateInFiat = (
 ): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
 
 export const getAssetValueInFiat = (
-  assetValue: ?BigNumber | string | number,
+  assetValue: ?Value,
   assetAddress: ?string,
   rates: RatesByAssetAddress,
   currency: Currency,
@@ -54,7 +55,7 @@ export const getAssetValueInFiat = (
 };
 
 export const getAssetValueFromFiat = (
-  fiatValue: ?BigNumber | string | number,
+  fiatValue: ?Value,
   assetAddress: ?string,
   rates: RatesByAssetAddress,
   currency: Currency,

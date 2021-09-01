@@ -39,8 +39,7 @@ import type {
   TransactionEthers,
 } from 'models/Transaction';
 import type { Account } from 'models/Account';
-import type { Value } from 'utils/common';
-import type { TokenValue } from 'models/Value';
+import type { Value, TokenValue } from 'models/Value';
 import type { Event, TransactionsStore } from 'models/History';
 import type { Asset } from 'models/Asset';
 import type { Chain, ChainRecord } from 'models/Chain';

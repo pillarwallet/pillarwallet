@@ -52,6 +52,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 // types
 import type { Chain } from 'models/Chain';
 import type { GasToken } from 'models/Transaction';
+import type { Value } from 'models/Value';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Record } from 'utils/object';
 
@@ -186,8 +187,6 @@ export const pipe = (...fns: Function[]) => {
 };
 
 export const noop = () => {};
-
-export type Value = BigNumber | number | string;
 
 export const wrapBigNumber = (value: Value): BigNumber => {
   if (value instanceof BigNumber) return value;

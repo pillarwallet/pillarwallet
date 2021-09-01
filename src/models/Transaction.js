@@ -28,7 +28,7 @@ import type { RariPool } from 'models/RariPool';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { BigNumber as EthersBigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import type { AssetData, AssetType } from 'models/Asset';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 import type { Chain } from 'models/Chain';
 
 

@@ -51,7 +51,7 @@ import type { QueryResult } from 'utils/types/react-query';
 import type { AssetCore } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, GasToken, TransactionFeeInfo } from 'models/Transaction';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 
 type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,

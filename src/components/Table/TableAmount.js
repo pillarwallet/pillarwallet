@@ -46,7 +46,7 @@ import {
 
 // types
 import type { Chain } from 'models/Chain';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 
 /**
  * TODO: get assetSymbol from matching asset once assets can be queried by assetAddress as key
