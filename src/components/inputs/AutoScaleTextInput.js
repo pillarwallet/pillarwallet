@@ -22,7 +22,7 @@ import * as React from 'react';
 import { Platform, TextInput as RNTextInput, Text as RNText } from 'react-native';
 
 // Components
-import TextInput from 'components/Inputs/TextInput';
+import TextInput from 'components/inputs/TextInput';
 import { appFont, fontSizes } from 'utils/variables';
 
 // Types

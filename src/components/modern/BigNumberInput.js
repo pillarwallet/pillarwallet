@@ -23,7 +23,7 @@ import { TextInput as RNTextInput } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import AutoScaleTextInput, { type Props as AutoScaleTextInputProps } from 'components/Inputs/AutoScaleTextInput';
+import AutoScaleTextInput, { type Props as AutoScaleTextInputProps } from 'components/inputs/AutoScaleTextInput';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

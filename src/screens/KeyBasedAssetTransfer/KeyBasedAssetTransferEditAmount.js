@@ -28,8 +28,8 @@ import t from 'translations/translate';
 // Components
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenBalanceAccessory from 'components/Inputs/TokenValueInput/TokenBalanceAccessory';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';

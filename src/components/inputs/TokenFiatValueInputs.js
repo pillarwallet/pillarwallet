@@ -26,9 +26,9 @@ import t from 'translations/translate';
 
 // Components
 import { Spacing } from 'components/modern/Layout';
-import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenBalanceAccessory from 'components/Inputs/TokenValueInput/TokenBalanceAccessory';
-import FiatValueInput from 'components/Inputs/FiatValueInput';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
+import FiatValueInput from 'components/inputs/FiatValueInput';
 
 // Selectors
 import { useChainRates, useFiatCurrency } from 'selectors';

@@ -25,8 +25,8 @@ import { BigNumber } from 'bignumber.js';
 // Components
 import AssetSelectorModal from 'components/AssetSelectorModal';
 import Modal from 'components/Modal';
-import TokenFiatValueInputs from 'components/Inputs/TokenFiatValueInputs';
-import CollectibleInput from 'components/Inputs/CollectibleInput';
+import TokenFiatValueInputs from 'components/inputs/TokenFiatValueInputs';
+import CollectibleInput from 'components/inputs/CollectibleInput';
 
 // Selectors
 import { useRootSelector } from 'selectors';

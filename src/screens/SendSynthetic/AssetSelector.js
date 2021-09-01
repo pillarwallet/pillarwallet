@@ -25,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 // Components
 import AssetSelectorModal from 'components/AssetSelectorModal';
 import Modal from 'components/Modal';
-import TokenValueInputs from 'components/Inputs/TokenFiatValueInputs';
+import TokenValueInputs from 'components/inputs/TokenFiatValueInputs';
 
 // Utils
 import { wrapBigNumberOrNil } from 'utils/bigNumber';

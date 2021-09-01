@@ -28,8 +28,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container, Content, Footer } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
-import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenBalanceAccessory from 'components/Inputs/TokenValueInput/TokenBalanceAccessory';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';

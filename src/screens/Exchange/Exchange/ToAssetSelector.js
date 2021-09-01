@@ -26,8 +26,8 @@ import styled from 'styled-components/native';
 // Components
 import AssetSelectorModal from 'components/AssetSelectorModal';
 import Modal from 'components/Modal';
-import TokenValueInput from 'components/Inputs/TokenValueInput';
-import TokenFiatValueAccessory from 'components/Inputs/TokenValueInput/TokenFiatValueAccessory';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
