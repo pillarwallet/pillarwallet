@@ -29,7 +29,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container, Spacing } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ValueInput from 'components/ValueInput';
+import ValueInput from 'components/legacy/ValueInput';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants

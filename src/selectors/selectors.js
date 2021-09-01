@@ -31,7 +31,7 @@ import { valueForAddress, EMPTY_OBJECT, EMPTY_ARRAY } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { AssetsPerChain } from 'models/Asset';
+import type { Asset, AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 
@@ -44,9 +44,23 @@ export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T 
 // Most commonly used selectors
 export const useFiatCurrency = () => useRootSelector(fiatCurrencySelector);
 export const useRatesPerChain = () => useRootSelector(ratesPerChainSelector);
-export const useChainRates = (chain: Chain) => useRatesPerChain()[chain] ?? EMPTY_OBJECT;
+
+export const useChainRates = (chain: ?Chain) => {
+  const ratesPerChain = useRatesPerChain();
+
+  if (!chain) return EMPTY_OBJECT;
+  return ratesPerChain[chain] ?? EMPTY_OBJECT;
+};
+
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
-export const useChainSupportedAssets = (chain: Chain) => useSupportedAssetsPerChain()[chain] ?? EMPTY_ARRAY;
+
+export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
+  const supportedAssetPerChain = useSupportedAssetsPerChain();
+  if (!chain) return EMPTY_ARRAY;
+
+  return supportedAssetPerChain[chain] ?? EMPTY_ARRAY;
+};
+
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
 

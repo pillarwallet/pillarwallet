@@ -27,10 +27,12 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
+import { getChainWalletAssetsBalances, getWalletBalanceForAsset } from 'utils/balances';
 import { valueForAddress } from 'utils/common';
 
 // Selectors
 import {
+  useRootSelector,
   fiatCurrencySelector,
   ratesPerChainSelector,
   activeAccountIdSelector,
@@ -41,8 +43,8 @@ import {
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, AccountAssetBalances, AssetBalancesPerAccount } from 'models/Balances';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { RatesPerChain } from 'models/Rates';
-
 
 export const assetsBalancesPerAccountSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 
@@ -53,6 +55,11 @@ export const accountAssetsBalancesSelector: Selector<AccountAssetBalances> = cre
     if (!activeAccountId) return {};
     return balances?.[activeAccountId] ?? {};
   },
+);
+
+export const accountWalletAssetsBalancesSelector: Selector<ChainRecord<WalletAssetsBalances>> = createSelector(
+  accountAssetsBalancesSelector,
+  (balances: AccountAssetBalances): ChainRecord<WalletAssetsBalances> => getChainWalletAssetsBalances(balances),
 );
 
 export const accountEthereumWalletAssetsBalancesSelector = createSelector(
@@ -82,3 +89,11 @@ export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber
   },
 );
 
+export const useWalletAssetBalance = (chain: ?Chain, assetAddress: ?string): BigNumber => {
+  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
+
+  if (!chain || !assetAddress) return BigNumber(0);
+
+  const walletBalances = accountBalances[chain]?.wallet;
+  return getWalletBalanceForAsset(walletBalances, assetAddress);
+};
