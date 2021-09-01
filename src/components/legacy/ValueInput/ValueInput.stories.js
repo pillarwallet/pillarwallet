@@ -27,14 +27,14 @@ import { ADDRESS_ZERO, ETH, GBP, PLR } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
-import ValueInputComponent from 'components/ValueInput';
+import ValueInputComponent from 'components/legacy/ValueInput';
 
 // test utils
 import { createTestStore, initialTestState } from 'testUtils/store';
 
 // local
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../../storybook/CenterViewStretchDecorator';
 
 
 // cannot import from test utils, bundler fails

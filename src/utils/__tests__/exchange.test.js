@@ -29,6 +29,7 @@ const assetEth = {
   name: 'Ethereum',
   chain: CHAIN.ETHEREUM,
   decimals: 18,
+  iconUrl: '',
 };
 const assetPlr = {
   symbol: 'PLR',
@@ -37,6 +38,7 @@ const assetPlr = {
   name: 'Pillar',
   chain: CHAIN.ETHEREUM,
   decimals: 18,
+  iconUrl: '',
 };
 
 describe('Exchange Utility function tests', () => {

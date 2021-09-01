@@ -47,11 +47,13 @@ import {
 import etherspotService from 'services/etherspot';
 
 // utils
+import { wrapBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 
 // types
 import type { Chain } from 'models/Chain';
 import type { GasToken } from 'models/Transaction';
+import type { Value } from 'models/Value';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Record } from 'utils/object';
 
@@ -186,13 +188,6 @@ export const pipe = (...fns: Function[]) => {
 };
 
 export const noop = () => {};
-
-export type Value = BigNumber | number | string;
-
-export const wrapBigNumber = (value: Value): BigNumber => {
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
-};
 
 /**
  * formatMoney(n, x, s, c)
@@ -606,11 +601,11 @@ export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
 
-export const addressAsKey = (address: string): string => address?.toLowerCase() ?? '';
+export const addressAsKey = (address: ?string): string => address?.toLowerCase() ?? '';
 
 export const valueForAddress = <V>(
   record: ?Record<V>,
-  address: string,
+  address: ?string,
 ): ?V => record?.[addressAsKey(address)];
 
 export const setValueForAddress = <V>(record: Record<V>, address: string, value: V) => {

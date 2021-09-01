@@ -53,7 +53,7 @@ import { isGasTokenSupportedSelector } from 'selectors/archanova';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 import type { Chain } from 'models/Chain';
 import type { GasToken } from 'models/Transaction';
 

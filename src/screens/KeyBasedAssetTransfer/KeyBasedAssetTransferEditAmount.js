@@ -21,8 +21,21 @@ import * as React from 'react';
 import { InteractionManager } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
+import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+
+// Components
+import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import TokenValueInput from 'components/inputs/TokenValueInput';
+import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
+// Selectors
+import { useRootSelector } from 'selectors';
 
 // Actions
 import {
@@ -30,27 +43,14 @@ import {
   removeKeyBasedAssetToTransferAction,
 } from 'actions/keyBasedAssetTransferActions';
 
-// Components
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueInput from 'components/ValueInput';
-
-// Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  useChainRates,
-} from 'selectors';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // Utils
-import { mapAssetDataToAssetOption } from 'utils/assets';
-import { BigNumber, formatAmount } from 'utils/common';
+import { mapAssetDataToAsset } from 'utils/assets';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { valueForAddress } from 'utils/common';
+import { isValidValueForTransfer, isLessThanOrEqualToBalance } from 'utils/transactions';
 import { spacing } from 'utils/variables';
 
-// types
+// Types
 import type { TokenData } from 'models/Asset';
 
 function KeyBasedAssetTransferEditAmount() {
@@ -60,16 +60,15 @@ function KeyBasedAssetTransferEditAmount() {
 
   const inputRef = React.useRef();
 
-  const [value, setValue] = React.useState(initialValue != null ? formatAmount(initialValue, assetData?.decimals) : '');
-  const [isValid, setIsValid] = React.useState(true);
+  const balance = useAssetBalance(assetData?.contractAddress);
+
+  const [value, setValue] = React.useState<?BigNumber>(wrapBigNumberOrNil(initialValue));
 
   const dispatch = useDispatch();
-  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
-  const fiatCurrency = useFiatCurrency();
-  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    return () => { promise.cancel(); };
   }, []);
 
   // Fail safe
@@ -83,17 +82,24 @@ function KeyBasedAssetTransferEditAmount() {
     );
   }
 
+  const isValidValue = isValidValueForTransfer(value, balance);
+  const hasEnoughBalance = isLessThanOrEqualToBalance(value, balance);
+
+  const handleUseMax = () => {
+    setValue(balance);
+  };
+
   const handleSubmit = () => {
-    if (!assetData) return;
+    if (!assetData || !value) return;
 
     dispatch(removeKeyBasedAssetToTransferAction(assetData));
-    dispatch(addKeyBasedAssetToTransferAction(assetData, BigNumber(value)));
+    dispatch(addKeyBasedAssetToTransferAction(assetData, value));
     navigation.goBack(null);
   };
 
-  const assetOption = assetData
-    ? mapAssetDataToAssetOption(assetData, keyWalletBalances, ethereumRates, fiatCurrency)
-    : null;
+  const asset = assetData ? mapAssetDataToAsset(assetData) : null;
+
+  const buttonTitle = hasEnoughBalance ? t('button.confirm') : t('label.notEnoughBalance', { symbol: asset?.symbol });
 
   return (
     <ContainerWithHeader
@@ -102,23 +108,23 @@ function KeyBasedAssetTransferEditAmount() {
       }}
       footer={
         <FooterContent>
-          <Button title={t('button.confirm')} onPress={handleSubmit} disabled={!isValid} />
+          <Button title={buttonTitle} onPress={handleSubmit} disabled={!isValidValue} />
         </FooterContent>
       }
       shouldFooterAvoidKeyboard
     >
       <Content>
-        <ValueInput
+        <TokenValueInput
+          // $FlowFixMe: ref type inference
+          ref={inputRef}
           value={value}
           onValueChange={setValue}
-          assetData={assetOption}
-          customAssets={[]}
-          customBalances={keyWalletBalances}
-          onFormValid={setIsValid}
-          getInputRef={(ref) => {
-            inputRef.current = ref;
-          }}
+          maxValue={balance}
+          referenceValue={balance}
+          chain={CHAIN.ETHEREUM}
+          asset={asset}
         />
+        <TokenBalanceAccessory balance={balance} onUseMax={handleUseMax} chain={CHAIN.ETHEREUM} asset={asset} />
       </Content>
     </ContainerWithHeader>
   );
@@ -126,9 +132,16 @@ function KeyBasedAssetTransferEditAmount() {
 
 export default KeyBasedAssetTransferEditAmount;
 
+function useAssetBalance(address: ?string) {
+  const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
+
+  const balance = valueForAddress(keyWalletBalances, address)?.balance;
+  return BigNumber(balance ?? 0);
+}
+
 const Content = styled.View`
   flex: 1;
-  padding: ${spacing.largePlus}px 40px ${spacing.large}px;
+  padding: ${spacing.largePlus}px 20px ${spacing.large}px;
 `;
 
 const FooterContent = styled.View`
