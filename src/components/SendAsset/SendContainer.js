@@ -34,10 +34,10 @@ import Spinner from 'components/Spinner';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { CHAIN } from 'constants/chainConstants';
 import { useChainConfig } from 'utils/uiConfig';
 
 // Types
