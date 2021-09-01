@@ -22,11 +22,13 @@ import * as React from 'react';
 import FastImage from 'react-native-fast-image';
 import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 
-export type ImageProps = FastImageProps;
+// Types
+import type { ImageSource } from 'utils/types/react-native';
 
-type Props = {
-  fallbackSource?: string,
-}
+export type ImageProps = {|
+  ...FastImageProps,
+  fallbackSource?: ImageSource,
+|};
 
 const getValidSource = (source: FastImageSource | number) => {
   if (typeof source?.uri !== 'string') return source;
@@ -40,7 +42,7 @@ const getValidSource = (source: FastImageSource | number) => {
 // This can be refactored to FC as soon as we update Styled Componenents.
 
 // eslint-disable-next-line react/prefer-stateless-function
-class Image extends React.Component<ImageProps, Props> {
+class Image extends React.Component<ImageProps> {
   static resizeMode = FastImage.resizeMode;
   static priority = FastImage.priority;
   static cacheControl = FastImage.cacheControl;
