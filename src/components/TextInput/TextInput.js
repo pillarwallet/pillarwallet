@@ -397,7 +397,6 @@ class TextInput extends React.Component<Props, State> {
         <StyledImage
           key={selectedValue}
           source={optionImageSource}
-          fallback
           fallbackSource={selectedOptionFallback || genericToken}
           resizeMode="contain"
         />
@@ -550,7 +549,6 @@ class TextInput extends React.Component<Props, State> {
                   <LeftSideWrapper>
                     {(innerImageURI || fallbackSource) && <Image
                       source={imageSource}
-                      fallback
                       fallbackSource={fallbackSource}
                       style={{ marginRight: 9 }}
                     />}

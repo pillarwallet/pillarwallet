@@ -294,7 +294,6 @@ const LiquidityPoolDashboard = ({
           <AssetIcon
             source={{ uri: pool.iconUrl }}
             fallbackSource={genericToken}
-            fallback
           />
           <MediumText giant center>{formattedBalance}{' '}
             <MediumText secondary fontSize={20}>{pool.symbol}</MediumText>
@@ -443,7 +442,6 @@ const LiquidityPoolDashboard = ({
                     <Row>
                       <AllocationIcon
                         source={{ uri: tokenData.iconUrl }}
-                        fallback
                         fallbackSource={genericToken}
                       />
                       <Spacing w={8} />

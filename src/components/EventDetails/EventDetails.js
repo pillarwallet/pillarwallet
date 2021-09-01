@@ -1156,7 +1156,7 @@ export class EventDetail extends React.Component<Props> {
           border={iconBorder}
           backgroundColor={this.getColor(iconBackgroundColor)}
         >
-          <TokenImage source={{ uri: itemImageUrl }} fallback fallbackSource={fallbackSource} />
+          <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
@@ -1186,7 +1186,6 @@ export class EventDetail extends React.Component<Props> {
           <StyledCollectibleImage
             borderRadius={borderRadius}
             source={{ uri: collectibleUrl }}
-            fallback
             fallbackSource={fallbackSource}
           />
         </IconCircle>

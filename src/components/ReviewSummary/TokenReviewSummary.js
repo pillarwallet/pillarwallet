@@ -91,7 +91,7 @@ export const TokenReviewSummaryComponent = ({
 
   return (
     <Container>
-      <TokenImage source={assetIcon} fallback fallbackSource={!!asset && genericToken} />
+      <TokenImage source={assetIcon} fallbackSource={!!asset && genericToken} />
       <Spacing h={32} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={4} />

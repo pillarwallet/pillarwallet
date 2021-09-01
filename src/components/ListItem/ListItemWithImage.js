@@ -404,7 +404,7 @@ const ItemImage = (props: Props) => {
         border={iconBorder}
         borderRadius={roundedImageCustomBorderRadius}
       >
-        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallback fallbackSource={fallbackSource} />
+        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
       </IconRounded>
     );
   }
@@ -433,7 +433,6 @@ const ItemImage = (props: Props) => {
         <TokenImage
           diameter={diameter}
           source={itemImageSource}
-          fallback
           fallbackSource={fallbackSource}
           borderRadius={roundedImageCustomBorderRadius}
         />

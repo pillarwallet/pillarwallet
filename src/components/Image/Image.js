@@ -26,7 +26,6 @@ export type ImageProps = FastImageProps;
 
 type Props = {
   fallbackSource?: string,
-  fallback?: boolean,
 }
 
 const getValidSource = (source: FastImageSource | number) => {
@@ -48,8 +47,10 @@ class Image extends React.Component<ImageProps, Props> {
   static preload = FastImage.preload;
 
   render() {
-    const { source, fallback, fallbackSource, ...rest } = this.props;
-    return <FastImage source={getValidSource(source)} fallback={fallback} defaultSource={fallbackSource} {...rest} />;
+    const { source, fallbackSource, ...rest } = this.props;
+    return (
+      <FastImage source={getValidSource(source)} fallback={!!fallbackSource} defaultSource={fallbackSource} {...rest} />
+    );
   }
 }
 

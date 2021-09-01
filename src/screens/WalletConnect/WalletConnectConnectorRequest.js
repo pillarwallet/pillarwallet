@@ -97,7 +97,6 @@ const WalletConnectConnectorRequestScreen = () => {
               marginBottom: spacing.mediumLarge,
             }}
             source={{ uri: icon }}
-            fallback
             fallbackSource={genericToken}
             resizeMode="contain"
           />

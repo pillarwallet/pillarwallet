@@ -156,7 +156,7 @@ export const ListCard = (props: Props) => {
       disabled={disabled}
     >
       <CardRow>
-        {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallback fallbackSource={fallbackIcon} />}
+        {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
         {customIcon}
         <CardContent>
           <TitleWrapper>

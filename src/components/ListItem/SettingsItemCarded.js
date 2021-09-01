@@ -133,7 +133,7 @@ const SettingsItemCarded = (props: Props) => {
         <CardRow>
           {showIcon &&
           <IconWrapper>
-            <CardImage source={iconSource} fallback fallbackSource={fallbackIcon} />
+            <CardImage source={iconSource} fallbackSource={fallbackIcon} />
           </IconWrapper>}
           <CardContent>
             <CardTitle>{title}</CardTitle>

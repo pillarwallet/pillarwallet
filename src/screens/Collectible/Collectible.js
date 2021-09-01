@@ -201,7 +201,6 @@ const CollectibleScreen = ({
           <StyledCollectibleImage
             key={id.toString()}
             source={{ uri: imageUrl }}
-            fallback
             fallbackSource={genericCollectible}
             resizeMode="contain"
             width={180}
