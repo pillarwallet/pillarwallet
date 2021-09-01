@@ -67,8 +67,8 @@ function KeyBasedAssetTransferEditAmount() {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    // $FlowFixMe: ref type inference
-    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    return () => { promise.cancel(); };
   }, []);
 
   // Fail safe

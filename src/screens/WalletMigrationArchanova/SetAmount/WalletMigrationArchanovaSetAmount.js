@@ -67,7 +67,8 @@ function WalletMigrationArchanovaSetAmount() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
+    return () => { promise.cancel(); };
   }, []);
 
   const isValid = isValidValueForTransfer(value, balance);
