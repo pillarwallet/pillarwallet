@@ -36,6 +36,7 @@ import { MENU_SETTINGS } from 'constants/navigationConstants';
 // utils
 import { getSaltedPin } from 'utils/wallet';
 import { setKeychainDataObject } from 'utils/keychain';
+import { getDeviceUniqueId } from 'utils/device';
 
 // services
 import { navigate } from 'services/navigation';
@@ -49,7 +50,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
-import { changeUseBiometricsAction, updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
+import { changeUseBiometricsAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 
 export const backupWalletAction = () => {
@@ -95,8 +96,8 @@ export const encryptAndSaveWalletAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
 
-    await dispatch(updateDeviceUniqueIdIfNeededAction());
-    const { deviceUniqueId } = getState().appSettings.data;
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     const saltedPin = await getSaltedPin(pin, deviceUniqueId);
     const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })

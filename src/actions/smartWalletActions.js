@@ -153,6 +153,7 @@ import {
 } from 'utils/wallet';
 import { nativeAssetPerChain } from 'utils/chains';
 import { fromEthersBigNumber } from 'utils/bigNumber';
+import { getDeviceUniqueId } from 'utils/device';
 
 // actions
 import {
@@ -174,7 +175,7 @@ import {
   setTransactionsEstimateErrorAction,
   setTransactionsEstimateFeeAction,
 } from './transactionEstimateActions';
-import { updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
+import { setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
@@ -1404,8 +1405,8 @@ export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _private
   return async (dispatch: Dispatch, getState: GetState) => {
     let privateKey = _privateKey;
     if (!_privateKey && pin) {
-      await dispatch(updateDeviceUniqueIdIfNeededAction());
-      const { deviceUniqueId } = getState().appSettings.data;
+      const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+      dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
       privateKey = await getPrivateKeyFromPin(pin, deviceUniqueId);
     }

@@ -51,6 +51,7 @@ import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { findFirstArchanovaAccount, findFirstEtherspotAccount } from 'utils/accounts';
+import { getDeviceUniqueId } from 'utils/device';
 
 // services
 import Storage from 'services/storage';
@@ -69,7 +70,7 @@ import { setupLoggingServicesAction } from './appActions';
 import { initOnLoginArchanovaAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { setAppThemeAction, setAppLanguageAction, updateDeviceUniqueIdIfNeededAction } from './appSettingsActions';
+import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { checkInitialDeepLinkAction } from './deepLinkActions';
@@ -230,8 +231,8 @@ export const checkAuthAction = (
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING });
 
-    await dispatch(updateDeviceUniqueIdIfNeededAction());
-    const { deviceUniqueId } = getState().appSettings.data;
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     let wallet;
     let decryptError;
@@ -268,8 +269,8 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
-    await dispatch(updateDeviceUniqueIdIfNeededAction());
-    const { deviceUniqueId } = getState().appSettings.data;
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     const wallet = await decryptWalletFromStorage(currentPin, deviceUniqueId);
 
