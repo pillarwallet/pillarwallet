@@ -208,7 +208,7 @@ const getTotalFee = (assetTransfers: KeyBasedAssetTransfer[]) => {
   let result = BigNumber(0);
 
   assetTransfers.forEach(({ calculatedGasLimit, gasPrice }) => {
-    const txFee = BigNumber(calculatedGasLimit ?? 0).multipliedBy(formatEther(gasPrice ?? 0));
+    const txFee = BigNumber(calculatedGasLimit ?? 0).multipliedBy(formatEther(gasPrice?.toString() ?? 0));
     result = result.plus(txFee);
   });
 
