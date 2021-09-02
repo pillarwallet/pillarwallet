@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { ethers, utils } from 'ethers';
-import DeviceInfo from 'react-native-device-info';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
@@ -26,10 +25,19 @@ import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
 // eslint-disable-next-line camelcase
 import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 
-import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
-import Storage from 'services/storage';
+// actions
 import { saveDbAction } from 'actions/dbActions';
+
+// utils
+import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
+import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
+
+// services
+import Storage from 'services/storage';
+
+// types
 import type { Dispatch } from 'reducers/rootReducer';
+
 
 const storage = Storage.getInstance('db');
 
@@ -48,13 +56,15 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
   return chosenWords;
 }
 
-export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
-  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+export async function getSaltedPin(pin: string, deviceUniqueId: ?string): Promise<string> {
   if (!deviceUniqueId) {
-    deviceUniqueId = DeviceInfo.getUniqueId();
-    await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
+    // report and return unsalted
+    reportErrorLog('getSaltedPin failed: no deviceUniqueId');
+    // eslint-disable-next-line i18next/no-literal-string
+    throw new Error('Unable to get deviceUniqueId.');
   }
-  return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
+
+  return `${deviceUniqueId}${pin}${deviceUniqueId.slice(0, 5)}`;
 }
 
 export function normalizeWalletAddress(walletAddress: string): string {
@@ -194,21 +204,78 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
   };
 }
 
-export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
-  return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
-}
-
-export function constructWalletFromPrivateKey(privateKey: string): Object {
+export function constructWalletFromPrivateKey(privateKey: string): ethers.Wallet {
   return new ethers.Wallet(privateKey);
 }
 
-export function constructWalletFromMnemonic(mnemonic: string): Object {
+export function constructWalletFromMnemonic(mnemonic: string): ethers.Wallet {
   return ethers.Wallet.fromMnemonic(mnemonic);
 }
 
-export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {
+export async function decryptWalletFromStorage(pin: string, deviceUniqueId: ?string): Promise<ethers.Wallet> {
   const { wallet: encryptedWallet } = await storage.get('wallet');
-  const saltedPin = await getSaltedPin(pin, dispatch);
-  const wallet = await decryptWallet(encryptedWallet, saltedPin);
-  return get(wallet, 'signingKey.privateKey');
+  const saltedPin = await getSaltedPin(pin, deviceUniqueId);
+
+  return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
+}
+
+export async function getPrivateKeyFromPin(pin: string, deviceUniqueId: ?string): Promise<?string> {
+  const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
+
+  return wallet?.signingKey?.privateKey;
+}
+
+export async function getDecryptedWallet(
+  pin: ?string,
+  privateKey: ?string,
+  deviceUniqueId: ?string,
+  biometricsEnabled: boolean = false,
+  withMnemonic: boolean = false,
+): Promise<?ethers.Wallet> {
+  if (privateKey) {
+    return constructWalletFromPrivateKey(privateKey);
+  }
+
+  if (!pin) return null;
+
+  /**
+   * Tries to retrieve from keychain without biometrics (basic secure chip approach),
+   * actual biometric unlock attempt happens on component level.
+   */
+  const keychainData = biometricsEnabled ? null : await getKeychainDataObject();
+  if (keychainData?.pin) {
+    const {
+      pin: keychainPin,
+      privateKey: keychainPrivateKey,
+      mnemonic: keychainMnemonic,
+    } = keychainData;
+
+    const mnemonicPhrase = typeof keychainMnemonic === 'string'
+      ? keychainMnemonic
+      : keychainMnemonic?.phrase; // needed for ethers v5 migration
+
+    if (pin && pin === keychainPin && keychainPrivateKey) {
+      return withMnemonic && mnemonicPhrase
+        ? constructWalletFromMnemonic(mnemonicPhrase)
+        : constructWalletFromPrivateKey(keychainPrivateKey);
+    }
+  }
+
+  const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
+
+  // migrate older users for keychain access
+  const keychainDataObject = {
+    pin,
+    privateKey: wallet?.privateKey,
+    mnemonic: wallet?.mnemonic?.phrase,
+  };
+  await setKeychainDataObject(keychainDataObject, biometricsEnabled);
+
+  return wallet;
+}
+
+export function formatToRawPrivateKey(privateKey: string): string {
+  return privateKey.indexOf('0x') === 0
+    ? privateKey.slice(2)
+    : privateKey;
 }

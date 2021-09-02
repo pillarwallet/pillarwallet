@@ -19,19 +19,22 @@
 */
 
 import isEmpty from 'lodash.isempty';
+import { Linking } from 'react-native';
 
 // actions
 import { connectToWalletConnectConnectorAction } from 'actions/walletConnectActions';
+import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 
 // utils
 import { validateDeepLink } from 'utils/deepLink';
+import { reportErrorLog } from 'utils/common';
 
 // types
-import type { Dispatch } from 'reducers/rootReducer';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
 export const executeDeepLinkAction = (deepLink: string) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     const validatedDeepLink = validateDeepLink(deepLink);
     if (isEmpty(validatedDeepLink)) return;
     const { action, query, protocol } = validatedDeepLink;
@@ -53,6 +56,22 @@ export const executeDeepLinkAction = (deepLink: string) => {
         break;
       default:
         break;
+    }
+  };
+};
+
+export const checkInitialDeepLinkAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { initialDeepLinkExecuted } = getState().appSettings?.data ?? {};
+    if (initialDeepLinkExecuted) return;
+
+    dispatch(initialDeepLinkExecutedAction());
+
+    try {
+      const url = await Linking.getInitialURL();
+      if (url) dispatch(executeDeepLinkAction(url));
+    } catch (error) {
+      reportErrorLog('checkInitialDeepLinkAction Linking.getInitialURL failed', { error });
     }
   };
 };

@@ -82,7 +82,7 @@ const BackupPhrase = ({
       <CheckAuth
         revealMnemonic
         enforcePin
-        onPinValid={(pin, walletObj) => onPinValid(walletObj)}
+        onPinValid={onPinValid}
         headerProps={{ onClose: handleScreenDismissal }}
       />
     );
