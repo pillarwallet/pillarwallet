@@ -53,15 +53,6 @@ exports[`Storyshots ActionModal default 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -70,7 +61,18 @@ exports[`Storyshots ActionModal default 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -105,6 +107,20 @@ exports[`Storyshots ActionModal default 1`] = `
               ]
             }
           >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "center",
+                    "backgroundColor": "#ededed",
+                    "borderRadius": 2.5,
+                    "height": 5,
+                    "marginTop": 12,
+                    "width": 38,
+                  },
+                ]
+              }
+            />
             <View
               style={
                 Array [
@@ -19977,15 +19993,6 @@ exports[`Storyshots DetailModal Layout L 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -19994,7 +20001,18 @@ exports[`Storyshots DetailModal Layout L 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -20368,15 +20386,6 @@ exports[`Storyshots DetailModal Layout M 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -20385,7 +20394,18 @@ exports[`Storyshots DetailModal Layout M 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -20777,15 +20797,6 @@ exports[`Storyshots DetailModal Layout S 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -20794,7 +20805,18 @@ exports[`Storyshots DetailModal Layout S 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -21125,15 +21147,6 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -21142,7 +21155,18 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -21452,15 +21476,6 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -21469,7 +21484,18 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -21944,15 +21970,6 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -21961,7 +21978,18 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -22230,15 +22258,6 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -22247,7 +22266,18 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -22700,15 +22730,6 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -22717,7 +22738,18 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -23170,15 +23202,6 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -23187,7 +23210,18 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -23509,15 +23543,6 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -23526,7 +23551,18 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -23847,15 +23883,6 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -23864,7 +23891,18 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -24186,15 +24224,6 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -24203,7 +24232,18 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -24732,15 +24772,6 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -24749,7 +24780,18 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -25217,15 +25259,6 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -25234,7 +25267,18 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -25497,15 +25541,6 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -25514,7 +25549,18 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -25777,15 +25823,6 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -25794,7 +25831,18 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -26399,15 +26447,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -26416,7 +26455,18 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -26739,15 +26789,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -26756,7 +26797,18 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -27079,15 +27131,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -27096,7 +27139,18 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -27419,15 +27473,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -27436,7 +27481,18 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -27759,15 +27815,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -27776,7 +27823,18 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -28055,15 +28113,6 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -28072,7 +28121,18 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -28351,15 +28411,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -28368,7 +28419,18 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -28647,15 +28709,6 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -28664,7 +28717,18 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -28943,15 +29007,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -28960,7 +29015,18 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -29233,15 +29299,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -29250,7 +29307,18 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -29572,15 +29640,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -29589,7 +29648,18 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -29890,15 +29960,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -29907,7 +29968,18 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -30257,15 +30329,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -30274,7 +30337,18 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -30547,15 +30621,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -30564,7 +30629,18 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -30886,15 +30962,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -30903,7 +30970,18 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -31204,15 +31282,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -31221,7 +31290,18 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -31571,15 +31651,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -31588,7 +31659,18 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -31911,15 +31993,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -31928,7 +32001,18 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -32251,15 +32335,6 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -32268,7 +32343,18 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -32574,15 +32660,6 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -32591,7 +32668,18 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -32836,15 +32924,6 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -32853,7 +32932,18 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {
@@ -43135,15 +43225,6 @@ exports[`Storyshots SlideModal default 1`] = `
           }
         >
           <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Array [
                 Object {
@@ -43152,7 +43233,18 @@ exports[`Storyshots SlideModal default 1`] = `
                 },
               ]
             }
-          />
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "height": "100%",
+                    "width": "100%",
+                  },
+                ]
+              }
+            />
+          </View>
           <View
             customTheme={
               Object {

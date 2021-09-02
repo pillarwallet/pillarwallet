@@ -248,6 +248,7 @@
     "smartWalletFAQ": "ብልህ ቦርሳ ተደጋጋሚ ጥያቄዎች",
     "subscribe": "ይመዝገቡ",
     "support": "ረዳት",
+    "swipeConfirm": "ለማረጋገጥ ያንሸራትቱ",
     "topUp": "ይሙሉ",
     "topUpMore": "ጨምረው ይሙሉ",
     "topUpPLRTank": "የ PLR በርሜሉን ይሙሉ",
@@ -988,7 +989,7 @@
       "requestsList": "ጥያቄዎች",
       "activeConnections": "ገቢራዊ ግንኙነቶች",
       "connect": "አገናኝ",
-      "walletConnectRequests": "የዎሌት ኮኔክት ጥያቄ",
+      "walletConnectRequests": "ጋር ይገናኙ {{app}}",
       "walletConnect": "ዎሌት ኮኔክት",
       "requestType": {
         "call": "የጥሪ ጥያቄ",

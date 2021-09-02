@@ -42,7 +42,7 @@ type Size = 'regular' | 'large' | 'compact';
 type Props = {|
   title?: string,
   leftIcon?: IconName,
-  onPress: () => mixed,
+  onPress?: () => mixed,
   variant?: Variant,
   size?: Size,
   disabled?: boolean,
@@ -75,7 +75,7 @@ function Button({
       setLocalDisabled(false);
     }, 300);
 
-    onPress();
+    if (onPress) onPress();
   };
 
   if (!titleColor) {
