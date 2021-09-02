@@ -28,13 +28,12 @@ function loadStories() {
 	require('../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories');
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
-	require('../src/components/SearchBar/SearchBar.stories');
-	require('../src/components/SearchBlock/SearchBlock.stories');
+	require('../src/components/legacy/SearchBar/SearchBar.stories');
 	require('../src/components/Table/Table.stories');
 	require('../src/components/TextInput/TextInput.stories');
 	require('../src/components/Toast/ToastCard.stories');
 	require('../src/components/Tooltip/Tooltip.stories');
-	require('../src/components/ValueInput/ValueInput.stories');
+	require('../src/components/legacy/ValueInput/ValueInput.stories');
 	require('../src/components/modern/CheckBox/CheckBox.stories');
 }
 
@@ -63,13 +62,12 @@ const stories = [
 	'../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories',
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
-	'../src/components/SearchBar/SearchBar.stories',
-	'../src/components/SearchBlock/SearchBlock.stories',
+	'../src/components/legacy/SearchBar/SearchBar.stories',
 	'../src/components/Table/Table.stories',
 	'../src/components/TextInput/TextInput.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',
-	'../src/components/ValueInput/ValueInput.stories',
+	'../src/components/legacy/ValueInput/ValueInput.stories',
 	'../src/components/modern/CheckBox/CheckBox.stories'
 ];
 

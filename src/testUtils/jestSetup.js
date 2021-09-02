@@ -198,8 +198,10 @@ jest.setMock('react-native-background-timer', {
   stopBackgroundTimer: () => {},
 });
 
+export const mockDeviceUniqueId = '1x1x1x1x1x1x1';
+
 jest.setMock('react-native-device-info', {
-  getUniqueId: () => '1x1x1x1x1x1x1',
+  getUniqueId: () => mockDeviceUniqueId,
   getBuildNumber: () => '',
   getVersion: () => '',
 });

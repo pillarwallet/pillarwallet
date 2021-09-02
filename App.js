@@ -122,7 +122,7 @@ type Props = {
   changeLanguage: (language: string) => void,
   translationsInitialised: boolean,
   updateTranslationResourceOnContextChange: () => void,
-  initialDeeplinkExecuted: boolean,
+  initialDeepLinkExecuted: boolean,
   sessionLanguageVersion: ?string,
   logScreenView: (screenName: string) => void,
   initWalletConnectSessionsWithoutReset: () => void,
@@ -284,7 +284,7 @@ class App extends React.Component<Props, *> {
 
   handleDeepLinkEvent = (event: { url: string }) => {
     // prevents invoking upon app launch, before login
-    if (this.props.initialDeeplinkExecuted) {
+    if (this.props.initialDeepLinkExecuted) {
       const { executeDeepLink } = this.props;
       const { url: deepLink } = event;
       if (deepLink === undefined) return;
@@ -369,7 +369,7 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeepLinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
   session: { data: { translationsInitialised, sessionLanguageVersion } },
 }: RootReducerState): $Shape<Props> => ({
@@ -378,7 +378,7 @@ const mapStateToProps = ({
   isManualThemeSelection,
   activeWalkthroughSteps,
   translationsInitialised,
-  initialDeeplinkExecuted,
+  initialDeepLinkExecuted,
   sessionLanguageVersion,
 });
 

@@ -21,7 +21,7 @@
 import { sdkConstants, sdkModules } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
+import { utils, type Wallet as EthersWallet } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -147,11 +147,13 @@ import {
   reportLog,
 } from 'utils/common';
 import {
+  formatToRawPrivateKey,
   getPrivateKeyFromPin,
   normalizeWalletAddress,
 } from 'utils/wallet';
 import { nativeAssetPerChain } from 'utils/chains';
 import { fromEthersBigNumber } from 'utils/bigNumber';
+import { getDeviceUniqueId } from 'utils/device';
 
 // actions
 import {
@@ -173,6 +175,7 @@ import {
   setTransactionsEstimateErrorAction,
   setTransactionsEstimateFeeAction,
 } from './transactionEstimateActions';
+import { setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
@@ -1399,10 +1402,13 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
 };
 
 export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitArchanovaProps) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     let privateKey = _privateKey;
     if (!_privateKey && pin) {
-      privateKey = await getPrivateKeyFromPin(pin, dispatch);
+      const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+      dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
+
+      privateKey = await getPrivateKeyFromPin(pin, deviceUniqueId);
     }
     if (!privateKey) return;
     await dispatch(initArchanovaSdkAction(privateKey));
@@ -1516,10 +1522,12 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     if (!smartWalletNeedsInit) return;
 
-    dispatch(lockScreenAction(
-      (privateKey: string) => dispatch(initOnLoginArchanovaAccountAction(privateKey)),
-      t('paragraph.sessionExpiredReEnterPin'),
-    ));
+    const onLoginSuccess = async (pin: ?string, wallet: EthersWallet) => {
+      const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
+      await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
+    };
+
+    dispatch(lockScreenAction(onLoginSuccess, t('paragraph.sessionExpiredReEnterPin')));
   };
 };
 

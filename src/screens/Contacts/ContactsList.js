@@ -90,7 +90,7 @@ const ContactsList = () => {
     <DeleteContactModal contact={contact} />
   ));
 
-  const handleChangeQuery = (value: string) => {
+  const handleQueryChange = (value: string) => {
     setQuery(value);
     const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
     setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
@@ -166,15 +166,7 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      <SearchBar
-        query={query}
-        onChangeQuery={handleChangeQuery}
-        iconProps={{
-          persistIconOnFocus: true,
-        }}
-        placeholder={t('label.walletAddressEnsUser')}
-        showPasteButton
-      />
+      <SearchBar query={query} onQueryChange={handleQueryChange} placeholder={t('label.addressEnsUsername')} />
 
       <FlatList
         data={items}

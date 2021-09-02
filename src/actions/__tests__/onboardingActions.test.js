@@ -59,6 +59,7 @@ import {
   mockEthAddress,
   mockPlrAddress,
   mockEtherExchangeRates,
+  mockDeviceUniqueId,
 } from 'testUtils/jestSetup';
 
 // types
@@ -128,6 +129,7 @@ describe('Onboarding actions', () => {
   it(`should expect series of actions with payload to be dispatched
   on setupWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
+      appSettings: { data: { deviceUniqueId: mockDeviceUniqueId } },
       session: { data: { isOnline: true } },
       onboarding: mockOnboarding,
     });
@@ -149,6 +151,7 @@ describe('Onboarding actions', () => {
   it(`should expect series of actions with payload to be
   dispatched on setupWalletAction execution when wallet was imported`, () => {
     store = mockStore({
+      appSettings: { data: { deviceUniqueId: mockDeviceUniqueId } },
       session: { data: { isOnline: true } },
       onboarding: {
         ...mockOnboarding,
@@ -244,8 +247,8 @@ describe('Onboarding actions', () => {
     const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
 
     const expectedActions = [
+      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
-
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
@@ -298,8 +301,8 @@ describe('Onboarding actions', () => {
     const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
 
     const expectedActions = [
+      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
-
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova

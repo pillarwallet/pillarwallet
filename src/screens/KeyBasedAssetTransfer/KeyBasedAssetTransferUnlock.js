@@ -61,7 +61,7 @@ const KeyBasedAssetTransferUnlock = ({
 
   return (
     <CheckAuth
-      onPinValid={(pin: string, wallet: Object) => {
+      onPinValid={(pin: string, wallet: Wallet) => {
         setIsPinValid(true);
         createKeyBasedAssetsToTransferTransactions(wallet);
       }}

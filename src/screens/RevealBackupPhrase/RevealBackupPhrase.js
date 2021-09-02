@@ -24,19 +24,27 @@ import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
-import type { Dispatch } from 'reducers/rootReducer';
+// actions
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+
+// components
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckAuth from 'components/CheckAuth';
 import Header from 'components/Header';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+
+// utils
 import { themedColors } from 'utils/themes';
 import { excludeFromMonitoring } from 'utils/monitoring';
 
+// types
+import type { Dispatch } from 'reducers/rootReducer';
+import type { OnValidPinCallback } from 'models/Wallet';
+
 
 type Props = {
-  checkPin: (pin: string, onValidPin: Function) => Function,
+  checkPin: (pin: string, onValidPin: ?OnValidPinCallback) => Function,
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: () => void,
 };

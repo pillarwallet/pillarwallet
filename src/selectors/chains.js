@@ -35,12 +35,12 @@ import { isEtherspotAccountDeployed } from 'utils/etherspot';
 // Types
 import type { Account } from 'models/Account';
 import type { Chain, ChainRecord } from 'models/Chain';
-import type { RootReducerState, Selector } from 'reducers/rootReducer';
+import type { Selector } from 'reducers/rootReducer';
 
-export const supportedChainsSelector = (root: RootReducerState): Chain[] => {
-  const activeAccount = activeAccountSelector(root);
-  return getSupportedChains(activeAccount);
-};
+export const supportedChainsSelector: Selector<Chain[]> = createSelector(
+  activeAccountSelector,
+  (activeAccount: ?Account) => getSupportedChains(activeAccount),
+);
 
 export const useSupportedChains = (): Chain[] => useRootSelector(supportedChainsSelector);
 

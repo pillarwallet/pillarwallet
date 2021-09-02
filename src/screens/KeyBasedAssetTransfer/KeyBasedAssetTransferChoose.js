@@ -135,6 +135,7 @@ const KeyBasedAssetTransferChoose = ({
     const assetExist = keyBasedAssetsToTransfer.some((assetToTransfer) =>
       isMatchingAssetToTransfer(assetToTransfer, assetData),
     );
+
     removeKeyBasedAssetToTransfer(assetData);
     if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };

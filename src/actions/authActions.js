@@ -17,10 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import { Linking } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
@@ -41,7 +38,6 @@ import {
   LOGOUT_PENDING,
   TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
-import { SET_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -49,66 +45,47 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { delay, reportLog, reportOrWarn } from 'utils/common';
-import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
+import { reportErrorLog, reportLog } from 'utils/common';
+import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
-import {
-  setKeychainDataObject,
-  resetKeychainDataObject,
-  getWalletFromPkByPin,
-  canLoginWithPkFromPin,
-} from 'utils/keychain';
+import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstArchanovaAccount,
-  findFirstEtherspotAccount,
-} from 'utils/accounts';
-import { isTest } from 'utils/environment';
+import { findFirstArchanovaAccount, findFirstEtherspotAccount } from 'utils/accounts';
+import { getDeviceUniqueId } from 'utils/device';
 
 // services
 import Storage from 'services/storage';
-import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
-import {
-  firebaseIid,
-  firebaseCrashlytics,
-  firebaseMessaging,
-  firebaseRemoteConfig,
-} from 'services/firebase';
+import { navigate, getNavigationState } from 'services/navigation';
+import { firebaseIid, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { OnValidPinCallback } from 'models/Wallet';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { setupSentryAction } from './appActions';
+import { setupLoggingServicesAction } from './appActions';
 import { initOnLoginArchanovaAccountAction } from './accountsActions';
-import {
-  encryptAndSaveWalletAction,
-  checkForWalletBackupToastAction,
-  updatePinAttemptsAction,
-} from './walletActions';
+import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
+import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
-import { executeDeepLinkAction } from './deepLinkActions';
+import { checkInitialDeepLinkAction } from './deepLinkActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import {
-  importEtherspotAccountsAction,
-  refreshEtherspotAccountsAction,
-  initEtherspotServiceAction,
-} from './etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction } from './cmsActions';
-import { fetchAllAccountsTotalBalancesAction } from './assetsActions';
+import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
+import { fetchAllCollectiblesDataAction } from './collectiblesActions';
 
 
 const storage = Storage.getInstance('db');
@@ -126,231 +103,159 @@ export const updateFcmTokenAction = () => {
   };
 };
 
-/**
- * ### IMPORTANT ###
- * If you plan to use any method within loginAction that calls
- * Pillar Wallet SDK API please make sure you wait until it completes
- * as first method might also perform tokens refresh during the request
- */
 export const loginAction = (
   pin: ?string,
   privateKey: ?string,
-  onLoginSuccess: ?Function,
-  useBiometrics?: ?boolean,
+  onLoginSuccess: ?OnValidPinCallback,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: {
-        data: {
-          blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted,
-        },
-      },
+      appSettings: { data: { blockchainNetwork } },
       session: { data: { isOnline } },
       accounts: { data: accounts },
+      user: { data: user },
     } = getState();
 
     dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: true } });
 
-    try {
-      let wallet;
+    await dispatch(checkAuthAction(pin, privateKey, onLoginSuccess));
 
-      dispatch({ type: SET_WALLET_IS_DECRYPTING });
-
-      const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
-      if (pin && keychainLogin) {
-        wallet = await getWalletFromPkByPin(pin);
-      } else if (pin) {
-        const { wallet: encryptedWallet } = await storage.get('wallet');
-        await delay(100);
-        const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin);
-        // no further code will be executed if pin is wrong
-        // migrate older users for keychain access OR fallback for biometrics login
-        const keychainDataObject = {
-          pin,
-          privateKey: wallet.privateKey,
-          mnemonic: wallet?.mnemonic?.phrase || '',
-        };
-        await setKeychainDataObject(keychainDataObject, useBiometrics);
-      } else if (privateKey) {
-        wallet = constructWalletFromPrivateKey(privateKey);
-      } else {
-        // nothing provided, invalid login
-        throw new Error();
-      }
-
-      const { user = {} } = await storage.get('user');
-
-      const decryptedPrivateKey = wallet?.privateKey;
-      if (!decryptedPrivateKey) {
-        reportLog('Unable to get wallet private key', { user });
-        throw new Error();
-      }
-
-      dispatch({ type: SET_USER, payload: user });
-
-      const { address } = wallet;
-      const unlockedWallet = { address };
-
-      // execute login success callback
-      if (onLoginSuccess) {
-        const rawPrivateKey = decryptedPrivateKey.indexOf('0x') === 0
-          ? decryptedPrivateKey.slice(2)
-          : decryptedPrivateKey;
-        await onLoginSuccess(rawPrivateKey);
-      }
-
-      if (isEmpty(accounts)) {
-        // complete registration, this can happen due offline
-        dispatch({ type: SET_WALLET, payload: { ...unlockedWallet, privateKey: decryptedPrivateKey } });
-        await dispatch(finishOnboardingAction());
-      } else {
-        dispatch({ type: SET_WALLET, payload: unlockedWallet });
-      }
-
-      // Archanova init flow
-      const archanovaAccount = findFirstArchanovaAccount(accounts);
-      if (archanovaAccount) {
-        await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
-      }
-
-      // init Etherspot SDK
-      await dispatch(updateFcmTokenAction());
-      await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
-
-      /**
-       * set Ethereum network as active if we disable feature flag
-       * or end beta testing program while user has set BTC as active network
-       */
-      const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
-      if (revertToDefaultNetwork || !blockchainNetwork) {
-        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-      }
-
-      if (isOnline) {
-        // Dispatch action to try and get the latest remote config values...
-        dispatch(loadRemoteConfigWithUserPropertiesAction());
-
-        // create etherspot account if does not exist, this also applies as migration from old key based wallets
-        const etherspotAccount = findFirstEtherspotAccount(accounts);
-        if (!etherspotAccount) {
-          await dispatch(importEtherspotAccountsAction()); // imports and sets as active
-        } else {
-          await dispatch(refreshEtherspotAccountsAction());
-        }
-
-        dispatch(setEnsNameIfNeededAction());
-
-        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-        dispatch(checkKeyBasedAssetTransferTransactionsAction());
-        dispatch(fetchAllAccountsTotalBalancesAction());
-      }
-
-      dispatch(addMissingWalletEventsIfNeededAction());
-
-      // user is registered
-      if (isOnline) {
-        dispatch(fetchTransactionsHistoryAction());
-        firebaseCrashlytics.setUserId(user.username);
-      }
-
-      dispatch(updatePinAttemptsAction(false));
-
-      if (!__DEV__) {
-        dispatch(setupSentryAction(user, wallet));
-      }
-
-      // TODO: do we actually need getNavigationPathAndParamsState check at all?
-      const pathAndParams = getNavigationPathAndParamsState();
-      if (!pathAndParams && !isTest) { // do not execute check on test instance
-        reportLog('loginAction failed: no pathAndParams');
-        return;
-      }
-
-      const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
-      let navigateAction = NavigationActions.navigate({
-        // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: lastActiveScreen || MAIN_FLOW,
-        params: lastActiveScreenParams,
-      });
-
-      const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
-      if (enableOnboardingTutorial) {
-        await dispatch(fetchTutorialDataIfNeededAction());
-        const { onboarding: { tutorialData } } = getState();
-        if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
-      }
-
-      const navigateToAppAction = NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: navigateAction,
-      });
-
-      if (!initialDeeplinkExecuted) {
-        Linking.getInitialURL()
-          .then(url => {
-            if (url) dispatch(executeDeepLinkAction(url));
-          })
-          .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
-        dispatch(initialDeeplinkExecutedAction());
-      }
-
-      navigate(navigateToAppAction);
-
-      dispatch(checkForWalletBackupToastAction());
-    } catch (e) {
-      reportLog(`An error occurred whilst trying to complete auth actions: ${e.errorMessage}`, e);
-      dispatch(updatePinAttemptsAction(true));
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: t('auth:error.invalidPin.default'),
-      });
+    const wallet = getState().wallet.data;
+    if (!wallet) {
+      reportErrorLog('loginAction failed: no wallet', { user });
+      dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
+      return;
     }
 
+    const decryptedPrivateKey = wallet?.privateKey;
+    if (!decryptedPrivateKey) {
+      reportErrorLog('loginAction failed: no private key', { user });
+      dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
+      return;
+    }
+
+    const { address } = wallet;
+    const unlockedWallet = { address };
+
+    if (isEmpty(accounts)) {
+      // complete registration, this can happen due offline onboarding
+      dispatch({ type: SET_WALLET, payload: { ...unlockedWallet, privateKey: decryptedPrivateKey } });
+      await dispatch(finishOnboardingAction());
+    } else {
+      dispatch({ type: SET_WALLET, payload: unlockedWallet });
+    }
+
+    dispatch(setupLoggingServicesAction());
+    dispatch(updatePinAttemptsAction(false));
+
+    const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
+    let navigateAction = NavigationActions.navigate({
+      // current active screen will be always AUTH_FLOW due to login/logout
+      routeName: lastActiveScreen || MAIN_FLOW,
+      params: lastActiveScreenParams,
+    });
+
+    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+    if (enableOnboardingTutorial) {
+      await dispatch(fetchTutorialDataIfNeededAction());
+      const { onboarding: { tutorialData } } = getState();
+      if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
+    }
+
+    const navigateToAppAction = NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: navigateAction,
+    });
+
+    dispatch(checkInitialDeepLinkAction());
+
+    navigate(navigateToAppAction);
+
     dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
+
+    /**
+     * set Ethereum network as active if we disable feature flag
+     * or end beta testing program while user has set BTC as active network
+     */
+    // TODO: subject to deprecate?
+    const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
+    if (revertToDefaultNetwork || !blockchainNetwork) {
+      dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+    }
+
+    dispatch(checkForWalletBackupToastAction());
+    dispatch(addMissingWalletEventsIfNeededAction());
+
+    // further calls require network connection
+    if (!isOnline) return;
+
+    await dispatch(updateFcmTokenAction());
+
+    // init Etherspot SDK
+    await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
+
+    // init Archanova SDK if needed
+    const archanovaAccount = findFirstArchanovaAccount(accounts);
+    if (archanovaAccount) {
+      await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
+    }
+
+    // Dispatch action to try and get the latest remote config values...
+    dispatch(loadRemoteConfigWithUserPropertiesAction());
+
+    // create etherspot account if does not exist, this also applies as migration from old key based wallets
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      await dispatch(importEtherspotAccountsAction()); // imports and sets as active
+    }
+
+    dispatch(fetchTransactionsHistoryAction());
+    dispatch(setEnsNameIfNeededAction());
+    dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+    dispatch(checkKeyBasedAssetTransferTransactionsAction());
+    dispatch(fetchAllAccountsTotalBalancesAction());
+    dispatch(fetchAllAccountsAssetsBalancesAction());
+    dispatch(fetchAllCollectiblesDataAction());
   };
 };
 
 export const checkAuthAction = (
   pin: ?string,
-  privateKey: ?string,
-  onValidPin?: Function,
+  decryptedPrivateKey: ?string,
+  onValidPin: ?OnValidPinCallback,
   withMnemonic: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { useBiometrics } } } = getState();
+
     dispatch({ type: SET_WALLET_IS_DECRYPTING });
+
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
+
+    let wallet;
+    let decryptError;
     try {
-      let wallet;
-      // fallback if biometrics check fails, or is rejected by user
-      if (pin && useBiometrics) {
-        const { wallet: encryptedWallet } = await storage.get('wallet');
-        await delay(100);
-        const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin);
-      } else if (pin) {
-        wallet = await getWalletFromPkByPin(pin, withMnemonic);
-      } else if (privateKey) {
-        wallet = constructWalletFromPrivateKey(privateKey);
-      }
-      if (wallet) {
-        dispatch({
-          type: SET_WALLET,
-          payload: { address: wallet.address },
-        });
-        if (onValidPin) {
-          onValidPin(pin, wallet);
-        }
-        return;
-      }
-    } catch (e) {
-      reportOrWarn('Error constructing the wallet object', e, 'error');
+      wallet = await getDecryptedWallet(pin, decryptedPrivateKey, deviceUniqueId, useBiometrics, withMnemonic);
+    } catch (error) {
+      decryptError = error;
     }
-    dispatch({
-      type: SET_WALLET_ERROR,
-      payload: t('auth:error.invalidPin.default'),
-    });
+
+    dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: false });
+
+    if (!wallet || decryptError) {
+      reportErrorLog('checkAuthAction failed: failed to get decrypted wallet', { decryptError });
+      dispatch({ type: SET_WALLET_ERROR, payload: t('auth:error.invalidPin.default') });
+      return;
+    }
+
+    const { privateKey, address } = wallet;
+
+    // private key checked and removed on every root navigation component update, make sure it stays this way
+    dispatch({ type: SET_WALLET, payload: { privateKey, address } });
+
+    if (onValidPin) onValidPin(pin, privateKey);
   };
 };
 
@@ -360,16 +265,18 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { appSettings: { data: { useBiometrics } } } = getState();
-    const backupStatus = get(encryptedWallet, 'backupStatus', {});
 
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
-    const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin);
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
+
+    const wallet = await decryptWalletFromStorage(currentPin, deviceUniqueId);
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: false });
 
+    const backupStatus = encryptedWallet?.backupStatus ?? {};
     await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
 
     dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: false });
@@ -378,7 +285,10 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
 export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR });
 
-export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
+export const lockScreenAction = (
+  onLoginSuccess: ?OnValidPinCallback,
+  errorMessage?: string,
+) => {
   return () => {
     navigate(NavigationActions.navigate({
       routeName: AUTH_FLOW,
