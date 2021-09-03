@@ -248,6 +248,7 @@
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Pretplati se",
     "support": "Podrška",
+    "swipeConfirm": "Prevucite za potvrdu",
     "topUp": "Nadopuna",
     "topUpMore": "Nadopuni još",
     "topUpPLRTank": "Nadopuni PLR Tanker",
@@ -988,7 +989,7 @@
       "requestsList": "Zahtjevi",
       "activeConnections": "Aktivne veze",
       "connect": "Spoji",
-      "walletConnectRequests": "WalletConnect Zahtjev",
+      "walletConnectRequests": "Povežite se na {{app}}",
       "walletConnect": "WalletConnect",
       "requestType": {
         "call": "Zahtjev za poziv",

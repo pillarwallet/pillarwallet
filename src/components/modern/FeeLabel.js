@@ -35,7 +35,6 @@ import { useFiatCurrency, useChainRates } from 'selectors';
 import { getBalanceInFiat } from 'utils/assets';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -86,15 +85,15 @@ function FeeLabel({
 
   return (
     <LabelWrapper style={style}>
-      <Text color={colors.basic030}>{mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}</Text>
+      <Text color={isNotEnough ? colors.negative : colors.basic030}>
+        {mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}
+      </Text>
 
       <Spacing w={8} />
 
-      <FeePill onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text variant="small" color="#ffffff">
-          {labelValue}
-        </Text>
-      </FeePill>
+      <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
+        <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
+      </FeeValue>
     </LabelWrapper>
   );
 }
@@ -106,9 +105,6 @@ const LabelWrapper = styled.View`
   align-items: center;
 `;
 
-const FeePill = styled.TouchableOpacity`
+const FeeValue = styled.TouchableOpacity`
   justify-content: center;
-  padding: 0 ${spacing.small}px;
-  border-radius: 12px;
-  background-color: ${({ theme, $isNotEnough }) => ($isNotEnough ? theme.colors.negative : theme.colors.labelTertiary)};
 `;

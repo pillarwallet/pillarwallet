@@ -27,6 +27,7 @@ import Text, { type TextVariant } from 'components/modern/Text';
 // Utils
 import { formatFiatValue, formatFiatChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 
 // Types
 import type { TextStyleProp } from 'utils/types/react-native';
@@ -34,7 +35,7 @@ import type { TextStyleProp } from 'utils/types/react-native';
 type Mode = 'balance' | 'change';
 
 type Props = {|
-  value: ?BigNumber,
+  value: ?BigNumber | number,
   currency: string,
   variant?: TextVariant,
   mode?: Mode,
@@ -54,19 +55,23 @@ function FiatValueView({
 
   if (!value) return null;
 
+  const valueBN = wrapBigNumberOrNil(value);
+
+  if (!valueBN) return null;
+
   if (mode === 'change') {
-    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.text);
+    const changeColor = color ?? (valueBN.gte(0) ? colors?.positive : colors?.text);
 
     return (
       <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
-        {formatFiatChange(value, currency)}
+        {formatFiatChange(valueBN, currency)}
       </Text>
     );
   }
 
   return (
     <Text variant={variant} color={color} style={[styles.textStyle, style]}>
-      {formatFiatValue(value, currency)}
+      {formatFiatValue(valueBN, currency)}
     </Text>
   );
 }

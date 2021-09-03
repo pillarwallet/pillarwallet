@@ -25,18 +25,25 @@ import { BigNumber } from 'bignumber.js';
 
 // Components
 import { Spacing } from 'components/modern/Layout';
-import Text from 'components/modern/Text';
+import TokenValueView from 'components/modern/TokenValueView';
+import FiatValueView from 'components/modern/FiatValueView';
 
 // Utils
-import { formatTokenValueWithoutSymbol } from 'utils/format';
 import { appFont, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
+import { getAssetValueInFiat } from 'utils/rates';
+
+// Selectors
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Types
 import type { TextStyleProp } from 'utils/types/react-native';
-
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   value: ?BigNumber,
+  assetAddress: ?string,
+  chain: Chain,
   symbol: string,
   style?: TextStyleProp,
 |};
@@ -44,35 +51,45 @@ type Props = {|
 /**
  * Large (& stylized) component to display token value.
  */
-function LargeTokenValueView({ value, symbol, style }: Props) {
-  if (!value) return null;
+function LargeFiatTokenValueView({ value, assetAddress, chain, symbol, style }: Props) {
+  const fiatCurrency = useFiatCurrency();
+  const colors = useThemeColors();
+  const rates = useChainRates(chain);
+  if (!value || !assetAddress) return null;
+  const balanceInFiat = getAssetValueInFiat(value, assetAddress, rates, fiatCurrency);
 
   return (
     <Container style={style}>
       {/* TokenValue & TokenSymbol are wrapped in plain RN Text in order to make baseline work */}
-      <RNText>
-        <TokenValue>{formatTokenValueWithoutSymbol(value, symbol, { stripTrailingZeros: true })}</TokenValue>
-        <Spacing w={spacing.extraSmall} />
-        <TokenSymbol>{symbol}</TokenSymbol>
+      <RNText style={styles.fiatTokenText} numberOfLines={1} adjustsFontSizeToFit>
+        <FiatValueView value={balanceInFiat} currency={fiatCurrency} style={styles.fiatTokenValue} />
+        <Spacing w={spacing.small} />
+        <TokenValueView
+          value={value}
+          symbol={symbol}
+          color={colors.secondaryText}
+          style={styles.fiatTokenValue}
+        />
       </RNText>
     </Container>
   );
 }
 
-export default LargeTokenValueView;
+export default LargeFiatTokenValueView;
+
+const styles = {
+  fiatTokenText: {
+    fontSize: 30,
+    lineHeight: 30,
+  },
+  fiatTokenValue: {
+    fontFamily: appFont.medium,
+    fontSize: 30,
+    lineHeight: 30,
+  },
+};
 
 const Container = styled.View`
   flex-direction: row;
   align-items: baseline;
-`;
-
-const TokenValue = styled(Text)`
-  font-size: 36px;
-  font-variant: tabular-nums;
-`;
-
-const TokenSymbol = styled(Text)`
-  font-family: ${appFont.medium};
-  font-size: 20px;
-  color: ${({ theme }) => theme.colors.secondaryText};
 `;

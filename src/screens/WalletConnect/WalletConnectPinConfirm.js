@@ -147,7 +147,7 @@ const WalletConnectPinConfirmScreeen = ({
     return result;
   };
 
-  const onPinValid = async (pin: string, wallet: Object) => {
+  const onPinValid = async (pin: string, wallet: Wallet) => {
     setIsChecking(true);
     const { method } = callRequest;
 

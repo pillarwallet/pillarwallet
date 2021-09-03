@@ -89,7 +89,7 @@ const IconImage = styled(Image)`
 const Title = styled(Text)`
   margin-bottom: ${spacing.mediumLarge}px;
   font-family: ${appFont.medium};
-  ${fontStyles.medium};
+  ${fontStyles.big};
   ${({ theme, $variant }) => $variant === 'destructive' && `color: ${theme.colors.negative};`}
 `;
 

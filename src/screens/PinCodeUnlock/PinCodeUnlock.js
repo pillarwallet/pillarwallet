@@ -21,20 +21,27 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { FORGOT_PIN } from 'constants/navigationConstants';
+// actions
 import { loginAction } from 'actions/authActions';
 import { initArchanovaSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
 import { switchAccountAction } from 'actions/accountsActions';
+
+// configs
+import { getEnv } from 'configs/envConfig';
+import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
+
+// constants
+import { FORGOT_PIN } from 'constants/navigationConstants';
+
+// components
 import { Container } from 'components/Layout';
-import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+
+// utils
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import {
   getKeychainDataObject,
@@ -43,7 +50,10 @@ import {
   type KeyChainData,
 } from 'utils/keychain';
 
+// types
 import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { OnValidPinCallback } from 'models/Wallet';
 
 
 const ACTIVE_APP_STATE = 'active';
@@ -56,8 +66,8 @@ type HandleUnlockActionProps = {
 }
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => void,
-  loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
+  loginWithPin: (pin: string, callback: ?OnValidPinCallback, useBiometrics: ?boolean) => void,
+  loginWithPrivateKey: (privateKey: string, callback: ?OnValidPinCallback) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
@@ -75,7 +85,7 @@ type State = {
 
 class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
-  onLoginSuccess: ?Function;
+  onLoginSuccess: ?OnValidPinCallback;
   interval: IntervalID;
   state = {
     waitingTime: 0,
@@ -239,10 +249,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handlePinSubmit = async (pin: string) => {
-    const { loginWithPin, useBiometrics } = this.props;
+    const { loginWithPin } = this.props;
     await this.handleUnlockAction({
       pin,
-      defaultAction: () => loginWithPin(pin, this.onLoginSuccess, useBiometrics),
+      defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
     this.handleLocking(false);
   };
@@ -260,14 +270,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const pinError = walletErrorMessage || this.errorMessage || null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (isAuthorizing) {
-      return (
-        <Container center>
-          <Loader />
-        </Container>
-      );
-    }
-
     if (showPin) {
       return (
         <Container>
@@ -283,6 +285,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
               onPinEntered={this.handlePinSubmit}
               onForgotPin={this.handleForgotPasscode}
               pinError={!!pinError}
+              isLoading={isAuthorizing}
             />
           }
         </Container>
@@ -304,10 +307,14 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => dispatch(
-    loginAction(pin, null, callback, useBiometrics),
-  ),
-  loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
+  loginWithPin: (
+    pin: string,
+    callback: ?OnValidPinCallback,
+  ) => dispatch(loginAction(pin, null, callback)),
+  loginWithPrivateKey: (
+    privateKey: string,
+    callback: ?OnValidPinCallback,
+  ) => dispatch(loginAction(null, privateKey, callback)),
   initSmartWalletSdkWithPrivateKeyOrPin: (
     initProps: InitArchanovaProps,
   ) => dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),

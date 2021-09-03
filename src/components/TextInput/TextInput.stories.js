@@ -74,27 +74,6 @@ storiesOf('TextInput', module)
       }}
     />
   ))
-  .add('with selector', () => (
-    <TextInputWithState
-      inputProps={{
-        placeholder: 'Placeholder',
-        label: 'Label',
-        selectorValue: {},
-      }}
-      selectorOptions={{
-        options: [
-          {
-            name: 'Option 1',
-            value: 'Option 1',
-          },
-          {
-            name: 'Option 2',
-            value: 'Option 2',
-          },
-        ],
-      }}
-    />
-  ))
   .add('numeric', () => (
     <TextInputWithState
       inputProps={{

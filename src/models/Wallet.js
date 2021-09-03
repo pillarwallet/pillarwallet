@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import type { Wallet as EthersWallet } from 'ethers';
 
 export type EthereumWallet = {
   mnemonic: ?string,
@@ -28,3 +29,5 @@ export type WalletObject = {
   mnemonic: ?string,
   privateKey: ?string,
 };
+
+export type OnValidPinCallback = (pin: ?string, wallet: EthersWallet) => Promise<void>;

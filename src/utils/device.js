@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,35 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import DeviceInfo from 'react-native-device-info';
 
-// Types
-import type { AssetType } from 'models/Asset';
+// services
+import Storage from 'services/storage';
 
 
-export type Option = {
-  name: string,
-  value: string,
-  token?: string,
-  symbol?: string,
-  tokenId?: string,
-  imageUrl?: string,
-  lastUpdateTime?: string,
-  imageSource?: string,
-  ethAddress?: string,
-  opacity?: number,
-  hasSmartWallet?: number,
-  disabled?: boolean,
-  key?: string,
-  icon?: string,
-  iconUrl?: string,
-  assetBalance?: string,
-  formattedBalanceInFiat?: string,
-  id?: string,
-  decimals?: number,
-  tokenType?: AssetType,
-  contractAddress?: string,
-  address?: string,
-  balance?: {
-    syntheticBalance?: string,
-  },
+const storage = Storage.getInstance('db');
+
+export const getDeviceUniqueId = async (): Promise<string> => {
+  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+
+  if (!deviceUniqueId) {
+    deviceUniqueId = DeviceInfo.getUniqueId();
+    storage.save('deviceUniqueId', { deviceUniqueId }, true);
+  }
+
+  return deviceUniqueId;
 };

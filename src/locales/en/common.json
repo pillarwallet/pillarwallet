@@ -29,6 +29,7 @@
   "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
+  "estimatedValue": "≈ {{value}}",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
@@ -158,6 +159,7 @@
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
     "notEnoughGas": "Insufficient gas",
+    "notEnoughBalance": "Insufficient {{symbol}} balance",
     "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",
@@ -204,7 +206,7 @@
     "whereToSend": "Where to send",
     "sendTo": "Send To",
     "walletAddress": "Wallet address",
-    "walletAddressEnsUser": "Wallet address, ENS, user",
+    "addressEnsUsername": "Address, ENS, username",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
@@ -261,7 +263,10 @@
     "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
     "deployed": "Deployed",
     "walletDeployment": "Wallet deployment",
-    "pleaseSelect": "Please select"
+    "pleaseSelect": "Please select",
+    "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "Balance {{balance}}",
+    "filterByName": "Filter by name"
   },
 
   "button": {
@@ -316,6 +321,7 @@
     "subscribe": "Subscribe",
     "support": "Support",
     "swap": "Swap",
+    "swipeConfirm": "Swipe to confirm",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -365,7 +371,11 @@
     "back": "Back",
     "native": "I know Crypto",
     "new": "I'm new to Crypto",
-    "copyAddress": "Copy address"
+    "copyAddress": "Copy address",
+    "sendMax": "Send max",
+    "spendMax": "Spend max",
+    "useMax": "Use max",
+    "selectToken": "Select token..."
   },
 
   "paragraph": {
@@ -638,6 +648,7 @@
     "requests": {
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
+      "transactionRequestFormat": "{{app}} on {{chain}}",
       "unsupportedRequest": "Unsupported request"
     },
     "connectedApps": {
@@ -979,8 +990,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "WalletConnect"
+      "walletConnectRequests": "Connect to {{app}}"
     },
     "label": {
       "unknownRequestName": "Unknown",

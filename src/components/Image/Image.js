@@ -22,7 +22,13 @@ import * as React from 'react';
 import FastImage from 'react-native-fast-image';
 import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 
-export type ImageProps = FastImageProps;
+// Types
+import type { ImageSource } from 'utils/types/react-native';
+
+export type ImageProps = {|
+  ...FastImageProps,
+  fallbackSource?: ImageSource,
+|};
 
 const getValidSource = (source: FastImageSource | number) => {
   if (typeof source?.uri !== 'string') return source;
@@ -43,8 +49,10 @@ class Image extends React.Component<ImageProps> {
   static preload = FastImage.preload;
 
   render() {
-    const { source, ...rest } = this.props;
-    return <FastImage source={getValidSource(source)} {...rest} />;
+    const { source, fallbackSource, ...rest } = this.props;
+    return (
+      <FastImage source={getValidSource(source)} fallback={!!fallbackSource} defaultSource={fallbackSource} {...rest} />
+    );
   }
 }
 

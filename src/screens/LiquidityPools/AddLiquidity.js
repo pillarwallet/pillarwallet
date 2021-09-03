@@ -30,7 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ValueInput from 'components/ValueInput';
+import ValueInput from 'components/legacy/ValueInput';
 import Icon from 'components/Icon';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Table, { TableRow, TableLabel } from 'components/Table';

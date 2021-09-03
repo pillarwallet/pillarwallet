@@ -141,7 +141,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
       navigate(NavigationActions.navigate({
         routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-        params: { peerId, peerMeta, chainId },
+        params: { connector, chainId },
       }));
     });
   };
