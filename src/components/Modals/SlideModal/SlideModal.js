@@ -25,13 +25,16 @@ import type { LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 
+// Components
 import Modal from 'components/Modal';
 import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
+// Utils
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
+// Types
 import type { ScrollToProps } from 'components/Modal';
 import type { Theme } from 'models/Theme';
 import type { OwnProps as HeaderProps } from 'components/HeaderBlock';
@@ -111,62 +114,6 @@ const getTheme = (props: Props) => {
   return themes.default;
 };
 
-const ContentWrapper = styled.View`
-  width: 100%;
-  height: 100%;
-  ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
-  ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
-`;
-
-const FillSpacer = styled.View`
-  width: 100%;
-  height: 100%;
-`;
-
-const Backdrop = styled.TouchableWithoutFeedback`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-const ModalBackground = styled.View`
-  border-top-left-radius: ${props => props.customTheme.borderRadius};
-  border-top-right-radius: ${props => props.customTheme.borderRadius};
-  overflow: hidden;
-  padding: ${props => props.customTheme.padding};
-  box-shadow: 0px 2px 7px rgba(0,0,0,.1);
-  elevation: 1;
-  margin-top: auto;
-  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.basic050};
-  margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
-`;
-
-const getModalContentPadding = (showHeader: boolean) => {
-  if (showHeader) {
-    return '0';
-  }
-  return `${spacing.rhythm}px 0 0`;
-};
-
-const ModalContent = styled.View`
-  flex-direction: column;
-  ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
-    padding: ${getModalContentPadding(showHeader)};
-  `}
-  ${({ fullScreen }) => fullScreen && `
-    flex: 1;
-  `}
-`;
-
-const ModalOverflow = styled.View`
-  width: 100%;
-  height: 100px;
-  margin-bottom: -100px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-`;
-
 class SlideModal extends React.Component<Props, State> {
   _modalRef = React.createRef<Modal>();
 
@@ -233,7 +180,7 @@ class SlideModal extends React.Component<Props, State> {
 
     const modalInner = (
       <React.Fragment>
-        {showModalHeader &&
+        {showModalHeader ? (
           // $FlowFixMe: flow update to 0.122
           <HeaderBlock
             leftItems={leftItems}
@@ -248,7 +195,9 @@ class SlideModal extends React.Component<Props, State> {
             forceInsetTop={insetTop ? 'always' : 'never'} // eslint-disable-line i18next/no-literal-string
             {...headerProps}
           />
-        }
+        ) : (
+          <HandleBar />
+        )}
         <ModalContent
           fullScreen={fullScreen}
           showHeader={showHeader}
@@ -318,7 +267,7 @@ class SlideModal extends React.Component<Props, State> {
       >
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           {!fullScreen && (
-            <Backdrop onPress={this.handleDismiss}>
+            <Backdrop>
               <FillSpacer />
             </Backdrop>
           )}
@@ -345,3 +294,65 @@ export type SlideModalInstance = SlideModal;
 
 const ThemedSlideModal: React.AbstractComponent<OwnProps, SlideModal> = withTheme(SlideModal);
 export default ThemedSlideModal;
+
+const getModalContentPadding = (showHeader: boolean) => {
+  if (showHeader) {
+    return '0';
+  }
+  return `${spacing.rhythm}px 0 0`;
+};
+
+const ContentWrapper = styled.View`
+  width: 100%;
+  height: 100%;
+  ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
+  ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
+`;
+
+const FillSpacer = styled.View`
+  width: 100%;
+  height: 100%;
+`;
+
+const Backdrop = styled.View`
+  width: 100%;
+  height: 100%;
+`;
+
+const ModalBackground = styled.View`
+  border-top-left-radius: ${props => props.customTheme.borderRadius};
+  border-top-right-radius: ${props => props.customTheme.borderRadius};
+  overflow: hidden;
+  padding: ${props => props.customTheme.padding};
+  box-shadow: 0px 2px 7px rgba(0,0,0,.1);
+  elevation: 1;
+  margin-top: auto;
+  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.basic050};
+  margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
+`;
+
+const ModalContent = styled.View`
+  flex-direction: column;
+  ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
+    padding: ${getModalContentPadding(showHeader)};
+  `}
+  ${({ fullScreen }) => fullScreen && `
+    flex: 1;
+  `}
+`;
+
+const ModalOverflow = styled.View`
+  width: 100%;
+  height: 100px;
+  margin-bottom: -100px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+`;
+
+const HandleBar = styled.View`
+  width: 38px;
+  height: 5px;
+  background-color: ${({ theme }) => theme.colors.modalHandleBar};
+  border-radius: 2.5px;
+  margin-top: ${spacing.medium}px;
+  align-self: center;
+`;
