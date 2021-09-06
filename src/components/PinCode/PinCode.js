@@ -26,7 +26,7 @@ import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButt
 
 // components
 import KeyPad from 'components/KeyPad';
-import { Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/legacy/Layout';
 import HorizontalDots from 'components/HorizontalDots';
 import Spinner from 'components/Spinner';
 

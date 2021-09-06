@@ -25,7 +25,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container } from 'components/modern/Layout';
-import ActivityFeed from 'components/ActivityFeed';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import HeaderBlock from 'components/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';
 

@@ -24,12 +24,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { BoldText, MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/legacy/Layout';
+import { BoldText, MediumText } from 'components/legacy/Typography';
+import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { LabelBadge } from 'components/LabelBadge';
 
 import { ASSETS } from 'constants/navigationConstants';

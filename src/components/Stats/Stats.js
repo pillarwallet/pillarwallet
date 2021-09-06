@@ -21,8 +21,8 @@ import * as React from 'react';
 import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 
-import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import { Spacing } from 'components/legacy/Layout';
 import Image from 'components/Image';
 
 

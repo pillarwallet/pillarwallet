@@ -27,7 +27,7 @@ import pick from 'lodash.pick';
 
 // Components
 import Modal from 'components/Modal';
-import { Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/legacy/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Utils

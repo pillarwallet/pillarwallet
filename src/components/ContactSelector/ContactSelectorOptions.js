@@ -28,14 +28,14 @@ import t from 'translations/translate';
 import { addContactAction } from 'actions/contactsActions';
 
 // Components
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';

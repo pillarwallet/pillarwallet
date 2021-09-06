@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import { getColorByTheme } from 'utils/themes';
 
 

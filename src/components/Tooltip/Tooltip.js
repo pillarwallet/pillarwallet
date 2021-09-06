@@ -22,7 +22,7 @@ import { View, Animated } from 'react-native';
 
 import styled from 'styled-components/native';
 
-import { Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/legacy/Typography';
 import { spacing, fontStyles } from 'utils/variables';
 import { getColorByTheme, themedColors } from 'utils/themes';
 import { getDeviceWidth, reportLog } from 'utils/common';

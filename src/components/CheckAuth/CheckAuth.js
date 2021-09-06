@@ -29,7 +29,7 @@ import { type Wallet as EthersWallet } from 'ethers';
 import { checkAuthAction } from 'actions/authActions';
 
 // components
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';

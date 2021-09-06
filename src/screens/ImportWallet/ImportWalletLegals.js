@@ -24,11 +24,11 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText } from 'components/Typography';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { BaseText } from 'components/legacy/Typography';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
-import Button from 'components/Button';
-import Checkbox from 'components/Checkbox';
+import Button from 'components/legacy/Button';
+import Checkbox from 'components/legacy/Checkbox';
 import Modal from 'components/Modal';
 
 // utils

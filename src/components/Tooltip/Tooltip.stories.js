@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Tooltip from 'components/Tooltip';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewDecorator from '../../../storybook/CenterViewDecorator';

@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import { Spacing } from 'components/Layout';
-import { MediumText, BaseText } from 'components/Typography';
+import { Spacing } from 'components/legacy/Layout';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import Modal from 'components/Modal';
 import ProfileImage from 'components/ProfileImage';
 import Spinner from 'components/Spinner';

@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 
 // components
-import { Label } from 'components/Typography';
+import { Label } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // actions

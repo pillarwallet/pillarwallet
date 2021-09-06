@@ -26,10 +26,10 @@ import { sortBy } from 'lodash';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
-import { ScrollWrapper } from 'components/Layout';
-import Button from 'components/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import SettingsItemCarded from 'components/legacy/ListItem/SettingsItemCarded';
+import { ScrollWrapper } from 'components/legacy/Layout';
+import Button from 'components/legacy/Button';
 
 // utils
 import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
