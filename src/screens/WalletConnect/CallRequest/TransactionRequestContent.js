@@ -120,7 +120,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
         {t('walletConnect.requests.transactionRequest')}
       </Text>
 
-      {!value?.isZero() && (
+      {value?.gt(0) && (
         <LargeFiatTokenValueView
           value={value}
           assetAddress={assetAddress}
