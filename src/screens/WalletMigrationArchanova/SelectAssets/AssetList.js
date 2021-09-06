@@ -25,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import AssetListItem from 'components/modern/AssetListItem';
+import AssetListItem from 'components/lists/AssetListItem';
 import CheckBox from 'components/core/CheckBox';
 import Text from 'components/core/Text';
 

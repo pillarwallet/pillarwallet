@@ -38,7 +38,7 @@ import { switchToEtherspotAccountIfNeededAction } from 'actions/accountsActions'
 // Components
 import { Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import AssetListItem from 'components/modern/AssetListItem';
+import AssetListItem from 'components/lists/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
 import CheckBox from 'components/core/CheckBox';
