@@ -41,7 +41,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
-import CheckBox from 'components/modern/CheckBox';
+import CheckBox from 'components/core/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import RefreshControl from 'components/RefreshControl';
 import Text from 'components/core/Text';
