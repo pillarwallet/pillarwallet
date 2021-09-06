@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 // Components
 import Text from 'components/core/Text';
 import FiatValueView from 'components/display/FiatValueView';
-import TokenValueView from 'components/modern/TokenValueView';
+import TokenValueView from 'components/display/TokenValueView';
 import TokenIcon from 'components/Icons/TokenIcon';
 
 // Selectors

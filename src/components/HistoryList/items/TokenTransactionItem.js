@@ -21,7 +21,7 @@
 import * as React from 'react';
 
 // Components
-import TokenValueView from 'components/modern/TokenValueView';
+import TokenValueView from 'components/display/TokenValueView';
 
 // Selectors
 import { useRootSelector } from 'selectors';

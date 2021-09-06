@@ -30,7 +30,7 @@ import { Row, ColumnRight, Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import FiatValueView from 'components/display/FiatValueView';
-import TokenValueView from 'components/modern/TokenValueView';
+import TokenValueView from 'components/display/TokenValueView';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 
