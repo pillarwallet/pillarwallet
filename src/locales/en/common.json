@@ -321,6 +321,7 @@
     "subscribe": "Subscribe",
     "support": "Support",
     "swap": "Swap",
+    "swipeConfirm": "Swipe to confirm",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -647,6 +648,7 @@
     "requests": {
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
+      "transactionRequestFormat": "{{app}} on {{chain}}",
       "unsupportedRequest": "Unsupported request"
     },
     "connectedApps": {
@@ -988,8 +990,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "WalletConnect"
+      "walletConnectRequests": "Connect to {{app}}"
     },
     "label": {
       "unknownRequestName": "Unknown",
