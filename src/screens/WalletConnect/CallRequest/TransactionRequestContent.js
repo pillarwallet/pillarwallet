@@ -29,7 +29,7 @@ import { useTranslation } from 'translations/translate';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
-import LargeFiatTokenValueView from 'components/modern/LargeFiatTokenValueView';
+import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView';
 import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/core/Icon';
