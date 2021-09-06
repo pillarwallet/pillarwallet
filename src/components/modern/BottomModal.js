@@ -26,7 +26,7 @@ import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
 import Image from 'components/Image';
 import Text from 'components/core/Text';
-import { Spacing } from 'components/modern/Layout';
+import { Spacing } from 'components/layout/Layout';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';

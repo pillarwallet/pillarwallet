@@ -23,7 +23,7 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import { Row, Spacing } from 'components/modern/Layout';
+import { Row, Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Modal from 'components/Modal';

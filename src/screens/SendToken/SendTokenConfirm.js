@@ -27,7 +27,7 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // components
-import { Container, Content, Spacing } from 'components/modern/Layout';
+import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import Button from 'components/legacy/Button';

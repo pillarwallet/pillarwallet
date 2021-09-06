@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import { Spacing } from 'components/modern/Layout';
+import { Spacing } from 'components/layout/Layout';
 import TokenValueView from 'components/modern/TokenValueView';
 import FiatValueView from 'components/modern/FiatValueView';
 

@@ -25,7 +25,7 @@ import Instabug from 'instabug-reactnative';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';

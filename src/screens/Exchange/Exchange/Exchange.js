@@ -31,7 +31,7 @@ import { useTranslation } from 'translations/translate';
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
-import { Container, Content, Spacing } from 'components/modern/Layout';
+import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';

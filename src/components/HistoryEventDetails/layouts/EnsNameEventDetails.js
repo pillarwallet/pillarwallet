@@ -26,7 +26,7 @@ import { useDispatch } from 'react-redux';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
-import { Spacing } from 'components/modern/Layout';
+import { Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Icon from 'components/core/Icon';

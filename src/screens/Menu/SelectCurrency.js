@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import FiatIcon from 'components/Icons/FiatIcon';
 import Icon from 'components/core/Icon';

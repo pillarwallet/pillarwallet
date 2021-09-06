@@ -25,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container, Content, Footer } from 'components/modern/Layout';
+import { Container, Content, Footer } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import TokenValueInput from 'components/inputs/TokenValueInput';

@@ -26,7 +26,7 @@ import { useDispatch } from 'react-redux';
 import { TouchableOpacity } from 'react-native';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';

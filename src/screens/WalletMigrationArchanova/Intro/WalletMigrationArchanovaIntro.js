@@ -32,7 +32,7 @@ import {
 } from 'constants/navigationConstants';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';

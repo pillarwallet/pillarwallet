@@ -28,7 +28,7 @@ import { useTranslation, useTranslationWithPrefix } from 'translations/translate
 import { chunk } from 'lodash';
 
 // Components
-import { Container, Center } from 'components/modern/Layout';
+import { Container, Center } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import TabBar from 'components/modern/TabBar';
 import Text from 'components/core/Text';
