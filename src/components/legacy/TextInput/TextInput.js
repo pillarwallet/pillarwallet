@@ -34,7 +34,7 @@ import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
 import Button from 'components/legacy/Button';
 import Input from 'components/Input';
-import ButtonText from 'components/ButtonText';
+import ButtonText from 'components/legacy/ButtonText';
 import Tooltip from 'components/Tooltip';
 
 import { fontSizes, fontStyles } from 'utils/variables';
