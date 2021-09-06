@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
 import styled, { withTheme } from 'styled-components/native';
 import { TextLink, BaseText } from 'components/legacy/Typography';
-import Title from 'components/Title';
+import Title from 'components/legacy/Title';
 import IconButton from 'components/IconButton';
 import { fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';

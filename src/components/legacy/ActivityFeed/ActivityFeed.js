@@ -28,7 +28,7 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
-import Title from 'components/Title';
+import Title from 'components/legacy/Title';
 import Tabs from 'components/legacy/Tabs';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
