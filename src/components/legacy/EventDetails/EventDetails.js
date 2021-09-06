@@ -341,6 +341,11 @@ const ListWrapper = styled.View`
   align-items: center;
 `;
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/HistoryEventDetails instead
+ */
 export class EventDetail extends React.Component<Props> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;

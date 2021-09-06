@@ -55,6 +55,11 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/SearchBar instead
+ */
 const SearchBar = ({
   query,
   onChangeQuery,

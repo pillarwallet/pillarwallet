@@ -59,6 +59,11 @@ const Text = styled(MediumText)`
   ${({ align }) => align === 'center' ? 'text-align: center;' : ''}
 `;
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/modern/Text instead
+ */
 const Title = (props: Props) => {
   const ellipsized = !props.fullWidth ? {
     ellipsizeMode: 'middle',

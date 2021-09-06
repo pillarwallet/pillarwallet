@@ -143,6 +143,9 @@ const ITEM_TYPE = {
   CARD_HEADER: 'CARD_HEADER',
 };
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ */
 class ActivityFeed extends React.Component<Props> {
   static defaultProps = {
     initialNumToRender: 7,

@@ -133,6 +133,11 @@ export type BaseTextProps = {|
   rJumbo?: boolean,
 |};
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/modern/Text instead
+ */
 export const BaseText: React.ComponentType<BaseTextProps> = styled.Text`
   font-family: "${appFont.regular}";
   text-align-vertical: center;

@@ -84,6 +84,11 @@ const CheckboxWrapper = styled.View`
   opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/modern/CheckBox instead
+ */
 const Checkbox = (props: Props) => {
   const {
     disabled,

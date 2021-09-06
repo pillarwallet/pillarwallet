@@ -156,6 +156,11 @@ const InputLabel = styled(MediumText)`
 `;
 
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/inputs/TextInput instead
+ */
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
   searchInput: React.ElementRef<typeof RNInput>;

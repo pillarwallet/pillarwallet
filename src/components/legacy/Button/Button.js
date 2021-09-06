@@ -235,6 +235,12 @@ const getVariant = (props) => {
   return VARIANT.DEFAULT;
 };
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/modern/Button instead
+ */
+
 class Button extends React.Component<CombinedProps, State> {
   static defaultProps = {
     debounceTime: 400,
