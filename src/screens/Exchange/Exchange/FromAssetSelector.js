@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import AssetSelectorModal from 'components/AssetSelectorModal';
+import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import Modal from 'components/Modal';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
@@ -72,7 +72,7 @@ const FromAssetSelector = ({
 
   const openSelectAsset = () => {
     Keyboard.dismiss();
-    Modal.open(() => <AssetSelectorModal options={assets} onSelectOption={handleSelectToken} />);
+    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={handleSelectToken} />);
   };
 
   const handleTokenValueChange = (newTokenValue: ?BigNumber) => {

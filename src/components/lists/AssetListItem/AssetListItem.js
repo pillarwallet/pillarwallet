@@ -26,7 +26,7 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 // Local
-import { Container, LeftAddOn, Icon, Name, Balance } from './components';
+import { Container, LeftAddOn, Icon, NameContainer, Name, Subtitle, Balance } from './components';
 
 
 type Props = {|
@@ -38,6 +38,7 @@ type Props = {|
   balance?: ?BigNumber,
   onPress?: () => mixed,
   onPressBalance?: () => mixed,
+  subtitle?: string,
   leftAddOn?: React.Node,
   style?: ViewStyleProp,
 |};
@@ -57,6 +58,7 @@ function AssetListItem({
   balance,
   onPress,
   onPressBalance,
+  subtitle,
   leftAddOn,
   style,
 }: Props) {
@@ -65,7 +67,11 @@ function AssetListItem({
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
       <Icon url={iconUrl} />
-      <Name>{name}</Name>
+
+      <NameContainer>
+        <Name numberOfLines={1}>{name}</Name>
+        {!!subtitle && <Subtitle numberOfLines={1}>{subtitle}</Subtitle>}
+      </NameContainer>
 
       {!!symbol && !!address && (
         <Balance

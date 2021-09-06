@@ -23,7 +23,7 @@ import { Keyboard } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import AssetSelectorModal from 'components/AssetSelectorModal';
+import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import Modal from 'components/Modal';
 import TokenFiatValueInputs from 'components/inputs/TokenFiatValueInputs';
 import CollectibleInput from 'components/inputs/CollectibleInput';
@@ -106,8 +106,8 @@ const AssetSelector = ({
 
     Modal.open(() => (
       <AssetSelectorModal
-        options={tokens}
-        onSelectOption={handleSelectToken}
+        tokens={tokens}
+        onSelectToken={handleSelectToken}
         collectibles={collectibles}
         onSelectCollectible={handleSelectCollectible}
       />

@@ -33,7 +33,7 @@ import { useChainRates, useFiatCurrency } from 'selectors';
 // Utils
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
-import { fontStyles, appFont, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -63,10 +63,18 @@ export const Icon = styled(TokenIcon)`
   margin-right: ${spacing.medium}px;
 `;
 
-export const Name = styled(Text)`
+export const NameContainer = styled.View`
   flex: 1;
+  justify-content: center;
+`;
+
+export const Name = styled(Text)`
   ${fontStyles.medium};
-  font-family: ${appFont.medium};
+`;
+
+export const Subtitle = styled(Text)`
+  flex: 1;
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
 /**
@@ -74,11 +82,11 @@ export const Name = styled(Text)`
  * instead of performing expensive search on whole assets array
  */
 type BalanceProps = {|
+  chain: Chain,
   assetSymbol: string,
   assetAddress: string,
   balance: ?BigNumber,
-  chain: Chain,
-  onPress: ?(() => mixed),
+  onPress: ?() => mixed,
   style?: ViewStyleProp,
 |};
 
@@ -92,14 +100,17 @@ export function Balance({ assetSymbol, assetAddress, balance, chain, onPress, st
 
   return (
     <BalanceWrapper onPress={onPress} disabled={!onPress} style={style}>
-      {!!balanceInFiat && <BalanceFiatValue>{formatFiatValue(balanceInFiat, currency)}</BalanceFiatValue>}
+      {!!balanceInFiat && (
+        <BalanceFiatValue numberOfLines={1}>{formatFiatValue(balanceInFiat, currency)}</BalanceFiatValue>
+      )}
 
-      <BalanceToken>{formatTokenValue(balance, assetSymbol)}</BalanceToken>
+      <BalanceToken numberOfLines={1}>{formatTokenValue(balance, assetSymbol)}</BalanceToken>
     </BalanceWrapper>
   );
 }
 
 const BalanceWrapper = styled(TouchableOpacity)`
+  flex: 0.5;
   margin-left: ${spacing.medium}px;
   align-self: stretch;
   justify-content: center;
@@ -108,8 +119,10 @@ const BalanceWrapper = styled(TouchableOpacity)`
 
 const BalanceFiatValue = styled(Text)`
   ${fontStyles.medium};
+  font-variant: tabular-nums;
 `;
 
 const BalanceToken = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
+  font-variant: tabular-nums;
 `;

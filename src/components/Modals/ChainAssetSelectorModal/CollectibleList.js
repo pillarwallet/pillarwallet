@@ -19,26 +19,19 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { FlatList, useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { chunk } from 'lodash';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import ChainListHeader from 'components/lists/ChainListHeader';
-import ChainListFooter from 'components/lists/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
-// Selectors
-import { useSupportedChains } from 'selectors/chains';
-
 // Utils
-import { mapNotNil } from 'utils/array';
+import { getCollectibleKey } from 'utils/collectibles';
 import { spacing } from 'utils/variables';
 
 // Types
-import type { SectionBase } from 'utils/types/react-native';
-import type { Chain } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
 
 // Local
@@ -48,18 +41,15 @@ import CollectibleListItem from 'screens/Assets/collectibles/CollectibleListItem
 type Props = {|
   items: Collectible[],
   onSelectItem: (collectible: Collectible) => mixed,
-  isSearching: boolean,
 |};
 
-function CollectibleList({ items, onSelectItem, isSearching }: Props) {
+function CollectibleList({ items, onSelectItem }: Props) {
   const { t } = useTranslation();
 
   const { width } = useWindowDimensions();
   const numberOfColumns = 2;
 
-  const sections = useSectionData(items, numberOfColumns);
-
-  const renderSectionHeader = ({ chain }: Section) => <ChainListHeader chain={chain} />;
+  const rowData = chunk(items, numberOfColumns);
 
   const renderItem = (rowItems: Collectible[]) => {
     const itemWidth = (width - 48) / numberOfColumns;
@@ -80,52 +70,33 @@ function CollectibleList({ items, onSelectItem, isSearching }: Props) {
   };
 
   const renderEmptyState = () => {
-    const emptyStateInfo = {
-      title: t('collectiblesList.emptyState.noCollectibles.title'),
-      bodyText: t('collectiblesList.emptyState.noCollectibles.paragraph'),
-    };
-
-    if (isSearching) {
-      emptyStateInfo.title = t('collectiblesList.emptyState.noneFound.title');
-      emptyStateInfo.bodyText = t('collectiblesList.emptyState.noneFound.paragraph');
-    }
-
     return (
       <EmptyStateWrapper>
-        <EmptyStateParagraph {...emptyStateInfo} />
+        <EmptyStateParagraph
+          title={t('collectiblesList.emptyState.noCollectibles.title')}
+          bodyText={t('collectiblesList.emptyState.noCollectibles.paragraph')}
+        />
       </EmptyStateWrapper>
     );
   };
 
   return (
-    <SectionList
-      sections={sections}
-      renderSectionHeader={({ section }) => renderSectionHeader(section)}
-      renderSectionFooter={() => <ChainListFooter />}
+    <FlatList
+      data={rowData}
       renderItem={({ item }) => renderItem(item)}
-      keyExtractor={(rowItems) => rowItems[0]?.key}
+      keyExtractor={(rowItems) => getCollectibleKey(rowItems[0])}
       ListEmptyComponent={renderEmptyState()}
+      contentContainerStyle={styles.contentContainer}
     />
   );
 }
 
 export default CollectibleList;
 
-type Section = {
-  ...SectionBase<Collectible[]>,
-  chain: Chain,
-};
-
-const useSectionData = (items: Collectible[], numberOfColumns: number): Section[] => {
-  const chains = useSupportedChains();
-
-  return mapNotNil(chains, (chain) => {
-    const chainItems = items.filter((item) => item.chain === chain);
-    if (!chainItems.length) return null;
-
-    const data = chunk(chainItems, numberOfColumns);
-    return { key: chain, chain, data };
-  });
+const styles = {
+  contentContainer: {
+    flexGrow: 1,
+  },
 };
 
 const ListRow = styled.View`
@@ -137,5 +108,7 @@ const ListRow = styled.View`
 const EmptyStateWrapper = styled.View`
   padding-top: 90px;
   padding-bottom: 90px;
+  justify-content: center;
   align-items: center;
+  backgroundColor: 'red'
 `;
