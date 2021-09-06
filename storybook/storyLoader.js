@@ -29,7 +29,7 @@ function loadStories() {
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/legacy/SearchBar/SearchBar.stories');
-	require('../src/components/Table/Table.stories');
+	require('../src/components/legacy/Table/Table.stories');
 	require('../src/components/legacy/TextInput/TextInput.stories');
 	require('../src/components/Toast/ToastCard.stories');
 	require('../src/components/Tooltip/Tooltip.stories');
@@ -63,7 +63,7 @@ const stories = [
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/legacy/SearchBar/SearchBar.stories',
-	'../src/components/Table/Table.stories',
+	'../src/components/legacy/Table/Table.stories',
 	'../src/components/legacy/TextInput/TextInput.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',

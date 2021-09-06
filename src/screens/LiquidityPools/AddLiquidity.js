@@ -33,7 +33,7 @@ import Button from 'components/legacy/Button';
 import ValueInput from 'components/legacy/ValueInput';
 import Icon from 'components/legacy/Icon';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import Table, { TableRow, TableLabel } from 'components/Table';
+import Table, { TableRow, TableLabel } from 'components/legacy/Table';
 
 // constants
 import { ETH } from 'constants/assetsConstants';

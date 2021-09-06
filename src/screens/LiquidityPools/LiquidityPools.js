@@ -26,7 +26,7 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import Table, { TableRow, TableLabel } from 'components/Table';
+import Table, { TableRow, TableLabel } from 'components/legacy/Table';
 import Image from 'components/Image';
 import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import { BaseText } from 'components/legacy/Typography';

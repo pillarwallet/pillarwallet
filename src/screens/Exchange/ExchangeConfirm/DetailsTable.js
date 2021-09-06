@@ -24,7 +24,7 @@ import t from 'translations/translate';
 
 // Components
 import ExchangeRateText from 'components/display/ExchangeRateText';
-import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/legacy/Table';
 import { BaseText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 
