@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
-import BigNumberInput from 'components/modern/BigNumberInput';
+import BigNumberInput from 'components/inputs/BigNumberInput';
 import FiatIcon from 'components/Icons/FiatIcon';
 import Text from 'components/core/Text';
 

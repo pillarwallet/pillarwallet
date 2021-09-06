@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import BigNumberInput from 'components/modern/BigNumberInput';
+import BigNumberInput from 'components/inputs/BigNumberInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
