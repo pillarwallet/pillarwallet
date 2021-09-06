@@ -25,7 +25,7 @@ import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
 
 import IconButton from 'components/IconButton';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
 
 import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';

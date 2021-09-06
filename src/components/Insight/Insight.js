@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 
 import ShadowedCard from 'components/ShadowedCard';
 import IconButton from 'components/IconButton';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors, getColorByTheme } from 'utils/themes';

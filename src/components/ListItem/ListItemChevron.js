@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/legacy/Typography';
 
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import NativeTouchable from 'components/NativeTouchable';
 
 const ItemRow = styled.View`

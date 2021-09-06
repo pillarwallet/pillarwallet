@@ -31,7 +31,7 @@ import { Spacing } from 'components/legacy/Layout';
 import { BaseText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ValueInput from 'components/legacy/ValueInput';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Table, { TableRow, TableLabel } from 'components/Table';
 

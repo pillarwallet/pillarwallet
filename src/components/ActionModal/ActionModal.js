@@ -23,7 +23,7 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import { MediumText, BaseText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import { spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 

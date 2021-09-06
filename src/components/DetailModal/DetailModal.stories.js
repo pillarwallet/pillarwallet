@@ -24,7 +24,7 @@ import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
 
 import { BaseText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
 
 import { themedColors, defaultTheme } from 'utils/themes';

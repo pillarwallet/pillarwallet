@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/legacy/Typography';

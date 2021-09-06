@@ -33,7 +33,7 @@ import PercentsInputAccessoryHolder, {
 import AssetSelectorModal from 'components/AssetSelectorModal';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Input from 'components/Input';
 import { Spacing } from 'components/legacy/Layout';
 import Modal from 'components/Modal';

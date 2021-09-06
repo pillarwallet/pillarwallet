@@ -28,7 +28,7 @@ import { fontStyles } from 'utils/variables';
 import { useTranslation } from 'translations/translate';
 
 // components
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';

@@ -22,7 +22,7 @@ import { TouchableOpacity } from 'react-native';
 import { BaseText } from 'components/legacy/Typography';
 import styled, { withTheme, css } from 'styled-components/native';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
 import { getColorByTheme, getThemeColors } from 'utils/themes';

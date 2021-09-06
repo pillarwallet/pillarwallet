@@ -22,7 +22,7 @@ import styled, { withTheme } from 'styled-components/native';
 import themeVariant from 'styled-theming';
 import debounce from 'lodash.debounce';
 import { BaseText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Spinner from 'components/Spinner';
 import { fontSizes, spacing } from 'utils/variables';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';

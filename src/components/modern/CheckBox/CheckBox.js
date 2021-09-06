@@ -24,7 +24,7 @@ import { View, TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';

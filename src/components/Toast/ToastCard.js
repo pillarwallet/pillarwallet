@@ -25,7 +25,7 @@ import Emoji from 'react-native-emoji';
 import ShadowedCard from 'components/ShadowedCard';
 import { Spacing } from 'components/legacy/Layout';
 import { MediumText, TextLink } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 
 import { themedColors } from 'utils/themes';
 

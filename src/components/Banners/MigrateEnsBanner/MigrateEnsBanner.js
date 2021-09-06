@@ -26,7 +26,7 @@ import { useNavigation } from 'react-navigation-hooks';
 
 // components
 import Text from 'components/modern/Text';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 
 // constants
 import { ENS_MIGRATION_CONFIRM } from 'constants/navigationConstants';

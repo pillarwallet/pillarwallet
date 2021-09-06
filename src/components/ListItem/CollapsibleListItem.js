@@ -25,7 +25,7 @@ import Collapsible from 'react-native-collapsible';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import NativeTouchable from 'components/NativeTouchable';
 
 type Props = {

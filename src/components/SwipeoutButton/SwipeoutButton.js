@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // components
 import { BaseText } from 'components/legacy/Typography';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 
 // utils
 import { fontSizes } from 'utils/variables';
