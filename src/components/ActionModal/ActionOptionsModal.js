@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText, MediumText } from 'components/legacy/Typography';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 
 import { compactFalsy } from 'utils/array';
 import { themedColors } from 'utils/themes';

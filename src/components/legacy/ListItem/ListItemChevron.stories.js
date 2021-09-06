@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { spacing } from 'utils/variables';
 import { BaseText } from 'components/legacy/Typography';
 
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 import { ListItemChevron } from './ListItemChevron';
 
 const ValueText = styled(BaseText)`

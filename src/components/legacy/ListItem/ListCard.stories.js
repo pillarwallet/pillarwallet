@@ -22,8 +22,8 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import Emoji from 'react-native-emoji';
 
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../../storybook/CenterViewStretchDecorator';
 import { ListCard } from './ListCard';
 
 const TITLE = 'Long list title to check layout on edge cases';

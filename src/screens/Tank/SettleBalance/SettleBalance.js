@@ -32,7 +32,7 @@ import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';
 import RefreshControl from 'components/RefreshControl';

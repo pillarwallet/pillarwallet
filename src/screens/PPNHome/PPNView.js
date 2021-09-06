@@ -34,7 +34,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 // components
 import { BaseText } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
+import { ListItemChevron } from 'components/legacy/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 import Button from 'components/legacy/Button';
 import ActivityFeed from 'components/legacy/ActivityFeed';

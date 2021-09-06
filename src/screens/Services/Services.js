@@ -26,7 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import { ListCard } from 'components/ListItem/ListCard';
+import { ListCard } from 'components/legacy/ListItem/ListCard';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // constants

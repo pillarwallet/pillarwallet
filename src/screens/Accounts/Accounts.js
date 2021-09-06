@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/legacy/ListItem/SettingsItemCarded';
 import { ScrollWrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 

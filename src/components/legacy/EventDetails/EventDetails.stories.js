@@ -47,7 +47,7 @@ import { ADDRESS_ZERO } from 'constants/assetsConstants';
 import { EVENT_TYPE } from 'models/History';
 
 // local
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
 const placeholderImage = 'https://picsum.photos/200';
 

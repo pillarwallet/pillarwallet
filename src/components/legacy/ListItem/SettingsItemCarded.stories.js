@@ -23,8 +23,8 @@ import { storiesOf } from '@storybook/react-native';
 
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../../storybook/CenterViewStretchDecorator';
 import SettingsItemCarded from './SettingsItemCarded';
 
 

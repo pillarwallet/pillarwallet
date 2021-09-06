@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import Button from 'components/legacy/Button';
 
 // utils

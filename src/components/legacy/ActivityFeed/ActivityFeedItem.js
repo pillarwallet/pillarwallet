@@ -53,7 +53,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { getMigratedEnsName } from 'utils/accounts';
 
 // components
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/legacy/Typography';
 

@@ -35,7 +35,7 @@ import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SwipeoutButton from 'components/SwipeoutButton';

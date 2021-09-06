@@ -20,9 +20,9 @@ function loadStories() {
 	require('../src/components/HeaderBlock/HeaderBlock.stories');
 	require('../src/components/HistoryList/HistoryList.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
-	require('../src/components/ListItem/ListCard.stories');
-	require('../src/components/ListItem/ListItemChevron.stories');
-	require('../src/components/ListItem/SettingsItemCarded.stories');
+	require('../src/components/legacy/ListItem/ListCard.stories');
+	require('../src/components/legacy/ListItem/ListItemChevron.stories');
+	require('../src/components/legacy/ListItem/SettingsItemCarded.stories');
 	require('../src/components/Modals/SlideModal/SlideModal.stories');
 	require('../src/components/ProfileImage/ProfileImage.stories');
 	require('../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories');
@@ -54,9 +54,9 @@ const stories = [
 	'../src/components/HeaderBlock/HeaderBlock.stories',
 	'../src/components/HistoryList/HistoryList.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
-	'../src/components/ListItem/ListCard.stories',
-	'../src/components/ListItem/ListItemChevron.stories',
-	'../src/components/ListItem/SettingsItemCarded.stories',
+	'../src/components/legacy/ListItem/ListCard.stories',
+	'../src/components/legacy/ListItem/ListItemChevron.stories',
+	'../src/components/legacy/ListItem/SettingsItemCarded.stories',
 	'../src/components/Modals/SlideModal/SlideModal.stories',
 	'../src/components/ProfileImage/ProfileImage.stories',
 	'../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories',

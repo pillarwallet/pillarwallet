@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import { Paragraph, MediumText, BaseText } from 'components/legacy/Typography';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/legacy/Icon';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
+import CollapsibleListItem from 'components/legacy/ListItem/CollapsibleListItem';
 
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
