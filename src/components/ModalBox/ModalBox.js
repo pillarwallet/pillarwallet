@@ -22,7 +22,7 @@ import type { Node as ReactNode } from 'react';
 import styled from 'styled-components/native';
 
 // components
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import Modal from 'components/Modal';
 
 // types

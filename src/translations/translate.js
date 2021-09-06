@@ -21,7 +21,7 @@
 import * as React from 'react';
 import i18next from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
 export { useTranslation } from 'react-i18next';

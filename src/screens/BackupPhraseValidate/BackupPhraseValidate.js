@@ -37,10 +37,10 @@ import { reportErrorLog } from 'utils/common';
 import { excludeFromMonitoring } from 'utils/monitoring';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { Paragraph, Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/legacy/Layout';
+import { Paragraph, Label, MediumText } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 import IconButton from 'components/IconButton';
 import Toast from 'components/Toast';
 

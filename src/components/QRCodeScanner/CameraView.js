@@ -30,7 +30,7 @@ import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
 import { fontSizes } from 'utils/variables';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 
 import type { Barcode } from 'react-native-camera';

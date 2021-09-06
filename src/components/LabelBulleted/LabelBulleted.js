@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { fontSizes } from 'utils/variables';
 
 

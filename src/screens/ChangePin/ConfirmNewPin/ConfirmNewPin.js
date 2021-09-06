@@ -29,11 +29,11 @@ import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActio
 import { MENU } from 'constants/navigationConstants';
 
 // components
-import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
+import { Container } from 'components/legacy/Layout';
+import { BaseText } from 'components/legacy/Typography';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 

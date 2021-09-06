@@ -22,8 +22,8 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
-import Icon from 'components/Icon';
-import { BaseText } from 'components/Typography';
+import Icon from 'components/legacy/Icon';
+import { BaseText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 
 import { fontSizes, spacing } from 'utils/variables';

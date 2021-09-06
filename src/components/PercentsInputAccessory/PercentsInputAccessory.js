@@ -22,7 +22,7 @@ import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 const PERCENTS = [10, 25, 50, 75, 100];
 const PERCENTS_WITHOUT_MAX = [10, 25, 50, 75];

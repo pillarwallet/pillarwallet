@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { withTheme } from 'styled-components/native';
-import Icon from 'components/Icon';
+import Icon from 'components/legacy/Icon';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 

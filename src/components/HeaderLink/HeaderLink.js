@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Spinner from 'components/Spinner';
-import { TextLink } from 'components/Typography';
+import { TextLink } from 'components/legacy/Typography';
 
 type Props = {
   children: React.Node,

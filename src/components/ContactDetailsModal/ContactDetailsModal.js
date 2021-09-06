@@ -29,16 +29,16 @@ import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
 // Components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
-import Button from 'components/Button';
-import Icon from 'components/Icon';
+import Button from 'components/legacy/Button';
+import Icon from 'components/legacy/Icon';
 import Image from 'components/Image';
 import Modal from 'components/Modal';
 import ModalBox from 'components/ModalBox';
 import Spinner from 'components/Spinner';
-import TextInput from 'components/TextInput';
-import Title from 'components/Title';
+import TextInput from 'components/legacy/TextInput';
+import Title from 'components/legacy/Title';
 
 // Utils
 import { addressesEqual } from 'utils/assets';

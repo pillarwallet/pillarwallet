@@ -21,7 +21,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 // constants
 import { CHAIN } from 'constants/chainConstants';

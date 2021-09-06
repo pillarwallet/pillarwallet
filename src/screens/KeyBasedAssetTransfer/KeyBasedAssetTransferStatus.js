@@ -35,12 +35,12 @@ import {
 } from 'actions/keyBasedAssetTransferActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Footer, ScrollWrapper, Wrapper } from 'components/Layout';
-import Button from 'components/Button';
-import ActivityFeed from 'components/ActivityFeed';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Footer, ScrollWrapper, Wrapper } from 'components/legacy/Layout';
+import Button from 'components/legacy/Button';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import Animation from 'components/Animation';
-import { MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 
 // utils

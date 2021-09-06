@@ -22,7 +22,7 @@ import { View } from 'react-native';
 import styled from 'styled-components/native';
 
 import { fontSizes } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Image from 'components/Image';
 
 type Props = {

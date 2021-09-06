@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import DynamicSizeImage from 'components/DynamicSizeImage';
 
 // Utils

@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
 
 // utils

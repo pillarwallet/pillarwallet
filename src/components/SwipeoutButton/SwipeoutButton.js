@@ -22,8 +22,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
+import { BaseText } from 'components/legacy/Typography';
+import Icon from 'components/legacy/Icon';
 
 // utils
 import { fontSizes } from 'utils/variables';

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 const Emoji = styled(BaseText)`
   flex: 0 0 40px;

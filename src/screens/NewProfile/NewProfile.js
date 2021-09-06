@@ -25,13 +25,13 @@ import t from 'translations/translate';
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import { Wrapper, Spacing } from 'components/Layout';
-import { BaseText, MediumText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import { Wrapper, Spacing } from 'components/legacy/Layout';
+import { BaseText, MediumText, Paragraph } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';
-import Checkbox from 'components/Checkbox';
+import Checkbox from 'components/legacy/Checkbox';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import Modal from 'components/Modal';
 
 // Constants

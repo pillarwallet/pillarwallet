@@ -22,7 +22,7 @@ import React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import TextInput from 'components/Input';
 
 import { themedColors } from 'utils/themes';

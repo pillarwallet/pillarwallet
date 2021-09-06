@@ -59,12 +59,12 @@ import { STAGING } from 'constants/envConstants';
 import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 import Modal from 'components/Modal';
 

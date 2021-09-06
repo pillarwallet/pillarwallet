@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import ChainListHeader from 'components/modern/ChainListHeader';
 import ChainListFooter from 'components/modern/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';

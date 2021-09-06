@@ -31,7 +31,7 @@ import { getAssetRateInFiat } from 'utils/rates';
 
 // components
 import Image from 'components/Image';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Tooltip from 'components/Tooltip';
 
 // selectors
