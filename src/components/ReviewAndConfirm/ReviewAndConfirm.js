@@ -27,7 +27,7 @@ import t from 'translations/translate';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 

@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import FloatingBox from 'components/FloatingBox';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 

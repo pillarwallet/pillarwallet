@@ -34,7 +34,7 @@ import {
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import TextInput from 'components/legacy/TextInput';
 import { getUsernameInputIcon } from 'screens/NewProfile';
 

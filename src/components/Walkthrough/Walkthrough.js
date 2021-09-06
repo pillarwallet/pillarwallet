@@ -7,7 +7,7 @@ import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { Paragraph, BoldText } from 'components/Typography';
 import Toast from 'components/Toast';
 import { spacing, fontStyles } from 'utils/variables';

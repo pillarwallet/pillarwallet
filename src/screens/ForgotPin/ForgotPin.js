@@ -30,7 +30,7 @@ import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants'
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 // utils
 import { spacing } from 'utils/variables';

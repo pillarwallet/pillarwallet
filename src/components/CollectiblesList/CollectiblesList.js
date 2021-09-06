@@ -26,7 +26,7 @@ import t from 'translations/translate';
 // Components
 import { BaseText } from 'components/Typography';
 import CollectibleImage from 'components/CollectibleImage';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { Spacing } from 'components/Layout';

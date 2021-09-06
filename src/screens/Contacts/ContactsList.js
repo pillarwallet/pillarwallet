@@ -30,7 +30,7 @@ import t from 'translations/translate';
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
 
 // Components
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';

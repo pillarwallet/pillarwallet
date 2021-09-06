@@ -40,7 +40,7 @@ import { excludeFromMonitoring } from 'utils/monitoring';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import IconButton from 'components/IconButton';
 import Toast from 'components/Toast';
 

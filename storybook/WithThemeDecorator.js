@@ -26,7 +26,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 import { Container } from 'components/Layout';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { getEnv } from 'configs/envConfig';
 import configureStore from '../src/configureStore';

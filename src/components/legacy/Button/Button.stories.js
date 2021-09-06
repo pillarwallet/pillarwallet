@@ -21,8 +21,8 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
-import Button from 'components/Button';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import Button from 'components/legacy/Button';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
 const Decorator = (story) => (
   <View style={{

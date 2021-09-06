@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import ModalBox from 'components/ModalBox';
 import { Spacing } from 'components/Layout';

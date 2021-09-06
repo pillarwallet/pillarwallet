@@ -28,7 +28,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
 

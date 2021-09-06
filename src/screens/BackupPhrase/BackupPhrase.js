@@ -31,7 +31,7 @@ import { Paragraph } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import CheckAuth from 'components/CheckAuth';
 
 // actions

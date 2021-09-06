@@ -28,7 +28,7 @@ import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // components
 import { Container } from 'components/Layout';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Loader from 'components/Loader';
 import { MediumText } from 'components/Typography';
 

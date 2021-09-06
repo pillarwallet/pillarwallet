@@ -64,7 +64,7 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 import Modal from 'components/Modal';
 

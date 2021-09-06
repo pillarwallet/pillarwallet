@@ -32,7 +32,7 @@ import { beginOnboardingAction } from 'actions/onboardingActions';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import Toast from 'components/Toast';
 

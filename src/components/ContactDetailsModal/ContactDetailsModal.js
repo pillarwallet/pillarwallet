@@ -31,7 +31,7 @@ import t from 'translations/translate';
 // Components
 import { BaseText } from 'components/Typography';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import Modal from 'components/Modal';

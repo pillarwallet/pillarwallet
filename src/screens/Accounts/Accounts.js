@@ -29,7 +29,7 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { ScrollWrapper } from 'components/Layout';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 // utils
 import { getAccountName, isNotKeyBasedType } from 'utils/accounts';

@@ -23,7 +23,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { getDeviceHeight } from 'utils/common';
 
 import type { LayoutEvent } from 'utils/types/react-native';

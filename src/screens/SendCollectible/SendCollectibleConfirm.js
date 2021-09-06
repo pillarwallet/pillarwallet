@@ -34,7 +34,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
 import { Paragraph } from 'components/Typography';

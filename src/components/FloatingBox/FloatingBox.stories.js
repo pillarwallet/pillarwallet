@@ -23,7 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
 
 import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 import FloatingBox from './FloatingBox';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';

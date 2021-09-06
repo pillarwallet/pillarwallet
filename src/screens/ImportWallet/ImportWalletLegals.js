@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Checkbox from 'components/Checkbox';
 import Modal from 'components/Modal';
 

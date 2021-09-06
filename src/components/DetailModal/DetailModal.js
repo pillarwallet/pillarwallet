@@ -29,14 +29,14 @@ import { SafeAreaView } from 'react-navigation';
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Spinner from 'components/Spinner';
 
 // utils
 import { fontStyles, fontSizes } from 'utils/variables';
 
 // types
-import type { Props as ButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/legacy/Button';
 
 opaque type FeePending = $FlowFixMe;
 export const FEE_PENDING: FeePending = Symbol('fee pending');

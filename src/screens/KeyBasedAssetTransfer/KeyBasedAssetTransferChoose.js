@@ -40,7 +40,7 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import CheckBox from 'components/modern/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import RefreshControl from 'components/RefreshControl';

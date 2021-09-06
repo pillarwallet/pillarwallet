@@ -32,7 +32,7 @@ import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'ac
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';

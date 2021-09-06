@@ -32,7 +32,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
 import Tooltip from 'components/Tooltip';
@@ -44,7 +44,7 @@ import { resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'u
 
 import type { ChangeEvent } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
-import type { Props as ButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/legacy/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 import type { InputPropsType } from 'models/TextInput';
 

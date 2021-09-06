@@ -30,7 +30,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { Container, Content, Spacing } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';

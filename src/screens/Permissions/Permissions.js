@@ -40,7 +40,7 @@ import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // types
 import type { Theme } from 'models/Theme';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 
 type Props = {

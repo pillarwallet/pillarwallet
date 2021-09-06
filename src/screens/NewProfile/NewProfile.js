@@ -27,7 +27,7 @@ import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import { Wrapper, Spacing } from 'components/Layout';
 import { BaseText, MediumText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/Checkbox';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';

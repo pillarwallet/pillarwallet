@@ -22,8 +22,8 @@ import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 import TextInput from 'components/legacy/TextInput';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../../storybook/CenterViewStretchDecorator';
 
 const leftSideImage = 'https://picsum.photos/100';
 

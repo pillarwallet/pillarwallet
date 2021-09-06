@@ -29,7 +29,7 @@ import debounce from 'lodash.debounce';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
 import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ValueInput from 'components/legacy/ValueInput';
 import Icon from 'components/Icon';
 import FeeLabelToggle from 'components/FeeLabelToggle';

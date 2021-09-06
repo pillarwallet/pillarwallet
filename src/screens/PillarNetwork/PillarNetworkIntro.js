@@ -29,7 +29,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { LabelBadge } from 'components/LabelBadge';
 
 import { ASSETS } from 'constants/navigationConstants';

@@ -32,7 +32,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';

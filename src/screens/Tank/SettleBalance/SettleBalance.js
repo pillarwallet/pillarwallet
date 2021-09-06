@@ -31,7 +31,7 @@ import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import Checkbox from 'components/Checkbox';

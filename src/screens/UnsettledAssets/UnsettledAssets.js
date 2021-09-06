@@ -28,7 +28,7 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 // utils
 import { findAssetByAddress, getAssetsAsList } from 'utils/assets';

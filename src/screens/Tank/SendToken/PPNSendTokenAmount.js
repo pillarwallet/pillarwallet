@@ -28,7 +28,7 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 
 // utils
